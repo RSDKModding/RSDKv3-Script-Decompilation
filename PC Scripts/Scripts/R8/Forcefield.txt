@@ -1,0 +1,99 @@
+//------------Sonic CD Forcefield Script-------------//
+//--------Scripted by Christian Whitehead 'The Taxman'--------//
+//-------Unpacked By Rubberduckycooly's Script Unpacker-------//
+
+//-------Aliases-------//
+#alias 64: TYPE_FORCEFIELD
+
+
+sub ObjectMain
+	switch Object.State
+	case 0
+		if Object.PropertyValue>168
+			Object.PropertyValue--
+		else
+			Object.State++
+		endif
+		Object.Frame=Object.AnimationTimer
+		Object.Frame>>=2
+		Object.AnimationTimer++
+		Object.AnimationTimer&=15
+		TempValue1=Oscillation
+		TempValue1<<=3
+		Sin(TempValue0,TempValue1)
+		TempValue0>>=4
+		TempValue0+=190
+		Object.Alpha=TempValue0
+		Object.InkEffect=2
+		Object.DrawOrder=4
+		break
+	case 1
+		Object.Frame=Object.AnimationTimer
+		Object.Frame>>=2
+		Object.AnimationTimer++
+		Object.AnimationTimer&=15
+		TempValue1=Oscillation
+		TempValue1<<=3
+		Sin(TempValue0,TempValue1)
+		TempValue0>>=4
+		TempValue0+=190
+		Object.Alpha=TempValue0
+		break
+	case 2
+		Object.Frame=0
+		if Object.Alpha>0
+			Object.Alpha-=2
+		endif
+		break
+
+	endswitch
+endsub
+
+
+sub ObjectPlayerInteraction
+	if Object.Alpha>0
+		TempValue0=Object.PropertyValue
+		TempValue0-=8
+		PlayerObjectCollision(C_BOX,TempValue0,-96,240,96)
+		FlipSign(TempValue0)
+		PlayerObjectCollision(C_BOX,-240,-96,TempValue0,96)
+	endif
+endsub
+
+
+sub ObjectDraw
+	TempValue0=Object.PropertyValue
+	TempValue0*=-65536
+	TempValue0+=Object.XPos
+	DrawSpriteFX(4,FX_INK,TempValue0,Object.YPos)
+	DrawSpriteFX(5,FX_INK,TempValue0,Object.YPos)
+	Object.Direction=FACING_RIGHT
+	DrawSpriteFX(Object.Frame,FX_FLIP,TempValue0,Object.YPos)
+	Object.Direction=2
+	DrawSpriteFX(Object.Frame,FX_FLIP,TempValue0,Object.YPos)
+	TempValue0=Object.PropertyValue
+	TempValue0<<=16
+	TempValue0+=Object.XPos
+	DrawSpriteFX(4,FX_INK,TempValue0,Object.YPos)
+	DrawSpriteFX(5,FX_INK,TempValue0,Object.YPos)
+	Object.Direction=FACING_RIGHT
+	DrawSpriteFX(Object.Frame,FX_FLIP,TempValue0,Object.YPos)
+	Object.Direction=2
+	DrawSpriteFX(Object.Frame,FX_FLIP,TempValue0,Object.YPos)
+endsub
+
+
+sub ObjectStartup
+	LoadSpriteSheet("R8/Objects3.gif")
+	SpriteFrame(-8,80,16,16,90,35)
+	SpriteFrame(-8,80,16,16,107,35)
+	SpriteFrame(-8,80,16,16,124,35)
+	SpriteFrame(-8,80,16,16,107,35)
+	SpriteFrame(-8,-82,16,82,74,114)
+	SpriteFrame(-8,0,16,82,74,114)
+endsub
+
+sub RSDK
+	LoadSpriteSheet("Global/Display.gif")
+	SetEditorIcon(Icon0,SingleIcon,-16,-16,32,32,1,143)
+endsub

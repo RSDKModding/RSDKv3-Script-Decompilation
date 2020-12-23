@@ -1,0 +1,54 @@
+//------------Sonic CD BossShoulder Script-------------//
+//--------Scripted by Christian Whitehead 'The Taxman'--------//
+//-------Unpacked By Rubberduckycooly's Script Unpacker-------//
+
+//-------Aliases-------//
+#alias 51: TYPE_BOSSSHOULDER
+
+
+sub ObjectMain
+	switch Object.State
+	case 0
+		Object.State=1
+		ArrayPos0=Object.Value0
+		Object.XPos=Object[ArrayPos0].XPos
+		Object.XPos+=1572864
+		Object.YPos=Object[ArrayPos0].YPos
+		Object.YPos-=786432
+		break
+	case 1
+		ArrayPos0=Object.Value0
+		Object.XPos=Object[ArrayPos0].XPos
+		Object.XPos+=1572864
+		Object.YPos=Object[ArrayPos0].YPos
+		Object.YPos-=786432
+		break
+	case 2
+		Object.Value2-=1536
+		Object.Value5+=6144
+		Object.XPos+=Object.Value2
+		Object.YPos+=Object.Value5
+		if Object.OutOfBounds==1
+			Object.Type=TypeName[BlankObject]
+			Object.Priority=0
+		endif
+		break
+
+	endswitch
+endsub
+
+
+sub ObjectDraw
+	DrawSprite(0)
+endsub
+
+
+sub ObjectStartup
+	LoadSpriteSheet("R1/Objects3.gif")
+	SpriteFrame(-24,-12,40,24,66,66)
+endsub
+
+sub RSDK
+	LoadSpriteSheet("Global/Display.gif")
+	SetEditorIcon(Icon0,SingleIcon,-16,-16,32,32,1,143)
+endsub

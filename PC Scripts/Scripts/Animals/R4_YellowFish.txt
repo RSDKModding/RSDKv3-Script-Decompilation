@@ -1,0 +1,65 @@
+//------------Sonic CD Yellow Fish Script-------------//
+//--------Scripted by Christian Whitehead 'The Taxman'--------//
+//-------Unpacked By Rubberduckycooly's Script Unpacker-------//
+
+//-------Aliases-------//
+#alias 83: TYPE_YELLOWFISH
+
+
+sub ObjectMain
+	switch Object.State
+	case 0
+		if Object.Value1<512
+			Object.Value1+=2
+			Object.XPos+=65536
+		else
+			Object.State=1
+			Object.Direction=FACING_LEFT
+		endif
+		break
+	case 1
+		if Object.Value1>0
+			Object.Value1-=2
+			Object.XPos-=65536
+		else
+			Object.State=0
+			Object.Direction=FACING_RIGHT
+		endif
+		break
+
+	endswitch
+	Object.Value0++
+	if Object.Value0>19
+		Object.Value0=0
+		Object.Frame++
+		Object.Frame&=1
+	endif
+endsub
+
+
+sub ObjectDraw
+	if MetalSonic_Destroyed==1
+		Sin(TempValue1,Object.Value1)
+		TempValue1<<=12
+		TempValue1+=Object.YPos
+		DrawSpriteFX(Object.Frame,FX_FLIP,Object.XPos,TempValue1)
+	endif
+	if Object[24].PropertyValue==2
+		Sin(TempValue1,Object.Value1)
+		TempValue1<<=12
+		TempValue1+=Object.YPos
+		DrawSpriteFX(Object.Frame,FX_FLIP,Object.XPos,TempValue1)
+	endif
+endsub
+
+
+sub ObjectStartup
+	LoadSpriteSheet("R4/Objects3.gif")
+	SpriteFrame(-8,-12,16,24,1,92)
+	SpriteFrame(-8,-12,16,24,18,92)
+endsub
+
+sub RSDK
+	LoadSpriteSheet("Global/Display.gif")
+	SetEditorIcon(Icon0,SingleIcon,-16,-16,32,32,1,143)
+endsub

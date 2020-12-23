@@ -1,0 +1,101 @@
+//------------Sonic CD Big Platform Script-------------//
+//--------Scripted by Christian Whitehead 'The Taxman'--------//
+//-------Unpacked By Rubberduckycooly's Script Unpacker-------//
+
+//-------Aliases-------//
+#alias 63: TYPE_BIGPLATFORM
+
+
+sub ObjectMain
+	switch Object.State
+	case 0
+		PlayerObjectCollision(C_TOUCH,-96,-160,128,160)
+		if CheckResult==1
+			TempValue0=Player.XPos
+			TempValue0-=Object.XPos
+			if TempValue0>8388608
+				Object.State=2
+				Object.Priority=1
+			else
+				Object.State=1
+				Object.Priority=1
+			endif
+		endif
+		break
+	case 1
+		TempValue0=Player.XPos
+		TempValue0-=Object.XPos
+		if TempValue0>8388608
+			Object.State=2
+		endif
+		if Object.Value3>0
+			Object.Value3-=2
+		endif
+		break
+	case 2
+		if Player.XPos<Object.XPos
+			Object.State=1
+		endif
+		if Object.Value3<256
+			Object.Value3+=2
+		endif
+		break
+
+	endswitch
+	Cos(Object.Value2,Object.Value3)
+	Object.Value2<<=13
+	Object.Value2+=4194304
+	Object.Value2+=Object.YPos
+	Object.Value2&=-65536
+	Object.Value2-=Object.Value1
+	PlayerObjectCollision(C_TOUCH,-328,-256,328,256)
+	if CheckResult==0
+		Object.State=0
+		Object.Priority=0
+		Object.Value3=256
+	endif
+endsub
+
+
+sub ObjectPlayerInteraction
+	TempValue0=Object.YPos
+	Object.YPos=Object.Value1
+	PlayerObjectCollision(C_BOX,-48,-81,48,80)
+	if CheckResult==1
+		Player.YPos+=Object.Value2
+		Player.YPos+=65536
+	endif
+	Object.YPos=TempValue0
+endsub
+
+
+sub ObjectDraw
+	Cos(Object.Value1,Object.Value3)
+	Object.Value1<<=13
+	Object.Value1+=4194304
+	Object.Value1+=Object.YPos
+	Object.Value1&=-65536
+	DrawSpriteXY(0,Object.XPos,Object.Value1)
+endsub
+
+
+sub ObjectStartup
+	LoadSpriteSheet("R6/Objects4.gif")
+	if Object[24].PropertyValue==2
+		SpriteFrame(-48,-80,96,192,98,1)
+	else
+		SpriteFrame(-48,-80,96,192,1,1)
+	endif
+	ArrayPos0=32
+	while ArrayPos0<1056
+		if Object[ArrayPos0].Type==TypeName[BigPlatform]
+			Object[ArrayPos0].Value3=256
+		endif
+		ArrayPos0++
+	loop
+endsub
+
+sub RSDK
+	LoadSpriteSheet("Global/Display.gif")
+	SetEditorIcon(Icon0,SingleIcon,-16,-16,32,32,1,143)
+endsub

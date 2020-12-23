@@ -1,0 +1,106 @@
+//------------Sonic CD Rotating Spikes Script-------------//
+//--------Scripted by Christian Whitehead 'The Taxman'--------//
+//-------Unpacked By Rubberduckycooly's Script Unpacker-------//
+
+//-------Aliases-------//
+#alias 46: TYPE_ROTATINGSPIKES
+
+
+sub ObjectMain
+	Object.Value0+=Object.Value1
+	if Object.Value0<0
+		Object.Value0+=512
+	endif
+	Object.Value0&=511
+endsub
+
+
+sub ObjectPlayerInteraction
+	TempValue0=0
+	TempValue1=16
+	TempValue2=Object.XPos
+	TempValue3=Object.YPos
+	while TempValue0<Object.Value2
+		Cos(Object.XPos,Object.Value0)
+		Object.XPos*=TempValue1
+		Object.XPos<<=7
+		Object.XPos+=TempValue2
+		Sin(Object.YPos,Object.Value0)
+		Object.YPos*=TempValue1
+		Object.YPos<<=7
+		Object.YPos+=TempValue3
+		PlayerObjectCollision(C_TOUCH,-8,-8,8,8)
+		if CheckResult==1
+			CallFunction(PlayerObject_BadnikHit)
+		endif
+		TempValue0++
+		TempValue1+=16
+	loop
+	Object.XPos=TempValue2
+	Object.YPos=TempValue3
+endsub
+
+
+sub ObjectDraw
+	DrawSprite(0)
+	TempValue0=0
+	TempValue1=16
+	while TempValue0<Object.Value2
+		Cos(TempValue2,Object.Value0)
+		TempValue2*=TempValue1
+		TempValue2<<=7
+		TempValue2+=Object.XPos
+		Sin(TempValue3,Object.Value0)
+		TempValue3*=TempValue1
+		TempValue3<<=7
+		TempValue3+=Object.YPos
+		DrawSpriteXY(1,TempValue2,TempValue3)
+		TempValue0++
+		TempValue1+=16
+	loop
+endsub
+
+
+sub ObjectStartup
+	LoadSpriteSheet("R3/Objects.gif")
+	ArrayPos0=32
+	while ArrayPos0<1056
+		if Object[ArrayPos0].Type==TypeName[RotatingSpikes]
+			switch Object[ArrayPos0].PropertyValue
+			case 0
+				Object[ArrayPos0].Value1=2
+				if Object[24].PropertyValue>1
+					Object[ArrayPos0].Value2=4
+				else
+					Object[ArrayPos0].Value2=3
+				endif
+				break
+			case 1
+				Object[ArrayPos0].Value1=-2
+				if Object[24].PropertyValue>1
+					Object[ArrayPos0].Value2=4
+				else
+					Object[ArrayPos0].Value2=3
+				endif
+				break
+			case 2
+				Object[ArrayPos0].Value1=2
+				Object[ArrayPos0].Value2=2
+				break
+			case 3
+				Object[ArrayPos0].Value1=-2
+				Object[ArrayPos0].Value2=2
+				break
+
+			endswitch
+		endif
+		ArrayPos0++
+	loop
+	SpriteFrame(-8,-8,16,16,181,143)
+	SpriteFrame(-8,-8,16,16,181,160)
+endsub
+
+sub RSDK
+	LoadSpriteSheet("Global/Display.gif")
+	SetEditorIcon(Icon0,SingleIcon,-16,-16,32,32,1,143)
+endsub

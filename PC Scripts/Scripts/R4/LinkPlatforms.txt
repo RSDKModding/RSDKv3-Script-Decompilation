@@ -1,0 +1,156 @@
+//------------Sonic CD Link Platforms Script-------------//
+//--------Scripted by Christian Whitehead 'The Taxman'--------//
+//-------Unpacked By Rubberduckycooly's Script Unpacker-------//
+
+//-------Aliases-------//
+#alias 65: TYPE_LINKPLATFORMS
+
+
+sub ObjectMain
+	Object.Value0+=Object.Value5
+	if Object.Value0<0
+		Object.Value0+=512
+	endif
+	Object.Value0&=511
+	TempValue1=96
+	Cos(Object.Value3,Object.Value0)
+	Object.Value3*=TempValue1
+	Object.Value3<<=7
+	Object.Value3+=Object.XPos
+	Object.Value3&=-65536
+	Object.Value3-=Object.Value1
+	Sin(Object.Value4,Object.Value0)
+	Object.Value4*=TempValue1
+	Object.Value4<<=7
+	Object.Value4+=Object.YPos
+	Object.Value4&=-65536
+	Object.Value4-=Object.Value2
+endsub
+
+
+sub ObjectPlayerInteraction
+	if Object.Frame==1
+		TempValue0=Object.XPos
+		TempValue1=Object.YPos
+		Object.XPos=Object.Value1
+		Object.YPos=Object.Value2
+		PlayerObjectCollision(C_PLATFORM,-32,-8,32,8)
+		if CheckResult==1
+			Player.XPos+=Object.Value3
+			Player.YPos+=Object.Value4
+		endif
+		Object.XPos=TempValue0
+		Object.YPos=TempValue1
+	endif
+endsub
+
+
+sub ObjectDraw
+	TempValue1=96
+	Cos(Object.Value1,Object.Value0)
+	Object.Value1*=TempValue1
+	Object.Value1<<=7
+	Object.Value1+=Object.XPos
+	Object.Value1&=-65536
+	Sin(Object.Value2,Object.Value0)
+	Object.Value2*=TempValue1
+	Object.Value2<<=7
+	Object.Value2+=Object.YPos
+	Object.Value2&=-65536
+	DrawSpriteXY(Object.Frame,Object.Value1,Object.Value2)
+endsub
+
+
+sub ObjectStartup
+	LoadSpriteSheet("R4/Objects.gif")
+	SpriteFrame(-8,-8,16,16,180,52)
+	SpriteFrame(-32,-8,64,16,147,69)
+	ArrayPos0=32
+	while ArrayPos0<1056
+		if Object[ArrayPos0].Type==TypeName[LinkPlatforms]
+			switch Object[ArrayPos0].PropertyValue
+			case 1
+				Object[ArrayPos0].Value0=112
+				Object[ArrayPos0].Frame=0
+				Object[ArrayPos0].Value5=2
+				ArrayPos0++
+				Object[ArrayPos0].Value0=16
+				Object[ArrayPos0].Frame=0
+				Object[ArrayPos0].Value5=2
+				ArrayPos0++
+				Object[ArrayPos0].Value0=32
+				Object[ArrayPos0].Frame=0
+				Object[ArrayPos0].Value5=2
+				ArrayPos0++
+				Object[ArrayPos0].Value0=48
+				Object[ArrayPos0].Frame=0
+				Object[ArrayPos0].Value5=2
+				ArrayPos0++
+				Object[ArrayPos0].Value0=96
+				Object[ArrayPos0].Frame=0
+				Object[ArrayPos0].Value5=2
+				ArrayPos0++
+				Object[ArrayPos0].Value0=80
+				Object[ArrayPos0].Frame=0
+				Object[ArrayPos0].Value5=2
+				ArrayPos0++
+				Object[ArrayPos0].Value0=64
+				Object[ArrayPos0].Frame=1
+				Object[ArrayPos0].Value5=2
+				ArrayPos0++
+				Object[ArrayPos0].Value0=0
+				Object[ArrayPos0].Frame=1
+				Object[ArrayPos0].Value5=2
+				ArrayPos0++
+				Object[ArrayPos0].Value0=128
+				Object[ArrayPos0].Frame=1
+				Object[ArrayPos0].Value5=2
+				break
+			case 2
+				Object[ArrayPos0].Value0=112
+				Object[ArrayPos0].Frame=0
+				Object[ArrayPos0].Value5=-2
+				ArrayPos0++
+				Object[ArrayPos0].Value0=16
+				Object[ArrayPos0].Frame=0
+				Object[ArrayPos0].Value5=-2
+				ArrayPos0++
+				Object[ArrayPos0].Value0=32
+				Object[ArrayPos0].Frame=0
+				Object[ArrayPos0].Value5=-2
+				ArrayPos0++
+				Object[ArrayPos0].Value0=48
+				Object[ArrayPos0].Frame=0
+				Object[ArrayPos0].Value5=-2
+				ArrayPos0++
+				Object[ArrayPos0].Value0=96
+				Object[ArrayPos0].Frame=0
+				Object[ArrayPos0].Value5=-2
+				ArrayPos0++
+				Object[ArrayPos0].Value0=80
+				Object[ArrayPos0].Frame=0
+				Object[ArrayPos0].Value5=-2
+				ArrayPos0++
+				Object[ArrayPos0].Value0=64
+				Object[ArrayPos0].Frame=1
+				Object[ArrayPos0].Value5=-2
+				ArrayPos0++
+				Object[ArrayPos0].Value0=0
+				Object[ArrayPos0].Frame=1
+				Object[ArrayPos0].Value5=-2
+				ArrayPos0++
+				Object[ArrayPos0].Value0=128
+				Object[ArrayPos0].Frame=1
+				Object[ArrayPos0].Value5=-2
+				break
+
+			endswitch
+		endif
+		ArrayPos0++
+	loop
+endsub
+
+sub RSDK
+	LoadSpriteSheet("Global/Display.gif")
+	SetEditorIcon(Icon0,SingleIcon,-16,-16,32,32,1,143)
+endsub

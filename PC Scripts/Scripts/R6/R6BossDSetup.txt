@@ -1,0 +1,300 @@
+//------------Sonic CD R6 Setup Script-------------//
+//--------Scripted by Christian Whitehead 'The Taxman'--------//
+//-------Unpacked By Rubberduckycooly's Script Unpacker-------//
+
+//-------Aliases-------//
+#alias 36: TYPE_R6SETUP
+
+
+sub ObjectMain
+	switch Object.Value3
+	case 0
+		if Object.Value2<15
+			Object.Value2++
+		else
+			Copy16x16Tile(646,841)
+			Copy16x16Tile(809,841)
+			Object.Value2=0
+			Object.Value3++
+		endif
+		break
+	case 1
+		if Object.Value2<4
+			Object.Value2++
+		else
+			Copy16x16Tile(646,842)
+			Copy16x16Tile(809,842)
+			Object.Value2=0
+			Object.Value3++
+		endif
+		break
+	case 2
+		if Object.Value2<9
+			Object.Value2++
+		else
+			Copy16x16Tile(646,843)
+			Copy16x16Tile(809,843)
+			Object.Value2=0
+			Object.Value3++
+		endif
+		break
+	case 3
+		if Object.Value2<4
+			Object.Value2++
+		else
+			Copy16x16Tile(646,840)
+			Copy16x16Tile(809,840)
+			Object.Value2=0
+			Object.Value3=0
+		endif
+		break
+
+	endswitch
+	TempValue0=Object.Value4
+	TempValue0&=1
+	if TempValue0==0
+		TempValue0=Object.Value4
+		TempValue0>>=1
+		TempValue0+=844
+		Copy16x16Tile(647,TempValue0)
+	endif
+	Object.Value4++
+	Object.Value4%=24
+	TempValue0=Object.Value5
+	TempValue0%=5
+	if TempValue0==0
+		TempValue0=Object.Value5
+		TempValue0/=5
+		TempValue0+=856
+		Copy16x16Tile(648,TempValue0)
+		TempValue0+=3
+		Copy16x16Tile(649,TempValue0)
+	endif
+	Object.Value5++
+	Object.Value5%=15
+	TempValue0=Object.Value6
+	TempValue0&=1
+	if TempValue0==0
+		TempValue0=Object.Value7
+		TempValue0+=862
+		Object.Value7++
+		Object.Value7%=6
+		Copy16x16Tile(543,TempValue0)
+	endif
+	Object.Value6++
+	Object.Value6&=511
+	Object.Scale=1
+	TempValue0=Object.Value1
+	TempValue0>>=1
+	SetActivePalette(TempValue0,0,Screen.YSize)
+	Object.Value1++
+	Object.Value1%=6
+endsub
+
+
+sub ObjectPlayerInteraction
+	TempValue2=Player.XPos
+	TempValue2>>=16
+	TempValue2+=Player.CollisionRight
+	TempValue3=Player.YPos
+	TempValue3>>=16
+	TempValue3+=Player.CollisionBottom
+	TempValue3+=2
+	Get16x16TileInfo(TempValue0,TempValue2,TempValue3,8)
+	TempValue2=Player.XPos
+	TempValue2>>=16
+	TempValue2+=Player.CollisionLeft
+	Get16x16TileInfo(TempValue1,TempValue2,TempValue3,8)
+	TempValue0|=TempValue1
+	if TempValue0==1
+		if Object.Scale==1
+			if Player.YVelocity>-1
+				Player.Animation=ANI_JUMPING
+				Player.Gravity=1
+				Player.Timer=0
+				Player.YVelocity=-1441792
+				Player.State=13
+				PlayStageSfx(0,0)
+			endif
+		endif
+	endif
+	TempValue2-=Player.CollisionLeft
+	TempValue3-=Player.CollisionBottom
+	TempValue3-=2
+	Get16x16TileInfo(TempValue0,TempValue2,TempValue3,8)
+	switch TempValue0
+	case 2
+		if Player.Value4==0
+			Player.State=23
+			if Player.Direction==FACING_LEFT
+				Player.Speed=131072
+			else
+				Player.Speed=-131072
+			endif
+		endif
+		break
+	case 5
+		if Object.State==2
+			if Player.Value4==0
+				Player.State=23
+				if Player.Direction==FACING_LEFT
+					Player.Speed=131072
+				else
+					Player.Speed=-131072
+				endif
+			endif
+		endif
+		break
+	case 6
+		if Object.State==2
+			if Object.Direction==FACING_RIGHT
+				if Player.Value4==0
+					Player.State=23
+					if Player.Direction==FACING_LEFT
+						Player.Speed=131072
+					else
+						Player.Speed=-131072
+					endif
+				endif
+			endif
+		endif
+		break
+	case 7
+		if Object.State==2
+			if Object.Direction==FACING_LEFT
+				if Player.Value4==0
+					Player.State=23
+					if Player.Direction==FACING_LEFT
+						Player.Speed=131072
+					else
+						Player.Speed=-131072
+					endif
+				endif
+			endif
+		endif
+		break
+	case 8
+		if Object.State==2
+			if Object.Direction==2
+				if Player.Value4==0
+					Player.State=23
+					if Player.Direction==FACING_LEFT
+						Player.Speed=131072
+					else
+						Player.Speed=-131072
+					endif
+				endif
+			endif
+		endif
+		break
+
+	endswitch
+	TempValue3-=4
+	Get16x16TileInfo(TempValue0,TempValue2,TempValue3,8)
+	switch TempValue0
+	case 2
+		if Player.Value4==0
+			Player.State=23
+			if Player.Direction==FACING_LEFT
+				Player.Speed=131072
+			else
+				Player.Speed=-131072
+			endif
+		endif
+		break
+	case 5
+		if Object.State==2
+			if Player.Value4==0
+				Player.State=23
+				if Player.Direction==FACING_LEFT
+					Player.Speed=131072
+				else
+					Player.Speed=-131072
+				endif
+			endif
+		endif
+		break
+	case 6
+		if Object.State==2
+			if Object.Direction==FACING_RIGHT
+				if Player.Value4==0
+					Player.State=23
+					if Player.Direction==FACING_LEFT
+						Player.Speed=131072
+					else
+						Player.Speed=-131072
+					endif
+				endif
+			endif
+		endif
+		break
+	case 7
+		if Object.State==2
+			if Object.Direction==FACING_LEFT
+				if Player.Value4==0
+					Player.State=23
+					if Player.Direction==FACING_LEFT
+						Player.Speed=131072
+					else
+						Player.Speed=-131072
+					endif
+				endif
+			endif
+		endif
+		break
+	case 8
+		if Object.State==2
+			if Object.Direction==2
+				if Player.Value4==0
+					Player.State=23
+					if Player.Direction==FACING_LEFT
+						Player.Speed=131072
+					else
+						Player.Speed=-131072
+					endif
+				endif
+			endif
+		endif
+		break
+
+	endswitch
+	TempValue3+=4
+	TempValue3+=Player.CollisionTop
+	Get16x16TileInfo(TempValue0,TempValue2,TempValue3,8)
+	if TempValue0==3
+		TempValue4=TempValue3
+		TempValue4&=15
+		if TempValue4<8
+			if Player.State!=28
+				Player.State=28
+				Player.YVelocity=0
+				Player.Animation=ANI_HANGING
+				TempValue3&=32752
+				TempValue3+=4
+				TempValue3-=Player.CollisionTop
+				Player.iYPos=TempValue3
+				PlayStageSfx(2,0)
+				Screen.AdjustCameraY=0
+			endif
+		endif
+	endif
+endsub
+
+
+sub ObjectStartup
+	Object[19].Type=TypeName[R6Setup]
+	Object[19].Priority=1
+	Object[19].DrawOrder=2
+	TempValue0=1
+	while TempValue0<3
+		RotatePalette(161,163,0)
+		CopyPalette(0,TempValue0)
+		TempValue0++
+	loop
+	RotatePalette(161,163,0)
+endsub
+
+sub RSDK
+	LoadSpriteSheet("Global/Display.gif")
+	SetEditorIcon(Icon0,SingleIcon,-16,-16,32,32,1,143)
+endsub

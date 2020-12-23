@@ -1,0 +1,160 @@
+//------------Sonic CD Boss Curtain Script-------------//
+//--------Scripted by Christian Whitehead 'The Taxman'--------//
+//-------Unpacked By Rubberduckycooly's Script Unpacker-------//
+
+//-------Aliases-------//
+#alias 59: TYPE_BOSSCURTAIN
+
+
+sub ObjectMain
+	switch Object.State
+	case 0
+		if Player.XPos>Object.XPos
+			if Object[24].PropertyValue>1
+				if Options.Soundtrack==0
+					SetMusicTrack("JP/FinalBoss.ogg",4,1)
+				else
+					SetMusicTrack("US/FinalBoss.ogg",4,1)
+				endif
+			endif
+			Object.State++
+		endif
+		break
+	case 1
+		if Object.Value0<240
+			Object.Value0++
+			if Object.Value0==140
+				CreateTempObject(TypeName[FadeMusic],0,Object.XPos,Object.YPos)
+			endif
+		else
+			Object.Value0=0
+			Object[19].Value1=0
+			ArrayPos0=Object.EntityNo
+			ArrayPos0-=3
+			Object[-3].Type=TypeName[EggMobile]
+			Object[-7].Type=TypeName[BossWing]
+			Object[-7].Value7=ArrayPos0
+			Object[-6].Type=TypeName[BossWing]
+			Object[-6].Value7=ArrayPos0
+			Object[-5].Type=TypeName[BossWing]
+			Object[-5].Value7=ArrayPos0
+			Object[-4].Type=TypeName[BossWing]
+			Object[-4].Value7=ArrayPos0
+			Object[-2].Value0=4
+			Object[-2].Value6=Object.XPos
+			Object[-2].Value4=Object.XPos
+			Object[-2].Value4-=8126464
+			Object[-2].Value5=Object.XPos
+			Object[-2].Value5+=8126464
+			Object[-3].Value4=4096
+			Object[-2].Value1=75
+			Object[-1].Value6=Stage.XBoundary2
+			Object.State++
+		endif
+		break
+	case 2
+		if Object.Alpha>0
+			Object.Alpha-=4
+		endif
+		Object.Value1-=131072
+		Object.Value2+=131072
+		TempValue1=Object.Value1
+		TempValue1>>=16
+		TempValue1+=7
+		TempValue3=Object.Value2
+		TempValue3>>=16
+		TempValue3-=7
+		TempValue2=Object.iYPos
+		TempValue2-=92
+		TempValue0=0
+		while TempValue0<12
+			Set16x16TileInfo(0,TempValue1,TempValue2,0)
+			TempValue1-=16
+			Set16x16TileInfo(395,TempValue1,TempValue2,0)
+			TempValue1+=16
+			Set16x16TileInfo(0,TempValue3,TempValue2,0)
+			TempValue3+=16
+			Set16x16TileInfo(395,TempValue3,TempValue2,0)
+			TempValue3-=16
+			TempValue2+=16
+			TempValue0++
+		loop
+		if Object.Value0<120
+			Object.Value0++
+		else
+			Object.Value0=0
+			Object.State++
+			if Screen.XSize>320
+				ResetObjectEntity(Object.EntityNo,TypeName[Forcefield],240,Object.XPos,Object.YPos)
+			else
+				ResetObjectEntity(Object.EntityNo,TypeName[BlankObject],0,Object.XPos,Object.YPos)
+			endif
+		endif
+		break
+
+	endswitch
+endsub
+
+
+sub ObjectPlayerInteraction
+	TempValue0=Player.CollisionRight
+	TempValue0<<=16
+	TempValue0+=Player.XPos
+	TempValue1=Stage.XBoundary2
+	TempValue1<<=16
+	if TempValue0>TempValue1
+		Player.XVelocity=0
+		Player.Speed=0
+		Player.XPos=TempValue1
+		TempValue0=Player.CollisionRight
+		TempValue0<<=16
+		Player.XPos-=TempValue0
+	endif
+endsub
+
+
+sub ObjectDraw
+	if Object.DrawOrder==2
+		DrawRect(0,0,Screen.XSize,Screen.YSize,0,0,0,Object.Alpha)
+		SetDrawListEntityRef(Object.EntityNo,3,Screen[3].DrawListSize)
+		Screen[3].DrawListSize++
+		Object.DrawOrder=3
+	else
+		TempValue0=0
+		while TempValue0<6
+			DrawSpriteXY(TempValue0,Object.Value1,Object.YPos)
+			DrawSpriteFX(TempValue0,FX_FLIP,Object.Value2,Object.YPos)
+			TempValue0++
+		loop
+		Object.DrawOrder=2
+	endif
+endsub
+
+
+sub ObjectStartup
+	LoadSpriteSheet("R8/Objects2.gif")
+	SpriteFrame(-8,-96,16,32,134,187)
+	SpriteFrame(-8,-64,16,32,134,187)
+	SpriteFrame(-8,-32,16,32,134,187)
+	SpriteFrame(-8,0,16,32,134,187)
+	SpriteFrame(-8,32,16,32,134,187)
+	SpriteFrame(-8,64,16,32,134,187)
+	ArrayPos0=32
+	while ArrayPos0<1056
+		if Object[ArrayPos0].Type==TypeName[BossCurtain]
+			Object[ArrayPos0].Direction=FACING_LEFT
+			Object[ArrayPos0].DrawOrder=2
+			Object[ArrayPos0].Alpha=224
+			Object[ArrayPos0].Value1=Object[ArrayPos0].XPos
+			Object[ArrayPos0].Value1-=524288
+			Object[ArrayPos0].Value2=Object[ArrayPos0].XPos
+			Object[ArrayPos0].Value2+=524288
+		endif
+		ArrayPos0++
+	loop
+endsub
+
+sub RSDK
+	LoadSpriteSheet("Global/Display.gif")
+	SetEditorIcon(Icon0,SingleIcon,-16,-16,32,32,1,143)
+endsub

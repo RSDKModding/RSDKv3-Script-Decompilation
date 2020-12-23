@@ -1,0 +1,2100 @@
+//------------Sonic CD Player Object Script-------------//
+//--------Scripted by Christian Whitehead 'The Taxman'--------//
+//-------Unpacked By Rubberduckycooly's Script Unpacker-------//
+
+//-------Aliases-------//
+#alias 1: TYPE_PLAYEROBJECT
+
+#alias Player.Value0:Player.Rings
+#alias Player.Value1:Player.AbilityTimer
+#alias Player.Value2:Player.CustomAnimSpeed
+#alias Player.Value3:Player.SpeedShoes
+#alias Player.Value4:Player.Invincible
+#alias Player.Value5:Player.BlinkTimer
+#alias Player.Value6:Player.MinRollSpeed
+#alias Player.Value7:Player.AnimationCheck
+#alias Player.Value8:Player.ScrollDelay
+#alias Player.Value9:Player.CameraOffset
+#alias Player.Value10:Player.FlightFunction
+#alias Player.Value11:Player.PeeloutFunction
+#alias Player.Value12:Player.SpindashFunction
+#alias Player.Value15:Player.FlightGravity
+
+function PlayerObject_ProcessPlayer
+	if Options.AttractMode==0
+		if Player.ControlMode==0
+			if Object[9].Type==TypeName[BlankObject]
+				if KeyPress.Start==1
+					KeyPress.Start=0
+					if Options.DevMenuFlag==1
+						Stage.State=STAGE_PAUSED
+						PauseMusic()
+						PlaySfx(27,0)
+						StopSfx(24)
+						StopSfx(25)
+						Object[9].Type=TypeName[PauseMenu]
+						Object[9].DrawOrder=6
+						Object[9].Priority=2
+					else
+						EngineCallback(13)
+					endif
+				endif
+			endif
+		endif
+		ProcessPlayerControl()
+	endif
+	if Player.SpeedShoes>0
+		Player.SpeedShoes--
+		if Player.SpeedShoes==0
+			Player.Acceleration=3072
+			Player.AirAcceleration=6144
+			Player.TopSpeed=393216
+			if Music.CurrentTrack==3
+				PlayMusic(0)
+			endif
+		endif
+	endif
+	if Player.Invincible>0
+		if Player.State!=24
+			if Player.Invincible>2000
+				Player.Invincible=120
+				Player.BlinkTimer=3
+			endif
+		endif
+		if Player.BlinkTimer>0
+			Player.BlinkTimer++
+			if Player.BlinkTimer>8
+				Player.BlinkTimer=1
+			endif
+			if Player.BlinkTimer>4
+				Player.Visible=0
+			else
+				Player.Visible=1
+			endif
+		endif
+		Player.Invincible--
+		if Player.Invincible==0
+			Player.BlinkTimer=0
+			Player.Visible=1
+			if Music.CurrentTrack==2
+				PlayMusic(0)
+			endif
+			if Object[+2].Type==TypeName[Invincibility]
+				switch Object[+2].PropertyValue
+				case 0
+					TempValue0=Player.EntityNo
+					TempValue0+=2
+					ResetObjectEntity(TempValue0,TypeName[BlankObject],0,0,0)
+					break
+				case 1
+					TempValue0=Player.EntityNo
+					TempValue0+=2
+					ResetObjectEntity(TempValue0,TypeName[BlankObject],0,0,0)
+					Object[+2].Type=TypeName[BlueShield]
+					Object[+2].PropertyValue=1
+					Object[+2].Priority=1
+					Object[+2].DrawOrder=4
+					Object[+2].InkEffect=2
+					Object[+2].Alpha=160
+					Object[+2].XPos=Player.XPos
+					Object[+2].YPos=Player.YPos
+					break
+
+				endswitch
+			endif
+		endif
+	endif
+	if Player.State!=16
+		if Player.State!=17
+			if Player.LookPos>0
+				Player.LookPos-=2
+			endif
+			if Player.LookPos<0
+				Player.LookPos+=2
+			endif
+		endif
+	endif
+	if Warp.Timer>0
+		Warp.Timer++
+		if Warp.Timer==220
+			Screen.CameraEnabled=0
+			CreateTempObject(TypeName[TimeWarp],0,0,0)
+			Object[TempObjectPos].DrawOrder=6
+		endif
+	endif
+	if Player.ScrollDelay>0
+		Player.ScrollDelay--
+		if Player.ScrollDelay==0
+			Screen.CameraStyle=0
+		endif
+	endif
+	if Player.State!=22
+		if Player.FlightGravity!=0
+			StopSfx(24)
+			StopSfx(25)
+			Player.FlightGravity=0
+		endif
+	endif
+endfunction
+
+
+function PlayerObject_Blank
+	CheckResult=0
+endfunction
+
+
+function PlayerObject_HandleMovement
+	if Player.ControlLock>0
+		Player.ControlLock--
+		Sin256(TempValue0,Player.Angle)
+		TempValue0*=8192
+		TempValue0>>=8
+		Player.Speed+=TempValue0
+	else
+		if Player.Left==1
+			TempValue0=Player.TopSpeed
+			FlipSign(TempValue0)
+			if Player.Speed>TempValue0
+				if Player.Speed>0
+					if Player.CollisionMode==0
+						if Player.Speed>262144
+							Player.Skidding=16
+						endif
+					endif
+					if Player.Speed<32768
+						Player.Speed=-32768
+						Player.Skidding=0
+					else
+						Player.Speed-=32768
+					endif
+				else
+					Player.Speed-=Player.Acceleration
+					Player.Skidding=0
+				endif
+			endif
+			if Player.Speed<=0
+				Player.Direction=FACING_LEFT
+			endif
+		endif
+		if Player.Right==1
+			if Player.Speed<Player.TopSpeed
+				if Player.Speed<0
+					if Player.CollisionMode==0
+						if Player.Speed<-262144
+							Player.Skidding=16
+						endif
+					endif
+					if Player.Speed>-32768
+						Player.Speed=32768
+						Player.Skidding=0
+					else
+						Player.Speed+=32768
+					endif
+				else
+					Player.Speed+=Player.Acceleration
+					Player.Skidding=0
+				endif
+			endif
+			if Player.Speed>=0
+				Player.Direction=FACING_RIGHT
+			endif
+		endif
+		TempValue0=Player.Left
+		TempValue0|=Player.Right
+		if TempValue0==0
+			if Player.Speed>0
+				Player.Speed-=Player.Deceleration
+				if Player.Speed<0
+					Player.Speed=0
+				endif
+			else
+				Player.Speed+=Player.Deceleration
+				if Player.Speed>0
+					Player.Speed=0
+				endif
+			endif
+			if Player.Speed>8192
+				Sin256(TempValue0,Player.Angle)
+				TempValue0*=8192
+				TempValue0>>=8
+				Player.Speed+=TempValue0
+			endif
+			if Player.Speed<-8192
+				Sin256(TempValue0,Player.Angle)
+				TempValue0*=8192
+				TempValue0>>=8
+				Player.Speed+=TempValue0
+			endif
+			if Player.Angle>192
+				if Player.Angle<228
+					if Player.Speed>-65536
+						if Player.Speed<65536
+							Player.ControlLock=30
+						endif
+					endif
+				endif
+			endif
+			if Player.Angle>28
+				if Player.Angle<64
+					if Player.Speed>-65536
+						if Player.Speed<65536
+							Player.ControlLock=30
+						endif
+					endif
+				endif
+			endif
+		else
+			Sin256(TempValue0,Player.Angle)
+			TempValue0*=8192
+			TempValue0>>=8
+			Player.Speed+=TempValue0
+			if Player.Right==1
+				if Player.Left==0
+					if Player.Angle>192
+						if Player.Angle<228
+							if Player.Speed<163840
+								if Player.Speed>-131072
+									Player.ControlLock=30
+								endif
+							endif
+						endif
+					endif
+				endif
+			else
+				if Player.Left==1
+					if Player.Angle>28
+						if Player.Angle<64
+							if Player.Speed>-163840
+								if Player.Speed<131072
+									Player.ControlLock=30
+								endif
+							endif
+						endif
+					endif
+				endif
+			endif
+		endif
+	endif
+endfunction
+
+
+function PlayerObject_HandleAirSpeed
+	if Player.YVelocity>-262144
+		if Player.YVelocity<0
+			TempValue0=Player.Speed
+			TempValue0>>=5
+			Player.Speed-=TempValue0
+		endif
+	endif
+	TempValue0=Player.TopSpeed
+	FlipSign(TempValue0)
+	if Player.Speed>TempValue0
+		if Player.Left==1
+			Player.Speed-=Player.AirAcceleration
+			Player.Direction=FACING_LEFT
+		endif
+	else
+		if Player.Left==1
+			Player.Direction=FACING_LEFT
+		endif
+	endif
+	if Player.Speed<Player.TopSpeed
+		if Player.Right==1
+			Player.Speed+=Player.AirAcceleration
+			Player.Direction=FACING_RIGHT
+		endif
+	else
+		if Player.Right==1
+			Player.Direction=FACING_RIGHT
+		endif
+	endif
+	if Options.OriginalControls==1
+		if Player.Left==1
+			if Player.Speed<-393216
+				Player.Speed=-393216
+			endif
+		endif
+		if Player.Right==1
+			if Player.Speed>393216
+				Player.Speed=393216
+			endif
+		endif
+	endif
+endfunction
+
+
+function PlayerObject_HandleAirMovement
+	Player.TrackScroll=1
+	Player.YVelocity+=Player.GravityStrength
+	if Player.YVelocity<Player.JumpCap
+		if Player.JumpHold==0
+			if Player.Timer>0
+				Player.YVelocity=Player.JumpCap
+				TempValue0=Player.Speed
+				TempValue0>>=5
+				Player.Speed-=TempValue0
+			endif
+		endif
+	endif
+	Player.XVelocity=Player.Speed
+	if Player.Rotation<256
+		if Player.Rotation>0
+			Player.Rotation-=4
+		else
+			Player.Rotation=0
+		endif
+	else
+		if Player.Rotation<512
+			Player.Rotation+=4
+		else
+			Player.Rotation=0
+		endif
+	endif
+	Player.CollisionMode=0
+	if Player.Animation==ANI_JUMPING
+		Player.AnimationSpeed=Player.CustomAnimSpeed
+	endif
+endfunction
+
+
+function PlayerObject_ResetOnFloor
+	Player.TrackScroll=0
+	Cos256(TempValue0,Player.Angle)
+	TempValue0*=Player.Speed
+	TempValue0>>=8
+	Player.XVelocity=TempValue0
+	Sin256(TempValue0,Player.Angle)
+	TempValue0*=Player.Speed
+	TempValue0>>=8
+	Player.YVelocity=TempValue0
+endfunction
+
+
+function PlayerObject_StartJump
+	CheckResult=0
+	if Player.CollisionMode==0
+		TempValue6=Object.XPos
+		TempValue7=Object.YPos
+		Object.XPos=Player.XPos
+		Object.YPos=Player.YPos
+		TempValue0=Player.CollisionTop
+		TempValue0-=2
+		ObjectTileCollision(2,0,TempValue0,0)
+		Object.XPos=TempValue6
+		Object.YPos=TempValue7
+	endif
+	if CheckResult==0
+		Player.ControlLock=0
+		Player.Gravity=1
+		Player.AbilityTimer=8
+		Sin256(Player.XVelocity,Player.Angle)
+		Player.XVelocity*=Player.JumpStrength
+		Cos256(TempValue0,Player.Angle)
+		TempValue0*=Player.Speed
+		Player.XVelocity+=TempValue0
+		Player.XVelocity>>=8
+		Sin256(Player.YVelocity,Player.Angle)
+		Player.YVelocity*=Player.Speed
+		Cos256(TempValue0,Player.Angle)
+		TempValue0*=Player.JumpStrength
+		Player.YVelocity-=TempValue0
+		Player.YVelocity>>=8
+		Player.Speed=Player.XVelocity
+		Player.TrackScroll=1
+		Player.Animation=ANI_JUMPING
+		Player.Angle=0
+		Player.CollisionMode=0
+		Player.Timer=1
+		CallFunction(41) // PlayerObject_HandleRollAnimationSpeed
+		Player.State=13
+		PlaySfx(0,0)
+	endif
+endfunction
+
+
+function PlayerObject_StartSpindashS2
+	Player.State=18
+	Player.Animation=ANI_SPINDASH
+	Player.AbilityTimer=0
+	PlaySfx(6,0)
+	CreateTempObject(TypeName[DustPuff],Object.EntityNo,Player.XPos,Player.YPos)
+	Object[TempObjectPos].iYPos=Player.CollisionBottom
+	Object[TempObjectPos].YPos+=Player.YPos
+	Object[TempObjectPos].Frame=4
+	Object[TempObjectPos].DrawOrder=4
+	Object[TempObjectPos].Direction=Player.Direction
+endfunction
+
+
+function PlayerObject_StartSpindashCD
+	Player.State=19
+	Player.Animation=ANI_JUMPING
+	Player.YPos+=327680
+	Player.AbilityTimer=0
+	PlaySfx(6,0)
+endfunction
+
+
+function PlayerObject_StartPeeloutS2
+	Player.State=20
+	Player.AbilityTimer=0
+	PlaySfx(6,0)
+endfunction
+
+
+function PlayerObject_StartPeeloutCD
+	Player.State=21
+	Player.AbilityTimer=0
+	PlaySfx(6,0)
+endfunction
+
+
+function PlayerObject_StartTailsFlight
+	if Player.AbilityTimer>0
+		Player.AbilityTimer--
+	else
+		if Player.JumpPress==1
+			Player.Timer=0
+			Player.State=22
+			Player.FlightGravity=2048
+			if Player.GravityStrength==14336
+				PlaySfx(24,1)
+				Player.Animation=ANI_FLYING
+			else
+				Player.Animation=ANI_SWIMMING
+			endif
+		endif
+	endif
+endfunction
+
+
+function PlayerObject_HandleGround
+	if Player.Animation!=ANI_SKIDDING
+		TempValue7=1
+	else
+		TempValue7=0
+	endif
+	CallFunction(PlayerObject_HandleMovement)
+	if Player.Gravity==1
+		Player.State=13
+		CallFunction(PlayerObject_HandleAirMovement)
+	else
+		CallFunction(PlayerObject_ResetOnFloor)
+		if Player.Speed==0
+			if Warp.Destination>0
+				if Warp.Timer>99
+					if Warp.Timer<220
+						Warp.Destination=0
+					endif
+				endif
+				Warp.Timer=0
+			endif
+			if Player.CollisionMode==0
+				if Player.Timer<240
+					Player.Animation=ANI_STOPPED
+					Player.Timer++
+				else
+					Player.Animation=ANI_WAITING
+					if Stage.PlayerListPos==0
+						Player.Timer++
+						if Player.Timer==10620
+							Player.Timer=0
+							PlaySfx(26,0)
+							Player.State=25
+							Player.Animation=ANI_BORED
+						endif
+					endif
+				endif
+				if Player[1].Flailing==0
+					if Player[2].Flailing==0
+						Player.Timer=0
+						if Player.Direction==FACING_LEFT
+							Player.Animation=ANI_FLAILINGLEFT
+						else
+							Player.Animation=ANI_FLAILINGRIGHT
+						endif
+					endif
+					if Player[0].Flailing==0
+						Player.Timer=0
+						if Player.Direction==FACING_RIGHT
+							Player.Animation=ANI_FLAILINGLEFT
+						else
+							Player.Animation=ANI_FLAILINGRIGHT
+						endif
+					endif
+				endif
+			endif
+		else
+			Player.Timer=0
+			if Player.Speed>0
+				if Player.Speed<390594
+					Player.Animation=ANI_WALKING
+					CallFunction(42) // PlayerObject_HandleWalkAnimationSpeed
+					if Warp.Destination>0
+						if Warp.Timer>99
+							if Warp.Timer<220
+								Warp.Destination=0
+							endif
+						endif
+						Warp.Timer=0
+					endif
+				else
+					if Warp.Destination>0
+						if Warp.Timer==0
+							Warp.Timer=1
+							ResetObjectEntity(3,TypeName[WarpStar],0,Player.XPos,Player.YPos)
+							Object[3].Value0=7
+							Object[3].DrawOrder=4
+						endif
+					endif
+					if Player.Speed>655359
+						Player.Animation=ANI_PEELOUT
+					else
+						Player.Animation=ANI_RUNNING
+					endif
+					CallFunction(43) // PlayerObject_HandleRunAnimationSpeed
+				endif
+			else
+				if Player.Speed>-390594
+					Player.Animation=ANI_WALKING
+					CallFunction(42) // PlayerObject_HandleWalkAnimationSpeed
+					if Warp.Destination>0
+						if Warp.Timer>99
+							if Warp.Timer<220
+								Warp.Destination=0
+							endif
+						endif
+						Warp.Timer=0
+						Object[3].Type=TypeName[BlankObject]
+					endif
+				else
+					if Warp.Destination>0
+						if Warp.Timer==0
+							Warp.Timer=1
+							ResetObjectEntity(3,TypeName[WarpStar],0,Player.XPos,Player.YPos)
+							Object[3].Value0=7
+							Object[3].DrawOrder=4
+						endif
+					endif
+					if Player.Speed<-655359
+						Player.Animation=ANI_PEELOUT
+					else
+						Player.Animation=ANI_RUNNING
+					endif
+					CallFunction(43) // PlayerObject_HandleRunAnimationSpeed
+				endif
+			endif
+		endif
+		if Player.Skidding>0
+			if TempValue7==1
+				PlaySfx(3,0)
+			endif
+			Player.Animation=ANI_SKIDDING
+			Player.AnimationSpeed=0
+			Player.Skidding--
+			if Ring.AniCount==0
+				CreateTempObject(TypeName[DustPuff],0,Player.XPos,Player.YPos)
+				Object[TempObjectPos].iYPos+=Player.CollisionBottom
+				Object[TempObjectPos].DrawOrder=Player.DrawOrder
+			endif
+			if Player.Speed>0
+				Player.Direction=FACING_RIGHT
+			else
+				Player.Direction=FACING_LEFT
+			endif
+		endif
+		if Player.CollisionMode==0
+			if Player.Pushing==2
+				Player.Animation=ANI_PUSHING
+				Player.AnimationSpeed=0
+			endif
+		endif
+		if Player.JumpPress==1
+			CallFunction(PlayerObject_StartJump)
+		else
+			if Player.Up==1
+				if Player.Speed==0
+					if Player.Animation!=ANI_FLAILINGLEFT
+						if Player.Animation!=ANI_FLAILINGRIGHT
+							Player.State=16
+							Player.Animation=ANI_LOOKINGUP
+							Player.Timer=0
+						endif
+					endif
+				endif
+			endif
+			if Player.Down==1
+				if Player.Speed==0
+					if Player.Animation!=ANI_FLAILINGLEFT
+						if Player.Animation!=ANI_FLAILINGRIGHT
+							Player.State=17
+							Player.Animation=ANI_LOOKINGDOWN
+							Player.Timer=0
+						endif
+					endif
+				else
+					if Player.Left==0
+						if Player.Right==0
+							if Player.Speed>0
+								if Player.Speed>34816
+									Player.State=14
+									Player.Animation=ANI_JUMPING
+									Player.iYPos-=Player.CameraOffset
+									Player.AbilityTimer=1024
+								endif
+							else
+								if Player.Speed<-34816
+									Player.State=14
+									Player.Animation=ANI_JUMPING
+									Player.iYPos-=Player.CameraOffset
+									Player.AbilityTimer=1024
+								endif
+							endif
+						endif
+					endif
+				endif
+			endif
+		endif
+	endif
+endfunction
+
+
+function PlayerObject_HandleAir
+	CallFunction(PlayerObject_HandleAirSpeed)
+	if Player.Gravity==1
+		CallFunction(PlayerObject_HandleAirMovement)
+		if Warp.Destination>0
+			TempValue0=Player.YVelocity
+			if TempValue0<0
+				FlipSign(TempValue0)
+			endif
+			if TempValue0<393216
+				TempValue0=Player.XVelocity
+				if TempValue0<0
+					FlipSign(TempValue0)
+				endif
+				if TempValue0<393216
+					TempValue0=Player.XVelocity
+					TempValue0-=Warp.SpeedCompare
+					if TempValue0<0
+						FlipSign(TempValue0)
+					endif
+					if TempValue0>262144
+						if Warp.Timer>99
+							if Warp.Timer<220
+								Warp.Destination=0
+							endif
+						endif
+						Warp.Timer=0
+					endif
+				endif
+			endif
+			Warp.SpeedCompare=Player.XVelocity
+		endif
+		if Player.YVelocity>131072
+			if Player.Animation==ANI_FLAILINGLEFT
+				Player.Animation=ANI_WALKING
+			endif
+			if Player.Animation==ANI_FLAILINGRIGHT
+				Player.Animation=ANI_WALKING
+			endif
+		endif
+		if Player.Animation==ANI_BOUNCING
+			if Player.YVelocity>=0
+				if Player.AnimationCheck==ANI_STOPPED
+					Player.AnimationCheck=ANI_WALKING
+				endif
+				Player.Animation=Player.AnimationCheck
+			endif
+		endif
+		if Player.Animation==ANI_HURT
+			if Player.YVelocity>=0
+				if Player.AnimationCheck==ANI_STOPPED
+					Player.AnimationCheck=ANI_WALKING
+				endif
+				Player.Animation=Player.AnimationCheck
+			endif
+		endif
+		if Player.Animation==ANI_JUMPING
+			CallFunction(Player.FlightFunction)
+		endif
+	else
+		Player.State=12
+		CallFunction(PlayerObject_ResetOnFloor)
+		Player.Skidding=0
+	endif
+endfunction
+
+
+function PlayerObject_HandleRolling
+	CallFunction(44) // PlayerObject_HandleRollingDeceleration
+	if Player.Gravity==1
+		Player.State=13
+		Player.Timer=0
+		CallFunction(PlayerObject_HandleAirMovement)
+	else
+		CallFunction(41) // PlayerObject_HandleRollAnimationSpeed
+		Player.AnimationSpeed=Player.CustomAnimSpeed
+		TempValue0=Player.Speed
+		if TempValue0<0
+			FlipSign(TempValue0)
+		endif
+		if TempValue0<390594
+			if Warp.Destination>0
+				if Warp.Timer>99
+					if Warp.Timer<220
+						Warp.Destination=0
+					endif
+				endif
+				Warp.Timer=0
+			endif
+		else
+			if Warp.Destination>0
+				if Warp.Timer==0
+					Warp.Timer=1
+					ResetObjectEntity(3,TypeName[WarpStar],0,Player.XPos,Player.YPos)
+					Object[3].Value0=7
+					Object[3].DrawOrder=4
+				endif
+			endif
+		endif
+		CallFunction(PlayerObject_ResetOnFloor)
+		if Player.JumpPress==1
+			CallFunction(PlayerObject_StartJump)
+		endif
+	endif
+endfunction
+
+
+function PlayerObject_AirControlLock
+	Player.Left=0
+	Player.Right=0
+	CallFunction(PlayerObject_HandleAirSpeed)
+	if Player.Gravity==1
+		CallFunction(PlayerObject_HandleAirMovement)
+	else
+		Player.State=12
+		CallFunction(PlayerObject_ResetOnFloor)
+		Player.Skidding=0
+	endif
+endfunction
+
+
+function PlayerObject_LookingUp
+	if Player.Up==0
+		Player.State=12
+		Player.Timer=0
+	else
+		if Player.Timer<60
+			Player.Timer++
+		else
+			if Player.LookPos>-112
+				Player.LookPos-=2
+			endif
+		endif
+		if Player.Gravity==1
+			Player.State=13
+			Player.Timer=0
+		else
+			if Player.JumpPress==1
+				CallFunction(Player.PeeloutFunction)
+			endif
+		endif
+	endif
+endfunction
+
+
+function PlayerObject_Crouching
+	if Player.Down==0
+		Player.State=12
+		Player.Timer=0
+	else
+		if Player.Timer<60
+			Player.Timer++
+		else
+			if Player.LookPos<96
+				Player.LookPos+=2
+			endif
+		endif
+		if Player.Gravity==1
+			Player.State=13
+			Player.Timer=0
+		else
+			if Player.JumpPress==1
+				CallFunction(Player.SpindashFunction)
+			endif
+		endif
+	endif
+endfunction
+
+
+function PlayerObject_HandleSpindashS2
+	if Player.Gravity==1
+		Player.State=13
+		Player.Speed=0
+	endif
+	if Player.JumpPress==1
+		if Player.AbilityTimer<512
+			Player.AbilityTimer+=64
+		endif
+		Player.Frame=0
+		PlaySfx(6,0)
+	else
+		if Player.AbilityTimer>0
+			Player.AbilityTimer--
+		endif
+	endif
+	if Player.Down==0
+		Player.Timer=0
+		Player.State=14
+		Player.Animation=ANI_JUMPING
+		Player.iYPos-=Player.CameraOffset
+		Player.ScrollDelay=15
+		Screen.CameraStyle=4
+		TempValue0=Player.AbilityTimer
+		TempValue0<<=9
+		TempValue0+=524288
+		if Player.Direction==FACING_RIGHT
+			Player.Speed=TempValue0
+		else
+			Player.Speed=TempValue0
+			FlipSign(Player.Speed)
+		endif
+		PlaySfx(7,0)
+		CallFunction(PlayerObject_ResetOnFloor)
+	endif
+endfunction
+
+
+function PlayerObject_HandleSpindashCD
+	if Player.Direction==FACING_RIGHT
+		Screen.CameraStyle=2
+	else
+		Screen.CameraStyle=3
+	endif
+	if Player.Gravity==1
+		Player.State=13
+		Player.Speed=0
+		Screen.CameraStyle=1
+	endif
+	if Player.GravityStrength==4096
+		if Player.AbilityTimer<524288
+			Player.AbilityTimer+=24576
+		endif
+	else
+		if Player.AbilityTimer<786432
+			Player.AbilityTimer+=24576
+		endif
+	endif
+	if Player.Down==0
+		Screen.CameraStyle=1
+		Player.Timer=0
+		if Player.AbilityTimer<195297
+			Player.Speed=0
+			Player.State=12
+		else
+			Player.State=14
+			Player.Animation=ANI_JUMPING
+			Player.Speed=Player.AbilityTimer
+			if Player.Direction==FACING_LEFT
+				FlipSign(Player.Speed)
+			endif
+			PlaySfx(7,0)
+		endif
+		CallFunction(PlayerObject_ResetOnFloor)
+	endif
+endfunction
+
+
+function PlayerObject_HandlePeeloutS2
+	if Player.Gravity==1
+		Player.State=13
+		Player.Speed=0
+	endif
+	if Player.GravityStrength==4096
+		if Player.AbilityTimer<393216
+			Player.AbilityTimer+=24576
+		endif
+	else
+		if Player.AbilityTimer<786432
+			Player.AbilityTimer+=24576
+		endif
+	endif
+	if Player.AbilityTimer<390594
+		Player.Animation=ANI_WALKING
+		TempValue0=Player.AbilityTimer
+		TempValue0>>=16
+		TempValue0*=80
+		TempValue0/=6
+		TempValue0+=20
+	else
+		TempValue0=Player.AbilityTimer
+		TempValue0>>=16
+		TempValue0*=80
+		TempValue0/=6
+		if Player.AbilityTimer>655359
+			Player.Animation=ANI_PEELOUT
+		else
+			Player.Animation=ANI_RUNNING
+		endif
+	endif
+	if Player.Up==0
+		Player.ScrollDelay=15
+		Screen.CameraStyle=4
+		Player.State=12
+		if Player.AbilityTimer<390594
+			Player.Speed=0
+		else
+			Player.Speed=Player.AbilityTimer
+			if Player.Direction==FACING_LEFT
+				FlipSign(Player.Speed)
+			endif
+			PlaySfx(7,0)
+		endif
+		CallFunction(PlayerObject_ResetOnFloor)
+	endif
+	Player.AnimationSpeed=TempValue0
+endfunction
+
+
+function PlayerObject_HandlePeeloutCD
+	if Player.Direction==FACING_RIGHT
+		Screen.CameraStyle=2
+	else
+		Screen.CameraStyle=3
+	endif
+	if Player.Gravity==1
+		Player.State=13
+		Player.Speed=0
+		Screen.CameraStyle=1
+	endif
+	if Player.GravityStrength==4096
+		if Player.AbilityTimer<393216
+			Player.AbilityTimer+=24576
+		endif
+	else
+		if Player.AbilityTimer<786432
+			Player.AbilityTimer+=24576
+		endif
+	endif
+	if Player.AbilityTimer<390594
+		Player.Animation=ANI_WALKING
+		TempValue0=Player.AbilityTimer
+		TempValue0>>=16
+		TempValue0*=80
+		TempValue0/=6
+		TempValue0+=20
+	else
+		TempValue0=Player.AbilityTimer
+		TempValue0>>=16
+		TempValue0*=80
+		TempValue0/=6
+		if Player.AbilityTimer>655359
+			Player.Animation=ANI_PEELOUT
+		else
+			Player.Animation=ANI_RUNNING
+		endif
+	endif
+	if Player.Up==0
+		Screen.CameraStyle=1
+		Player.State=12
+		if Player.AbilityTimer<390594
+			Player.Speed=0
+		else
+			Player.Speed=Player.AbilityTimer
+			if Player.Direction==FACING_LEFT
+				FlipSign(Player.Speed)
+			endif
+			PlaySfx(7,0)
+		endif
+		CallFunction(PlayerObject_ResetOnFloor)
+	endif
+	Player.AnimationSpeed=TempValue0
+endfunction
+
+
+function PlayerObject_HandleTailsFlight
+	CallFunction(PlayerObject_HandleAirSpeed)
+	if Player.Gravity==1
+		Player.XVelocity=Player.Speed
+		if Warp.Destination>0
+			TempValue0=Player.XVelocity
+			if TempValue0<0
+				FlipSign(TempValue0)
+			endif
+			TempValue1=Player.YVelocity
+			if TempValue1<0
+				FlipSign(TempValue1)
+			endif
+			TempValue0+=TempValue1
+			if TempValue0<262144
+				if Warp.Timer>99
+					if Warp.Timer<220
+						Warp.Destination=0
+					endif
+				endif
+				Warp.Timer=0
+			endif
+		endif
+		if Player.YVelocity<-65536
+			Player.FlightGravity=2048
+		else
+			if Player.YVelocity<1
+				if Player.AbilityTimer<60
+					Player.AbilityTimer++
+				else
+					Player.FlightGravity=2048
+				endif
+			endif
+		endif
+		Player.YVelocity+=Player.FlightGravity
+		if Player.Timer<480
+			if Player.GravityStrength==14336
+				Player.Animation=ANI_FLYING
+			else
+				Player.Animation=ANI_SWIMMING
+			endif
+			Player.Timer++
+			if Player.Timer==480
+				if Player.GravityStrength==14336
+					Player.Animation=ANI_FLYINGTIRED
+					StopSfx(24)
+					PlaySfx(25,1)
+				else
+					Player.Animation=ANI_SWIMMINGTIRED
+				endif
+			else
+				if Player.JumpPress==1
+					Player.FlightGravity=-8192
+					Player.AbilityTimer=0
+				endif
+			endif
+		else
+			if Player.GravityStrength==14336
+				Player.Animation=ANI_FLYINGTIRED
+			else
+				Player.Animation=ANI_SWIMMINGTIRED
+			endif
+		endif
+	else
+		Player.State=12
+		CallFunction(PlayerObject_ResetOnFloor)
+	endif
+	if Player.RoofBarrier==1
+		TempValue0=Player.YPos
+		TempValue0>>=16
+		if TempValue0<Player.CollisionBottom
+			Player.YPos=Player.CollisionBottom
+			Player.YPos<<=16
+		endif
+	endif
+endfunction
+
+
+function PlayerObject_Hurt
+	ArrayPos0=Player.EntityNo
+	ArrayPos0+=2
+	if Object[ArrayPos0].PropertyValue>0
+		TempValue0=1
+		ResetObjectEntity(ArrayPos0,TypeName[BlankObject],0,0,0)
+		PlaySfx(5,0)
+	else
+		if Object[0].Value0==0
+			PlaySfx(5,0)
+			TempValue0=3
+		else
+			PlaySfx(4,0)
+			TempValue0=2
+		endif
+	endif
+	switch TempValue0
+	case 1
+		Player.State=24
+		Player.Animation=ANI_HURT
+		Player.YVelocity=-262144
+		Player.Gravity=1
+		Player.TrackScroll=1
+		Player.Invincible=8000
+		if Player.GravityStrength==4096
+			Player.Speed>>=1
+			Player.YVelocity>>=1
+		endif
+		break
+	case 2
+		if Player.CollisionPlane==0
+			TempValue4=3
+		else
+			TempValue4=1
+		endif
+		Player.State=24
+		Player.Animation=ANI_HURT
+		Player.YVelocity=-262144
+		Player.Gravity=1
+		Player.TrackScroll=1
+		Player.Invincible=8000
+		if Player.GravityStrength==4096
+			Player.Speed>>=1
+			Player.YVelocity>>=1
+		endif
+		TempValue0=Object[0].Value0
+		if TempValue0>16
+			TempValue1=TempValue0
+			TempValue1-=16
+			TempValue0=16
+		else
+			TempValue1=0
+		endif
+		if TempValue1>16
+			TempValue1=16
+		endif
+		TempValue3=TempValue1
+		TempValue3>>=1
+		TempValue3<<=5
+		TempValue2=384
+		TempValue2-=TempValue3
+		TempValue3>>=4
+		if TempValue3==TempValue1
+			TempValue2+=16
+		else
+			TempValue2-=16
+		endif
+		TempValue3=0
+		while TempValue3<TempValue1
+			CreateTempObject(TypeName[LoseRing],Player.CollisionPlane,Player.XPos,Player.YPos)
+			Cos(Object[TempObjectPos].Value0,TempValue2)
+			Sin(Object[TempObjectPos].Value1,TempValue2)
+			Object[TempObjectPos].Value0<<=8
+			Object[TempObjectPos].Value1<<=8
+			Object[TempObjectPos].DrawOrder=TempValue4
+			Object[TempObjectPos].AnimationSpeed=256
+			TempValue3++
+			TempValue2+=32
+		loop
+		TempValue3=TempValue0
+		TempValue3>>=1
+		TempValue3<<=5
+		TempValue2=384
+		TempValue2-=TempValue3
+		TempValue3>>=4
+		if TempValue3==TempValue0
+			TempValue2+=16
+		else
+			TempValue2-=16
+		endif
+		TempValue3=0
+		while TempValue3<TempValue0
+			CreateTempObject(TypeName[LoseRing],Player.CollisionPlane,Player.XPos,Player.YPos)
+			Cos(Object[TempObjectPos].Value0,TempValue2)
+			Sin(Object[TempObjectPos].Value1,TempValue2)
+			Object[TempObjectPos].Value0<<=9
+			Object[TempObjectPos].Value1<<=9
+			Object[TempObjectPos].DrawOrder=TempValue4
+			Object[TempObjectPos].AnimationSpeed=256
+			TempValue3++
+			TempValue2+=32
+		loop
+		Object[0].Value0=0
+		Ring.ExtraLife=100
+		break
+	case 3
+		Object.DrawOrder=5
+		Player.Speed=0
+		Player.YVelocity=-458752
+		Player.XVelocity=0
+		Player.State=26
+		Player.Animation=ANI_DYING
+		Player.TileCollisions=0
+		Player.ObjectInteraction=0
+		if Player.EntityNo==0
+			Screen.CameraEnabled=0
+		endif
+		break
+
+	endswitch
+	if Warp.Destination>0
+		if Warp.Timer>99
+			if Warp.Timer<220
+				Warp.Destination=0
+			endif
+		endif
+		Warp.Timer=0
+	endif
+endfunction
+
+
+function PlayerObject_Knockback
+	if Player.Gravity==1
+		Player.TrackScroll=1
+		if Player.GravityStrength==14336
+			Player.YVelocity+=12288
+		else
+			Player.YVelocity+=3840
+		endif
+		Player.XVelocity=Player.Speed
+	else
+		Player.State=12
+		Player.Invincible=120
+		Player.BlinkTimer=3
+		Player.Speed=0
+		Player.XVelocity=0
+		CallFunction(PlayerObject_ResetOnFloor)
+	endif
+endfunction
+
+
+function PlayerObject_OuttaHere
+	if Player.Timer<140
+		Player.Timer++
+	else
+		Player.Timer=0
+		Player.DrawOrder=5
+		if Player.Direction==FACING_RIGHT
+			Player.Speed=65536
+			Player.XVelocity=65536
+		else
+			Player.Speed=-65536
+			Player.XVelocity=-65536
+		endif
+		Player.YVelocity=-360448
+		Player.State=26
+		Player.TileCollisions=0
+		Player.ObjectInteraction=0
+		Screen.CameraEnabled=0
+	endif
+endfunction
+
+
+function PlayerObject_Death
+	Player.ControlMode=-1
+	Player.YVelocity+=14336
+	if Player.Animation!=ANI_BORED
+		Player.Animation=ANI_DYING
+	endif
+	if Player.YVelocity>1048576
+		if Player.Lives>0
+			if Player.Animation==ANI_BORED
+				Player.Lives=0
+			else
+				Player.Lives--
+			endif
+		endif
+		Stage.TimeEnabled=0
+		Object.Type=TypeName[DeathEvent]
+		Object.DrawOrder=6
+		Object.Value1=Screen.CenterX
+		Object.Value1-=264
+		Object.Value2=Screen.CenterX
+		Object.Value2+=200
+		if Options.GameMode==2
+			Object.Value3=0
+			Object.State=3
+		else
+			if Player.Lives==0
+				Object.Value3=-2880
+				Object.State=0
+				PlayMusic(5)
+				Stage.PauseEnabled=0
+			else
+				Object.Value3=0
+				Object.State=2
+				if Stage.Minutes==9
+					if Stage.Seconds==59
+						Object.Value3=-2880
+						Object.State=1
+						PlayMusic(5)
+						Stage.PauseEnabled=0
+					endif
+				endif
+			endif
+		endif
+	endif
+endfunction
+
+
+function PlayerObject_Drown
+	Player.ControlMode=-1
+	Player.YVelocity+=Player.GravityStrength
+	Player.Animation=ANI_DROWNING
+	if Player.YVelocity>524288
+		if Player.Lives>0
+			Player.Lives--
+		endif
+		Stage.TimeEnabled=0
+		Object.Type=TypeName[DeathEvent]
+		Object.DrawOrder=6
+		Object.Value1=Screen.CenterX
+		Object.Value1-=264
+		Object.Value2=Screen.CenterX
+		Object.Value2+=200
+		if Options.GameMode==2
+			Object.Value3=0
+			Object.State=3
+		else
+			if Player.Lives==0
+				Object.Value3=-2880
+				Object.State=0
+				PlayMusic(5)
+				Stage.PauseEnabled=0
+			else
+				Object.Value3=0
+				Object.State=2
+			endif
+		endif
+	endif
+endfunction
+
+//Could be named better
+function PlayerObject_CheckTile
+	if Player.Left==1
+		Player.Direction=FACING_LEFT
+		Player.Speed=-131072
+		Player.AnimationSpeed=30
+	else
+		if Player.Right==1
+			Player.Direction=FACING_RIGHT
+			Player.Speed=131072
+			Player.AnimationSpeed=30
+		else
+			Player.Speed=0
+			Player.AnimationSpeed=0
+		endif
+	endif
+	TempValue1=Player.XPos
+	TempValue1>>=16
+	TempValue2=Player.YPos
+	TempValue2>>=16
+	TempValue2+=Player.CollisionTop
+	Get16x16TileInfo(TempValue0,TempValue1,TempValue2,8)
+	if TempValue0!=3
+		Player.State=13
+		Player.Speed=0
+		Player.AnimationSpeed=0
+		Player.YVelocity=0
+	endif
+	if Player.JumpPress==1
+		Player.State=13
+		Player.YVelocity=0
+		Player.Speed=0
+		Player.AnimationSpeed=0
+		Player.YPos+=262144
+	endif
+	Player.XVelocity=Player.Speed
+	if Warp.Destination>0
+		if Warp.Timer>99
+			if Warp.Timer<220
+				Warp.Destination=0
+			endif
+		endif
+		Warp.Timer=0
+	endif
+endfunction
+
+//Could be named better
+function PlayerObject_CorkscrewRun
+	Player.Angle=0
+	CallFunction(PlayerObject_HandleMovement)
+	Player.Animation=34
+	if Player.Speed<393216
+		if Player.Speed>-393216
+			Player.Animation=ANI_WALKING
+			Player.State=13
+			Player.Rotation=0
+			if Player.Speed<0
+				Player.Direction=FACING_LEFT
+			endif
+		endif
+	endif
+	if Player.Down==1
+		if Player.Speed>6554
+			Player.State=30
+			Player.Animation=ANI_JUMPING
+		endif
+		if Player.Speed<-6554
+			Player.State=30
+			Player.Animation=ANI_JUMPING
+		endif
+	endif
+	if Player.Skidding>0
+		if Player.Skidding==16
+			PlaySfx(8,0)
+		endif
+		Player.Animation=ANI_SKIDDING
+		Player.Skidding--
+	endif
+	if Player.JumpPress==1
+		CallFunction(PlayerObject_StartJump)
+	else
+		CallFunction(PlayerObject_ResetOnFloor)
+	endif
+endfunction
+
+//Could be named better
+function PlayerObject_CorkscrewRoll
+	Player.Angle=0
+	CallFunction(44) // PlayerObject_HandleRollingDeceleration
+	if Player.Speed<393216
+		if Player.Speed>-393216
+			Player.State=13
+		endif
+	endif
+	if Player.JumpPress==1
+		CallFunction(PlayerObject_StartJump)
+	else
+		CallFunction(PlayerObject_ResetOnFloor)
+	endif
+endfunction
+
+
+function PlayerObject_Tunnel
+	if Player.Gravity==1
+		Player.State=13
+		Player.Timer=0
+		CallFunction(PlayerObject_HandleAirMovement)
+	else
+		if Player.Speed>0
+			if Player.Speed<Player.MinRollSpeed
+				Player.Speed=Player.MinRollSpeed
+			endif
+			if Player.Speed>1048576
+				Player.Speed=1048576
+			endif
+		else
+			TempValue0=Player.MinRollSpeed
+			FlipSign(TempValue0)
+			if Player.Speed>TempValue0
+				Player.Speed=TempValue0
+				CallFunction(PlayerObject_ResetOnFloor)
+			endif
+			if Player.Speed<-1048576
+				Player.Speed=-1048576
+			endif
+		endif
+		TempValue0=Player.Speed
+		if TempValue0<0
+			FlipSign(TempValue0)
+		endif
+		if TempValue0<390594
+			if Warp.Destination>0
+				if Warp.Timer>99
+					if Warp.Timer<220
+						Warp.Destination=0
+					endif
+				endif
+				Warp.Timer=0
+			endif
+		else
+			if Warp.Destination>0
+				if Warp.Timer==0
+					Warp.Timer=1
+					CreateTempObject(TypeName[WarpStar],0,Player.XPos,Player.YPos)
+					Object[TempObjectPos].Value0=7
+					Object[TempObjectPos].DrawOrder=4
+				endif
+			endif
+		endif
+		CallFunction(44) // PlayerObject_HandleRollingDeceleration
+		CallFunction(41) // PlayerObject_HandleRollAnimationSpeed
+		Player.AnimationSpeed=Player.CustomAnimSpeed
+		CallFunction(PlayerObject_ResetOnFloor)
+	endif
+endfunction
+
+
+function PlayerObject_StartTimeTravelControlLock
+	Player.Right=0
+	Player.Left=0
+	if Player.Gravity==1
+		Player.State=13
+		Player.Timer=0
+		CallFunction(PlayerObject_HandleAirMovement)
+	else
+		if Player.Speed>0
+			Player.Speed=Player.MinRollSpeed
+		else
+			TempValue0=Player.MinRollSpeed
+			FlipSign(TempValue0)
+			Player.Speed=TempValue0
+		endif
+		TempValue0=Player.Speed
+		if TempValue0<0
+			FlipSign(TempValue0)
+		endif
+		if TempValue0<390594
+			if Warp.Destination>0
+				if Warp.Timer>99
+					if Warp.Timer<220
+						Warp.Destination=0
+					endif
+				endif
+				Warp.Timer=0
+			endif
+		else
+			if Warp.Destination>0
+				if Warp.Timer==0
+					Warp.Timer=1
+					CreateTempObject(TypeName[WarpStar],0,Player.XPos,Player.YPos)
+					Object[TempObjectPos].Value0=7
+					Object[TempObjectPos].DrawOrder=4
+				endif
+			endif
+		endif
+		CallFunction(44) // PlayerObject_HandleRollingDeceleration
+		CallFunction(41) // PlayerObject_HandleRollAnimationSpeed
+		Player.AnimationSpeed=Player.CustomAnimSpeed
+		CallFunction(PlayerObject_ResetOnFloor)
+	endif
+endfunction
+
+
+function PlayerObject_SpinningTop
+	Player.Timer+=Player.MinRollSpeed
+	if Player.Gravity==1
+		Player.State=13
+		Player.Animation=ANI_WALKING
+		Player.Timer=0
+		CallFunction(PlayerObject_HandleAirMovement)
+	else
+		CallFunction(PlayerObject_ResetOnFloor)
+	endif
+endfunction
+
+
+function PlayerObject_Hugged
+	if Player.Gravity==1
+		Player.State=13
+		Player.Animation=ANI_WALKING
+		Player.Timer=0
+		CallFunction(PlayerObject_HandleAirMovement)
+	else
+		CallFunction(PlayerObject_ResetOnFloor)
+		if Player.Timer<240
+			Player.Animation=ANI_STOPPED
+			Player.Timer++
+		else
+			Player.Animation=ANI_WAITING
+		endif
+		if Warp.Destination>0
+			if Warp.Timer>99
+				if Warp.Timer<220
+					Warp.Destination=0
+				endif
+			endif
+			Warp.Timer=0
+		endif
+		if Player.JumpPress==1
+			CallFunction(PlayerObject_StartJump)
+		endif
+	endif
+endfunction
+
+
+function PlayerObject_Handle3DRampAnims
+	CallFunction(PlayerObject_HandleMovement)
+	if Player.Gravity==1
+		Player.State=13
+		Player.Timer=0
+		CallFunction(PlayerObject_HandleAirMovement)
+		if Player.Direction==FACING_LEFT
+			if Player.Animation==ANI_RAMP_RUNNING3
+				Player.Animation=ANI_RAMP_RUNNING5
+			endif
+			if Player.Animation==ANI_RAMP_RUNNING2
+				Player.Animation=ANI_RAMP_RUNNING6
+			endif
+		endif
+	else
+		CallFunction(PlayerObject_ResetOnFloor)
+		if Player.Speed==0
+			if Warp.Destination>0
+				if Warp.Timer>99
+					if Warp.Timer<220
+						Warp.Destination=0
+					endif
+				endif
+				Warp.Timer=0
+			endif
+			if Player.Timer<240
+				Player.Animation=ANI_STOPPED
+				Player.Timer++
+			else
+				Player.Animation=ANI_WAITING
+			endif
+		else
+			if Player.Angle==0
+				Player.Animation=ANI_RAMP_RUNNING1
+			endif
+			if Player.Angle>200
+				if Player.Direction==FACING_RIGHT
+					Player.Animation=ANI_RAMP_RUNNING3
+				else
+					Player.Animation=ANI_RAMP_RUNNING5
+				endif
+			endif
+			if Player.Angle>216
+				if Player.Direction==FACING_RIGHT
+					Player.Animation=ANI_RAMP_RUNNING2
+				else
+					Player.Animation=ANI_RAMP_RUNNING6
+				endif
+			endif
+			if Player.Angle>232
+				Player.Animation=ANI_RAMP_RUNNING1
+			endif
+			if Player.Angle==192
+				Player.Animation=ANI_RAMP_RUNNING4
+			endif
+		endif
+		if Player.JumpPress==1
+			CallFunction(PlayerObject_StartJump)
+		else
+			if Player.Up==1
+				if Player.Speed==0
+					Player.State=16
+					Player.Animation=ANI_LOOKINGUP
+					Player.Timer=0
+				endif
+			endif
+			if Player.Down==1
+				if Player.Speed==0
+					Player.State=17
+					Player.Animation=ANI_LOOKINGDOWN
+					Player.Timer=0
+				else
+					if Player.Speed>6554
+						Player.ControlLock=0
+						Player.State=14
+						Player.Animation=ANI_JUMPING
+					endif
+					if Player.Speed<-6554
+						Player.ControlLock=0
+						Player.State=14
+						Player.Animation=ANI_JUMPING
+					endif
+				endif
+			endif
+		endif
+	endif
+	if Player.Animation!=ANI_STOPPED
+		Player.AnimationSpeed=Player.Speed
+		if Player.AnimationSpeed<0
+			FlipSign(Player.AnimationSpeed)
+		endif
+		Player.AnimationSpeed*=60
+		Player.AnimationSpeed/=393216
+		Player.AnimationSpeed+=20
+	else
+		Player.AnimationSpeed=0
+	endif
+endfunction
+
+
+function PlayerObject_DebugMode
+	Player.Gravity=1
+	if Player.Up==1
+		Player.YPos-=131072
+	endif
+	if Player.Down==1
+		Player.YPos+=131072
+	endif
+	if Player.Left==1
+		Player.XPos-=131072
+	endif
+	if Player.Right==1
+		Player.XPos+=131072
+	endif
+endfunction
+
+
+function PlayerObject_Shrink
+	if Player.Gravity==1
+		Player.TrackScroll=1
+		Player.YVelocity+=12288
+		Player.XVelocity=Player.Speed
+	else
+		Player.State=12
+		Player.Invincible=120
+		Player.BlinkTimer=3
+		Player.Speed=0
+		Player.XVelocity=0
+		CallFunction(PlayerObject_ResetOnFloor)
+		if Mini_PlayerFlag==0
+			Mini_PlayerFlag=1
+			Player.CameraOffset=-1
+			switch Stage.PlayerListPos
+			case 0
+				LoadAnimation("MiniSonic.Ani")
+				break
+			case 1
+				LoadAnimation("MiniTails.Ani")
+				Object[1].Type=TypeName[BlankObject]
+				break
+
+			endswitch
+		else
+			Mini_PlayerFlag=0
+			switch Stage.PlayerListPos
+			case 0
+				LoadAnimation("Sonic.Ani")
+				Player.CameraOffset=-5
+				break
+			case 1
+				LoadAnimation("Tails.Ani")
+				Player.CameraOffset=-1
+				Object[1].Type=TypeName[TailsObject]
+				break
+
+			endswitch
+		endif
+		BindPlayerToObject(0,0)
+	endif
+endfunction
+
+
+function PlayerObject_BadnikBreak
+	CheckEqual(Player.Animation,ANI_JUMPING)
+	TempValue0=CheckResult
+	CheckEqual(Player.Animation,ANI_SPINDASH)
+	TempValue0|=CheckResult
+	ArrayPos0=Player.EntityNo
+	ArrayPos0+=2
+	CheckEqual(Object[ArrayPos0].Type,TypeName[Invincibility])
+	TempValue0|=CheckResult
+	if Warp.Timer>0
+		TempValue0|=1
+	endif
+	if Player.Animation==ANI_FLYING
+		CheckGreater(Player.YPos,Object.YPos)
+		TempValue0|=CheckResult
+	endif
+	if TempValue0==1
+		ResetObjectEntity(Object.EntityNo,Flower_TypeNo,0,Object.XPos,Object.YPos)
+		Object.DrawOrder=4
+		CreateTempObject(TypeName[SmokePuff],0,Object.XPos,Object.YPos)
+		Object[TempObjectPos].DrawOrder=4
+		CreateTempObject(TypeName[ObjectScore],Object[26].Value0,Object.XPos,Object.YPos)
+		Object[TempObjectPos].DrawOrder=4
+		PlaySfx(8,0)
+		if Player.YVelocity>0
+			FlipSign(Player.YVelocity)
+		else
+			Player.YVelocity+=49152
+		endif
+		switch Object[26].Value0
+		case 0
+			Player.Score+=100
+			break
+		case 1
+			Player.Score+=200
+			break
+		case 2
+			Player.Score+=500
+			break
+		case 3
+			Player.Score+=1000
+			break
+
+		endswitch
+	else
+		if Player.Invincible==0
+			Player.State=23
+			if Player.XPos>Object.XPos
+				Player.Speed=131072
+			else
+				Player.Speed=-131072
+			endif
+		endif
+	endif
+endfunction
+
+
+function PlayerObject_BadnikHit
+	ArrayPos0=Player.EntityNo
+	ArrayPos0+=2
+	if Object[ArrayPos0].Type!=TypeName[Invincibility]
+		if Player.Invincible==0
+			Player.State=23
+			if Player.XPos>Object.XPos
+				Player.Speed=131072
+			else
+				Player.Speed=-131072
+			endif
+		endif
+	endif
+endfunction
+
+
+function PlayerObject_Kill
+	PlaySfx(5,0)
+	Player.DrawOrder=5
+	Player.Speed=0
+	Player.XVelocity=0
+	Player.YVelocity=-425984
+	Player.State=26
+	Player.Animation=ANI_DYING
+	Player.TileCollisions=0
+	Player.ObjectInteraction=0
+	Screen.CameraEnabled=0
+endfunction
+
+
+function PlayerObject_HandleRollAnimationSpeed
+	Player.CustomAnimSpeed=Player.Speed
+	if Player.CustomAnimSpeed<0
+		FlipSign(Player.CustomAnimSpeed)
+	endif
+	Player.CustomAnimSpeed*=240
+	Player.CustomAnimSpeed/=393216
+	Player.CustomAnimSpeed+=48
+endfunction
+
+
+function PlayerObject_HandleWalkAnimationSpeed
+	Player.AnimationSpeed=Player.Speed
+	if Player.AnimationSpeed<0
+		FlipSign(Player.AnimationSpeed)
+	endif
+	Player.AnimationSpeed*=60
+	Player.AnimationSpeed/=393216
+	Player.AnimationSpeed+=20
+endfunction
+
+
+function PlayerObject_HandleRunAnimationSpeed
+	Player.AnimationSpeed=Player.Speed
+	if Player.AnimationSpeed<0
+		FlipSign(Player.AnimationSpeed)
+	endif
+	Player.AnimationSpeed*=80
+	Player.AnimationSpeed/=393216
+endfunction
+
+
+function PlayerObject_HandleRollingDeceleration
+	if Player.Right==1
+		if Player.Speed<0
+			Player.Speed+=Player.RollingDeceleration
+		endif
+	endif
+	if Player.Left==1
+		if Player.Speed>0
+			Player.Speed-=Player.RollingDeceleration
+		endif
+	endif
+	if Player.Speed>0
+		Player.Speed-=Player.AirDeceleration
+		if Player.Speed<0
+			Player.Speed=0
+		endif
+		if Player.Speed==0
+			if Player.Angle>224
+				Player.State=12
+			endif
+			if Player.Angle<32
+				Player.State=12
+			endif
+		endif
+		Sin256(TempValue0,Player.Angle)
+		if TempValue0>0
+			Sin256(TempValue0,Player.Angle)
+			TempValue0*=20480
+		else
+			Sin256(TempValue0,Player.Angle)
+			TempValue0*=7680
+		endif
+		TempValue0>>=8
+		Player.Speed+=TempValue0
+	else
+		Player.Speed+=Player.AirDeceleration
+		if Player.Speed>0
+			Player.Speed=0
+		endif
+		if Player.Speed==0
+			if Player.Angle>224
+				Player.State=12
+			endif
+			if Player.Angle<32
+				Player.State=12
+			endif
+		endif
+		Sin256(TempValue0,Player.Angle)
+		if TempValue0<0
+			Sin256(TempValue0,Player.Angle)
+			TempValue0*=20480
+		else
+			Sin256(TempValue0,Player.Angle)
+			TempValue0*=7680
+		endif
+		TempValue0>>=8
+		Player.Speed+=TempValue0
+	endif
+	if Player.Speed>1572864
+		Player.Speed=1572864
+	endif
+	if Player.Speed<-1572864
+		Player.Speed=-1572864
+	endif
+endfunction
+
+
+sub ObjectMain
+	if Stage.DebugMode==1
+		if KeyPress.ButtonB==1
+			Object.Type=TypeName[DebugMode]
+			Player.YVelocity=0
+			Player.State=PlayerObject_Blank
+			Player.Frame=0
+			Player.Rotation=0
+			Player.ObjectInteraction=0
+			Player.TileCollisions=1
+			Player.DrawOrder=4
+			Player.AbilityTimer=0
+			Player.MinRollSpeed=0
+			Screen.CameraEnabled=1
+			Screen.CameraStyle=Options.OriginalControls
+		else
+			CallFunction(PlayerObject_ProcessPlayer)
+			CallFunction(Player.State)
+			ProcessAnimation()
+			if Player.Animation==ANI_JUMPING
+				Screen.AdjustCameraY=Player.CameraOffset
+			else
+				if Screen.AdjustCameraY==Player.CameraOffset
+					Screen.AdjustCameraY=0
+					Player.iYPos+=Player.CameraOffset
+				endif
+			endif
+			if Player.YVelocity>1048576
+				Player.YVelocity=1048576
+			endif
+			PlayerTileCollision()
+			if CheckResult==1
+				if Player.Animation==ANI_JUMPING
+					if Player.Down==0
+						Player.Animation=ANI_WALKING
+						Screen.AdjustCameraY=0
+						Player.iYPos+=Player.CameraOffset
+					endif
+				endif
+			endif
+		endif
+	else
+		CallFunction(PlayerObject_ProcessPlayer)
+		CallFunction(Player.State)
+		ProcessAnimation()
+		if Player.Animation==ANI_JUMPING
+			Screen.AdjustCameraY=Player.CameraOffset
+		else
+			if Screen.AdjustCameraY==Player.CameraOffset
+				Screen.AdjustCameraY=0
+				Player.iYPos+=Player.CameraOffset
+			endif
+		endif
+		if Player.YVelocity>1048576
+			Player.YVelocity=1048576
+		endif
+		PlayerTileCollision()
+		if CheckResult==1
+			if Player.Animation==ANI_JUMPING
+				if Player.Down==0
+					Player.Animation=ANI_WALKING
+					Screen.AdjustCameraY=0
+					Player.iYPos+=Player.CameraOffset
+				endif
+			endif
+		endif
+	endif
+endsub
+
+
+sub ObjectDraw
+	if Player.Animation!=Player.PrevAnimation
+		Player.PrevAnimation=Player.Animation
+		Player.Frame=0
+		Player.AnimationTimer=0
+		Player.AnimationSpeed=0
+	endif
+	DrawPlayerAnimation()
+endsub
+
+
+sub ObjectStartup
+	ArrayPos0=32
+	while ArrayPos0<1056
+		if Object[ArrayPos0].Type==TypeName[PlayerObject]
+			switch Stage.PlayerListPos
+			case 0
+				ResetObjectEntity(0,TypeName[PlayerObject],0,Object[ArrayPos0].XPos,Object[ArrayPos0].YPos)
+				Player.XPos=Object[ArrayPos0].XPos
+				Player.YPos=Object[ArrayPos0].YPos
+				LoadAnimation("Sonic.Ani")
+				BindPlayerToObject(0,0)
+				Player.State=PlayerObject_HandleAir
+				Player.Priority=1
+				Player.DrawOrder=4
+				Player.TopSpeed=393216
+				Player.Acceleration=3072
+				Player.Deceleration=3072
+				Player.AirAcceleration=6144
+				Player.AirDeceleration=1536
+				Player.GravityStrength=14336
+				Player.JumpStrength=425984
+				Player.JumpCap=-262144
+				Player.RollingDeceleration=8192
+				Player.CameraOffset=-5
+				Player.FlightFunction=PlayerObject_Blank
+				if Options.OriginalControls==0
+					Player.PeeloutFunction=PlayerObject_StartPeeloutS2
+					Player.SpindashFunction=PlayerObject_StartSpindashS2
+				else
+					Player.PeeloutFunction=PlayerObject_StartPeeloutCD
+					Player.SpindashFunction=PlayerObject_StartSpindashCD
+				endif
+				break
+			case 1
+				ResetObjectEntity(0,TypeName[PlayerObject],0,Object[ArrayPos0].XPos,Object[ArrayPos0].YPos)
+				Player.XPos=Object[ArrayPos0].XPos
+				Player.YPos=Object[ArrayPos0].YPos
+				LoadAnimation("Tails.Ani")
+				BindPlayerToObject(0,0)
+				Player.State=PlayerObject_HandleAir
+				Player.Priority=1
+				Player.DrawOrder=4
+				Player.TopSpeed=393216
+				Player.Acceleration=3072
+				Player.Deceleration=3072
+				Player.AirAcceleration=6144
+				Player.AirDeceleration=1536
+				Player.GravityStrength=14336
+				Player.JumpStrength=425984
+				Player.JumpCap=-262144
+				Player.RollingDeceleration=8192
+				Player.CameraOffset=-1
+				Player.FlightFunction=PlayerObject_StartTailsFlight
+				Player.PeeloutFunction=PlayerObject_StartJump
+				if Options.OriginalControls==0
+					Player.SpindashFunction=PlayerObject_StartSpindashS2
+				else
+					Player.SpindashFunction=PlayerObject_StartSpindashCD
+				endif
+				break
+
+			endswitch
+			GetAnimationByName(ANI_SPINNING_TOP,"Spinning Top")
+			GetAnimationByName(ANI_RAMP_RUNNING1,"3D Ramp 1")
+			GetAnimationByName(ANI_RAMP_RUNNING2,"3D Ramp 2")
+			GetAnimationByName(ANI_RAMP_RUNNING3,"3D Ramp 3")
+			GetAnimationByName(ANI_RAMP_RUNNING4,"3D Ramp 4")
+			GetAnimationByName(ANI_RAMP_RUNNING5,"3D Ramp 5")
+			GetAnimationByName(ANI_RAMP_RUNNING6,"3D Ramp 6")
+			GetAnimationByName(ANI_ROLL3D,"3D Ramp 7")
+			GetAnimationByName(ANI_SIZE_CHANGE,"Size Change")
+			ResetObjectEntity(ArrayPos0,TypeName[BlankObject],0,0,0)
+		endif
+		ArrayPos0++
+	loop
+endsub
+
+sub RSDK
+	LoadSpriteSheet("Global/Display.gif")
+	SetEditorIcon(Icon0,SingleIcon,-16,-16,32,32,1,143)
+endsub

@@ -1,0 +1,91 @@
+//------------Sonic CD BossBumper Script-------------//
+//--------Scripted by Christian Whitehead 'The Taxman'--------//
+//-------Unpacked By Rubberduckycooly's Script Unpacker-------//
+
+//-------Aliases-------//
+#alias 54: TYPE_BOSSBUMPER
+
+
+sub ObjectMain
+	switch Object.State
+	case 0
+		Object.State=1
+		ArrayPos0=Object.Value0
+		Object.XPos=Object[ArrayPos0].XPos
+		Object.XPos-=1245184
+		Object.YPos=Object[ArrayPos0].YPos
+		if Object[ArrayPos0].Frame!=0
+			if Object[ArrayPos0].Frame==1
+				Object.XPos+=524288
+			else
+				Object.XPos+=1048576
+			endif
+		endif
+		break
+	case 1
+		ArrayPos0=Object.Value0
+		Object.XPos=Object[ArrayPos0].XPos
+		Object.XPos-=1245184
+		Object.YPos=Object[ArrayPos0].YPos
+		if Object[ArrayPos0].Frame!=0
+			if Object[ArrayPos0].Frame==1
+				Object.XPos+=524288
+			else
+				Object.XPos+=1048576
+			endif
+		endif
+		break
+	case 2
+		Object.Value2-=1280
+		Object.Value5+=6144
+		Object.XPos+=Object.Value2
+		Object.YPos+=Object.Value5
+		if Object.OutOfBounds==1
+			Object.Type=TypeName[BlankObject]
+			Object.Priority=0
+		endif
+		break
+
+	endswitch
+endsub
+
+
+sub ObjectPlayerInteraction
+	if Object.State<2
+		if Player.Animation!=ANI_HURT
+			ArrayPos0=Object.Value0
+			if Object[ArrayPos0].Frame==0
+				PlayerObjectCollision(C_TOUCH,-10,-16,14,16)
+				if CheckResult==1
+					Player.Speed=-262144
+					Player.XVelocity=-262144
+					if Object.Frame==0
+						PlaySfx(11,0)
+					endif
+					Object.Frame=2
+				endif
+			endif
+		endif
+	endif
+endsub
+
+
+sub ObjectDraw
+	DrawSprite(Object.Frame)
+	if Object.Frame>0
+		Object.Frame--
+	endif
+endsub
+
+
+sub ObjectStartup
+	LoadSpriteSheet("R1/Objects3.gif")
+	SpriteFrame(-14,-16,24,32,99,26)
+	SpriteFrame(-18,-16,24,32,99,26)
+	SpriteFrame(-18,-16,24,32,99,26)
+endsub
+
+sub RSDK
+	LoadSpriteSheet("Global/Display.gif")
+	SetEditorIcon(Icon0,SingleIcon,-16,-16,32,32,1,143)
+endsub

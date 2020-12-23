@@ -1,0 +1,1025 @@
+//------------Sonic CD Sonic Script-------------//
+//--------Scripted by Christian Whitehead 'The Taxman'--------//
+//-------Unpacked By Rubberduckycooly's Script Unpacker-------//
+
+//-------Aliases-------//
+#alias 7: TYPE_SONIC
+
+#alias Object.Value7:Player.Tilt
+
+function Sonic_ProcessPlayer
+	if Options.AttractMode==0
+		if Player.ControlMode==0
+			if Object[9].Type==TypeName[BlankObject]
+				if KeyPress.Start==1
+					KeyPress.Start=0
+					if Options.DevMenuFlag==1
+						Stage.State=STAGE_PAUSED
+						PauseMusic()
+						PlaySfx(27,0)
+						StopSfx(24)
+						StopSfx(25)
+						Object[9].Type=TypeName[PauseMenu]
+						Object[9].DrawOrder=6
+						Object[9].Priority=2
+						TileLayer[0].Type=3
+					else
+						EngineCallback(13)
+					endif
+				endif
+			endif
+		endif
+		ProcessPlayerControl()
+	endif
+endfunction
+
+
+function Sonic_HandlePause
+	if Options.AttractMode==0
+		if Player.ControlMode==0
+			if Object[9].Type==TypeName[BlankObject]
+				if KeyPress.Start==1
+					KeyPress.Start=0
+					if Options.DevMenuFlag==1
+						Stage.State=STAGE_PAUSED
+						PauseMusic()
+						PlaySfx(27,0)
+						StopSfx(24)
+						StopSfx(25)
+						Object[9].Type=TypeName[PauseMenu]
+						Object[9].DrawOrder=6
+						Object[9].Priority=2
+						TileLayer[0].Type=3
+					else
+						EngineCallback(13)
+					endif
+				endif
+			endif
+		endif
+	endif
+endfunction
+
+
+function Sonic_HandlePlayerTilt
+	if Player.Left==1
+		Player.Tilt--
+		if Player.Tilt<-8
+			Player.Tilt=-8
+		endif
+	else
+		if Player.Right==1
+			Player.Tilt++
+			if Player.Tilt>8
+				Player.Tilt=8
+			endif
+		else
+			if Player.Tilt>0
+				Player.Tilt--
+			endif
+			if Player.Tilt<0
+				Player.Tilt++
+			endif
+		endif
+	endif
+	if Player.Left==1
+		Player.Angle+=2
+	endif
+	if Player.Right==1
+		Player.Angle-=2
+	endif
+	if Player.Angle<0
+		Player.Angle+=512
+	endif
+	Player.Angle&=511
+	Sin(TempValue0,Player.Angle)
+	TempValue0*=Player.Speed
+	TempValue0>>=9
+	Player.XPos+=TempValue0
+	Cos(TempValue0,Player.Angle)
+	TempValue0*=Player.Speed
+	TempValue0>>=9
+	Object.Value0+=TempValue0
+endfunction
+
+
+function Sonic_ProcessAnimationSpeed
+	Object.Value3+=Object.AnimationSpeed
+	if Object.Value3>239
+		Object.Value3-=240
+		Object.Frame++
+		if Object.Frame>Object.Value2
+			Object.Frame=Object.Value1
+		endif
+	endif
+endfunction
+
+
+function Sonic_HandlePlayerHeight
+	TempValue2=0
+	TempValue0-=8
+	TempValue1-=8
+	Get16x16TileInfo(CheckResult,TempValue0,TempValue1,6)
+	if CheckResult==3
+		SetBit(TempValue2,0,1)
+	endif
+	TempValue0+=16
+	Get16x16TileInfo(CheckResult,TempValue0,TempValue1,6)
+	if CheckResult==3
+		SetBit(TempValue2,1,1)
+	endif
+	TempValue0-=16
+	TempValue1+=16
+	Get16x16TileInfo(CheckResult,TempValue0,TempValue1,6)
+	if CheckResult==3
+		SetBit(TempValue2,2,1)
+	endif
+	TempValue0+=16
+	Get16x16TileInfo(CheckResult,TempValue0,TempValue1,6)
+	if CheckResult==3
+		SetBit(TempValue2,3,1)
+	endif
+	if TempValue2>0
+		TempValue3=Player.Speed
+		TempValue3+=65536
+		if Object.Value6!=32
+			PlayStageSfx(2,0)
+		endif
+		Object.Value6=32
+		switch TempValue2
+		case 1
+			Player.ScreenXPos=TempValue3
+			Player.ScreenYPos=TempValue3
+			break
+		case 2
+			Player.ScreenXPos=TempValue3
+			Player.ScreenYPos=TempValue3
+			FlipSign(Player.ScreenXPos)
+			break
+		case 3
+			Player.ScreenXPos=0
+			Player.ScreenYPos=TempValue3
+			break
+		case 4
+			Player.ScreenXPos=TempValue3
+			Player.ScreenYPos=TempValue3
+			FlipSign(Player.ScreenYPos)
+			break
+		case 5
+			Player.ScreenXPos=TempValue3
+			Player.ScreenYPos=0
+			break
+		case 6
+		case 7
+			Player.ScreenXPos=TempValue3
+			Player.ScreenYPos=TempValue3
+			break
+		case 8
+		case 14
+		case 15
+			Player.ScreenXPos=TempValue3
+			Player.ScreenYPos=TempValue3
+			FlipSign(Player.ScreenXPos)
+			FlipSign(Player.ScreenYPos)
+			break
+		case 9
+		case 11
+			Player.ScreenXPos=TempValue3
+			Player.ScreenYPos=TempValue3
+			FlipSign(Player.ScreenXPos)
+			break
+		case 10
+			Player.ScreenXPos=TempValue3
+			Player.ScreenYPos=0
+			FlipSign(Player.ScreenXPos)
+			break
+		case 12
+			Player.ScreenXPos=0
+			Player.ScreenYPos=TempValue3
+			FlipSign(Player.ScreenYPos)
+			break
+		case 13
+			Player.ScreenXPos=TempValue3
+			Player.ScreenYPos=TempValue3
+			FlipSign(Player.ScreenYPos)
+			break
+
+		endswitch
+	endif
+endfunction
+
+function Sonic_HandleTileInteractions
+	TempValue0=Player.XPos
+	TempValue0>>=16
+	TempValue1=Object.Value0
+	TempValue1>>=16
+	CallFunction(Sonic_HandlePlayerHeight)
+	TempValue0=Player.XPos
+	TempValue0>>=16
+	TempValue1=Object.Value0
+	TempValue1>>=16
+	Get16x16TileInfo(CheckResult,TempValue0,TempValue1,6)
+	switch CheckResult
+	case 1
+		Object[3].Type=TypeName[DustPuff]
+		Object[3].DrawOrder=4
+		if Object[4].Value5==0
+			if Player.Speed>163840
+				Player.Speed=163840
+			endif
+		else
+			if Player.Speed>327680
+				Player.Speed=327680
+			endif
+		endif
+		break
+	case 2
+		Object[3].Type=TypeName[WaterSplash]
+		Object[3].DrawOrder=4
+		Object[3].Value5=22526
+		if Object[4].Value5>0
+			if Player.Speed>327680
+				Player.Speed=327680
+			endif
+		endif
+		break
+	case 4
+		Object.State=6
+		Object.Value6=136
+		Object.Frame=54
+		Object.Value1=54
+		Object.Value2=76
+		Object.AnimationSpeed=40
+		Object.Value3=0
+		Player.Speed=65536
+		if Object[4].Value3>0
+			PlaySfx(4,0)
+			TempValue0=Object[4].Value3
+			Object[4].Value3>>=1
+			TempValue0-=Object[4].Value3
+			if TempValue0>8
+				TempValue0=8
+			endif
+			while TempValue0>0
+				CreateTempObject(TypeName[Ring],0,Player.XPos,0)
+				Object[TempObjectPos].Priority=1
+				Object[TempObjectPos].Value0=Object.Value0
+				Rand(TempValue1,64)
+				TempValue1-=32
+				TempValue1<<=10
+				Object[TempObjectPos].Value1=TempValue1
+				Sin(TempValue1,Player.Angle)
+				TempValue1*=96
+				Object[TempObjectPos].Value1+=TempValue1
+				Rand(TempValue1,64)
+				TempValue1+=32
+				TempValue1<<=12
+				Object[TempObjectPos].Value2=TempValue1
+				Rand(TempValue1,64)
+				TempValue1-=32
+				TempValue1<<=10
+				Object[TempObjectPos].Value3=TempValue1
+				Cos(TempValue1,Player.Angle)
+				TempValue1*=96
+				Object[TempObjectPos].Value3+=TempValue1
+				TempValue0--
+			loop
+		endif
+		break
+	case 5
+		Object.State=11
+		Object.Value6=0
+		Object.Frame=39
+		Object.Value1=39
+		Object.Value2=42
+		Object.AnimationSpeed=80
+		Object.Value3=0
+		Player.YVelocity=573440
+		PlaySfx(11,0)
+		break
+	case 6
+		Object.State=5
+		Object.Value6=0
+		Object.Frame=48
+		Object.Value1=48
+		Object.Value2=53
+		Object.AnimationSpeed=24
+		Object.Value3=0
+		Player.YVelocity=163840
+		PlayStageSfx(6,0)
+		break
+	case 7
+		Object.Value6=40
+		Player.ScreenXPos=-786432
+		Player.ScreenYPos=0
+		Get16x16TileInfo(CheckResult,TempValue0,TempValue1,1)
+		if CheckResult==1
+			FlipSign(Player.ScreenXPos)
+		else
+			if CheckResult==3
+				FlipSign(Player.ScreenXPos)
+			endif
+		endif
+		if Object.State!=4
+			PlayStageSfx(3,0)
+		endif
+		Object.State=4
+		Object.Frame=43
+		Object.Value1=43
+		Object.Value2=47
+		Object.AnimationSpeed=24
+		Object.Value3=0
+		break
+	case 8
+		Object.Value6=40
+		Player.ScreenXPos=786432
+		Player.ScreenYPos=0
+		Get16x16TileInfo(CheckResult,TempValue0,TempValue1,1)
+		if CheckResult==1
+			FlipSign(Player.ScreenXPos)
+		else
+			if CheckResult==3
+				FlipSign(Player.ScreenXPos)
+			endif
+		endif
+		if Object.State!=4
+			PlayStageSfx(3,0)
+		endif
+		Object.State=4
+		Object.Frame=43
+		Object.Value1=43
+		Object.Value2=47
+		Object.AnimationSpeed=24
+		Object.Value3=0
+		break
+	case 9
+		Object.Value6=40
+		Player.ScreenXPos=0
+		Player.ScreenYPos=-786432
+		Get16x16TileInfo(CheckResult,TempValue0,TempValue1,1)
+		if CheckResult==2
+			FlipSign(Player.ScreenYPos)
+		else
+			if CheckResult==3
+				FlipSign(Player.ScreenYPos)
+			endif
+		endif
+		if Object.State!=4
+			PlayStageSfx(3,0)
+		endif
+		Object.State=4
+		Object.Frame=43
+		Object.Value1=43
+		Object.Value2=47
+		Object.AnimationSpeed=24
+		Object.Value3=0
+		break
+	case 10
+		Object.Value6=40
+		Player.ScreenXPos=0
+		Player.ScreenYPos=786432
+		Get16x16TileInfo(CheckResult,TempValue0,TempValue1,1)
+		if CheckResult==2
+			FlipSign(Player.ScreenYPos)
+		else
+			if CheckResult==3
+				FlipSign(Player.ScreenYPos)
+			endif
+		endif
+		if Object.State!=4
+			PlayStageSfx(3,0)
+		endif
+		Object.State=4
+		Object.Frame=43
+		Object.Value1=43
+		Object.Value2=47
+		Object.AnimationSpeed=24
+		Object.Value3=0
+		break
+	case 11
+		if Object.Value6!=16
+			PlayStageSfx(4,0)
+		endif
+		Object.Value6=16
+		Player.ScreenXPos=-524288
+		Player.ScreenYPos=0
+		Get16x16TileInfo(CheckResult,TempValue0,TempValue1,1)
+		if CheckResult==1
+			FlipSign(Player.ScreenXPos)
+		else
+			if CheckResult==3
+				FlipSign(Player.ScreenXPos)
+			endif
+		endif
+		break
+	case 12
+		if Object.Value6!=16
+			PlayStageSfx(4,0)
+		endif
+		Object.Value6=16
+		Player.ScreenXPos=524288
+		Player.ScreenYPos=0
+		Get16x16TileInfo(CheckResult,TempValue0,TempValue1,1)
+		if CheckResult==1
+			FlipSign(Player.ScreenXPos)
+		else
+			if CheckResult==3
+				FlipSign(Player.ScreenXPos)
+			endif
+		endif
+		break
+	case 13
+		if Object.Value6!=16
+			PlayStageSfx(4,0)
+		endif
+		Object.Value6=16
+		Player.ScreenXPos=0
+		Player.ScreenYPos=-524288
+		Get16x16TileInfo(CheckResult,TempValue0,TempValue1,1)
+		if CheckResult==2
+			FlipSign(Player.ScreenYPos)
+		else
+			if CheckResult==3
+				FlipSign(Player.ScreenYPos)
+			endif
+		endif
+		break
+	case 14
+		if Object.Value6!=16
+			PlayStageSfx(4,0)
+		endif
+		Object.Value6=16
+		Player.ScreenXPos=0
+		Player.ScreenYPos=524288
+		Get16x16TileInfo(CheckResult,TempValue0,TempValue1,1)
+		if CheckResult==2
+			FlipSign(Player.ScreenYPos)
+		else
+			if CheckResult==3
+				FlipSign(Player.ScreenYPos)
+			endif
+		endif
+		break
+
+	endswitch
+endfunction
+
+
+sub ObjectMain
+	if Object[4].Value5>0
+		Object[4].Value5--
+	endif
+	switch Object.State
+	case 0
+		CallFunction(Sonic_ProcessAnimationSpeed)
+		Object.Value6++
+		if Object.Value6==120
+			Object.Value6=0
+			Object.State=1
+			Object.Frame=2
+			Object.Value1=4
+			Object.Value2=4
+			Object.Value3=0
+			Object.AnimationSpeed=20
+		endif
+		break
+	case 1
+		CallFunction(Sonic_ProcessAnimationSpeed)
+		Object.Value6++
+		if Object.Value6==140
+			Object.Value6=0
+			Object.State=2
+			Object.Frame=9
+			Object.Value1=9
+			Object.Value2=14
+			Player.Speed=0
+		endif
+		break
+	case 2
+		CallFunction(Sonic_ProcessPlayer)
+		if Player.Speed<327680
+			Player.Speed+=2048
+		else
+			Player.Speed=327680
+		endif
+		if KeyDown.Down==1
+			Player.Speed-=3072
+			if Player.Speed<122880
+				Player.Speed=122880
+			endif
+		endif
+		Object.AnimationSpeed=Player.Speed
+		Object.AnimationSpeed*=15
+		Object.AnimationSpeed/=81920
+		Object.AnimationSpeed+=20
+		CallFunction(Sonic_HandlePlayerTilt)
+		CallFunction(Sonic_ProcessAnimationSpeed)
+		if Object.Value6>0
+			Object.Value6--
+			Player.XPos+=Player.ScreenXPos
+			Object.Value0+=Player.ScreenYPos
+		endif
+		CallFunction(Sonic_HandleTileInteractions)
+		if Player.JumpPress==1
+			Object.State=3
+			Object.Value6=0
+			Object.Frame=39
+			Object.Value1=39
+			Object.Value2=42
+			Object.Value3=0
+			Object.AnimationSpeed=80
+			Player.YVelocity=286720
+			PlaySfx(0,0)
+		endif
+		break
+	case 3
+		CallFunction(Sonic_ProcessPlayer)
+		if Player.Speed<327680
+			Player.Speed+=2048
+		endif
+		if KeyDown.Down==1
+			Player.Speed-=3072
+			if Player.Speed<122880
+				Player.Speed=122880
+			endif
+		endif
+		if Player.JumpHold==0
+			if Player.YVelocity>172032
+				Player.YVelocity=172032
+			endif
+		endif
+		CallFunction(Sonic_HandlePlayerTilt)
+		CallFunction(Sonic_ProcessAnimationSpeed)
+		Player.YVelocity-=8192
+		Player.YPos+=Player.YVelocity
+		if Player.YPos<0
+			Player.YPos=0
+			if Object[4].Value0>0
+				if Object[4].Value5==0
+					Object.State=2
+					Object.Frame=9
+					Object.Value1=9
+					Object.Value2=14
+					Object.Value3=0
+				else
+					Object.State=7
+					Object.Frame=77
+					Object.Value1=77
+					Object.Value2=80
+					Object.AnimationSpeed=80
+					Object.Value3=0
+				endif
+			else
+				Player.ControlMode=-1
+				Object.State=8
+				Stage.TimeEnabled=0
+			endif
+		endif
+		break
+	case 4
+		CallFunction(Sonic_ProcessPlayer)
+		if Player.Speed<327680
+			Player.Speed+=2048
+		endif
+		if KeyDown.Down==1
+			Player.Speed-=3072
+			if Player.Speed<122880
+				Player.Speed=122880
+			endif
+		endif
+		CallFunction(Sonic_HandlePlayerTilt)
+		CallFunction(Sonic_ProcessAnimationSpeed)
+		if Object.Value6>0
+			Object.Value6--
+			Player.XPos+=Player.ScreenXPos
+			Object.Value0+=Player.ScreenYPos
+		else
+			if Object[4].Value5==0
+				Object.State=2
+				Object.Frame=9
+				Object.Value1=9
+				Object.Value2=14
+				Object.Value3=0
+			else
+				Object.State=7
+				Object.Frame=77
+				Object.Value1=77
+				Object.Value2=80
+				Object.AnimationSpeed=80
+				Object.Value3=0
+			endif
+		endif
+		CallFunction(Sonic_HandleTileInteractions)
+		if Player.JumpPress==1
+			Object.State=3
+			Object.Value6=0
+			Object.Frame=39
+			Object.Value1=39
+			Object.Value2=42
+			Object.AnimationSpeed=80
+			Player.YVelocity=286720
+			PlaySfx(0,0)
+		endif
+		break
+	case 5
+		CallFunction(Sonic_ProcessPlayer)
+		if Player.Speed<327680
+			Player.Speed+=2048
+		endif
+		CallFunction(Sonic_HandlePlayerTilt)
+		CallFunction(Sonic_ProcessAnimationSpeed)
+		Player.YVelocity-=2048
+		Player.YPos+=Player.YVelocity
+		if Player.YPos<0
+			Player.YPos=0
+			if Object[4].Value0>0
+				if Object[4].Value5==0
+					Object.State=2
+					Object.Frame=9
+					Object.Value1=9
+					Object.Value2=14
+					Object.Value3=0
+				else
+					Object.State=7
+					Object.Frame=77
+					Object.Value1=77
+					Object.Value2=80
+					Object.AnimationSpeed=80
+					Object.Value3=0
+				endif
+			else
+				Object.State=8
+				Player.ControlMode=-1
+				Stage.TimeEnabled=0
+			endif
+		endif
+		break
+	case 6
+		CallFunction(Sonic_HandlePause)
+		Player.Left=0
+		Player.Right=0
+		CallFunction(Sonic_HandlePlayerTilt)
+		CallFunction(Sonic_ProcessAnimationSpeed)
+		TempValue0=Player.XPos
+		TempValue0>>=16
+		TempValue1=Object.Value0
+		TempValue1>>=16
+		Get16x16TileInfo(CheckResult,TempValue0,TempValue1,6)
+		if CheckResult==3
+			Object.State=2
+			Object.Frame=9
+			Object.Value1=9
+			Object.Value2=14
+			Object.Value3=0
+		endif
+		if Object.Value6>0
+			Object.Value6--
+		else
+			if Object[4].Value5==0
+				Object.State=2
+				Object.Frame=9
+				Object.Value1=9
+				Object.Value2=14
+				Object.Value3=0
+			else
+				Object.State=7
+				Object.Frame=77
+				Object.Value1=77
+				Object.Value2=80
+				Object.AnimationSpeed=80
+				Object.Value3=0
+			endif
+		endif
+		break
+	case 7
+		CallFunction(Sonic_ProcessPlayer)
+		if Player.Speed<458752
+			Player.Speed+=4096
+		endif
+		if KeyDown.Down==1
+			Player.Speed-=3072
+			if Player.Speed<122880
+				Player.Speed=122880
+			endif
+		endif
+		CallFunction(Sonic_HandlePlayerTilt)
+		CallFunction(Sonic_ProcessAnimationSpeed)
+		if Object.Value6>0
+			Object.Value6--
+			Player.XPos+=Player.ScreenXPos
+			Object.Value0+=Player.ScreenYPos
+		endif
+		CallFunction(Sonic_HandleTileInteractions)
+		if Player.JumpPress==1
+			Object.State=3
+			Object.Value6=0
+			Object.Frame=39
+			Object.Value1=39
+			Object.Value2=42
+			Object.Value3=0
+			Object.AnimationSpeed=80
+			Player.YVelocity=286720
+			PlaySfx(0,0)
+		endif
+		if Object[4].Value5==0
+			Object.State=2
+			Object.Frame=9
+			Object.Value1=9
+			Object.Value2=14
+			Object.Value3=0
+		endif
+		break
+	case 8
+		Object.Frame=1
+		Object.Value6=0
+		Player.Speed=0
+		break
+	case 9
+		if Object.Value6<128
+			Object.Value6++
+			Player.Angle-=2
+			if Player.Angle<0
+				Player.Angle+=512
+			endif
+		else
+			if Object[3].Type==TypeName[BlankObject]
+				ResetObjectEntity(3,TypeName[TimeStone],0,0,-1572864)
+				Object[3].iXPos=Screen.CenterX
+				Object[3].Priority=1
+			endif
+		endif
+		Object.Frame=Object.Value6
+		Object.Frame>>=4
+		Object.Frame+=81
+		break
+	case 10
+		if Object.Value6==308
+			Object[30].Type=TypeName[StageFinish]
+			Object[30].PropertyValue=1
+		else
+			Object.Value6++
+		endif
+		break
+	case 11
+		CallFunction(Sonic_ProcessPlayer)
+		if Player.Speed<327680
+			Player.Speed+=2048
+		endif
+		if KeyDown.Down==1
+			Player.Speed-=3072
+			if Player.Speed<122880
+				Player.Speed=122880
+			endif
+		endif
+		CallFunction(Sonic_HandlePlayerTilt)
+		CallFunction(Sonic_ProcessAnimationSpeed)
+		Player.YVelocity-=8192
+		Player.YPos+=Player.YVelocity
+		if Player.YPos<0
+			Player.YPos=0
+			if Object[4].Value0>0
+				if Object[4].Value5==0
+					Object.State=2
+					Object.Frame=9
+					Object.Value1=9
+					Object.Value2=14
+					Object.Value3=0
+				else
+					Object.State=7
+					Object.Frame=77
+					Object.Value1=77
+					Object.Value2=80
+					Object.AnimationSpeed=80
+					Object.Value3=0
+				endif
+			else
+				Player.ControlMode=-1
+				Object.State=8
+			endif
+		endif
+		break
+
+	endswitch
+	if Player.XPos>Stage.XBoundary2
+		Player.XPos=Stage.XBoundary2
+	endif
+	if Player.XPos<Stage.XBoundary1
+		Player.XPos=Stage.XBoundary1
+	endif
+	if Object.Value0>Stage.YBoundary2
+		Object.Value0=Stage.YBoundary2
+	endif
+	if Object.Value0<Stage.YBoundary1
+		Object.Value0=Stage.YBoundary1
+	endif
+	TileLayer[0].Angle=Player.Angle
+	Sin(TileLayer[0].XPos,TileLayer[0].Angle)
+	Cos(TileLayer[0].ZPos,TileLayer[0].Angle)
+	TileLayer[0].XPos*=-11264
+	TileLayer[0].ZPos*=-11264
+	TileLayer[0].XPos+=Player.XPos
+	TileLayer[0].ZPos+=Object.Value0
+	TileLayer[0].YPos=Player.YPos
+	TileLayer[0].YPos/=3
+	TileLayer[0].YPos+=5767168
+endsub
+
+
+sub ObjectDraw
+	TempValue0=TileLayer[0].YPos
+	TempValue0>>=8
+	TempValue0*=96
+	TempValue0/=22528
+	TempValue0+=128
+	DrawSpriteScreenXY(0,Screen.CenterX,TempValue0)
+	TempValue0=TileLayer[0].YPos
+	TempValue0-=Player.YPos
+	TempValue0>>=8
+	TempValue0*=96
+	TempValue0/=22528
+	TempValue0+=128
+	switch Object.State
+	default
+		DrawSpriteScreenXY(Object.Frame,Screen.CenterX,TempValue0)
+		break
+	case 2
+		TempValue1=Object.Frame
+		TempValue2=Player.Tilt
+		TempValue2>>=2
+		TempValue2+=2
+		switch TempValue2
+		case 0
+			TempValue1+=6
+			Object.Direction=FACING_LEFT
+			break
+		case 1
+			TempValue1+=12
+			Object.Direction=FACING_LEFT
+			break
+		case 2
+			Object.Direction=FACING_RIGHT
+			break
+		case 3
+			TempValue1+=18
+			Object.Direction=FACING_RIGHT
+			break
+		case 4
+			TempValue1+=24
+			Object.Direction=FACING_RIGHT
+			break
+
+		endswitch
+		DrawSpriteScreenFX(TempValue1,FX_FLIP,Screen.CenterX,TempValue0)
+		break
+
+	endswitch
+endsub
+
+
+sub ObjectStartup
+	if Stage.PlayerListPos==0
+		LoadSpriteSheet("Special/Sonic.gif")
+	else
+		LoadSpriteSheet("Special/Tails.gif")
+	endif
+	Object[2].Type=TypeName[Sonic]
+	Object[2].Priority=1
+	Object[2].Value5=22528
+	Object[2].Frame=5
+	Object[2].Value1=5
+	Object[2].Value2=8
+	Object[2].AnimationSpeed=30
+	ArrayPos0=32
+	while ArrayPos0<1056
+		if Object[ArrayPos0].Type==TypeName[Sonic]
+			Player.XPos=Object[ArrayPos0].XPos
+			Object[2].Value0=Object[ArrayPos0].YPos
+			Player.YPos=0
+			Player.Angle=Object[ArrayPos0].PropertyValue
+			Player.Angle<<=1
+			ResetObjectEntity(ArrayPos0,TypeName[BlankObject],0,0,0)
+		endif
+		ArrayPos0++
+	loop
+	SpriteFrame(-20,-4,40,8,210,377)
+	SpriteFrame(-20,-48,40,48,1,197)
+	SpriteFrame(-20,-48,40,48,83,197)
+	SpriteFrame(-20,-48,40,48,42,197)
+	SpriteFrame(-20,-48,40,48,1,197)
+	SpriteFrame(-20,-48,40,48,1,246)
+	SpriteFrame(-20,-48,40,48,42,246)
+	SpriteFrame(-20,-48,40,48,83,246)
+	SpriteFrame(-20,-48,40,48,42,246)
+	SpriteFrame(-20,-48,40,48,1,1)
+	SpriteFrame(-20,-48,40,48,42,1)
+	SpriteFrame(-20,-48,40,48,83,1)
+	SpriteFrame(-20,-48,40,48,1,50)
+	SpriteFrame(-20,-48,40,48,42,50)
+	SpriteFrame(-20,-48,40,48,83,50)
+	SpriteFrame(-20,-48,40,48,1,99)
+	SpriteFrame(-20,-48,40,48,42,99)
+	SpriteFrame(-20,-48,40,48,83,99)
+	SpriteFrame(-20,-48,40,48,1,148)
+	SpriteFrame(-20,-48,40,48,42,148)
+	SpriteFrame(-20,-48,40,48,83,148)
+	SpriteFrame(-20,-48,40,48,124,1)
+	SpriteFrame(-20,-48,40,48,165,1)
+	SpriteFrame(-20,-48,40,48,206,1)
+	SpriteFrame(-20,-48,40,48,124,50)
+	SpriteFrame(-20,-48,40,48,165,50)
+	SpriteFrame(-20,-48,40,48,206,50)
+	SpriteFrame(-20,-48,40,48,124,50)
+	SpriteFrame(-20,-48,40,48,165,50)
+	SpriteFrame(-20,-48,40,48,206,50)
+	SpriteFrame(-20,-48,40,48,124,1)
+	SpriteFrame(-20,-48,40,48,165,1)
+	SpriteFrame(-20,-48,40,48,206,1)
+	SpriteFrame(-20,-48,40,48,1,148)
+	SpriteFrame(-20,-48,40,48,42,148)
+	SpriteFrame(-20,-48,40,48,83,148)
+	SpriteFrame(-20,-48,40,48,1,99)
+	SpriteFrame(-20,-48,40,48,42,99)
+	SpriteFrame(-20,-48,40,48,83,99)
+	SpriteFrame(-20,-40,40,40,165,99)
+	SpriteFrame(-20,-40,40,40,206,99)
+	SpriteFrame(-20,-40,40,40,124,140)
+	SpriteFrame(-20,-40,40,40,124,99)
+	SpriteFrame(-20,-48,40,48,51,344)
+	SpriteFrame(-21,-48,42,48,182,295)
+	SpriteFrame(-25,-48,49,48,1,344)
+	if Stage.PlayerListPos==0
+		SpriteFrame(-21,-48,42,48,135,410)
+		SpriteFrame(-20,-48,40,48,178,410)
+	else
+		SpriteFrame(-21,-48,42,48,135,426)
+		SpriteFrame(-20,-48,40,48,178,426)
+	endif
+	SpriteFrame(-16,-32,54,32,17,442)
+	SpriteFrame(-26,-32,52,32,78,442)
+	SpriteFrame(-37,-32,54,32,178,475)
+	SpriteFrame(-32,-32,48,32,1,475)
+	SpriteFrame(-30,-32,60,32,115,475)
+	SpriteFrame(-16,-32,48,32,208,344)
+	SpriteFrame(-28,-48,56,48,92,344)
+	SpriteFrame(-30,-32,60,32,54,475)
+	if Stage.PlayerListPos==0
+		SpriteFrame(-29,-32,58,32,149,344)
+		SpriteFrame(-30,-32,60,32,149,377)
+		SpriteFrame(-30,-32,60,32,149,377)
+		SpriteFrame(-30,-32,60,32,149,377)
+		SpriteFrame(-30,-32,60,32,149,377)
+		SpriteFrame(-30,-32,60,32,149,377)
+		SpriteFrame(-30,-32,60,32,149,377)
+		SpriteFrame(-30,-32,60,32,149,377)
+		SpriteFrame(-30,-32,60,32,149,377)
+		SpriteFrame(-30,-32,60,32,149,377)
+		SpriteFrame(-30,-32,60,32,149,377)
+		SpriteFrame(-30,-32,60,32,149,377)
+		SpriteFrame(-30,-32,60,32,149,377)
+		SpriteFrame(-30,-32,60,32,149,377)
+		SpriteFrame(-30,-32,60,32,149,377)
+		SpriteFrame(-30,-32,60,32,149,377)
+		SpriteFrame(-30,-32,60,32,149,377)
+		SpriteFrame(-30,-32,60,32,149,377)
+	else
+		SpriteFrame(-29,-32,58,37,149,344)
+		SpriteFrame(-30,-32,60,32,149,382)
+		SpriteFrame(-30,-32,60,32,149,382)
+		SpriteFrame(-30,-32,60,32,149,382)
+		SpriteFrame(-30,-32,60,32,149,382)
+		SpriteFrame(-30,-32,60,32,149,382)
+		SpriteFrame(-30,-32,60,32,149,382)
+		SpriteFrame(-30,-32,60,32,149,382)
+		SpriteFrame(-30,-32,60,32,149,382)
+		SpriteFrame(-30,-32,60,32,149,382)
+		SpriteFrame(-30,-32,60,32,149,382)
+		SpriteFrame(-30,-32,60,32,149,382)
+		SpriteFrame(-30,-32,60,32,149,382)
+		SpriteFrame(-30,-32,60,32,149,382)
+		SpriteFrame(-30,-32,60,32,149,382)
+		SpriteFrame(-30,-32,60,32,149,382)
+		SpriteFrame(-30,-32,60,32,149,382)
+		SpriteFrame(-30,-32,60,32,149,382)
+	endif
+	SpriteFrame(-20,-48,40,48,1,393)
+	SpriteFrame(-20,-48,40,48,42,393)
+	SpriteFrame(-20,-48,40,48,83,393)
+	SpriteFrame(-20,-48,40,48,165,140)
+	SpriteFrame(-20,-48,40,48,206,140)
+	SpriteFrame(-20,-48,40,48,165,189)
+	SpriteFrame(-20,-48,40,48,206,189)
+	SpriteFrame(-20,-48,40,48,1,197)
+	SpriteFrame(-20,-48,40,48,124,246)
+	SpriteFrame(-20,-48,40,48,165,246)
+	SpriteFrame(-20,-48,40,48,206,246)
+	SpriteFrame(-20,-48,40,48,1,295)
+	SpriteFrame(-20,-48,40,48,42,295)
+	SpriteFrame(-16,-48,32,48,83,295)
+	SpriteFrame(-16,-48,32,48,116,295)
+	SpriteFrame(-16,-48,32,48,116,295)
+	SpriteFrame(-16,-48,32,48,149,295)
+endsub
+
+sub RSDK
+	LoadSpriteSheet("Global/Display.gif")
+	SetEditorIcon(Icon0,SingleIcon,-16,-16,32,32,1,143)
+endsub

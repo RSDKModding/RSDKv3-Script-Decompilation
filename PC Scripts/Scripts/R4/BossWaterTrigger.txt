@@ -1,0 +1,67 @@
+//------------Sonic CD BossWaterTrigger Script-------------//
+//--------Scripted by Christian Whitehead 'The Taxman'--------//
+//-------Unpacked By Rubberduckycooly's Script Unpacker-------//
+
+//-------Aliases-------//
+#alias 44: TYPE_BOSSWATERTRIGGER
+
+
+sub ObjectMain
+	switch Object.PropertyValue
+	case 0
+		if Player.XPos>Object.XPos
+			if Stage.NewWaterLevel>76808192
+				Stage.NewWaterLevel=76808192
+				ArrayPos0=Object.Value0
+				Object[ArrayPos0].YPos=Screen.YOffset
+				Object[ArrayPos0].YPos+=256
+				Object[ArrayPos0].YPos<<=16
+				Stage.YBoundary2=1496
+			endif
+		else
+			if Stage.NewWaterLevel<201326592
+				Stage.NewWaterLevel=201326592
+				Stage.NewYBoundary2=2304
+			endif
+			ArrayPos0=Object.Value0
+			TempValue0=Screen.YOffset
+			TempValue0+=256
+			TempValue0<<=16
+			if Object[ArrayPos0].YPos>=TempValue0
+				Object[ArrayPos0].YPos=201326592
+			endif
+		endif
+		break
+	case 1
+		if Player.XPos>Object.XPos
+			Stage.NewYBoundary2=1448
+		else
+			Stage.NewYBoundary2=1496
+		endif
+		break
+
+	endswitch
+endsub
+
+
+sub ObjectStartup
+	ArrayPos0=32
+	while ArrayPos0<1056
+		if Object[ArrayPos0].Type==TypeName[Water]
+			TempValue0=ArrayPos0
+		endif
+		ArrayPos0++
+	loop
+	ArrayPos0=32
+	while ArrayPos0<1056
+		if Object[ArrayPos0].Type==TypeName[BossWaterTrigger]
+			Object[ArrayPos0].Value0=TempValue0
+		endif
+		ArrayPos0++
+	loop
+endsub
+
+sub RSDK
+	LoadSpriteSheet("Global/Display.gif")
+	SetEditorIcon(Icon0,SingleIcon,-16,-16,32,32,1,143)
+endsub

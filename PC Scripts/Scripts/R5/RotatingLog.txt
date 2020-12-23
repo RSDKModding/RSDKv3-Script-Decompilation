@@ -1,0 +1,107 @@
+//------------Sonic CD Rotating Log Script-------------//
+//--------Scripted by Christian Whitehead 'The Taxman'--------//
+//-------Unpacked By Rubberduckycooly's Script Unpacker-------//
+
+//-------Aliases-------//
+#alias 51: TYPE_ROTATINGLOG
+
+
+sub ObjectMain
+	Object.Value0++
+	Object.Value0&=511
+	TempValue1=96
+	Cos(Object.Value3,Object.Value0)
+	Object.Value3*=TempValue1
+	Object.Value3<<=7
+	Object.Value3+=Object.XPos
+	Object.Value3&=-65536
+	Object.Value3-=Object.Value1
+	Sin(Object.Value4,Object.Value0)
+	Object.Value4*=TempValue1
+	Object.Value4<<=7
+	Object.Value4+=Object.YPos
+	Object.Value4&=-65536
+	Object.Value4-=Object.Value2
+endsub
+
+
+sub ObjectPlayerInteraction
+	TempValue0=Object.XPos
+	TempValue1=Object.YPos
+	Object.XPos=Object.Value1
+	Object.YPos=Object.Value2
+	PlayerObjectCollision(C_BOX,-8,-8,8,8)
+	if CheckResult==1
+		Player.XPos+=Object.Value3
+		Player.YPos+=Object.Value4
+	endif
+	Object.XPos=TempValue0
+	Object.YPos=TempValue1
+endsub
+
+
+sub ObjectDraw
+	TempValue1=96
+	Cos(Object.Value1,Object.Value0)
+	Object.Value1*=TempValue1
+	Object.Value1<<=7
+	Object.Value1+=Object.XPos
+	Object.Value1&=-65536
+	Sin(Object.Value2,Object.Value0)
+	Object.Value2*=TempValue1
+	Object.Value2<<=7
+	Object.Value2+=Object.YPos
+	Object.Value2&=-65536
+	DrawSpriteXY(0,Object.Value1,Object.Value2)
+endsub
+
+
+sub ObjectStartup
+	LoadSpriteSheet("R5/Objects.gif")
+	switch Object[24].PropertyValue
+	case 0
+		SpriteFrame(-8,-8,16,16,35,1)
+		break
+	case 1
+		SpriteFrame(-8,-8,16,16,67,174)
+		break
+	case 2
+		SpriteFrame(-8,-8,16,16,83,174)
+		break
+	case 3
+		SpriteFrame(-8,-8,16,16,83,158)
+		break
+
+	endswitch
+	ArrayPos0=32
+	while ArrayPos0<1056
+		if Object[ArrayPos0].Type==TypeName[RotatingLog]
+			switch Object[ArrayPos0].PropertyValue
+			case 1
+				Object[ArrayPos0].Value0=504
+				ArrayPos0++
+				Object[ArrayPos0].Value0=8
+				ArrayPos0++
+				Object[ArrayPos0].Value0=120
+				ArrayPos0++
+				Object[ArrayPos0].Value0=136
+				ArrayPos0++
+				Object[ArrayPos0].Value0=248
+				ArrayPos0++
+				Object[ArrayPos0].Value0=264
+				ArrayPos0++
+				Object[ArrayPos0].Value0=376
+				ArrayPos0++
+				Object[ArrayPos0].Value0=392
+				break
+
+			endswitch
+		endif
+		ArrayPos0++
+	loop
+endsub
+
+sub RSDK
+	LoadSpriteSheet("Global/Display.gif")
+	SetEditorIcon(Icon0,SingleIcon,-16,-16,32,32,1,143)
+endsub

@@ -1,0 +1,123 @@
+//------------Sonic CD BG Animation Script-------------//
+//--------Scripted by Christian Whitehead 'The Taxman'--------//
+//-------Unpacked By Rubberduckycooly's Script Unpacker-------//
+
+//-------Aliases-------//
+#alias 1: TYPE_BGANIMATION
+
+
+sub ObjectDraw
+	Object.Value0++
+	Object.Value0&=1023
+	Object.Value1=Object.Value0
+	Object.Value1>>=1
+	Sin(Object.Value4,Object.Value1)
+	Object.Value4+=20480
+	MatrixTranslateXYZ(MAT_WORLD,0,0,Object.Value4)
+	TempValue0=Object.Value1
+	MatrixRotateXYZ(MAT_VIEW,0,0,TempValue0)
+	Draw3DScene()
+	Object.Value2=Screen.CenterX
+	Object.Value2-=4
+	DrawSpriteScreenFX(0,FX_INK,Object.Value2,Screen.CenterY)
+	Object.Value3=Screen.CenterX
+	Object.Value3+=4
+	DrawSpriteScreenFX(0,FX_INK,Object.Value3,Screen.CenterY)
+endsub
+
+
+sub ObjectStartup
+	Stage[0].ActiveLayer=9
+	LoadSpriteSheet("Menu/MenuGfx1_EN.gif")
+	SpriteFrame(-160,-104,320,224,0,0)
+	ArrayPos0=32
+	while ArrayPos0<1056
+		if Object[ArrayPos0].Type==TypeName[BGAnimation]
+			Object[ArrayPos0].Priority=1
+			Object[ArrayPos0].DrawOrder=2
+			Object[ArrayPos0].InkEffect=1
+		endif
+		ArrayPos0++
+	loop
+	MatrixTranslateXYZ(MAT_WORLD,0,0,0)
+	MatrixRotateXYZ(MAT_VIEW,0,0,0)
+	3DScene.NoVertices=12
+	3DScene.NoFaces=3
+	VertexBuffer[0].x=-51200
+	VertexBuffer[0].y=51200
+	VertexBuffer[0].z=256
+	VertexBuffer[1].x=3072
+	VertexBuffer[1].y=51200
+	VertexBuffer[1].z=256
+	VertexBuffer[2].x=-51200
+	VertexBuffer[2].y=12288
+	VertexBuffer[2].z=256
+	VertexBuffer[3].x=3072
+	VertexBuffer[3].y=12288
+	VertexBuffer[3].z=256
+	FaceBuffer[0].a=0
+	FaceBuffer[0].b=1
+	FaceBuffer[0].c=2
+	FaceBuffer[0].d=3
+	FaceBuffer[0].Flag=2
+	FaceBuffer[0].Color=128
+	FaceBuffer[0].Color<<=16
+	TempValue0=224
+	TempValue0<<=8
+	FaceBuffer[0].Color+=TempValue0
+	FaceBuffer[0].Color+=64
+	FaceBuffer[0].Color+=2130706432
+	VertexBuffer[4].x=-51200
+	VertexBuffer[4].y=12288
+	VertexBuffer[4].z=256
+	VertexBuffer[5].x=3072
+	VertexBuffer[5].y=12288
+	VertexBuffer[5].z=256
+	VertexBuffer[6].x=-51200
+	VertexBuffer[6].y=-51200
+	VertexBuffer[6].z=256
+	VertexBuffer[7].x=3072
+	VertexBuffer[7].y=-51200
+	VertexBuffer[7].z=256
+	FaceBuffer[1].a=4
+	FaceBuffer[1].b=5
+	FaceBuffer[1].c=6
+	FaceBuffer[1].d=7
+	FaceBuffer[1].Flag=2
+	FaceBuffer[1].Color=224
+	FaceBuffer[1].Color<<=16
+	TempValue0=160
+	TempValue0<<=8
+	FaceBuffer[1].Color+=TempValue0
+	FaceBuffer[1].Color+=96
+	FaceBuffer[1].Color+=2130706432
+	VertexBuffer[8].x=2816
+	VertexBuffer[8].y=51200
+	VertexBuffer[8].z=256
+	VertexBuffer[9].x=51200
+	VertexBuffer[9].y=51200
+	VertexBuffer[9].z=256
+	VertexBuffer[10].x=2816
+	VertexBuffer[10].y=-51200
+	VertexBuffer[10].z=256
+	VertexBuffer[11].x=51200
+	VertexBuffer[11].y=-51200
+	VertexBuffer[11].z=256
+	FaceBuffer[2].a=8
+	FaceBuffer[2].b=9
+	FaceBuffer[2].c=10
+	FaceBuffer[2].d=11
+	FaceBuffer[2].Flag=2
+	FaceBuffer[2].Color=128
+	FaceBuffer[2].Color<<=16
+	TempValue0=128
+	TempValue0<<=8
+	FaceBuffer[2].Color+=TempValue0
+	FaceBuffer[2].Color+=224
+	FaceBuffer[2].Color+=2130706432
+endsub
+
+sub RSDK
+	LoadSpriteSheet("Global/Display.gif")
+	SetEditorIcon(Icon0,SingleIcon,-16,-16,32,32,1,143)
+endsub

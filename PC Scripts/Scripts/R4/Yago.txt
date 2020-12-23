@@ -1,0 +1,203 @@
+//------------Sonic CD Yago Script-------------//
+//--------Scripted by Christian Whitehead 'The Taxman'--------//
+//-------Unpacked By Rubberduckycooly's Script Unpacker-------//
+
+//-------Aliases-------//
+#alias 57: TYPE_YAGO
+
+
+sub ObjectMain
+	switch Object.State
+	case 0
+		Object.YPos+=65536
+		ObjectTileCollision(0,0,17,0)
+		if CheckResult==1
+			Object.Direction=FACING_RIGHT
+			Object.Value3=5242880
+			Object.Value1=-16384
+			Object.Priority=1
+			Object.State++
+		endif
+		break
+	case 1
+		Object.Value3+=Object.Value1
+		if Object.Value3>=0
+			Object.XPos+=Object.Value1
+			Object.YPos+=32768
+			ObjectTileCollision(0,0,17,0)
+			if Object.Direction==FACING_RIGHT
+				ObjectTileCollision(3,-20,0,0)
+			else
+				ObjectTileCollision(1,20,0,0)
+			endif
+			if CheckResult==1
+				Object.State++
+				Object.Value0=30
+			else
+				TempValue0=Object.XPos
+				TempValue0-=Player.XPos
+				if TempValue0<0
+					FlipSign(TempValue0)
+				endif
+				if TempValue0<5242880
+					Object.State=4
+					Object.Value0=6
+				endif
+			endif
+		else
+			Object.State++
+			Object.Value0=30
+		endif
+		break
+	case 2
+		if Object.Value0>0
+			Object.Value0--
+		else
+			Object.Value0=30
+			Object.Value3=5242880
+			Object.Direction++
+			Object.Direction&=FACING_LEFT
+			FlipSign(Object.Value1)
+			Object.State++
+		endif
+		break
+	case 3
+		if Object.Value0>0
+			Object.Value0--
+		else
+			Object.State=1
+		endif
+		break
+	case 4
+		if Object.Value0>0
+			Object.Value0--
+		else
+			Object.Value0=30
+			Object.State++
+		endif
+		break
+	case 5
+		Object.YPos+=8192
+		if Object.Value0>0
+			Object.Value0--
+		else
+			if Object.PropertyValue==0
+				if Object.Direction==FACING_RIGHT
+					Object.Value3=-294912
+				else
+					Object.Value3=294912
+				endif
+				Object.Value2=-98304
+			else
+				if Object.Direction==FACING_RIGHT
+					Object.Value3=-65536
+				else
+					Object.Value3=65536
+				endif
+			endif
+			Object.Value2=-98304
+			if Object.PropertyValue==0
+				Object.State++
+			else
+				Object.State=7
+			endif
+		endif
+		break
+	case 6
+		Object.XPos+=Object.Value3
+		if Object.Direction==FACING_RIGHT
+			ObjectTileCollision(2,-20,0,0)
+		else
+			ObjectTileCollision(1,20,0,0)
+		endif
+		if CheckResult==1
+			Object.Value0=30
+			Object.State=2
+		else
+			Object.YPos+=Object.Value2
+			if Object.Value2<0
+				Object.Value2+=8192
+			endif
+		endif
+		break
+	case 7
+		Object.XPos+=Object.Value3
+		if Object.Direction==FACING_RIGHT
+			ObjectTileCollision(2,-20,0,0)
+		else
+			ObjectTileCollision(1,20,0,0)
+		endif
+		if CheckResult==1
+			Object.Value0=30
+			Object.State=2
+		else
+			Object.YPos+=Object.Value2
+			Object.Value2+=4096
+			if Object.Value2>0
+				ObjectTileCollision(0,0,17,0)
+				if CheckResult==1
+					Object.Value3=5242880
+					Object.State=1
+				endif
+			endif
+		endif
+		break
+
+	endswitch
+	Object.AnimationTimer++
+	Object.AnimationTimer%=20
+	CallFunction(StageSetup_CheckGoodFuture)
+	if Object.OutOfBounds==1
+		TempValue0=Object.XPos
+		TempValue1=Object.YPos
+		Object.XPos=Object.Value4
+		Object.YPos=Object.Value5
+		if Object.OutOfBounds==1
+			Object.State=0
+			Object.Priority=0
+		else
+			Object.XPos=TempValue0
+			Object.YPos=TempValue1
+		endif
+	endif
+endsub
+
+
+sub ObjectPlayerInteraction
+	PlayerObjectCollision(C_TOUCH,-20,-8,20,8)
+	if CheckResult==1
+		CallFunction(PlayerObject_BadnikBreak)
+	endif
+endsub
+
+
+sub ObjectDraw
+	TempValue0=Object.AnimationTimer
+	TempValue0/=10
+	if Object.PropertyValue==1
+		TempValue0+=2
+	endif
+	DrawSpriteFX(TempValue0,FX_FLIP,Object.XPos,Object.YPos)
+endsub
+
+
+sub ObjectStartup
+	LoadSpriteSheet("R4/Objects.gif")
+	SpriteFrame(-24,-12,48,24,67,181)
+	SpriteFrame(-24,-12,48,24,67,206)
+	SpriteFrame(-24,-12,48,24,18,181)
+	SpriteFrame(-24,-12,48,24,18,206)
+	ArrayPos0=32
+	while ArrayPos0<1056
+		if Object[ArrayPos0].Type==TypeName[Yago]
+			Object[ArrayPos0].Value4=Object[ArrayPos0].XPos
+			Object[ArrayPos0].Value5=Object[ArrayPos0].YPos
+		endif
+		ArrayPos0++
+	loop
+endsub
+
+sub RSDK
+	LoadSpriteSheet("Global/Display.gif")
+	SetEditorIcon(Icon0,SingleIcon,-16,-16,32,32,1,143)
+endsub

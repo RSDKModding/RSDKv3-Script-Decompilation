@@ -1,0 +1,140 @@
+//------------Sonic CD CountdownBubble Script-------------//
+//--------Scripted by Christian Whitehead 'The Taxman'--------//
+//-------Unpacked By Rubberduckycooly's Script Unpacker-------//
+
+//-------Aliases-------//
+#alias 54: TYPE_COUNTDOWNBUBBLE
+
+
+sub ObjectMain
+	switch Object.State
+	case 0
+		Object.YPos+=Object.Value3
+		Object.Value0++
+		if Object.Value0>6
+			Object.Value0=0
+			Object.Frame++
+		endif
+		if Object.Frame<4
+			Sin(Object.XPos,Object.Value1)
+			Object.XPos<<=9
+			Object.XPos+=Object.Value2
+			Object.Value1+=4
+			Object.Value1&=511
+		else
+			TempValue0=Object.PropertyValue
+			TempValue0*=3
+			Object.Frame+=TempValue0
+			Object.Value2=Object.iXPos
+			Object.Value2-=Screen.XOffset
+			Object.Value4=Object.iYPos
+			Object.Value4-=Screen.YOffset
+			Object.State++
+		endif
+		break
+	case 1
+		Object.Value0++
+		if Object.Value0==6
+			Object.Value0=0
+			Object.Frame++
+			Object.State++
+		endif
+		break
+	case 2
+		Object.Value0++
+		if Object.Value0==6
+			Object.Value0=0
+			Object.Frame++
+			Object.State++
+		endif
+		break
+	case 3
+		Object.Value0++
+		if Object.Value0==8
+			Object.Value0=0
+			Object.Frame--
+			Object.State++
+		endif
+		break
+	case 4
+		Object.Value0++
+		if Object.Value0==8
+			Object.Value0=0
+			Object.Frame++
+			Object.State++
+		endif
+		break
+	case 5
+		Object.Value0++
+		if Object.Value0==8
+			Object.Value0=0
+			Object.Frame--
+			Object.State++
+		endif
+		break
+	case 6
+		Object.Value0++
+		if Object.Value0==8
+			Object.Value0=0
+			Object.Frame++
+			Object.State++
+		endif
+		break
+	case 7
+		Object.Value0++
+		if Object.Value0==8
+			Object.Value0=0
+			Object.Frame--
+			Object.State++
+		endif
+		break
+	case 8
+		Object.Value0++
+		if Object.Value0==9
+			Object.Type=TypeName[BlankObject]
+		endif
+		break
+
+	endswitch
+endsub
+
+
+sub ObjectDraw
+	if Object.State==0
+		DrawSprite(Object.Frame)
+	else
+		DrawSpriteScreenXY(Object.Frame,Object.Value2,Object.Value4)
+	endif
+endsub
+
+
+sub ObjectStartup
+	LoadSpriteSheet("R4/Objects2.gif")
+	SpriteFrame(-4,-4,8,8,35,135)
+	SpriteFrame(-4,-4,8,8,44,135)
+	SpriteFrame(-4,-4,8,8,53,135)
+	SpriteFrame(-8,-8,16,16,101,210)
+	SpriteFrame(-8,-12,16,24,101,185)
+	SpriteFrame(-8,-12,16,24,67,135)
+	SpriteFrame(-8,-12,0,0,67,135)
+	SpriteFrame(-8,-12,16,24,84,210)
+	SpriteFrame(-8,-12,16,24,84,135)
+	SpriteFrame(-8,-12,0,0,67,135)
+	SpriteFrame(-8,-12,16,24,67,210)
+	SpriteFrame(-8,-12,16,24,67,160)
+	SpriteFrame(-8,-12,0,0,67,135)
+	SpriteFrame(-8,-12,16,24,84,210)
+	SpriteFrame(-8,-12,16,24,84,160)
+	SpriteFrame(-8,-12,0,0,67,135)
+	SpriteFrame(-8,-12,16,24,84,210)
+	SpriteFrame(-8,-12,16,24,67,185)
+	SpriteFrame(-8,-12,0,0,67,135)
+	SpriteFrame(-8,-12,16,24,101,160)
+	SpriteFrame(-8,-12,16,24,84,185)
+	SpriteFrame(-8,-12,0,0,67,135)
+endsub
+
+sub RSDK
+	LoadSpriteSheet("Global/Display.gif")
+	SetEditorIcon(Icon0,SingleIcon,-16,-16,32,32,1,143)
+endsub

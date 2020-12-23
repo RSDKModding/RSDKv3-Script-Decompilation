@@ -1,0 +1,96 @@
+//------------Sonic CD LampPost Script-------------//
+//--------Scripted by Christian Whitehead 'The Taxman'--------//
+//-------Unpacked By Rubberduckycooly's Script Unpacker-------//
+
+//-------Aliases-------//
+#alias 15: TYPE_LAMPPOST
+
+
+sub ObjectPlayerInteraction
+	if Object.State==0
+		PlayerObjectCollision(C_TOUCH,-8,-32,8,32)
+		if CheckResult==1
+			LampPost.Check=Object.EntityNo
+			if Player.XPos<Object.XPos
+				LampPost.Side=-1572864
+			else
+				LampPost.Side=1572864
+			endif
+			Rec_Milliseconds=Stage.MilliSeconds
+			Rec_Seconds=Stage.Seconds
+			Rec_Minutes=Stage.Minutes
+			Object.State=1
+			Object.Value0=384
+			PlaySfx(9,0)
+		endif
+	endif
+endsub
+
+
+sub ObjectDraw
+	switch Object.State
+	case 0
+		DrawSprite(0)
+		break
+	case 1
+		DrawSprite(1)
+		Cos(TempValue0,Object.Value0)
+		TempValue0<<=10
+		Sin(TempValue1,Object.Value0)
+		TempValue1<<=10
+		TempValue0+=Object.XPos
+		TempValue1+=Object.YPos
+		TempValue1-=1572864
+		DrawSpriteXY(2,TempValue0,TempValue1)
+		Object.Value0+=16
+		if Object.Value0>896
+			Object.Value0=0
+			Object.State=2
+		endif
+		break
+	case 2
+		DrawSprite(1)
+		Object.Value0++
+		if Object.Value0==8
+			Object.Value0=0
+		endif
+		TempValue0=Object.YPos
+		TempValue0-=2097152
+		if Object.Value0>3
+			DrawSpriteXY(4,Object.XPos,TempValue0)
+		else
+			DrawSpriteXY(3,Object.XPos,TempValue0)
+		endif
+		break
+
+	endswitch
+endsub
+
+
+sub ObjectStartup
+	LoadSpriteSheet("Global/Items.gif")
+	SpriteFrame(-8,-40,16,64,1,137)
+	SpriteFrame(-8,-24,16,48,1,153)
+	SpriteFrame(-8,-8,16,16,1,137)
+	SpriteFrame(-8,-8,16,16,1,236)
+	SpriteFrame(-8,-8,16,16,18,236)
+	if Warp.XPos==0
+		if Object[24].PropertyValue==0
+			if LampPost.Check>31
+				ArrayPos0=LampPost.Check
+				Player.XPos=Object[ArrayPos0].XPos
+				Player.XPos+=LampPost.Side
+				Player.YPos=Object[ArrayPos0].YPos
+				Object[ArrayPos0].State=2
+				Stage.MilliSeconds=Rec_Milliseconds
+				Stage.Seconds=Rec_Seconds
+				Stage.Minutes=Rec_Minutes
+			endif
+		endif
+	endif
+endsub
+
+sub RSDK
+	LoadSpriteSheet("Global/Display.gif")
+	SetEditorIcon(Icon0,SingleIcon,-16,-16,32,32,1,143)
+endsub

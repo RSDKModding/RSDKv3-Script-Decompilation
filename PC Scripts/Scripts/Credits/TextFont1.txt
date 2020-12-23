@@ -1,0 +1,103 @@
+//------------Sonic CD TextFont1 Script-------------//
+//--------Scripted by Christian Whitehead 'The Taxman'--------//
+//-------Unpacked By Rubberduckycooly's Script Unpacker-------//
+
+//-------Aliases-------//
+#alias 35: TYPE_TEXTFONT1
+
+
+sub ObjectDraw
+	ArrayPos0=3
+	GetTextInfo(TempValue1,MENU_1,1,Object.Value1,0)
+	TempValue1-=3
+	TempValue2=TempValue1
+	TempValue2<<=18
+	FlipSign(TempValue2)
+	TempValue2+=Object.XPos
+	while TempValue1>0
+		GetTextInfo(TempValue0,MENU_1,0,Object.Value1,ArrayPos0)
+		switch TempValue0
+		default
+			Object.Frame=0
+			if TempValue0>64
+				if TempValue0<91
+					Object.Frame=TempValue0
+					Object.Frame-=64
+				endif
+			endif
+			if TempValue0>96
+				if TempValue0<123
+					Object.Frame=TempValue0
+					Object.Frame-=96
+				endif
+			endif
+			if Object.Frame>0
+				DrawSpriteXY(Object.Frame,TempValue2,Object.YPos)
+			endif
+			break
+		case 38
+			DrawSpriteXY(32,TempValue2,Object.YPos)
+			break
+		case 39
+			DrawSpriteXY(30,TempValue2,Object.YPos)
+			break
+		case 44
+			DrawSpriteXY(28,TempValue2,Object.YPos)
+			break
+		case 46
+			DrawSpriteXY(27,TempValue2,Object.YPos)
+			break
+		case 47
+			DrawSpriteXY(31,TempValue2,Object.YPos)
+			break
+		case 58
+			DrawSpriteXY(29,TempValue2,Object.YPos)
+			break
+		case 94
+			DrawSpriteXY(36,TempValue2,Object.YPos)
+			break
+		case 225
+			DrawSpriteXY(33,TempValue2,Object.YPos)
+			break
+		case 233
+			DrawSpriteXY(34,TempValue2,Object.YPos)
+			break
+		case 243
+			DrawSpriteXY(35,TempValue2,Object.YPos)
+			break
+
+		endswitch
+		ArrayPos0++
+		TempValue1--
+		TempValue2+=524288
+	loop
+endsub
+
+
+sub ObjectStartup
+	LoadSpriteSheet("Menu/CreditsText.gif")
+	SpriteFrame(-3,-9,8,16,37,35)
+	TempValue1=1
+	while TempValue1<35
+		TempValue0=1
+		while TempValue0<127
+			SpriteFrame(-3,-6,8,16,TempValue0,TempValue1)
+			TempValue0+=9
+		loop
+		TempValue1+=17
+	loop
+	TempValue0=1
+	while TempValue0<37
+		SpriteFrame(-3,-6,8,16,TempValue0,TempValue1)
+		TempValue0+=9
+	loop
+	SpriteFrame(-3,-9,8,16,37,35)
+	SpriteFrame(-3,-9,8,16,46,35)
+	SpriteFrame(-3,-9,8,16,55,35)
+	SpriteFrame(-3,-6,8,16,73,35)
+endsub
+
+sub RSDK
+	LoadSpriteSheet("Global/Display.gif")
+	SetEditorIcon(Icon0,SingleIcon,-16,-16,32,32,1,143)
+endsub

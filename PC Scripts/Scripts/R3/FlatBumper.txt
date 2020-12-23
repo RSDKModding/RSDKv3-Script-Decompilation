@@ -1,0 +1,136 @@
+//------------Sonic CD Flat Bumper Script-------------//
+//--------Scripted by Christian Whitehead 'The Taxman'--------//
+//-------Unpacked By Rubberduckycooly's Script Unpacker-------//
+
+//-------Aliases-------//
+#alias 41: TYPE_FLATBUMPER
+
+
+sub ObjectMain
+	switch Object.State
+	case 0
+		if Object.Value0<96
+			Object.Value0++
+			if Object.PropertyValue==0
+				Object.XPos+=65536
+			else
+				Object.YPos+=65536
+			endif
+		else
+			Object.State=1
+		endif
+		break
+	case 1
+		if Object.Value0>-96
+			Object.Value0--
+			if Object.PropertyValue==0
+				Object.XPos-=65536
+			else
+				Object.YPos-=65536
+			endif
+		else
+			Object.State=0
+		endif
+		break
+
+	endswitch
+endsub
+
+
+sub ObjectPlayerInteraction
+	TempValue0=0
+	PlayerObjectCollision(C_TOUCH,-34,-16,-28,16)
+	TempValue1=CheckResult
+	PlayerObjectCollision(C_TOUCH,28,-16,34,16)
+	TempValue2=CheckResult
+	PlayerObjectCollision(C_BOX,-32,-14,32,14)
+	switch CheckResult
+	case 1
+		if Player.State==22
+			Player.YVelocity=-262144
+		else
+			Player.YVelocity=-458752
+			Player.Timer=0
+		endif
+		Player.Gravity=1
+		TempValue0=1
+		break
+	case 4
+		if Player.State==22
+			Player.YVelocity=262144
+		else
+			Player.YVelocity=458752
+			Player.Timer=0
+		endif
+		Player.Timer=0
+		Player.Gravity=1
+		TempValue0=1
+		break
+
+	endswitch
+	if TempValue1==1
+		Player.Speed=-458752
+		Player.XVelocity=-458752
+		TempValue0=1
+	endif
+	if TempValue2==1
+		Player.Speed=458752
+		Player.XVelocity=458752
+		TempValue0=1
+	endif
+	PlayerObjectCollision(C_TOUCH,-16,-14,16,0)
+	if CheckResult==1
+		if Player.State==22
+			Player.YVelocity=-262144
+		else
+			Player.YVelocity=-458752
+			Player.Timer=0
+		endif
+		Player.Gravity=1
+		TempValue0=1
+	endif
+	PlayerObjectCollision(C_TOUCH,-16,0,16,14)
+	if CheckResult==1
+		if Player.State==22
+			Player.YVelocity=262144
+		else
+			Player.YVelocity=458752
+			Player.Timer=0
+		endif
+		Player.Gravity=1
+		TempValue0=1
+	endif
+	if TempValue0==1
+		PlayStageSfx(1,0)
+	endif
+endsub
+
+
+sub ObjectDraw
+	DrawSprite(0)
+endsub
+
+
+sub ObjectStartup
+	switch Object[24].PropertyValue
+	case 0
+	case 1
+		LoadSpriteSheet("R3/Objects.gif")
+		SpriteFrame(-32,-16,64,32,1,75)
+		break
+	case 2
+		LoadSpriteSheet("R3/Objects3.gif")
+		SpriteFrame(-32,-16,64,32,132,67)
+		break
+	case 3
+		LoadSpriteSheet("R3/Objects3.gif")
+		SpriteFrame(-32,-16,64,32,132,100)
+		break
+
+	endswitch
+endsub
+
+sub RSDK
+	LoadSpriteSheet("Global/Display.gif")
+	SetEditorIcon(Icon0,SingleIcon,-16,-16,32,32,1,143)
+endsub

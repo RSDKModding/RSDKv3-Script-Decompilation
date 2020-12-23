@@ -1,0 +1,68 @@
+//------------Sonic CD KumoKumoWeb Script-------------//
+//--------Scripted by Christian Whitehead 'The Taxman'--------//
+//-------Unpacked By Rubberduckycooly's Script Unpacker-------//
+
+//-------Aliases-------//
+#alias 54: TYPE_KUMOKUMOWEB
+
+
+sub ObjectMain
+	if Object.State==0
+		Object.XPos+=Object.Value1
+		if Object.OutOfBounds==1
+			Object.Type=TypeName[BlankObject]
+		else
+			TempValue0=Screen.YOffset
+			TempValue0-=8
+			TempValue0<<=16
+			if Object.YPos<TempValue0
+				Object.Type=TypeName[BlankObject]
+			endif
+		endif
+	else
+		if Object.Value0<120
+			Object.Value0++
+			if Player.Speed>16384
+				Player.Speed=16384
+			endif
+			if Player.Speed<-16384
+				Player.Speed=-16384
+			endif
+		else
+			Object.Type=TypeName[BlankObject]
+		endif
+	endif
+endsub
+
+
+sub ObjectPlayerInteraction
+	PlayerObjectCollision(C_TOUCH,-6,-6,6,6)
+	if CheckResult==1
+		Object.State=1
+	endif
+endsub
+
+
+sub ObjectDraw
+	if Object.State==1
+		Object.XPos=Player.XPos
+		Object.YPos=Player.YPos
+	endif
+	TempValue0=Object.Frame
+	TempValue0/=3
+	DrawSprite(TempValue0)
+	Object.Frame++
+	Object.Frame%=6
+endsub
+
+
+sub ObjectStartup
+	LoadSpriteSheet("R5/Objects.gif")
+	SpriteFrame(-12,-8,24,16,69,1)
+	SpriteFrame(-12,-8,24,16,94,1)
+endsub
+
+sub RSDK
+	LoadSpriteSheet("Global/Display.gif")
+	SetEditorIcon(Icon0,SingleIcon,-16,-16,32,32,1,143)
+endsub

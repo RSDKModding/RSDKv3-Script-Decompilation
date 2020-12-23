@@ -1,0 +1,352 @@
+//------------Sonic CD Metal Sonic Script-------------//
+//--------Scripted by Christian Whitehead 'The Taxman'--------//
+//-------Unpacked By Rubberduckycooly's Script Unpacker-------//
+
+//-------Aliases-------//
+#alias 52: TYPE_METALSONIC
+
+
+function MetalSonic_Function52
+	Object.YPos-=2097152
+	ObjectTileGrip(0,0,20,0)
+	if CheckResult==0
+		Object.YPos+=1048576
+		ObjectTileGrip(0,0,20,0)
+		if CheckResult==0
+			Object.YPos+=1048576
+			ObjectTileGrip(0,0,20,0)
+		endif
+	endif
+endfunction
+
+
+sub ObjectMain
+	switch Object.State
+	case 0
+		if Object.Animation==0
+			if Player.JumpPress==1
+				Object.Value0=120
+				Object.Animation=1
+			endif
+		else
+			if Object.Value0>0
+				Object.Value0--
+			else
+				Object.Animation=0
+			endif
+		endif
+		break
+	case 1
+		if Object.Value0<140
+			Object.Value0++
+		else
+			Object.Priority=1
+			Object.Value0=0
+			Object.Value3=1
+			Object.Value4=0
+			Object.State++
+		endif
+		break
+	case 2
+		if Object.Value0<204
+			Object.Value0++
+		else
+			Object.Value0=0
+			Object.Value3=2
+			Object.Animation=4
+			Object.Value1=262144
+			Player.HeavyMetalFlag=1
+			Object.State++
+		endif
+		break
+	case 3
+		TempValue0=Object[-2].XPos
+		TempValue0-=117440512
+		if Object.XPos<TempValue0
+			TempValue0=Object.XPos
+			TempValue0-=Player.XPos
+			TempValue0>>=6
+			Object.Value1=262144
+			Object.Value1-=TempValue0
+			if Object.Value1<131072
+				Object.Value1=131072
+			endif
+			if Object.Value1>393216
+				Object.Value1=393216
+			endif
+			if Object.Value1<245760
+				Object.Value3=2
+				Object.Animation=3
+			else
+				Object.Value3=3
+				Object.Animation=4
+			endif
+			if Object.Value0<180
+				Object.Value0++
+			else
+				Object.Animation=9
+				Object.Value0=0
+				Object.Value3=1
+				Object.State++
+				PlayStageSfx(4,0)
+			endif
+		else
+			TempValue0=Object.XPos
+			TempValue0-=Player.XPos
+			TempValue0>>=6
+			Object.Value1=262144
+			Object.Value1-=TempValue0
+			if Object.Value1<131072
+				Object.Value1=131072
+			endif
+			if Object.Value1>393216
+				Object.Value1=393216
+			endif
+			if Object.Value1<245760
+				Object.Value3=2
+				Object.Animation=3
+			else
+				Object.Value3=3
+				Object.Animation=4
+			endif
+		endif
+		break
+	case 4
+		if Object.Value0<60
+			Object.Value0++
+		else
+			Object.Value0=0
+			if Player.XPos>Object.XPos
+				Object.State=6
+				Object.Animation=6
+				Object.Value3=0
+				Object.Value4=0
+				PlayStageSfx(6,0)
+			else
+				Object.State=5
+				Object.Value1=131072
+				Object.Animation=5
+				Object.Value3=4
+				Object.Value4=0
+				PlayStageSfx(5,0)
+			endif
+		endif
+		break
+	case 5
+		if Object.Value0<180
+			Object.Value0++
+			TempValue0=Object[-1].XPos
+			TempValue0+=4194304
+			if Object.XPos<TempValue0
+				Object.State=6
+				Object.Value0=60
+				Object.Animation=7
+				Object.Value3=0
+				Object.Value4=0
+				PlayStageSfx(6,0)
+			endif
+		else
+			Object.Value0=0
+			Object.State=3
+			Object.Value4=0
+		endif
+		break
+	case 6
+		Object.Value1+=2048
+		if Object.Value1>524288
+			Object.Value1=524288
+		endif
+		if Object.Value0<180
+			Object.Value0++
+			if Object.Value0==10
+				Object.Animation=7
+			endif
+		else
+			Object.Value0=0
+			Object.State=3
+		endif
+		break
+	case 7
+		if Player.Animation==ANI_DYING
+			Object.Animation=1
+		endif
+		break
+	case 8
+		Object.Value2+=14336
+		Object.YPos+=Object.Value2
+		if Object.Value2>1048576
+			ResetObjectEntity(Object.EntityNo,TypeName[BlankObject],0,0,0)
+		endif
+		break
+
+	endswitch
+	if Object.Value1>0
+		TempValue0=Object[-1].XPos
+		TempValue0+=4194304
+		if Object.XPos<TempValue0
+			Object.XPos=TempValue0
+		endif
+		if Object.Value1>196608
+			TempValue0=Object.Value1
+			TempValue0-=196608
+			Object.XPos+=196608
+			CallFunction(MetalSonic_Function52)
+			Object.XPos+=TempValue0
+			CallFunction(MetalSonic_Function52)
+		else
+			Object.XPos+=Object.Value1
+			CallFunction(MetalSonic_Function52)
+		endif
+		if CheckResult==1
+			Object.Value2=0
+		else
+			Object.Value2+=14336
+			Object.YPos+=Object.Value2
+		endif
+		switch Object[-2].State
+		case 2
+		case 6
+			if Player.HeavyMetalFlag==1
+				if Stage.PlayerListPos==0
+					SetAchievement(6,100)
+				endif
+			endif
+			TempValue0=Object[-2].XPos
+			TempValue0-=1966080
+			if Object.XPos>TempValue0
+				Object.XPos=TempValue0
+				Object.Value1=0
+				Object.Value2=-425984
+				Object.Value3=0
+				Object.Animation=8
+				Object.State=8
+				CreateTempObject(TypeName[Explosion],0,Object.XPos,Object.YPos)
+				TempValue0=0
+				TempValue1=4
+				while TempValue0<8
+					CreateTempObject(TypeName[Debris],TempValue1,Object.XPos,Object.YPos)
+					Rand(Object[TempObjectPos].Value1,4)
+					Object[TempObjectPos].Value2++
+					Object[TempObjectPos].Value1<<=16
+					FlipSign(Object[TempObjectPos].Value1)
+					Rand(Object[TempObjectPos].Value2,3)
+					Object[TempObjectPos].Value2+=2
+					Object[TempObjectPos].Value2<<=16
+					FlipSign(Object[TempObjectPos].Value2)
+					TempValue0++
+					TempValue1++
+					if TempValue1>8
+						TempValue1=4
+					endif
+				loop
+				PlaySfx(22,0)
+			endif
+			break
+		case 4
+			TempValue0=Object[-2].XPos
+			TempValue0+=2359296
+			if Object.XPos>TempValue0
+				Object.XPos=TempValue0
+				Object.Value1=0
+				Object.Value3=0
+				Object.Animation=0
+				Object.State=7
+			endif
+			break
+
+		endswitch
+	endif
+	ProcessAnimation()
+endsub
+
+
+sub ObjectPlayerInteraction
+	switch Object.Animation
+	case 5
+	case 7
+		PlayerObjectCollision(C_TOUCH,-16,-12,16,12)
+		if CheckResult==1
+			CallFunction(PlayerObject_BadnikHit)
+			Player.HeavyMetalFlag=0
+		endif
+		endswitch
+endsub
+
+
+
+sub ObjectDraw
+	switch Object.Value3
+	case 1
+		TempValue0=Object.Value4
+		TempValue0>>=1
+		DrawSprite(TempValue0)
+		Object.Value4++
+		Object.Value4&=7
+		break
+	case 2
+		TempValue0=Object.Value4
+		TempValue0>>=1
+		TempValue0+=4
+		DrawSprite(TempValue0)
+		Object.Value4++
+		Object.Value4&=7
+		break
+	case 3
+		TempValue0=Object.Value4
+		TempValue0>>=1
+		TempValue0+=8
+		DrawSprite(TempValue0)
+		Object.Value4++
+		Object.Value4&=7
+		break
+	case 4
+		TempValue0=Object.Value4
+		TempValue0+=12
+		DrawSprite(TempValue0)
+		Object.Value4++
+		Object.Value4%=10
+		break
+
+	endswitch
+	DrawObjectAnimation()
+endsub
+
+
+sub ObjectStartup
+	LoadSpriteSheet("R7/Objects3.gif")
+	LoadAnimation("MetalSonic.Ani")
+	SpriteFrame(0,0,0,0,1,83)
+	SpriteFrame(-12,3,16,16,1,83)
+	SpriteFrame(0,0,0,0,1,83)
+	SpriteFrame(-12,3,16,16,18,83)
+	SpriteFrame(0,0,0,0,1,83)
+	SpriteFrame(-14,-8,16,16,18,83)
+	SpriteFrame(0,0,0,0,1,83)
+	SpriteFrame(-18,-12,24,24,1,100)
+	SpriteFrame(0,0,0,0,1,83)
+	SpriteFrame(-18,-12,24,24,1,100)
+	SpriteFrame(0,0,0,0,1,83)
+	SpriteFrame(-22,-16,32,32,1,125)
+	SpriteFrame(-24,-28,48,48,150,75)
+	SpriteFrame(-24,-28,48,48,150,75)
+	SpriteFrame(-24,-28,48,48,150,75)
+	SpriteFrame(-24,-28,48,48,150,75)
+	SpriteFrame(0,0,0,0,1,83)
+	SpriteFrame(-24,-28,48,48,199,75)
+	SpriteFrame(-24,-28,48,48,199,75)
+	SpriteFrame(-24,-28,48,48,199,75)
+	SpriteFrame(-24,-28,48,48,199,75)
+	SpriteFrame(0,0,0,0,1,83)
+	ArrayPos0=32
+	while ArrayPos0<1056
+		if Object[ArrayPos0].Type==TypeName[MetalSonic]
+			MetalSonic_EntityNo=ArrayPos0
+		endif
+		ArrayPos0++
+	loop
+endsub
+
+sub RSDK
+	LoadSpriteSheet("Global/Display.gif")
+	SetEditorIcon(Icon0,SingleIcon,-16,-16,32,32,1,143)
+endsub

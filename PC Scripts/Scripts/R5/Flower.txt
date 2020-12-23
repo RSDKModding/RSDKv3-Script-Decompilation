@@ -1,0 +1,123 @@
+//------------Sonic CD Flower Script-------------//
+//--------Scripted by Christian Whitehead 'The Taxman'--------//
+//-------Unpacked By Rubberduckycooly's Script Unpacker-------//
+
+//-------Aliases-------//
+#alias 55: TYPE_FLOWER
+
+
+sub ObjectMain
+	switch Object.State
+	case 0
+		Object.Frame=8
+		Object.Value0++
+		if Object.Value0==20
+			Object.Value0=0
+			Object.State++
+		endif
+		break
+	case 1
+		Object.Frame=Object.Value0
+		Object.Frame>>=2
+		Object.Value0++
+		Object.Value0&=7
+		Object.YPos+=131072
+		ObjectTileCollision(0,0,8,0)
+		if CheckResult==1
+			Object.YPos+=524288
+			Object.State++
+			Object.Value0=0
+			Object.Frame=2
+		endif
+		break
+	case 2
+		Object.Value0++
+		if Object.Value0==4
+			Object.Value0=0
+			Object.State++
+			Object.Frame=3
+		endif
+		break
+	case 3
+		Object.Value0++
+		if Object.Value0==4
+			Object.Value0=0
+			Object.State++
+			Object.Frame=2
+		endif
+		break
+	case 4
+		Object.Value0++
+		if Object.Value0==4
+			Object.Value0=0
+			Object.State++
+			Object.Frame=3
+		endif
+		break
+	case 5
+		Object.Value0++
+		if Object.Value0==5
+			Object.Value0=0
+			Object.State++
+			Object.Frame=4
+		endif
+		break
+	case 6
+		Object.Value0++
+		if Object.Value0==4
+			Object.Value0=0
+			Object.State++
+			Object.Frame=5
+		endif
+		break
+	case 7
+		Object.Value0++
+		if Object.Value0==2
+			Object.Value0=0
+			Object.State++
+			Object.Frame=6
+		endif
+		break
+	case 8
+		Object.Value0++
+		if Object.Value0==20
+			Object.Value0=0
+			Object.State++
+			Object.Frame=7
+		endif
+		break
+	case 9
+		Object.Value0++
+		if Object.Value0==20
+			Object.Value0=0
+			Object.State--
+			Object.Frame=6
+		endif
+		break
+
+	endswitch
+endsub
+
+
+sub ObjectDraw
+	DrawSprite(Object.Frame)
+endsub
+
+
+sub ObjectStartup
+	LoadSpriteSheet("R5/Objects.gif")
+	SpriteFrame(-4,-8,8,16,99,51)
+	SpriteFrame(-4,-8,8,16,99,68)
+	SpriteFrame(-8,-8,16,16,167,110)
+	SpriteFrame(-8,-8,16,16,150,127)
+	SpriteFrame(-8,-16,16,16,150,110)
+	SpriteFrame(-12,-24,24,24,100,168)
+	SpriteFrame(-12,-48,24,48,100,144)
+	SpriteFrame(-12,-48,24,48,125,144)
+	SpriteFrame(0,0,0,0,1,1)
+endsub
+
+sub RSDK
+	LoadSpriteSheet("Global/Display.gif")
+	SetEditorIcon(Icon0,SingleIcon,-16,-16,32,32,1,143)
+endsub

@@ -1,0 +1,123 @@
+//------------Sonic CD Lightning Script-------------//
+//--------Scripted by Christian Whitehead 'The Taxman'--------//
+//-------Unpacked By Rubberduckycooly's Script Unpacker-------//
+
+//-------Aliases-------//
+#alias 61: TYPE_LIGHTNING
+
+
+sub ObjectMain
+	switch Object.State
+	case 0
+		if Object.Value0<256
+			Object.Value0++
+		else
+			Object.Value0=0
+			Object.Alpha=254
+			Object.Value1=128
+			Object.State++
+		endif
+		break
+	case 1
+		if Object.Alpha>0
+			Object.Alpha-=2
+		else
+			Object.State=0
+			Object.Frame++
+			Object.Frame&=3
+		endif
+		if Object.Value1>0
+			Object.Value1-=4
+		endif
+		break
+
+	endswitch
+endsub
+
+
+sub ObjectDraw
+	if Object.State>0
+		if Object.DrawOrder==1
+			Object.YPos=Screen.YOffset
+			Object.YPos*=Object.PropertyValue
+			Object.YPos>>=7
+			FlipSign(Object.YPos)
+			Object.YPos+=312
+			TempValue0=Object.Value1
+			TempValue0>>=1
+			DrawRect(0,0,Screen.XSize,Screen.YSize,224,192,128,TempValue0)
+			TempValue0=Screen.XOffset
+			TempValue0>>=3
+			TempValue0&=511
+			FlipSign(TempValue0)
+			TempValue1=Object.Frame
+			TempValue0+=64
+			if TempValue0<-64
+				TempValue0+=512
+				DrawSpriteScreenFX(TempValue1,FX_INK,TempValue0,Object.YPos)
+				TempValue0-=512
+			else
+				DrawSpriteScreenFX(TempValue1,FX_INK,TempValue0,Object.YPos)
+			endif
+			TempValue1++
+			TempValue1&=3
+			TempValue0+=128
+			if TempValue0<-64
+				TempValue0+=512
+				DrawSpriteScreenFX(TempValue1,FX_INK,TempValue0,Object.YPos)
+				TempValue0-=512
+			else
+				DrawSpriteScreenFX(TempValue1,FX_INK,TempValue0,Object.YPos)
+			endif
+			TempValue1++
+			TempValue1&=3
+			TempValue0+=128
+			if TempValue0<-64
+				TempValue0+=512
+				DrawSpriteScreenFX(TempValue1,FX_INK,TempValue0,Object.YPos)
+				TempValue0-=512
+			else
+				DrawSpriteScreenFX(TempValue1,FX_INK,TempValue0,Object.YPos)
+			endif
+			TempValue1++
+			TempValue1&=3
+			TempValue0+=96
+			if TempValue0<-64
+				TempValue0+=512
+				DrawSpriteScreenFX(TempValue1,FX_INK,TempValue0,Object.YPos)
+				TempValue0-=512
+			else
+				DrawSpriteScreenFX(TempValue1,FX_INK,TempValue0,Object.YPos)
+			endif
+			SetDrawListEntityRef(Object.EntityNo,5,Screen[5].DrawListSize)
+			Screen[5].DrawListSize++
+			Object.DrawOrder=5
+		else
+			DrawRect(0,0,Screen.XSize,Screen.YSize,224,224,192,Object.Value1)
+			Object.DrawOrder=1
+		endif
+	endif
+endsub
+
+
+sub ObjectStartup
+	LoadSpriteSheet("R7/Objects3.gif")
+	SpriteFrame(-8,0,16,40,43,140)
+	SpriteFrame(-8,0,16,24,60,140)
+	SpriteFrame(-16,0,32,40,77,132)
+	SpriteFrame(-8,0,16,24,60,140)
+	ArrayPos0=32
+	while ArrayPos0<1056
+		if Object[ArrayPos0].Type==TypeName[Lightning]
+			Object[ArrayPos0].Priority=1
+			Object[ArrayPos0].DrawOrder=1
+			Object[ArrayPos0].InkEffect=2
+		endif
+		ArrayPos0++
+	loop
+endsub
+
+sub RSDK
+	LoadSpriteSheet("Global/Display.gif")
+	SetEditorIcon(Icon0,SingleIcon,-16,-16,32,32,1,143)
+endsub

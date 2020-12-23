@@ -1,0 +1,236 @@
+//------------Sonic CD Kama Kama Script-------------//
+//--------Scripted by Christian Whitehead 'The Taxman'--------//
+//-------Unpacked By Rubberduckycooly's Script Unpacker-------//
+
+//-------Aliases-------//
+#alias 50: TYPE_KAMAKAMA
+
+
+sub ObjectMain
+	Object.Value1++
+	Object.Value1&=15
+	switch Object.State
+	case 0
+		ObjectTileGrip(0,0,19,0)
+		if Object.XPos>Player.XPos
+			Object.Direction=FACING_RIGHT
+		else
+			Object.Direction=FACING_LEFT
+		endif
+		PlayerObjectCollision(C_TOUCH,-96,-48,96,48)
+		if CheckResult==1
+			Object.State=1
+			Object.Priority=1
+			if Object.PropertyValue==0
+				CreateTempObject(TypeName[KamaKamaBlade],24,Object.XPos,Object.YPos)
+				Object[TempObjectPos].Direction=Object.Direction
+				Object[TempObjectPos].iYPos-=6
+				Object[TempObjectPos].Value2=Object.EntityNo
+				if Object.Direction==FACING_RIGHT
+					Object[TempObjectPos].iXPos-=8
+				else
+					Object[TempObjectPos].iXPos+=8
+				endif
+				CreateTempObject(TypeName[KamaKamaBlade],56,Object.XPos,Object.YPos)
+				Object[TempObjectPos].Direction=Object.Direction
+				Object[TempObjectPos].iYPos-=4
+				Object[TempObjectPos].Value2=Object.EntityNo
+				if Object.Direction==FACING_RIGHT
+					Object[TempObjectPos].iXPos-=16
+				else
+					Object[TempObjectPos].iXPos+=16
+				endif
+			endif
+		endif
+		break
+	case 1
+		if Object.Value0<110
+			Object.Value0++
+		else
+			Object.State=2
+			Object.Value0=0
+		endif
+		break
+	case 2
+		if Object.Value0<48
+			Object.Value0++
+		else
+			Object.State=3
+			Object.Value0=0
+			Object.Frame=0
+			if Object.Direction==FACING_RIGHT
+				Object.Value2=-65536
+			else
+				Object.Value2=65536
+			endif
+			if Object.PropertyValue>0
+				Object.Value2>>=1
+			endif
+		endif
+		break
+	case 3
+		Object.Frame++
+		Object.Frame&=31
+		Object.XPos+=Object.Value2
+		ObjectTileGrip(0,0,19,0)
+		if CheckResult==0
+			Object.State=4
+			Object.Value0=60
+		endif
+		break
+	case 4
+		Object.Frame++
+		Object.Frame&=31
+		if Object.Value0>0
+			Object.Value0--
+		else
+			Object.State=3
+			FlipSign(Object.Value2)
+			if Object.Direction==FACING_RIGHT
+				Object.Direction=FACING_LEFT
+			else
+				Object.Direction=FACING_RIGHT
+			endif
+		endif
+		break
+
+	endswitch
+	if Object.OutOfBounds==1
+		Object.Priority=0
+		Object.State=0
+		Object.Value0=0
+		Object.Value1=0
+		Object.Frame=0
+		Object.XPos=Object.Value3
+		Object.YPos=Object.Value4
+	endif
+	CallFunction(StageSetup_CheckGoodFuture)
+endsub
+
+
+sub ObjectPlayerInteraction
+	PlayerObjectCollision(C_TOUCH,-16,-16,16,20)
+	if CheckResult==1
+		CallFunction(PlayerObject_BadnikBreak)
+	endif
+endsub
+
+
+sub ObjectDraw
+	switch Object.State
+	case 0
+		TempValue0=Object.Value1
+		TempValue0>>=3
+		DrawSpriteFX(TempValue0,FX_FLIP,Object.XPos,Object.YPos)
+		if Object.PropertyValue==0
+			TempValue1=TempValue0
+			TempValue1+=4
+			DrawSpriteFX(TempValue1,FX_FLIP,Object.XPos,Object.YPos)
+			TempValue1+=12
+			DrawSpriteFX(TempValue1,FX_FLIP,Object.XPos,Object.YPos)
+			TempValue1-=10
+			DrawSpriteFX(TempValue1,FX_FLIP,Object.XPos,Object.YPos)
+		else
+			TempValue1=TempValue0
+			TempValue1+=10
+			DrawSpriteFX(TempValue1,FX_FLIP,Object.XPos,Object.YPos)
+			TempValue1+=2
+			DrawSpriteFX(TempValue1,FX_FLIP,Object.XPos,Object.YPos)
+		endif
+		break
+	case 1
+		TempValue0=Object.Value1
+		TempValue0>>=3
+		DrawSpriteFX(TempValue0,FX_FLIP,Object.XPos,Object.YPos)
+		if Object.PropertyValue==0
+			TempValue1=TempValue0
+			TempValue1+=4
+			DrawSpriteFX(TempValue1,FX_FLIP,Object.XPos,Object.YPos)
+			TempValue1+=2
+			DrawSpriteFX(TempValue1,FX_FLIP,Object.XPos,Object.YPos)
+		else
+			TempValue1=TempValue0
+			TempValue1+=10
+			DrawSpriteFX(TempValue1,FX_FLIP,Object.XPos,Object.YPos)
+			TempValue1+=2
+			DrawSpriteFX(TempValue1,FX_FLIP,Object.XPos,Object.YPos)
+		endif
+		break
+	case 2
+		TempValue0=Object.Value1
+		TempValue0>>=3
+		DrawSpriteFX(TempValue0,FX_FLIP,Object.XPos,Object.YPos)
+		if Object.PropertyValue==0
+			TempValue1=TempValue0
+			TempValue1+=4
+			DrawSpriteFX(TempValue1,FX_FLIP,Object.XPos,Object.YPos)
+			TempValue1+=4
+			DrawSpriteFX(TempValue1,FX_FLIP,Object.XPos,Object.YPos)
+		else
+			TempValue1=TempValue0
+			TempValue1+=10
+			DrawSpriteFX(TempValue1,FX_FLIP,Object.XPos,Object.YPos)
+			TempValue1+=4
+			DrawSpriteFX(TempValue1,FX_FLIP,Object.XPos,Object.YPos)
+		endif
+		break
+	case 3
+	case 4
+		TempValue0=Object.Frame
+		TempValue0>>=3
+		DrawSpriteFX(TempValue0,FX_FLIP,Object.XPos,Object.YPos)
+		TempValue0=Object.Value1
+		TempValue0>>=3
+		if Object.PropertyValue==0
+			TempValue1=TempValue0
+			TempValue1+=4
+			DrawSpriteFX(TempValue1,FX_FLIP,Object.XPos,Object.YPos)
+			TempValue1+=2
+			DrawSpriteFX(TempValue1,FX_FLIP,Object.XPos,Object.YPos)
+		else
+			TempValue1=TempValue0
+			TempValue1+=10
+			DrawSpriteFX(TempValue1,FX_FLIP,Object.XPos,Object.YPos)
+			TempValue1+=2
+			DrawSpriteFX(TempValue1,FX_FLIP,Object.XPos,Object.YPos)
+		endif
+		break
+
+	endswitch
+endsub
+
+
+sub ObjectStartup
+	LoadSpriteSheet("R3/Objects.gif")
+	ArrayPos0=32
+	while ArrayPos0<1056
+		if Object[ArrayPos0].Type==TypeName[KamaKama]
+			Object[ArrayPos0].Value3=Object[ArrayPos0].XPos
+			Object[ArrayPos0].Value4=Object[ArrayPos0].YPos
+		endif
+		ArrayPos0++
+	loop
+	SpriteFrame(0,4,16,16,198,119)
+	SpriteFrame(0,4,16,16,215,119)
+	SpriteFrame(0,4,16,16,232,119)
+	SpriteFrame(0,4,16,16,215,119)
+	SpriteFrame(-10,-4,24,16,215,102)
+	SpriteFrame(-10,-3,24,16,215,102)
+	SpriteFrame(-16,-20,16,16,198,102)
+	SpriteFrame(-16,-19,16,16,198,102)
+	SpriteFrame(-16,-20,16,16,198,136)
+	SpriteFrame(-16,-19,16,16,198,102)
+	SpriteFrame(-10,-4,24,16,232,136)
+	SpriteFrame(-10,-3,24,16,198,153)
+	SpriteFrame(-16,-20,16,16,215,136)
+	SpriteFrame(-16,-19,16,16,240,102)
+	SpriteFrame(-16,-20,16,16,198,136)
+	SpriteFrame(-16,-19,16,16,240,102)
+	SpriteFrame(-22,-14,24,20,173,101)
+	SpriteFrame(-22,-14,24,20,173,122)
+endsub
+
+sub RSDK
+	LoadSpriteSheet("Global/Display.gif")
+	SetEditorIcon(Icon0,SingleIcon,-16,-16,32,32,1,143)
+endsub

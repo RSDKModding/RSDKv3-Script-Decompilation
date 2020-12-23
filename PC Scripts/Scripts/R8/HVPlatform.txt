@@ -1,0 +1,177 @@
+//------------Sonic CD HV Platform Script-------------//
+//--------Scripted by Christian Whitehead 'The Taxman'--------//
+//-------Unpacked By Rubberduckycooly's Script Unpacker-------//
+
+//-------Aliases-------//
+#alias 42: TYPE_HVPLATFORM
+
+
+sub ObjectMain
+	switch Object.State
+	case 0
+	case 8
+		if Object.Value0<30
+			Object.Value0++
+		else
+			Object.Value0=0
+			Object.State++
+		endif
+		break
+	case 1
+	case 2
+	case 3
+	case 9
+	case 10
+	case 11
+		if Object.Value0<5
+			Object.Value0++
+		else
+			Object.Value0=0
+			Object.State++
+		endif
+		break
+	case 4
+	case 12
+		if Object.Value0<120
+			Object.Value0++
+		else
+			Object.Value0=0
+			Object.State++
+		endif
+		break
+	case 5
+	case 6
+	case 7
+	case 13
+	case 14
+	case 15
+		if Object.Value0<5
+			Object.Value0++
+		else
+			Object.Value0=0
+			Object.State++
+			Object.State&=15
+		endif
+		break
+
+	endswitch
+endsub
+
+
+sub ObjectPlayerInteraction
+	switch Object.State
+	case 0
+	case 8
+		PlayerObjectCollision(C_BOX,-8,-8,8,8)
+		break
+	case 1
+	case 7
+		PlayerObjectCollision(C_BOX,-24,-8,24,8)
+		break
+	case 2
+	case 6
+		PlayerObjectCollision(C_BOX,-40,-8,40,8)
+		break
+	case 3
+	case 4
+	case 5
+		PlayerObjectCollision(C_BOX,-56,-8,56,8)
+		break
+	case 9
+	case 15
+		PlayerObjectCollision(C_BOX,-8,-24,8,24)
+		break
+	case 10
+	case 14
+		PlayerObjectCollision(C_BOX,-8,-40,8,40)
+		break
+	case 11
+	case 12
+	case 13
+		PlayerObjectCollision(C_BOX,-8,-56,8,56)
+		break
+
+	endswitch
+endsub
+
+
+sub ObjectDraw
+	DrawSprite(0)
+	switch Object.State
+	case 1
+	case 7
+		DrawSprite(3)
+		DrawSprite(4)
+		break
+	case 2
+	case 6
+		DrawSprite(2)
+		DrawSprite(3)
+		DrawSprite(4)
+		DrawSprite(5)
+		break
+	case 3
+	case 4
+	case 5
+		DrawSprite(1)
+		DrawSprite(2)
+		DrawSprite(3)
+		DrawSprite(4)
+		DrawSprite(5)
+		DrawSprite(6)
+		break
+	case 9
+	case 15
+		DrawSprite(9)
+		DrawSprite(10)
+		break
+	case 10
+	case 14
+		DrawSprite(8)
+		DrawSprite(9)
+		DrawSprite(10)
+		DrawSprite(11)
+		break
+	case 11
+	case 12
+	case 13
+		DrawSprite(7)
+		DrawSprite(8)
+		DrawSprite(9)
+		DrawSprite(10)
+		DrawSprite(11)
+		DrawSprite(12)
+		break
+
+	endswitch
+endsub
+
+
+sub ObjectStartup
+	LoadSpriteSheet("R8/Objects.gif")
+	SpriteFrame(-8,-8,16,16,140,123)
+	SpriteFrame(-56,-8,16,16,75,200)
+	SpriteFrame(-40,-8,16,16,75,200)
+	SpriteFrame(-24,-8,16,16,75,200)
+	SpriteFrame(8,-8,16,16,75,200)
+	SpriteFrame(24,-8,16,16,75,200)
+	SpriteFrame(40,-8,16,16,75,200)
+	SpriteFrame(-8,-56,16,16,75,200)
+	SpriteFrame(-8,-40,16,16,75,200)
+	SpriteFrame(-8,-24,16,16,75,200)
+	SpriteFrame(-8,8,16,16,75,200)
+	SpriteFrame(-8,24,16,16,75,200)
+	SpriteFrame(-8,40,16,16,75,200)
+	ArrayPos0=32
+	while ArrayPos0<1056
+		if Object[ArrayPos0].Type==TypeName[HVPlatform]
+			Object[ArrayPos0].State=12
+		endif
+		ArrayPos0++
+	loop
+endsub
+
+sub RSDK
+	LoadSpriteSheet("Global/Display.gif")
+	SetEditorIcon(Icon0,SingleIcon,-16,-16,32,32,1,143)
+endsub

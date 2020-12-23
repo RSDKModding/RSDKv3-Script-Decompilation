@@ -1,0 +1,74 @@
+//------------Sonic CD DustPuff Script-------------//
+//--------Scripted by Christian Whitehead 'The Taxman'--------//
+//-------Unpacked By Rubberduckycooly's Script Unpacker-------//
+
+//-------Aliases-------//
+#alias 13: TYPE_DUSTPUFF
+
+
+sub ObjectMain
+	if Object.PropertyValue==0
+		if Player.YPos>0
+			ResetObjectEntity(3,TypeName[BlankObject],0,0,0)
+		else
+			TempValue0=Player.XPos
+			TempValue0>>=16
+			TempValue1=Object[-1].Value0
+			TempValue1>>=16
+			Get16x16TileInfo(CheckResult,TempValue0,TempValue1,6)
+			if CheckResult>0
+				Object.Value0++
+				if Object.Value0>2
+					Object.Value0=0
+					PlayStageSfx(0,0)
+					Rand(TempValue0,40)
+					TempValue0-=20
+					Rand(TempValue1,8)
+					TempValue1-=8
+					TempValue0+=Screen.CenterX
+					TempValue1+=224
+					TempValue0<<=16
+					TempValue1<<=16
+					CreateTempObject(TypeName[DustPuff],1,TempValue0,TempValue1)
+					Object[TempObjectPos].DrawOrder=4
+				endif
+			else
+				Object.Type=TypeName[BlankObject]
+				Object.Value0=0
+			endif
+		endif
+	else
+		Object.Value0++
+		if Object.Value0==9
+			Object.Type=TypeName[BlankObject]
+		endif
+		if Player.Left==1
+			Object.XPos+=65536
+		endif
+		if Player.Right==1
+			Object.XPos-=65536
+		endif
+	endif
+endsub
+
+
+sub ObjectDraw
+	if Object.PropertyValue==1
+		Object.Frame=Object.Value0
+		Object.Frame/=3
+		DrawSprite(Object.Frame)
+	endif
+endsub
+
+
+sub ObjectStartup
+	LoadSpriteSheet("Special/Objects.gif")
+	SpriteFrame(-5,-4,10,8,27,58)
+	SpriteFrame(-5,-4,11,8,10,58)
+	SpriteFrame(-4,-4,8,8,1,58)
+endsub
+
+sub RSDK
+	LoadSpriteSheet("Global/Display.gif")
+	SetEditorIcon(Icon0,SingleIcon,-16,-16,32,32,1,143)
+endsub

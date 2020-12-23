@@ -1,0 +1,133 @@
+//------------Sonic CD R8 Setup Script-------------//
+//--------Scripted by Christian Whitehead 'The Taxman'--------//
+//-------Unpacked By Rubberduckycooly's Script Unpacker-------//
+
+//-------Aliases-------//
+#alias 35: TYPE_R8SETUP
+
+
+sub ObjectMain
+	Object.Rotation++
+	Object.Rotation%=144
+	TempValue0=Object.Value2
+	TempValue0%=7
+	if TempValue0==0
+		TempValue0=Object.Value2
+		TempValue0/=7
+		TempValue0<<=1
+		TempValue0+=600
+		Copy16x16Tile(387,TempValue0)
+		TempValue0++
+		Copy16x16Tile(388,TempValue0)
+	endif
+	Object.Value2++
+	Object.Value2%=28
+	TempValue0=Object.Value3
+	TempValue0&=3
+	if TempValue0==0
+		TempValue0=Object.Value3
+		TempValue0>>=2
+		TempValue0<<=1
+		TempValue0+=608
+		Copy16x16Tile(389,TempValue0)
+		TempValue0++
+		Copy16x16Tile(390,TempValue0)
+	endif
+	Object.Value3++
+	Object.Value3&=15
+	TempValue0=Object.Value4
+	TempValue0%=5
+	if TempValue0==0
+		TempValue0=Object.Value4
+		TempValue0/=5
+		TempValue0<<=2
+		TempValue0+=616
+		Copy16x16Tile(391,TempValue0)
+		TempValue0++
+		Copy16x16Tile(392,TempValue0)
+		TempValue0++
+		Copy16x16Tile(393,TempValue0)
+		TempValue0++
+		Copy16x16Tile(394,TempValue0)
+	endif
+	Object.Value4++
+	Object.Value4%=20
+	TempValue0=Object.Value5
+	TempValue0&=7
+	if TempValue0==0
+		TempValue0=Object.Value5
+		TempValue0>>=3
+		TempValue0+=632
+		Copy16x16Tile(396,TempValue0)
+	endif
+	Object.Value5++
+	Object.Value5%=56
+	Object.Value0++
+	if Object.Value0==6
+		Object.Value0=0
+		Object.Value1++
+		Object.Value1%=6
+		TempValue0=Object.Value1
+		TempValue0+=639
+		Copy16x16Tile(395,TempValue0)
+	endif
+	SetActivePalette(Object.Value1,0,Screen.YSize)
+endsub
+
+
+sub ObjectPlayerInteraction
+	TempValue1=Player.XPos
+	TempValue1>>=16
+	TempValue1+=Player.CollisionRight
+	TempValue2=Player.YPos
+	TempValue2>>=16
+	TempValue2+=Player.CollisionBottom
+	TempValue2+=2
+	Get16x16TileInfo(TempValue0,TempValue1,TempValue2,8)
+	if TempValue0==1
+		Get16x16TileInfo(TempValue0,TempValue1,TempValue2,1)
+		if TempValue0==0
+			Player.XPos+=65536
+		else
+			Player.XPos-=65536
+		endif
+	else
+		TempValue1=Player.XPos
+		TempValue1>>=16
+		TempValue1+=Player.CollisionLeft
+		Get16x16TileInfo(TempValue0,TempValue1,TempValue2,8)
+		if TempValue0==1
+			Get16x16TileInfo(TempValue0,TempValue1,TempValue2,1)
+			if TempValue0==0
+				Player.XPos+=65536
+			else
+				Player.XPos-=65536
+			endif
+		endif
+	endif
+endsub
+
+
+sub ObjectStartup
+	Object[19].Type=TypeName[R8Setup]
+	Object[19].Priority=1
+	CopyPalette(0,1)
+	CopyPalette(0,2)
+	CopyPalette(0,3)
+	CopyPalette(0,4)
+	CopyPalette(0,5)
+	TempValue0=0
+	TempValue1=0
+	TempValue2=32
+	while TempValue0<6
+		LoadPalette("R83D_PalCycle.act",TempValue0,160,TempValue1,TempValue2)
+		TempValue0++
+		TempValue1+=32
+		TempValue2+=32
+	loop
+endsub
+
+sub RSDK
+	LoadSpriteSheet("Global/Display.gif")
+	SetEditorIcon(Icon0,SingleIcon,-16,-16,32,32,1,143)
+endsub

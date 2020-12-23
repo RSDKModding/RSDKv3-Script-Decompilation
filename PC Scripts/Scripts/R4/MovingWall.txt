@@ -1,0 +1,95 @@
+//------------Sonic CD Moving Wall Script-------------//
+//--------Scripted by Christian Whitehead 'The Taxman'--------//
+//-------Unpacked By Rubberduckycooly's Script Unpacker-------//
+
+//-------Aliases-------//
+#alias 64: TYPE_MOVINGWALL
+
+
+sub ObjectMain
+	if Object.PropertyValue==0
+		if Player.ControlMode>-1
+			if Object.Value0<384
+				Object.Value0++
+				Object.XPos+=32768
+			else
+				Object.Priority=0
+				Object.PropertyValue=1
+			endif
+		endif
+	endif
+endsub
+
+
+sub ObjectPlayerInteraction
+	PlayerObjectCollision(C_BOX,-32,-64,32,64)
+	if CheckResult==3
+		if Object.Value0==383
+			Player.XPos+=65536
+		endif
+	endif
+endsub
+
+
+sub ObjectDraw
+	DrawSprite(0)
+	DrawSprite(1)
+	DrawSprite(2)
+	DrawSprite(3)
+	DrawSprite(4)
+	DrawSprite(5)
+	DrawSprite(6)
+	DrawSprite(7)
+endsub
+
+
+sub ObjectStartup
+	switch Object[24].PropertyValue
+	case 0
+		LoadSpriteSheet("R4/Objects.gif")
+		TempValue0=163
+		TempValue1=1
+		TempValue2=196
+		break
+	case 1
+		LoadSpriteSheet("R4/Objects2.gif")
+		TempValue0=1
+		TempValue1=157
+		TempValue2=34
+		break
+	case 2
+		LoadSpriteSheet("R4/Objects2.gif")
+		TempValue0=1
+		TempValue1=190
+		TempValue2=34
+		break
+	case 3
+		LoadSpriteSheet("R4/Objects2.gif")
+		TempValue0=1
+		TempValue1=223
+		TempValue2=34
+		break
+
+	endswitch
+	SpriteFrame(-32,-64,32,32,TempValue0,TempValue1)
+	SpriteFrame(0,-64,32,32,TempValue0,TempValue1)
+	SpriteFrame(-32,-32,32,32,TempValue0,TempValue1)
+	SpriteFrame(0,-32,32,32,TempValue0,TempValue1)
+	SpriteFrame(-32,0,32,32,TempValue0,TempValue1)
+	SpriteFrame(0,0,32,32,TempValue0,TempValue1)
+	SpriteFrame(-32,32,32,32,TempValue0,TempValue1)
+	SpriteFrame(0,32,32,32,TempValue0,TempValue1)
+	ArrayPos0=32
+	while ArrayPos0<1056
+		if Object[ArrayPos0].Type==TypeName[MovingWall]
+			Object[ArrayPos0].DrawOrder=4
+			Object[ArrayPos0].Priority=1
+		endif
+		ArrayPos0++
+	loop
+endsub
+
+sub RSDK
+	LoadSpriteSheet("Global/Display.gif")
+	SetEditorIcon(Icon0,SingleIcon,-16,-16,32,32,1,143)
+endsub

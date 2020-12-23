@@ -1,0 +1,71 @@
+//------------Sonic CD Time Warp Fix Script-------------//
+//--------Scripted by Christian Whitehead 'The Taxman'--------//
+//-------Unpacked By Rubberduckycooly's Script Unpacker-------//
+
+//-------Aliases-------//
+#alias 68: TYPE_TIMEWARPFIX
+
+
+sub ObjectMain
+	switch Object.PropertyValue
+	case 0
+		PlayerObjectCollision(C_TOUCH,-16,-16,16,16)
+		if CheckResult==1
+			if Warp.Destination>0
+				if Warp.Timer>99
+					if Warp.Timer<220
+						Warp.Destination=0
+					endif
+				endif
+				Warp.Timer=0
+			endif
+		endif
+		break
+	case 1
+		if Player.XPos<Object.XPos
+			Warp.Destination=0
+			Warp.Timer=0
+		endif
+		break
+	case 2
+		PlayerObjectCollision(C_TOUCH,-48,-48,48,48)
+		if CheckResult==1
+			Object.Type=TypeName[BlankObject]
+			Player.XPos=Object[+1].XPos
+			Player.YPos=Object[+1].YPos
+		endif
+		Object.Value0++
+		if Object.Value0==2
+			Object.Type=TypeName[BlankObject]
+		endif
+		break
+	case 3
+		PlayerObjectCollision(C_TOUCH,-96,-96,96,96)
+		if CheckResult==1
+			Object.Type=TypeName[BlankObject]
+			Player.XPos=Object[+1].XPos
+			Player.YPos=Object[+1].YPos
+			Player.Gravity=1
+		endif
+		Object.Value0++
+		if Object.Value0==2
+			Object.Type=TypeName[BlankObject]
+		endif
+		break
+
+	endswitch
+endsub
+
+
+sub ObjectPlayerInteraction
+	PlayerObjectCollision(C_TOUCH,-14,-15,14,16)
+endsub
+
+
+sub ObjectStartup
+endsub
+
+sub RSDK
+	LoadSpriteSheet("Global/Display.gif")
+	SetEditorIcon(Icon0,SingleIcon,-16,-16,32,32,1,143)
+endsub

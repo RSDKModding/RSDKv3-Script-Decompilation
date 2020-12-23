@@ -1,0 +1,445 @@
+//------------Sonic CD ActFinish Script-------------//
+//--------Scripted by Christian Whitehead 'The Taxman'--------//
+//-------Unpacked By Rubberduckycooly's Script Unpacker-------//
+
+//-------Aliases-------//
+#alias 4: TYPE_ACTFINISH
+
+
+sub ObjectMain
+	switch Object.State
+	case 0
+		Object.XPos=-799
+		Object.Value1=1168
+		Object.Value2=1255
+		Object.Value3=1319
+		Object.Value4=1402
+		Object.State=1
+		switch Stage.Minutes
+		case 0
+			if Stage.Seconds<30
+				Object.Value5=50000
+			else
+				if Stage.Seconds<45
+					Object.Value5=10000
+				else
+					Object.Value5=5000
+				endif
+			endif
+			break
+		case 1
+			if Stage.Seconds<30
+				Object.Value5=4000
+			else
+				Object.Value5=3000
+			endif
+			break
+		case 2
+			Object.Value5=2000
+			break
+		case 3
+			Object.Value5=1000
+			break
+		case 4
+			Object.Value5=500
+			break
+		case 5
+			Object.Value5=100
+			break
+
+		endswitch
+		Object.Value6=Object[0].Value0
+		Object.Value6*=100
+		break
+	case 1
+		TempValue0=Screen.CenterX
+		TempValue0-=68
+		if Object.XPos<TempValue0
+			Object.XPos+=16
+			if Object.XPos>TempValue0
+				Object.XPos=TempValue0
+			endif
+		else
+			Object.XPos=TempValue0
+		endif
+		TempValue0-=32
+		if Object.Value1>TempValue0
+			Object.Value1-=16
+			if Object.Value1<TempValue0
+				Object.Value1=TempValue0
+			endif
+		else
+			Object.Value1=TempValue0
+		endif
+		TempValue0+=9
+		if Object.Value2>TempValue0
+			Object.Value2-=16
+			if Object.Value2<TempValue0
+				Object.Value2=TempValue0
+			endif
+		else
+			Object.Value2=TempValue0
+		endif
+		if Object.Value3>TempValue0
+			Object.Value3-=16
+			if Object.Value3<TempValue0
+				Object.Value3=TempValue0
+			endif
+		else
+			Object.Value3=TempValue0
+		endif
+		if Object.Value4>TempValue0
+			Object.Value4-=16
+			if Object.Value4<TempValue0
+				Object.Value4=TempValue0
+			endif
+		else
+			Object.Value4=TempValue0
+			Object.State=2
+			Object.Value0=0
+		endif
+		break
+	case 2
+		Object.Value0++
+		if Options.Soundtrack==0
+			if Object.Value0>299
+				Object.Value0=0
+				Object.State=3
+				if Stage.PlayerListPos==0
+					if Object[24].PropertyValue==2
+						if Stage.DebugMode==0
+							SetAchievement(2,100)
+						endif
+					endif
+				endif
+			endif
+		else
+			if Object.Value0>429
+				Object.Value0=0
+				Object.State=3
+				if Stage.PlayerListPos==0
+					if Object[24].PropertyValue==2
+						if Stage.DebugMode==0
+							SetAchievement(2,100)
+						endif
+					endif
+				endif
+			endif
+		endif
+		break
+	case 3
+		if Object.Value6>0
+			Object.Value6-=100
+			Player.Score+=100
+		endif
+		if Object.Value5>0
+			Object.Value5-=100
+			Player.Score+=100
+		endif
+		CheckGreater(Object.Value6,0)
+		TempValue0=CheckResult
+		CheckGreater(Object.Value5,0)
+		TempValue0|=CheckResult
+		if TempValue0==1
+			Object.Value0++
+			if Object.Value0==2
+				PlaySfx(16,0)
+				Object.Value0=0
+			endif
+		else
+			Object.State=4
+			Object.Value0=0
+			PlaySfx(17,0)
+		endif
+		break
+	case 4
+		Object.Value0++
+		if Object.Value0==160
+			Object.Value0=0
+			Object.State=5
+			if Object[0].Type==TypeName[BlankObject]
+				PlaySfx(19,0)
+			endif
+		endif
+		break
+	case 5
+		if Object[0].Type==TypeName[BlankObject]
+			Object.Value0+=8
+			SetScreenFade(208,255,224,Object.Value0)
+			if Engine.TrialMode==1
+				if Object.Value0==1016
+					EngineCallback(11)
+				endif
+			endif
+			if Object.Value0==1024
+				if Stage.PlayerListPos==0
+					TempValue0=Stage.ListPos
+					TempValue0%=10
+					TempValue0>>=2
+					TempValue1=Stage.ListPos
+					TempValue1/=10
+					TempValue1*=3
+					TempValue0+=TempValue1
+					TempValue0++
+					TempValue1=Stage.Seconds
+					TempValue1*=100
+					TempValue2=Stage.Minutes
+					TempValue2*=6000
+					TempValue1+=TempValue2
+					TempValue1+=Stage.MilliSeconds
+					SetLeaderboard(TempValue0,TempValue1)
+				endif
+				Fade_Colour=208
+				Fade_Colour<<=16
+				TempValue0=255
+				TempValue0<<=8
+				Fade_Colour+=TempValue0
+				Fade_Colour+=224
+				Player.Direction=FACING_RIGHT
+				Object.Value0=0
+				LampPost.Check=0
+				Good_Future_Count+=Good_Future
+				Good_Future=0
+				Transporter_Destroyed=0
+				MetalSonic_Destroyed=0
+				if Stage.ActNo==2
+					if Good_Future_Count<2
+						Stage.ListPos++
+					endif
+				endif
+				if Stage.ActNo==3
+					Good_Future_Count=0
+				endif
+				switch Object[24].PropertyValue
+				case 0
+					Stage.ListPos+=4
+					break
+				case 1
+					Stage.ListPos+=3
+					break
+				case 2
+					Stage.ListPos+=2
+					break
+				case 3
+					Stage.ListPos++
+					break
+
+				endswitch
+				if Options.GameMode==1
+					ArrayPos1=Options.SaveSlot
+					ArrayPos1<<=3
+					SaveRAM[ArrayPos1]=Stage.PlayerListPos
+					ArrayPos1++
+					SaveRAM[ArrayPos1]=Player.Lives
+					ArrayPos1++
+					SaveRAM[ArrayPos1]=Player.Score
+					ArrayPos1++
+					SaveRAM[ArrayPos1]=Stage.ListPos
+					SaveRAM[ArrayPos1]+=81
+					ArrayPos1++
+					SaveRAM[ArrayPos1]=SpecialStage.TimeStones
+					ArrayPos1++
+					SaveRAM[ArrayPos1]=SpecialStage.ListPos
+					ArrayPos1++
+					SaveRAM[ArrayPos1]=Player.ScoreBonus
+					ArrayPos1++
+					SaveRAM[ArrayPos1]=MetalSonic_List
+					SaveRAM[ArrayPos1]<<=16
+					SaveRAM[ArrayPos1]+=Good_Future_List
+					WriteSaveRAM()
+				endif
+				SpecialStage.NextZone=Stage.ListPos
+				Stage.ListPos=SpecialStage.ListPos
+				Stage.ActiveList=SPECIAL_STAGE
+				TempValue0=Engine.TrialMode
+				if Stage.ListPos>=Stage.ListSize
+					TempValue0=1
+				endif
+				if TempValue0==0
+					LoadStage()
+				else
+					Stage.ActiveList=PRESENTATION_STAGE
+					Stage.ListPos=1
+					LoadStage()
+				endif
+			endif
+		else
+			Object.Value0+=4
+			SetScreenFade(0,0,0,Object.Value0)
+			if Engine.TrialMode==1
+				if Object.Value0==380
+					EngineCallback(11)
+				endif
+			endif
+			if Object.Value0==384
+				if Stage.PlayerListPos==0
+					TempValue0=Stage.ListPos
+					TempValue0%=10
+					TempValue0>>=2
+					TempValue1=Stage.ListPos
+					TempValue1/=10
+					TempValue1*=3
+					TempValue0+=TempValue1
+					TempValue0++
+					TempValue1=Stage.Seconds
+					TempValue1*=100
+					TempValue2=Stage.Minutes
+					TempValue2*=6000
+					TempValue1+=TempValue2
+					TempValue1+=Stage.MilliSeconds
+					SetLeaderboard(TempValue0,TempValue1)
+				endif
+				Fade_Colour=0
+				Object.Value0=0
+				LampPost.Check=0
+				Player.Direction=FACING_RIGHT
+				Good_Future_Count+=Good_Future
+				Good_Future=0
+				Transporter_Destroyed=0
+				MetalSonic_Destroyed=0
+				if Stage.ActNo==2
+					if Good_Future_Count<2
+						Stage.ListPos++
+					endif
+				endif
+				if Stage.ActNo==3
+					Good_Future_Count=0
+				endif
+				switch Object[24].PropertyValue
+				case 0
+					Stage.ListPos+=4
+					break
+				case 1
+					Stage.ListPos+=3
+					break
+				case 2
+					Stage.ListPos+=2
+					break
+				case 3
+					Stage.ListPos++
+					break
+
+				endswitch
+				if Options.GameMode==1
+					ArrayPos1=Options.SaveSlot
+					ArrayPos1<<=3
+					SaveRAM[ArrayPos1]=Stage.PlayerListPos
+					ArrayPos1++
+					SaveRAM[ArrayPos1]=Player.Lives
+					ArrayPos1++
+					SaveRAM[ArrayPos1]=Player.Score
+					ArrayPos1++
+					SaveRAM[ArrayPos1]=Stage.ListPos
+					SaveRAM[ArrayPos1]++
+					ArrayPos1++
+					SaveRAM[ArrayPos1]=SpecialStage.TimeStones
+					ArrayPos1++
+					SaveRAM[ArrayPos1]=SpecialStage.ListPos
+					ArrayPos1++
+					SaveRAM[ArrayPos1]=Player.ScoreBonus
+					ArrayPos1++
+					SaveRAM[ArrayPos1]=MetalSonic_List
+					SaveRAM[ArrayPos1]<<=16
+					SaveRAM[ArrayPos1]+=Good_Future_List
+					WriteSaveRAM()
+				endif
+				if Options.GameMode==2
+					TimeAttack.Result=Stage.Seconds
+					TimeAttack.Result*=100
+					TempValue0=Stage.Minutes
+					TempValue0*=6000
+					TimeAttack.Result+=TempValue0
+					TimeAttack.Result+=Stage.MilliSeconds
+					Stage.ActiveList=PRESENTATION_STAGE
+					Stage.ListPos=2
+					LoadStage()
+				else
+					TempValue0=Engine.TrialMode
+					if Stage.ListPos>=Stage.ListSize
+						TempValue0=1
+					endif
+					if TempValue0==0
+						LoadStage()
+					else
+						Stage.ActiveList=PRESENTATION_STAGE
+						Stage.ListPos=1
+						LoadStage()
+					endif
+				endif
+			endif
+		endif
+		break
+
+	endswitch
+endsub
+
+
+sub ObjectDraw
+	if Good_Future==0
+		DrawSpriteScreenXY(0,Object.XPos,65)
+		DrawSpriteScreenXY(4,Object.Value1,89)
+		TempValue0=Object.Value1
+		TempValue0+=128
+		DrawSpriteScreenXY(5,TempValue0,89)
+	else
+		DrawSpriteScreenXY(20,Object.XPos,65)
+		DrawSpriteScreenXY(21,Object.Value1,89)
+		TempValue0=Object.Value1
+		TempValue0+=140
+		DrawSpriteScreenXY(5,TempValue0,89)
+	endif
+	TempValue0+=64
+	DrawSpriteScreenXY(Stage.ActNo,TempValue0,89)
+	DrawSpriteScreenXY(6,Object.Value2,121)
+	TempValue0=Object.Value2
+	TempValue0+=163
+	DrawNumbers(10,TempValue0,121,Player.Score,6,8,0)
+	DrawSpriteScreenXY(7,Object.Value3,145)
+	TempValue0=Object.Value3
+	TempValue0+=40
+	DrawSpriteScreenXY(9,TempValue0,145)
+	TempValue0+=123
+	DrawNumbers(10,TempValue0,145,Object.Value6,5,8,0)
+	DrawSpriteScreenXY(8,Object.Value4,169)
+	TempValue0=Object.Value4
+	TempValue0+=40
+	DrawSpriteScreenXY(9,TempValue0,169)
+	TempValue0+=123
+	DrawNumbers(10,TempValue0,169,Object.Value5,5,8,0)
+endsub
+
+
+sub ObjectStartup
+	if Stage.PlayerListPos==0
+		LoadSpriteSheet("Global/Display.gif")
+	else
+		LoadSpriteSheet("Global/Display_t.gif")
+	endif
+	SpriteFrame(0,0,136,16,0,206)
+	SpriteFrame(0,0,8,16,194,223)
+	SpriteFrame(0,0,16,16,203,223)
+	SpriteFrame(0,0,16,16,220,223)
+	SpriteFrame(0,0,113,16,137,206)
+	SpriteFrame(0,0,56,16,137,223)
+	SpriteFrame(0,0,39,11,1,1)
+	SpriteFrame(0,0,31,11,1,33)
+	SpriteFrame(0,0,31,11,1,17)
+	SpriteFrame(0,0,41,11,1,107)
+	SpriteFrame(0,0,8,11,1,50)
+	SpriteFrame(0,0,8,11,10,50)
+	SpriteFrame(0,0,8,11,19,50)
+	SpriteFrame(0,0,8,11,28,50)
+	SpriteFrame(0,0,8,11,1,62)
+	SpriteFrame(0,0,8,11,10,62)
+	SpriteFrame(0,0,8,11,19,62)
+	SpriteFrame(0,0,8,11,28,62)
+	SpriteFrame(0,0,8,11,1,74)
+	SpriteFrame(0,0,8,11,10,74)
+	SpriteFrame(-60,0,256,16,0,240)
+	SpriteFrame(-12,0,136,16,0,223)
+endsub
+
+sub RSDK
+	LoadSpriteSheet("Global/Display.gif")
+	SetEditorIcon(Icon0,SingleIcon,-16,-16,32,32,1,143)
+endsub

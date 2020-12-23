@@ -1,0 +1,192 @@
+//------------Sonic CD Tube Switch Script-------------//
+//--------Scripted by Christian Whitehead 'The Taxman'--------//
+//-------Unpacked By Rubberduckycooly's Script Unpacker-------//
+
+//-------Aliases-------//
+#alias 42: TYPE_TUBESWITCH
+
+
+sub ObjectPlayerInteraction
+	PlayerObjectCollision(C_TOUCH,-16,-16,16,16)
+	if CheckResult==1
+		switch Object.PropertyValue
+		case 0
+			if Object.Value0==0
+				if Player.State!=32
+					Player.State=32
+					Player.Gravity=0
+					Player.Animation=ANI_JUMPING
+					Player.Value6=851968
+				else
+					Player.State=14
+					Player.Animation=ANI_JUMPING
+				endif
+			endif
+			break
+		case 1
+			Player.State=13
+			Player.Animation=ANI_JUMPING
+			if Player.Gravity==1
+				if Player.YVelocity<0
+					Player.YVelocity=-851968
+				else
+					Player.YVelocity=851968
+				endif
+			else
+				switch Player.CollisionMode
+				case 1
+					if Player.Speed<0
+						Player.YVelocity=851968
+					else
+						Player.YVelocity=-851968
+					endif
+					break
+				case 3
+					if Player.Speed<0
+						Player.YVelocity=-851968
+					else
+						Player.YVelocity=851968
+					endif
+					break
+
+				endswitch
+			endif
+			Player.Gravity=1
+			Player.XPos=Object.XPos
+			Player.XVelocity=0
+			Player.Speed=0
+			break
+		case 2
+			if Object.Value0==0
+				if Player.State!=32
+					Player.XPos=Object.XPos
+					Player.State=32
+					Player.Animation=ANI_JUMPING
+					Player.Value6=851968
+					Player.CollisionMode=3
+					Player.Angle=64
+					Player.Gravity=0
+					Player.XVelocity=0
+					if Player.YVelocity<0
+						Player.Speed=-851968
+					else
+						Player.Speed=851968
+					endif
+					Player.YVelocity=0
+					Player.Right=0
+					Player.Left=0
+				else
+					Player.State=13
+					Player.Animation=ANI_JUMPING
+					switch Player.CollisionMode
+					case 1
+						if Player.Speed<0
+							Player.YVelocity=851968
+						else
+							Player.YVelocity=-851968
+						endif
+						break
+					case 3
+						if Player.Speed<0
+							Player.YVelocity=-851968
+						else
+							Player.YVelocity=851968
+						endif
+						break
+
+					endswitch
+					Player.Gravity=1
+					Player.XPos=Object.XPos
+					Player.XVelocity=0
+					Player.Speed=0
+				endif
+			endif
+			break
+		case 3
+			if Object.Value0==0
+				if Player.CollisionMode==2
+					Player.CollisionMode=0
+					Player.Angle=0
+					FlipSign(Player.Speed)
+					FlipSign(Player.XVelocity)
+				endif
+			endif
+			break
+		case 4
+			if Object.Value0==0
+				Player.State=14
+				Player.Animation=ANI_JUMPING
+				if Player.XPos<Object.XPos
+					if Player.Speed<655360
+						Player.Speed=655360
+					endif
+					Player.Direction=FACING_RIGHT
+				else
+					if Player.Speed>-655360
+						Player.Speed=-655360
+					endif
+					Player.Direction=FACING_LEFT
+				endif
+			endif
+			break
+		case 5
+			if Player.YVelocity<0
+				if Player.State!=32
+					if Player.Left==1
+						Player.State=32
+						Player.Gravity=0
+						Player.CollisionMode=3
+						Player.Angle=64
+						Player.Animation=ANI_JUMPING
+						Player.Value6=851968
+						Player.Speed=-851968
+						Player.XVelocity=0
+						Player.YVelocity=0
+						Player.XPos-=524288
+					endif
+					if Player.Right==1
+						Player.State=32
+						Player.Gravity=0
+						Player.CollisionMode=1
+						Player.Angle=192
+						Player.Animation=ANI_JUMPING
+						Player.Value6=851968
+						Player.Speed=851968
+						Player.XVelocity=0
+						Player.YVelocity=0
+						Player.XPos+=524288
+					endif
+				endif
+			endif
+			break
+		case 6
+			if Object.Value0==0
+				if Player.State==13
+					Player.XPos=Object.XPos
+					Player.XVelocity=0
+					Player.Speed=0
+				endif
+			endif
+			break
+		case 7
+			if Object.Value0==0
+				if Player.CollisionMode==2
+					Player.CollisionMode=0
+					Player.Angle+=128
+					FlipSign(Player.Speed)
+					FlipSign(Player.XVelocity)
+				endif
+			endif
+			break
+
+		endswitch
+		Object.Value0=1
+	else
+		Object.Value0=0
+	endif
+endsub
+
+sub RSDK
+	LoadSpriteSheet("Global/Display.gif")
+	SetEditorIcon(Icon0,SingleIcon,-16,-16,32,32,1,143)
+endsub

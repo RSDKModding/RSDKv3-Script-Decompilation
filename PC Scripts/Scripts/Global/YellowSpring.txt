@@ -1,0 +1,270 @@
+//------------Sonic CD Yellow Spring Script-------------//
+//--------Scripted by Christian Whitehead 'The Taxman'--------//
+//-------Unpacked By Rubberduckycooly's Script Unpacker-------//
+
+//-------Aliases-------//
+#alias 14: TYPE_YELLOWSPRING
+
+
+sub ObjectPlayerInteraction
+	switch Object.PropertyValue
+	case 0
+		TempValue0=0
+		if Player.Gravity==1
+			TempValue0=1
+		endif
+		if Player.CollisionMode>0
+			if Player.YVelocity<0
+				TempValue0=1
+			endif
+		endif
+		if TempValue0==0
+			PlayerObjectCollision(C_BOX,-16,-8,16,8)
+			PlayerObjectCollision(C_TOUCH,-15,-10,15,-6)
+			if CheckResult==1
+				Player.Value7=ANI_WALKING
+				if Player.Animation==ANI_RUNNING
+					Player.Value7=ANI_RUNNING
+				endif
+				if Player.Animation==ANI_PEELOUT
+					Player.Value7=ANI_PEELOUT
+				endif
+				Object.Value0=1
+				Player.State=13
+				Player.Gravity=1
+				Player.YVelocity=-655360
+				Player.Animation=11
+				Player.Timer=0
+				PlaySfx(11,0)
+			endif
+		else
+			if Player.YVelocity>=0
+				PlayerObjectCollision(C_PLATFORM,-16,-8,16,8)
+				PlayerObjectCollision(C_TOUCH,-15,-10,15,-6)
+				if CheckResult==1
+					Player.Value7=ANI_WALKING
+					if Player.Animation==ANI_RUNNING
+						Player.Value7=ANI_RUNNING
+					endif
+					if Player.Animation==ANI_PEELOUT
+						Player.Value7=ANI_PEELOUT
+					endif
+					Object.Value0=1
+					Player.State=13
+					Player.Gravity=1
+					Player.YVelocity=-655360
+					Player.Animation=11
+					Player.Timer=0
+					PlaySfx(11,0)
+				endif
+			endif
+		endif
+		break
+	case 1
+		PlayerObjectCollision(C_BOX,-8,-16,8,16)
+		if Player.Gravity==0
+			PlayerObjectCollision(C_TOUCH,6,-15,10,15)
+			if CheckResult==1
+				Object.Value0=1
+				Player.Speed=655360
+				Player.CollisionMode=0
+				Player.Pushing=0
+				Player.Direction=FACING_RIGHT
+				Player.ControlLock=16
+				PlaySfx(11,0)
+			endif
+		endif
+		break
+	case 2
+		PlayerObjectCollision(C_BOX,-8,-16,8,16)
+		if Player.Gravity==0
+			PlayerObjectCollision(C_TOUCH,-10,-15,-6,15)
+			if CheckResult==1
+				Object.Value0=1
+				Player.Speed=-655360
+				Player.CollisionMode=0
+				Player.Pushing=0
+				Player.Direction=FACING_LEFT
+				Player.ControlLock=16
+				PlaySfx(11,0)
+			endif
+		endif
+		break
+	case 3
+		PlayerObjectCollision(C_BOX,-16,-8,16,8)
+		PlayerObjectCollision(C_TOUCH,-15,6,15,10)
+		if CheckResult==1
+			Object.Value0=1
+			if Player.CollisionMode==2
+				FlipSign(Player.Speed)
+				FlipSign(Player.XVelocity)
+			endif
+			Player.State=13
+			Player.Gravity=1
+			Player.YVelocity=655360
+			Player.Timer=0
+			PlaySfx(11,0)
+		endif
+		break
+	case 4
+		PlayerObjectCollision(C_TOUCH,-12,-16,12,12)
+		if Player.Gravity==0
+			if CheckResult==1
+				Object.Value0=1
+				Player.State=13
+				Player.Gravity=1
+				Player.Speed=475136
+				Player.YVelocity=-475136
+				Player.Animation=5
+				Player.Direction=FACING_RIGHT
+				Player.Timer=0
+				PlaySfx(11,0)
+			endif
+		endif
+		if Player.YVelocity>=0
+			if CheckResult==1
+				Object.Value0=1
+				Player.State=13
+				Player.Gravity=1
+				Player.Speed=475136
+				Player.YVelocity=-475136
+				Player.Animation=5
+				Player.Direction=FACING_RIGHT
+				Player.Timer=0
+				PlaySfx(11,0)
+			endif
+		endif
+		break
+	case 5
+		PlayerObjectCollision(C_TOUCH,-12,-16,12,12)
+		if Player.Gravity==0
+			if CheckResult==1
+				Object.Value0=1
+				Player.State=13
+				Player.Gravity=1
+				Player.Speed=-475136
+				Player.YVelocity=-475136
+				Player.Animation=5
+				Player.Direction=FACING_LEFT
+				Player.Timer=0
+				PlaySfx(11,0)
+			endif
+		endif
+		if Player.YVelocity>=0
+			if CheckResult==1
+				Object.Value0=1
+				Player.State=13
+				Player.Gravity=1
+				Player.Speed=-475136
+				Player.YVelocity=-475136
+				Player.Animation=5
+				Player.Direction=FACING_LEFT
+				Player.Timer=0
+				PlaySfx(11,0)
+			endif
+		endif
+		break
+	case 6
+		PlayerObjectCollision(C_TOUCH,-12,-12,12,12)
+		if CheckResult==1
+			Object.Value0=1
+			Player.State=13
+			Player.Gravity=1
+			Player.Speed=475136
+			Player.YVelocity=475136
+			Player.Timer=0
+			PlaySfx(11,0)
+		endif
+		break
+	case 7
+		PlayerObjectCollision(C_TOUCH,-12,-12,12,12)
+		if CheckResult==1
+			Object.Value0=1
+			Player.State=13
+			Player.Gravity=1
+			Player.Speed=-475136
+			Player.YVelocity=475136
+			Player.Timer=0
+			PlaySfx(11,0)
+		endif
+		break
+
+	endswitch
+endsub
+
+
+sub ObjectDraw
+	if Object.Value0==0
+		DrawSpriteFX(Object.PropertyValue,FX_FLIP,Object.XPos,Object.YPos)
+	else
+		Object.Value0++
+		TempValue0=Object.Value0
+		TempValue0>>=1
+		switch TempValue0
+		case 0
+		case 1
+			DrawSpriteFX(Object.PropertyValue,FX_FLIP,Object.XPos,Object.YPos)
+			break
+		case 2
+		case 6
+			TempValue1=Object.PropertyValue
+			TempValue1+=8
+			DrawSpriteFX(TempValue1,FX_FLIP,Object.XPos,Object.YPos)
+			break
+		case 3
+		case 4
+		case 5
+			TempValue1=Object.PropertyValue
+			TempValue1+=16
+			DrawSpriteFX(TempValue1,FX_FLIP,Object.XPos,Object.YPos)
+			break
+
+		endswitch
+		if Object.Value0>12
+			Object.Value0=0
+		endif
+	endif
+endsub
+
+
+sub ObjectStartup
+	LoadSpriteSheet("Global/Items.gif")
+	ArrayPos0=32
+	while ArrayPos0<1056
+		if Object[ArrayPos0].Type==TypeName[YellowSpring]
+			if Object[ArrayPos0].PropertyValue>5
+				Object[ArrayPos0].Direction=2
+			endif
+		endif
+		ArrayPos0++
+	loop
+	SpriteFrame(-16,-8,32,16,84,183)
+	SpriteFrame(-8,-16,16,32,215,116)
+	SpriteFrame(-8,-16,16,32,232,116)
+	SpriteFrame(-16,-8,32,16,184,239)
+	SpriteFrame(-16,-16,32,32,183,165)
+	SpriteFrame(-16,-16,32,32,216,182)
+	SpriteFrame(-16,-16,32,32,183,165)
+	SpriteFrame(-16,-16,32,32,216,182)
+	SpriteFrame(-16,0,32,8,84,183)
+	SpriteFrame(-8,-16,8,32,223,116)
+	SpriteFrame(0,-16,8,32,232,116)
+	SpriteFrame(-16,-8,32,8,215,107)
+	SpriteFrame(-16,-16,32,32,216,149)
+	SpriteFrame(-16,-16,32,32,218,215)
+	SpriteFrame(-16,-16,32,32,216,149)
+	SpriteFrame(-16,-16,32,32,218,215)
+	SpriteFrame(-16,-32,32,40,215,34)
+	SpriteFrame(-8,-16,40,32,134,198)
+	SpriteFrame(-16,-16,40,32,175,198)
+	SpriteFrame(-16,-8,32,40,215,75)
+	SpriteFrame(-16,-32,48,48,117,83)
+	SpriteFrame(-32,-32,48,48,166,83)
+	SpriteFrame(-16,-32,48,48,117,83)
+	SpriteFrame(-32,-32,48,48,166,83)
+endsub
+
+sub RSDK
+	LoadSpriteSheet("Global/Display.gif")
+	SetEditorIcon(Icon0,SingleIcon,-16,-16,32,32,1,143)
+endsub

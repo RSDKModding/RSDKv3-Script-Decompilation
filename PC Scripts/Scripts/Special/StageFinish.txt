@@ -1,0 +1,500 @@
+//------------Sonic CD StageFinish Script-------------//
+//--------Scripted by Christian Whitehead 'The Taxman'--------//
+//-------Unpacked By Rubberduckycooly's Script Unpacker-------//
+
+//-------Aliases-------//
+#alias 15: TYPE_STAGEFINISH
+
+
+sub ObjectMain
+	switch Object.State
+	case 0
+		Object.XPos=-799
+		Object.Value1=1255
+		Object.Value2=1319
+		Object.Value3=1402
+		Object.Value4=1466
+		Object.State=1
+		Object.Value0=0
+		Object.Alpha=0
+		Object.InkEffect=2
+		if Object.PropertyValue>0
+			Object.Value5=Object[4].Value1
+			Object.Value5*=200
+			TempValue0=Stage.ActNo
+			TempValue0--
+			SetBit(SpecialStage.TimeStones,TempValue0,1)
+		else
+			Object.Value5=0
+		endif
+		Object.Value6=Object[4].Value3
+		Object.Value6*=200
+		Stage.ListPos=SpecialStage.NextZone
+		Stage.ActiveList=REGULAR_STAGE
+		if SpecialStage.TimeStones<127
+			TempValue0=0
+			while TempValue0==0
+				SpecialStage.ListPos++
+				if SpecialStage.ListPos>6
+					SpecialStage.ListPos=0
+				endif
+				GetBit(TempValue1,SpecialStage.TimeStones,SpecialStage.ListPos)
+				if TempValue1==0
+					TempValue0=1
+				endif
+			loop
+		else
+			TempValue0=Stage.ListPos
+			TempValue0%=10
+			if TempValue0==9
+				Stage.ListPos--
+			endif
+			Good_Future_Count=2
+			if Stage.PlayerListPos==0
+				SetAchievement(8,100)
+			endif
+		endif
+		if Options.GameMode==1
+			ArrayPos1=Options.SaveSlot
+			ArrayPos1<<=3
+			SaveRAM[ArrayPos1]=Stage.PlayerListPos
+			ArrayPos1++
+			SaveRAM[ArrayPos1]=Player.Lives
+			ArrayPos1++
+			SaveRAM[ArrayPos1]=Player.Score
+			ArrayPos1++
+			SaveRAM[ArrayPos1]=Stage.ListPos
+			SaveRAM[ArrayPos1]++
+			ArrayPos1++
+			SaveRAM[ArrayPos1]=SpecialStage.TimeStones
+			ArrayPos1++
+			SaveRAM[ArrayPos1]=SpecialStage.ListPos
+			ArrayPos1++
+			SaveRAM[ArrayPos1]=Player.ScoreBonus
+			ArrayPos1++
+			WriteSaveRAM()
+		endif
+		break
+	case 1
+		if Object.Value0==120
+			Object.State=2
+			Object.Value0=256
+			if SpecialStage.TimeStones>126
+				Object.PropertyValue=2
+			endif
+			PlayMusic(1)
+		else
+			Object.Value0++
+			Music.Volume--
+			if Object.Value0==24
+				TempValue0=0
+				while TempValue0<30
+					ResetObjectEntity(TempValue0,TypeName[BlankObject],0,0,0)
+					TempValue0++
+				loop
+				TempValue0++
+				while TempValue0<1184
+					ResetObjectEntity(TempValue0,TypeName[BlankObject],0,0,0)
+					TempValue0++
+				loop
+				Stage[0].ActiveLayer=9
+				Stage[1].ActiveLayer=9
+				Stage[2].ActiveLayer=9
+				Stage[3].ActiveLayer=9
+				Player.ControlMode=0
+				KeyDown.Left=0
+				KeyDown.Right=0
+				Player.Direction=FACING_RIGHT
+			endif
+		endif
+		TempValue0=Object.Value0
+		TempValue0<<=4
+		if TempValue0>255
+			TempValue0=255
+		endif
+		SetScreenFade(208,255,224,TempValue0)
+		break
+	case 2
+		Object.Value0-=16
+		if Object.Value0==0
+			Object.State=3
+		endif
+		SetScreenFade(208,255,224,Object.Value0)
+		TempValue0=Screen.CenterX
+		TempValue0-=88
+		if Object.XPos<TempValue0
+			Object.XPos+=16
+			if Object.XPos>TempValue0
+				Object.XPos=TempValue0
+			endif
+		else
+			Object.XPos=TempValue0
+		endif
+		TempValue0++
+		if Object.Value1>TempValue0
+			Object.Value1-=16
+			if Object.Value1<TempValue0
+				Object.Value1=TempValue0
+			endif
+		else
+			Object.Value1=TempValue0
+		endif
+		if Object.Value2>TempValue0
+			Object.Value2-=16
+			if Object.Value2<TempValue0
+				Object.Value2=TempValue0
+			endif
+		else
+			Object.Value2=TempValue0
+		endif
+		if Object.Value3>TempValue0
+			Object.Value3-=16
+			if Object.Value3<TempValue0
+				Object.Value3=TempValue0
+			endif
+		else
+			Object.Value3=TempValue0
+		endif
+		if Object.Value4>TempValue0
+			Object.Value4-=16
+			if Object.Value4<TempValue0
+				Object.Value4=TempValue0
+			endif
+		else
+			Object.Value4=TempValue0
+			Object.State=4
+			Object.Value0=0
+		endif
+		break
+	case 3
+		TempValue0=Screen.CenterX
+		TempValue0-=88
+		if Object.XPos<TempValue0
+			Object.XPos+=16
+			if Object.XPos>TempValue0
+				Object.XPos=TempValue0
+			endif
+		else
+			Object.XPos=TempValue0
+		endif
+		TempValue0++
+		if Object.Value1>TempValue0
+			Object.Value1-=16
+			if Object.Value1<TempValue0
+				Object.Value1=TempValue0
+			endif
+		else
+			Object.Value1=TempValue0
+		endif
+		if Object.Value2>TempValue0
+			Object.Value2-=16
+			if Object.Value2<TempValue0
+				Object.Value2=TempValue0
+			endif
+		else
+			Object.Value2=TempValue0
+		endif
+		if Object.Value3>TempValue0
+			Object.Value3-=16
+			if Object.Value3<TempValue0
+				Object.Value3=TempValue0
+			endif
+		else
+			Object.Value3=TempValue0
+		endif
+		if Object.Value4>TempValue0
+			Object.Value4-=16
+			if Object.Value4<TempValue0
+				Object.Value4=TempValue0
+			endif
+		else
+			Object.Value4=TempValue0
+			Object.State=4
+			Object.Value0=0
+		endif
+		break
+	case 4
+		if Object.Alpha<255
+			TempValue0=Object.Alpha
+			TempValue0+=8
+			if TempValue0>255
+				TempValue0=255
+			endif
+			Object.Alpha=TempValue0
+		endif
+		if Options.Soundtrack==0
+			Object.Value0++
+			if Object.Value0>299
+				Object.Value0=0
+				Object.State=5
+			endif
+		else
+			Object.Value0++
+			if Object.Value0>429
+				Object.Value0=0
+				Object.State=5
+			endif
+		endif
+		break
+	case 5
+		if Object.Value6>0
+			Object.Value6-=200
+			Player.Score+=200
+			if Object.Value6<0
+				Player.Score+=Object.Value6
+				Object.Value6=0
+			endif
+		else
+			if Object.Value5>0
+				Object.Value5-=200
+				Player.Score+=200
+				if Object.Value5<0
+					Player.Score+=Object.Value5
+					Object.Value5=0
+				endif
+			endif
+		endif
+		if Player.Score>=Player.ScoreBonus
+			Object.Value7++
+			Player.Lives++
+			Player.ScoreBonus+=50000
+			if Stage.PlayerListPos==0
+				PlaySfx(20,0)
+			else
+				PlaySfx(21,0)
+			endif
+		endif
+		CheckGreater(Object.Value6,0)
+		TempValue0=CheckResult
+		CheckGreater(Object.Value5,0)
+		TempValue0|=CheckResult
+		if TempValue0==1
+			Object.Value0++
+			if Object.Value0==2
+				PlaySfx(16,0)
+				Object.Value0=0
+			endif
+		else
+			Object.State=6
+			Object.Value0=0
+			PlaySfx(17,0)
+		endif
+		break
+	case 6
+		Object.Value0++
+		if Object.Value0==160
+			Object.Value0=0
+			Object.State=7
+			if Object[0].Type==TypeName[BlankObject]
+				PlaySfx(19,0)
+			endif
+		endif
+		break
+	case 7
+		if Object[0].Type==TypeName[BlankObject]
+			Object.Value0+=8
+			SetScreenFade(208,255,224,Object.Value0)
+			if Object.Value0==1024
+				if Options.GameMode==1
+					ArrayPos1=Options.SaveSlot
+					ArrayPos1<<=3
+					SaveRAM[ArrayPos1]=Stage.PlayerListPos
+					ArrayPos1++
+					SaveRAM[ArrayPos1]=Player.Lives
+					ArrayPos1++
+					SaveRAM[ArrayPos1]=Player.Score
+					ArrayPos1++
+					SaveRAM[ArrayPos1]=Stage.ListPos
+					SaveRAM[ArrayPos1]++
+					ArrayPos1++
+					SaveRAM[ArrayPos1]=SpecialStage.TimeStones
+					ArrayPos1++
+					SaveRAM[ArrayPos1]=SpecialStage.ListPos
+					ArrayPos1++
+					SaveRAM[ArrayPos1]=Player.ScoreBonus
+					ArrayPos1++
+					WriteSaveRAM()
+				endif
+				Fade_Colour=208
+				Fade_Colour<<=16
+				TempValue0=255
+				TempValue0<<=8
+				Fade_Colour+=TempValue0
+				Fade_Colour+=224
+				if Stage.ListPos<Stage.ListSize
+					LoadStage()
+				else
+					Stage.ActiveList=PRESENTATION_STAGE
+					Stage.ListPos=0
+					LoadStage()
+				endif
+			endif
+		endif
+		break
+	case 8
+		if Object.Value0<480
+			Object.Value0+=4
+			Music.Volume--
+		else
+			StopMusic()
+			TimeAttack.Result=Stage.Seconds
+			TimeAttack.Result*=100
+			TempValue0=Stage.Minutes
+			TempValue0*=6000
+			TimeAttack.Result+=TempValue0
+			TimeAttack.Result+=Stage.MilliSeconds
+			Stage.ListPos=2
+			Stage.ActiveList=PRESENTATION_STAGE
+			LoadStage()
+		endif
+		SetScreenFade(0,0,0,Object.Value0)
+		break
+	case 9
+		if Object.Value0<480
+			Object.Value0+=4
+			Music.Volume--
+		else
+			StopMusic()
+			Stage.ListPos=7
+			Stage.ActiveList=PRESENTATION_STAGE
+			LoadStage()
+		endif
+		SetScreenFade(0,0,0,Object.Value0)
+		break
+
+	endswitch
+endsub
+
+
+sub ObjectDraw
+	if Object.State>1
+		TempValue0=0
+		while TempValue0<240
+			TempValue1=0
+			while TempValue1<360
+				DrawSpriteScreenXY(0,TempValue1,TempValue0)
+				TempValue1+=224
+			loop
+			TempValue0+=48
+		loop
+		TempValue0=0
+		TempValue1=20
+		TempValue2=Screen.CenterX
+		TempValue2-=79
+		while TempValue0<7
+			GetBit(TempValue3,SpecialStage.TimeStones,TempValue0)
+			TempValue0++
+			if TempValue3==1
+				DrawSpriteScreenFX(TempValue1,FX_INK,TempValue2,81)
+			endif
+			TempValue1++
+			TempValue2+=24
+		loop
+	endif
+	switch Object.PropertyValue
+	case 0
+		DrawSpriteScreenXY(1,Object.XPos,50)
+		break
+	case 1
+		DrawSpriteScreenXY(2,Object.XPos,50)
+		break
+	case 2
+		DrawSpriteScreenXY(3,Object.XPos,50)
+		break
+
+	endswitch
+	DrawSpriteScreenXY(4,Object.Value1,105)
+	TempValue0=Object.Value1
+	TempValue0+=176
+	DrawNumbers(10,TempValue0,105,Player.Score,6,8,0)
+	DrawSpriteScreenXY(5,Object.Value2,129)
+	TempValue0=Object.Value2
+	TempValue0+=40
+	DrawSpriteScreenXY(7,TempValue0,129)
+	TempValue0+=136
+	DrawNumbers(10,TempValue0,129,Object.Value6,5,8,0)
+	DrawSpriteScreenXY(6,Object.Value3,153)
+	TempValue0=Object.Value3
+	TempValue0+=40
+	DrawSpriteScreenXY(7,TempValue0,153)
+	TempValue0+=136
+	DrawNumbers(10,TempValue0,153,Object.Value5,5,8,0)
+	DrawSpriteScreenXY(8,Object.Value4,177)
+	TempValue0=Object.Value4
+	TempValue0+=49
+	DrawSpriteScreenXY(9,TempValue0,177)
+	TempValue0+=86
+	Object.Frame++
+	Object.Frame&=15
+	TempValue1=Object.Frame
+	TempValue1>>=3
+	TempValue1+=27
+	TempValue2=Object.Value7
+	while TempValue2>0
+		DrawSpriteScreenXY(TempValue1,TempValue0,177)
+		TempValue2--
+		TempValue0+=24
+	loop
+endsub
+
+
+sub ObjectStartup
+	switch Engine.Language
+	case 0
+	case 5
+		LoadSpriteSheet("Special/ScoreScreen.gif")
+		break
+	case 1
+		LoadSpriteSheet("Special/ScoreScreen_FR.gif")
+		break
+	case 2
+		LoadSpriteSheet("Special/ScoreScreen_IT.gif")
+		break
+	case 3
+		LoadSpriteSheet("Special/ScoreScreen_DE.gif")
+		break
+	case 4
+		LoadSpriteSheet("Special/ScoreScreen_ES.gif")
+		break
+
+	endswitch
+	SpriteFrame(0,0,224,48,0,63)
+	SpriteFrame(0,0,184,14,1,1)
+	SpriteFrame(9,0,167,14,1,16)
+	SpriteFrame(-16,0,205,14,1,48)
+	SpriteFrame(0,0,39,11,1,112)
+	SpriteFrame(0,0,31,11,41,112)
+	SpriteFrame(0,0,31,11,73,112)
+	SpriteFrame(0,0,41,11,105,112)
+	SpriteFrame(0,0,40,11,147,112)
+	SpriteFrame(0,0,36,11,188,112)
+	SpriteFrame(0,0,8,11,220,1)
+	SpriteFrame(0,0,8,11,229,1)
+	SpriteFrame(0,0,8,11,238,1)
+	SpriteFrame(0,0,8,11,247,1)
+	SpriteFrame(0,0,8,11,220,13)
+	SpriteFrame(0,0,8,11,229,13)
+	SpriteFrame(0,0,8,11,238,13)
+	SpriteFrame(0,0,8,11,247,13)
+	SpriteFrame(0,0,8,11,238,25)
+	SpriteFrame(0,0,8,11,247,25)
+	SpriteFrame(0,0,16,16,1,31)
+	SpriteFrame(0,0,16,16,18,31)
+	SpriteFrame(0,0,16,16,35,31)
+	SpriteFrame(0,0,16,16,52,31)
+	SpriteFrame(0,0,16,16,69,31)
+	SpriteFrame(0,0,16,16,86,31)
+	SpriteFrame(0,0,16,16,103,31)
+	if Stage.PlayerListPos==0
+		SpriteFrame(0,0,16,23,169,24)
+		SpriteFrame(0,0,16,23,186,24)
+	else
+		SpriteFrame(0,0,16,23,139,203)
+		SpriteFrame(0,0,16,23,156,203)
+	endif
+endsub
+
+sub RSDK
+	LoadSpriteSheet("Global/Display.gif")
+	SetEditorIcon(Icon0,SingleIcon,-16,-16,32,32,1,143)
+endsub

@@ -1,0 +1,228 @@
+//------------Sonic CD Water Skimmer Script-------------//
+//--------Scripted by Christian Whitehead 'The Taxman'--------//
+//-------Unpacked By Rubberduckycooly's Script Unpacker-------//
+
+//-------Aliases-------//
+#alias 53: TYPE_WATERSKIMMER
+
+
+sub ObjectMain
+	if Object.PropertyValue==0
+		switch Object.State
+		case 0
+			if Object.Value1>-98304
+				Object.Value1-=1024
+				Object.XPos+=Object.Value1
+			else
+				Object.State++
+			endif
+			Object.Frame++
+			Object.Frame%=22
+			break
+		case 1
+			if Object.Value1<0
+				Object.Value1+=280
+				Object.XPos+=Object.Value1
+			else
+				Object.Value1=0
+				Object.State++
+				Object.Value0=60
+			endif
+			break
+		case 2
+			if Object.Value0>0
+				Object.Value0--
+			else
+				Object.State++
+				Object.Direction=FACING_LEFT
+				Object.Value0=60
+			endif
+			break
+		case 3
+			if Object.Value0>0
+				Object.Value0--
+			else
+				Object.State++
+			endif
+			break
+		case 4
+			if Object.Value1<98304
+				Object.Value1+=1024
+				Object.XPos+=Object.Value1
+			else
+				Object.State++
+			endif
+			Object.Frame++
+			Object.Frame%=22
+			break
+		case 5
+			if Object.Value1>0
+				Object.Value1-=280
+				Object.XPos+=Object.Value1
+			else
+				Object.Value1=0
+				Object.State++
+				Object.Value0=60
+			endif
+			break
+		case 6
+			if Object.Value0>0
+				Object.Value0--
+			else
+				Object.State++
+				Object.Direction=FACING_RIGHT
+				Object.Value0=60
+			endif
+			break
+		case 7
+			if Object.Value0>0
+				Object.Value0--
+			else
+				Object.State=0
+			endif
+			break
+
+		endswitch
+		if Object.Value2>0
+			Object.Value2--
+			if Object.Value2==0
+				PlayStageSfx(1,0)
+				CreateTempObject(TypeName[SkimmerBullet],0,Object.XPos,Object.YPos)
+				if Object.Direction==FACING_RIGHT
+					Object[TempObjectPos].Value1=-131072
+				else
+					Object[TempObjectPos].Value1=131072
+				endif
+			endif
+		endif
+	else
+		switch Object.State
+		case 0
+			if Object.Value1>-65536
+				Object.Value1-=1024
+				Object.XPos+=Object.Value1
+			else
+				Object.State++
+			endif
+			Object.Frame++
+			Object.Frame%=22
+			break
+		case 1
+			if Object.Value1<0
+				Object.Value1+=280
+				Object.XPos+=Object.Value1
+			else
+				Object.Value1=0
+				Object.State++
+				Object.Value0=60
+			endif
+			break
+		case 2
+			if Object.Value0>0
+				Object.Value0--
+			else
+				Object.State++
+				Object.Direction=FACING_LEFT
+				Object.Value0=60
+			endif
+			break
+		case 3
+			if Object.Value0>0
+				Object.Value0--
+			else
+				Object.State++
+			endif
+			break
+		case 4
+			if Object.Value1<65536
+				Object.Value1+=1024
+				Object.XPos+=Object.Value1
+			else
+				Object.State++
+			endif
+			Object.Frame++
+			Object.Frame%=22
+			break
+		case 5
+			if Object.Value1>0
+				Object.Value1-=280
+				Object.XPos+=Object.Value1
+			else
+				Object.Value1=0
+				Object.State++
+				Object.Value0=60
+			endif
+			break
+		case 6
+			if Object.Value0>0
+				Object.Value0--
+			else
+				Object.State++
+				Object.Direction=FACING_RIGHT
+				Object.Value0=60
+			endif
+			break
+		case 7
+			if Object.Value0>0
+				Object.Value0--
+			else
+				Object.State=0
+			endif
+			break
+
+		endswitch
+	endif
+	Object.YPos=Stage.WaterLevel
+	Object.YPos-=10
+	Object.YPos<<=16
+	CallFunction(StageSetup_CheckGoodFuture)
+endsub
+
+
+sub ObjectPlayerInteraction
+	PlayerObjectCollision(C_TOUCH,-12,-8,12,8)
+	if CheckResult==1
+		CallFunction(PlayerObject_BadnikBreak)
+	endif
+	if Object.Value2==0
+		if Object.Direction==FACING_RIGHT
+			PlayerObjectCollision(C_TOUCH,-96,-16,0,16)
+			if CheckResult==1
+				Object.Value2=120
+			endif
+		else
+			PlayerObjectCollision(C_TOUCH,0,-16,96,16)
+			if CheckResult==1
+				Object.Value2=120
+			endif
+		endif
+	endif
+endsub
+
+
+sub ObjectDraw
+	if Object.PropertyValue==0
+		TempValue0=Object.Frame
+		TempValue0/=11
+		DrawSpriteFX(TempValue0,FX_FLIP,Object.XPos,Object.YPos)
+	else
+		TempValue0=Object.Frame
+		TempValue0/=11
+		TempValue0+=2
+		DrawSpriteFX(TempValue0,FX_FLIP,Object.XPos,Object.YPos)
+	endif
+endsub
+
+
+sub ObjectStartup
+	LoadSpriteSheet("R4/Objects.gif")
+	SpriteFrame(-20,-12,32,24,67,231)
+	SpriteFrame(-20,-12,32,24,100,231)
+	SpriteFrame(-20,-12,32,24,1,231)
+	SpriteFrame(-20,-12,32,24,34,231)
+endsub
+
+sub RSDK
+	LoadSpriteSheet("Global/Display.gif")
+	SetEditorIcon(Icon0,SingleIcon,-16,-16,32,32,1,143)
+endsub

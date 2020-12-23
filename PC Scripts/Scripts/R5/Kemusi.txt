@@ -1,0 +1,605 @@
+//------------Sonic CD Kemusi Script-------------//
+//--------Scripted by Christian Whitehead 'The Taxman'--------//
+//-------Unpacked By Rubberduckycooly's Script Unpacker-------//
+
+//-------Aliases-------//
+#alias 52: TYPE_KEMUSI
+
+
+sub ObjectMain
+	switch Object.State
+	case 0
+		Object.Value1=Object.XPos
+		Object.Value1+=786432
+		Object.Value2=Object.XPos
+		Object.Value2+=1572864
+		Object.Value3=Object.XPos
+		Object.Value3+=2359296
+		Object.Value4=Object.YPos
+		Object.Value5=Object.YPos
+		Object.Value6=Object.YPos
+		Object.Scale=Object.XPos
+		Object.Scale-=4194304
+		Object.Rotation=Object.XPos
+		Object.Rotation+=4194304
+		Object.State=1
+		break
+	case 1
+		GetBit(TempValue0,Object.Value7,0)
+		GetBit(TempValue1,Object.Value7,1)
+		GetBit(TempValue2,Object.Value7,2)
+		GetBit(TempValue3,Object.Value7,3)
+		if TempValue0==0
+			ObjectTileCollision(0,0,8,0)
+			if CheckResult==0
+				Object.YPos+=65536
+			else
+				TempValue0=CheckResult
+			endif
+		endif
+		TempValue4=Object.XPos
+		TempValue5=Object.YPos
+		if TempValue1==0
+			Object.XPos=Object.Value1
+			Object.YPos=Object.Value4
+			ObjectTileCollision(0,0,8,0)
+			if CheckResult==0
+				Object.Value4+=65536
+			else
+				TempValue1=CheckResult
+				Object.Value4=Object.YPos
+			endif
+		endif
+		if TempValue2==0
+			Object.XPos=Object.Value2
+			Object.YPos=Object.Value5
+			ObjectTileCollision(0,0,8,0)
+			if CheckResult==0
+				Object.Value5+=65536
+			else
+				TempValue2=CheckResult
+				Object.Value5=Object.YPos
+			endif
+		endif
+		if TempValue3==0
+			Object.XPos=Object.Value3
+			Object.YPos=Object.Value6
+			ObjectTileCollision(0,0,8,0)
+			if CheckResult==0
+				Object.Value6+=65536
+			else
+				TempValue3=CheckResult
+				Object.Value6=Object.YPos
+			endif
+		endif
+		Object.XPos=TempValue4
+		Object.YPos=TempValue5
+		TempValue4=TempValue0
+		TempValue4+=TempValue1
+		TempValue4+=TempValue2
+		TempValue4+=TempValue3
+		if TempValue4==4
+			if Object.PropertyValue==0
+				Object.State=3
+			else
+				Object.State=5
+			endif
+			Object.Value7=0
+		else
+			SetBit(Object.Value7,0,TempValue0)
+			SetBit(Object.Value7,1,TempValue1)
+			SetBit(Object.Value7,2,TempValue2)
+			SetBit(Object.Value7,3,TempValue3)
+		endif
+		break
+	case 2
+		if Object.Value0<36
+			Object.Value0++
+			GetBit(TempValue0,Object.Value7,0)
+			if TempValue0==0
+				Object.XPos-=32768
+				ObjectTileGrip(0,0,8,0)
+				if CheckResult==1
+					if Object.XPos<Object.Scale
+						SetBit(Object.Value7,0,1)
+					endif
+				else
+					SetBit(Object.Value7,0,1)
+				endif
+			else
+				Object.XPos+=32768
+				ObjectTileGrip(0,0,8,0)
+				if CheckResult==1
+					if Object.XPos>Object.Rotation
+						SetBit(Object.Value7,0,0)
+					endif
+				else
+					SetBit(Object.Value7,0,0)
+				endif
+			endif
+			TempValue1=Object.XPos
+			TempValue2=Object.YPos
+			GetBit(TempValue0,Object.Value7,1)
+			if TempValue0==0
+				Object.Value1-=21845
+				Object.XPos=Object.Value1
+				Object.YPos=Object.Value4
+				ObjectTileGrip(0,0,8,0)
+				if CheckResult==1
+					Object.Value4=Object.YPos
+					if Object.Value1<Object.Scale
+						SetBit(Object.Value7,1,1)
+					endif
+				else
+					SetBit(Object.Value7,1,1)
+				endif
+			else
+				Object.Value1+=21845
+				Object.XPos=Object.Value1
+				Object.YPos=Object.Value4
+				ObjectTileGrip(0,0,8,0)
+				if CheckResult==1
+					Object.Value4=Object.YPos
+					if Object.Value1>Object.Rotation
+						SetBit(Object.Value7,1,0)
+					endif
+				else
+					SetBit(Object.Value7,1,0)
+				endif
+			endif
+			GetBit(TempValue0,Object.Value7,2)
+			if TempValue0==0
+				Object.Value2-=10922
+				Object.XPos=Object.Value2
+				Object.YPos=Object.Value5
+				ObjectTileGrip(0,0,8,0)
+				if CheckResult==1
+					Object.Value5=Object.YPos
+					if Object.Value2<Object.Scale
+						SetBit(Object.Value7,2,1)
+					endif
+				else
+					SetBit(Object.Value7,2,1)
+				endif
+			else
+				Object.Value2+=10922
+				Object.XPos=Object.Value2
+				Object.YPos=Object.Value5
+				ObjectTileGrip(0,0,8,0)
+				if CheckResult==1
+					Object.Value5=Object.YPos
+					if Object.Value2>Object.Rotation
+						SetBit(Object.Value7,2,0)
+					endif
+				else
+					SetBit(Object.Value7,2,0)
+				endif
+			endif
+			Object.XPos=TempValue1
+			Object.YPos=TempValue2
+		else
+			if Object.Value7==0
+				Object.Value1=Object.XPos
+				Object.Value1+=786432
+				Object.Value2=Object.XPos
+				Object.Value2+=1572864
+				Object.Value3=Object.XPos
+				Object.Value3+=2359296
+			endif
+			if Object.Value7==15
+				Object.Value1=Object.XPos
+				Object.Value1-=786432
+				Object.Value2=Object.XPos
+				Object.Value2-=1572864
+				Object.Value3=Object.XPos
+				Object.Value3-=2359296
+			endif
+			Object.Value0=0
+			Object.State=3
+		endif
+		break
+	case 3
+		if Object.Value0<36
+			Object.Value0++
+			TempValue1=Object.XPos
+			TempValue2=Object.YPos
+			GetBit(TempValue0,Object.Value7,1)
+			if TempValue0==0
+				Object.Value1-=10922
+				Object.XPos=Object.Value1
+				Object.YPos=Object.Value4
+				ObjectTileGrip(0,0,8,0)
+				if CheckResult==1
+					Object.Value4=Object.YPos
+					if Object.Value1<Object.Scale
+						SetBit(Object.Value7,1,1)
+					endif
+				else
+					SetBit(Object.Value7,1,1)
+				endif
+			else
+				Object.Value1+=10922
+				Object.XPos=Object.Value1
+				Object.YPos=Object.Value4
+				ObjectTileGrip(0,0,8,0)
+				if CheckResult==1
+					Object.Value4=Object.YPos
+					if Object.Value1>Object.Rotation
+						SetBit(Object.Value7,1,0)
+					endif
+				else
+					SetBit(Object.Value7,1,0)
+				endif
+			endif
+			GetBit(TempValue0,Object.Value7,2)
+			if TempValue0==0
+				Object.Value2-=21845
+				Object.XPos=Object.Value2
+				Object.YPos=Object.Value5
+				ObjectTileGrip(0,0,8,0)
+				if CheckResult==1
+					Object.Value5=Object.YPos
+					if Object.Value2<Object.Scale
+						SetBit(Object.Value7,2,1)
+					endif
+				else
+					SetBit(Object.Value7,2,1)
+				endif
+			else
+				Object.Value2+=21845
+				Object.XPos=Object.Value2
+				Object.YPos=Object.Value5
+				ObjectTileGrip(0,0,8,0)
+				if CheckResult==1
+					Object.Value5=Object.YPos
+					if Object.Value2>Object.Rotation
+						SetBit(Object.Value7,2,0)
+					endif
+				else
+					SetBit(Object.Value7,2,0)
+				endif
+			endif
+			GetBit(TempValue0,Object.Value7,3)
+			if TempValue0==0
+				Object.Value3-=32768
+				Object.XPos=Object.Value3
+				Object.YPos=Object.Value6
+				ObjectTileGrip(0,0,8,0)
+				if CheckResult==1
+					Object.Value6=Object.YPos
+					if Object.Value3<Object.Scale
+						SetBit(Object.Value7,3,1)
+					endif
+				else
+					SetBit(Object.Value7,3,1)
+				endif
+			else
+				Object.Value3+=32768
+				Object.XPos=Object.Value3
+				Object.YPos=Object.Value6
+				ObjectTileGrip(0,0,8,0)
+				if CheckResult==1
+					Object.Value6=Object.YPos
+					if Object.Value3>Object.Rotation
+						SetBit(Object.Value7,3,0)
+					endif
+				else
+					SetBit(Object.Value7,3,0)
+				endif
+			endif
+			Object.XPos=TempValue1
+			Object.YPos=TempValue2
+		else
+			Object.Value0=0
+			Object.State=2
+		endif
+		break
+	case 4
+		if Object.Value0<36
+			Object.Value0++
+			GetBit(TempValue0,Object.Value7,0)
+			if TempValue0==0
+				Object.XPos-=16384
+				ObjectTileGrip(0,0,8,0)
+				if CheckResult==1
+					if Object.XPos<Object.Scale
+						SetBit(Object.Value7,0,1)
+					endif
+				else
+					SetBit(Object.Value7,0,1)
+				endif
+			else
+				Object.XPos+=16384
+				ObjectTileGrip(0,0,8,0)
+				if CheckResult==1
+					if Object.XPos>Object.Rotation
+						SetBit(Object.Value7,0,0)
+					endif
+				else
+					SetBit(Object.Value7,0,0)
+				endif
+			endif
+			TempValue1=Object.XPos
+			TempValue2=Object.YPos
+			GetBit(TempValue0,Object.Value7,1)
+			if TempValue0==0
+				Object.Value1-=10922
+				Object.XPos=Object.Value1
+				Object.YPos=Object.Value4
+				ObjectTileGrip(0,0,8,0)
+				if CheckResult==1
+					Object.Value4=Object.YPos
+					if Object.Value1<Object.Scale
+						SetBit(Object.Value7,1,1)
+					endif
+				else
+					SetBit(Object.Value7,1,1)
+				endif
+			else
+				Object.Value1+=10922
+				Object.XPos=Object.Value1
+				Object.YPos=Object.Value4
+				ObjectTileGrip(0,0,8,0)
+				if CheckResult==1
+					Object.Value4=Object.YPos
+					if Object.Value1>Object.Rotation
+						SetBit(Object.Value7,1,0)
+					endif
+				else
+					SetBit(Object.Value7,1,0)
+				endif
+			endif
+			GetBit(TempValue0,Object.Value7,2)
+			if TempValue0==0
+				Object.Value2-=5461
+				Object.XPos=Object.Value2
+				Object.YPos=Object.Value5
+				ObjectTileGrip(0,0,8,0)
+				if CheckResult==1
+					Object.Value5=Object.YPos
+					if Object.Value2<Object.Scale
+						SetBit(Object.Value7,2,1)
+					endif
+				else
+					SetBit(Object.Value7,2,1)
+				endif
+			else
+				Object.Value2+=5461
+				Object.XPos=Object.Value2
+				Object.YPos=Object.Value5
+				ObjectTileGrip(0,0,8,0)
+				if CheckResult==1
+					Object.Value5=Object.YPos
+					if Object.Value2>Object.Rotation
+						SetBit(Object.Value7,2,0)
+					endif
+				else
+					SetBit(Object.Value7,2,0)
+				endif
+			endif
+			Object.XPos=TempValue1
+			Object.YPos=TempValue2
+		else
+			if Object.Value7==0
+				Object.Value1=Object.XPos
+				Object.Value1+=786432
+				Object.Value2=Object.XPos
+				Object.Value2+=1572864
+				Object.Value3=Object.XPos
+				Object.Value3+=2359296
+			endif
+			if Object.Value7==15
+				Object.Value1=Object.XPos
+				Object.Value1-=786432
+				Object.Value2=Object.XPos
+				Object.Value2-=1572864
+				Object.Value3=Object.XPos
+				Object.Value3-=2359296
+			endif
+			Object.Value0=0
+			Object.State=5
+		endif
+		break
+	case 5
+		if Object.Value0<36
+			Object.Value0++
+			TempValue1=Object.XPos
+			TempValue2=Object.YPos
+			GetBit(TempValue0,Object.Value7,1)
+			if TempValue0==0
+				Object.Value1-=5461
+				Object.XPos=Object.Value1
+				Object.YPos=Object.Value4
+				ObjectTileGrip(0,0,8,0)
+				if CheckResult==1
+					Object.Value4=Object.YPos
+					if Object.Value1<Object.Scale
+						SetBit(Object.Value7,1,1)
+					endif
+				else
+					SetBit(Object.Value7,1,1)
+				endif
+			else
+				Object.Value1+=5461
+				Object.XPos=Object.Value1
+				Object.YPos=Object.Value4
+				ObjectTileGrip(0,0,8,0)
+				if CheckResult==1
+					Object.Value4=Object.YPos
+					if Object.Value1>Object.Rotation
+						SetBit(Object.Value7,1,0)
+					endif
+				else
+					SetBit(Object.Value7,1,0)
+				endif
+			endif
+			GetBit(TempValue0,Object.Value7,2)
+			if TempValue0==0
+				Object.Value2-=10922
+				Object.XPos=Object.Value2
+				Object.YPos=Object.Value5
+				ObjectTileGrip(0,0,8,0)
+				if CheckResult==1
+					Object.Value5=Object.YPos
+					if Object.Value2<Object.Scale
+						SetBit(Object.Value7,2,1)
+					endif
+				else
+					SetBit(Object.Value7,2,1)
+				endif
+			else
+				Object.Value2+=10922
+				Object.XPos=Object.Value2
+				Object.YPos=Object.Value5
+				ObjectTileGrip(0,0,8,0)
+				if CheckResult==1
+					Object.Value5=Object.YPos
+					if Object.Value2>Object.Rotation
+						SetBit(Object.Value7,2,0)
+					endif
+				else
+					SetBit(Object.Value7,2,0)
+				endif
+			endif
+			GetBit(TempValue0,Object.Value7,3)
+			if TempValue0==0
+				Object.Value3-=16384
+				Object.XPos=Object.Value3
+				Object.YPos=Object.Value6
+				ObjectTileGrip(0,0,8,0)
+				if CheckResult==1
+					Object.Value6=Object.YPos
+					if Object.Value3<Object.Scale
+						SetBit(Object.Value7,3,1)
+					endif
+				else
+					SetBit(Object.Value7,3,1)
+				endif
+			else
+				Object.Value3+=16384
+				Object.XPos=Object.Value3
+				Object.YPos=Object.Value6
+				ObjectTileGrip(0,0,8,0)
+				if CheckResult==1
+					Object.Value6=Object.YPos
+					if Object.Value3>Object.Rotation
+						SetBit(Object.Value7,3,0)
+					endif
+				else
+					SetBit(Object.Value7,3,0)
+				endif
+			endif
+			Object.XPos=TempValue1
+			Object.YPos=TempValue2
+		else
+			Object.Value0=0
+			Object.State=4
+		endif
+		break
+
+	endswitch
+	CallFunction(StageSetup_CheckGoodFuture)
+endsub
+
+
+sub ObjectPlayerInteraction
+	PlayerObjectCollision(C_TOUCH,-8,-10,8,8)
+	if CheckResult==1
+		CallFunction(PlayerObject_BadnikBreak)
+	else
+		TempValue1=Object.XPos
+		TempValue2=Object.YPos
+		if Object.PropertyValue==0
+			Object.XPos=Object.Value1
+			Object.YPos=Object.Value4
+			PlayerObjectCollision(C_TOUCH,-8,-10,8,8)
+			if CheckResult==1
+				CallFunction(PlayerObject_BadnikHit)
+			else
+				Object.XPos=Object.Value2
+				Object.YPos=Object.Value5
+				PlayerObjectCollision(C_TOUCH,-8,-10,8,8)
+				if CheckResult==1
+					CallFunction(PlayerObject_BadnikHit)
+				else
+					Object.XPos=Object.Value3
+					Object.YPos=Object.Value6
+					PlayerObjectCollision(C_TOUCH,-8,-10,8,8)
+					if CheckResult==1
+						CallFunction(PlayerObject_BadnikHit)
+					endif
+				endif
+			endif
+		else
+			Object.XPos=Object.Value1
+			Object.YPos=Object.Value4
+			PlayerObjectCollision(C_TOUCH,-8,-8,8,8)
+			if CheckResult==1
+				CallFunction(PlayerObject_BadnikBreak)
+			else
+				Object.XPos=Object.Value2
+				Object.YPos=Object.Value5
+				PlayerObjectCollision(C_TOUCH,-8,-8,8,8)
+				if CheckResult==1
+					CallFunction(PlayerObject_BadnikBreak)
+				else
+					Object.XPos=Object.Value3
+					Object.YPos=Object.Value6
+					PlayerObjectCollision(C_TOUCH,-8,-8,8,8)
+					if CheckResult==1
+						CallFunction(PlayerObject_BadnikBreak)
+					endif
+				endif
+			endif
+		endif
+		Object.XPos=TempValue1
+		Object.YPos=TempValue2
+	endif
+endsub
+
+
+sub ObjectDraw
+	if Object.PropertyValue==0
+		GetBit(Object.Direction,Object.Value7,3)
+		DrawSpriteFX(2,FX_FLIP,Object.Value3,Object.Value6)
+		GetBit(Object.Direction,Object.Value7,2)
+		DrawSpriteFX(2,FX_FLIP,Object.Value2,Object.Value5)
+		GetBit(Object.Direction,Object.Value7,1)
+		DrawSpriteFX(2,FX_FLIP,Object.Value1,Object.Value4)
+	else
+		GetBit(Object.Direction,Object.Value7,3)
+		DrawSpriteFX(3,FX_FLIP,Object.Value3,Object.Value6)
+		GetBit(Object.Direction,Object.Value7,2)
+		DrawSpriteFX(3,FX_FLIP,Object.Value2,Object.Value5)
+		GetBit(Object.Direction,Object.Value7,1)
+		DrawSpriteFX(3,FX_FLIP,Object.Value1,Object.Value4)
+	endif
+	GetBit(Object.Direction,Object.Value7,0)
+	switch Object.State
+	case 0
+	case 1
+	case 3
+	case 5
+		DrawSpriteFX(0,FX_FLIP,Object.XPos,Object.YPos)
+		break
+	case 2
+	case 4
+		DrawSpriteFX(1,FX_FLIP,Object.XPos,Object.YPos)
+		break
+
+	endswitch
+endsub
+
+
+sub ObjectStartup
+	LoadSpriteSheet("R5/Objects.gif")
+	SpriteFrame(-8,-16,16,24,125,75)
+	SpriteFrame(-8,-16,16,24,125,50)
+	SpriteFrame(-8,-16,16,24,67,150)
+	SpriteFrame(-8,-8,16,16,52,1)
+endsub
+
+sub RSDK
+	LoadSpriteSheet("Global/Display.gif")
+	SetEditorIcon(Icon0,SingleIcon,-16,-16,32,32,1,143)
+endsub

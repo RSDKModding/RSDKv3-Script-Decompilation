@@ -1,0 +1,50 @@
+//------------Sonic CD SasuriBullet Script-------------//
+//--------Scripted by Christian Whitehead 'The Taxman'--------//
+//-------Unpacked By Rubberduckycooly's Script Unpacker-------//
+
+//-------Aliases-------//
+#alias 51: TYPE_SASURIBULLET
+
+
+sub ObjectMain
+	Object.XPos+=Object.Value1
+	if Object.OutOfBounds==1
+		Object.Type=TypeName[BlankObject]
+	else
+		TempValue0=Screen.YOffset
+		TempValue0-=8
+		TempValue0<<=16
+		if Object.YPos<TempValue0
+			Object.Type=TypeName[BlankObject]
+		endif
+	endif
+endsub
+
+
+sub ObjectPlayerInteraction
+	PlayerObjectCollision(C_TOUCH,-6,-6,6,6)
+	if CheckResult==1
+		CallFunction(PlayerObject_BadnikHit)
+	endif
+endsub
+
+
+sub ObjectDraw
+	TempValue0=Object.Frame
+	TempValue0>>=1
+	DrawSprite(TempValue0)
+	Object.Frame++
+	Object.Frame&=3
+endsub
+
+
+sub ObjectStartup
+	LoadSpriteSheet("R5/Objects.gif")
+	SpriteFrame(-8,-8,16,16,67,27)
+	SpriteFrame(-8,-8,16,16,133,127)
+endsub
+
+sub RSDK
+	LoadSpriteSheet("Global/Display.gif")
+	SetEditorIcon(Icon0,SingleIcon,-16,-16,32,32,1,143)
+endsub

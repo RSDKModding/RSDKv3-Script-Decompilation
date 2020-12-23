@@ -1,0 +1,37 @@
+//------------Sonic CD PaletteAnimation Script-------------//
+//--------Scripted by Christian Whitehead 'The Taxman'--------//
+//-------Unpacked By Rubberduckycooly's Script Unpacker-------//
+
+//-------Aliases-------//
+#alias 64: TYPE_PALETTEANIMATION
+
+
+sub ObjectMain
+	Object.Value0++
+	if Object.Value0==8
+		Object.Value0=0
+		Object.Value1++
+		Object.Value1%=3
+		SetActivePalette(Object.Value1,0,240)
+	endif
+endsub
+
+
+sub ObjectStartup
+	Object[19].Type=TypeName[PaletteAnimation]
+	Object[19].Priority=1
+	TempValue0=1
+	while TempValue0<3
+		RotatePalette(177,179,1)
+		RotatePalette(172,174,0)
+		CopyPalette(0,TempValue0)
+		TempValue0++
+	loop
+	RotatePalette(177,179,1)
+	RotatePalette(172,174,0)
+endsub
+
+sub RSDK
+	LoadSpriteSheet("Global/Display.gif")
+	SetEditorIcon(Icon0,SingleIcon,-16,-16,32,32,1,143)
+endsub

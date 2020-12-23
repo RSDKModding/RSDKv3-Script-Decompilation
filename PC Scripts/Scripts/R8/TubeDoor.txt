@@ -1,0 +1,96 @@
+//------------Sonic CD Tube Door Script-------------//
+//--------Scripted by Christian Whitehead 'The Taxman'--------//
+//-------Unpacked By Rubberduckycooly's Script Unpacker-------//
+
+//-------Aliases-------//
+#alias 53: TYPE_TUBEDOOR
+
+
+sub ObjectMain
+	if Object.OutOfBounds==1
+		Object.State=0
+		Object.Value1=0
+		Object.Priority=0
+	endif
+	switch Object.State
+	case 0
+		Object.Priority=1
+		if Object[-1].PropertyValue==1
+			if Object.PropertyValue==0
+				Object.State=1
+			endif
+		else
+			if Player.State==1
+				if Player.Animation==ANI_JUMPING
+					Object.State=3
+					Object.Value1=1048576
+				endif
+			endif
+		endif
+		break
+	case 1
+		if Object.Value1<1048576
+			Object.Value1+=131072
+		endif
+		if Player.State==1
+			if Player.Animation==ANI_JUMPING
+				if Player.YPos>Object.YPos
+					Object.State=3
+				endif
+			endif
+		endif
+		break
+	case 2
+		if Object.Value1>0
+			Object.Value1-=131072
+		else
+			Object.State=0
+		endif
+		break
+	case 3
+		TempValue0=Object.YPos
+		TempValue0-=Player.YPos
+		if TempValue0>1048576
+			Object.State=2
+		endif
+		break
+
+	endswitch
+endsub
+
+
+sub ObjectPlayerInteraction
+	if Object.State==0
+		PlayerObjectCollision(C_PLATFORM,-8,-4,56,32)
+	else
+		PlayerObjectCollision(C_PLATFORM,-8,-4,4,32)
+		PlayerObjectCollision(C_PLATFORM,44,-4,56,32)
+	endif
+endsub
+
+
+sub ObjectDraw
+	TempValue0=Object.Value1
+	FlipSign(TempValue0)
+	TempValue0+=Object.XPos
+	DrawSpriteXY(2,TempValue0,Object.YPos)
+	TempValue0=Object.Value1
+	TempValue0+=Object.XPos
+	DrawSpriteXY(3,TempValue0,Object.YPos)
+	DrawSprite(0)
+	DrawSprite(1)
+endsub
+
+
+sub ObjectStartup
+	LoadSpriteSheet("R8/Objects2.gif")
+	SpriteFrame(-8,-4,16,8,19,75)
+	SpriteFrame(40,-4,16,8,133,26)
+	SpriteFrame(8,-4,16,8,100,26)
+	SpriteFrame(24,-4,16,8,116,26)
+endsub
+
+sub RSDK
+	LoadSpriteSheet("Global/Display.gif")
+	SetEditorIcon(Icon0,SingleIcon,-16,-16,32,32,1,143)
+endsub

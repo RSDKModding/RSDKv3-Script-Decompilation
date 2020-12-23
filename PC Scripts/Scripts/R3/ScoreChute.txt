@@ -1,0 +1,200 @@
+//------------Sonic CD Score Chute Script-------------//
+//--------Scripted by Christian Whitehead 'The Taxman'--------//
+//-------Unpacked By Rubberduckycooly's Script Unpacker-------//
+
+//-------Aliases-------//
+#alias 42: TYPE_SCORECHUTE
+
+
+sub ObjectMain
+	switch Object.State
+	case 1
+		if Object.Value0<8
+			Object.Value0++
+			Player.XPos=Object.XPos
+			Player.YPos=Object.YPos
+			Player.YPos-=524288
+			Player.YVelocity=0
+			Player.XVelocity=0
+			Player.Speed=0
+		else
+			Object.State=2
+			Object.Value0=0
+			Player.YVelocity=0
+			Player.XVelocity=0
+			Player.Visible=0
+			if Player.Value5>0
+				Player.Value4=0
+				Player.Value5=0
+			endif
+			Player.State=1
+		endif
+		break
+	case 2
+		if Object.Value0<8
+			Object.Value0++
+			Player.XPos=Object.XPos
+			Player.YPos=Object.YPos
+			Player.YPos-=524288
+		else
+			Object.State=3
+			Object.Value0=0
+		endif
+		break
+	case 3
+		if Object.Value0<4
+			Object.Value0++
+		else
+			Object.State=4
+			Object.Value0=0
+		endif
+		if Player.State==26
+			Object.State=7
+			Object.Value0=0
+			Player.Visible=1
+		endif
+		break
+	case 4
+		if Object.Value1<4
+			if Object.Value0==32
+				CreateTempObject(TypeName[ObjectScore],0,Object.XPos,Object.YPos)
+				Player.Score+=100
+			endif
+		endif
+		if Object.Value1<3
+			if Object.Value0==64
+				CreateTempObject(TypeName[ObjectScore],0,Object.XPos,Object.YPos)
+				Player.Score+=100
+			endif
+		endif
+		if Object.Value0<80
+			Object.Value0++
+		else
+			Object.State=5
+			Object.Value0=0
+		endif
+		if Player.State==26
+			Object.State=7
+			Object.Value0=0
+			Player.Visible=1
+		endif
+		break
+	case 5
+		if Object.Value0<4
+			Object.Value0++
+		else
+			Object.State=6
+			Object.Value0=0
+		endif
+		if Player.State==26
+			Object.State=7
+			Object.Value0=0
+			Player.Visible=1
+		endif
+		break
+	case 6
+		if Object.Value0<8
+			Object.Value0++
+		else
+			Object.State=7
+			Object.Value0=0
+			Player.Visible=1
+			Player.State=13
+			Player.Animation=ANI_JUMPING
+			Player.ObjectInteraction=1
+			Player.YVelocity=-475136
+			Player.Timer=0
+			PlayStageSfx(3,0)
+		endif
+		break
+	case 7
+		if Object.Value0<120
+			Object.Value0++
+		else
+			Object.State=0
+			Object.Value0=0
+			Object.Value1++
+		endif
+		break
+
+	endswitch
+	if Object.OutOfBounds==1
+		Object.Value1=0
+		Object.Priority=0
+	endif
+endsub
+
+
+sub ObjectPlayerInteraction
+	if Object.State==0
+		if Player.YVelocity>=0
+			PlayerObjectCollision(C_TOUCH,-16,-8,16,16)
+			if CheckResult==1
+				Object.State=1
+				Object.Priority=1
+				Player.Animation=ANI_JUMPING
+				Player.ObjectInteraction=0
+				PlayStageSfx(2,0)
+			endif
+		endif
+	endif
+endsub
+
+
+sub ObjectDraw
+	switch Object.State
+	case 1
+		DrawSprite(0)
+		break
+	case 2
+		DrawSprite(0)
+		DrawSprite(1)
+		break
+	case 3
+		DrawSprite(0)
+		DrawSprite(2)
+		break
+	case 4
+		TempValue0=Object.Value0
+		TempValue0&=7
+		TempValue0>>=2
+		if TempValue0>0
+			DrawSprite(0)
+		endif
+		break
+	case 5
+		DrawSprite(0)
+		DrawSprite(2)
+		break
+	case 6
+		DrawSprite(0)
+		DrawSprite(1)
+		break
+
+	endswitch
+endsub
+
+
+sub ObjectStartup
+	LoadSpriteSheet("R3/Objects.gif")
+	ArrayPos0=32
+	while ArrayPos0<1056
+		if Object[ArrayPos0].Type==TypeName[ScoreChute]
+			Object[ArrayPos0].DrawOrder=4
+		endif
+		ArrayPos0++
+	loop
+	SpriteFrame(-24,-8,48,16,117,233)
+	if Stage.PlayerListPos==0
+		SpriteFrame(-16,-24,32,16,2,240)
+		SpriteFrame(-8,-16,16,8,35,241)
+	else
+		SpriteFrame(-12,-20,24,12,228,244)
+		SpriteFrame(-8,-16,16,8,211,247)
+	endif
+endsub
+
+sub RSDK
+	LoadSpriteSheet("Global/Display.gif")
+	SetEditorIcon(Icon0,SingleIcon,-16,-16,32,32,1,143)
+endsub

@@ -1,0 +1,46 @@
+//------------Sonic CD R8 Setup Script-------------//
+//--------Scripted by Christian Whitehead 'The Taxman'--------//
+//-------Unpacked By Rubberduckycooly's Script Unpacker-------//
+
+//-------Aliases-------//
+#alias 35: TYPE_R8SETUP
+
+
+sub ObjectMain
+	Object.Rotation++
+	Object.Rotation%=144
+	Object.Value0++
+	if Object.Value0==5
+		Object.Value0=0
+		Object.Value1++
+		Object.Value1%=3
+		TempValue0=Object.Value1
+		TempValue0+=639
+	endif
+	SetActivePalette(Object.Value1,0,Screen.YSize)
+endsub
+
+
+sub ObjectStartup
+	Object[19].Type=TypeName[R8Setup]
+	Object[19].Priority=1
+	CopyPalette(0,1)
+	CopyPalette(0,2)
+	CopyPalette(0,3)
+	CopyPalette(0,4)
+	CopyPalette(0,5)
+	TempValue0=0
+	TempValue1=0
+	TempValue2=32
+	while TempValue0<3
+		LoadPalette("R81B_PalCycle.act",TempValue0,160,TempValue1,TempValue2)
+		TempValue0++
+		TempValue1+=32
+		TempValue2+=32
+	loop
+endsub
+
+sub RSDK
+	LoadSpriteSheet("Global/Display.gif")
+	SetEditorIcon(Icon0,SingleIcon,-16,-16,32,32,1,143)
+endsub

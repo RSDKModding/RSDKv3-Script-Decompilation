@@ -1,0 +1,73 @@
+//------------Sonic CD Bounce Pole Script-------------//
+//--------Scripted by Christian Whitehead 'The Taxman'--------//
+//-------Unpacked By Rubberduckycooly's Script Unpacker-------//
+
+//-------Aliases-------//
+#alias 57: TYPE_BOUNCEPOLE
+
+
+sub ObjectPlayerInteraction
+	PlayerObjectCollision(C_TOUCH,-16,-8,16,8)
+	if CheckResult==1
+		if Player.Gravity==1
+			if Player.YVelocity>0
+				Player.State=13
+				Player.Timer=0
+				Player.Animation=ANI_JUMPING
+				FlipSign(Player.YVelocity)
+				Player.YVelocity-=131072
+				if Player.YVelocity<-655360
+					Player.YVelocity=-655360
+				endif
+				Object.Frame=1
+			endif
+		endif
+	endif
+endsub
+
+
+sub ObjectDraw
+	Object.Direction=Object.PropertyValue
+	DrawSpriteFX(Object.Frame,FX_FLIP,Object.XPos,Object.YPos)
+	if Object.Frame>0
+		Object.Value0++
+		if Object.Value0==3
+			Object.Value0=0
+			Object.Frame++
+			if Object.Frame>20
+				Object.Frame=0
+			endif
+		endif
+	endif
+endsub
+
+
+sub ObjectStartup
+	LoadSpriteSheet("R1/Objects.gif")
+	SpriteFrame(-16,-8,32,16,190,34)
+	SpriteFrame(-16,-8,32,16,190,34)
+	SpriteFrame(-16,-8,32,20,190,80)
+	SpriteFrame(-16,-8,32,16,190,34)
+	SpriteFrame(-16,-20,32,28,190,51)
+	SpriteFrame(-16,-8,32,16,190,34)
+	SpriteFrame(-16,-8,32,20,190,80)
+	SpriteFrame(-16,-8,32,16,190,34)
+	SpriteFrame(-16,-8,32,16,190,34)
+	SpriteFrame(-16,-8,32,20,190,80)
+	SpriteFrame(-16,-8,32,16,190,34)
+	SpriteFrame(-16,-20,32,28,190,51)
+	SpriteFrame(-16,-8,32,16,190,34)
+	SpriteFrame(-16,-8,32,20,190,80)
+	SpriteFrame(-16,-8,32,16,190,34)
+	SpriteFrame(-16,-8,32,16,190,34)
+	SpriteFrame(-16,-8,32,20,190,80)
+	SpriteFrame(-16,-8,32,16,190,34)
+	SpriteFrame(-16,-20,32,28,190,51)
+	SpriteFrame(-16,-8,32,16,190,34)
+	SpriteFrame(-16,-8,32,20,190,80)
+endsub
+
+sub RSDK
+	LoadSpriteSheet("Global/Display.gif")
+	SetEditorIcon(Icon0,SingleIcon,-16,-16,32,32,1,143)
+endsub

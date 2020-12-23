@@ -1,0 +1,104 @@
+//------------Sonic CD Ladybug Script-------------//
+//--------Scripted by Christian Whitehead 'The Taxman'--------//
+//-------Unpacked By Rubberduckycooly's Script Unpacker-------//
+
+//-------Aliases-------//
+#alias 52: TYPE_LADYBUG
+
+
+sub ObjectMain
+	switch Object.State
+	case 0
+		if Object.XPos>Player.XPos
+			Object.Direction=FACING_RIGHT
+		else
+			Object.Direction=FACING_LEFT
+		endif
+		TempValue0=Object.Value0
+		TempValue0<<=4
+		Sin(TempValue1,TempValue0)
+		TempValue1>>=8
+		TempValue1+=24
+		ObjectTileGrip(0,0,TempValue1,0)
+		PlayerObjectCollision(C_TOUCH,-64,-256,64,256)
+		if CheckResult==1
+			Object.State=1
+			Object.DrawOrder=4
+			if Object.XPos>Player.XPos
+				Object.Value1=65536
+				Object.Direction=FACING_LEFT
+			else
+				Object.Value1=-65536
+				Object.Direction=FACING_RIGHT
+			endif
+		endif
+		break
+	case 1
+		TempValue0=Object.Value0
+		TempValue0&=3
+		if TempValue0<3
+			Object.XPos+=Object.Value1
+		endif
+		if Object.Value0<16
+			ObjectTileGrip(0,0,24,0)
+		else
+			ObjectTileGrip(0,0,23,0)
+		endif
+		if CheckResult==0
+			Object.State=2
+		endif
+		if Object.PropertyValue==0
+			if Object.Value2<128
+				Object.Value2++
+			else
+				Object.Value2=0
+				CreateTempObject(TypeName[LadybugBomb],0,Object.XPos,Object.YPos)
+				Object[TempObjectPos].YPos+=1310720
+			endif
+		endif
+		break
+	case 2
+		Object.YPos-=32768
+		break
+
+	endswitch
+	Object.Value0++
+	Object.Value0&=31
+	Object.Frame++
+	Object.Frame%=12
+	CallFunction(StageSetup_CheckGoodFuture)
+endsub
+
+
+sub ObjectPlayerInteraction
+	PlayerObjectCollision(C_TOUCH,-16,-16,16,20)
+	if CheckResult==1
+		CallFunction(PlayerObject_BadnikBreak)
+	endif
+endsub
+
+
+sub ObjectDraw
+	TempValue0=Object.Frame
+	TempValue0>>=2
+	if Object.PropertyValue==1
+		TempValue0+=3
+	endif
+	DrawSpriteFX(TempValue0,FX_FLIP,Object.XPos,Object.YPos)
+endsub
+
+
+sub ObjectStartup
+	LoadSpriteSheet("R3/Objects.gif")
+	SpriteFrame(-16,-16,32,32,67,134)
+	SpriteFrame(-16,-16,32,32,100,134)
+	SpriteFrame(-16,-16,32,32,133,134)
+	SpriteFrame(-16,-16,32,32,67,101)
+	SpriteFrame(-16,-16,32,32,100,101)
+	SpriteFrame(-16,-16,32,32,133,101)
+endsub
+
+sub RSDK
+	LoadSpriteSheet("Global/Display.gif")
+	SetEditorIcon(Icon0,SingleIcon,-16,-16,32,32,1,143)
+endsub

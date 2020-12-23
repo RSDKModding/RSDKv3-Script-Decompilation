@@ -1,0 +1,62 @@
+//------------Sonic CD Tile Trigger L Script-------------//
+//--------Scripted by Christian Whitehead 'The Taxman'--------//
+//-------Unpacked By Rubberduckycooly's Script Unpacker-------//
+
+//-------Aliases-------//
+#alias 41: TYPE_TILETRIGGERL
+
+
+sub ObjectPlayerInteraction
+	if Player.Gravity==0
+		PlayerObjectCollision(C_TOUCH,-12,Object.Value0,12,Object.Value1)
+		if CheckResult==1
+			if Player.Speed>0
+				TempValue0=Object.Value7
+			else
+				TempValue0=Object.Value6
+			endif
+			SetTileLayerEntry(TempValue0,0,Object.Value2,Object.Value3)
+			TempValue0++
+			SetTileLayerEntry(TempValue0,0,Object.Value4,Object.Value3)
+			TempValue0++
+			SetTileLayerEntry(TempValue0,0,Object.Value2,Object.Value5)
+			TempValue0++
+			SetTileLayerEntry(TempValue0,0,Object.Value4,Object.Value5)
+			TempValue0++
+		endif
+	endif
+endsub
+
+
+sub ObjectStartup
+	ArrayPos0=32
+	while ArrayPos0<1056
+		if Object[ArrayPos0].Type==TypeName[TileTriggerL]
+			ArrayPos1=ArrayPos0
+			ArrayPos1++
+			Object[ArrayPos0].Value0=Object[ArrayPos0].PropertyValue
+			Object[ArrayPos0].Value0<<=3
+			Object[ArrayPos0].Value1=Object[ArrayPos0].Value0
+			FlipSign(Object[ArrayPos0].Value0)
+			Object[ArrayPos0].Value0-=8
+			Object[ArrayPos0].Value1+=8
+			Object[ArrayPos0].Value2=Object[ArrayPos1].iXPos
+			Object[ArrayPos0].Value2>>=7
+			Object[ArrayPos0].Value4=Object[ArrayPos0].Value2
+			Object[ArrayPos0].Value4++
+			Object[ArrayPos0].Value3=Object[ArrayPos1].iYPos
+			Object[ArrayPos0].Value3>>=7
+			Object[ArrayPos0].Value5=Object[ArrayPos0].Value3
+			Object[ArrayPos0].Value5++
+			GetTileLayerEntry(Object[ArrayPos0].Value6,0,Object[ArrayPos0].Value2,Object[ArrayPos0].Value3)
+			Object[ArrayPos0].Value7=Object[ArrayPos0].Value6
+			Object[ArrayPos0].Value7+=4
+		endif
+		ArrayPos0++
+	loop
+endsub
+
+sub RSDK
+	LoadSpriteSheet("Global/Display.gif")
+	SetEditorIcon(Icon0,SingleIcon,-16,-16,32,32,1,143)
+endsub

@@ -1,0 +1,103 @@
+//------------Sonic CD WarpStar Script-------------//
+//--------Scripted by Christian Whitehead 'The Taxman'--------//
+//-------Unpacked By Rubberduckycooly's Script Unpacker-------//
+
+//-------Aliases-------//
+#alias 27: TYPE_WARPSTAR
+
+
+sub ObjectMain
+	switch Object.State
+	case 0
+		Warp.Count++
+		if Warp.Count>2
+			Warp.Count=0
+		endif
+		Object.Value0--
+		if Object.Value0<1
+			if Warp.Timer>0
+				Warp.Frame=Object.Frame
+				Object.State=1
+				Object.InkEffect=2
+				Object.Alpha=255
+				CreateTempObject(TypeName[WarpStar],0,Player.XPos,Player.YPos)
+				if Player.Speed<0
+					Object[TempObjectPos].Value0=Player.Speed
+					FlipSign(Object[TempObjectPos].Value0)
+				else
+					Object[TempObjectPos].Value0=Player.Speed
+				endif
+				Object[TempObjectPos].Value0>>=19
+				Object[TempObjectPos].Value0+=7
+				Object[TempObjectPos].DrawOrder=4
+				Object[TempObjectPos].Frame=Object.Frame
+			else
+				Object.Type=TypeName[BlankObject]
+			endif
+		else
+			if Warp.Timer==0
+				Object.Type=TypeName[BlankObject]
+			endif
+		endif
+		break
+	case 1
+		Object.Value0++
+		Object.Alpha-=8
+		if Object.Value0==16
+			Object.Type=TypeName[BlankObject]
+		endif
+		break
+	case 2
+		Object.Value2+=12288
+		Object.YPos+=Object.Value2
+		Object.Value0++
+		if Object.Value0==Object.Value1
+			Object.Type=TypeName[BlankObject]
+		endif
+		break
+
+	endswitch
+endsub
+
+
+sub ObjectDraw
+	switch Object.State
+	case 0
+		if Warp.Timer>0
+			DrawSprite(Object.Frame)
+		endif
+		Object.Frame++
+		Object.Frame&=3
+		break
+	case 1
+		if Warp.Count!=2
+			if Warp.Timer>0
+				DrawSpriteFX(Warp.Frame,FX_INK,Object.XPos,Object.YPos)
+			endif
+		endif
+		break
+	case 2
+		TempValue0=Object.Frame
+		TempValue0>>=1
+		DrawSprite(TempValue0)
+		Object.Frame++
+		Object.Frame&=7
+		break
+
+	endswitch
+endsub
+
+
+sub ObjectStartup
+	LoadSpriteSheet("Global/Items3.gif")
+	SpriteFrame(-16,-16,32,32,50,133)
+	SpriteFrame(-16,-16,32,32,50,166)
+	SpriteFrame(-24,-24,48,48,1,197)
+	SpriteFrame(-16,-16,32,32,50,199)
+	SpriteFrame(-12,-12,24,24,148,152)
+endsub
+
+sub RSDK
+	LoadSpriteSheet("Global/Display.gif")
+	SetEditorIcon(Icon0,SingleIcon,-16,-16,32,32,1,143)
+endsub

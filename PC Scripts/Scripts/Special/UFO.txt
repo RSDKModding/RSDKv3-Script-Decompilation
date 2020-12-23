@@ -1,0 +1,174 @@
+//------------Sonic CD UFO Script-------------//
+//--------Scripted by Christian Whitehead 'The Taxman'--------//
+//-------Unpacked By Rubberduckycooly's Script Unpacker-------//
+
+//-------Aliases-------//
+#alias 4: TYPE_UFO
+
+
+sub ObjectMain
+	if Object.Value3==0
+		ArrayPos0=Object.Value0
+		if Object[ArrayPos0].Type!=TypeName[UFONode]
+			Object.Value0=Object.EntityNo
+			Object.Value0++
+			ArrayPos0=Object.Value0
+		endif
+		Object.XPos=Object[ArrayPos0].XPos
+		Object.YPos=Object[ArrayPos0].YPos
+		Object.Value3=Object[ArrayPos0].PropertyValue
+		Object.Value3*=2
+		ArrayPos0++
+		Object.Value0++
+		if Object[ArrayPos0].Type!=TypeName[UFONode]
+			Object.Value0=Object.EntityNo
+			Object.Value0++
+			ArrayPos0=Object.Value0
+		endif
+		Object.Value1=Object[ArrayPos0].XPos
+		Object.Value1-=Object.XPos
+		Object.Value1/=Object.Value3
+		Object.Value2=Object[ArrayPos0].YPos
+		Object.Value2-=Object.YPos
+		Object.Value2/=Object.Value3
+	else
+		Object.Value3--
+		Object.XPos+=Object.Value1
+		Object.YPos+=Object.Value2
+	endif
+	TempValue0=Object.XPos
+	TempValue0-=TileLayer[0].XPos
+	TempValue0>>=8
+	TempValue1=Object.YPos
+	TempValue1-=TileLayer[0].ZPos
+	TempValue1>>=8
+	Sin(TempValue2,TileLayer[0].Angle)
+	TempValue2*=TempValue1
+	Cos(TempValue3,TileLayer[0].Angle)
+	TempValue3*=TempValue0
+	Object.Value4=TempValue2
+	Object.Value4-=TempValue3
+	Object.Value4>>=9
+	Cos(TempValue2,TileLayer[0].Angle)
+	TempValue2*=TempValue1
+	Sin(TempValue3,TileLayer[0].Angle)
+	TempValue3*=TempValue0
+	Object.Value5=TempValue2
+	Object.Value5+=TempValue3
+	Object.Value5>>=9
+	if Player.YPos>3538944
+		if Player.YPos<7995392
+			if Object.Value5<22728
+				if Object.Value5>20628
+					if Object.Value4>-8192
+						if Object.Value4<8192
+							TempValue0=Object.Value4
+							TempValue0*=192
+							TempValue0/=Object.Value5
+							TempValue0+=Screen.CenterX
+							TempValue0<<=16
+							TempValue1=TileLayer[0].YPos
+							TempValue1>>=8
+							TempValue1-=24576
+							TempValue1*=96
+							TempValue1/=Object.Value5
+							TempValue1+=128
+							TempValue1<<=16
+							PlaySfx(1,0)
+							switch Object.PropertyValue
+							case 0
+								Object[4].Value0--
+								if Object[4].Value4==Object.PropertyValue
+									Object[4].Value3<<=1
+								else
+									Object[4].Value3+=20
+								endif
+								break
+							case 1
+								Object[4].Value0--
+								Object[4].Value5=600
+								break
+							case 2
+								Object[4].Value1+=30
+								break
+
+							endswitch
+							Object[4].Value4=Object.PropertyValue
+							CreateTempObject(TypeName[UFOPowerUp],Object.PropertyValue,TempValue0,TempValue1)
+							Rand(Object[TempObjectPos].Value0,100)
+							Object[TempObjectPos].Value1=TempValue0
+							Object[TempObjectPos].Value2=TempValue1
+							Object[TempObjectPos].Value4=-262144
+							Object[TempObjectPos].Value5=22728
+							if Object[4].Value0==0
+								Object[TempObjectPos].Value7=1
+							endif
+							ResetObjectEntity(Object.EntityNo,TypeName[BlankObject],0,0,0)
+						endif
+					endif
+				endif
+			endif
+		endif
+	endif
+endsub
+
+
+sub ObjectDraw
+	if Object.Value5>256
+		Object.Scale=12582912
+		Object.Scale/=Object.Value5
+		TempValue0=768
+		TempValue0-=Object.Scale
+		TempValue0/=6
+		TempValue1=Object.Value5
+		TempValue1>>=12
+		if TempValue0>0
+			Object.Scale+=TempValue0
+			Object.Scale-=TempValue1
+		endif
+		TempValue0=Object.Value4
+		TempValue0*=192
+		TempValue0/=Object.Value5
+		TempValue0+=Screen.CenterX
+		TempValue1=TileLayer[0].YPos
+		TempValue1>>=8
+		TempValue1-=24576
+		TempValue1*=96
+		TempValue1/=Object.Value5
+		TempValue1+=128
+		DrawSpriteScreenFX(Object.PropertyValue,FX_SCALE,TempValue0,TempValue1)
+		TempValue1=TileLayer[0].YPos
+		TempValue1>>=8
+		TempValue1*=96
+		TempValue1/=Object.Value5
+		TempValue1+=128
+		DrawSpriteScreenFX(3,FX_SCALE,TempValue0,TempValue1)
+	endif
+endsub
+
+
+sub ObjectStartup
+	LoadSpriteSheet("Special/Objects.gif")
+	SpriteFrame(-40,-28,80,56,1,1)
+	SpriteFrame(-40,-28,80,56,82,1)
+	SpriteFrame(-40,-28,80,56,163,1)
+	SpriteFrame(-40,-8,80,16,1,117)
+	ArrayPos0=32
+	while ArrayPos0<1056
+		if Object[ArrayPos0].Type==TypeName[UFO]
+			Object[ArrayPos0].Priority=1
+			if Object[ArrayPos0].PropertyValue<2
+				Object[4].Value0++
+			else
+				Object[ArrayPos0].Type=TypeName[BlankObject]
+				Object[4].Value6=ArrayPos0
+			endif
+		endif
+		ArrayPos0++
+	loop
+endsub
+
+sub RSDK
+	LoadSpriteSheet("Global/Display.gif")
+	SetEditorIcon(Icon0,SingleIcon,-16,-16,32,32,1,143)
+endsub

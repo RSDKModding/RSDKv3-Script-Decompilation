@@ -1,0 +1,187 @@
+//------------Sonic CD Kamemusi Script-------------//
+//--------Scripted by Christian Whitehead 'The Taxman'--------//
+//-------Unpacked By Rubberduckycooly's Script Unpacker-------//
+
+//-------Aliases-------//
+#alias 38: TYPE_KAMEMUSI
+
+
+sub ObjectMain
+	if Object.PropertyValue==0
+		switch Object.State
+		case 0
+			Object.Frame++
+			Object.Frame%=60
+			Object.XPos-=43690
+			Object.Value0--
+			if Object.Value0==-192
+				Object.State=1
+				Object.Direction=FACING_LEFT
+			endif
+			ObjectTileGrip(0,0,14,0)
+			if CheckResult==0
+				Object.State=1
+				Object.Value0=-192
+				Object.Direction=FACING_LEFT
+			endif
+			if Object.Value1>-1
+				PlayerObjectCollision(C_TOUCH,-64,-64,64,64)
+				if CheckResult==1
+					Object.State=2
+					Object.DrawOrder=4
+				endif
+			else
+				Object.Value1++
+			endif
+			break
+		case 1
+			Object.Frame++
+			Object.Frame%=60
+			Object.XPos+=43690
+			Object.Value0++
+			if Object.Value0==192
+				Object.State=0
+				Object.Direction=FACING_RIGHT
+			endif
+			ObjectTileGrip(0,0,14,0)
+			if CheckResult==0
+				Object.State=0
+				Object.Value0=192
+				Object.Direction=FACING_RIGHT
+			endif
+			if Object.Value1>-1
+				PlayerObjectCollision(C_TOUCH,-64,-64,64,64)
+				if CheckResult==1
+					Object.State=2
+					Object.DrawOrder=4
+				endif
+			else
+				Object.Value1++
+			endif
+			break
+		case 2
+			if Object.Value1==60
+				CreateTempObject(TypeName[Bullet],0,Object.XPos,Object.YPos)
+				Object[TempObjectPos].Value1=-131072
+				Object[TempObjectPos].Value2=-327680
+			endif
+			if Object.Value1==62
+				CreateTempObject(TypeName[Bullet],0,Object.XPos,Object.YPos)
+				Object[TempObjectPos].Value1=131072
+				Object[TempObjectPos].Value2=-327680
+				PlayStageSfx(1,0)
+			endif
+			if Object.Value1==64
+				Object.State=Object.Direction
+				Object.Value1=-120
+				Object.DrawOrder=3
+			else
+				Object.Value1++
+			endif
+			break
+
+		endswitch
+	else
+		switch Object.State
+		case 0
+			Object.Frame++
+			Object.Frame%=12
+			Object.XPos-=14336
+			Object.Value0--
+			if Object.Value0==-384
+				Object.State=1
+				Object.Direction=FACING_LEFT
+			endif
+			ObjectTileGrip(0,0,14,0)
+			if CheckResult==0
+				Object.State=1
+				Object.Value0=-384
+				Object.Direction=FACING_LEFT
+			endif
+			if Object.Value1==82
+				Object.State=2
+				Object.Value1=0
+			else
+				Object.Value1++
+			endif
+			break
+		case 1
+			Object.Frame++
+			Object.Frame%=12
+			Object.XPos+=14336
+			Object.Value0++
+			if Object.Value0==384
+				Object.State=0
+				Object.Direction=FACING_RIGHT
+			endif
+			ObjectTileGrip(0,0,14,0)
+			if CheckResult==0
+				Object.State=0
+				Object.Value0=384
+				Object.Direction=FACING_RIGHT
+			endif
+			if Object.Value1==82
+				Object.State=2
+				Object.Value1=0
+			else
+				Object.Value1++
+			endif
+			break
+		case 2
+			if Object.Value1==14
+				Object.State=Object.Direction
+				Object.Value1=0
+			else
+				Object.Value1++
+			endif
+			break
+
+		endswitch
+	endif
+	CallFunction(StageSetup_CheckGoodFuture)
+endsub
+
+
+sub ObjectPlayerInteraction
+	PlayerObjectCollision(C_TOUCH,-16,-14,16,14)
+	if CheckResult==1
+		CallFunction(PlayerObject_BadnikBreak)
+	endif
+endsub
+
+
+sub ObjectDraw
+	if Object.PropertyValue==0
+		if Object.State<2
+			TempValue0=Object.Frame
+			TempValue0/=30
+			DrawSpriteFX(TempValue0,FX_FLIP,Object.XPos,Object.YPos)
+		else
+			DrawSpriteFX(4,FX_FLIP,Object.XPos,Object.YPos)
+		endif
+	else
+		if Object.State<2
+			TempValue0=Object.Frame
+			TempValue0/=6
+			TempValue0+=2
+			DrawSpriteFX(TempValue0,FX_FLIP,Object.XPos,Object.YPos)
+		else
+			DrawSpriteFX(4,FX_FLIP,Object.XPos,Object.YPos)
+		endif
+	endif
+endsub
+
+
+sub ObjectStartup
+	LoadSpriteSheet("R1/Objects.gif")
+	SpriteFrame(-16,-15,32,29,223,34)
+	SpriteFrame(-16,-14,32,28,223,93)
+	SpriteFrame(-16,-15,32,29,223,34)
+	SpriteFrame(-16,-14,32,28,223,64)
+	SpriteFrame(-16,-17,32,31,223,122)
+endsub
+
+sub RSDK
+	LoadSpriteSheet("Global/Display.gif")
+	SetEditorIcon(Icon0,SingleIcon,-16,-16,32,32,1,143)
+endsub

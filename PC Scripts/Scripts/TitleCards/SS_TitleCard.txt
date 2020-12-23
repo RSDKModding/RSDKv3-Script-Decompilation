@@ -1,0 +1,144 @@
+//------------Sonic CD TitleCard Script-------------//
+//--------Scripted by Christian Whitehead 'The Taxman'--------//
+//-------Unpacked By Rubberduckycooly's Script Unpacker-------//
+
+//-------Aliases-------//
+#alias 3: TYPE_TITLECARD
+
+
+sub ObjectDraw
+	Object[4].Value1=100
+	Object[4].Value2=0
+	switch Object.State
+	case 0
+		if Object.Value3>0
+			if Object.Value3==256
+				PlayMusic(0)
+				Player.ControlMode=0
+			endif
+			SetScreenFade(Object.Value4,Object.Value5,Object.Value6,Object.Value3)
+			Object.Value3-=8
+		else
+			Object.State=1
+			Object.Value3=0
+		endif
+		Player.ControlMode=-1
+		break
+	case 1
+		TempValue0=144
+		TempValue0+=Object.Value7
+		if Object.Value1>TempValue0
+			Object.Value1-=8
+		endif
+		if Object.Value0<0
+			Object.Value0+=8
+		else
+			Object.State=2
+		endif
+		break
+	case 2
+		if Object.Value3==160
+			Object.State=3
+		else
+			Object.Value3++
+		endif
+		break
+	case 3
+		if Object.Value1<408
+			Object.Value1+=16
+			Object.Value0-=16
+		else
+			ResetObjectEntity(20,TypeName[BlankObject],0,0,0)
+			Player.ControlMode=0
+			if Options.GameMode==2
+				Stage.TimeEnabled=1
+			endif
+		endif
+		break
+
+	endswitch
+	if Object.Type>TypeName[BlankObject]
+		TempValue0=136
+		TempValue0+=Object.Value7
+		DrawSpriteScreenXY(0,TempValue0,Object.Value0)
+		DrawSpriteScreenXY(5,Object.Value1,64)
+		DrawSpriteScreenXY(6,Object.Value1,64)
+		DrawSpriteScreenXY(7,Object.Value1,64)
+		TempValue0=8
+		while TempValue0<Object.Value2
+			DrawSpriteScreenXY(TempValue0,Object.Value1,64)
+			TempValue0++
+		loop
+	endif
+endsub
+
+
+sub ObjectStartup
+	switch Engine.Language
+	case 0
+	case 5
+		LoadSpriteSheet("Special/ScoreScreen.gif")
+		break
+	case 1
+		LoadSpriteSheet("Special/ScoreScreen_FR.gif")
+		break
+	case 2
+		LoadSpriteSheet("Special/ScoreScreen_IT.gif")
+		break
+	case 3
+		LoadSpriteSheet("Special/ScoreScreen_DE.gif")
+		break
+	case 4
+		LoadSpriteSheet("Special/ScoreScreen_ES.gif")
+		break
+
+	endswitch
+	Object[20].Type=TypeName[TitleCard]
+	Object[20].Value3=384
+	Object[20].Priority=1
+	Object[20].DrawOrder=6
+	Object[20].Value0=-216
+	Object[20].Value1=336
+	Object[20].Value7=Screen.CenterX
+	Object[20].Value7-=160
+	if Object[20].Value7>3
+		Object[20].Value7-=4
+	endif
+	Object[20].Value7&=248
+	Object[20].Value1+=Object[20].Value7
+	Object[20].Value1+=Object[20].Value7
+	Object[20].Value2=12
+	Object[20].Value2+=8
+	Object[20].Value4=Fade_Colour
+	Object[20].Value4>>=16
+	Object[20].Value5=Fade_Colour
+	Object[20].Value5&=65280
+	Object[20].Value5>>=8
+	Object[20].Value6=Fade_Colour
+	Object[20].Value6&=255
+	SpriteFrame(0,0,32,184,224,37)
+	SpriteFrame(96,96,48,48,41,1)
+	SpriteFrame(96,96,48,48,90,1)
+	SpriteFrame(96,96,48,48,139,1)
+	SpriteFrame(64,97,48,16,41,67)
+	SpriteFrame(64,81,160,16,52,227)
+	SpriteFrame(39,81,160,16,52,227)
+	SpriteFrame(100,32,24,48,182,124)
+	SpriteFrame(20,0,16,55,207,124)
+	SpriteFrame(37,32,10,23,176,180)
+	SpriteFrame(48,32,9,23,187,180)
+	SpriteFrame(58,32,8,23,197,180)
+	SpriteFrame(67,32,6,23,206,180)
+	SpriteFrame(74,32,11,23,212,180)
+	SpriteFrame(86,32,9,23,176,203)
+	SpriteFrame(20,56,16,55,207,124)
+	SpriteFrame(37,56,10,23,186,203)
+	SpriteFrame(48,56,11,23,212,180)
+	SpriteFrame(60,56,10,23,197,203)
+	SpriteFrame(71,56,9,23,187,180)
+endsub
+
+sub RSDK
+	LoadSpriteSheet("Global/Display.gif")
+	SetEditorIcon(Icon0,SingleIcon,-16,-16,32,32,1,143)
+endsub

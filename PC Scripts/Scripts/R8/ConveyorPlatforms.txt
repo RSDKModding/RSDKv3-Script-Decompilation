@@ -1,0 +1,200 @@
+//------------Sonic CD C Platforms Script-------------//
+//--------Scripted by Christian Whitehead 'The Taxman'--------//
+//-------Unpacked By Rubberduckycooly's Script Unpacker-------//
+
+//-------Aliases-------//
+#alias 37: TYPE_CPLATFORMS
+
+
+sub ObjectMain
+	if Object.PropertyValue==0
+		TempValue2=0
+		ArrayPos0=Object.EntityNo
+		ArrayPos0++
+		while TempValue2<5
+			Object[ArrayPos0].Value0=Object[ArrayPos0].Value1
+			Object[ArrayPos0].Value0+=Object.Value0
+			Object[ArrayPos0].Value0%=448
+			if Object[ArrayPos0].Value0<160
+				Object[ArrayPos0].Value4=Object.XPos
+				Object[ArrayPos0].Value4-=4194304
+				TempValue0=Object[ArrayPos0].Value0
+				TempValue0<<=16
+				Object[ArrayPos0].Value4+=TempValue0
+				Object[ArrayPos0].Value5=Object.YPos
+				Object[ArrayPos0].Value5-=3801088
+				TempValue0=Object[ArrayPos0].Value0
+				TempValue0<<=15
+				Object[ArrayPos0].Value5+=TempValue0
+			else
+				if Object[ArrayPos0].Value0<224
+					TempValue0=Object[ArrayPos0].Value0
+					TempValue0-=144
+					TempValue0<<=2
+					if TempValue0>144
+						Object[ArrayPos0].Rotation++
+						Object[ArrayPos0].Rotation%=24
+						Object[ArrayPos0].Value6=0
+					endif
+					Sin(Object[ArrayPos0].Value4,TempValue0)
+					Object[ArrayPos0].Value4*=3072
+					Object[ArrayPos0].Value4+=Object.XPos
+					Object[ArrayPos0].Value4+=5242880
+					Cos(Object[ArrayPos0].Value5,TempValue0)
+					Object[ArrayPos0].Value5*=-3072
+					Object[ArrayPos0].Value5+=Object.YPos
+					Object[ArrayPos0].Value5+=2621440
+				else
+					if Object[ArrayPos0].Value0<384
+						Object[ArrayPos0].Rotation++
+						Object[ArrayPos0].Rotation%=24
+						Object[ArrayPos0].Value6=0
+						TempValue0=Object[ArrayPos0].Value0
+						TempValue0-=224
+						Object[ArrayPos0].Value4=Object.XPos
+						Object[ArrayPos0].Value4+=4063232
+						TempValue1=TempValue0
+						TempValue1<<=16
+						Object[ArrayPos0].Value4-=TempValue1
+						Object[ArrayPos0].Value5=Object.YPos
+						Object[ArrayPos0].Value5+=3735552
+						TempValue1=TempValue0
+						TempValue1<<=15
+						Object[ArrayPos0].Value5-=TempValue1
+					else
+						TempValue0=Object[ArrayPos0].Value0
+						TempValue0-=368
+						TempValue0<<=2
+						if TempValue0>144
+							Object[ArrayPos0].Rotation=0
+							Object[ArrayPos0].Value6=1
+						else
+							Object[ArrayPos0].Rotation++
+							Object[ArrayPos0].Rotation%=24
+							Object[ArrayPos0].Value6=0
+						endif
+						Sin(Object[ArrayPos0].Value4,TempValue0)
+						Object[ArrayPos0].Value4*=-3072
+						Object[ArrayPos0].Value4+=Object.XPos
+						Object[ArrayPos0].Value4-=5242880
+						Cos(Object[ArrayPos0].Value5,TempValue0)
+						Object[ArrayPos0].Value5*=3072
+						Object[ArrayPos0].Value5+=Object.YPos
+						Object[ArrayPos0].Value5-=2621440
+					endif
+				endif
+			endif
+			Object[ArrayPos0].Value4&=-65536
+			Object[ArrayPos0].Value2=Object[ArrayPos0].Value4
+			Object[ArrayPos0].Value4-=Object[ArrayPos0].XPos
+			Object[ArrayPos0].Value5&=-65536
+			Object[ArrayPos0].Value3=Object[ArrayPos0].Value5
+			Object[ArrayPos0].Value5-=Object[ArrayPos0].YPos
+			TempValue2++
+			ArrayPos0++
+		loop
+		Object.Value0++
+		Object.Value0%=448
+	endif
+endsub
+
+
+sub ObjectPlayerInteraction
+	if Object.PropertyValue==1
+		if Object.Value6==1
+			PlayerObjectCollision(C_PLATFORM,-16,-5,16,11)
+			if CheckResult==1
+				Player.XPos+=Object.Value4
+				Player.YPos+=Object.Value5
+			endif
+		endif
+	endif
+endsub
+
+
+sub ObjectDraw
+	if Object.PropertyValue==1
+		Object.XPos=Object.Value2
+		Object.YPos=Object.Value3
+		TempValue0=Object.Rotation
+		TempValue0>>=1
+		switch TempValue0
+		case 0
+		case 6
+			DrawSprite(0)
+			break
+		case 1
+		case 7
+			DrawSprite(1)
+			break
+		case 2
+		case 8
+			DrawSprite(2)
+			break
+		case 3
+		case 9
+			DrawSprite(3)
+			break
+		case 4
+		case 10
+			Object.Direction=FACING_LEFT
+			DrawSpriteFX(4,FX_FLIP,Object.XPos,Object.YPos)
+			break
+		case 5
+		case 11
+			Object.Direction=FACING_LEFT
+			DrawSpriteFX(5,FX_FLIP,Object.XPos,Object.YPos)
+			break
+
+		endswitch
+	endif
+endsub
+
+
+sub ObjectStartup
+	LoadSpriteSheet("R8/Objects.gif")
+	SpriteFrame(-16,-8,32,16,107,98)
+	SpriteFrame(-16,-12,32,24,107,115)
+	SpriteFrame(-12,-16,24,32,230,34)
+	SpriteFrame(-8,-16,16,32,239,212)
+	SpriteFrame(-12,-16,24,32,230,34)
+	SpriteFrame(-16,-12,32,24,107,115)
+	ArrayPos0=32
+	while ArrayPos0<1056
+		if Object[ArrayPos0].Type==TypeName[CPlatforms]
+			if Object[ArrayPos0].PropertyValue==0
+				ArrayPos0++
+				Object[ArrayPos0].Value1=0
+				Object[ArrayPos0].Value6=1
+				Object[ArrayPos0].Value2=Object[ArrayPos0].XPos
+				Object[ArrayPos0].Value3=Object[ArrayPos0].YPos
+				ArrayPos0++
+				Object[ArrayPos0].Value1=90
+				Object[ArrayPos0].Value6=1
+				Object[ArrayPos0].Value2=Object[ArrayPos0].XPos
+				Object[ArrayPos0].Value3=Object[ArrayPos0].YPos
+				ArrayPos0++
+				Object[ArrayPos0].Value1=180
+				Object[ArrayPos0].Value6=1
+				Object[ArrayPos0].Value2=Object[ArrayPos0].XPos
+				Object[ArrayPos0].Value3=Object[ArrayPos0].YPos
+				ArrayPos0++
+				Object[ArrayPos0].Value1=268
+				Object[ArrayPos0].Value6=1
+				Object[ArrayPos0].Value2=Object[ArrayPos0].XPos
+				Object[ArrayPos0].Value3=Object[ArrayPos0].YPos
+				ArrayPos0++
+				Object[ArrayPos0].Value1=358
+				Object[ArrayPos0].Value6=1
+				Object[ArrayPos0].Value2=Object[ArrayPos0].XPos
+				Object[ArrayPos0].Value3=Object[ArrayPos0].YPos
+			endif
+		endif
+		ArrayPos0++
+	loop
+endsub
+
+sub RSDK
+	LoadSpriteSheet("Global/Display.gif")
+	SetEditorIcon(Icon0,SingleIcon,-16,-16,32,32,1,143)
+endsub

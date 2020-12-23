@@ -1,0 +1,186 @@
+//------------Sonic CD Effect Trigger Script-------------//
+//--------Scripted by Christian Whitehead 'The Taxman'--------//
+//-------Unpacked By Rubberduckycooly's Script Unpacker-------//
+
+//-------Aliases-------//
+#alias 37: TYPE_EFFECTTRIGGER
+
+
+sub ObjectMain
+	switch Object.PropertyValue
+	case 0
+		if Player.XPos<41943040
+			Stage[0].ActiveLayer=1
+			Object.Type=TypeName[BlankObject]
+			Object[19].Type=TypeName[BlankObject]
+		endif
+		break
+	case 1
+		if Player.YPos>Object.YPos
+			Stage[0].ActiveLayer=2
+			Object[19].Type=TypeName[BlankObject]
+		else
+			Stage[0].ActiveLayer=1
+			Object[19].Type=TypeName[BlankObject]
+		endif
+		break
+	case 2
+		if Player.XPos>Object.XPos
+			Stage.NewWaterLevel=40108032
+		else
+			Stage.NewWaterLevel=42205184
+		endif
+		break
+	case 4
+		PlayerObjectCollision(C_TOUCH,-10,-16,10,16)
+		if CheckResult==1
+			if Player.State!=26
+				if Player.State!=27
+					Player.State=36
+					Player.Animation=ANI_FANROTATE
+					Player.XVelocity=0
+					Player.YVelocity=-262144
+					if Player.XPos<Object.XPos
+						Player.XPos+=65536
+					else
+						Player.XPos-=65536
+					endif
+				endif
+			endif
+		else
+			if Player.State==36
+				PlayerObjectCollision(C_TOUCH,-64,-16,-32,16)
+				if CheckResult==1
+					Player.State=13
+					Player.Animation=ANI_WALKING
+				endif
+				PlayerObjectCollision(C_TOUCH,32,-16,64,16)
+				if CheckResult==1
+					Player.State=13
+					Player.Animation=ANI_WALKING
+				endif
+			endif
+		endif
+		break
+	case 5
+		PlayerObjectCollision(C_TOUCH,-10,-16,10,16)
+		if CheckResult==1
+			if Player.State!=26
+				if Player.State!=27
+					Player.State=36
+					Player.Animation=ANI_FANROTATE
+					Player.XVelocity=0
+					Player.YVelocity=262144
+					if Player.XPos<Object.XPos
+						Player.XPos+=65536
+					else
+						Player.XPos-=65536
+					endif
+				endif
+			endif
+		else
+			if Player.State==36
+				PlayerObjectCollision(C_TOUCH,-64,-16,-32,16)
+				if CheckResult==1
+					Player.State=12
+					Player.Animation=ANI_WALKING
+				endif
+				PlayerObjectCollision(C_TOUCH,32,-16,64,16)
+				if CheckResult==1
+					Player.State=12
+					Player.Animation=ANI_WALKING
+				endif
+			endif
+		endif
+		break
+	case 6
+		PlayerObjectCollision(C_TOUCH,-16,-16,16,16)
+		if CheckResult==1
+			if Player.State!=26
+				if Player.State!=27
+					Player.XVelocity=-262144
+					Player.Animation=ANI_FANROTATE
+				endif
+			endif
+		endif
+		break
+	case 7
+		PlayerObjectCollision(C_TOUCH,-16,-16,16,16)
+		if CheckResult==1
+			if Player.State!=26
+				if Player.State!=27
+					Player.XVelocity=262144
+					Player.Animation=ANI_FANROTATE
+				endif
+			endif
+		endif
+		break
+	case 8
+		PlayerObjectCollision(C_TOUCH,-16,-16,16,16)
+		if CheckResult==1
+			if Player.State!=26
+				if Player.State!=27
+					Player.YVelocity=-262144
+					Player.Animation=ANI_FANROTATE
+				endif
+			endif
+		endif
+		break
+	case 9
+		PlayerObjectCollision(C_TOUCH,-16,-16,16,16)
+		if CheckResult==1
+			if Player.State!=26
+				if Player.State!=27
+					Player.YVelocity=262144
+					Player.Animation=ANI_FANROTATE
+				endif
+			endif
+		endif
+		break
+	case 10
+		PlayerObjectCollision(C_TOUCH,-16,-16,16,16)
+		if CheckResult==1
+			if Player.State!=26
+				if Player.State!=27
+					Player.XVelocity=0
+				endif
+			endif
+		endif
+		break
+	case 11
+		PlayerObjectCollision(C_TOUCH,-16,-16,16,16)
+		if CheckResult==1
+			if Player.State!=26
+				if Player.State!=27
+					Player.YVelocity=0
+				endif
+			endif
+		endif
+		break
+	case 12
+		PlayerObjectCollision(C_TOUCH,-16,-16,16,16)
+		if CheckResult==1
+			if Player.State!=26
+				if Player.State!=27
+					Player.YVelocity=262144
+					Player.State=13
+					Player.Animation=ANI_WALKING
+				endif
+			endif
+		endif
+		break
+	case 13
+		if Player.XPos>Object.XPos
+			Stage.NewWaterLevel=125829120
+		else
+			Stage.NewWaterLevel=87293952
+		endif
+		break
+
+	endswitch
+endsub
+
+sub RSDK
+	LoadSpriteSheet("Global/Display.gif")
+	SetEditorIcon(Icon0,SingleIcon,-16,-16,32,32,1,143)
+endsub

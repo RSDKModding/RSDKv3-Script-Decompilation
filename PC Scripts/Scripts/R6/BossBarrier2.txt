@@ -1,0 +1,62 @@
+//------------Sonic CD Boss Barrier 2 Script-------------//
+//--------Scripted by Christian Whitehead 'The Taxman'--------//
+//-------Unpacked By Rubberduckycooly's Script Unpacker-------//
+
+//-------Aliases-------//
+#alias 58: TYPE_BOSSBARRIER2
+
+
+sub ObjectMain
+	switch Object.State
+	case 0
+		break
+	case 1
+		if Object.Value0<6291456
+			Object.Value0+=131072
+			Object.YPos-=131072
+		endif
+		TempValue0=Player.XPos
+		TempValue0-=Object.XPos
+		break
+	case 2
+		if Object.Value0<6291456
+			Object.Value0+=131072
+			Object.YPos-=131072
+		else
+			Object.State=0
+		endif
+		break
+
+	endswitch
+endsub
+
+
+sub ObjectPlayerInteraction
+	if Object.Value0<1
+		PlayerObjectCollision(C_BOX,-16,-48,16,64)
+	else
+		PlayerObjectCollision(C_BOX,-16,-48,16,48)
+	endif
+endsub
+
+
+sub ObjectDraw
+	DrawSprite(0)
+	DrawSprite(1)
+	DrawSprite(2)
+	DrawSprite(3)
+endsub
+
+
+sub ObjectStartup
+	LoadSpriteSheet("R6/Objects2.gif")
+	SpriteFrame(-16,-48,32,32,173,223)
+	SpriteFrame(-16,-16,32,32,173,223)
+	SpriteFrame(-16,16,32,32,173,223)
+	SpriteFrame(-32,10,16,32,239,216)
+endsub
+
+sub RSDK
+	LoadSpriteSheet("Global/Display.gif")
+	SetEditorIcon(Icon0,SingleIcon,-16,-16,32,32,1,143)
+endsub

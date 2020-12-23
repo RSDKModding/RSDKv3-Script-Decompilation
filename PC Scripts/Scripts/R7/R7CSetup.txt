@@ -1,0 +1,183 @@
+//------------Sonic CD R7 Setup Script-------------//
+//--------Scripted by Christian Whitehead 'The Taxman'--------//
+//-------Unpacked By Rubberduckycooly's Script Unpacker-------//
+
+//-------Aliases-------//
+#alias 35: TYPE_R7SETUP
+
+
+function R7Setup_Function49
+	TempValue3=Player.XPos
+	TempValue3>>=16
+	TempValue3&=255
+	TempValue3+=12544
+	TempValue0-=16
+	TempValue0>>=2
+	TempValue0<<=8
+	TempValue4=Player.YPos
+	TempValue4>>=16
+	TempValue4&=255
+	TempValue4+=TempValue0
+	Get16x16TileInfo(TempValue0,TempValue3,TempValue4,0)
+endfunction
+
+
+sub ObjectMain
+	if Object.Value2>0
+		Object.Value2--
+	endif
+endsub
+
+
+sub ObjectPlayerInteraction
+	TempValue1=Player.XPos
+	TempValue1>>=23
+	TempValue2=Player.YPos
+	TempValue2>>=23
+	GetTileLayerEntry(TempValue0,0,TempValue1,TempValue2)
+	switch TempValue0
+	case 16
+	case 17
+	case 18
+	case 19
+		CallFunction(R7Setup_Function49)
+		if Player.CollisionMode==0
+			if TempValue0==1001
+				TempValue1&=1022
+				TempValue2&=1022
+				SetTileLayerEntry(20,0,TempValue1,TempValue2)
+				TempValue1++
+				SetTileLayerEntry(21,0,TempValue1,TempValue2)
+				TempValue1--
+				TempValue2++
+				SetTileLayerEntry(22,0,TempValue1,TempValue2)
+				TempValue1++
+				SetTileLayerEntry(23,0,TempValue1,TempValue2)
+			endif
+		else
+			if Player.Speed>0
+				if TempValue0==1003
+					TempValue1&=1022
+					TempValue2&=1022
+					SetTileLayerEntry(20,0,TempValue1,TempValue2)
+					TempValue1++
+					SetTileLayerEntry(21,0,TempValue1,TempValue2)
+					TempValue1--
+					TempValue2++
+					SetTileLayerEntry(22,0,TempValue1,TempValue2)
+					TempValue1++
+					SetTileLayerEntry(23,0,TempValue1,TempValue2)
+				endif
+			endif
+		endif
+		break
+	case 20
+	case 21
+	case 22
+	case 23
+		CallFunction(R7Setup_Function49)
+		if Player.CollisionMode==0
+			if TempValue0==1000
+				TempValue1&=1022
+				TempValue2&=1022
+				SetTileLayerEntry(16,0,TempValue1,TempValue2)
+				TempValue1++
+				SetTileLayerEntry(17,0,TempValue1,TempValue2)
+				TempValue1--
+				TempValue2++
+				SetTileLayerEntry(18,0,TempValue1,TempValue2)
+				TempValue1++
+				SetTileLayerEntry(19,0,TempValue1,TempValue2)
+			endif
+		else
+			if Player.Speed<0
+				if TempValue0==1002
+					TempValue1&=1022
+					TempValue2&=1022
+					SetTileLayerEntry(16,0,TempValue1,TempValue2)
+					TempValue1++
+					SetTileLayerEntry(17,0,TempValue1,TempValue2)
+					TempValue1--
+					TempValue2++
+					SetTileLayerEntry(18,0,TempValue1,TempValue2)
+					TempValue1++
+					SetTileLayerEntry(19,0,TempValue1,TempValue2)
+				endif
+			endif
+		endif
+		break
+	case 24
+	case 25
+	case 26
+	case 27
+		CallFunction(R7Setup_Function49)
+		if TempValue0==1001
+			TempValue1&=1022
+			TempValue2&=1022
+			SetTileLayerEntry(28,0,TempValue1,TempValue2)
+			TempValue1++
+			SetTileLayerEntry(29,0,TempValue1,TempValue2)
+			TempValue1--
+			TempValue2++
+			SetTileLayerEntry(30,0,TempValue1,TempValue2)
+			TempValue1++
+			SetTileLayerEntry(31,0,TempValue1,TempValue2)
+		endif
+		break
+	case 28
+	case 29
+	case 30
+	case 31
+		CallFunction(R7Setup_Function49)
+		if TempValue0==1000
+			TempValue1&=1022
+			TempValue2&=1022
+			SetTileLayerEntry(24,0,TempValue1,TempValue2)
+			TempValue1++
+			SetTileLayerEntry(25,0,TempValue1,TempValue2)
+			TempValue1--
+			TempValue2++
+			SetTileLayerEntry(26,0,TempValue1,TempValue2)
+			TempValue1++
+			SetTileLayerEntry(27,0,TempValue1,TempValue2)
+		endif
+		break
+
+	endswitch
+	if Object.Value2==0
+		TempValue0=Player.Speed
+		if TempValue0<0
+			FlipSign(TempValue0)
+		endif
+		if TempValue0>655360
+			TempValue3=Player.XPos
+			TempValue3>>=16
+			TempValue4=Player.YPos
+			TempValue4>>=16
+			TempValue4+=8
+			Get16x16TileInfo(TempValue0,TempValue3,TempValue4,8)
+			if TempValue0==1
+				Object.Value2=4
+				CreateTempObject(TypeName[FireTrail],0,Player.XPos,Player.YPos)
+				if Player.Speed<0
+					Object[TempObjectPos].Direction=FACING_LEFT
+				else
+					Object[TempObjectPos].Direction=FACING_RIGHT
+				endif
+				Object[TempObjectPos].DrawOrder=4
+				Object[TempObjectPos].iYPos+=Player.CollisionBottom
+			endif
+		endif
+	endif
+endsub
+
+
+sub ObjectStartup
+	Object[19].Type=TypeName[R7Setup]
+	Object[19].Priority=1
+endsub
+
+sub RSDK
+	LoadSpriteSheet("Global/Display.gif")
+	SetEditorIcon(Icon0,SingleIcon,-16,-16,32,32,1,143)
+endsub

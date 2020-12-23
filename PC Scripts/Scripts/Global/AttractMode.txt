@@ -1,0 +1,136 @@
+//------------Sonic CD Attract Mode Script-------------//
+//--------Scripted by Christian Whitehead 'The Taxman'--------//
+//-------Unpacked By Rubberduckycooly's Script Unpacker-------//
+
+//-------Aliases-------//
+#alias 18: TYPE_ATTRACTMODE
+
+
+sub ObjectMain
+	switch Object.State
+	case 0
+		if Player.ControlMode==0
+			Object.State++
+			Object.Value3=Object.Value2
+			Object.Value3-=60
+		endif
+		break
+	case 1
+		GetTextInfo(TempValue0,MENU_1,0,0,Object.Value1)
+		GetBit(Player.Up,TempValue0,0)
+		GetBit(Player.Down,TempValue0,1)
+		GetBit(Player.Left,TempValue0,2)
+		GetBit(Player.Right,TempValue0,3)
+		GetBit(Player.JumpPress,TempValue0,4)
+		GetBit(Player.JumpHold,TempValue0,5)
+		if Object.Value1<Object.Value2
+			Object.Value1++
+		else
+			StopMusic()
+			Options.AttractMode=0
+			Stage.ActiveList=PRESENTATION_STAGE
+			Stage.ListPos=0
+			Transporter_Destroyed=0
+			MetalSonic_Destroyed=0
+			Good_Future=0
+			LoadStage()
+			LampPost.Check=0
+		endif
+		if Object.Value1>=Object.Value3
+			Music.Volume-=2
+			Screen.CameraEnabled=0
+			TempValue0=Object.Value1
+			TempValue0-=Object.Value3
+			TempValue0<<=3
+			if TempValue0>255
+				TempValue0=255
+			endif
+			SetScreenFade(0,0,0,TempValue0)
+		else
+			if KeyPress.ButtonA==1
+				Object.Value1=Object.Value3
+			endif
+			if KeyPress.ButtonB==1
+				Object.Value1=Object.Value3
+			endif
+			if KeyPress.ButtonC==1
+				Object.Value1=Object.Value3
+			endif
+			if KeyPress.AnyStart==1
+				Object.Value1=Object.Value3
+			endif
+		endif
+		break
+
+	endswitch
+endsub
+
+
+sub ObjectDraw
+	if Object[20].Type!=TypeName[TitleCard]
+		Object.AnimationTimer++
+		Object.AnimationTimer%=60
+		if Object.AnimationTimer>29
+		endif
+	endif
+endsub
+
+
+sub ObjectStartup
+	if Stage.ActiveList==REGULAR_STAGE
+		if Stage.PlayerListPos==0
+			LoadSpriteSheet("Global/Display.gif")
+		else
+			LoadSpriteSheet("Global/Display_t.gif")
+		endif
+		SpriteFrame(-17,-5,34,11,1,176)
+	else
+		LoadSpriteSheet("Special/Objects.gif")
+		SpriteFrame(-17,-5,34,11,83,168)
+	endif
+	ArrayPos0=32
+	while ArrayPos0<1056
+		if Object[ArrayPos0].Type==TypeName[AttractMode]
+			if Options.AttractMode==1
+				Object[ArrayPos0].Priority=1
+				Object[ArrayPos0].DrawOrder=6
+				switch Object[ArrayPos0].PropertyValue
+				case 0
+					LoadTextFile(MENU_1,"Data/Game/Demos/Key11a.bin",0)
+					LampPost.Check=0
+					break
+				case 1
+					LoadTextFile(MENU_1,"Data/Game/Demos/Special1.bin",0)
+					LampPost.Check=0
+					break
+				case 2
+					LoadTextFile(MENU_1,"Data/Game/Demos/Key43c.bin",0)
+					Player.XPos=Object[ArrayPos0].XPos
+					Player.YPos=Object[ArrayPos0].YPos
+					LampPost.Check=33
+					break
+				case 3
+					LoadTextFile(MENU_1,"Data/Game/Demos/Special6.bin",0)
+					LampPost.Check=0
+					break
+				case 4
+					LoadTextFile(MENU_1,"Data/Game/Demos/Key82a.bin",0)
+					Player.XPos=Object[ArrayPos0].XPos
+					Player.YPos=Object[ArrayPos0].YPos
+					LampPost.Check=33
+					break
+
+				endswitch
+				GetTextInfo(Object[ArrayPos0].Value2,MENU_1,1,0,0)
+			else
+				Object[ArrayPos0].Type=TypeName[BlankObject]
+			endif
+		endif
+		ArrayPos0++
+	loop
+endsub
+
+sub RSDK
+	LoadSpriteSheet("Global/Display.gif")
+	SetEditorIcon(Icon0,SingleIcon,-16,-16,32,32,1,143)
+endsub

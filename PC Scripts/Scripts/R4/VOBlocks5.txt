@@ -1,0 +1,85 @@
+//------------Sonic CD VOBlocks5 Script-------------//
+//--------Scripted by Christian Whitehead 'The Taxman'--------//
+//-------Unpacked By Rubberduckycooly's Script Unpacker-------//
+
+//-------Aliases-------//
+#alias 70: TYPE_VOBLOCKS5
+
+
+sub ObjectMain
+	Object.Value3=Object.PropertyValue
+	Object.Value3<<=1
+	Object.Value3+=Oscillation
+	Sin(Object.Value2,Object.Value3)
+	Object.Value2<<=14
+	Object.Value2+=Object.YPos
+	Object.Value2&=-65536
+	Object.Value2-=Object.Value1
+endsub
+
+
+sub ObjectPlayerInteraction
+	TempValue0=Object.YPos
+	Object.YPos=Object.Value1
+	PlayerObjectCollision(C_BOX,-16,-32,16,32)
+	switch CheckResult
+	case 1
+		Player.YPos+=Object.Value2
+		break
+	case 4
+		if Player.Gravity==0
+			CallFunction(PlayerObject_Kill)
+		endif
+		break
+
+	endswitch
+	Object.YPos=TempValue0
+endsub
+
+
+sub ObjectDraw
+	Sin(Object.Value1,Object.Value3)
+	Object.Value1<<=14
+	Object.Value1+=Object.YPos
+	Object.Value1&=-65536
+	DrawSpriteXY(0,Object.XPos,Object.Value1)
+	DrawSpriteXY(1,Object.XPos,Object.Value1)
+endsub
+
+
+sub ObjectStartup
+	switch Object[24].PropertyValue
+	case 0
+		LoadSpriteSheet("R4/Objects.gif")
+		TempValue0=163
+		TempValue1=1
+		TempValue2=196
+		break
+	case 1
+		LoadSpriteSheet("R4/Objects2.gif")
+		TempValue0=1
+		TempValue1=157
+		TempValue2=34
+		break
+	case 2
+		LoadSpriteSheet("R4/Objects2.gif")
+		TempValue0=1
+		TempValue1=190
+		TempValue2=34
+		break
+	case 3
+		LoadSpriteSheet("R4/Objects2.gif")
+		TempValue0=1
+		TempValue1=223
+		TempValue2=34
+		break
+
+	endswitch
+	SpriteFrame(-16,-32,32,32,TempValue0,TempValue1)
+	SpriteFrame(-16,0,32,32,TempValue0,TempValue1)
+endsub
+
+sub RSDK
+	LoadSpriteSheet("Global/Display.gif")
+	SetEditorIcon(Icon0,SingleIcon,-16,-16,32,32,1,143)
+endsub

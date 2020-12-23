@@ -1,0 +1,197 @@
+//------------Sonic CD Menu Heading Script-------------//
+//--------Scripted by Christian Whitehead 'The Taxman'--------//
+//-------Unpacked By Rubberduckycooly's Script Unpacker-------//
+
+//-------Aliases-------//
+#alias 2: TYPE_MENUHEADING
+
+
+function MenuHeading_Function0
+	if Engine.Message==2
+		Object.Value1=-1
+	endif
+	TempValue0=Screen.XSize
+	TempValue0-=76
+	CheckTouchRect(TempValue0,192,Screen.XSize,Screen.YSize)
+	if CheckResult>-1
+		Object.Value1=5
+		Object[1].Value4=1
+	else
+		Object[1].Value4=0
+		if TempValue3<0
+			if Object.Value1==5
+				KeyPress.ButtonB=1
+			endif
+		else
+			if Object.Value1==5
+				Object.Value1=-1
+			endif
+		endif
+	endif
+endfunction
+
+
+sub ObjectMain
+	switch Object.State
+	case 1
+		if Object.Value0<16
+			Object.Value0++
+			Object.Value2-=16
+		else
+			Object.Frame=Object.PropertyValue
+			Object.Value0=0
+			Object.State++
+		endif
+		if Object.Alpha==255
+			Object.Alpha=240
+		else
+			if Object.Alpha>0
+				Object.Alpha-=16
+			endif
+		endif
+		break
+	case 2
+		if Object.Value0<16
+			Object.Value0++
+			Object.Value2+=16
+		else
+			Object.Value0=0
+			Object.State=0
+		endif
+		if Object.PropertyValue==5
+			if Object.Alpha==240
+				Object.Alpha=255
+			else
+				if Object.Alpha<255
+					Object.Alpha+=16
+				endif
+			endif
+		endif
+		break
+
+	endswitch
+endsub
+
+
+sub ObjectDraw
+	Object.Value1--
+	Object.Value1%=240
+	Object.SpriteSheet=Object.Value4
+	DrawSpriteScreenXY(1,Screen.CenterX,Object.Value1)
+	DrawSpriteScreenXY(2,Screen.CenterX,Object.Value1)
+	DrawSpriteScreenXY(0,Screen.CenterX,20)
+	TempValue0=Screen.CenterX
+	TempValue0+=12
+	DrawRect(0,212,TempValue0,13,0,0,0,255)
+	Object.SpriteSheet=Object.Value5
+	TempValue0=Screen.CenterX
+	TempValue0-=160
+	TempValue0>>=2
+	TempValue0+=Object.Value2
+	DrawSpriteScreenXY(Object.Frame,TempValue0,194)
+	Object.SpriteSheet=Object.Value4
+	Object.Value3+=4
+	Object.Value3&=511
+	TempValue0=Screen.XSize
+	TempValue0-=40
+	if Object[1].Value2>4
+		Sin(TempValue1,Object.Value3)
+		TempValue1>>=6
+		TempValue1+=96
+		DrawSpriteScreenFX(3,FX_INK,TempValue0,TempValue1)
+		Sin(TempValue1,Object.Value3)
+		TempValue1/=-64
+		TempValue1+=144
+		DrawSpriteScreenFX(4,FX_INK,40,TempValue1)
+	endif
+endsub
+
+
+sub ObjectStartup
+	LoadSpriteSheet("Menu/MenuGfx1_EN.gif")
+	ArrayPos0=32
+	while ArrayPos0<1056
+		if Object[ArrayPos0].Type==TypeName[MenuHeading]
+			Object[ArrayPos0].Frame=5
+			Object[ArrayPos0].Alpha=255
+			Object[ArrayPos0].PropertyValue=5
+			Object[ArrayPos0].InkEffect=2
+			Object[ArrayPos0].Value2=-256
+			Object[ArrayPos0].State=2
+			LoadSpriteSheet("Menu/MenuGfx1_EN.gif")
+			Object[ArrayPos0].Value4=Object[ArrayPos0].SpriteSheet
+			switch Engine.Language
+			case 0
+				LoadSpriteSheet("Menu/MenuGfx2_EN.gif")
+				break
+			case 1
+				LoadSpriteSheet("Menu/MenuGfx2_FR.gif")
+				break
+			case 2
+				LoadSpriteSheet("Menu/MenuGfx2_IT.gif")
+				break
+			case 3
+				LoadSpriteSheet("Menu/MenuGfx2_DE.gif")
+				break
+			case 4
+				LoadSpriteSheet("Menu/MenuGfx2_ES.gif")
+				break
+			case 5
+				LoadSpriteSheet("Menu/MenuGfx2_JP.gif")
+				break
+
+			endswitch
+			Object[ArrayPos0].Value5=Object[ArrayPos0].SpriteSheet
+		endif
+		ArrayPos0++
+	loop
+	SpriteFrame(12,0,192,9,1,225)
+	SpriteFrame(8,0,8,240,503,1)
+	SpriteFrame(8,240,8,240,503,1)
+	SpriteFrame(-11,-36,22,72,418,366)
+	SpriteFrame(-11,-36,22,72,441,366)
+	switch Engine.Language
+	case 0
+	case 5
+		SpriteFrame(32,0,160,30,1,615)
+		SpriteFrame(32,0,160,30,1,646)
+		SpriteFrame(16,0,160,30,1,677)
+		SpriteFrame(32,0,160,30,1,708)
+		SpriteFrame(24,0,160,30,1,739)
+		break
+	case 1
+		SpriteFrame(12,0,160,30,1,615)
+		SpriteFrame(20,0,160,30,1,646)
+		SpriteFrame(14,0,160,30,1,677)
+		SpriteFrame(32,0,160,30,1,708)
+		SpriteFrame(10,0,160,30,1,739)
+		break
+	case 2
+		SpriteFrame(8,0,160,30,1,615)
+		SpriteFrame(32,0,160,30,1,646)
+		SpriteFrame(14,0,160,30,1,677)
+		SpriteFrame(32,0,160,30,1,708)
+		SpriteFrame(8,0,160,30,1,739)
+		break
+	case 3
+		SpriteFrame(24,0,160,30,1,615)
+		SpriteFrame(16,0,160,30,1,646)
+		SpriteFrame(6,0,160,30,1,677)
+		SpriteFrame(32,0,160,30,1,708)
+		SpriteFrame(24,0,160,30,1,739)
+		break
+	case 4
+		SpriteFrame(16,0,160,30,1,615)
+		SpriteFrame(16,0,160,30,1,646)
+		SpriteFrame(8,0,160,30,1,677)
+		SpriteFrame(32,0,160,30,1,708)
+		SpriteFrame(6,0,160,30,1,739)
+		break
+
+	endswitch
+endsub
+
+sub RSDK
+	LoadSpriteSheet("Global/Display.gif")
+	SetEditorIcon(Icon0,SingleIcon,-16,-16,32,32,1,143)
+endsub

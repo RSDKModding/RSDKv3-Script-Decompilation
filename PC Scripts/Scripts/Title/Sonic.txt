@@ -1,0 +1,81 @@
+//------------Sonic CD Sonic Script-------------//
+//--------Scripted by Christian Whitehead 'The Taxman'--------//
+//-------Unpacked By Rubberduckycooly's Script Unpacker-------//
+
+//-------Aliases-------//
+#alias 2: TYPE_SONIC
+
+
+sub ObjectDraw
+	DrawRect(0,0,Screen.XSize,Screen.YSize,0,0,96,255)
+	switch Object.State
+	case 0
+		if Object.Alpha>8
+			DrawSpriteFX(0,FX_INK,Object.XPos,Object.YPos)
+		endif
+		if Object.Value0<256
+			Object.Value0+=8
+			if Object.Value0<256
+				Object.Alpha=Object.Value0
+			else
+				Object.Alpha=255
+			endif
+			TempValue0=255
+			TempValue0-=Object.Alpha
+			SetScreenFade(0,0,0,TempValue0)
+		else
+			if Object.Value0<272
+				Object.Value0++
+			else
+				Object.Value0=0
+				Object.State=1
+				LampPost.Check=0
+				Player.ControlMode=0
+				Stage.PlayerListPos=0
+				PlayMusic(Options.Soundtrack)
+			endif
+		endif
+		break
+	case 1
+		TempValue0=Object.Value0
+		TempValue0>>=2
+		DrawSprite(TempValue0)
+		TempValue0=11
+		TempValue0+=Screen.CenterX
+		if Object.Value0>15
+			DrawSpriteScreenXY(5,TempValue0,72)
+		endif
+		Object.Value0++
+		if Object.Value0>19
+			ResetObjectEntity(Object.EntityNo,TypeName[Logo],0,Object.XPos,Object.YPos)
+			Object.Value0=256
+			ArrayPos0=Object.EntityNo
+			ArrayPos0-=2
+			Object[ArrayPos0].Type=TypeName[Background]
+			Object[ArrayPos0].DrawOrder=0
+			Stage[2].ActiveLayer=9
+			ArrayPos0++
+			Object[ArrayPos0].Type=TypeName[Clouds]
+		endif
+		break
+
+	endswitch
+endsub
+
+
+sub ObjectStartup
+	SetMusicTrack("JP/TitleScreen.ogg",0,0)
+	SetMusicTrack("US/TitleScreen.ogg",1,0)
+	LoadSpriteSheet("Title/Title.gif")
+	SpriteFrame(-47,-89,96,112,1,203)
+	SpriteFrame(-47,-89,104,120,98,203)
+	SpriteFrame(-47,-96,96,120,1,316)
+	SpriteFrame(-47,-96,104,120,98,324)
+	SpriteFrame(-47,-96,104,120,1,1)
+	SpriteFrame(0,0,45,55,210,203)
+endsub
+
+sub RSDK
+	LoadSpriteSheet("Global/Display.gif")
+	SetEditorIcon(Icon0,SingleIcon,-16,-16,32,32,1,143)
+endsub

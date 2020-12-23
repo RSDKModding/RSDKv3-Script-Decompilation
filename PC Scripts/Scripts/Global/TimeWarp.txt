@@ -1,0 +1,198 @@
+//------------Sonic CD TimeWarp Script-------------//
+//--------Scripted by Christian Whitehead 'The Taxman'--------//
+//-------Unpacked By Rubberduckycooly's Script Unpacker-------//
+
+//-------Aliases-------//
+#alias 28: TYPE_TIMEWARP
+
+
+sub ObjectDraw
+	switch Object.State
+	case 0
+		if Object.Value1<320
+			if Object.Value1==0
+				Warp.XPos=Player.XPos
+				Warp.YPos=Player.YPos
+				Warp.XVelocity=Player.XVelocity
+				Warp.YVelocity=Player.YVelocity
+				Warp.Speed=Player.Speed
+				Warp.CollisionMode=Player.CollisionMode
+				Warp.MinRollSpeed=Player.Value6
+				Warp.Gravity=Player.Gravity
+				if Player.State==1
+					Warp.State=13
+				else
+					if Player.State==33
+						Warp.State=13
+					else
+						if Player.State==36
+							Warp.State=13
+						else
+							Warp.State=Player.State
+						endif
+					endif
+				endif
+				Warp.Animation=Player.Animation
+				Warp.Angle=Player.Angle
+				Warp.PlayerFrame=Player.Frame
+				Player.Value4=1000
+				Player.ControlMode=-1
+			endif
+			Music.Volume-=8
+			SetScreenFade(208,255,224,Object.Value1)
+			Object.Value1+=10
+		else
+			if Stage.PlayerListPos==0
+				if Stage.DebugMode==0
+					SetAchievement(0,100)
+				endif
+			endif
+			StopSfx(24)
+			StopSfx(25)
+			Stage.State=STAGE_RUNNING
+			Stage.TimeEnabled=0
+			CallFunction(StageSetup_SaveStageState)
+			Rec_Milliseconds=Stage.MilliSeconds
+			Rec_Seconds=Stage.Seconds
+			Rec_Minutes=Stage.Minutes
+			Warp.Rings=Player.Value0
+			TempValue2=Object[24].PropertyValue
+			TempValue0=0
+			while TempValue0<1184
+				ResetObjectEntity(TempValue0,TypeName[BlankObject],0,0,0)
+				TempValue0++
+			loop
+			Screen.XOffset=0
+			Screen.YOffset=0
+			Stage[0].ActiveLayer=9
+			Stage[1].ActiveLayer=9
+			Stage[2].ActiveLayer=9
+			Stage[3].ActiveLayer=9
+			ArrayPos0=0
+			Object[ArrayPos0].Type=TypeName[TimeWarp]
+			Object[ArrayPos0].State=1
+			Object[ArrayPos0].Value1=320
+			Object[ArrayPos0].Value7=TempValue2
+			ArrayPos0++
+			TempValue0=-32
+			while TempValue0<256
+				TempValue1=0
+				while TempValue1<Screen.XSize
+					Object[ArrayPos0].Type=TypeName[TimeWarp]
+					Object[ArrayPos0].State=2
+					Rand(Object[ArrayPos0].Frame,27)
+					Object[ArrayPos0].Frame>>=2
+					Object[ArrayPos0].Frame<<=2
+					Object[ArrayPos0].iXPos=TempValue1
+					Object[ArrayPos0].iYPos=TempValue0
+					Object[ArrayPos0].iXPos+=16
+					Object[ArrayPos0].iYPos+=16
+					Rand(Object[ArrayPos0].Direction,15)
+					Object[ArrayPos0].Direction>>=2
+					ArrayPos0++
+					TempValue1+=32
+				loop
+				TempValue0+=32
+			loop
+			Object[ArrayPos0].Type=TypeName[WarpSonic]
+			Object[ArrayPos0].iXPos=Screen.CenterX
+			Object[ArrayPos0].iYPos=480
+			SetScreenFade(208,255,224,255)
+			PlaySfx(14,0)
+		endif
+		break
+	case 1
+		if Object.Value1>0
+			SetScreenFade(208,255,224,Object.Value1)
+			Object.Value1-=10
+		else
+			Object.State=3
+		endif
+		break
+	case 2
+		TempValue0=Object.Frame
+		TempValue0>>=1
+		DrawSpriteFX(TempValue0,FX_FLIP,Object.XPos,Object.YPos)
+		Object.Frame++
+		if Object.Frame==28
+			Object.Frame=0
+		endif
+		Object.YPos+=262144
+		if Object.YPos>=16777216
+			Object.YPos-=18874368
+		endif
+		break
+	case 3
+		break
+	case 4
+		Object.Value1++
+		if Object.Value1==40
+			Object.Value1=0
+			Object.State=5
+		endif
+		break
+	case 5
+		if Object.Value1<1800
+			SetScreenFade(208,255,224,Object.Value1)
+			Object.Value1+=10
+		else
+			SetScreenFade(208,255,224,255)
+			switch Object.Value7
+			case 0
+				if Warp.Destination==1
+					Stage.ListPos++
+				else
+					if Transporter_Destroyed==1
+						Stage.ListPos+=2
+					else
+						Stage.ListPos+=3
+					endif
+				endif
+				break
+			case 1
+				Stage.ListPos--
+				break
+			case 2
+				Stage.ListPos-=2
+				break
+			case 3
+				Stage.ListPos-=3
+				break
+
+			endswitch
+			Fade_Colour=208
+			Fade_Colour<<=16
+			TempValue0=255
+			TempValue0<<=8
+			Fade_Colour+=TempValue0
+			Fade_Colour+=224
+			LoadStage()
+		endif
+		break
+
+	endswitch
+endsub
+
+
+sub ObjectStartup
+	LoadSpriteSheet("Global/Items3.gif")
+	SpriteFrame(-16,-16,32,32,83,0)
+	SpriteFrame(-16,-16,32,32,83,32)
+	SpriteFrame(-16,-16,32,32,83,64)
+	SpriteFrame(-16,-16,32,32,83,96)
+	SpriteFrame(-16,-16,32,32,83,128)
+	SpriteFrame(-16,-16,32,32,83,160)
+	SpriteFrame(-16,-16,32,32,83,192)
+	SpriteFrame(-16,-16,32,32,83,224)
+	SpriteFrame(-16,-16,32,32,115,0)
+	SpriteFrame(-16,-16,32,32,115,32)
+	SpriteFrame(-16,-16,32,32,115,64)
+	SpriteFrame(-16,-16,32,32,115,96)
+	SpriteFrame(-16,-16,32,32,115,128)
+	SpriteFrame(-16,-16,32,32,115,160)
+endsub
+
+sub RSDK
+	LoadSpriteSheet("Global/Display.gif")
+	SetEditorIcon(Icon0,SingleIcon,-16,-16,32,32,1,143)
+endsub

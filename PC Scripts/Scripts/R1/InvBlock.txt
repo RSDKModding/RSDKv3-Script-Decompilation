@@ -1,0 +1,117 @@
+//------------Sonic CD Invisible Block Script-------------//
+//--------Scripted by Christian Whitehead 'The Taxman'--------//
+//-------Unpacked By Rubberduckycooly's Script Unpacker-------//
+
+//-------Aliases-------//
+#alias 49: TYPE_INVISIBLEBLOCK
+
+
+sub ObjectPlayerInteraction
+	if Object.State<2
+		PlayerObjectCollision(C_PLATFORM,-12,-12,12,12)
+		Object.Value0=CheckResult
+	endif
+	if Object[24].PropertyValue>1
+		switch Object.State
+		case 0
+			if Object.Value0==1
+				Object.State=1
+				Object.Priority=1
+				Player.YPos+=131072
+			endif
+			break
+		case 1
+			if Object.Value0==1
+				Player.YPos+=131072
+			endif
+			break
+
+		endswitch
+	endif
+endsub
+
+
+sub ObjectDraw
+	switch Object.State
+	case 1
+		Object.YPos+=131072
+		if Object.OutOfBounds==1
+			Object.State=2
+			Object.YPos=Object.Value2
+		endif
+		break
+	case 2
+		if Object.OutOfBounds==1
+			Object.State=0
+			Object.Priority=0
+		endif
+		break
+
+	endswitch
+	switch Object[24].PropertyValue
+	case 0
+		if Object.Value0==1
+			if Object.Frame<24
+				Object.Frame++
+			endif
+		else
+			if Object.Frame>0
+				Object.Frame--
+			endif
+		endif
+		DrawSprite(Object.Frame)
+		break
+	case 1
+		DrawSprite(5)
+		break
+	case 2
+	case 3
+		if Object.State<2
+			DrawSprite(5)
+		endif
+		break
+
+	endswitch
+endsub
+
+
+sub ObjectStartup
+	LoadSpriteSheet("R1/Objects.gif")
+	ArrayPos0=32
+	while ArrayPos0<1056
+		if Object[ArrayPos0].Type==TypeName[InvisibleBlock]
+			Object[ArrayPos0].Value2=Object[ArrayPos0].YPos
+		endif
+		ArrayPos0++
+	loop
+	SpriteFrame(0,0,4,4,68,162)
+	SpriteFrame(-12,-12,24,24,93,142)
+	SpriteFrame(-12,-12,24,24,93,142)
+	SpriteFrame(-12,-12,24,24,93,142)
+	SpriteFrame(-12,-12,24,24,93,142)
+	SpriteFrame(-12,-12,24,24,68,142)
+	SpriteFrame(-12,-12,24,24,68,142)
+	SpriteFrame(-12,-12,24,24,68,142)
+	SpriteFrame(-12,-12,24,24,68,142)
+	SpriteFrame(-12,-12,24,24,118,142)
+	SpriteFrame(-12,-12,24,24,118,142)
+	SpriteFrame(-12,-12,24,24,118,142)
+	SpriteFrame(-12,-12,24,24,68,142)
+	SpriteFrame(-12,-12,24,24,68,142)
+	SpriteFrame(-12,-12,24,24,68,142)
+	SpriteFrame(-12,-12,24,24,143,142)
+	SpriteFrame(-12,-12,24,24,143,142)
+	SpriteFrame(-12,-12,24,24,143,142)
+	SpriteFrame(-12,-12,24,24,68,142)
+	SpriteFrame(-12,-12,24,24,68,142)
+	SpriteFrame(-12,-12,24,24,68,142)
+	SpriteFrame(-12,-12,24,24,168,142)
+	SpriteFrame(-12,-12,24,24,168,142)
+	SpriteFrame(-12,-12,24,24,168,142)
+	SpriteFrame(-12,-12,24,24,68,142)
+endsub
+
+sub RSDK
+	LoadSpriteSheet("Global/Display.gif")
+	SetEditorIcon(Icon0,SingleIcon,-16,-16,32,32,1,143)
+endsub

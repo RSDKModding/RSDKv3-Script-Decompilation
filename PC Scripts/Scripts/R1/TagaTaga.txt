@@ -1,0 +1,233 @@
+//------------Sonic CD TagaTaga Script-------------//
+//--------Scripted by Christian Whitehead 'The Taxman'--------//
+//-------Unpacked By Rubberduckycooly's Script Unpacker-------//
+
+//-------Aliases-------//
+#alias 40: TYPE_TAGATAGA
+
+
+sub ObjectMain
+	if Object.PropertyValue==0
+		switch Object.State
+		case 0
+			Object.Value1=-262144
+			Object.Value0=1
+			Object.State=1
+			break
+		case 1
+			Object.Value1+=4096
+			Object.YPos+=Object.Value1
+			Object.Value0++
+			if Object.Value0>24
+				Object.State=2
+			endif
+			break
+		case 2
+			Object.Value1+=4096
+			Object.YPos+=Object.Value1
+			Object.Value0++
+			if Object.Value0>48
+				Object.State=3
+			endif
+			break
+		case 3
+			Object.Value1+=4096
+			Object.YPos+=Object.Value1
+			Object.Value0++
+			if Object.Value0>56
+				Object.State=4
+			endif
+			break
+		case 4
+			Object.Value1+=4096
+			Object.YPos+=Object.Value1
+			Object.Value0++
+			if Object.Value0>64
+				Object.State=5
+			endif
+			break
+		case 5
+			Object.Value1+=4096
+			Object.YPos+=Object.Value1
+			Object.Value0++
+			if Object.Value0>96
+				Object.State=6
+			endif
+			break
+		case 6
+			Object.Value1+=4096
+			Object.YPos+=Object.Value1
+			Object.Value0++
+			if Object.Value0>128
+				Object.State=7
+				PlayStageSfx(3,0)
+			endif
+			break
+		case 7
+			Object.Value0++
+			if Object.Value0>204
+				Object.State=0
+				Object.Value0=0
+				Object.YPos=Object.Value2
+				PlayStageSfx(3,0)
+			endif
+			break
+
+		endswitch
+	else
+		switch Object.State
+		case 0
+			Object.Value1=-196608
+			Object.Value0=1
+			Object.State=1
+			break
+		case 1
+			Object.Value1+=3780
+			Object.YPos+=Object.Value1
+			Object.Value0++
+			if Object.Value0>40
+				Object.State=2
+			endif
+			break
+		case 2
+			Object.Value1+=3780
+			Object.YPos+=Object.Value1
+			Object.Value0++
+			if Object.Value0>50
+				Object.State=3
+			endif
+			break
+		case 3
+			Object.Value1+=3780
+			Object.YPos+=Object.Value1
+			Object.Value0++
+			if Object.Value0>60
+				Object.State=4
+			endif
+			break
+		case 4
+			Object.Value1+=3780
+			Object.YPos+=Object.Value1
+			Object.Value0++
+			if Object.Value0>104
+				Object.State=5
+				PlayStageSfx(3,0)
+			endif
+			break
+		case 5
+			Object.Value0++
+			if Object.Value0>188
+				Object.State=0
+				Object.Value0=0
+				Object.YPos=Object.Value2
+				PlayStageSfx(3,0)
+			endif
+			break
+
+		endswitch
+	endif
+	CallFunction(StageSetup_CheckGoodFuture)
+endsub
+
+
+sub ObjectPlayerInteraction
+	if Object.PropertyValue==0
+		if Object.State<7
+			PlayerObjectCollision(C_TOUCH,-16,-16,16,16)
+			if CheckResult==1
+				CallFunction(PlayerObject_BadnikBreak)
+			endif
+		endif
+	else
+		if Object.State<5
+			PlayerObjectCollision(C_TOUCH,-16,-16,16,16)
+			if CheckResult==1
+				CallFunction(PlayerObject_BadnikBreak)
+			endif
+		endif
+	endif
+endsub
+
+
+sub ObjectDraw
+	if Object.PropertyValue==0
+		switch Object.State
+		case 0
+		case 1
+			DrawSprite(0)
+			break
+		case 2
+			TempValue0=Object.Value0
+			TempValue0&=15
+			if TempValue0<8
+				DrawSprite(0)
+			else
+				DrawSprite(1)
+			endif
+			break
+		case 3
+			DrawSprite(2)
+			break
+		case 4
+			DrawSprite(3)
+			break
+		case 5
+			DrawSprite(4)
+			break
+		case 6
+			TempValue0=Object.Value0
+			TempValue0&=15
+			if TempValue0<8
+				DrawSprite(4)
+			else
+				DrawSprite(5)
+			endif
+			break
+
+		endswitch
+	else
+		switch Object.State
+		case 0
+		case 1
+			DrawSprite(6)
+			break
+		case 2
+			DrawSprite(7)
+			break
+		case 3
+			DrawSprite(8)
+			break
+		case 4
+			DrawSprite(9)
+			break
+
+		endswitch
+	endif
+endsub
+
+
+sub ObjectStartup
+	LoadSpriteSheet("R1/Objects.gif")
+	ArrayPos0=32
+	while ArrayPos0<1056
+		if Object[ArrayPos0].Type==TypeName[TagaTaga]
+			Object[ArrayPos0].Value2=Object[ArrayPos0].YPos
+		endif
+		ArrayPos0++
+	loop
+	SpriteFrame(-16,-22,32,44,223,154)
+	SpriteFrame(-16,-22,32,44,223,199)
+	SpriteFrame(-16,-16,32,32,35,109)
+	SpriteFrame(-16,-16,32,32,68,109)
+	SpriteFrame(-16,-22,32,44,1,101)
+	SpriteFrame(-16,-22,32,44,1,146)
+	SpriteFrame(-16,-22,32,44,223,154)
+	SpriteFrame(-16,-16,32,32,35,109)
+	SpriteFrame(-16,-16,32,32,35,142)
+	SpriteFrame(-16,-22,32,44,1,191)
+endsub
+
+sub RSDK
+	LoadSpriteSheet("Global/Display.gif")
+	SetEditorIcon(Icon0,SingleIcon,-16,-16,32,32,1,143)
+endsub

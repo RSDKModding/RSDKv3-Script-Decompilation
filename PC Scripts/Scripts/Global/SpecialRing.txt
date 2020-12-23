@@ -1,0 +1,102 @@
+//------------Sonic CD Special Ring Script-------------//
+//--------Scripted by Christian Whitehead 'The Taxman'--------//
+//-------Unpacked By Rubberduckycooly's Script Unpacker-------//
+
+//-------Aliases-------//
+#alias 20: TYPE_SPECIALRING
+
+
+sub ObjectMain
+	if Object.State==0
+		if Player.Value0>49
+			PlayerObjectCollision(C_TOUCH,-16,-16,16,16)
+			if CheckResult==1
+				Object[0].Type=TypeName[BlankObject]
+				Object[1].Type=TypeName[BlankObject]
+				Player.ControlMode=-1
+				Player.Direction=FACING_RIGHT
+				ResetObjectEntity(2,TypeName[BlankObject],0,0,0)
+				Object.DrawOrder=4
+				Object.State=1
+				Object.Frame=16
+				PlaySfx(18,0)
+				Player.Left=0
+				Player.Right=0
+			endif
+		endif
+	endif
+endsub
+
+
+sub ObjectDraw
+	switch Object.State
+	case 0
+		if Player.Value0>49
+			TempValue0=Object.Frame
+			TempValue0>>=3
+			DrawSprite(TempValue0)
+			Object.Frame++
+			if Object.Frame>31
+				Object.Frame=0
+			endif
+		endif
+		break
+	case 1
+		TempValue0=Object.Frame
+		TempValue0>>=2
+		DrawSpriteFX(TempValue0,FX_FLIP,Object.XPos,Object.YPos)
+		Object.Frame++
+		if Object.Frame>31
+			Object.Direction=FACING_LEFT
+		endif
+		if Object.Frame>47
+			ResetObjectEntity(Object.EntityNo,TypeName[BlankObject],0,0,0)
+		endif
+		break
+
+	endswitch
+endsub
+
+
+sub ObjectStartup
+	if Stage.PlayerListPos==0
+		LoadSpriteSheet("Global/Items2.gif")
+	else
+		LoadSpriteSheet("Global/Items2_t.gif")
+	endif
+	SpriteFrame(-32,-32,64,64,83,1)
+	SpriteFrame(-24,-32,48,64,148,1)
+	SpriteFrame(-12,-32,24,64,197,1)
+	SpriteFrame(-24,-32,48,64,101,66)
+	SpriteFrame(0,-32,32,64,222,1)
+	SpriteFrame(-16,-32,48,64,150,66)
+	SpriteFrame(-24,-32,56,64,199,66)
+	SpriteFrame(-32,-32,64,64,191,131)
+	SpriteFrame(-24,-32,56,64,199,66)
+	SpriteFrame(-16,-32,48,64,150,66)
+	SpriteFrame(0,-32,32,64,222,1)
+	SpriteFrame(-32,-32,64,64,126,131)
+	if SpecialStage.TimeStones>=127
+		ArrayPos0=32
+		while ArrayPos0<1056
+			if Object[ArrayPos0].Type==TypeName[SpecialRing]
+				ResetObjectEntity(ArrayPos0,TypeName[BlankObject],0,0,0)
+			endif
+			ArrayPos0++
+		loop
+	endif
+	if Options.GameMode==2
+		ArrayPos0=32
+		while ArrayPos0<1056
+			if Object[ArrayPos0].Type==TypeName[SpecialRing]
+				ResetObjectEntity(ArrayPos0,TypeName[BlankObject],0,0,0)
+			endif
+			ArrayPos0++
+		loop
+	endif
+endsub
+
+sub RSDK
+	LoadSpriteSheet("Global/Display.gif")
+	SetEditorIcon(Icon0,SingleIcon,-16,-16,32,32,1,143)
+endsub

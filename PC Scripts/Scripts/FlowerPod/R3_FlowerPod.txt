@@ -1,0 +1,206 @@
+//------------Sonic CD Flower Pod Script-------------//
+//--------Scripted by Christian Whitehead 'The Taxman'--------//
+//-------Unpacked By Rubberduckycooly's Script Unpacker-------//
+
+//-------Aliases-------//
+#alias 46: TYPE_FLOWERPOD
+
+
+sub ObjectMain
+	switch Object.State
+	case 0
+		TempValue0=Object.YPos
+		TempValue0+=4194394
+		if Player.YPos<TempValue0
+			Stage.NewXBoundary1=Object.XPos
+			Stage.NewXBoundary1>>=16
+			Stage.NewXBoundary1-=Screen.CenterX
+			Stage.NewXBoundary2=Object.XPos
+			Stage.NewXBoundary2>>=16
+			Stage.NewXBoundary2+=Screen.CenterX
+		endif
+		if Object.Value0<60
+			Object.Frame=1
+		else
+			TempValue0=Object.Value0
+			TempValue0-=60
+			TempValue0>>=1
+			switch TempValue0
+			case 0
+				Object.Frame=2
+				break
+			case 1
+			case 2
+				Object.Frame=1
+				break
+			case 3
+				Object.Frame=2
+				break
+			case 4
+			case 5
+				Object.Frame=1
+				break
+			case 6
+				Object.Frame=2
+				break
+
+			endswitch
+		endif
+		Object.Value0++
+		if Object.Value0==74
+			Object.Value0=0
+		endif
+		break
+	case 1
+		if Object.Value0<120
+			Object.Value0++
+			TempValue0=Object.Value0
+			TempValue0&=3
+			if TempValue0==3
+				Rand(TempValue0,64)
+				TempValue0-=32
+				TempValue0<<=16
+				TempValue0+=Object.XPos
+				Rand(TempValue1,40)
+				TempValue1-=40
+				TempValue1<<=16
+				TempValue1+=Object.YPos
+				CreateTempObject(TypeName[Explosion],0,TempValue0,TempValue1)
+				PlaySfx(22,0)
+			endif
+		else
+			Object.State=2
+			Object.Value0=256
+			Object.InkEffect=2
+			Object.Alpha=255
+			TempValue0=Object.XPos
+			TempValue0-=196608
+			TempValue1=Object.YPos
+			TempValue1-=1572864
+			CreateTempObject(TypeName[PodSeed],1,TempValue0,TempValue1)
+			Object[TempObjectPos].Value2=-131072
+			Object[TempObjectPos].Value3=-393216
+			Object[TempObjectPos].Value1=Object.EntityNo
+			TempValue0+=65536
+			CreateTempObject(TypeName[PodSeed],0,TempValue0,TempValue1)
+			Object[TempObjectPos].Value2=-87380
+			Object[TempObjectPos].Value3=-393216
+			TempValue0+=65536
+			CreateTempObject(TypeName[PodSeed],0,TempValue0,TempValue1)
+			Object[TempObjectPos].Value2=-43690
+			Object[TempObjectPos].Value3=-393216
+			TempValue0+=65536
+			CreateTempObject(TypeName[PodSeed],0,TempValue0,TempValue1)
+			Object[TempObjectPos].Value2=0
+			Object[TempObjectPos].Value3=-393216
+			TempValue0+=65536
+			CreateTempObject(TypeName[PodSeed],0,TempValue0,TempValue1)
+			Object[TempObjectPos].Value2=43690
+			Object[TempObjectPos].Value3=-393216
+			TempValue0+=65536
+			CreateTempObject(TypeName[PodSeed],0,TempValue0,TempValue1)
+			Object[TempObjectPos].Value2=87380
+			Object[TempObjectPos].Value3=-393216
+			TempValue0+=65536
+			CreateTempObject(TypeName[PodSeed],0,TempValue0,TempValue1)
+			Object[TempObjectPos].Value2=131072
+			Object[TempObjectPos].Value3=-393216
+		endif
+		break
+	case 2
+		if Object.Value0>0
+			Object.Value0-=16
+			Object.Alpha=Object.Value0
+		endif
+		break
+	case 3
+		if Player.ControlMode==-1
+			Player.Left=0
+			Player.Right=1
+			Player.Up=0
+			Player.Down=0
+			Player.JumpHold=0
+		endif
+		TempValue0=Object.XPos
+		TempValue0+=10485760
+		if Player.XPos>TempValue0
+			PlayMusic(1)
+			Object.State=4
+			Object[30].Type=TypeName[ActFinish]
+			Object[30].DrawOrder=6
+			Object[30].Priority=1
+		endif
+		break
+	case 4
+		if Player.ControlMode==-1
+			Player.Right=1
+		endif
+		break
+
+	endswitch
+endsub
+
+
+sub ObjectPlayerInteraction
+	if Object.State==0
+		if Player.Animation==ANI_JUMPING
+			PlayerObjectCollision(C_TOUCH,-28,-46,28,6)
+			if CheckResult==1
+				Stage.TimeEnabled=0
+				Object.State=1
+				Object.Frame=3
+				Object.Value0=0
+				Player.YVelocity>>=1
+				FlipSign(Player.YVelocity)
+			endif
+		endif
+	endif
+	TempValue0=Screen.CenterX
+	TempValue0+=40
+	TempValue0<<=16
+	TempValue1=Object.XPos
+	TempValue1+=TempValue0
+	if Player.XPos>TempValue1
+		Player.XPos=TempValue1
+		Player.Speed=0
+		Player.XVelocity=0
+		if Player.Gravity==0
+			Player.YVelocity=0
+		endif
+	endif
+endsub
+
+
+sub ObjectDraw
+	if Object.State<2
+		DrawSprite(0)
+		DrawSprite(Object.Frame)
+	else
+		DrawSpriteFX(0,FX_INK,Object.XPos,Object.YPos)
+		DrawSpriteFX(Object.Frame,FX_INK,Object.XPos,Object.YPos)
+	endif
+endsub
+
+
+sub ObjectStartup
+	LoadSpriteSheet("R3/Objects3.gif")
+	SpriteFrame(-32,6,64,42,1,55)
+	SpriteFrame(-32,-48,64,54,1,1)
+	SpriteFrame(-32,-48,64,54,1,98)
+	SpriteFrame(-32,-10,64,16,1,153)
+	ArrayPos0=32
+	while ArrayPos0<1056
+		if Object[ArrayPos0].Type==TypeName[FlowerPod]
+			TempValue0=Screen.CenterX
+			TempValue0-=160
+			TempValue0<<=16
+			Object[ArrayPos0].XPos-=TempValue0
+		endif
+		ArrayPos0++
+	loop
+endsub
+
+sub RSDK
+	LoadSpriteSheet("Global/Display.gif")
+	SetEditorIcon(Icon0,SingleIcon,-16,-16,32,32,1,143)
+endsub

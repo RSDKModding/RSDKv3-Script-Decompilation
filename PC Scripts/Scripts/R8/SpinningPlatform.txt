@@ -1,0 +1,76 @@
+//------------Sonic CD SpinningPlatform Script-------------//
+//--------Scripted by Christian Whitehead 'The Taxman'--------//
+//-------Unpacked By Rubberduckycooly's Script Unpacker-------//
+
+//-------Aliases-------//
+#alias 36: TYPE_SPINNINGPLATFORM
+
+
+sub ObjectMain
+	Object.Rotation=Object[19].Rotation
+	Object.Rotation+=Object.PropertyValue
+	Object.Rotation%=144
+endsub
+
+
+sub ObjectPlayerInteraction
+	if Object.Rotation<121
+		PlayerObjectCollision(C_PLATFORM,-16,-5,16,11)
+	endif
+endsub
+
+
+sub ObjectDraw
+	if Object.Rotation<121
+		DrawSprite(0)
+	else
+		TempValue0=Object.Rotation
+		TempValue0-=120
+		TempValue0>>=1
+		switch TempValue0
+		case 0
+		case 6
+			DrawSprite(1)
+			break
+		case 1
+		case 7
+			DrawSprite(2)
+			break
+		case 2
+		case 8
+			DrawSprite(3)
+			break
+		case 3
+		case 9
+			Object.Direction=FACING_LEFT
+			DrawSpriteFX(4,FX_FLIP,Object.XPos,Object.YPos)
+			break
+		case 4
+		case 10
+			Object.Direction=FACING_LEFT
+			DrawSpriteFX(5,FX_FLIP,Object.XPos,Object.YPos)
+			break
+		case 5
+		case 11
+			DrawSprite(0)
+			break
+
+		endswitch
+	endif
+endsub
+
+
+sub ObjectStartup
+	LoadSpriteSheet("R8/Objects.gif")
+	SpriteFrame(-16,-8,32,16,107,98)
+	SpriteFrame(-16,-12,32,24,107,115)
+	SpriteFrame(-12,-16,24,32,230,34)
+	SpriteFrame(-8,-16,16,32,239,212)
+	SpriteFrame(-12,-16,24,32,230,34)
+	SpriteFrame(-16,-12,32,24,107,115)
+endsub
+
+sub RSDK
+	LoadSpriteSheet("Global/Display.gif")
+	SetEditorIcon(Icon0,SingleIcon,-16,-16,32,32,1,143)
+endsub

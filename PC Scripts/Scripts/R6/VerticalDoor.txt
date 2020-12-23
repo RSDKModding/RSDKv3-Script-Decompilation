@@ -1,0 +1,65 @@
+//------------Sonic CD Vertical Door Script-------------//
+//--------Scripted by Christian Whitehead 'The Taxman'--------//
+//-------Unpacked By Rubberduckycooly's Script Unpacker-------//
+
+//-------Aliases-------//
+#alias 47: TYPE_VERTICALDOOR
+
+
+sub ObjectMain
+	if Object.State==0
+		if Object[+1].PropertyValue==1
+			Object.State=1
+		endif
+		if Object.Value0>0
+			Object.Value0-=262144
+			Object.YPos+=262144
+		endif
+	else
+		if Object.Value0<4194304
+			Object.Value0+=262144
+			Object.YPos-=262144
+		endif
+	endif
+endsub
+
+
+sub ObjectPlayerInteraction
+	if Object.PropertyValue==0
+		if Object.State==1
+			PlayerObjectCollision(C_BOX,-8,-32,8,32)
+			PlayerObjectCollision(C_TOUCH,-64,-128,-32,128)
+			if CheckResult==1
+				Object.State=0
+			endif
+		else
+			PlayerObjectCollision(C_BOX,-8,-32,8,64)
+		endif
+	else
+		if Object.State==1
+			PlayerObjectCollision(C_BOX,-8,-32,8,32)
+			PlayerObjectCollision(C_TOUCH,32,-128,64,128)
+			if CheckResult==1
+				Object.State=0
+			endif
+		else
+			PlayerObjectCollision(C_BOX,-8,-32,8,64)
+		endif
+	endif
+endsub
+
+
+sub ObjectDraw
+	DrawSprite(0)
+endsub
+
+
+sub ObjectStartup
+	LoadSpriteSheet("R6/Objects.gif")
+	SpriteFrame(-8,-32,16,64,239,1)
+endsub
+
+sub RSDK
+	LoadSpriteSheet("Global/Display.gif")
+	SetEditorIcon(Icon0,SingleIcon,-16,-16,32,32,1,143)
+endsub

@@ -1,0 +1,144 @@
+//------------Sonic CD SRecords Script-------------//
+//--------Scripted by Christian Whitehead 'The Taxman'--------//
+//-------Unpacked By Rubberduckycooly's Script Unpacker-------//
+
+//-------Aliases-------//
+#alias 8: TYPE_SRECORDS
+
+
+function SRecords_Function6
+	Object.Value1=SaveRAM[ArrayPos0]
+	Object.Value1/=6000
+	Object.Value2=SaveRAM[ArrayPos0]
+	Object.Value2/=100
+	Object.Value2%=60
+	Object.Value3=SaveRAM[ArrayPos0]
+	Object.Value3%=100
+	TempValue0=Object.XPos
+	TempValue0>>=16
+	TempValue0-=16
+	DrawNumbers(0,TempValue0,TempValue1,Object.Value1,2,8,1)
+	TempValue0+=24
+	DrawNumbers(0,TempValue0,TempValue1,Object.Value2,2,8,1)
+	TempValue0+=24
+	DrawNumbers(0,TempValue0,TempValue1,Object.Value3,2,8,1)
+endfunction
+
+
+sub ObjectMain
+	Object.YPos=Object.PropertyValue
+	Object.YPos*=192
+	Object.YPos-=Object[0].Value4
+	if Object.YPos<-384
+		Object.YPos+=576
+	endif
+	Object.YPos+=224
+	Object.YPos<<=16
+endsub
+
+
+sub ObjectDraw
+	DrawSprite(18)
+	DrawSprite(10)
+	switch Object.PropertyValue
+	case 0
+		TempValue0=Object[-1].PropertyValue
+		TempValue0+=11
+		DrawSprite(TempValue0)
+		break
+	case 1
+		TempValue0=Object[-2].PropertyValue
+		TempValue0+=11
+		DrawSprite(TempValue0)
+		break
+	case 2
+		TempValue0=Object[-3].PropertyValue
+		TempValue0+=11
+		DrawSprite(TempValue0)
+		break
+
+	endswitch
+	ArrayPos0=TempValue0
+	ArrayPos0-=11
+	ArrayPos0*=18
+	TempValue0=Object.PropertyValue
+	TempValue0*=6
+	ArrayPos0+=TempValue0
+	ArrayPos0+=49
+	TempValue1=Object.YPos
+	TempValue1>>=16
+	TempValue1+=97
+	CallFunction(SRecords_Function6)
+	TempValue1+=24
+	ArrayPos0+=2
+	CallFunction(SRecords_Function6)
+	TempValue1+=24
+	ArrayPos0+=2
+	CallFunction(SRecords_Function6)
+	DrawSprite(21)
+	switch Object[0].State
+	case 7
+		switch Object[0].Value5
+		case 0
+			DrawSprite(19)
+			break
+		case 2
+			DrawSprite(20)
+			break
+
+		endswitch
+		break
+	case 10
+		TempValue0=Object[0].Value0
+		TempValue0&=3
+		TempValue0>>=1
+		if TempValue0==0
+			DrawSprite(20)
+		endif
+		break
+	case 11
+		DrawSprite(20)
+		break
+	case 13
+		TempValue0=Object[0].Value0
+		TempValue0&=3
+		TempValue0>>=1
+		if TempValue0==0
+			DrawSprite(19)
+		endif
+		break
+
+	endswitch
+endsub
+
+
+sub ObjectStartup
+	LoadSpriteSheet("TAttack/TimeAttack.gif")
+	SpriteFrame(0,0,8,16,370,638)
+	SpriteFrame(0,0,8,16,379,638)
+	SpriteFrame(0,0,8,16,388,638)
+	SpriteFrame(0,0,8,16,397,638)
+	SpriteFrame(0,0,8,16,406,638)
+	SpriteFrame(0,0,8,16,415,638)
+	SpriteFrame(0,0,8,16,424,638)
+	SpriteFrame(0,0,8,16,433,638)
+	SpriteFrame(0,0,8,16,442,638)
+	SpriteFrame(0,0,8,16,451,638)
+	SpriteFrame(-26,17,54,32,1,797)
+	SpriteFrame(-20,49,38,16,368,593)
+	SpriteFrame(-20,49,40,15,366,610)
+	SpriteFrame(-20,49,40,15,422,655)
+	SpriteFrame(-20,49,40,15,422,671)
+	SpriteFrame(-20,49,40,15,422,731)
+	SpriteFrame(-20,49,40,15,422,747)
+	SpriteFrame(-20,49,40,15,422,763)
+	SpriteFrame(-60,0,224,192,81,831)
+	SpriteFrame(-36,0,44,8,306,864)
+	SpriteFrame(8,0,28,8,390,864)
+	SpriteFrame(-60,0,112,8,306,846)
+endsub
+
+sub RSDK
+	LoadSpriteSheet("Global/Display.gif")
+	SetEditorIcon(Icon0,SingleIcon,-16,-16,32,32,1,143)
+endsub

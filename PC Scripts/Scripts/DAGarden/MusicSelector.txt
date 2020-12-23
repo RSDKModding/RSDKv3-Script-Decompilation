@@ -1,0 +1,108 @@
+//------------Sonic CD Music Selector Script-------------//
+//--------Scripted by Christian Whitehead 'The Taxman'--------//
+//-------Unpacked By Rubberduckycooly's Script Unpacker-------//
+
+//-------Aliases-------//
+#alias 4: TYPE_MUSICSELECTOR
+
+
+sub ObjectMain
+	switch Object.State
+	case 1
+		Object.XPos-=786432
+		TempValue0=Screen.CenterX
+		TempValue0<<=16
+		if Object.XPos<=TempValue0
+			Object.XPos=TempValue0
+			Object.State=0
+		endif
+		break
+	case 2
+		Object.XPos-=786432
+		if Object.XPos<-6291456
+			TempValue0=Screen.XSize
+			TempValue0+=192
+			TempValue0<<=16
+			Object.XPos+=TempValue0
+			Object.State=1
+			if Object.Frame<30
+				Object.Frame++
+			else
+				Object.Frame=0
+			endif
+		endif
+		break
+	case 3
+		Object.XPos+=786432
+		TempValue0=Screen.CenterX
+		TempValue0<<=16
+		if Object.XPos>=TempValue0
+			Object.XPos=TempValue0
+			Object.State=0
+		endif
+		break
+	case 4
+		Object.XPos+=786432
+		TempValue0=Screen.XSize
+		TempValue0+=96
+		TempValue0<<=16
+		if Object.XPos>TempValue0
+			Object.XPos-=TempValue0
+			Object.XPos-=6291456
+			Object.State=3
+			if Object.Frame>0
+				Object.Frame--
+			else
+				Object.Frame=30
+			endif
+		endif
+		break
+
+	endswitch
+endsub
+
+
+sub ObjectDraw
+	DrawSprite(Object.Frame)
+endsub
+
+
+sub ObjectStartup
+	LoadSpriteSheet("DAGarden/Objects.gif")
+	SpriteFrame(-49,-4,98,8,1,577)
+	SpriteFrame(-68,-4,136,8,1,586)
+	SpriteFrame(-68,-4,136,8,1,595)
+	SpriteFrame(-54,-4,108,8,1,604)
+	SpriteFrame(-72,-4,144,8,1,613)
+	SpriteFrame(-72,-4,144,8,1,622)
+	SpriteFrame(-46,-4,92,8,1,631)
+	SpriteFrame(-65,-4,130,8,1,640)
+	SpriteFrame(-65,-4,130,8,1,649)
+	SpriteFrame(-54,-4,108,8,1,658)
+	SpriteFrame(-72,-4,144,8,1,667)
+	SpriteFrame(-72,-4,144,8,1,676)
+	SpriteFrame(-55,-4,110,8,1,685)
+	SpriteFrame(-73,-4,146,8,1,694)
+	SpriteFrame(-73,-4,146,8,1,703)
+	SpriteFrame(-61,-4,122,8,1,712)
+	SpriteFrame(-79,-4,158,8,1,721)
+	SpriteFrame(-79,-4,158,8,1,730)
+	SpriteFrame(-59,-4,118,8,1,739)
+	SpriteFrame(-77,-4,154,8,1,748)
+	SpriteFrame(-77,-4,154,8,1,757)
+	SpriteFrame(-38,-4,76,8,1,766)
+	SpriteFrame(-46,-4,92,8,1,775)
+	SpriteFrame(-33,-4,66,8,1,784)
+	SpriteFrame(-36,-4,72,8,1,793)
+	SpriteFrame(-18,-4,36,8,1,802)
+	SpriteFrame(-37,-4,74,8,1,811)
+	SpriteFrame(-30,-4,60,8,1,820)
+	SpriteFrame(-18,-4,36,8,1,829)
+	SpriteFrame(-45,-4,90,8,1,838)
+	SpriteFrame(-40,-4,81,8,1,847)
+endsub
+
+sub RSDK
+	LoadSpriteSheet("Global/Display.gif")
+	SetEditorIcon(Icon0,SingleIcon,-16,-16,32,32,1,143)
+endsub

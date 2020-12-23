@@ -1,0 +1,210 @@
+//------------Sonic CD Rotating Drum Script-------------//
+//--------Scripted by Christian Whitehead 'The Taxman'--------//
+//-------Unpacked By Rubberduckycooly's Script Unpacker-------//
+
+//-------Aliases-------//
+#alias 60: TYPE_ROTATINGDRUM
+
+
+sub ObjectMain
+	switch Object.State
+	case 0
+		Object.Frame=0
+		Object.Direction=FACING_RIGHT
+		Object.DrawOrder=3
+		Object.Value2=65536
+		break
+	case 1
+		Object.Frame=1
+		Object.Direction=FACING_RIGHT
+		Object.DrawOrder=3
+		Object.Value2=327680
+		break
+	case 2
+		Object.Frame=2
+		Object.Direction=FACING_RIGHT
+		Object.DrawOrder=3
+		Object.Value2=393216
+		break
+	case 3
+		Object.Frame=3
+		Object.Direction=FACING_RIGHT
+		Object.DrawOrder=3
+		Object.Value2=524288
+		break
+	case 4
+		Object.Frame=4
+		Object.Direction=FACING_RIGHT
+		Object.DrawOrder=3
+		Object.Value2=524288
+		break
+	case 5
+		Object.Frame=5
+		Object.Direction=2
+		Object.DrawOrder=3
+		Object.Value2=524288
+		break
+	case 6
+		Object.Frame=6
+		Object.Direction=2
+		Object.DrawOrder=3
+		Object.Value2=393216
+		break
+	case 7
+		Object.Frame=7
+		Object.Direction=2
+		Object.DrawOrder=3
+		Object.Value2=327680
+		break
+	case 8
+		Object.Frame=8
+		Object.Direction=2
+		Object.DrawOrder=3
+		Object.Value2=65536
+		break
+	case 9
+		Object.Frame=9
+		Object.Direction=2
+		Object.DrawOrder=2
+		Object.Value2=-65536
+		break
+	case 10
+		Object.Frame=9
+		Object.Direction=2
+		Object.DrawOrder=2
+		Object.Value2=-327680
+		break
+	case 11
+		Object.Frame=9
+		Object.Direction=2
+		Object.DrawOrder=2
+		Object.Value2=-393216
+		break
+	case 12
+		Object.Frame=9
+		Object.Direction=2
+		Object.DrawOrder=2
+		Object.Value2=-524288
+		break
+	case 13
+		Object.Frame=9
+		Object.Direction=2
+		Object.DrawOrder=2
+		Object.Value2=-524288
+		break
+	case 14
+		Object.Frame=9
+		Object.Direction=FACING_RIGHT
+		Object.DrawOrder=2
+		Object.Value2=-524288
+		break
+	case 15
+		Object.Frame=9
+		Object.Direction=FACING_RIGHT
+		Object.DrawOrder=2
+		Object.Value2=-393216
+		break
+	case 16
+		Object.Frame=9
+		Object.Direction=FACING_RIGHT
+		Object.DrawOrder=2
+		Object.Value2=-327680
+		break
+	case 17
+		Object.Frame=9
+		Object.Direction=FACING_RIGHT
+		Object.DrawOrder=2
+		Object.Value2=-65536
+		break
+
+	endswitch
+	TempValue0=RotatingDrum_Timer
+	TempValue0%=10
+	if TempValue0==0
+		Object.Value1++
+		if Object.Value1>3
+			Object.Value1=0
+			Object.State++
+			Object.State%=18
+		endif
+	else
+		Object.Value2=0
+	endif
+	Object.Priority=1
+	TempValue0=Object.iXPos
+	TempValue0-=Screen.XOffset
+	TempValue0-=Screen.XSize
+	if TempValue0>128
+		Object.YPos=Object.Value3
+		Object.State=Object.PropertyValue
+		Object.Value1=0
+		Object.Value2=0
+		Object.Priority=3
+	endif
+	TempValue0=Object.iXPos
+	TempValue0-=Screen.XOffset
+	if TempValue0<-128
+		Object.YPos=Object.Value3
+		Object.State=Object.PropertyValue
+		Object.Value1=0
+		Object.Value2=0
+		Object.Priority=3
+	endif
+endsub
+
+
+sub ObjectPlayerInteraction
+	switch Object.State
+	case 2
+		PlayerObjectCollision(C_PLATFORM,-24,-8,24,12)
+		if CheckResult==1
+			Player.YPos+=Object.Value2
+		endif
+		break
+	case 3
+	case 4
+	case 5
+	case 6
+		PlayerObjectCollision(C_PLATFORM,-24,-4,24,12)
+		if CheckResult==1
+			Player.YPos+=Object.Value2
+		endif
+		break
+
+	endswitch
+endsub
+
+
+sub ObjectDraw
+	Object.YPos+=Object.Value2
+	DrawSpriteFX(Object.Frame,FX_FLIP,Object.XPos,Object.YPos)
+endsub
+
+
+sub ObjectStartup
+	LoadSpriteSheet("R3/Objects.gif")
+	SpriteFrame(-24,-16,48,16,67,34)
+	SpriteFrame(-24,-12,48,16,116,34)
+	SpriteFrame(-24,-8,48,16,165,34)
+	SpriteFrame(-24,-4,48,16,67,51)
+	SpriteFrame(-24,-4,48,16,116,51)
+	SpriteFrame(-24,-12,48,16,67,51)
+	SpriteFrame(-24,-12,48,16,165,34)
+	SpriteFrame(-24,-12,48,16,116,34)
+	SpriteFrame(-24,-16,48,16,67,34)
+	SpriteFrame(-24,-8,48,8,165,18)
+	ArrayPos0=32
+	while ArrayPos0<1056
+		if Object[ArrayPos0].Type==TypeName[RotatingDrum]
+			Object[ArrayPos0].Priority=3
+			Object[ArrayPos0].Value3=Object[ArrayPos0].YPos
+			Object[ArrayPos0].State=Object[ArrayPos0].PropertyValue
+		endif
+		ArrayPos0++
+	loop
+endsub
+
+sub RSDK
+	LoadSpriteSheet("Global/Display.gif")
+	SetEditorIcon(Icon0,SingleIcon,-16,-16,32,32,1,143)
+endsub

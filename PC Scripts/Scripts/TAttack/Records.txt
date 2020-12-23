@@ -1,0 +1,190 @@
+//------------Sonic CD Records Script-------------//
+//--------Scripted by Christian Whitehead 'The Taxman'--------//
+//-------Unpacked By Rubberduckycooly's Script Unpacker-------//
+
+//-------Aliases-------//
+#alias 5: TYPE_RECORDS
+
+
+function Records_Function5
+	Object.Value1=SaveRAM[ArrayPos0]
+	Object.Value1/=6000
+	Object.Value2=SaveRAM[ArrayPos0]
+	Object.Value2/=100
+	Object.Value2%=60
+	Object.Value3=SaveRAM[ArrayPos0]
+	Object.Value3%=100
+	TempValue0=Object.XPos
+	TempValue0>>=16
+	TempValue0-=16
+	DrawNumbers(26,TempValue0,TempValue1,Object.Value1,2,8,1)
+	TempValue0+=24
+	DrawNumbers(26,TempValue0,TempValue1,Object.Value2,2,8,1)
+	TempValue0+=24
+	DrawNumbers(26,TempValue0,TempValue1,Object.Value3,2,8,1)
+endfunction
+
+
+sub ObjectMain
+	Object.YPos=Object.PropertyValue
+	Object.YPos*=192
+	Object.YPos-=Object[0].Value4
+	if Object.YPos<-384
+		Object.YPos+=576
+	endif
+	Object.YPos+=224
+	Object.YPos<<=16
+endsub
+
+
+sub ObjectDraw
+	DrawSprite(47)
+	switch Object.PropertyValue
+	case 0
+		TempValue0=Object[-1].PropertyValue
+		TempValue0+=36
+		DrawSprite(TempValue0)
+		DrawSprite(44)
+		break
+	case 1
+		TempValue0=Object[-2].PropertyValue
+		TempValue0+=36
+		DrawSprite(TempValue0)
+		DrawSprite(45)
+		break
+	case 2
+		TempValue0=Object[-3].PropertyValue
+		TempValue0+=36
+		DrawSprite(TempValue0)
+		DrawSprite(46)
+		break
+
+	endswitch
+	ArrayPos0=TempValue0
+	ArrayPos0-=36
+	ArrayPos0*=18
+	TempValue0=Object.PropertyValue
+	TempValue0*=6
+	ArrayPos0+=TempValue0
+	ArrayPos0+=48
+	TempValue1=Object.YPos
+	TempValue1>>=16
+	TempValue1+=97
+	CallFunction(Records_Function5)
+	TempValue1+=24
+	ArrayPos0+=2
+	CallFunction(Records_Function5)
+	TempValue1+=24
+	ArrayPos0+=2
+	CallFunction(Records_Function5)
+	switch Object[0].State
+	case 7
+		switch Object[0].Value5
+		case 0
+			DrawSprite(48)
+			break
+		case 1
+			DrawSprite(49)
+			break
+		case 2
+			DrawSprite(50)
+			break
+
+		endswitch
+		break
+	case 10
+		TempValue0=Object[0].Value0
+		TempValue0&=3
+		TempValue0>>=1
+		if TempValue0==0
+			DrawSprite(50)
+		endif
+		break
+	case 11
+		DrawSprite(50)
+		break
+	case 13
+		TempValue0=Object[0].Value0
+		TempValue0&=3
+		TempValue0>>=1
+		if TempValue0==0
+			DrawSprite(48)
+		endif
+		break
+
+	endswitch
+endsub
+
+
+sub ObjectStartup
+	LoadSpriteSheet("TAttack/TimeAttack.gif")
+	ArrayPos0=32
+	while ArrayPos0<1056
+		if Object[ArrayPos0].Type==TypeName[Records]
+			TempValue0=Screen.CenterX
+			TempValue0+=76
+			TempValue0<<=16
+			Object[ArrayPos0].XPos=TempValue0
+			Object[ArrayPos0].DrawOrder=2
+			Object[ArrayPos0].Priority=1
+		endif
+		ArrayPos0++
+	loop
+	SpriteFrame(0,0,8,16,136,638)
+	SpriteFrame(0,0,8,16,145,638)
+	SpriteFrame(0,0,8,16,154,638)
+	SpriteFrame(0,0,8,16,163,638)
+	SpriteFrame(0,0,8,16,172,638)
+	SpriteFrame(0,0,8,16,181,638)
+	SpriteFrame(0,0,8,16,190,638)
+	SpriteFrame(0,0,8,16,199,638)
+	SpriteFrame(0,0,8,16,208,638)
+	SpriteFrame(0,0,8,16,217,638)
+	SpriteFrame(0,0,8,16,226,638)
+	SpriteFrame(0,0,8,16,235,638)
+	SpriteFrame(0,0,8,16,244,638)
+	SpriteFrame(0,0,8,16,253,638)
+	SpriteFrame(0,0,8,16,262,638)
+	SpriteFrame(0,0,8,16,280,638)
+	SpriteFrame(0,0,8,16,289,638)
+	SpriteFrame(0,0,8,16,298,638)
+	SpriteFrame(0,0,8,16,307,638)
+	SpriteFrame(0,0,8,16,316,638)
+	SpriteFrame(0,0,8,16,325,638)
+	SpriteFrame(0,0,8,16,334,638)
+	SpriteFrame(0,0,8,16,343,638)
+	SpriteFrame(0,0,8,16,352,638)
+	SpriteFrame(0,0,8,16,361,638)
+	SpriteFrame(0,0,8,16,361,638)
+	SpriteFrame(0,0,8,16,370,638)
+	SpriteFrame(0,0,8,16,379,638)
+	SpriteFrame(0,0,8,16,388,638)
+	SpriteFrame(0,0,8,16,397,638)
+	SpriteFrame(0,0,8,16,406,638)
+	SpriteFrame(0,0,8,16,415,638)
+	SpriteFrame(0,0,8,16,424,638)
+	SpriteFrame(0,0,8,16,433,638)
+	SpriteFrame(0,0,8,16,442,638)
+	SpriteFrame(0,0,8,16,451,638)
+	SpriteFrame(-32,17,64,32,1,731)
+	SpriteFrame(-32,17,65,32,66,731)
+	SpriteFrame(-30,17,60,32,132,731)
+	SpriteFrame(-35,17,70,32,193,731)
+	SpriteFrame(-38,17,77,32,264,731)
+	SpriteFrame(-34,17,68,32,342,731)
+	SpriteFrame(-32,17,64,32,1,764)
+	SpriteFrame(-32,17,64,32,1,764)
+	SpriteFrame(-20,49,38,16,368,593)
+	SpriteFrame(-20,49,40,15,366,610)
+	SpriteFrame(-20,49,40,15,422,655)
+	SpriteFrame(-60,0,224,192,81,831)
+	SpriteFrame(-60,0,44,8,306,864)
+	SpriteFrame(-16,0,40,8,350,864)
+	SpriteFrame(24,0,28,8,390,864)
+	SpriteFrame(-60,0,112,8,306,855)
+endsub
+
+sub RSDK
+	LoadSpriteSheet("Global/Display.gif")
+	SetEditorIcon(Icon0,SingleIcon,-16,-16,32,32,1,143)
+endsub

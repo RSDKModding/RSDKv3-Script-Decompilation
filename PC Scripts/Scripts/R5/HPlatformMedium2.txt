@@ -1,0 +1,215 @@
+//------------Sonic CD HPlatformMedium2 Script-------------//
+//--------Scripted by Christian Whitehead 'The Taxman'--------//
+//-------Unpacked By Rubberduckycooly's Script Unpacker-------//
+
+//-------Aliases-------//
+#alias 43: TYPE_HPLATFORMMEDIUM2
+
+
+sub ObjectMain
+	Object.Value6++
+	if Object.Value6==312
+		Object.Value6=0
+	endif
+	Object.Value5=Object.Value6
+	Object.Value5<<=6
+	Object.Value5/=39
+	Sin(Object.Value4,Object.Value5)
+	switch Object.PropertyValue
+	case 0
+	case 2
+		Object.Value4*=6144
+		Object.Value4+=3145728
+		Object.Value4+=Object.XPos
+		Object.Value4&=-65536
+		Object.Value4-=Object.Value3
+		break
+	case 3
+	case 5
+		Object.Value4*=-6144
+		Object.Value4-=3145728
+		Object.Value4+=Object.XPos
+		Object.Value4&=-65536
+		Object.Value4-=Object.Value3
+		break
+	case 1
+		Object.Value4*=6144
+		Object.Value4+=3145728
+		Object.Value4+=Object.XPos
+		Object.Value4&=-65536
+		Object[+1].XPos=Object.Value4
+		Object[+1].XPos-=1048576
+		Object[+1].YPos=Object.YPos
+		Object[+1].YPos-=1572864
+		Object[+2].XPos=Object.Value4
+		Object[+2].XPos+=1048576
+		Object[+2].YPos=Object.YPos
+		Object[+2].YPos-=1572864
+		Object.Value4-=Object.Value3
+		break
+	case 4
+		Object.Value4*=-6144
+		Object.Value4-=3145728
+		Object.Value4+=Object.XPos
+		Object.Value4&=-65536
+		Object[+1].XPos=Object.Value4
+		Object[+1].XPos-=1048576
+		Object[+1].YPos=Object.YPos
+		Object[+1].YPos-=1572864
+		Object[+2].XPos=Object.Value4
+		Object[+2].XPos+=1048576
+		Object[+2].YPos=Object.YPos
+		Object[+2].YPos-=1572864
+		Object.Value4-=Object.Value3
+		break
+
+	endswitch
+	if Object.Value0==1
+		if Object.Value1<16
+			Object.Value1++
+			TempValue0=Object.Value1
+			TempValue0&=3
+			if TempValue0==3
+				Object.Value2=65536
+			else
+				Object.Value2=0
+			endif
+		else
+			Object.Value2=0
+		endif
+	else
+		if Object.Value1>0
+			Object.Value1--
+			TempValue0=Object.Value1
+			TempValue0&=3
+			if TempValue0==3
+				Object.Value2=-65536
+			else
+				Object.Value2=0
+			endif
+		else
+			Object.Value2=0
+		endif
+	endif
+	Object.Value0=0
+endsub
+
+
+sub ObjectPlayerInteraction
+	TempValue0=Object.XPos
+	Object.XPos=Object.Value3
+	switch Object.PropertyValue
+	case 0
+	case 3
+		PlayerObjectCollision(C_PLATFORM,-32,-16,32,12)
+		if CheckResult==1
+			Object.Value0=1
+			Player.XPos+=Object.Value4
+			Player.YPos+=Object.Value2
+		endif
+		break
+	case 2
+	case 5
+		if Object.Value7==0
+			PlayerObjectCollision(C_PLATFORM,-32,-16,32,12)
+			if CheckResult==1
+				Object.Value0=1
+				Player.XPos+=Object.Value4
+				Player.YPos+=Object.Value2
+				if ConveyorBelt_Flag==0
+					Player.XPos+=ConveyorBelt_Speed
+				else
+					Player.XPos-=ConveyorBelt_Speed
+				endif
+				if Player.Animation==ANI_FLAILINGLEFT
+					Object.Value7=30
+				endif
+				if Player.Animation==ANI_FLAILINGRIGHT
+					Object.Value7=30
+				endif
+			endif
+		else
+			Object.Value7--
+		endif
+		break
+
+	endswitch
+	Object.XPos=TempValue0
+endsub
+
+
+sub ObjectDraw
+	Object.YPos+=Object.Value2
+	switch Object.PropertyValue
+	case 0
+	case 1
+		Sin(Object.Value3,Object.Value5)
+		Object.Value3*=6144
+		Object.Value3+=3145728
+		Object.Value3+=Object.XPos
+		Object.Value3&=-65536
+		DrawSpriteXY(0,Object.Value3,Object.YPos)
+		break
+	case 2
+		Sin(Object.Value3,Object.Value5)
+		Object.Value3*=6144
+		Object.Value3+=3145728
+		Object.Value3+=Object.XPos
+		Object.Value3&=-65536
+		DrawSpriteXY(0,Object.Value3,Object.YPos)
+		DrawSpriteXY(1,Object.Value3,Object.YPos)
+		break
+	case 3
+	case 4
+		Sin(Object.Value3,Object.Value5)
+		Object.Value3*=-6144
+		Object.Value3-=3145728
+		Object.Value3+=Object.XPos
+		Object.Value3&=-65536
+		DrawSpriteXY(0,Object.Value3,Object.YPos)
+		break
+	case 5
+		Sin(Object.Value3,Object.Value5)
+		Object.Value3*=-6144
+		Object.Value3-=3145728
+		Object.Value3+=Object.XPos
+		Object.Value3&=-65536
+		DrawSpriteXY(0,Object.Value3,Object.YPos)
+		DrawSpriteXY(1,Object.Value3,Object.YPos)
+		break
+
+	endswitch
+endsub
+
+
+sub ObjectStartup
+	LoadSpriteSheet("R5/Objects.gif")
+	switch Object[24].PropertyValue
+	case 0
+		LoadSpriteSheet("R5/Objects.gif")
+		SpriteFrame(-32,-16,64,32,34,51)
+		SpriteFrame(-32,-16,64,16,1,208)
+		break
+	case 1
+		LoadSpriteSheet("R5/Objects3.gif")
+		SpriteFrame(-32,-16,64,32,34,170)
+		SpriteFrame(-32,-16,64,16,159,148)
+		break
+	case 2
+		LoadSpriteSheet("R5/Objects3.gif")
+		SpriteFrame(-32,-16,64,32,34,170)
+		SpriteFrame(-32,-16,64,16,159,182)
+		break
+	case 3
+		LoadSpriteSheet("R5/Objects3.gif")
+		SpriteFrame(-32,-16,64,32,34,170)
+		SpriteFrame(-32,-16,64,16,159,216)
+		break
+
+	endswitch
+endsub
+
+sub RSDK
+	LoadSpriteSheet("Global/Display.gif")
+	SetEditorIcon(Icon0,SingleIcon,-16,-16,32,32,1,143)
+endsub

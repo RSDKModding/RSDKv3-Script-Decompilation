@@ -1,0 +1,54 @@
+//------------Sonic CD Goal Post Script-------------//
+//--------Scripted by Christian Whitehead 'The Taxman'--------//
+//-------Unpacked By Rubberduckycooly's Script Unpacker-------//
+
+//-------Aliases-------//
+#alias 19: TYPE_GOALPOST
+
+
+sub ObjectMain
+	if Object.State==0
+		TempValue0=Object.YPos
+		TempValue0+=6291456
+		if Player.YPos<TempValue0
+			if Player.XPos>Object.XPos
+				Stage.NewXBoundary1=Object.XPos
+				Stage.NewXBoundary1>>=16
+				Stage.NewXBoundary1-=160
+				Warp.Destination=0
+				Warp.Timer=0
+				Object.State=1
+				if Object.PropertyValue==1
+					PlayerObjectCollision(C_TOUCH,-32,-256,32,16)
+					if CheckResult==1
+						if Stage.PlayerListPos==0
+							if Stage.DebugMode==0
+								SetAchievement(3,100)
+							endif
+						endif
+					endif
+				endif
+			endif
+		endif
+	endif
+endsub
+
+
+sub ObjectDraw
+	DrawSprite(0)
+endsub
+
+
+sub ObjectStartup
+	if Stage.PlayerListPos==0
+		LoadSpriteSheet("Global/Items2.gif")
+	else
+		LoadSpriteSheet("Global/Items2_t.gif")
+	endif
+	SpriteFrame(-20,-44,40,56,34,165)
+endsub
+
+sub RSDK
+	LoadSpriteSheet("Global/Display.gif")
+	SetEditorIcon(Icon0,SingleIcon,-16,-16,32,32,1,143)
+endsub
