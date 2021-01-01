@@ -1,0 +1,118 @@
+//------------Sonic CD Logo Script-------------//
+//--------Scripted by Christian Whitehead 'The Taxman'--------//
+//-------Unpacked By Rubberduckycooly's Script Unpacker-------//
+
+//-------Aliases-------//
+#alias 3: TYPE_LOGO
+
+
+sub ObjectDraw
+	TempValue0=Screen.CenterX
+	TempValue0<<=1
+	DrawSpriteScreenXY(16,0,100)
+	DrawSpriteScreenXY(17,TempValue0,100)
+	switch Object.State
+	case 0
+		SetScreenFade(255,255,255,Object.Value0)
+		Object.Direction=FACING_RIGHT
+		DrawSpriteScreenFX(0,FX_FLIP,Screen.CenterX,40)
+		Object.Direction=FACING_LEFT
+		DrawSpriteScreenFX(0,FX_FLIP,Screen.CenterX,40)
+		DrawSpriteScreenXY(2,Screen.CenterX,120)
+		TempValue0=Screen.CenterX
+		TempValue0-=110
+		DrawSpriteScreenXY(1,TempValue0,135)
+		TempValue0+=121
+		DrawSpriteScreenXY(4,TempValue0,110)
+		if Object.Value0>0
+			Object.Value0-=8
+		else
+			Object.State=1
+			Object.Frame=4
+		endif
+		break
+	case 1
+		Object.Direction=FACING_RIGHT
+		DrawSpriteScreenFX(0,FX_FLIP,Screen.CenterX,40)
+		Object.Direction=FACING_LEFT
+		DrawSpriteScreenFX(0,FX_FLIP,Screen.CenterX,40)
+		DrawSpriteScreenXY(2,Screen.CenterX,120)
+		if Object.Frame>7
+			if Object.Frame<13
+				TempValue0=Screen.CenterX
+				TempValue0-=43
+				DrawSpriteScreenXY(3,TempValue0,48)
+			endif
+		endif
+		TempValue0=Screen.CenterX
+		TempValue0-=110
+		DrawSpriteScreenXY(1,TempValue0,135)
+		TempValue0+=121
+		DrawSpriteScreenXY(Object.Frame,TempValue0,110)
+		Object.Value0++
+		if Object.Value0>1
+			Object.Value0=0
+			Object.Frame++
+			if Object.Frame>15
+				Object.State=2
+				Object[+1].Type=TypeName[TouchStart]
+				Object[+1].iXPos=Screen.CenterX
+				Object[+1].iYPos=200
+			endif
+		endif
+		break
+	case 2
+		Object.Direction=FACING_RIGHT
+		DrawSpriteScreenFX(0,FX_FLIP,Screen.CenterX,40)
+		Object.Direction=FACING_LEFT
+		DrawSpriteScreenFX(0,FX_FLIP,Screen.CenterX,40)
+		DrawSpriteScreenXY(2,Screen.CenterX,120)
+		TempValue0=Screen.CenterX
+		TempValue0-=110
+		DrawSpriteScreenXY(1,TempValue0,135)
+		TempValue0+=121
+		DrawSpriteScreenXY(4,TempValue0,110)
+		break
+
+	endswitch
+#platform: Mobile
+	if Engine.PlatformID==RETRO_WP7
+		if KeyPress.ButtonB==1
+			EngineCallback(7)
+		endif
+	endif
+#endplatform
+endsub
+
+
+sub ObjectStartup
+	LoadSpriteSheet("Title/Title.gif")
+	SpriteFrame(-130,0,130,152,381,73)
+	SpriteFrame(0,0,220,80,1,122)
+	SpriteFrame(-47,-96,104,120,1,1)
+	SpriteFrame(0,0,56,48,106,33)
+	SpriteFrame(0,-38,45,55,210,203)
+	SpriteFrame(0,-44,32,61,223,125)
+	SpriteFrame(-1,-44,25,61,230,63)
+	SpriteFrame(-10,-44,30,61,225,1)
+	SpriteFrame(-1,-44,25,61,230,63)
+	SpriteFrame(0,-44,32,61,223,125)
+	SpriteFrame(0,-38,45,55,210,203)
+	SpriteFrame(0,-44,32,61,223,125)
+	SpriteFrame(-1,-44,25,61,230,63)
+	SpriteFrame(-10,-44,30,61,225,1)
+	SpriteFrame(-1,-44,25,61,230,63)
+	SpriteFrame(0,-44,32,61,223,125)
+	SpriteFrame(0,0,176,68,256,4)
+#platform: Standard
+	SpriteFrame(-124,0,124,68,256,77)
+#endplatform
+#platform: Mobile
+	SpriteFrame(-144,0,144,68,257,251)
+#endplatform
+endsub
+
+sub RSDK
+	LoadSpriteSheet("Global/Display.gif")
+	SetEditorIcon(Icon0,SingleIcon,-16,-16,32,32,1,143)
+endsub

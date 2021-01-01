@@ -1,0 +1,199 @@
+//------------Sonic CD Trophies Menu Script-------------//
+//--------Scripted by Christian Whitehead 'The Taxman'--------//
+//-------Unpacked By Rubberduckycooly's Script Unpacker-------//
+
+//-------Aliases-------//
+#alias 1: TYPE_TROPHIESMENU
+
+
+sub ObjectMain
+#platform: Mobile
+	switch Object.State
+	case 0
+		TempValue0=256
+		TempValue0-=Screen.CenterX
+		Screen.XOffset=TempValue0
+		PlayMusic(1)
+		Object.Value0=384
+		Object.State++
+		SetScreenFade(0,0,0,255)
+		break
+	case 1
+		if Object.Value0>0
+			Object.Value0-=8
+		else
+			Object.State++
+		endif
+		SetScreenFade(0,0,0,Object.Value0)
+		break
+	case 2
+		if Options.PhysicalControls==1
+			if KeyDown.Down==1
+				Object.Value2+=0x40000
+				if Object.Value2>0x1800000
+					Object.Value2=0x1800000
+				endif
+			endif
+			if KeyDown.Up==1
+				Object.Value2-=0x40000
+				if Object.Value2<0
+					Object.Value2=0
+				endif
+			endif
+			CheckTouchRect(0,0,Screen.XSize,Screen.YSize)
+			if CheckResult>-1
+				Options.PhysicalControls=0
+			endif
+		else
+			CheckTouchRect(0,48,Screen.XSize,Screen.YSize)
+			if CheckResult>-1
+				ArrayPos0=CheckResult
+				if Object.Value3==0
+					Object.Value3=1
+					Object[1].Value0=Object.Value2
+					Object[1].Value0>>=16
+					Object.Value4=TouchScreen[ArrayPos0].YPos
+				else
+					TempValue0=Object.Value4
+					TempValue0-=TouchScreen[ArrayPos0].YPos
+					TempValue0+=Object[1].Value0
+					Object[1].Value6=Object[1].Value5
+					Object[1].Value5=Object[1].Value4
+					Object[1].Value4=Object.Value5
+					Object.Value5=TempValue0
+					TempValue1=Object.Value2
+					TempValue1>>=16
+					Object.Value5-=TempValue1
+					Object.Value2=TempValue0
+					Object.Value2<<=16
+				endif
+			else
+				if Object.Value3==1
+					Object.Value3=0
+					Object.Value5+=Object[1].Value4
+					Object.Value5+=Object[1].Value5
+					Object.Value5+=Object[1].Value6
+					Object.Value5>>=2
+					Object.Value5<<=16
+				endif
+				if Object.Value5!=0
+					Object.Value2+=Object.Value5
+					if Object.Value2<0
+						Object.Value5=0
+					endif
+					if Object.Value2>0x1800000
+						Object.Value5=0
+					endif
+					if Object.Value5>0
+						Object.Value5-=0x2000
+						if Object.Value5<0
+							Object.Value5=0
+						endif
+					else
+						Object.Value5+=0x2000
+						if Object.Value5>0
+							Object.Value5=0
+						endif
+					endif
+				else
+					if Object.Value2<0
+						Object.Value2*=224
+						Object.Value2>>=8
+					endif
+					if Object.Value2>0x1800000
+						Object.Value2-=0x1800000
+						Object.Value2*=224
+						Object.Value2>>=8
+						Object.Value2+=0x1800000
+					endif
+				endif
+			endif
+			if KeyPress.Up==1
+				Options.PhysicalControls=1
+			endif
+			if KeyPress.Down==1
+				Options.PhysicalControls=1
+			endif
+		endif
+		if KeyPress.ButtonB==1
+			PlaySfx(26,0)
+			StopMusic()
+			Object.State=5
+		endif
+		break
+	case 5
+		if Object.Value0<348
+			Object.Value0+=8
+		else
+			Stage.ListPos=1
+			Engine.State=6
+			LoadStage()
+		endif
+		SetScreenFade(0,0,0,Object.Value0)
+		break
+	endswitch
+#endplatform
+endsub
+
+
+sub ObjectDraw
+#platform: Mobile
+	Object.Value1--
+	if Object.Value1<-31
+		Object.Value1+=32
+	endif
+	TempValue1=Object.Value1
+	TempValue1>>=1
+	while TempValue1<Screen.YSize
+		TempValue0=Object.Value1
+		TempValue0>>=1
+		while TempValue0<Screen.XSize
+			DrawSpriteScreenXY(0,TempValue0,TempValue1)
+			TempValue0+=64
+		loop
+		TempValue1+=64
+	loop
+	TempValue0=Screen.XSize
+	TempValue0-=16
+	DrawRect(TempValue0,56,4,176,128,128,128,128)
+	TempValue1=Object.Value2
+	TempValue1>>=16
+	if TempValue1<0
+		TempValue1=0
+	endif
+	if TempValue1>384
+		TempValue1=384
+	endif
+	TempValue1*=160
+	TempValue1/=384
+	TempValue1+=56
+	DrawRect(TempValue0,TempValue1,4,16,0,0,0,255)
+#endplatform
+endsub
+
+
+sub ObjectStartup
+#platform: Mobile
+	LoadSpriteSheet("Menu/Trophies.gif")
+	SpriteFrame(0,0,64,64,385,385)
+	LoadPalette("Trophies.act",0,0,0,256)
+	LoadPalette("HelpPal1.act",0,0,0,32)
+	LoadTextFont("Data/Game/HelpText.bin")
+	if Options.Soundtrack==0
+		SetMusicTrack("JP/DAGarden.ogg",1,1)
+	else
+		SetMusicTrack("US/DAGarden.ogg",1,0x1CA86)
+	endif
+	Engine.State=5
+	Screen.CameraEnabled=0
+	Object[0].Type=TypeName[TrophiesMenu]
+	Object[0].Priority=1
+	Object[0].DrawOrder=0
+	LoadTextFile(MENU_1,"Data/Game/Trophies.txt",1)
+#endplatform
+endsub
+
+sub RSDK
+	LoadSpriteSheet("Global/Display.gif")
+	SetEditorIcon(Icon0,SingleIcon,-16,-16,32,32,1,143)
+endsub

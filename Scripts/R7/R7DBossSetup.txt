@@ -1,0 +1,208 @@
+//------------Sonic CD R7 Setup Script-------------//
+//--------Scripted by Christian Whitehead 'The Taxman'--------//
+//-------Unpacked By Rubberduckycooly's Script Unpacker-------//
+
+//-------Aliases-------//
+#alias 35: TYPE_R7SETUP
+
+// Function declarations
+#function R7Setup_Function49
+
+function R7Setup_Function49
+	TempValue3=Player.XPos
+	TempValue3>>=16
+	TempValue3&=255
+	TempValue3+=16384
+	TempValue0-=16
+	TempValue0>>=2
+	TempValue0<<=8
+	TempValue4=Player.YPos
+	TempValue4>>=16
+	TempValue4&=255
+	TempValue4+=TempValue0
+	Get16x16TileInfo(TempValue0,TempValue3,TempValue4,0)
+endfunction
+
+
+sub ObjectMain
+	Object.Value0++
+	if Object.Value0==5
+		Object.Value0=0
+		Object.Value1++
+		Object.Value1%=6
+		SetActivePalette(Object.Value1,0,240)
+	endif
+endsub
+
+
+sub ObjectPlayerInteraction
+	TempValue1=Player.XPos
+	TempValue1>>=23
+	TempValue2=Player.YPos
+	TempValue2>>=23
+	GetTileLayerEntry(TempValue0,0,TempValue1,TempValue2)
+	switch TempValue0
+	case 16
+	case 17
+	case 18
+	case 19
+		CallFunction(R7Setup_Function49)
+		if Player.CollisionMode==0
+			if TempValue0==1001
+				TempValue1&=1022
+				TempValue2&=1022
+				SetTileLayerEntry(20,0,TempValue1,TempValue2)
+				TempValue1++
+				SetTileLayerEntry(21,0,TempValue1,TempValue2)
+				TempValue1--
+				TempValue2++
+				SetTileLayerEntry(22,0,TempValue1,TempValue2)
+				TempValue1++
+				SetTileLayerEntry(23,0,TempValue1,TempValue2)
+			endif
+		else
+			if Player.Speed>0
+				if TempValue0==1003
+					TempValue1&=1022
+					TempValue2&=1022
+					SetTileLayerEntry(20,0,TempValue1,TempValue2)
+					TempValue1++
+					SetTileLayerEntry(21,0,TempValue1,TempValue2)
+					TempValue1--
+					TempValue2++
+					SetTileLayerEntry(22,0,TempValue1,TempValue2)
+					TempValue1++
+					SetTileLayerEntry(23,0,TempValue1,TempValue2)
+				endif
+			endif
+		endif
+		break
+	case 20
+	case 21
+	case 22
+	case 23
+		CallFunction(R7Setup_Function49)
+		if Player.CollisionMode==0
+			if TempValue0==1000
+				TempValue1&=1022
+				TempValue2&=1022
+				SetTileLayerEntry(16,0,TempValue1,TempValue2)
+				TempValue1++
+				SetTileLayerEntry(17,0,TempValue1,TempValue2)
+				TempValue1--
+				TempValue2++
+				SetTileLayerEntry(18,0,TempValue1,TempValue2)
+				TempValue1++
+				SetTileLayerEntry(19,0,TempValue1,TempValue2)
+			endif
+		else
+			if Player.Speed<0
+				if TempValue0==1002
+					TempValue1&=1022
+					TempValue2&=1022
+					SetTileLayerEntry(16,0,TempValue1,TempValue2)
+					TempValue1++
+					SetTileLayerEntry(17,0,TempValue1,TempValue2)
+					TempValue1--
+					TempValue2++
+					SetTileLayerEntry(18,0,TempValue1,TempValue2)
+					TempValue1++
+					SetTileLayerEntry(19,0,TempValue1,TempValue2)
+				endif
+			endif
+		endif
+		break
+	case 24
+	case 25
+	case 26
+	case 27
+		CallFunction(R7Setup_Function49)
+		if TempValue0==1001
+			TempValue1&=1022
+			TempValue2&=1022
+			SetTileLayerEntry(28,0,TempValue1,TempValue2)
+			TempValue1++
+			SetTileLayerEntry(29,0,TempValue1,TempValue2)
+			TempValue1--
+			TempValue2++
+			SetTileLayerEntry(30,0,TempValue1,TempValue2)
+			TempValue1++
+			SetTileLayerEntry(31,0,TempValue1,TempValue2)
+		endif
+		break
+	case 28
+	case 29
+	case 30
+	case 31
+		CallFunction(R7Setup_Function49)
+		if TempValue0==1000
+			TempValue1&=1022
+			TempValue2&=1022
+			SetTileLayerEntry(24,0,TempValue1,TempValue2)
+			TempValue1++
+			SetTileLayerEntry(25,0,TempValue1,TempValue2)
+			TempValue1--
+			TempValue2++
+			SetTileLayerEntry(26,0,TempValue1,TempValue2)
+			TempValue1++
+			SetTileLayerEntry(27,0,TempValue1,TempValue2)
+		endif
+		break
+
+	endswitch
+endsub
+
+
+sub ObjectDraw
+	Object.XPos=Screen.XOffset
+	Object.XPos/=420
+	Object.XPos*=420
+	Object.XPos+=320
+	Object.XPos*=3
+	Object.XPos>>=1
+	TempValue0=Screen.XOffset
+	TempValue0*=3
+	TempValue0>>=1
+	Object.XPos-=TempValue0
+	Object.YPos=520
+	TempValue0=Screen.YOffset
+	TempValue0*=23
+	TempValue0>>=4
+	Object.YPos-=TempValue0
+	DrawSpriteScreenXY(0,Object.XPos,Object.YPos)
+	DrawSpriteScreenXY(1,Object.XPos,Object.YPos)
+	DrawSpriteScreenXY(2,Object.XPos,Object.YPos)
+	DrawSpriteScreenXY(3,Object.XPos,Object.YPos)
+endsub
+
+
+sub ObjectStartup
+	LoadSpriteSheet("R7/Objects2.gif")
+	Object[19].Type=TypeName[R7Setup]
+	Object[19].Priority=1
+	Object[19].DrawOrder=5
+	SpriteFrame(-24,-24,48,24,173,26)
+	SpriteFrame(-8,0,16,224,222,26)
+	SpriteFrame(-8,224,16,224,222,26)
+	SpriteFrame(-8,448,16,224,222,26)
+	Stage.XBoundary2-=288
+	CopyPalette(0,1)
+	CopyPalette(0,2)
+	CopyPalette(0,3)
+	CopyPalette(0,4)
+	CopyPalette(0,5)
+	TempValue0=0
+	TempValue1=0
+	TempValue2=16
+	while TempValue0<6
+		LoadPalette("R7D_PalCycle.act",TempValue0,160,TempValue1,TempValue2)
+		TempValue0++
+		TempValue1+=16
+		TempValue2+=16
+	loop
+endsub
+
+sub RSDK
+	LoadSpriteSheet("Global/Display.gif")
+	SetEditorIcon(Icon0,SingleIcon,-16,-16,32,32,1,143)
+endsub

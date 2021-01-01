@@ -1,0 +1,123 @@
+//------------Sonic CD Mecha Bu Script-------------//
+//--------Scripted by Christian Whitehead 'The Taxman'--------//
+//-------Unpacked By Rubberduckycooly's Script Unpacker-------//
+
+//-------Aliases-------//
+#alias 45: TYPE_MECHABU
+
+
+sub ObjectMain
+	switch Object.State
+	case 0
+		ObjectTileCollision(0,0,15,0)
+		if CheckResult==1
+			Object.State=1
+		else
+			Object.YPos+=65536
+		endif
+		break
+	case 1
+		if Object.Value0<416
+			Object.Value0++
+			Object.XPos+=20480
+		else
+			Object.Value0=0
+			Object.State=2
+		endif
+		ObjectTileGrip(0,0,15,0)
+		break
+	case 2
+		if Object.Value0<416
+			Object.Value0++
+			Object.XPos-=20480
+		else
+			Object.Value0=0
+			Object.State=1
+		endif
+		ObjectTileGrip(0,0,15,0)
+		break
+
+	endswitch
+	CallFunction(StageSetup_CheckGoodFuture)
+endsub
+
+
+sub ObjectPlayerInteraction
+	if Object.State<3
+		PlayerObjectCollision(C_TOUCH,-16,-14,16,14)
+		if CheckResult==1
+			CallFunction(PlayerObject_BadnikBreak)
+		endif
+		if Object.Type==TypeName[MechaBu]
+			if Object.Value4>59
+				PlayerObjectCollision(C_TOUCH,-30,-32,-8,0)
+				if CheckResult==1
+					CallFunction(PlayerObject_Hit)
+				endif
+			else
+				PlayerObjectCollision(C_TOUCH,-36,-16,-14,16)
+				if CheckResult==1
+					CallFunction(PlayerObject_Hit)
+				endif
+			endif
+		endif
+	endif
+endsub
+
+
+sub ObjectDraw
+	Object.Value5++
+	if Object.Value5==48
+		Object.Value5=0
+		PlayStageSfx(1,0)
+	endif
+	TempValue0=Object.AnimationTimer
+	TempValue0/=3
+	Object.AnimationTimer++
+	Object.AnimationTimer%=6
+	if Object.PropertyValue==0
+		if Object.Value4>59
+			TempValue0+=5
+			DrawSpriteFX(TempValue0,FX_FLIP,Object.XPos,Object.YPos)
+			DrawSpriteFX(0,FX_FLIP,Object.XPos,Object.YPos)
+			DrawSpriteFX(4,FX_FLIP,Object.XPos,Object.YPos)
+		else
+			TempValue0+=2
+			DrawSpriteFX(TempValue0,FX_FLIP,Object.XPos,Object.YPos)
+			DrawSpriteFX(0,FX_FLIP,Object.XPos,Object.YPos)
+			DrawSpriteFX(1,FX_FLIP,Object.XPos,Object.YPos)
+		endif
+		Object.Value4++
+		Object.Value4%=120
+	else
+		TempValue0+=5
+		DrawSpriteFX(TempValue0,FX_FLIP,Object.XPos,Object.YPos)
+		DrawSpriteFX(0,FX_FLIP,Object.XPos,Object.YPos)
+		DrawSpriteFX(4,FX_FLIP,Object.XPos,Object.YPos)
+	endif
+endsub
+
+
+sub ObjectStartup
+	LoadSpriteSheet("R8/Objects.gif")
+	SpriteFrame(-24,-16,48,32,173,140)
+	SpriteFrame(-23,-17,16,24,156,177)
+	SpriteFrame(-31,-32,24,32,230,1)
+	SpriteFrame(-31,-32,24,32,173,173)
+	SpriteFrame(-33,-8,24,16,131,177)
+	SpriteFrame(-37,-16,24,32,230,1)
+	SpriteFrame(-37,-16,24,32,173,173)
+	ArrayPos0=32
+	while ArrayPos0<1056
+		if Object[ArrayPos0].Type==TypeName[MechaBu]
+			Object[ArrayPos0].Value2=Object[ArrayPos0].XPos
+			Object[ArrayPos0].Value3=Object[ArrayPos0].YPos
+		endif
+		ArrayPos0++
+	loop
+endsub
+
+sub RSDK
+	LoadSpriteSheet("Global/Display.gif")
+	SetEditorIcon(Icon0,SingleIcon,-16,-16,32,32,1,143)
+endsub

@@ -1,0 +1,243 @@
+//------------Sonic CD Poh Bee Script-------------//
+//--------Scripted by Christian Whitehead 'The Taxman'--------//
+//-------Unpacked By Rubberduckycooly's Script Unpacker-------//
+
+//-------Aliases-------//
+#alias 49: TYPE_POHBEE
+
+
+sub ObjectMain
+	if Object.OutOfBounds==1
+		Object.XPos=Object.Value1
+		Object.Value0=0
+		Object.State=0
+	endif
+	Object.Rotation+=9
+	Object.Rotation&=2047
+	if Object.PropertyValue==0
+		Object.Value6+=10
+		Object.Value6&=2047
+		switch Object.State
+		case 0
+			Object.Direction=FACING_LEFT
+			if Object.Value0<128
+				Object.Value0++
+				Object.XPos+=65536
+			else
+				Object.State=1
+				Object.Value0=0
+			endif
+			break
+		case 1
+			Object.Direction=FACING_RIGHT
+			if Object.Value0<128
+				Object.Value0++
+				Object.XPos-=65536
+			else
+				Object.State=0
+				Object.Value0=0
+			endif
+			break
+
+		endswitch
+		Object.Value3+=8
+		Object.Value3&=511
+		Sin(Object.YPos,Object.Value3)
+		Object.YPos<<=12
+		Object.YPos+=Object.Value2
+		TempValue0=Object.Rotation
+		TempValue0>>=2
+		Sin(Object.Value4,TempValue0)
+		Object.Value4>>=2
+		Object.Value4+=136
+		Object.Value4*=120
+		Object.Value4>>=7
+		TempValue0=Object.Value6
+		TempValue0>>=2
+		Sin(Object.Value5,TempValue0)
+		Object.Value5>>=2
+		Object.Value5+=144
+		Object.Value5*=112
+		Object.Value5>>=7
+	else
+		switch Object.State
+		case 0
+			Object.Direction=FACING_LEFT
+			if Object.Value0<256
+				Object.Value0++
+				Object.XPos+=32768
+			else
+				Object.State=1
+				Object.Value0=0
+			endif
+			break
+		case 1
+			Object.Direction=FACING_RIGHT
+			if Object.Value0<256
+				Object.Value0++
+				Object.XPos-=32768
+			else
+				Object.State=0
+				Object.Value0=0
+			endif
+			break
+
+		endswitch
+		Object.Value3+=6
+		Object.Value3&=511
+		Sin(Object.YPos,Object.Value3)
+		Object.YPos<<=11
+		Object.YPos+=Object.Value2
+		TempValue0=Object.Rotation
+		TempValue0>>=2
+		Sin(Object.Value4,TempValue0)
+		Object.Value4>>=2
+		Object.Value4+=136
+		Object.Value4*=120
+		Object.Value4>>=7
+	endif
+	Object.Value7=Object.YPos
+	Object.Value7+=851968
+	CallFunction(StageSetup_CheckGoodFuture)
+endsub
+
+
+sub ObjectPlayerInteraction
+	PlayerObjectCollision(C_TOUCH,-20,-16,20,14)
+	if CheckResult==1
+		CallFunction(PlayerObject_BadnikBreak)
+	endif
+	TempValue0=Object.XPos
+	TempValue1=Object.YPos
+	Cos(Object.XPos,Object.Value4)
+	Object.XPos*=10752
+	Object.XPos+=TempValue0
+	Sin(Object.YPos,Object.Value4)
+	Object.YPos*=10752
+	Object.YPos+=Object.Value7
+	PlayerObjectCollision(C_TOUCH,-9,-9,9,9)
+	if CheckResult==1
+		CallFunction(PlayerObject_Hit)
+	endif
+	if Object.PropertyValue==0
+		Cos(Object.XPos,Object.Value5)
+		Object.XPos*=4608
+		Object.XPos+=TempValue0
+		Sin(Object.YPos,Object.Value5)
+		Object.YPos*=4608
+		Object.YPos+=Object.Value7
+		PlayerObjectCollision(C_TOUCH,-9,-9,9,9)
+		if CheckResult==1
+			CallFunction(PlayerObject_Hit)
+		endif
+	endif
+	Object.XPos=TempValue0
+	Object.YPos=TempValue1
+endsub
+
+
+sub ObjectDraw
+	if Object.PropertyValue==0
+		TempValue0=0
+		TempValue1=4
+		while TempValue0<10
+			Cos(TempValue2,Object.Value4)
+			TempValue2*=TempValue1
+			TempValue2<<=7
+			TempValue2+=Object.XPos
+			Sin(TempValue3,Object.Value4)
+			TempValue3*=TempValue1
+			TempValue3<<=7
+			TempValue3+=Object.Value7
+			DrawSpriteXY(2,TempValue2,TempValue3)
+			TempValue0++
+			TempValue1+=8
+		loop
+		Cos(TempValue2,Object.Value4)
+		TempValue2*=TempValue1
+		TempValue2<<=7
+		TempValue2+=Object.XPos
+		Sin(TempValue3,Object.Value4)
+		TempValue3*=TempValue1
+		TempValue3<<=7
+		TempValue3+=Object.Value7
+		DrawSpriteXY(3,TempValue2,TempValue3)
+		TempValue0=0
+		TempValue1=4
+		while TempValue0<4
+			Cos(TempValue2,Object.Value5)
+			TempValue2*=TempValue1
+			TempValue2<<=7
+			TempValue2+=Object.XPos
+			Sin(TempValue3,Object.Value5)
+			TempValue3*=TempValue1
+			TempValue3<<=7
+			TempValue3+=Object.Value7
+			DrawSpriteXY(2,TempValue2,TempValue3)
+			TempValue0++
+			TempValue1+=8
+		loop
+		Cos(TempValue2,Object.Value5)
+		TempValue2*=TempValue1
+		TempValue2<<=7
+		TempValue2+=Object.XPos
+		Sin(TempValue3,Object.Value5)
+		TempValue3*=TempValue1
+		TempValue3<<=7
+		TempValue3+=Object.Value7
+		DrawSpriteXY(3,TempValue2,TempValue3)
+	else
+		TempValue0=0
+		TempValue1=4
+		while TempValue0<10
+			Cos(TempValue2,Object.Value4)
+			TempValue2*=TempValue1
+			TempValue2<<=7
+			TempValue2+=Object.XPos
+			Sin(TempValue3,Object.Value4)
+			TempValue3*=TempValue1
+			TempValue3<<=7
+			TempValue3+=Object.Value7
+			DrawSpriteXY(2,TempValue2,TempValue3)
+			TempValue0++
+			TempValue1+=8
+		loop
+		Cos(TempValue2,Object.Value4)
+		TempValue2*=TempValue1
+		TempValue2<<=7
+		TempValue2+=Object.XPos
+		Sin(TempValue3,Object.Value4)
+		TempValue3*=TempValue1
+		TempValue3<<=7
+		TempValue3+=Object.Value7
+		DrawSpriteXY(4,TempValue2,TempValue3)
+	endif
+	Object.AnimationTimer++
+	Object.AnimationTimer&=3
+	Object.Frame=Object.AnimationTimer
+	Object.Frame>>=1
+	DrawSpriteFX(Object.Frame,FX_FLIP,Object.XPos,Object.YPos)
+endsub
+
+
+sub ObjectStartup
+	LoadSpriteSheet("R8/Objects.gif")
+	SpriteFrame(-19,-20,48,36,75,140)
+	SpriteFrame(-19,-20,48,36,124,140)
+	SpriteFrame(-8,-8,16,16,58,114)
+	SpriteFrame(-12,-12,24,24,230,67)
+	SpriteFrame(-12,-12,24,24,75,114)
+	ArrayPos0=32
+	while ArrayPos0<1056
+		if Object[ArrayPos0].Type==TypeName[PohBee]
+			Object[ArrayPos0].Value1=Object[ArrayPos0].XPos
+			Object[ArrayPos0].Value2=Object[ArrayPos0].YPos
+		endif
+		ArrayPos0++
+	loop
+endsub
+
+sub RSDK
+	LoadSpriteSheet("Global/Display.gif")
+	SetEditorIcon(Icon0,SingleIcon,-16,-16,32,32,1,143)
+endsub

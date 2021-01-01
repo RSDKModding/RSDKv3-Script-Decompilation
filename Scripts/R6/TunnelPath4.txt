@@ -1,0 +1,230 @@
+//------------Sonic CD Tunnel Path 4 Script-------------//
+//--------Scripted by Christian Whitehead 'The Taxman'--------//
+//-------Unpacked By Rubberduckycooly's Script Unpacker-------//
+
+//-------Aliases-------//
+#alias 63: TYPE_TUNNELPATH4
+#alias Player.Value4:Player.Invincible
+#alias Player.Value5:Player.BlinkTimer
+
+
+sub ObjectMain
+	if Object.State==1
+		if Player.State==PlayerObject_Death
+			Object.State=0
+		endif
+		Object.Value0++
+		Player.Speed=Player.XPos
+		Player.Animation=ANI_JUMPING
+		Player.AnimationSpeed=240
+		switch Object.Value0
+		case 0
+			Player.XPos=35584
+			Player.YPos=33280
+			break
+		case 1
+			Player.XPos=559872
+			Player.YPos=33280
+			break
+		case 2
+			Player.XPos=559872
+			Player.YPos=557568
+			break
+		case 3
+			Player.XPos=559872
+			Player.YPos=1081856
+			break
+		case 4
+			Player.XPos=559872
+			Player.YPos=1606144
+			break
+		case 5
+			Player.XPos=559872
+			Player.YPos=2130432
+			break
+		case 6
+			Player.XPos=559872
+			Player.YPos=2654720
+			break
+		case 7
+			Player.XPos=559872
+			Player.YPos=3179008
+			break
+		case 8
+			Player.XPos=559872
+			Player.YPos=3703296
+			break
+		case 9
+			Player.XPos=559872
+			Player.YPos=4227584
+			break
+		case 10
+			Player.XPos=559872
+			Player.YPos=4751872
+			break
+		case 11
+			Player.XPos=559872
+			Player.YPos=5276160
+			break
+		case 12
+			Player.XPos=559872
+			Player.YPos=5800448
+			break
+		case 13
+			Player.XPos=559872
+			Player.YPos=6324736
+			break
+		case 14
+			Player.XPos=559872
+			Player.YPos=6849024
+			break
+		case 15
+			Player.XPos=559872
+			Player.YPos=7373312
+			break
+		case 16
+			Player.XPos=559872
+			Player.YPos=7897600
+			break
+		case 17
+			Player.XPos=559872
+			Player.YPos=8421888
+			break
+		case 18
+			Player.XPos=559872
+			Player.YPos=8946176
+			break
+		case 19
+			Player.XPos=559872
+			Player.YPos=9470464
+			break
+		case 20
+			Player.XPos=559872
+			Player.YPos=9994752
+			break
+		case 21
+			Player.XPos=559872
+			Player.YPos=10519040
+			break
+		case 22
+			Player.XPos=559872
+			Player.YPos=11043328
+			break
+		case 23
+			Player.XPos=559872
+			Player.YPos=11567616
+			break
+		case 24
+			Player.XPos=559872
+			Player.YPos=12091904
+			break
+		case 25
+			Player.XPos=559872
+			Player.YPos=12616192
+			break
+		case 26
+			Player.XPos=559872
+			Player.YPos=13140480
+			break
+		case 27
+			Player.XPos=559872
+			Player.YPos=13664768
+			break
+		case 28
+			Player.XPos=559872
+			Player.YPos=14189056
+			break
+		case 29
+			Player.XPos=559872
+			Player.YPos=14713344
+			break
+		case 30
+			Player.XPos=559872
+			Player.YPos=15237632
+			break
+		case 31
+			Player.XPos=559872
+			Player.YPos=15761920
+			break
+		case 32
+			Player.XPos=559872
+			Player.YPos=16286208
+			break
+		case 33
+			Player.XPos=559872
+			Player.YPos=16810496
+			break
+		case 34
+			Player.XPos=1084160
+			Player.YPos=16810496
+			break
+		case 35
+			Player.XPos=1608448
+			Player.YPos=16810496
+			break
+		case 36
+			Player.ObjectInteraction=1
+			Player.XPos=2132736
+			Player.YPos=16810496
+			break
+		case 37
+			Player.XPos=2657024
+			Player.YPos=16810496
+			break
+		case 38
+			Player.XPos=3181312
+			Player.YPos=16810496
+			break
+		case 39
+			Player.XPos=3705600
+			Player.YPos=16810496
+			break
+		case 40
+			Player.XPos=4229888
+			Player.YPos=16810496
+			Player.Direction=FACING_RIGHT
+			Object.State=0
+			Object.Priority=0
+			Player.XVelocity=524288
+			Player.Speed=524288
+			Player.YVelocity=0
+			Player.State=PlayerObject_HandleAir
+			Player.Visible=1
+			break
+
+		endswitch
+		Player.XPos+=Object.XPos
+		Player.YPos+=Object.YPos
+		if Object.State>0
+			Player.Speed-=Player.XPos
+			FlipSign(Player.Speed)
+		endif
+	endif
+endsub
+
+
+sub ObjectPlayerInteraction
+	if Object.PropertyValue==0
+		if Player.State!=PlayerObject_Blank
+			PlayerObjectCollision(C_TOUCH,-16,-16,16,16)
+			if CheckResult==1
+				Player.State=PlayerObject_Blank
+				Player.ObjectInteraction=0
+				Player.Visible=0
+				if Player.BlinkTimer>0
+					Player.Invincible=0
+					Player.BlinkTimer=0
+				endif
+				Object.State=1
+				Object.Value0=-1
+				Object.Priority=1
+				PlaySfx(7,0)
+			endif
+		endif
+	endif
+endsub
+
+sub RSDK
+	LoadSpriteSheet("Global/Display.gif")
+	SetEditorIcon(Icon0,SingleIcon,-16,-16,32,32,1,143)
+endsub

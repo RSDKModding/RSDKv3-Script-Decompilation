@@ -1,0 +1,240 @@
+//------------Sonic CD 3D Ramp Script-------------//
+//--------Scripted by Christian Whitehead 'The Taxman'--------//
+//-------Unpacked By Rubberduckycooly's Script Unpacker-------//
+
+//-------Aliases-------//
+#alias 66: TYPE_3DRAMP
+
+
+sub ObjectPlayerInteraction
+	switch Object.PropertyValue
+	case 0
+		if Player.Gravity==0
+			PlayerObjectCollision(C_TOUCH,-16,-16,16,16)
+			if CheckResult==1
+				if Player.State!=PlayerObject_Blank
+					Player.Speed=0
+					Player.XVelocity=0
+					Player.AnimationSpeed=0
+					Player.TrackScroll=1
+					Player.YVelocity=-786432
+					Player.State=PlayerObject_Blank
+					Player.TileCollisions=0
+				endif
+			endif
+		endif
+		break
+	case 1
+		PlayerObjectCollision(C_TOUCH,-16,-16,16,16)
+		if CheckResult==1
+			Player.State=PlayerObject_HandleAir
+			Player.TileCollisions=1
+			Player.Speed=524288
+			Player.Gravity=1
+			Player.XVelocity=524288
+			Player.YVelocity=-917504
+			Player.Rotation=384
+			Stage.NewYBoundary2=1280
+			Stage.NewXBoundary1=2080
+			if Player.Animation==ANI_ROLL3D
+				Player.Animation=ANI_JUMPING
+			else
+				if Player.Animation!=ANI_JUMPING
+					Player.Animation=ANI_WALKING
+				endif
+			endif
+			Object[15].Type=TypeName[BackgroundFX]
+			Object[15].Priority=1
+			Object[15].DrawOrder=0
+			ArrayPos0=0
+			while ArrayPos0<2
+				HParallax[ArrayPos0].ScrollPos=0
+				ArrayPos0++
+			loop
+		endif
+		break
+	case 2
+		if Player.State==PlayerObject_Blank
+			PlayerObjectCollision(C_TOUCH,-16,-16,16,16)
+			if CheckResult==1
+				Player.State=PlayerObject_HandleAir
+				Player.TileCollisions=1
+				Player.Speed=262144
+				Player.Gravity=1
+				Player.XVelocity=262144
+				Player.YVelocity=-786432
+				Player.Rotation=384
+				Stage.NewYBoundary2=1280
+				if Player.Animation==ANI_ROLL3D
+					Player.Animation=ANI_JUMPING
+				else
+					if Player.Animation!=ANI_JUMPING
+						Player.Animation=ANI_WALKING
+					endif
+				endif
+			endif
+		endif
+		break
+	case 3
+		if Player.XPos>Object.XPos
+			Stage.YBoundary2=1024
+		else
+			Stage.YBoundary2=1280
+		endif
+		break
+	case 4
+		if Player.XPos>Object.XPos
+			if Player.Gravity==0
+				if Player.State!=PlayerObject_Blank
+					if Player.State==PlayerObject_HandleRolling
+						if Player.Angle>216
+							Player.Animation=ANI_JUMPING
+						else
+							if Player.Angle==0
+								Player.Animation=ANI_JUMPING
+							else
+								Player.Animation=ANI_ROLL3D
+							endif
+						endif
+					else
+						if Player.Speed!=0
+							Player.State=PlayerObject_Handle3DRampAnims
+						endif
+					endif
+				endif
+			endif
+			Object[+3].Value0=Player.XPos
+			Object[+3].Value0-=Object.XPos
+			Object[+5].Value0=Object[+3].Value0
+			Object[+5].Value0/=3
+			Object[+3].Value0>>=1
+			Object[+4].Value0=Object[+3].Value0
+			Object[+3].Value0+=Object[+3].XPos
+			Object[+4].Value0+=Object[+4].XPos
+			Object[+5].Value0+=Object[+5].XPos
+			TempValue0=Object.YPos
+			TempValue0-=Player.YPos
+			if TempValue0<14680064
+				TempValue0=Player.XPos
+				TempValue0-=Object.Value1
+				HParallax[0].ScrollPos+=TempValue0
+				ArrayPos0=13
+				TempValue2=128
+				while ArrayPos0<141
+					TempValue1=TempValue0
+					TempValue1*=TempValue2
+					TempValue1>>=7
+					HParallax[ArrayPos0].ScrollPos+=TempValue1
+					ArrayPos0++
+					TempValue2--
+				loop
+				TempValue0<<=1
+				HParallax[1].ScrollPos+=TempValue0
+			endif
+		else
+			Object[+3].Value0=Object[+3].XPos
+			Object[+4].Value0=Object[+4].XPos
+			Object[+5].Value0=Object[+5].XPos
+			if Player.Gravity==0
+				if Player.State==PlayerObject_Handle3DRampAnims
+					Player.State=PlayerObject_HandleGround
+				endif
+			endif
+		endif
+		Object.Value1=Player.XPos
+		break
+	case 5
+		if Player.State==PlayerObject_HandleAir
+			PlayerObjectCollision(C_TOUCH,-16,-128,16,16)
+			if CheckResult==1
+				Player.Animation=ANI_DROPPING
+				Object.Value1=Player.XPos
+			endif
+			if Player.Animation==ANI_DROPPING
+				Player.Speed=0
+				Player.XVelocity=0
+				Player.XPos=Object.Value1
+			endif
+		endif
+		break
+	case 6
+		if Player.YPos<Object.YPos
+			if Player.XPos>Object.XPos
+				Stage.YBoundary2=792
+			else
+				Stage.YBoundary2=1024
+			endif
+		endif
+		break
+	case 7
+		if Player.XPos>Object.XPos
+			Stage.YBoundary2=1024
+			if Player.Gravity==0
+				if Player.State==PlayerObject_Handle3DRampAnims
+					Player.State=PlayerObject_HandleGround
+				endif
+			endif
+		else
+			Stage.YBoundary2=792
+		endif
+		break
+	case 8
+		PlayerObjectCollision(C_TOUCH,-16,-16,16,16)
+		if CheckResult==1
+			Player.Timer=0
+			Player.State=PlayerObject_HandleAir
+			Player.TileCollisions=1
+			Player.Speed=524288
+			Player.Gravity=1
+			Player.XVelocity=524288
+			Player.YVelocity=-917504
+			Player.Rotation=384
+			Stage.NewYBoundary2=1280
+			Stage.NewXBoundary1=2080
+			if Player.Animation==ANI_ROLL3D
+				Player.Animation=ANI_JUMPING
+			else
+				if Player.Animation!=ANI_JUMPING
+					Player.Animation=ANI_WALKING
+				endif
+			endif
+			Object[15].Type=TypeName[BackgroundFX]
+			Object[15].Priority=1
+			Object[15].DrawOrder=0
+			ArrayPos0=0
+			while ArrayPos0<2
+				HParallax[ArrayPos0].ScrollPos=0
+				ArrayPos0++
+			loop
+		endif
+		if Player.YVelocity<0
+			Player.ControlMode=-1
+			Player.Left=0
+			Player.Right=0
+			Object.Priority=1
+		else
+			Player.ControlMode=0
+			Object.Priority=0
+		endif
+		break
+
+	endswitch
+endsub
+
+
+sub ObjectStartup
+	if Player.XPos>131072000
+		Stage.YBoundary2=1280
+		Object[15].Type=TypeName[BackgroundFX]
+		Object[15].Priority=1
+		Object[15].DrawOrder=0
+	endif
+	if Player.XPos>262144000
+		Stage.YBoundary2=1024
+	endif
+endsub
+
+sub RSDK
+	LoadSpriteSheet("Global/Display.gif")
+	SetEditorIcon(Icon0,SingleIcon,-16,-16,32,32,1,143)
+endsub

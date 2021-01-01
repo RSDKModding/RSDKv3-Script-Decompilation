@@ -1,0 +1,131 @@
+//------------Sonic CD BGEffects Script-------------//
+//--------Scripted by Christian Whitehead 'The Taxman'--------//
+//-------Unpacked By Rubberduckycooly's Script Unpacker-------//
+
+//-------Aliases-------//
+#alias 16: TYPE_BGEFFECTS
+
+
+sub ObjectDraw
+	Object.Value3++
+	if Object.Value3>2
+		Object.Value3=0
+		Object.Value5++
+		Object.Value5%=3
+		switch Object.Value5
+		case 0
+			Copy16x16Tile(122,428)
+			Copy16x16Tile(123,429)
+			Copy16x16Tile(124,430)
+			Copy16x16Tile(125,431)
+			Copy16x16Tile(126,432)
+			Copy16x16Tile(127,433)
+			Copy16x16Tile(128,434)
+			Copy16x16Tile(129,435)
+			break
+		case 1
+			Copy16x16Tile(122,436)
+			Copy16x16Tile(123,437)
+			Copy16x16Tile(124,438)
+			Copy16x16Tile(125,439)
+			Copy16x16Tile(126,440)
+			Copy16x16Tile(127,441)
+			Copy16x16Tile(128,442)
+			Copy16x16Tile(129,443)
+			break
+		case 2
+			Copy16x16Tile(122,444)
+			Copy16x16Tile(123,445)
+			Copy16x16Tile(124,446)
+			Copy16x16Tile(125,447)
+			Copy16x16Tile(126,448)
+			Copy16x16Tile(127,449)
+			Copy16x16Tile(128,450)
+			Copy16x16Tile(129,451)
+			break
+
+		endswitch
+	endif
+	Object.Value4++
+	if Object.Value4>5
+		Object.Value4=0
+		Object.Value6++
+		Object.Value6&=3
+		switch Object.Value6
+		case 0
+			Copy16x16Tile(157,452)
+			Copy16x16Tile(158,453)
+			Copy16x16Tile(159,456)
+			Copy16x16Tile(160,457)
+			break
+		case 1
+			Copy16x16Tile(157,454)
+			Copy16x16Tile(158,455)
+			Copy16x16Tile(159,458)
+			Copy16x16Tile(160,459)
+			break
+		case 2
+			Copy16x16Tile(157,460)
+			Copy16x16Tile(158,461)
+			Copy16x16Tile(159,464)
+			Copy16x16Tile(160,465)
+			break
+		case 3
+			Copy16x16Tile(157,462)
+			Copy16x16Tile(158,463)
+			Copy16x16Tile(159,466)
+			Copy16x16Tile(160,467)
+			break
+
+		endswitch
+	endif
+	TempValue1=Object.Value2
+	TempValue2=TileLayer[0].Angle
+	if TempValue1<TempValue2
+		TempValue3=TempValue2
+		TempValue3-=TempValue1
+		if TempValue3>256
+			TempValue1+=512
+		endif
+	else
+		TempValue3=TempValue1
+		TempValue3-=TempValue2
+		if TempValue3>256
+			TempValue2+=512
+		endif
+	endif
+	TempValue0=TempValue1
+	TempValue0-=TempValue2
+	Object.Value2=TileLayer[0].Angle
+	TempValue1=131072
+	TempValue2=65536
+	TempValue1*=TempValue0
+	TempValue2*=TempValue0
+	HParallax[0].ScrollPos+=TempValue1
+	HParallax[1].ScrollPos+=TempValue2
+endsub
+
+
+sub ObjectStartup
+	Stage.XBoundary1=58720256
+	Stage.XBoundary2=209715200
+	Stage.YBoundary1=58720256
+	Stage.YBoundary2=209715200
+#platform: HW_Rendering
+	LoadSpriteSheet("Special/SSMap2.gif")
+#endplatform
+	ArrayPos0=32
+	while ArrayPos0<1056
+		if Object[ArrayPos0].Type==TypeName[BGEffects]
+			Object[ArrayPos0].Priority=1
+			Object[ArrayPos0].DrawOrder=0
+			Object[ArrayPos0].Value2=368
+		endif
+		ArrayPos0++
+	loop
+endsub
+
+sub RSDK
+	LoadSpriteSheet("Global/Display.gif")
+	SetEditorIcon(Icon0,SingleIcon,-16,-16,32,32,1,143)
+endsub

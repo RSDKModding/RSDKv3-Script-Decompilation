@@ -1,0 +1,927 @@
+//------------Sonic CD Menu Control Script-------------//
+//--------Scripted by Christian Whitehead 'The Taxman'--------//
+//-------Unpacked By Rubberduckycooly's Script Unpacker-------//
+
+//-------Aliases-------//
+#alias 3: TYPE_MENUCONTROL
+
+// Function declarations
+#function MenuControl_Function0
+#function MenuControl_Function1
+#function MenuControl_Function2
+#function MenuControl_Function3
+#function MenuControl_Function4
+
+function MenuControl_Function0
+	ArrayPos0=32
+	TempValue2=Screen.CenterX
+	TempValue2<<=16
+	TempValue0=-210
+	TempValue1=-46
+	while ArrayPos0<36
+		Object[ArrayPos0].XPos=TempValue0
+		Object[ArrayPos0].XPos*=Object.Scale
+		Object[ArrayPos0].XPos>>=1
+		Object[ArrayPos0].XPos+=TempValue2
+		Object[ArrayPos0].YPos=TempValue1
+		Object[ArrayPos0].YPos*=Object.Scale
+		Object[ArrayPos0].YPos+=6553600
+		TempValue0+=140
+		ArrayPos0++
+	loop
+	TempValue0=-210
+	TempValue1=46
+	while ArrayPos0<40
+		Object[ArrayPos0].XPos=TempValue0
+		Object[ArrayPos0].XPos*=Object.Scale
+		Object[ArrayPos0].XPos>>=1
+		Object[ArrayPos0].XPos+=TempValue2
+		Object[ArrayPos0].YPos=TempValue1
+		Object[ArrayPos0].YPos*=Object.Scale
+		Object[ArrayPos0].YPos+=6553600
+		TempValue0+=140
+		ArrayPos0++
+	loop
+endfunction
+
+
+function MenuControl_Function1
+	ArrayPos0=48
+	TempValue0=0
+	TempValue1=0
+	while TempValue0<21
+		TempValue1+=SaveRAM[ArrayPos0]
+		ArrayPos0+=6
+		TempValue0++
+	loop
+	if TempValue1==0
+		ArrayPos0=48
+		TempValue0=0
+		while TempValue0<21
+			SaveRAM[ArrayPos0]=30000
+			ArrayPos0++
+			SaveRAM[ArrayPos0]=30000
+			ArrayPos0++
+			SaveRAM[ArrayPos0]=30000
+			ArrayPos0++
+			SaveRAM[ArrayPos0]=30000
+			ArrayPos0++
+			SaveRAM[ArrayPos0]=30000
+			ArrayPos0++
+			SaveRAM[ArrayPos0]=30000
+			ArrayPos0++
+			TempValue0++
+		loop
+	endif
+endfunction
+
+
+function MenuControl_Function2
+	TempValue0=-1
+	ArrayPos0=3
+	while ArrayPos0<40
+		TempValue1=SaveRAM[ArrayPos0]
+		if TempValue1>10
+			if TempValue1>67
+				if TempValue1<80
+					TempValue1=7
+				else
+					TempValue1-=80
+					TempValue1/=10
+				endif
+			else
+				TempValue1/=10
+			endif
+		else
+			TempValue1=0
+		endif
+		if TempValue1>TempValue0
+			TempValue0=TempValue1
+		endif
+		ArrayPos0+=8
+	loop
+	if TempValue0>SaveRAM[39]
+		SaveRAM[39]=TempValue0
+	else
+		TempValue0=SaveRAM[39]
+	endif
+	ArrayPos0=32
+	while TempValue0>0
+		Object[ArrayPos0].Value4=0
+		ArrayPos0++
+		TempValue0--
+	loop
+	while ArrayPos0<39
+		Object[ArrayPos0].Value4=1
+		ArrayPos0++
+	loop
+endfunction
+
+
+function MenuControl_Function3
+	ArrayPos0=32
+	ArrayPos1=48
+	TempValue1=0
+	while ArrayPos0<39
+		TempValue0=SaveRAM[ArrayPos1]
+		ArrayPos1+=6
+		TempValue0+=SaveRAM[ArrayPos1]
+		ArrayPos1+=6
+		TempValue0+=SaveRAM[ArrayPos1]
+		ArrayPos1+=6
+		TempValue1+=TempValue0
+		Object[ArrayPos0].Value1=TempValue0
+		Object[ArrayPos0].Value1/=6000
+		Object[ArrayPos0].Value2=TempValue0
+		Object[ArrayPos0].Value2/=100
+		Object[ArrayPos0].Value2%=60
+		Object[ArrayPos0].Value3=TempValue0
+		Object[ArrayPos0].Value3%=100
+		ArrayPos0++
+	loop
+	Object[ArrayPos0].Value1=TempValue1
+	Object[ArrayPos0].Value1/=6000
+	if Object[ArrayPos0].Value1<25
+		SetAchievement(10,100)
+	endif
+	Object[ArrayPos0].Value2=TempValue1
+	Object[ArrayPos0].Value2/=100
+	Object[ArrayPos0].Value2%=60
+	Object[ArrayPos0].Value3=TempValue1
+	Object[ArrayPos0].Value3%=100
+	if TempValue1<182105
+		Object.Value7=1
+	endif
+endfunction
+
+
+function MenuControl_Function4
+	ArrayPos0=32
+	ArrayPos1=49
+	TempValue1=0
+	while ArrayPos0<39
+		TempValue0=SaveRAM[ArrayPos1]
+		ArrayPos1+=18
+		TempValue1+=TempValue0
+		Object[ArrayPos0].Value1=TempValue0
+		Object[ArrayPos0].Value1/=6000
+		Object[ArrayPos0].Value2=TempValue0
+		Object[ArrayPos0].Value2/=100
+		Object[ArrayPos0].Value2%=60
+		Object[ArrayPos0].Value3=TempValue0
+		Object[ArrayPos0].Value3%=100
+		ArrayPos0++
+	loop
+	Object[ArrayPos0].Value1=TempValue1
+	Object[ArrayPos0].Value1/=6000
+	Object[ArrayPos0].Value2=TempValue1
+	Object[ArrayPos0].Value2/=100
+	Object[ArrayPos0].Value2%=60
+	Object[ArrayPos0].Value3=TempValue1
+	Object[ArrayPos0].Value3%=100
+	Object.Value7=1
+endfunction
+
+
+sub ObjectMain
+	switch Object.State
+	case 0
+		Stage.DebugMode=0
+		Stage.PlayerListPos=0
+		LampPost.Check=0
+		Good_Future=0
+		Good_Future_Count=0
+		Good_Future_List=0
+		SpecialStage.TimeStones=0
+		ReadSaveRAM()
+		Object.State=1
+		Object.Value0=384
+		Object.Scale=262144
+		SetScreenFade(0,0,0,255)
+#platform: Mobile
+		Object.Value3=-1
+		Object.Value2=-1
+		Object.Value5=-1
+#endplatform
+		CallFunction(MenuControl_Function2)
+		if TimeAttack.Round>-1
+			Object.State=12
+			Object[40].PropertyValue=TimeAttack.Round
+			Object.Value3=TimeAttack.Round
+			Object[40].XPos=Screen.CenterX
+			Object[40].XPos-=72
+			Object[40].XPos<<=16
+			Object.Value4=TimeAttack.Zone
+			Object.Value4*=192
+			Object.Value4+=192
+			if TimeAttack.Result>0
+				ArrayPos0=TimeAttack.Round
+				ArrayPos0*=18
+				TempValue0=TimeAttack.Zone
+				TempValue0*=6
+				ArrayPos0+=TempValue0
+				ArrayPos0+=48
+				ArrayPos0+=TimeAttack.MenuSection
+				if TimeAttack.Result<SaveRAM[ArrayPos0]
+					ArrayPos1=ArrayPos0
+					ArrayPos1+=4
+					ArrayPos0+=2
+					SaveRAM[ArrayPos1]=SaveRAM[ArrayPos0]
+					ArrayPos1-=2
+					ArrayPos0-=2
+					SaveRAM[ArrayPos1]=SaveRAM[ArrayPos0]
+					SaveRAM[ArrayPos0]=TimeAttack.Result
+					Object.Value6=1
+				else
+					ArrayPos0+=2
+					if TimeAttack.Result<SaveRAM[ArrayPos0]
+						ArrayPos1=ArrayPos0
+						ArrayPos1+=2
+						SaveRAM[ArrayPos1]=SaveRAM[ArrayPos0]
+						SaveRAM[ArrayPos0]=TimeAttack.Result
+						Object.Value6=2
+					else
+						ArrayPos0+=2
+						if TimeAttack.Result<SaveRAM[ArrayPos0]
+							SaveRAM[ArrayPos0]=TimeAttack.Result
+							Object.Value6=3
+						endif
+					endif
+				endif
+			endif
+			Object.Scale=327680
+		else
+			TimeAttack.MenuSection=0
+		endif
+		CallFunction(MenuControl_Function1)
+		if TimeAttack.MenuSection==0
+			CallFunction(MenuControl_Function3)
+		else
+			CallFunction(MenuControl_Function4)
+			Object[40].Type=TypeName[SLargeIcon]
+			Object[41].Type=TypeName[SRecords]
+			ArrayPos0=32
+			while ArrayPos0<40
+				Object[ArrayPos0].Type=TypeName[SpecialIcon]
+				ArrayPos0++
+			loop
+		endif
+		WriteSaveRAM()
+		CallFunction(MenuControl_Function0)
+		EngineCallback(2)
+		PlayMusic(0)
+		break
+	case 1
+		if Object.Value0>0
+			Object.Value0-=8
+			Object.Scale-=4096
+		else
+			Object.State=2
+		endif
+		SetScreenFade(0,0,0,Object.Value0)
+		CallFunction(MenuControl_Function0)
+		break
+	case 2
+#platform: Mobile
+		if Options.PhysicalControls==1
+#endplatform
+			ArrayPos0=32
+			ArrayPos0+=Object.Value3
+			CheckResult=0
+			if Object[ArrayPos0].State!=1
+				if KeyPress.Left==1
+					Object.Value3--
+					if Object.Value3<0
+						Object.Value3=7
+					endif
+					PlaySfx(23,0)
+				endif
+				if KeyPress.Right==1
+					Object.Value3++
+					if Object.Value3>7
+						Object.Value3=0
+					endif
+					PlaySfx(23,0)
+				endif
+				if KeyPress.Up==1
+					Object.Value3-=4
+					if Object.Value3<0
+						Object.Value3+=8
+						if Object.Value7==1
+							Object.State=18
+						endif
+					endif
+					PlaySfx(23,0)
+				endif
+				if KeyPress.Down==1
+					Object.Value3+=4
+					if Object.Value3>7
+						Object.Value3-=8
+						if Object.Value7==1
+							Object.State=16
+						endif
+					endif
+					PlaySfx(23,0)
+				endif
+				if KeyPress.Start==1
+					CheckResult=1
+				endif
+				if KeyPress.ButtonA==1
+					CheckResult=1
+				endif
+			endif
+			if CheckResult==1
+				ArrayPos0=32
+				ArrayPos0+=Object.Value3
+				if Object[ArrayPos0].Value4==0
+					Object[ArrayPos0].State=1
+					switch Object.Value3
+					case 0
+						PlaySfx(27,0)
+						break
+					case 1
+						PlaySfx(27,0)
+						break
+					case 2
+						PlaySfx(27,0)
+						break
+					case 3
+						PlaySfx(27,0)
+						break
+					case 4
+						PlaySfx(27,0)
+						break
+					case 5
+						PlaySfx(27,0)
+						break
+					case 6
+						PlaySfx(27,0)
+						break
+					case 7
+						PlaySfx(27,0)
+						Object.State++
+						StopMusic()
+						break
+	
+					endswitch
+				endif
+			endif
+#platform: Mobile
+			CheckTouchRect(0,0,Screen.XSize,Screen.YSize)
+			if CheckResult>-1
+				Options.PhysicalControls=0
+				Object.Value3=-1
+			endif
+		else
+			if Engine.Message==2
+				Object.Value2=-1
+			endif
+			if Object.Value7==1
+				TempValue0=Screen.XSize
+				TempValue0-=72
+				CheckTouchRect(TempValue0,192,Screen.XSize,Screen.YSize)
+				if CheckResult>-1
+					Object.Value2=8
+				else
+					CheckTouchRect(0,0,Screen.XSize,Screen.YSize)
+					if CheckResult<0
+						if Object.Value2==8
+							PlaySfx(23,0)
+							Object.State=16
+							Object.Value2=-1
+						endif
+					else
+						if Object.Value2==8
+							Object.Value2=-1
+						endif
+					endif
+				endif
+			endif
+			if Object.Value2>-1
+				Object.Value3=Object.Value2
+			else
+				Object.Value3=-1
+			endif
+			if KeyPress.Left==1
+				Object.Value3=7
+				Object.Value2=-1
+				Options.PhysicalControls=1
+			endif
+			if KeyPress.Right==1
+				Object.Value3=0
+				Object.Value2=-1
+				Options.PhysicalControls=1
+			endif
+			if KeyPress.Up==1
+				Object.Value3=7
+				Object.Value2=-1
+				Options
+			if KeyPress.Down==1
+				Object.Value3=0
+				Object.Value2=-1
+				Options.PhysicalControls=1
+			endif
+		endif
+#endplatform
+		if KeyPress.ButtonB==1
+			Object.Value3=7
+			ArrayPos0=32
+			ArrayPos0+=Object.Value3
+			Object[ArrayPos0].State=1
+			Object.State++
+			StopMusic()
+			PlaySfx(27,0)
+		endif
+		break
+	case 3
+		break
+	case 4
+		if Object.Value0<384
+			Object.Value0+=8
+			Object.Scale+=4096
+		else
+			Stage.ListPos=1
+			LoadStage()
+		endif
+		SetScreenFade(0,0,0,Object.Value0)
+		CallFunction(MenuControl_Function0)
+		EngineCallback(3)
+		break
+	case 5
+		if Object.Value0<256
+			Object.Value0+=8
+			Object.Scale+=8192
+		else
+			if TimeAttack.MenuSection==0
+				Object[40].Type=TypeName[LargeIcon]
+				Object[41].Type=TypeName[Records]
+			else
+				Object[40].Type=TypeName[SLargeIcon]
+				Object[41].Type=TypeName[SRecords]
+			endif
+			Object[40].PropertyValue=Object.Value3
+			Object[40].State=1
+			Object[41].DrawOrder=2
+			Object[42].DrawOrder=2
+			Object[43].DrawOrder=2
+			Object.Value0=0
+			Object.Value4=0
+			Object.State++
+		endif
+		CallFunction(MenuControl_Function0)
+		break
+	case 6
+		if Object.Value4<192
+			Object.Value4+=8
+		else
+			Object.State++
+		endif
+#platform: Standard
+		Object.Value5=0
+#endplatform
+#platform: Mobile
+		if Options.PhysicalControls==1
+			Object.Value5=0
+		else
+			Object.Value5=-1
+		endif
+#endplatform
+		break
+	case 7
+#platform: Mobile
+		if Options.PhysicalControls==1
+#endplatform
+			if TimeAttack.MenuSection==0
+				if KeyPress.Up==1
+					Object.State=9
+				endif
+				if KeyPress.Down==1
+					Object.State=8
+				endif
+				if KeyPress.Left==1
+					Object.Value5--
+					if Object.Value5<0
+						Object.Value5=2
+					endif
+				endif
+				if KeyPress.Right==1
+					Object.Value5++
+					if Object.Value5>2
+						Object.Value5=0
+					endif
+				endif
+			else
+				if KeyPress.Left==1
+					Object.Value5-=2
+					if Object.Value5<0
+						Object.Value5=2
+					endif
+				endif
+				if KeyPress.Right==1
+					Object.Value5+=2
+					if Object.Value5>2
+						Object.Value5=0
+					endif
+				endif
+			endif
+			CheckResult=0
+			if KeyPress.Start==1
+				CheckResult=1
+			endif
+			if KeyPress.ButtonA==1
+				CheckResult=1
+			endif
+			if KeyPress.ButtonB==1
+				PlayStageSfx(0,0)
+				Object[40].State=2
+				Object.State=13
+				Object[41].DrawOrder=8
+				Object[42].DrawOrder=8
+				Object[43].DrawOrder=8
+				ArrayPos0=Object.Value4
+				ArrayPos0/=192
+				ArrayPos0+=40
+				Object[ArrayPos0].DrawOrder=2
+			endif
+			if CheckResult==1
+				switch Object.Value5
+				case 0
+					PlayStageSfx(0,0)
+					Object[40].State=2
+					Object.State=13
+					Object[41].DrawOrder=8
+					Object[42].DrawOrder=8
+					Object[43].DrawOrder=8
+					ArrayPos0=Object.Value4
+					ArrayPos0/=192
+					ArrayPos0+=40
+					Object[ArrayPos0].DrawOrder=2
+					break
+				case 1
+					PlaySfx(23,0)
+					Object.State=8
+					break
+				case 2
+					PlaySfx(27,0)
+					Object.State=10
+					StopMusic()
+					break
+	
+				endswitch
+#platform: Mobile
+			CheckTouchRect(0,0,Screen.XSize,Screen.YSize)
+			if CheckResult>-1
+				Options.PhysicalControls=0
+				Object.Value5=-1
+			endif
+		else
+			if Engine.Message==2
+				Object.Value5=-1
+			endif
+			TempValue0=Screen.CenterX
+			TempValue0-=140
+			TempValue1=TempValue0
+			TempValue1+=66
+			CheckTouchRect(TempValue0,0,TempValue1,40)
+			if CheckResult>-1
+				Object.Value5=0
+			else
+				CheckTouchRect(0,0,Screen.XSize,Screen.YSize)
+				if CheckResult<0
+					if Object.Value5==0
+						PlayStageSfx(0,0)
+						Object[40].State=2
+						Object.State=13
+						Object[41].DrawOrder=8
+						Object[42].DrawOrder=8
+						Object[43].DrawOrder=8
+						ArrayPos0=Object.Value4
+						ArrayPos0/=192
+						ArrayPos0+=40
+						Object[ArrayPos0].DrawOrder=2
+					endif
+				else
+					if Object.Value5==0
+						Object.Value5=-1
+					endif
+				endif
+			endif
+			if KeyPress.ButtonB==1
+				PlayStageSfx(0,0)
+				Object[40].State=2
+				Object.State=13
+				Object[41].DrawOrder=8
+				Object[42].DrawOrder=8
+				Object[43].DrawOrder=8
+				ArrayPos0=Object.Value4
+				ArrayPos0/=192
+				ArrayPos0+=40
+				Object[ArrayPos0].DrawOrder=2
+			endif
+			TempValue0+=159
+			TempValue1+=159
+			if TimeAttack.MenuSection==0
+				CheckTouchRect(TempValue0,0,TempValue1,40)
+				if CheckResult>-1
+					Object.Value5=1
+				else
+					CheckTouchRect(0,0,Screen.XSize,Screen.YSize)
+					if CheckResult<0
+						if Object.Value5==1
+							PlaySfx(23,0)
+							Object.State=8
+						endif
+					else
+						if Object.Value5==1
+							Object.Value5=-1
+						endif
+					endif
+				endif
+			endif
+			TempValue0+=68
+			TempValue1+=68
+			CheckTouchRect(TempValue0,0,TempValue1,40)
+			if CheckResult>-1
+				Object.Value5=2
+			else
+				CheckTouchRect(0,0,Screen.XSize,Screen.YSize)
+				if CheckResult<0
+					if Object.Value5==2
+						PlaySfx(27,0)
+						Object.State=10
+						StopMusic()
+					endif
+				else
+					if Object.Value5==2
+						Object.Value5=-1
+					endif
+				endif
+			endif
+			if KeyPress.Left==1
+				Object.Value5=2
+				Options.PhysicalControls=1
+			endif
+			if KeyPress.Right==1
+				Object.Value5=0
+				Options.PhysicalControls=1
+			endif
+#endplatform
+		endif
+		break
+	case 8
+		if Object.Value0<192
+			Object.Value0+=8
+			Object.Value4+=8
+			if Object.Value4>767
+				Object.Value4-=576
+			endif
+		else
+			Object.Value0=0
+			Object.State=7
+#platform: Mobile
+			if Options.PhysicalControls==0
+				Object.Value5=-1
+			endif
+#endplatform
+		endif
+		break
+	case 9
+		if Object.Value0<192
+			Object.Value0+=8
+			Object.Value4-=8
+			if Object.Value4<192
+				Object.Value4+=576
+			endif
+		else
+			Object.Value0=0
+			Object.State=7
+#platform: Mobile
+			if Options.PhysicalControls==0
+				Object.Value5=-1
+			endif
+#endplatform
+		endif
+		break
+	case 10
+		if Object.Value0<30
+			Object.Value0++
+		else
+			Object.Value0=0
+			Object.State++
+		endif
+		break
+	case 11
+		if Object.Value0<320
+			Object.Value0+=8
+		else
+			if TimeAttack.MenuSection==0
+				Stage.ActiveList=REGULAR_STAGE
+				Stage.ListPos=Object[40].PropertyValue
+				TimeAttack.Round=Object[40].PropertyValue
+				Stage.ListPos*=10
+				TempValue0=Object.Value4
+				TempValue0-=192
+				TempValue0/=192
+				TimeAttack.Zone=TempValue0
+				TempValue0<<=2
+				Stage.ListPos+=TempValue0
+				if TempValue0==8
+					Stage.ListPos++
+				endif
+			else
+				Stage.ActiveList=SPECIAL_STAGE
+				Stage.ListPos=Object[40].PropertyValue
+				TimeAttack.Round=Object[40].PropertyValue
+				TimeAttack.Zone=0
+			endif
+			Player.Lives=1
+			Player.Score=0
+			Options.GameMode=2
+			LoadStage()
+		endif
+		SetScreenFade(0,0,0,Object.Value0)
+		break
+	case 12
+		if Object.Value0>0
+			Object.Value0-=8
+		else
+			TimeAttack.Round=-1
+			if Object.Value6>0
+				PlaySfx(21,0)
+				Object.State=15
+				Object[0].DrawOrder=4
+			else
+				Object.State=7
+			endif
+		endif
+		SetScreenFade(0,0,0,Object.Value0)
+		break
+	case 13
+		if Object.Value0<30
+			Object.Value0++
+		else
+			Object.Scale=327680
+			Object.Value0=0
+			Object.State++
+		endif
+		if Object.Value4>0
+			Object.Value4-=8
+		endif
+		break
+	case 14
+		if Object.Value0<256
+			Object.Value0+=8
+			Object.Scale-=8192
+		else
+			Object.Value0=0
+			Object.State=2
+		endif
+		CallFunction(MenuControl_Function0)
+		break
+	case 15
+		if Object.Value0<120
+			Object.Value0++
+		else
+			Object.Value0=0
+			Object.State=7
+			Object.Value6=0
+			Object[0].DrawOrder=1
+		endif
+		break
+	case 16
+		if Object.Value0<20
+			Object.Value0++
+			ArrayPos0=32
+			while ArrayPos0<40
+				Object[ArrayPos0].YPos-=786432
+				ArrayPos0++
+			loop
+		else
+			Object.Value0=0
+			ArrayPos0=32
+			if TimeAttack.MenuSection==0
+				while ArrayPos0<40
+					Object[ArrayPos0].YPos+=31457280
+					Object[ArrayPos0].Type=TypeName[SpecialIcon]
+					ArrayPos0++
+				loop
+				TimeAttack.MenuSection=1
+				CallFunction(MenuControl_Function4)
+			else
+				while ArrayPos0<40
+					Object[ArrayPos0].YPos+=31457280
+					Object[ArrayPos0].Type=TypeName[RoundIcon]
+					ArrayPos0++
+				loop
+				TimeAttack.MenuSection=0
+				CallFunction(MenuControl_Function3)
+			endif
+			Object.State++
+		endif
+		break
+	case 17
+		if Object.Value0<20
+			Object.Value0++
+			ArrayPos0=32
+			while ArrayPos0<40
+				Object[ArrayPos0].YPos-=786432
+				ArrayPos0++
+			loop
+		else
+			Object.Value0=0
+			Object.State=2
+		endif
+		break
+	case 18
+		if Object.Value0<20
+			Object.Value0++
+			ArrayPos0=32
+			while ArrayPos0<40
+				Object[ArrayPos0].YPos+=786432
+				ArrayPos0++
+			loop
+		else
+			Object.Value0=0
+			ArrayPos0=32
+			if TimeAttack.MenuSection==0
+				while ArrayPos0<40
+					Object[ArrayPos0].YPos-=31457280
+					Object[ArrayPos0].Type=TypeName[SpecialIcon]
+					ArrayPos0++
+				loop
+				TimeAttack.MenuSection=1
+				CallFunction(MenuControl_Function4)
+			else
+				while ArrayPos0<40
+					Object[ArrayPos0].YPos-=31457280
+					Object[ArrayPos0].Type=TypeName[RoundIcon]
+					ArrayPos0++
+				loop
+				TimeAttack.MenuSection=0
+				CallFunction(MenuControl_Function3)
+			endif
+			Object.State++
+		endif
+		break
+	case 19
+		if Object.Value0<20
+			Object.Value0++
+			ArrayPos0=32
+			while ArrayPos0<40
+				Object[ArrayPos0].YPos+=786432
+				ArrayPos0++
+			loop
+		else
+			Object.Value0=0
+			Object.State=2
+		endif
+		break
+
+	endswitch
+endsub
+
+
+sub ObjectDraw
+	switch Object.State
+	case 13
+		TempValue0=Screen.CenterX
+		TempValue0+=16
+		DrawRect(TempValue0,31,Screen.CenterX,9,0,0,0,255)
+		DrawRect(TempValue0,40,Screen.CenterX,135,224,0,0,255)
+		DrawRect(TempValue0,175,Screen.CenterX,38,0,0,96,255)
+		break
+	case 15
+		TempValue0=Object.Value0
+		TempValue0>>=2
+		TempValue0&=1
+		if TempValue0==0
+			TempValue0=Screen.CenterX
+			TempValue0+=16
+			TempValue1=Object.Value6
+			TempValue1*=24
+			TempValue1+=105
+			DrawRect(TempValue0,TempValue1,34,24,8,0,104,255)
+		endif
+		break
+
+	endswitch
+endsub
+
+
+sub ObjectStartup
+	if Options.Soundtrack==0
+		SetMusicTrack("JP/TimeAttack.ogg",0,100512)
+	else
+		SetMusicTrack("US/DAGarden.ogg",0,117382)
+	endif
+	Object[0].Type=TypeName[MenuControl]
+	Object[0].DrawOrder=1
+#platform: Mobile
+	Options.PhysicalControls=0
+#endplatform
+endsub
+
+sub RSDK
+	LoadSpriteSheet("Global/Display.gif")
+	SetEditorIcon(Icon0,SingleIcon,-16,-16,32,32,1,143)
+endsub

@@ -1,0 +1,79 @@
+//------------Sonic CD Boost Spinner Script-------------//
+//--------Scripted by Christian Whitehead 'The Taxman'--------//
+//-------Unpacked By Rubberduckycooly's Script Unpacker-------//
+
+//-------Aliases-------//
+#alias 68: TYPE_BOOSTSPINNER
+
+
+sub ObjectPlayerInteraction
+	if Object.State==0
+		if Object.Frame==3
+			PlayerObjectCollision(C_TOUCH,0,-24,128,8)
+			if CheckResult==1
+				Object.State=1
+				Object.Value2=4
+#platform: Use_Haptics
+				HapticEffect(30,0,0,0)
+#endplatform
+			endif
+		endif
+	endif
+endsub
+
+
+sub ObjectDraw
+	TempValue0=Object.Value0
+	TempValue0-=Object.XPos
+	TempValue0>>=20
+	Object.Frame=TempValue0
+	if Object.Frame>3
+		Object.Frame=3
+	endif
+	if Object.State==1
+		DrawSpriteXY(Object.Value2,Object.Value0,Object.YPos)
+		Object.Value1++
+		if Object.Value1==3
+			Object.Value1=0
+			Object.Value2++
+			if Object.Value2==16
+				Object.State=0
+			endif
+		endif
+	else
+		DrawSpriteXY(Object.Frame,Object.Value0,Object.YPos)
+	endif
+endsub
+
+
+sub ObjectStartup
+	ArrayPos0=32
+	while ArrayPos0<1056
+		if Object[ArrayPos0].Type==TypeName[BoostSpinner]
+			Object[ArrayPos0].DrawOrder=4
+		endif
+		ArrayPos0++
+	loop
+	LoadSpriteSheet("R1/Objects2.gif")
+	SpriteFrame(-24,-24,48,48,1,82)
+	SpriteFrame(-34,-24,56,48,50,82)
+	SpriteFrame(-38,-24,57,48,107,82)
+	SpriteFrame(-40,-24,56,48,1,131)
+	SpriteFrame(-40,-24,56,48,58,131)
+	SpriteFrame(-40,-24,64,48,58,180)
+	SpriteFrame(-40,-24,56,48,1,180)
+	SpriteFrame(-40,-24,64,48,123,180)
+	SpriteFrame(-40,-24,56,48,58,131)
+	SpriteFrame(-40,-24,64,48,58,180)
+	SpriteFrame(-40,-24,56,48,1,180)
+	SpriteFrame(-40,-24,64,48,123,180)
+	SpriteFrame(-40,-24,56,48,58,131)
+	SpriteFrame(-40,-24,64,48,58,180)
+	SpriteFrame(-40,-24,56,48,1,180)
+	SpriteFrame(-40,-24,64,48,123,180)
+endsub
+
+sub RSDK
+	LoadSpriteSheet("Global/Display.gif")
+	SetEditorIcon(Icon0,SingleIcon,-16,-16,32,32,1,143)
+endsub

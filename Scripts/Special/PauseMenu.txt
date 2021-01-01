@@ -1,0 +1,713 @@
+//------------Sonic CD PauseMenu Script-------------//
+//--------Scripted by Christian Whitehead 'The Taxman'--------//
+//-------Unpacked By Rubberduckycooly's Script Unpacker-------//
+
+//-------Aliases-------//
+#alias 9: TYPE_PAUSEMENU
+
+
+sub ObjectMain
+	switch Object.State
+	case 0
+		Object.XPos=Screen.XSize
+		Object.Value3=0
+		Object.Value0=0
+		Object.InkEffect=2
+		Object.Alpha=0
+		switch Engine.Language
+		case 0
+		case 5
+			Object.PropertyValue=12
+			break
+		case 1
+			Object.PropertyValue=15
+			break
+		case 2
+			Object.PropertyValue=13
+			break
+		case 3
+			Object.PropertyValue=13
+			break
+		case 4
+			Object.PropertyValue=13
+			break
+
+		endswitch
+		if Player.Lives<2
+			Object.Value6=1
+		else
+			if Stage.ActiveList==SPECIAL_STAGE
+				Object.Value6=1
+			else
+				Object.Value6=0
+			endif
+		endif
+#platform: Mobile
+		if Options.TouchControls==1
+			Object.Value1=-1
+			Options.PhysicalControls=0
+		else
+			Options.PhysicalControls=1
+		endif
+#endplatform
+		Object.State++
+		break
+	case 1
+		Object.Value3=Object.Value0
+		Object.Value3*=Screen.XSize
+		Object.Value3/=12
+		Object.Value4=Object.Value0
+		Object.Value4*=240
+		Object.Value4/=12
+		TempValue0=Object.Value0
+		TempValue0<<=7
+		TempValue0/=12
+		Object.XPos=Screen.XSize
+		Object.XPos-=TempValue0
+		if Object.Value0<Object.PropertyValue
+			Object.Value0++
+		else
+			Object.Value2=Object.XPos
+			Object.Value2+=48
+			Object.Value0=0
+			Object.State++
+		endif
+		break
+	case 2
+		if Object.Value0<256
+			Object.Value0+=16
+			if Object.Value0<255
+				Object.Alpha=Object.Value0
+			else
+				Object.Alpha=255
+			endif
+		else
+			Object.Value0=0
+			Object.Alpha=255
+			Object.State++
+		endif
+		break
+	case 3
+#platform: Mobile
+		if Options.PhysicalControls==1
+#endplatform
+			if KeyPress.Up==1
+				PlaySfx(23,0)
+				Object.Value0=0
+				Object.AnimationTimer=0
+				Object.Frame=0
+				Object.Value2=Screen.XSize
+				Object.Value1--
+				if Options.DevMenuFlag==1
+					if Object.Value1<0
+						Object.Value1=3
+					endif
+				else
+					if Object.Value1<0
+						Object.Value1=2
+					endif
+				endif
+				if Object.Value6==1
+					if Object.Value1==1
+						Object.Value1--
+					endif
+				endif
+			endif
+			if KeyPress.Down==1
+				PlaySfx(23,0)
+				Object.Value0=0
+				Object.AnimationTimer=0
+				Object.Frame=0
+				Object.Value2=Screen.XSize
+				Object.Value1++
+				if Options.DevMenuFlag==1
+					if Object.Value1>3
+						Object.Value1=0
+					endif
+				else
+					if Object.Value1>2
+						Object.Value1=0
+					endif
+				endif
+				if Object.Value6==1
+					if Object.Value1==1
+						Object.Value1++
+					endif
+				endif
+			endif
+			if KeyPress.Start==1
+				PlaySfx(27,0)
+				Object.State=4
+				Object.Alpha=248
+				Object.Value0=0
+			endif
+			if KeyPress.ButtonA==1
+				PlaySfx(27,0)
+				Object.State=4
+				Object.Alpha=248
+				Object.Value0=0
+			endif
+#platform: Mobile
+			CheckTouchRect(0,0,Screen.XSize,Screen.YSize)
+			if CheckResult>-1
+				Options.PhysicalControls=0
+				Object.Value1=-1
+			endif
+		else
+			if Engine.Message==2
+				Object.Value1=-1
+			endif
+			CheckTouchRect(0,0,Screen.XSize,Screen.YSize)
+			TempValue3=CheckResult
+			CheckTouchRect(TempValue0,32,Screen.XSize,64)
+			if CheckResult>-1
+				Object.Value1=0
+			else
+				if TempValue3<0
+					if Object.Value1==0
+						PlaySfx(27,0)
+						Object.State=4
+						Object.Alpha=248
+						Object.Value0=0
+					endif
+				else
+					if Object.Value1==0
+						Object.Value1=-1
+					endif
+				endif
+			endif
+			if Object.Value6==0
+				CheckTouchRect(TempValue0,80,Screen.XSize,112)
+				if CheckResult>-1
+					Object.Value1=1
+				else
+					if TempValue3<0
+						if Object.Value1==1
+							PlaySfx(27,0)
+							Object.State=4
+							Object.Alpha=248
+							Object.Value0=0
+						endif
+					else
+						if Object.Value1==1
+							Object.Value1=-1
+						endif
+					endif
+				endif
+			endif
+			CheckTouchRect(TempValue0,128,Screen.XSize,160)
+			if CheckResult>-1
+				Object.Value1=2
+			else
+				if TempValue3<0
+					if Object.Value1==2
+						PlaySfx(27,0)
+						Object.State=4
+						Object.Alpha=248
+						Object.Value0=0
+					endif
+				else
+					if Object.Value1==2
+						Object.Value1=-1
+					endif
+				endif
+			endif
+			if Options.DevMenuFlag==1
+				CheckTouchRect(TempValue0,176,Screen.XSize,208)
+				if CheckResult>-1
+					Object.Value1=3
+				else
+					if TempValue3<0
+						if Object.Value1==3
+							PlaySfx(27,0)
+							Object.State=4
+							Object.Alpha=248
+							Object.Value0=0
+						endif
+					else
+						if Object.Value1==3
+							Object.Value1=-1
+						endif
+					endif
+				endif
+			endif
+			if KeyPress.Up==1
+				if Options.DevMenuFlag==1
+					Object.Value1=3
+				else
+					Object.Value1=2
+				endif
+				Options.PhysicalControls=1
+			endif
+			if KeyPress.Down==1
+				Object.Value1=0
+				Options.PhysicalControls=1
+			endif
+		endif
+#endplatform
+		if Object.Value0<60
+			Object.Value0++
+		else
+			Object.Frame=Object.AnimationTimer
+			Object.Frame>>=4
+			Object.Frame++
+			Object.AnimationTimer++
+			Object.AnimationTimer&=31
+		endif
+		break
+	case 4
+		Object.Value0++
+		Object.Value0&=3
+		Object.Value2+=4
+		if Object.Alpha>0
+			Object.Alpha-=8
+		else
+			if Object.Value1==0
+				Object.Value2=Object.XPos
+				Object.Value2+=48
+				Object.Value4=202
+				Object.Value0=0
+				Object.Alpha=128
+				Object.State=5
+				Stage.State=STAGE_RUNNING
+#platform: Standard
+			else
+				Object.Value2=Object.XPos
+				Object.Value2+=48
+				StopMusic()
+				Object.State=6
+			endif
+#endplatform
+#platform: Mobile
+			else
+				if Engine.Message<3
+					switch Object.Value1
+					case 1
+						EngineCallback(6)
+						break
+					case 2
+						EngineCallback(7)
+						break
+					case 3
+						Object.Value2=Object.XPos
+						Object.Value2+=48
+						StopMusic()
+						Object.State=6
+						break
+
+					endswitch
+				else
+					if Engine.Message==4
+						Object.Value0=0
+						Object.AnimationTimer=0
+						Object.Frame=0
+						Object.Value2=Screen.XSize
+						if Options.PhysicalControls==0
+							Object.Value1=-1
+						endif
+						Object.State=3
+						Object.Alpha=255
+					else
+						Object.Value2=Object.XPos
+						Object.Value2+=48
+						StopMusic()
+						Object.State=6
+					endif
+				endif
+			endif
+#endplatform
+		endif
+		break
+	case 5
+		if Object.Alpha>0
+			Object.Alpha-=8
+			Object.XPos+=16
+			Object.Value2+=16
+			Object.Value4+=16
+		else
+			ResumeMusic()
+			ResetObjectEntity(Object.EntityNo,TypeName[BlankObject],0,0,0)
+			if Engine.FrameSkipSetting>0
+				Engine.FrameSkipTimer=0
+			endif
+			TileLayer[0].Type=4
+		endif
+		break
+	case 6
+#platform: Standard
+		if Object.XPos>-32
+#endplatform
+#platform: Mobile
+		if Object.XPos>-64
+#endplatform
+			Object.XPos-=16
+			Object.Value2+=16
+		else
+			switch Object.Value1
+			case 1
+				LampPost.Check=0
+				Player.Lives--
+				LoadStage()
+				break
+			case 2
+				Good_Future_Count=0
+				Good_Future_List=0
+				Good_Future=0
+				Transporter_Destroyed=0
+				MetalSonic_Destroyed=0
+				Stage.ActiveList=PRESENTATION_STAGE
+				LampPost.Check=0
+				if Options.GameMode==2
+					Stage.ListPos=2
+					TimeAttack.Result=0
+				else
+					Stage.ListPos=0
+				endif
+				LoadStage()
+				break
+			case 3
+				Engine.State=RESET_GAME
+				break
+			endswitch
+		endif
+		break
+	endswitch
+endsub
+
+
+sub ObjectDraw
+	switch Object.State
+	case 0
+	case 1
+	case 2
+		if Object.Value5<240
+			if Object.Value4>Object.Value5
+				TempValue0=Object.Value4
+				TempValue0-=Object.Value5
+				DrawRect(0,Object.Value5,384,TempValue0,255,255,255,128)
+				Object.Value5=Object.Value4
+			endif
+		endif
+		DrawSpriteScreenXY(3,Object.XPos,0)
+		DrawSpriteScreenXY(3,Object.XPos,32)
+		DrawSpriteScreenXY(3,Object.XPos,64)
+		DrawSpriteScreenXY(3,Object.XPos,96)
+		DrawSpriteScreenXY(3,Object.XPos,128)
+		DrawSpriteScreenXY(3,Object.XPos,160)
+		DrawSpriteScreenXY(3,Object.XPos,192)
+		DrawSpriteScreenXY(3,Object.XPos,224)
+		TempValue0=Object.XPos
+		TempValue0+=128
+		DrawRect(TempValue0,0,128,Screen.YSize,0,0,0,255)
+		DrawRect(0,202,Object.Value3,13,0,0,0,255)
+		DrawSpriteScreenFX(4,FX_INK,0,202)
+		TempValue0=Object.XPos
+		TempValue0+=48
+		if Object.Value2>TempValue0
+			TempValue1=TempValue0
+			TempValue1-=Object.Value2
+			TempValue1>>=3
+			Object.Value2+=TempValue1
+		endif
+		TempValue1=48
+		DrawSpriteScreenFX(6,FX_INK,TempValue0,TempValue1)
+		if Object.Value1==0
+			DrawSpriteScreenFX(5,FX_INK,Object.Value2,TempValue1)
+			DrawSpriteScreenFX(Object.Frame,FX_INK,TempValue0,TempValue1)
+		endif
+		TempValue1+=48
+		if Object.Value6==0
+			DrawSpriteScreenFX(7,FX_INK,TempValue0,TempValue1)
+		else
+			DrawSpriteScreenFX(10,FX_INK,TempValue0,TempValue1)
+		endif
+		if Object.Value1==1
+			DrawSpriteScreenFX(5,FX_INK,Object.Value2,TempValue1)
+			DrawSpriteScreenFX(Object.Frame,FX_INK,TempValue0,TempValue1)
+		endif
+		TempValue1+=48
+		DrawSpriteScreenFX(8,FX_INK,TempValue0,TempValue1)
+		if Object.Value1==2
+			DrawSpriteScreenFX(5,FX_INK,Object.Value2,TempValue1)
+			DrawSpriteScreenFX(Object.Frame,FX_INK,TempValue0,TempValue1)
+		endif
+		TempValue1+=48
+		if Options.DevMenuFlag==1
+			DrawSpriteScreenFX(9,FX_INK,TempValue0,TempValue1)
+			if Object.Value1==3
+				DrawSpriteScreenFX(5,FX_INK,Object.Value2,TempValue1)
+				DrawSpriteScreenFX(Object.Frame,FX_INK,TempValue0,TempValue1)
+			endif
+		endif
+		break
+	case 3
+		DrawSpriteScreenXY(3,Object.XPos,0)
+		DrawSpriteScreenXY(3,Object.XPos,32)
+		DrawSpriteScreenXY(3,Object.XPos,64)
+		DrawSpriteScreenXY(3,Object.XPos,96)
+		DrawSpriteScreenXY(3,Object.XPos,128)
+		DrawSpriteScreenXY(3,Object.XPos,160)
+		DrawSpriteScreenXY(3,Object.XPos,192)
+		DrawSpriteScreenXY(3,Object.XPos,224)
+		TempValue0=Object.XPos
+		TempValue0+=128
+		DrawRect(TempValue0,0,128,Screen.YSize,0,0,0,255)
+		DrawRect(0,202,Object.Value3,13,0,0,0,255)
+		DrawSpriteScreenFX(4,FX_INK,0,202)
+		TempValue0=Object.XPos
+		TempValue0+=48
+		if Object.Value2>TempValue0
+			TempValue1=TempValue0
+			TempValue1-=Object.Value2
+			TempValue1>>=3
+			Object.Value2+=TempValue1
+		endif
+		TempValue1=48
+		DrawSpriteScreenFX(6,FX_INK,TempValue0,TempValue1)
+		if Object.Value1==0
+			DrawSpriteScreenFX(5,FX_INK,Object.Value2,TempValue1)
+			DrawSpriteScreenFX(Object.Frame,FX_INK,TempValue0,TempValue1)
+		endif
+		TempValue1+=48
+		if Object.Value6==0
+			DrawSpriteScreenFX(7,FX_INK,TempValue0,TempValue1)
+		else
+			DrawSpriteScreenFX(10,FX_INK,TempValue0,TempValue1)
+		endif
+		if Object.Value1==1
+			DrawSpriteScreenFX(5,FX_INK,Object.Value2,TempValue1)
+			DrawSpriteScreenFX(Object.Frame,FX_INK,TempValue0,TempValue1)
+		endif
+		TempValue1+=48
+		DrawSpriteScreenFX(8,FX_INK,TempValue0,TempValue1)
+		if Object.Value1==2
+			DrawSpriteScreenFX(5,FX_INK,Object.Value2,TempValue1)
+			DrawSpriteScreenFX(Object.Frame,FX_INK,TempValue0,TempValue1)
+		endif
+		TempValue1+=48
+		if Options.DevMenuFlag==1
+			DrawSpriteScreenFX(9,FX_INK,TempValue0,TempValue1)
+			if Object.Value1==3
+				DrawSpriteScreenFX(5,FX_INK,Object.Value2,TempValue1)
+				DrawSpriteScreenFX(Object.Frame,FX_INK,TempValue0,TempValue1)
+			endif
+		endif
+		break
+	case 4
+		DrawSpriteScreenXY(3,Object.XPos,0)
+		DrawSpriteScreenXY(3,Object.XPos,32)
+		DrawSpriteScreenXY(3,Object.XPos,64)
+		DrawSpriteScreenXY(3,Object.XPos,96)
+		DrawSpriteScreenXY(3,Object.XPos,128)
+		DrawSpriteScreenXY(3,Object.XPos,160)
+		DrawSpriteScreenXY(3,Object.XPos,192)
+		DrawSpriteScreenXY(3,Object.XPos,224)
+		TempValue0=Object.XPos
+		TempValue0+=128
+		DrawRect(TempValue0,0,128,Screen.YSize,0,0,0,255)
+		DrawRect(0,202,Object.Value3,13,0,0,0,255)
+		DrawSpriteScreenXY(4,0,202)
+		TempValue0=Object.XPos
+		TempValue0+=48
+		TempValue1=48
+		if Object.Value1==0
+			if Object.Value0<2
+				DrawSpriteScreenXY(6,TempValue0,TempValue1)
+			endif
+			DrawSpriteScreenXY(5,Object.Value2,TempValue1)
+			DrawSpriteScreenXY(Object.Frame,TempValue0,TempValue1)
+		else
+			DrawSpriteScreenFX(6,FX_INK,TempValue0,TempValue1)
+		endif
+		TempValue1+=48
+		if Object.Value1==1
+			if Object.Value0<2
+				DrawSpriteScreenXY(7,TempValue0,TempValue1)
+			endif
+			DrawSpriteScreenXY(5,Object.Value2,TempValue1)
+			DrawSpriteScreenXY(Object.Frame,TempValue0,TempValue1)
+		else
+			if Object.Value6==0
+				DrawSpriteScreenFX(7,FX_INK,TempValue0,TempValue1)
+			else
+				DrawSpriteScreenFX(10,FX_INK,TempValue0,TempValue1)
+			endif
+		endif
+		TempValue1+=48
+		if Object.Value1==2
+			if Object.Value0<2
+				DrawSpriteScreenXY(8,TempValue0,TempValue1)
+			endif
+			DrawSpriteScreenXY(5,Object.Value2,TempValue1)
+			DrawSpriteScreenXY(Object.Frame,TempValue0,TempValue1)
+		else
+			DrawSpriteScreenFX(8,FX_INK,TempValue0,TempValue1)
+		endif
+		TempValue1+=48
+		if Options.DevMenuFlag==1
+			if Object.Value1==3
+				if Object.Value0<2
+					DrawSpriteScreenXY(9,TempValue0,TempValue1)
+				endif
+				DrawSpriteScreenXY(5,Object.Value2,TempValue1)
+				DrawSpriteScreenXY(Object.Frame,TempValue0,TempValue1)
+			else
+				DrawSpriteScreenFX(9,FX_INK,TempValue0,TempValue1)
+			endif
+		endif
+		break
+	case 5
+		if Object.Alpha<128
+			DrawRect(0,0,Screen.XSize,240,255,255,255,Object.Alpha)
+		endif
+		DrawSpriteScreenXY(3,Object.XPos,0)
+		DrawSpriteScreenXY(3,Object.XPos,32)
+		DrawSpriteScreenXY(3,Object.XPos,64)
+		DrawSpriteScreenXY(3,Object.XPos,96)
+		DrawSpriteScreenXY(3,Object.XPos,128)
+		DrawSpriteScreenXY(3,Object.XPos,160)
+		DrawSpriteScreenXY(3,Object.XPos,192)
+		DrawSpriteScreenXY(3,Object.XPos,224)
+		TempValue0=Object.XPos
+		TempValue0+=128
+		DrawRect(TempValue0,0,128,Screen.YSize,0,0,0,255)
+		DrawRect(0,Object.Value4,Screen.XSize,13,0,0,0,255)
+		DrawSpriteScreenXY(4,0,Object.Value4)
+		switch Object.Value1
+		case 0
+			DrawSpriteScreenXY(6,Object.Value2,48)
+			DrawSpriteScreenXY(Object.Frame,Object.Value2,48)
+			break
+		case 1
+			DrawSpriteScreenXY(6,Object.Value2,96)
+			DrawSpriteScreenXY(Object.Frame,Object.Value2,96)
+			break
+		case 2
+			DrawSpriteScreenXY(8,Object.Value2,144)
+			DrawSpriteScreenXY(Object.Frame,Object.Value2,144)
+			break
+		case 3
+			if Options.DevMenuFlag==1
+				DrawSpriteScreenXY(9,Object.Value2,192)
+				DrawSpriteScreenXY(Object.Frame,Object.Value2,192)
+			endif
+			break
+
+		endswitch
+		break
+	case 6
+		TempValue0=Screen.XSize
+		TempValue0-=96
+		DrawRect(TempValue0,0,96,240,0,0,0,255)
+		DrawSpriteScreenXY(3,Object.XPos,0)
+		DrawSpriteScreenXY(3,Object.XPos,32)
+		DrawSpriteScreenXY(3,Object.XPos,64)
+		DrawSpriteScreenXY(3,Object.XPos,96)
+		DrawSpriteScreenXY(3,Object.XPos,128)
+		DrawSpriteScreenXY(3,Object.XPos,160)
+		DrawSpriteScreenXY(3,Object.XPos,192)
+		DrawSpriteScreenXY(3,Object.XPos,224)
+		TempValue0=Object.XPos
+		TempValue0+=128
+		DrawRect(TempValue0,0,128,Screen.YSize,0,0,0,255)
+		switch Object.Value1
+		case 0
+			DrawSpriteScreenXY(6,Object.Value2,48)
+			DrawSpriteScreenXY(Object.Frame,Object.Value2,48)
+			break
+		case 1
+			DrawSpriteScreenXY(6,Object.Value2,96)
+			DrawSpriteScreenXY(Object.Frame,Object.Value2,96)
+			break
+		case 2
+			DrawSpriteScreenXY(8,Object.Value2,144)
+			DrawSpriteScreenXY(Object.Frame,Object.Value2,144)
+			break
+		case 3
+			if Options.DevMenuFlag==1
+				DrawSpriteScreenXY(9,Object.Value2,192)
+				DrawSpriteScreenXY(Object.Frame,Object.Value2,192)
+			endif
+			break
+
+		endswitch
+		break
+	endswitch
+endsub
+
+
+sub ObjectStartup
+	switch Engine.Language
+	case 0
+	case 5
+		LoadSpriteSheet("Special/ScoreScreen.gif")
+		break
+	case 1
+		LoadSpriteSheet("Special/ScoreScreen_FR.gif")
+		break
+	case 2
+		LoadSpriteSheet("Special/ScoreScreen_IT.gif")
+		break
+	case 3
+		LoadSpriteSheet("Special/ScoreScreen_DE.gif")
+		break
+	case 4
+		LoadSpriteSheet("Special/ScoreScreen_ES.gif")
+		break
+	endswitch
+	if Stage.PlayerListPos==0
+		SpriteFrame(-28,-14,16,24,1,231)
+		SpriteFrame(-28,-14,16,24,18,231)
+		SpriteFrame(-28,-14,16,24,35,231)
+	else
+		SpriteFrame(-28,-14,16,24,122,202)
+		SpriteFrame(-28,-14,16,24,139,202)
+		SpriteFrame(-28,-14,16,24,156,202)
+	endif
+	SpriteFrame(0,0,128,32,0,128)
+	SpriteFrame(0,-19,128,32,0,160)
+	SpriteFrame(-6,7,128,3,0,193)
+	switch Engine.Language
+	case 0
+	case 5
+		SpriteFrame(0,-5,65,11,0,197)
+		SpriteFrame(0,-5,55,11,66,197)
+		SpriteFrame(0,-5,30,11,0,209)
+		SpriteFrame(0,-5,64,11,31,209)
+		SpriteFrame(0,-5,55,11,52,244)
+		break
+	case 1
+		SpriteFrame(0,-5,73,11,0,197)
+		SpriteFrame(0,-5,95,11,0,209)
+		SpriteFrame(0,-5,53,11,148,244)
+		SpriteFrame(0,-5,23,11,96,209)
+		SpriteFrame(0,-5,95,11,52,244)
+		break
+	case 2
+		SpriteFrame(0,-5,65,11,0,197)
+		SpriteFrame(0,-5,78,11,0,209)
+		SpriteFrame(0,-5,28,11,66,197)
+		SpriteFrame(0,-5,23,11,79,209)
+		SpriteFrame(0,-5,78,11,52,244)
+		break
+	case 3
+		SpriteFrame(0,-5,48,11,0,197)
+		SpriteFrame(0,-5,65,11,0,209)
+		SpriteFrame(0,-5,71,11,49,197)
+		SpriteFrame(0,-5,23,11,66,209)
+		SpriteFrame(0,-5,65,11,52,244)
+		break
+	case 4
+		SpriteFrame(0,-5,73,11,0,197)
+		SpriteFrame(0,-5,67,11,0,209)
+		SpriteFrame(0,-5,36,11,74,197)
+		SpriteFrame(0,-5,23,11,68,209)
+		SpriteFrame(0,-5,67,11,52,244)
+		break
+	endswitch
+endsub
+
+sub RSDK
+	LoadSpriteSheet("Global/Display.gif")
+	SetEditorIcon(Icon0,SingleIcon,-16,-16,32,32,1,143)
+endsub

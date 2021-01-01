@@ -1,0 +1,1132 @@
+//------------Sonic CD Menu Button Script-------------//
+//--------Scripted by Christian Whitehead 'The Taxman'--------//
+//-------Unpacked By Rubberduckycooly's Script Unpacker-------//
+
+//-------Aliases-------//
+#alias 4: TYPE_MENUBUTTON
+
+// Function declarations
+#function MenuButton_SetupMenuWindow
+
+function MenuButton_SetupMenuWindow
+	ResetObjectEntity(61,TypeName[MenuWindow],0,Object.XPos,Object.YPos)
+	Object[61].XPos+=4718592
+	Object[61].Value1=144
+	Object[61].Value2=21
+	Object[61].Value3=Object[61].XPos
+	Object[61].Value4=Object[61].YPos
+	Object[61].Value5=Object.EntityNo
+endfunction
+
+
+sub ObjectMain
+#platform: Standard
+	Object.Value2=Object.Value5
+	Object.Value2--
+	Object.Value2*=60
+	Object.Value2+=Object[0].Value1
+	TempValue0=Screen.CenterX
+	TempValue0-=160
+	Object.Value1=Object.Value2
+	Object.Value1*=54
+	Object.Value1/=60
+	Object.Value1-=16
+	Object.Value1+=TempValue0
+	switch Object.State
+	case 0
+		if Object.Value0<60
+			Object.Value0++
+		else
+			Object.Value0=0
+			Object.State++
+		endif
+		break
+	case 1
+		TempValue0=Object.Value1
+		TempValue0<<=16
+		TempValue0-=Object.XPos
+		TempValue0>>=4
+		Object.XPos+=TempValue0
+		TempValue0=Object.Value2
+		TempValue0<<=16
+		TempValue0-=Object.YPos
+		TempValue0>>=4
+		Object.YPos+=TempValue0
+		if Object.Value0<80
+			Object.Value0++
+		else
+			Object.Value0=0
+			Object.State++
+		endif
+		break
+	case 2
+		Object.XPos=Object.Value1
+		Object.XPos<<=16
+		Object.YPos=Object.Value2
+		Object.YPos<<=16
+		if Object.Value5==Object[0].Value3
+			CheckResult=0
+			if KeyPress.Start==1
+				CheckResult=1
+			endif
+			if KeyPress.ButtonA==1
+				CheckResult=1
+			endif
+			if Object.PropertyValue==4
+				if Engine.OnlineActive==0
+					CheckResult=0
+				endif
+			endif
+			if CheckResult==1
+				PlaySfx(27,0)
+				if Engine.TrialMode==1
+					if Object.PropertyValue==1
+						StopMusic()
+					endif
+				else
+					if Object.PropertyValue==2
+						StopMusic()
+					endif
+				endif
+				Object[0].State=3
+				switch Object.PropertyValue
+				case 1
+				case 5
+				case 6
+				case 10
+					Object[34].State=4
+					Object[34].Value0=0
+					Object[35].State=4
+					Object[35].Value0=0
+					Object[36].State=4
+					Object[36].Value0=0
+					Object[37].State=4
+					Object[37].Value0=0
+					Object[38].State=4
+					Object[38].Value0=0
+					Object[39].State=4
+					Object[39].Value0=0
+					Object[40].State=4
+					Object[40].Value0=0
+					Object[41].State=4
+					Object[41].Value0=0
+					Object[42].State=4
+					Object[42].Value0=0
+					Object[43].State=4
+					Object[43].Value0=0
+					break
+				case 2
+					if Engine.TrialMode==0
+						Object[34].State=4
+						Object[34].Value0=0
+						Object[35].State=4
+						Object[35].Value0=0
+						Object[36].State=4
+						Object[36].Value0=0
+						Object[37].State=4
+						Object[37].Value0=0
+						Object[38].State=4
+						Object[38].Value0=0
+						Object[39].State=4
+						Object[39].Value0=0
+						Object[40].State=4
+						Object[40].Value0=0
+						Object[41].State=4
+						Object[41].Value0=0
+						Object[42].State=4
+						Object[42].Value0=0
+						Object[43].State=4
+						Object[43].Value0=0
+					endif
+					endswitch
+					Object.State=3
+				endif
+			endif
+			break
+		case 3
+			if Object.Value0<30
+				Object.Value0++
+			else
+				Object.Value0=0
+				switch Object.PropertyValue
+				case 1
+					if Engine.TrialMode==0
+						Object[33].State=1
+						Object[33].PropertyValue=6
+						CallFunction(MenuButton_SetupMenuWindow)
+						ResetObjectEntity(62,TypeName[LoadSaveMenu],0,0,0)
+						Object[62].InkEffect=2
+						Object[62].Alpha=0
+						ResetObjectEntity(63,TypeName[BlankObject],0,0,0)
+						ResetObjectEntity(64,TypeName[BlankObject],0,0,0)
+						ResetObjectEntity(65,TypeName[BlankObject],0,0,0)
+						ResetObjectEntity(66,TypeName[BlankObject],0,0,0)
+						Object.Type=TypeName[BlankObject]
+						ReadSaveRAM()
+					else
+						Object.State=5
+						Object[0].State=5
+						Object[0].Value0=0
+						Options.GameMode=0
+						Player.Score=0
+						Player.Lives=3
+						Player.ScoreBonus=50000
+						Transporter_Destroyed=0
+						MetalSonic_Destroyed=0
+						Good_Future=0
+					endif
+					break
+				case 2
+					if Engine.TrialMode==0
+						Object.State=5
+						Object[0].State=4
+						Object[0].Value0=0
+					else
+						Object.State=2
+						Object[0].State=2
+						EngineCallback(14)
+					endif
+					break
+				case 3
+					LoadOnlineMenu(0)
+					Object.State=2
+					Object[0].State=2
+					break
+				case 4
+					LoadOnlineMenu(1)
+					Object.State=2
+					Object[0].State=2
+					break
+				case 5
+					Object[33].State=1
+					Object[33].PropertyValue=7
+					CallFunction(MenuButton_SetupMenuWindow)
+					ResetObjectEntity(62,TypeName[OptionsMenuC],0,0,0)
+					Object[62].InkEffect=2
+					Object[62].Alpha=0
+					ResetObjectEntity(63,TypeName[BlankObject],0,0,0)
+					ResetObjectEntity(64,TypeName[BlankObject],0,0,0)
+					ResetObjectEntity(65,TypeName[BlankObject],0,0,0)
+					ResetObjectEntity(66,TypeName[BlankObject],0,0,0)
+					Object.Type=TypeName[BlankObject]
+					break
+				case 6
+					Object[33].State=1
+					Object[33].PropertyValue=8
+					CallFunction(MenuButton_SetupMenuWindow)
+					ResetObjectEntity(62,TypeName[ExtrasMenu],0,0,0)
+					Object[62].InkEffect=2
+					Object[62].Alpha=0
+					ResetObjectEntity(63,TypeName[BlankObject],0,0,0)
+					ResetObjectEntity(64,TypeName[BlankObject],0,0,0)
+					ResetObjectEntity(65,TypeName[BlankObject],0,0,0)
+					ResetObjectEntity(66,TypeName[BlankObject],0,0,0)
+					Object.Type=TypeName[BlankObject]
+					break
+				case 7
+					EngineCallback(8)
+					Object.State=2
+					Object[0].State=2
+					break
+				case 8
+					EngineCallback(5)
+					Object.State=2
+					Object[0].State=2
+					break
+				case 9
+					EngineCallback(7)
+					Object.State=2
+					Object[0].State=2
+					break
+				case 10
+					Object[33].State=1
+					Object[33].PropertyValue=9
+					CallFunction(MenuButton_SetupMenuWindow)
+					Object[61].State=5
+					ResetObjectEntity(62,TypeName[SoundtrackMenu],0,0,0)
+					Object[62].InkEffect=2
+					Object[62].Alpha=0
+					ResetObjectEntity(63,TypeName[BlankObject],0,0,0)
+					ResetObjectEntity(64,TypeName[BlankObject],0,0,0)
+					ResetObjectEntity(65,TypeName[BlankObject],0,0,0)
+					ResetObjectEntity(66,TypeName[BlankObject],0,0,0)
+					Object.Type=TypeName[BlankObject]
+					break
+
+				endswitch
+			endif
+			break
+		case 4
+			TempValue0=Object.Value3
+			TempValue0-=Object.XPos
+			TempValue0>>=4
+			Object.XPos+=TempValue0
+			TempValue0=Object.Value4
+			TempValue0-=Object.YPos
+			TempValue0>>=4
+			Object.YPos+=TempValue0
+			if Object.Value0<80
+				Object.Value0++
+			else
+				Object.Value0=0
+				Object.State=6
+			endif
+			break
+		case 7
+			if Object.PropertyValue==6
+				if Object[-1].State==2
+					Object.State=2
+					Object[0].State=2
+				endif
+			else
+				if Object[+1].State==2
+					Object.State=2
+					Object[0].State=2
+				endif
+			endif
+			break
+		endswitch
+#endplatform
+
+
+#platform: Mobile
+	Object.Value2=Object.Value5
+	Object.Value2--
+	Object.Value2*=60
+	Object.Value2+=Object[0].Value1
+	TempValue0=Screen.CenterX
+	TempValue0-=160
+	Object.Value1=Object.Value2
+	Object.Value1*=54
+	Object.Value1/=60
+	Object.Value1-=16
+	Object.Value1+=TempValue0
+	switch Object.State
+	case 0
+		if Object.Value0<60
+			Object.Value0++
+		else
+			Object.Value0=0
+			Object.State++
+		endif
+		break
+	case 1
+		TempValue0=Object.Value1
+		TempValue0<<=16
+		TempValue0-=Object.XPos
+		TempValue0>>=4
+		Object.XPos+=TempValue0
+		TempValue0=Object.Value2
+		TempValue0<<=16
+		TempValue0-=Object.YPos
+		TempValue0>>=4
+		Object.YPos+=TempValue0
+		if Object.Value0<80
+			Object.Value0++
+		else
+			Object.Value0=0
+			Object.State++
+		endif
+		break
+	case 2
+		Object.XPos=Object.Value1
+		Object.XPos<<=16
+		Object.YPos=Object.Value2
+		Object.YPos<<=16
+		if Options.PhysicalControls==0
+			TempValue0=Object.Value1
+			TempValue0-=16
+			TempValue1=Object.Value1
+			TempValue1+=176
+			TempValue2=Object.Value2
+			TempValue2-=20
+			TempValue3=Object.Value2
+			TempValue3+=20
+			CheckTouchRect(TempValue0,TempValue2,TempValue1,TempValue3)
+			if CheckResult>-1
+				TempValue0=Object[0].Value7
+				TempValue0>>=2
+				if TempValue0==0
+					if Object[1].Value1==0
+						Object[0].Value2=Object.Value5
+					endif
+				endif
+			else
+				CheckTouchRect(0,0,Screen.XSize,Screen.YSize)
+				if CheckResult<0
+					if Object[0].Value2==Object.Value5
+						if Object[1].Value1==0
+							PlaySfx(27,0)
+							Object[0].State=3
+							switch Object.PropertyValue
+							case 1
+							case 5
+							case 6
+							case 10
+								Object[34].State=4
+								Object[34].Value0=0
+								Object[35].State=4
+								Object[35].Value0=0
+								Object[36].State=4
+								Object[36].Value0=0
+								Object[37].State=4
+								Object[37].Value0=0
+								Object[38].State=4
+								Object[38].Value0=0
+								Object[39].State=4
+								Object[39].Value0=0
+								Object[40].State=4
+								Object[40].Value0=0
+								Object[41].State=4
+								Object[41].Value0=0
+								Object[42].State=4
+								Object[42].Value0=0
+								Object[43].State=4
+								Object[43].Value0=0
+								break
+							case 2
+							case 4
+								if Engine.TrialMode==0
+									StopMusic()
+									Object[34].State=4
+									Object[34].Value0=0
+									Object[35].State=4
+									Object[35].Value0=0
+									Object[36].State=4
+									Object[36].Value0=0
+									Object[37].State=4
+									Object[37].Value0=0
+									Object[38].State=4
+									Object[38].Value0=0
+									Object[39].State=4
+									Object[39].Value0=0
+									Object[40].State=4
+									Object[40].Value0=0
+									Object[41].State=4
+									Object[41].Value0=0
+									Object[42].State=4
+									Object[42].Value0=0
+									Object[43].State=4
+									Object[43].Value0=0
+								endif
+								break
+							case 3
+								StopMusic()
+								endswitch
+								Object.State=3
+							endif
+						endif
+					else
+						if Object[0].Value2==Object.Value5
+							Object[0].Value2=0
+						endif
+					endif
+				endif
+			else
+				if Object.Value5==Object[0].Value3
+					CheckResult=0
+					if KeyPress.Start==1
+						CheckResult=1
+					endif
+					if KeyPress.ButtonA==1
+						CheckResult=1
+					endif
+					if Object.PropertyValue==4
+						if Engine.OnlineActive==0
+							CheckResult=0
+						endif
+					endif
+					if CheckResult==1
+						PlaySfx(27,0)
+						if Engine.TrialMode==1
+							if Engine.PlatformID!=RETRO_ANDROID
+								if Object.PropertyValue==1
+									StopMusic()
+								endif
+							endif
+						else
+							if Object.PropertyValue==2
+								StopMusic()
+							endif
+						endif
+						Object[0].State=3
+						switch Object.PropertyValue
+						case 1
+						case 5
+						case 6
+						case 10
+							Object[34].State=4
+							Object[34].Value0=0
+							Object[35].State=4
+							Object[35].Value0=0
+							Object[36].State=4
+							Object[36].Value0=0
+							Object[37].State=4
+							Object[37].Value0=0
+							Object[38].State=4
+							Object[38].Value0=0
+							Object[39].State=4
+							Object[39].Value0=0
+							Object[40].State=4
+							Object[40].Value0=0
+							Object[41].State=4
+							Object[41].Value0=0
+							Object[42].State=4
+							Object[42].Value0=0
+							Object[43].State=4
+							Object[43].Value0=0
+							break
+						case 2
+						case 4
+							if Engine.TrialMode==0
+								Object[34].State=4
+								Object[34].Value0=0
+								Object[35].State=4
+								Object[35].Value0=0
+								Object[36].State=4
+								Object[36].Value0=0
+								Object[37].State=4
+								Object[37].Value0=0
+								Object[38].State=4
+								Object[38].Value0=0
+								Object[39].State=4
+								Object[39].Value0=0
+								Object[40].State=4
+								Object[40].Value0=0
+								Object[41].State=4
+								Object[41].Value0=0
+								Object[42].State=4
+								Object[42].Value0=0
+								Object[43].State=4
+								Object[43].Value0=0
+							endif
+							break
+						case 3
+							StopMusic()
+							endswitch
+							Object.State=3
+						endif
+					endif
+				endif
+				if Engine.PlatformID==RETRO_WP7
+					if KeyPress.ButtonB==1
+						EngineCallback(7)
+						Object.State=2
+						Object[0].State=2
+						Object[0].Value2=0
+					endif
+				endif
+				break
+			case 3
+				if Object.Value0<30
+					Object.Value0++
+				else
+					Object.Value0=0
+					switch Object.PropertyValue
+					case 1
+						if Engine.TrialMode==0
+							Object[33].State=1
+							Object[33].PropertyValue=6
+							CallFunction(MenuButton_SetupMenuWindow)
+							ResetObjectEntity(62,TypeName[LoadSaveMenu],0,0,0)
+							Object[62].InkEffect=2
+							Object[62].Alpha=0
+							ResetObjectEntity(63,TypeName[BlankObject],0,0,0)
+							ResetObjectEntity(64,TypeName[BlankObject],0,0,0)
+							ResetObjectEntity(65,TypeName[BlankObject],0,0,0)
+							ResetObjectEntity(66,TypeName[BlankObject],0,0,0)
+							Object.Type=TypeName[BlankObject]
+							ReadSaveRAM()
+						else
+							if Engine.PlatformID==RETRO_ANDROID
+								Object[33].State=1
+								Object[33].PropertyValue=10
+								CallFunction(MenuButton_SetupMenuWindow)
+								Object[61].State=5
+								ResetObjectEntity(62,TypeName[DemoMenu],0,0,0)
+								Object[62].InkEffect=2
+								Object[62].Alpha=0
+								ResetObjectEntity(63,TypeName[BlankObject],0,0,0)
+								ResetObjectEntity(64,TypeName[BlankObject],0,0,0)
+								ResetObjectEntity(65,TypeName[BlankObject],0,0,0)
+								ResetObjectEntity(66,TypeName[BlankObject],0,0,0)
+								Object.Type=TypeName[BlankObject]
+								ReadSaveRAM()
+							else
+								Object.State=5
+								Object[0].State=5
+								Object[0].Value0=0
+								Options.GameMode=0
+								Player.Score=0
+								Player.Lives=3
+								Player.ScoreBonus=50000
+								Transporter_Destroyed=0
+								MetalSonic_Destroyed=0
+								Good_Future=0
+							endif
+						endif
+						break
+					case 2
+						if Engine.TrialMode==0
+							Object.State=5
+							Object[0].State=4
+							Object[0].Value0=0
+						else
+							Object.State=2
+							Object[0].State=2
+							EngineCallback(14)
+							Object[0].Value2=0
+						endif
+						break
+					case 3
+						if Engine.PlatformID<RETRO_WP7
+							LoadOnlineMenu(0)
+							Object.State=2
+							Object[0].State=2
+							Object[0].Value2=0
+						else
+							Object.State=5
+							Object[0].State=7
+							Object[0].Value0=0
+						endif
+						break
+					case 4
+						if Engine.PlatformID!=RETRO_WP7
+							LoadOnlineMenu(1)
+							Object.State=2
+							Object[0].State=2
+							Object[0].Value2=0
+						else
+							if Engine.TrialMode==0
+								Object.State=5
+								Object[0].State=8
+								Object[0].Value0=0
+							else
+								Object.State=2
+								Object[0].State=2
+								EngineCallback(14)
+								Object[0].Value2=0
+							endif
+						endif
+						break
+					case 5
+						Object[33].State=1
+						Object[33].PropertyValue=7
+						CallFunction(MenuButton_SetupMenuWindow)
+						if Options.HapticsMenu==1
+							ResetObjectEntity(62,TypeName[OptionsMenuH],0,0,0)
+						else
+							ResetObjectEntity(62,TypeName[OptionsMenu],0,0,0)
+						endif
+						Object[62].InkEffect=2
+						Object[62].Alpha=0
+						ResetObjectEntity(63,TypeName[BlankObject],0,0,0)
+						ResetObjectEntity(64,TypeName[BlankObject],0,0,0)
+						ResetObjectEntity(65,TypeName[BlankObject],0,0,0)
+						ResetObjectEntity(66,TypeName[BlankObject],0,0,0)
+						Object.Type=TypeName[BlankObject]
+						break
+					case 6
+						Object[33].State=1
+						Object[33].PropertyValue=8
+						CallFunction(MenuButton_SetupMenuWindow)
+						ResetObjectEntity(62,TypeName[ExtrasMenu],0,0,0)
+						Object[62].InkEffect=2
+						Object[62].Alpha=0
+						ResetObjectEntity(63,TypeName[BlankObject],0,0,0)
+						ResetObjectEntity(64,TypeName[BlankObject],0,0,0)
+						ResetObjectEntity(65,TypeName[BlankObject],0,0,0)
+						ResetObjectEntity(66,TypeName[BlankObject],0,0,0)
+						Object.Type=TypeName[BlankObject]
+						break
+					case 7
+						EngineCallback(8)
+						Object.State=2
+						Object[0].State=2
+						Object[0].Value2=0
+						break
+					case 8
+						EngineCallback(8)
+						Object.State=2
+						Object[0].State=2
+						Object[0].Value2=0
+						break
+					case 9
+						EngineCallback(7)
+						Object.State=2
+						Object[0].State=2
+						Object[0].Value2=0
+						break
+					case 10
+						Object[33].State=1
+						Object[33].PropertyValue=9
+						CallFunction(MenuButton_SetupMenuWindow)
+						Object[61].State=5
+						ResetObjectEntity(62,TypeName[SoundtrackMenu],0,0,0)
+						Object[62].InkEffect=2
+						Object[62].Alpha=0
+						ResetObjectEntity(63,TypeName[BlankObject],0,0,0)
+						ResetObjectEntity(64,TypeName[BlankObject],0,0,0)
+						ResetObjectEntity(65,TypeName[BlankObject],0,0,0)
+						ResetObjectEntity(66,TypeName[BlankObject],0,0,0)
+						Object.Type=TypeName[BlankObject]
+						break
+					case 11
+						EngineCallback(16)
+						Object.State=2
+						Object[0].State=2
+						Object[0].Value2=0
+						break
+
+					endswitch
+				endif
+				break
+			case 4
+				TempValue0=Object.Value3
+				TempValue0-=Object.XPos
+				TempValue0>>=4
+				Object.XPos+=TempValue0
+				TempValue0=Object.Value4
+				TempValue0-=Object.YPos
+				TempValue0>>=4
+				Object.YPos+=TempValue0
+				if Object.Value0<80
+					Object.Value0++
+				else
+					Object.Value0=0
+					Object.State=6
+				endif
+				break
+			case 7
+				if Object.PropertyValue==6
+					if Object[-1].State==2
+						Object.State=2
+						Object[0].State=2
+						Object[0].Value2=0
+					endif
+				else
+					if Object[+1].State==2
+						Object.State=2
+						Object[0].State=2
+						Object[0].Value2=0
+					endif
+				endif
+				break
+			endswitch
+#endplatform
+endsub
+
+
+
+sub ObjectDraw
+	DrawSprite(0)
+	switch Object.State
+	case 0
+	case 1
+	case 2
+	case 4
+	case 5
+	case 7
+		if Object.Value5==Object[0].Value3
+			TempValue0=Object.PropertyValue
+#platform: Standard
+			TempValue0+=10
+#endplatform
+#platform: Mobile
+			TempValue0+=11
+#endplatform
+			DrawSprite(TempValue0)
+		else
+			DrawSprite(Object.PropertyValue)
+		endif
+		break
+	case 3
+		TempValue0=Object.Value0
+		TempValue0&=3
+		TempValue0>>=1
+		if TempValue0==0
+			TempValue0=Object.PropertyValue
+#platform: Standard
+			TempValue0+=10
+#endplatform
+#platform: Mobile
+			TempValue0+=11
+#endplatform
+			DrawSprite(TempValue0)
+		endif
+		break
+
+	endswitch
+endsub
+
+
+sub ObjectStartup
+	switch Engine.Language
+	case 0
+		LoadSpriteSheet("Menu/MenuGfx2_EN.gif")
+		break
+	case 1
+		LoadSpriteSheet("Menu/MenuGfx2_FR.gif")
+		break
+	case 2
+		LoadSpriteSheet("Menu/MenuGfx2_IT.gif")
+		break
+	case 3
+		LoadSpriteSheet("Menu/MenuGfx2_DE.gif")
+		break
+	case 4
+		LoadSpriteSheet("Menu/MenuGfx2_ES.gif")
+		break
+	case 5
+		LoadSpriteSheet("Menu/MenuGfx2_JP.gif")
+		break
+
+	endswitch
+	Object[1].Value2=1
+	ArrayPos0=32
+	while ArrayPos0<1056
+		if Object[ArrayPos0].Type==TypeName[MenuButton]
+			Object[ArrayPos0].Priority=1
+			Object[ArrayPos0].Value3=Object[ArrayPos0].XPos
+			Object[ArrayPos0].Value4=Object[ArrayPos0].Value4
+		endif
+		ArrayPos0++
+	loop
+	switch Engine.PlatformID
+	case 0
+	case 1
+#platform: Standard
+		if Engine.TrialMode==1
+			Object[34].PropertyValue=1
+			Object[35].PropertyValue=2
+			Object[36].PropertyValue=4
+			Object[37].PropertyValue=3
+			Object[38].PropertyValue=5
+			Object[39].PropertyValue=10
+			Object[40].PropertyValue=7
+			Object[41].PropertyValue=9
+			Object[1].Value2=8
+		else
+			Object[34].PropertyValue=1
+			Object[35].PropertyValue=2
+			Object[36].PropertyValue=4
+			Object[37].PropertyValue=3
+			Object[38].PropertyValue=5
+			Object[39].PropertyValue=10
+			Object[40].PropertyValue=6
+			Object[41].PropertyValue=9
+			Object[1].Value2=8
+#endplatform
+
+#platform: Mobile
+	if Options.DevMenuFlag==1
+			Object[34].PropertyValue=1
+			Object[35].PropertyValue=2
+			Object[36].PropertyValue=5
+			Object[37].PropertyValue=10
+			Object[38].PropertyValue=6
+							  
+							 
+			Object[39].PropertyValue=9
+			Object[1].Value2=6
+		else
+			if Engine.TrialMode==1
+				Object[34].PropertyValue=1
+				Object[35].PropertyValue=2
+				Object[36].PropertyValue=4
+				Object[37].PropertyValue=3
+				Object[38].PropertyValue=5
+				Object[39].PropertyValue=10
+				Object[40].PropertyValue=7
+				Object[41].PropertyValue=9
+				Object[1].Value2=8
+			else
+				Object[34].PropertyValue=1
+				Object[35].PropertyValue=2
+				Object[36].PropertyValue=4
+				Object[37].PropertyValue=3
+				Object[38].PropertyValue=5
+				Object[39].PropertyValue=10
+				Object[40].PropertyValue=6
+				Object[41].PropertyValue=9
+				Object[1].Value2=8
+			endif
+#endplatform
+		endif
+		break
+	case 2
+		if Engine.TrialMode==1
+			Object[34].PropertyValue=1
+			Object[35].PropertyValue=2
+			Object[36].PropertyValue=4
+			Object[37].PropertyValue=3
+			Object[38].PropertyValue=5
+			Object[39].PropertyValue=10
+			Object[40].PropertyValue=7
+			Object[41].PropertyValue=9
+			Object[1].Value2=8
+		else
+			Object[34].PropertyValue=1
+			Object[35].PropertyValue=2
+			Object[36].PropertyValue=4
+			Object[37].PropertyValue=3
+			Object[38].PropertyValue=5
+			Object[39].PropertyValue=10
+			Object[40].PropertyValue=6
+			Object[41].PropertyValue=9
+			Object[1].Value2=8
+		endif
+		break
+	case 3
+		if Engine.TrialMode==1
+			Object[34].PropertyValue=1
+			Object[35].PropertyValue=2
+			Object[36].PropertyValue=3
+			Object[37].PropertyValue=4
+			Object[38].PropertyValue=5
+			Object[39].PropertyValue=10
+			Object[40].PropertyValue=7
+			Object[1].Value2=7
+		else
+			Object[34].PropertyValue=1
+			Object[35].PropertyValue=2
+			Object[36].PropertyValue=3
+			Object[37].PropertyValue=4
+			Object[38].PropertyValue=5
+			Object[39].PropertyValue=10
+			Object[40].PropertyValue=6
+			Object[1].Value2=7
+		endif
+		break
+#platform: Standard
+	case 4
+	case 5
+	case 6
+#endplatform
+#platform: Mobile
+	case 5
+#endplatform
+		if Engine.TrialMode==1
+			Object[34].PropertyValue=1
+			Object[35].PropertyValue=5
+#platform: Standard
+			Object[36].PropertyValue=6
+			Object[37].PropertyValue=7
+			Object[1].Value2=4
+#endplatform
+
+#platform: Mobile
+			Object[36].PropertyValue=10
+			Object[37].PropertyValue=11
+			Object[38].PropertyValue=9
+			Object[1].Value2=5
+		else
+			if Engine.OnlineActive==1
+				Object[34].PropertyValue=1
+				Object[35].PropertyValue=2
+				Object[36].PropertyValue=3
+				Object[37].PropertyValue=4
+				Object[38].PropertyValue=5
+				Object[39].PropertyValue=10
+				Object[40].PropertyValue=6
+				Object[41].PropertyValue=9
+				Object[1].Value2=8
+			else
+				Object[34].PropertyValue=1
+				Object[35].PropertyValue=2
+				Object[36].PropertyValue=5
+				Object[37].PropertyValue=11
+				Object[38].PropertyValue=10
+				Object[39].PropertyValue=6
+				Object[40].PropertyValue=9
+				Object[1].Value2=7
+			endif
+		endif
+		break
+	case 4
+	case 6
+		if Engine.TrialMode==1
+			Object[34].PropertyValue=1
+			Object[35].PropertyValue=2
+			Object[36].PropertyValue=3
+			Object[37].PropertyValue=4
+			Object[38].PropertyValue=5
+			Object[39].PropertyValue=10
+			Object[40].PropertyValue=7
+			Object[1].Value2=7
+#endplatform
+		else
+			if Engine.OnlineActive==1
+				Object[34].PropertyValue=1
+				Object[35].PropertyValue=2
+				Object[36].PropertyValue=3
+				Object[37].PropertyValue=4
+				Object[38].PropertyValue=5
+				Object[39].PropertyValue=10
+				Object[40].PropertyValue=6
+				Object[1].Value2=7
+			else
+				Object[34].PropertyValue=1
+				Object[35].PropertyValue=2
+				Object[36].PropertyValue=5
+				Object[37].PropertyValue=10
+				Object[38].PropertyValue=6
+				Object[1].Value2=5
+			endif
+		endif
+		break
+
+	endswitch
+	ArrayPos0=34
+	TempValue0=0
+	while TempValue0<Object[1].Value2
+		Object[ArrayPos0].Value5=TempValue0
+		Object[ArrayPos0].Value5++
+		ArrayPos0++
+		TempValue0++
+	loop
+	while TempValue0<9
+		Object[ArrayPos0].Type=TypeName[BlankObject]
+		ArrayPos0++
+		TempValue0++
+	loop
+	Object[1].Value3=Object[1].Value2
+	Object[1].Value3*=-30
+	Object[1].Value3<<=8
+	SpriteFrame(0,-10,144,21,259,71)
+	TempValue0=0
+	TempValue1=18
+	while TempValue0<2
+		SpriteFrame(19,-7,128,16,1,TempValue1)
+		TempValue1+=17
+		TempValue0++
+	loop
+#platform: Standard
+	switch Engine.PlatformID
+	case 0
+	case 1
+		switch Engine.Language
+		case 0
+		case 1
+		case 4
+		case 5
+			SpriteFrame(19,-7,128,16,1,TempValue1)
+			break
+		case 2
+		case 3
+			SpriteFrame(19,-7,128,16,1,770)
+			break
+
+		endswitch
+		break
+	case 3
+		SpriteFrame(19,-7,128,16,1,513)
+		break
+	case 2
+	case 4
+	case 5
+	case 6
+		SpriteFrame(19,-7,128,16,1,TempValue1)
+		break
+	endswitch
+#endplatform
+
+#platform: Mobile
+	if Engine.PlatformID==RETRO_PS3
+		SpriteFrame(19,-7,128,16,1,513)
+	else
+		SpriteFrame(19,-7,128,16,1,TempValue1)
+	endif
+#endplatform
+	TempValue1+=17
+	TempValue0++
+	if Engine.OnlineActive==0
+		SpriteFrame(19,-7,128,16,130,460)
+	else
+		SpriteFrame(19,-7,128,16,1,TempValue1)
+	endif
+	TempValue1+=17
+	TempValue0++
+	while TempValue0<6
+		SpriteFrame(19,-7,128,16,1,TempValue1)
+		TempValue1+=17
+		TempValue0++
+	loop
+	TempValue0=0
+	TempValue1=547
+	while TempValue0<4
+		SpriteFrame(19,-7,128,16,1,TempValue1)
+		TempValue1+=17
+		TempValue0++
+	loop
+#platform: Mobile
+	SpriteFrame(19,-7,128,16,162,649)
+#endplatform
+	TempValue0=0
+	TempValue1=18
+	while TempValue0<2
+		SpriteFrame(19,-7,128,16,130,TempValue1)
+		TempValue1+=17
+		TempValue0++
+	loop
+#platform: Standard
+	switch Engine.PlatformID
+	case 0
+	case 1
+		switch Engine.Language
+		case 0
+		case 1
+		case 4
+		case 5
+			SpriteFrame(19,-7,128,16,130,TempValue1)
+			break
+		case 2
+		case 3
+			SpriteFrame(19,-7,128,16,130,770)
+			break
+
+		endswitch
+		break
+	case 3
+		SpriteFrame(19,-7,128,16,130,513)
+		break
+	case 2
+	case 4
+	case 5
+	case 6
+		SpriteFrame(19,-7,128,16,130,TempValue1)
+		break
+	endswitch
+#endplatform
+
+#platform: Mobile
+	if Engine.PlatformID==RETRO_PS3
+		SpriteFrame(19,-7,128,16,130,513)
+	else
+		SpriteFrame(19,-7,128,16,130,TempValue1)
+	endif
+#endplatform
+
+	TempValue1+=17
+	TempValue0++
+	while TempValue0<6
+		SpriteFrame(19,-7,128,16,130,TempValue1)
+		TempValue1+=17
+		TempValue0++
+	loop
+	TempValue0=0
+	TempValue1=547
+	while TempValue0<4
+		SpriteFrame(19,-7,128,16,130,TempValue1)
+		TempValue1+=17
+		TempValue0++
+	loop
+#platform: Mobile
+	SpriteFrame(19,-7,128,16,162,666)
+#endplatform
+endsub
+
+sub RSDK
+	LoadSpriteSheet("Global/Display.gif")
+	SetEditorIcon(Icon0,SingleIcon,-16,-16,32,32,1,143)
+endsub

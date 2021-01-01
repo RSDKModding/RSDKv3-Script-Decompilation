@@ -1,0 +1,151 @@
+//------------Sonic CD BossBullet Script-------------//
+//--------Scripted by Christian Whitehead 'The Taxman'--------//
+//-------Unpacked By Rubberduckycooly's Script Unpacker-------//
+
+//-------Aliases-------//
+#alias 49: TYPE_BOSSBULLET
+
+
+sub ObjectMain
+	switch Object.State
+	case 0
+		if Object.Value0<56
+			Object.Value0++
+		else
+			switch Object.PropertyValue
+			case 0
+				Object.Value1=-81920
+				Object.Value2=81920
+				break
+			case 1
+				Object.Value1=0
+				Object.Value2=114688
+				break
+			case 2
+				Object.Value1=65536
+				Object.Value2=98304
+				break
+			case 3
+				Object.Value1=81920
+				Object.Value2=81920
+				break
+			case 4
+				Object.Value1=81920
+				Object.Value2=81920
+				break
+			case 5
+				Object.Value1=0
+				Object.Value2=114688
+				break
+			case 6
+				Object.Value1=-65536
+				Object.Value2=98304
+				break
+			case 7
+				Object.Value1=-81920
+				Object.Value2=81920
+				break
+
+			endswitch
+			Object.Value0=0
+			Object.State++
+		endif
+		ArrayPos0=Object.Value5
+		Object.XPos=Object[ArrayPos0].XPos
+		Object.YPos=Object[ArrayPos0].YPos
+		switch Object.PropertyValue
+		case 0
+			Object.XPos-=1900544
+			Object.YPos+=1507328
+			break
+		case 1
+			Object.XPos-=393216
+			Object.YPos+=2097152
+			break
+		case 2
+			Object.XPos+=1114112
+			Object.YPos+=1900544
+			break
+		case 3
+			Object.XPos+=1900544
+			Object.YPos+=1114112
+			break
+		case 4
+			Object.XPos+=1900544
+			Object.YPos+=1507328
+			break
+		case 5
+			Object.XPos+=393216
+			Object.YPos+=2097152
+			break
+		case 6
+			Object.XPos-=1114112
+			Object.YPos+=1900544
+			break
+		case 7
+			Object.XPos-=1900544
+			Object.YPos+=1114112
+			break
+
+		endswitch
+		break
+	case 1
+		Object.XPos+=Object.Value1
+		Object.YPos+=Object.Value2
+		if Object.Value0<60
+			Object.Value0++
+		else
+			Object.Value0=0
+			Object.DrawOrder=3
+			Object.State++
+		endif
+		break
+	case 2
+		Object.XPos+=Object.Value1
+		Object.YPos+=Object.Value2
+		break
+
+	endswitch
+	if Object.OutOfBounds==1
+		Object.Type=TypeName[BlankObject]
+	endif
+	ArrayPos0=Object.Value5
+	if Object[ArrayPos0].State>13
+		Object.Type=TypeName[BlankObject]
+	endif
+endsub
+
+
+sub ObjectPlayerInteraction
+	if Object.State>0
+		PlayerObjectCollision(C_TOUCH,-4,-4,4,4)
+		if CheckResult==1
+			CallFunction(PlayerObject_Hit)
+			if Player.State==PlayerObject_Hurt
+				ArrayPos0=Object.Value5
+				Object[ArrayPos0].Value7=1
+			endif
+		endif
+	endif
+endsub
+
+
+sub ObjectDraw
+	TempValue0=Object.Frame
+	TempValue0>>=1
+	DrawSprite(TempValue0)
+	Object.Frame++
+	Object.Frame&=3
+endsub
+
+
+sub ObjectStartup
+	LoadSpriteSheet("R4/Objects2.gif")
+	SpriteFrame(-4,-4,8,8,52,35)
+	SpriteFrame(-4,-4,8,8,52,44)
+endsub
+
+sub RSDK
+	LoadSpriteSheet("Global/Display.gif")
+	SetEditorIcon(Icon0,SingleIcon,-16,-16,32,32,1,143)
+endsub

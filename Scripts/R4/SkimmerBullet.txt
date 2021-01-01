@@ -1,0 +1,45 @@
+//------------Sonic CD SkimmerBullet Script-------------//
+//--------Scripted by Christian Whitehead 'The Taxman'--------//
+//-------Unpacked By Rubberduckycooly's Script Unpacker-------//
+
+//-------Aliases-------//
+#alias 54: TYPE_SKIMMERBULLET
+
+
+sub ObjectMain
+	Object.XPos+=Object.Value1
+	if Object.OutOfBounds==1
+		Object.Type=TypeName[BlankObject]
+	endif
+endsub
+
+
+sub ObjectPlayerInteraction
+	PlayerObjectCollision(C_TOUCH,-4,-4,4,4)
+	if CheckResult==1
+		CallFunction(PlayerObject_Hit)
+	endif
+endsub
+
+
+sub ObjectDraw
+	DrawSprite(Object.Frame)
+	Object.Value0++
+	if Object.Value0>5
+		Object.Value0=0
+		Object.Frame++
+		Object.Frame&=1
+	endif
+endsub
+
+
+sub ObjectStartup
+	LoadSpriteSheet("R4/Objects.gif")
+	SpriteFrame(-4,-4,8,8,197,52)
+	SpriteFrame(-4,-4,8,8,197,60)
+endsub
+
+sub RSDK
+	LoadSpriteSheet("Global/Display.gif")
+	SetEditorIcon(Icon0,SingleIcon,-16,-16,32,32,1,143)
+endsub

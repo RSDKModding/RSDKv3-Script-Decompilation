@@ -1,0 +1,279 @@
+//------------Sonic CD AboutMenu Script-------------//
+//--------Scripted by Christian Whitehead 'The Taxman'--------//
+//-------Unpacked By Rubberduckycooly's Script Unpacker-------//
+
+//-------Aliases-------//
+#alias 10: TYPE_ABOUTMENU
+
+
+sub ObjectMain
+	Object.Alpha=Object[-10].Alpha
+#platform: Mobile
+	if Object.Alpha>254
+		switch Object.State
+		case 0
+			if Options.PhysicalControls==1
+				if KeyPress.Up==1
+					Object.Value1--
+					if Object.Value1<0
+						Object.Value1=1
+					endif
+					PlaySfx(23,0)
+				endif
+				if KeyPress.Down==1
+					Object.Value1++
+					if Object.Value1>1
+						Object.Value1=0
+					endif
+					PlaySfx(23,0)
+				endif
+				CheckTouchRect(0,0,Screen.XSize,Screen.YSize)
+				if CheckResult>-1
+					Options.PhysicalControls=0
+					Object.Value1=-1
+				endif
+			else
+				CheckTouchRect(0,0,Screen.XSize,Screen.YSize)
+				TempValue3=CheckResult
+				TempValue0=Screen.CenterX
+				TempValue0+=36
+				TempValue1=Screen.CenterX
+				TempValue1+=110
+				CheckTouchRect(TempValue0,124,TempValue1,152)
+				if CheckResult>-1
+					Object.Value1=0
+				else
+					if TempValue3<0
+						if Object.Value1==0
+							KeyPress.Start=1
+						endif
+					else
+						if Object.Value1==0
+							Object.Value1=-1
+						endif
+					endif
+				endif
+				TempValue0=Screen.CenterX
+				TempValue0+=36
+				TempValue1=Screen.CenterX
+				TempValue1+=110
+				CheckTouchRect(TempValue0,152,TempValue1,180)
+				if CheckResult>-1
+					Object.Value1=1
+				else
+					if TempValue3<0
+						if Object.Value1==1
+							KeyPress.Start=1
+						endif
+					else
+						if Object.Value1==1
+							Object.Value1=-1
+						endif
+					endif
+				endif
+				CallFunction(MenuHeading_Function0)
+				if KeyPress.Up==1
+					Object.Value1=1
+					Options.PhysicalControls=1
+				endif
+				if KeyPress.Down==1
+					Object.Value1=0
+					Options.PhysicalControls=1
+				endif
+			endif
+			CheckResult=0
+			if Object.Value1>-1
+				if KeyPress.Start==1
+					CheckResult=1
+				endif
+				if KeyPress.ButtonA==1
+					CheckResult=1
+				endif
+			endif
+			if CheckResult==1
+				PlaySfx(27,0)
+				Object.State++
+			endif
+			break
+		case 1
+			if Object.AnimationTimer<30
+				Object.AnimationTimer++
+			else
+				Object.AnimationTimer=0
+				Object.State=0
+				switch Object.Value1
+				case 0
+					EngineCallback(9)
+					break
+				case 1
+					EngineCallback(10)
+					break
+
+				endswitch
+				Object.Value1=-1
+			endif
+			break
+
+		endswitch
+	else
+		if Options.PhysicalControls==0
+			Object.Value1=-1
+		endif
+		Object.AnimationTimer=0
+		Object.State=0
+	endif
+#endplatform
+endsub
+
+
+sub ObjectDraw
+	TempValue0=Screen.CenterX
+	TempValue0-=120
+	DrawSpriteScreenFX(0,FX_INK,TempValue0,72)
+	TempValue0=Screen.CenterX
+#platform: Standard
+	TempValue0+=64
+	DrawSpriteScreenFX(1,FX_INK,TempValue0,92)
+#endplatform
+
+#platform: Mobile
+	TempValue0+=72
+	DrawSpriteScreenFX(1,FX_INK,TempValue0,82)
+	TempValue0=Screen.CenterX
+	TempValue0+=72
+	if Object.Value1==0
+		TempValue2=Object.AnimationTimer
+		TempValue2&=3
+		TempValue2>>=1
+		TempValue2+=44
+		DrawSpriteScreenFX(TempValue2,FX_INK,TempValue0,128)
+	else
+		DrawSpriteScreenFX(45,FX_INK,TempValue0,128)
+	endif
+	if Object.Value1==1
+		TempValue2=Object.AnimationTimer
+		TempValue2&=3
+		TempValue2>>=1
+		TempValue2+=46
+		DrawSpriteScreenFX(TempValue2,FX_INK,TempValue0,156)
+	else
+		DrawSpriteScreenFX(47,FX_INK,TempValue0,156)
+	endif
+#endplatform
+	ArrayPos0=0
+	GetTextInfo(TempValue1,MENU_1,1,0,0)
+	TempValue2=TempValue1
+	TempValue2<<=2
+	FlipSign(TempValue2)
+	TempValue2+=Screen.CenterX
+#platform: Standard
+	TempValue0+=64
+#endplatform
+
+#platform: Mobile
+	TempValue2+=72
+#endplatform
+	while TempValue1>0
+		GetTextInfo(TempValue0,MENU_1,0,0,ArrayPos0)
+		switch TempValue0
+		default
+			Object.Frame=0
+			if TempValue0>64
+				if TempValue0<91
+					Object.Frame=TempValue0
+					Object.Frame-=63
+				endif
+			endif
+			if TempValue0>96
+				if TempValue0<123
+					Object.Frame=TempValue0
+					Object.Frame-=95
+				endif
+			endif
+			if TempValue0>47
+				if TempValue0<58
+					Object.Frame=TempValue0
+					Object.Frame-=18
+				endif
+			endif
+			if Object.Frame>0
+#platform: Standard
+				DrawSpriteScreenFX(Object.Frame,FX_INK,TempValue2,112)
+#endplatform
+#platform: Mobile
+				DrawSpriteScreenFX(Object.Frame,FX_INK,TempValue2,102)
+#endplatform
+			endif
+			break
+		case 38
+#platform: Standard
+			DrawSpriteScreenFX(33,FX_INK,TempValue2,112)
+#endplatform
+#platform: Mobile
+			DrawSpriteScreenFX(33,FX_INK,TempValue2,102)
+#endplatform
+			break
+		case 39
+#platform: Standard
+			DrawSpriteScreenFX(31,FX_INK,TempValue2,112)
+#endplatform
+#platform: Mobile
+			DrawSpriteScreenFX(31,FX_INK,TempValue2,102)
+#endplatform
+			break
+		case 44
+#platform: Standard
+			DrawSpriteScreenFX(29,FX_INK,TempValue2,112)
+#endplatform
+#platform: Mobile
+			DrawSpriteScreenFX(29,FX_INK,TempValue2,102)
+#endplatform
+			break
+		case 46
+#platform: Standard
+			DrawSpriteScreenFX(28,FX_INK,TempValue2,112)
+#endplatform
+#platform: Mobile
+			DrawSpriteScreenFX(28,FX_INK,TempValue2,102)
+#endplatform
+			break
+
+		endswitch
+		ArrayPos0++
+		TempValue1--
+		TempValue2+=8
+	loop
+endsub
+
+
+sub ObjectStartup
+	LoadSpriteSheet("Menu/MenuGfx1_EN.gif")
+	SpriteFrame(0,0,132,113,154,235)
+	SpriteFrame(-28,0,56,16,154,349)
+	TempValue1=366
+	while TempValue1<417
+		TempValue0=154
+		while TempValue0<280
+			SpriteFrame(-3,0,8,16,TempValue0,TempValue1)
+			TempValue0+=9
+		loop
+		TempValue1+=17
+	loop
+#platform: Mobile
+	SpriteFrame(-32,0,64,21,195,476)
+	SpriteFrame(-32,0,64,21,130,476)
+	SpriteFrame(-32,0,64,21,195,454)
+	SpriteFrame(-32,0,64,21,130,454)
+	SpriteFrame(-32,0,42,21,418,439)
+	SpriteFrame(-32,0,42,21,418,461)
+	SpriteFrame(10,0,22,21,464,395)
+	SpriteFrame(10,0,22,21,464,417)
+	SpriteFrame(10,0,22,21,464,439)
+	SpriteFrame(10,0,22,21,464,461)
+#endplatform
+endsub
+
+sub RSDK
+	LoadSpriteSheet("Global/Display.gif")
+	SetEditorIcon(Icon0,SingleIcon,-16,-16,32,32,1,143)
+endsub

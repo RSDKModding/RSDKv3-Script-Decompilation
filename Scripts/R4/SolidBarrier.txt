@@ -1,0 +1,99 @@
+//------------Sonic CD Solid Barrier Script-------------//
+//--------Scripted by Christian Whitehead 'The Taxman'--------//
+//-------Unpacked By Rubberduckycooly's Script Unpacker-------//
+
+//-------Aliases-------//
+#alias 53: TYPE_SOLIDBARRIER
+
+
+sub ObjectMain
+	switch Object.PropertyValue
+	case 1
+		PlayerObjectCollision(C_TOUCH,112,-64,256,256)
+		if CheckResult==1
+			Object.PropertyValue=2
+		endif
+		break
+	case 2
+		if Object.Value0<64
+			Object.Value0+=4
+			Object.YPos+=262144
+		else
+			Object.PropertyValue=0
+		endif
+		break
+	case 3
+		if Object.Value0<128
+			Object.Value0+=4
+			Object.YPos+=262144
+		else
+			Object.PropertyValue=0
+		endif
+		break
+
+	endswitch
+endsub
+
+
+sub ObjectPlayerInteraction
+#platform: Mobile
+if Object.PropertyValue>1
+		PlayerObjectCollision(C_BOX,-64,-64,64,128)
+	else
+#endplatform
+		PlayerObjectCollision(C_BOX,-64,-64,64,64)
+#platform: Mobile
+	endif 
+#endplatform
+endsub
+
+
+sub ObjectDraw
+	TempValue0=0
+	while TempValue0<16
+		DrawSprite(TempValue0)
+		TempValue0++
+	loop
+endsub
+
+
+sub ObjectStartup
+	switch Object[24].PropertyValue
+	case 0
+		LoadSpriteSheet("R4/Objects.gif")
+		TempValue2=163
+		TempValue3=1
+		break
+	case 1
+		LoadSpriteSheet("R4/Objects2.gif")
+		TempValue2=1
+		TempValue3=157
+		break
+	case 2
+		LoadSpriteSheet("R4/Objects2.gif")
+		TempValue2=1
+		TempValue3=190
+		break
+	case 3
+		LoadSpriteSheet("R4/Objects2.gif")
+		TempValue2=1
+		TempValue3=223
+		break
+
+	endswitch
+	TempValue0=-64
+	TempValue1=-64
+	while TempValue1<64
+		while TempValue0<64
+			SpriteFrame(TempValue0,TempValue1,32,32,TempValue2,TempValue3)
+			TempValue0+=32
+		loop
+		TempValue0=-64
+		TempValue1+=32
+	loop
+endsub
+
+sub RSDK
+	LoadSpriteSheet("Global/Display.gif")
+	SetEditorIcon(Icon0,SingleIcon,-16,-16,32,32,1,143)
+endsub

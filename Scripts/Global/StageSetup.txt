@@ -1,0 +1,263 @@
+//------------Sonic CD Stage Setup Script-------------//
+//--------Scripted by Christian Whitehead 'The Taxman'--------//
+//-------Unpacked By Rubberduckycooly's Script Unpacker-------//
+
+//-------Aliases-------//
+#alias 2: TYPE_STAGESETUP
+
+#alias Player.Value0:Player.Rings
+#alias Player.Value6:Player.MinRollSpeed
+
+function StageSetup_CheckGoodFuture
+	if Good_Future==1
+		if Object.PropertyValue>0
+			ResetObjectEntity(Object.EntityNo,Flower_TypeNo,0,Object.XPos,Object.YPos)
+			Object.DrawOrder=4
+			Object.State=1
+		else
+			if Object[24].PropertyValue>0
+				ResetObjectEntity(Object.EntityNo,Flower_TypeNo,0,Object.XPos,Object.YPos)
+				Object.DrawOrder=4
+				Object.State=1
+			endif
+		endif
+	endif
+endfunction
+
+
+function StageSetup_SaveStageState
+	ArrayPos0=32
+	ArrayPos1=7168
+	TempValue1=Object[24].PropertyValue
+	TempValue1+=4
+	while ArrayPos0<1056
+		if Object[ArrayPos0].Type==TypeName[BlankObject]
+			SetBit(SaveRAM[ArrayPos1],Object[24].PropertyValue,1)
+		else
+			if Object[ArrayPos0].Type==TypeName[BrokenMonitor]
+				SetBit(SaveRAM[ArrayPos1],Object[24].PropertyValue,1)
+			else
+				if Object[ArrayPos0].Type==TypeName[FuturePost]
+					if Object[ArrayPos0].State==2
+						SetBit(SaveRAM[ArrayPos1],Object[24].PropertyValue,1)
+					else
+						SetBit(SaveRAM[ArrayPos1],Object[24].PropertyValue,0)
+					endif
+				else
+					if Object[ArrayPos0].Type==TypeName[PastPost]
+						if Object[ArrayPos0].State==2
+							SetBit(SaveRAM[ArrayPos1],Object[24].PropertyValue,1)
+						else
+							SetBit(SaveRAM[ArrayPos1],Object[24].PropertyValue,0)
+						endif
+					else
+						SetBit(SaveRAM[ArrayPos1],Object[24].PropertyValue,0)
+						if Object[ArrayPos0].Type==Flower_TypeNo
+							SetBit(SaveRAM[ArrayPos1],TempValue1,1)
+						else
+							SetBit(SaveRAM[ArrayPos1],TempValue1,0)
+						endif
+					endif
+				endif
+			endif
+		endif
+		ArrayPos0++
+		ArrayPos1++
+	loop
+endfunction
+
+
+function StageSetup_LoadStageState
+	ArrayPos0=32
+	ArrayPos1=7168
+	TempValue1=Object[24].PropertyValue
+	TempValue1+=4
+	while ArrayPos0<1056
+		if Object[ArrayPos0].Type==TypeName[Ring]
+			GetBit(TempValue0,SaveRAM[ArrayPos1],Object[24].PropertyValue)
+			if TempValue0==1
+				Object[ArrayPos0].Type=TypeName[BlankObject]
+			endif
+		else
+			if Object[ArrayPos0].Type==TypeName[Monitor]
+				GetBit(TempValue0,SaveRAM[ArrayPos1],Object[24].PropertyValue)
+				if TempValue0==1
+					Object[ArrayPos0].Type=TypeName[BrokenMonitor]
+					Object[ArrayPos0].State=2
+				endif
+			else
+				if Object[ArrayPos0].Type==TypeName[FuturePost]
+					GetBit(TempValue0,SaveRAM[ArrayPos1],Object[24].PropertyValue)
+					if TempValue0==1
+						Object[ArrayPos0].State=2
+					endif
+				else
+					if Object[ArrayPos0].Type==TypeName[PastPost]
+						GetBit(TempValue0,SaveRAM[ArrayPos1],Object[24].PropertyValue)
+						if TempValue0==1
+							Object[ArrayPos0].State=2
+						endif
+					else
+						GetBit(TempValue0,SaveRAM[ArrayPos1],TempValue1)
+						if TempValue0==1
+							Object[ArrayPos0].Type=TypeName[BlankObject]
+						endif
+					endif
+				endif
+			endif
+		endif
+		ArrayPos0++
+		ArrayPos1++
+	loop
+endfunction
+
+
+sub ObjectMain
+	Ring.AniCount++
+	if Ring.AniCount==4
+		Ring.AniCount=0
+		Ring.Frame++
+		Ring.Frame&=7
+	endif
+	if Options.GameMode!=2
+		if Player.Score>=Player.ScoreBonus
+			Player.Lives++
+			Player.ScoreBonus+=50000
+			if Stage.PlayerListPos==0
+				PlaySfx(20,0)
+			else
+				PlaySfx(21,0)
+			endif
+		endif
+	endif
+	Oscillation++
+	Oscillation&=511
+	if Stage.TimeEnabled==1
+		if Stage.Minutes==10
+			Stage.Minutes=9
+			Stage.Seconds=59
+			Stage.MilliSeconds=99
+			Stage.TimeEnabled=0
+			Object[0].Type=TypeName[PlayerObject]
+			CallFunction(PlayerObject_Kill)
+		endif
+	endif
+endsub
+
+
+sub ObjectPlayerInteraction
+	TempValue0=Player.CollisionLeft
+	TempValue0<<=16
+	TempValue0+=Player.XPos
+	TempValue1=Stage.XBoundary1
+	TempValue1<<=16
+	if TempValue0<TempValue1
+		if Player.Right==1
+			Player.XVelocity=65536
+			Player.Speed=65536
+		else
+			Player.XVelocity=0
+			Player.Speed=0
+		endif
+		Player.XPos=TempValue1
+		TempValue0=Player.CollisionLeft
+		TempValue0<<=16
+		Player.XPos-=TempValue0
+	endif
+	TempValue0=Player.CollisionBottom
+	TempValue0<<=16
+	TempValue0+=Player.YPos
+	if TempValue0>Stage.DeathBoundary
+		CallFunction(PlayerObject_Kill)
+	endif
+endsub
+
+
+sub ObjectStartup
+	if Options.Soundtrack==0
+		SetMusicTrack("JP/ZoneComplete.ogg",1,0)
+		SetMusicTrack("JP/Invincibility.ogg",2,0)
+		SetMusicTrack("JP/SpeedShoes.ogg",3,0)
+		SetMusicTrack("JP/Boss.ogg",4,1)
+		SetMusicTrack("JP/GameOver.ogg",5,0)
+	else
+		SetMusicTrack("US/ZoneComplete.ogg",1,0)
+		SetMusicTrack("US/Invincibility.ogg",2,0)
+		SetMusicTrack("US/SpeedShoes.ogg",3,0)
+		SetMusicTrack("US/Boss.ogg",4,196526)
+		SetMusicTrack("US/GameOver.ogg",5,0)
+	endif
+	Stage.PauseEnabled=0
+	Screen.CameraStyle=Options.OriginalControls
+	Screen.CameraTarget=0
+	Stage.DeathBoundary=Stage.YBoundary2
+	Stage.DeathBoundary<<=16
+	Object[23].Type=TypeName[StageSetup]
+	Object[23].Priority=1
+	ArrayPos0=32
+	while ArrayPos0<1056
+		if Object[ArrayPos0].Type==TypeName[StageSetup]
+			ResetObjectEntity(ArrayPos0,TypeName[BlankObject],0,0,0)
+		endif
+		ArrayPos0++
+	loop
+	ArrayPos0=32
+	while ArrayPos0<1056
+		if Object[ArrayPos0].Type==TypeName[HUD]
+			Object[ArrayPos0].Type=TypeName[BlankObject]
+			Object[24].Type=TypeName[HUD]
+			Object[24].Priority=1
+			Object[24].DrawOrder=6
+			Object[24].PropertyValue=Object[ArrayPos0].PropertyValue
+		endif
+		ArrayPos0++
+	loop
+	Warp.Timer=0
+	if Warp.XPos>0
+		Player.XPos=Warp.XPos
+		Player.YPos=Warp.YPos
+		Player.XVelocity=Warp.XVelocity
+		Player.YVelocity=Warp.YVelocity
+		Player.Speed=Warp.Speed
+		Player.CollisionMode=Warp.CollisionMode
+		Player.Gravity=Warp.Gravity
+		Player.State=Warp.State
+		Player.Animation=Warp.Animation
+		Player.Frame=Warp.PlayerFrame
+		Player.Angle=Warp.Angle
+		Player.Rings=Warp.Rings
+		Player.MinRollSpeed=Warp.MinRollSpeed
+		Stage.MilliSeconds=Rec_Milliseconds
+		Stage.Seconds=Rec_Seconds
+		Stage.Minutes=Rec_Minutes
+		CallFunction(StageSetup_LoadStageState)
+	else
+		ArrayPos0=7168
+		while ArrayPos0<8192
+			SaveRAM[ArrayPos0]=0
+			ArrayPos0++
+		loop
+		Player.Direction=FACING_RIGHT
+		Player.Left=0
+		Player.Right=1
+		Player.ControlMode=-1
+		Player.Speed=0
+		Player.Animation=0
+	endif
+	if Object[24].PropertyValue==2
+		Good_Future=1
+		Transporter_Destroyed=1
+	endif
+	if SpecialStage.TimeStones==127
+		Good_Future=1
+		Transporter_Destroyed=1
+	endif
+	Warp.Destination=0
+	Ring.ExtraLife=100
+	Player.RoofBarrier=0
+endsub
+
+sub RSDK
+	LoadSpriteSheet("Global/Display.gif")
+	SetEditorIcon(Icon0,SingleIcon,-16,-16,32,32,1,143)
+endsub

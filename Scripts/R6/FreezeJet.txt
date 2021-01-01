@@ -1,0 +1,142 @@
+//------------Sonic CD Freeze Jet Script-------------//
+//--------Scripted by Christian Whitehead 'The Taxman'--------//
+//-------Unpacked By Rubberduckycooly's Script Unpacker-------//
+
+//-------Aliases-------//
+#alias 43: TYPE_FREEZEJET
+#alias Player.Value4:Player.Invincible
+
+
+sub ObjectMain
+	switch Object.State
+	case 0
+		if Object.Value0<120
+			Object.Value0++
+			Object.Frame=2
+		else
+			Object.Value0=0
+			Object.State++
+			Object.Frame=1
+		endif
+		break
+	case 1
+		if Object.Value0<160
+			TempValue0=Object.Value0
+			TempValue0&=1
+			if TempValue0==0
+				Object.Frame++
+			endif
+			if Object.Frame>6
+				Object.Frame=3
+				Object.Direction++
+				Object.Direction&=FACING_LEFT
+			endif
+			Object.Value0++
+		else
+			Object.Value0=0
+			Object.State++
+			Object.Frame=7
+		endif
+		break
+	case 2
+		if Object.Value0<24
+			TempValue0=Object.Value0
+			TempValue0&=3
+			if TempValue0==0
+				Object.Frame++
+			endif
+			if Object.Frame>12
+				Object.Frame=7
+				Object.Direction++
+				Object.Direction&=FACING_LEFT
+			endif
+			Object.Value0++
+		else
+			Object.Value0=0
+			Object.Value1=7
+			Object.State++
+		endif
+		break
+	case 3
+		if Object.Value0<120
+			TempValue0=Object.Value0
+			TempValue0&=Object.Value1
+			if TempValue0==0
+				Object.Frame++
+				Object.Value1++
+				Object.Value1<<=1
+				Object.Value1--
+			endif
+			if Object.Frame>12
+				Object.Frame=7
+				Object.Direction++
+				Object.Direction&=FACING_LEFT
+			endif
+			Object.Value0++
+		else
+			Object.Value0=0
+			Object.State=1
+			Object.Frame=1
+		endif
+		break
+
+	endswitch
+endsub
+
+
+sub ObjectPlayerInteraction
+	if Object.State==1
+		PlayerObjectCollision(C_TOUCH,-16,0,16,60)
+		if CheckResult==1
+			if Player.Invincible==0
+#platform: Mobile
+				if Warp.Destination>0
+					if Warp.Timer>99
+						if Warp.Timer<220
+							Warp.Destination=0
+						endif
+					endif
+					Warp.Timer=0
+				endif
+#endplatform
+				Player.State=PlayerObject_Blank
+				Player.Visible=0
+				Player.ObjectInteraction=0
+				Player.Speed=0
+				Player.XVelocity=0
+				Player.YVelocity=0
+				CreateTempObject(TypeName[IceBlock],0,Player.XPos,Player.YPos)
+				Object[TempObjectPos].DrawOrder=4
+			endif
+		endif
+	endif
+endsub
+
+
+sub ObjectDraw
+	DrawSpriteFX(Object.Frame,FX_FLIP,Object.XPos,Object.YPos)
+	DrawSprite(0)
+endsub
+
+
+sub ObjectStartup
+	LoadSpriteSheet("R6/Objects.gif")
+	SpriteFrame(-32,-8,64,16,1,1)
+	SpriteFrame(-16,0,32,36,1,46)
+	SpriteFrame(-16,0,0,0,1,46)
+	SpriteFrame(-16,0,0,0,1,46)
+	SpriteFrame(-16,0,32,60,1,22)
+	SpriteFrame(-16,0,0,0,1,46)
+	SpriteFrame(-16,4,32,64,1,18)
+	SpriteFrame(-16,0,0,0,1,46)
+	SpriteFrame(-16,0,0,0,1,46)
+	SpriteFrame(-16,0,32,60,1,22)
+	SpriteFrame(-16,0,0,0,1,46)
+	SpriteFrame(-16,0,0,0,1,46)
+	SpriteFrame(-16,4,32,64,1,18)
+endsub
+
+sub RSDK
+	LoadSpriteSheet("Global/Display.gif")
+	SetEditorIcon(Icon0,SingleIcon,-16,-16,32,32,1,143)
+endsub

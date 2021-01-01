@@ -1,0 +1,404 @@
+//------------Sonic CD Boss Body Script-------------//
+//--------Scripted by Christian Whitehead 'The Taxman'--------//
+//-------Unpacked By Rubberduckycooly's Script Unpacker-------//
+
+//-------Aliases-------//
+#alias 50: TYPE_BOSSBODY
+
+// Function declarations
+#function BossBody_Function49
+
+function BossBody_Function49
+	TempValue0=Player.YPos
+	TempValue0-=Object.YPos
+	if TempValue0<37748736
+		CreateTempObject(TypeName[PinballBomb],0,Object.XPos,Object.YPos)
+		Rand(Object[TempObjectPos].Value1,1024)
+		Object[TempObjectPos].Value1<<=8
+		if Object.Value4<128
+			FlipSign(Object[TempObjectPos].Value1)
+			Object[TempObjectPos].XPos-=524288
+		else
+			Object[TempObjectPos].XPos+=524288
+		endif
+		Object[TempObjectPos].YPos+=1572864
+		Object[TempObjectPos].Value2=196608
+		Object[TempObjectPos].DrawOrder=2
+	endif
+endfunction
+
+
+sub ObjectMain
+	switch Object.State
+	case 0
+		Object.YPos=Player.YPos
+		Object.YPos&=-65536
+		if Object.YPos<Object.Value1
+			Object.YPos=Object.Value1
+			Object.Frame=0
+		endif
+		if Object.YPos>Object.Value2
+			Object.YPos=Object.Value2
+			Object.Frame=0
+			Object.State=1
+			Object.Priority=1
+		endif
+		if Object.YPos!=Object.Value3
+			Object.Value3=Object.YPos
+			Object.Frame++
+			Object.Frame%=9
+		endif
+		Object[-1].YPos=Object.YPos
+		Object.Value4++
+		Object.Value4&=255
+		if Object.Value4==0
+			CallFunction(BossBody_Function49)
+		endif
+		if Object.Value4==128
+			CallFunction(BossBody_Function49)
+		endif
+		break
+	case 1
+		Object[-1].YPos=Object.YPos
+		if Object[+1].Value2<8
+			Object.Value4++
+			Object.Value4&=255
+		else
+			Object.Value4=32
+		endif
+		if Object.Value4==0
+			CallFunction(BossBody_Function49)
+		endif
+		if Object.Value4==128
+			CallFunction(BossBody_Function49)
+		endif
+		break
+	case 2
+		if Object.YPos>Object.Value2
+			Object.YPos-=163840
+			Object.Frame++
+			Object.Frame%=9
+		else
+			Object.YPos=Object.Value2
+			Object.Frame=0
+			Object.State=3
+		endif
+		Object[-1].YPos=Object.YPos
+		if Object.Value5==2
+			CreateTempObject(TypeName[Explosion],0,Object.XPos,Object.YPos)
+			Object[TempObjectPos].iXPos-=32
+			Object[TempObjectPos].iYPos+=10
+		endif
+		if Object.Value5==3
+			CreateTempObject(TypeName[Explosion],0,Object.XPos,Object.YPos)
+			Object[TempObjectPos].iXPos+=32
+			Object[TempObjectPos].iYPos+=6
+		endif
+		if Object.Value5==4
+			CreateTempObject(TypeName[Explosion],0,Object.XPos,Object.YPos)
+			Object[TempObjectPos].iYPos+=4
+		endif
+		break
+	case 3
+		Object[-1].YPos=Object.YPos
+		break
+	case 4
+		if Object.YPos>Object.Value2
+			Object.YPos-=163840
+			Object.Frame++
+			Object.Frame%=9
+		else
+			Object.YPos=Object.Value2
+			Object.Frame=0
+			Object.State=5
+		endif
+		Object[-1].YPos=Object.YPos
+		if Object.Value5==2
+			CreateTempObject(TypeName[Explosion],0,Object.XPos,Object.YPos)
+			Object[TempObjectPos].iXPos-=32
+			Object[TempObjectPos].iYPos-=48
+		endif
+		if Object.Value5==3
+			CreateTempObject(TypeName[Explosion],0,Object.XPos,Object.YPos)
+			Object[TempObjectPos].iXPos+=32
+			Object[TempObjectPos].iYPos-=52
+		endif
+		if Object.Value5==4
+			CreateTempObject(TypeName[Explosion],0,Object.XPos,Object.YPos)
+			Object[TempObjectPos].iYPos-=56
+		endif
+		break
+	case 5
+		Object[-1].YPos=Object.YPos
+		break
+	case 6
+		if Object.YPos>Object.Value2
+			Object.YPos-=163840
+			Object.Frame++
+			Object.Frame%=9
+			Music.Volume--
+		else
+			Object.YPos=Object.Value2
+			Object.Frame=0
+			Object.State=7
+			Object.Value0=0
+			Object.Priority=1
+#platform: Use_Haptics
+			HapticEffect(76,0,0,0)
+#endplatform
+		endif
+		if Object.Value5>0
+			Object[-1].YPos=Object.Value5
+			Object[-1].YPos<<=17
+			FlipSign(Object[-1].YPos)
+			Object[-1].YPos+=Object.YPos
+		else
+			if Object[-1].State==0
+				Object[-1].State=3
+				Object[-1].Priority=1
+				Object[-1].Value0&=7
+			endif
+			if Object[-1].State==2
+				Object[-1].State=3
+				Object[-1].Priority=1
+				Object[-1].Value0&=7
+			endif
+		endif
+		if Object.Value5==2
+			CreateTempObject(TypeName[Explosion],0,Object.XPos,Object.YPos)
+			Object[TempObjectPos].iXPos-=16
+			Object[TempObjectPos].iYPos-=52
+		endif
+		if Object.Value5==3
+			CreateTempObject(TypeName[Explosion],0,Object.XPos,Object.YPos)
+			Object[TempObjectPos].iXPos+=16
+			Object[TempObjectPos].iYPos-=56
+		endif
+		break
+	case 7
+		TempValue0=Object.Value0
+		TempValue0&=3
+		if TempValue0==0
+			Rand(TempValue0,128)
+			TempValue0-=64
+			TempValue0<<=16
+			TempValue0+=Object.XPos
+			Rand(TempValue1,48)
+			TempValue1-=24
+			TempValue1<<=16
+			TempValue1+=Object.YPos
+			CreateTempObject(TypeName[Explosion],0,TempValue0,TempValue1)
+			PlaySfx(22,0)
+		endif
+		Object.Value0++
+		if Object.Value0==80
+			Player.Score+=1000
+			ResetObjectEntity(Object.EntityNo,TypeName[BlankObject],0,0,0)
+			PlayMusic(0)
+		endif
+		break
+
+	endswitch
+endsub
+
+
+sub ObjectPlayerInteraction
+	switch Object.State
+	case 1
+	case 3
+		PlayerObjectCollision(C_TOUCH,-64,-16,64,16)
+		if CheckResult==1
+			Player.YVelocity=0
+			Object.Value2-=4718592
+			Object.Value5=1
+			Object.State++
+			Object[-1].State=1
+			PlaySfx(22,0)
+#platform: Use_Haptics
+			HapticEffect(75,0,0,0)
+#endplatform
+		endif
+		break
+	case 5
+		PlayerObjectCollision(C_TOUCH,-64,-16,64,16)
+		if CheckResult==1
+			Player.YVelocity=0
+			Object.Value2-=8388608
+			Object.Value5=1
+			Object.State++
+			PlaySfx(22,0)
+#platform: Use_Haptics
+			HapticEffect(75,0,0,0)
+#endplatform
+		endif
+		break
+
+	endswitch
+endsub
+
+
+sub ObjectDraw
+	switch Object.State
+	case 0
+	case 1
+		DrawSprite(4)
+		DrawSprite(5)
+		if Object.Value4<128
+			if Object.Value4<8
+				TempValue0=Object.Value4
+				TempValue0>>=1
+				TempValue0+=7
+			else
+				TempValue0=8
+			endif
+			DrawSprite(TempValue0)
+			DrawSprite(12)
+		else
+			if Object.Value4<136
+				TempValue0=Object.Value4
+				TempValue0-=128
+				TempValue0>>=1
+				TempValue0+=11
+			else
+				TempValue0=12
+			endif
+			DrawSprite(8)
+			DrawSprite(TempValue0)
+		endif
+		DrawSprite(6)
+		DrawSprite(3)
+		TempValue0=Object.Frame
+		TempValue0/=3
+		DrawSprite(TempValue0)
+		break
+	case 2
+	case 3
+	case 4
+		TempValue0=Object.Value5
+		TempValue0&=1
+		if TempValue0==0
+			DrawSprite(4)
+			DrawSprite(5)
+			DrawSprite(3)
+		else
+			DrawSprite(16)
+			DrawSprite(17)
+			DrawSprite(15)
+		endif
+		if Object.Value5>0
+			Object.Value5++
+			Object.Value5&=15
+		endif
+		TempValue0=Object.Frame
+		TempValue0/=3
+		DrawSprite(TempValue0)
+		break
+	case 5
+		TempValue0=Object.Value5
+		TempValue0&=1
+		TempValue1=Object.YPos
+		TempValue1+=Object.Value6
+		if TempValue0==0
+			DrawSprite(4)
+			DrawSprite(5)
+			DrawSpriteXY(18,Object.XPos,TempValue1)
+			DrawSprite(3)
+		else
+			DrawSprite(16)
+			DrawSprite(17)
+			DrawSpriteXY(19,Object.XPos,TempValue1)
+			DrawSprite(15)
+		endif
+		if Object[-1].State==2
+			if Object.Value6<1048576
+				Object.Value6+=32768
+			endif
+		endif
+		if Object.Value5>0
+			Object.Value5++
+			Object.Value5&=15
+		endif
+		TempValue0=Object.Frame
+		TempValue0/=3
+		DrawSprite(TempValue0)
+		break
+	case 6
+		TempValue0=Object.YPos
+		TempValue0-=2097152
+		if TempValue0<Object.Value2
+			DrawSprite(16)
+			DrawSprite(17)
+			DrawSprite(3)
+		else
+			TempValue0=Object.Value5
+			TempValue0&=1
+			TempValue1=Object.YPos
+			TempValue1+=Object.Value6
+			if TempValue0==0
+				DrawSprite(4)
+				DrawSprite(5)
+				DrawSprite(3)
+			else
+				DrawSprite(16)
+				DrawSprite(17)
+				DrawSprite(15)
+			endif
+			if Object.Value6<1048576
+				Object.Value6+=32768
+			endif
+		endif
+		if Object.Value5>0
+			Object.Value5++
+			Object.Value5&=15
+		endif
+		TempValue0=Object.Frame
+		TempValue0/=3
+		DrawSprite(TempValue0)
+		break
+	case 7
+		DrawSprite(3)
+		DrawSprite(0)
+		break
+
+	endswitch
+endsub
+
+
+sub ObjectStartup
+	LoadSpriteSheet("R3/Objects2.gif")
+	ArrayPos0=32
+	while ArrayPos0<1056
+		if Object[ArrayPos0].Type==TypeName[BossBody]
+			Object[ArrayPos0].Value1=Object[ArrayPos0].YPos
+			Object[ArrayPos0].Value3=Object[ArrayPos0].YPos
+			Object[ArrayPos0].Value2=Object[ArrayPos0].YPos
+			Object[ArrayPos0].Value2+=14942208
+		endif
+		ArrayPos0++
+	loop
+	SpriteFrame(-80,-16,32,32,134,0)
+	SpriteFrame(-80,-16,32,32,167,0)
+	SpriteFrame(-80,-16,32,32,200,0)
+	SpriteFrame(-64,-16,128,32,1,67)
+	SpriteFrame(-48,-32,32,32,1,100)
+	SpriteFrame(16,-32,32,32,34,100)
+	SpriteFrame(-24,16,48,8,148,141)
+	SpriteFrame(-24,24,24,24,148,149)
+	SpriteFrame(-24,16,24,24,148,149)
+	SpriteFrame(-24,8,24,24,148,149)
+	SpriteFrame(-24,16,24,24,148,149)
+	SpriteFrame(0,24,24,24,172,149)
+	SpriteFrame(0,16,24,24,172,149)
+	SpriteFrame(0,8,24,24,172,149)
+	SpriteFrame(0,16,24,24,172,149)
+	SpriteFrame(-64,-16,128,32,117,33)
+	SpriteFrame(-48,-32,32,32,1,133)
+	SpriteFrame(16,-32,32,32,34,133)
+	SpriteFrame(-24,-32,48,16,148,107)
+	SpriteFrame(-24,-32,48,16,148,124)
+endsub
+
+sub RSDK
+	LoadSpriteSheet("Global/Display.gif")
+	SetEditorIcon(Icon0,SingleIcon,-16,-16,32,32,1,143)
+endsub

@@ -1,0 +1,131 @@
+//------------Sonic CD BGEffects Script-------------//
+//--------Scripted by Christian Whitehead 'The Taxman'--------//
+//-------Unpacked By Rubberduckycooly's Script Unpacker-------//
+
+//-------Aliases-------//
+#alias 35: TYPE_BGEFFECTS
+
+// Function declarations
+#function BGEffects_Function49
+#function BGEffects_Function50
+
+function BGEffects_Function49
+	Stage[ArrayPos0].DeformationData1=1
+	ArrayPos0++
+	Stage[ArrayPos0].DeformationData1=1
+	ArrayPos0++
+	Stage[ArrayPos0].DeformationData1=2
+	ArrayPos0++
+	Stage[ArrayPos0].DeformationData1=2
+	ArrayPos0++
+	Stage[ArrayPos0].DeformationData1=3
+	ArrayPos0++
+	Stage[ArrayPos0].DeformationData1=3
+	ArrayPos0++
+	Stage[ArrayPos0].DeformationData1=3
+	ArrayPos0++
+	Stage[ArrayPos0].DeformationData1=3
+	ArrayPos0++
+	Stage[ArrayPos0].DeformationData1=2
+	ArrayPos0++
+	Stage[ArrayPos0].DeformationData1=2
+	ArrayPos0++
+	Stage[ArrayPos0].DeformationData1=1
+	ArrayPos0++
+	Stage[ArrayPos0].DeformationData1=1
+	ArrayPos0++
+endfunction
+
+
+function BGEffects_Function50
+	Stage[ArrayPos0].DeformationData1=-1
+	ArrayPos0++
+	Stage[ArrayPos0].DeformationData1=-1
+	ArrayPos0++
+	Stage[ArrayPos0].DeformationData1=-2
+	ArrayPos0++
+	Stage[ArrayPos0].DeformationData1=-2
+	ArrayPos0++
+	Stage[ArrayPos0].DeformationData1=-3
+	ArrayPos0++
+	Stage[ArrayPos0].DeformationData1=-3
+	ArrayPos0++
+	Stage[ArrayPos0].DeformationData1=-3
+	ArrayPos0++
+	Stage[ArrayPos0].DeformationData1=-3
+	ArrayPos0++
+	Stage[ArrayPos0].DeformationData1=-2
+	ArrayPos0++
+	Stage[ArrayPos0].DeformationData1=-2
+	ArrayPos0++
+	Stage[ArrayPos0].DeformationData1=-1
+	ArrayPos0++
+	Stage[ArrayPos0].DeformationData1=-1
+	ArrayPos0++
+endfunction
+
+
+sub ObjectDraw
+	Object.Value0++
+	if Object.Value0>1
+		TileLayer[0].DeformationOffsetW++
+		TileLayer[2].DeformationOffsetW++
+		Object.Value0=0
+	endif
+	TempValue0=Stage.WaterLevel
+	TempValue0-=Screen.YOffset
+	if TempValue0<0
+		TempValue0=0
+	endif
+	if TempValue0>Screen.YSize
+		TempValue0=Screen.YSize
+	endif
+#platform: Standard
+	SetActivePalette(Object[19].Value1,0,TempValue0)
+	SetActivePalette(7,TempValue0,Screen.YSize)
+#endplatform
+#platform: Mobile
+	SetActivePalette(Object[19].Value1,0,TempValue0)
+	DrawRect(0,TempValue0,Screen.XSize,Screen.YSize,0,96,48,128)
+#endplatform	
+endsub
+
+
+sub ObjectStartup
+	ArrayPos0=32
+	while ArrayPos0<1056
+		if Object[ArrayPos0].Type==TypeName[BGEffects]
+			Object[ArrayPos0].Priority=1
+			Object[ArrayPos0].DrawOrder=5
+#platform: Mobile
+			Object[ArrayPos0].DrawOrder=5
+#endplatform
+#platform: Standard
+			Object[ArrayPos0].DrawOrder=0
+#endplatform
+		endif
+		ArrayPos0++
+	loop
+#platform: Standard
+	ArrayPos0=0
+	CallFunction(BGEffects_Function49)
+	ArrayPos0=128
+	CallFunction(BGEffects_Function49)
+	ArrayPos0=160
+	CallFunction(BGEffects_Function50)
+	ArrayPos0=256
+	while ArrayPos0<576
+		ArrayPos1=ArrayPos0
+		ArrayPos1-=256
+		Stage[ArrayPos0].DeformationData1=Stage[ArrayPos1].DeformationData1
+		ArrayPos0++
+	loop
+#endplatform
+	SetLayerDeformation(3,128,4,0,0,0)
+	LoadPalette("R4A_WaterPal.act",7,0,0,256)
+endsub
+
+sub RSDK
+	LoadSpriteSheet("Global/Display.gif")
+	SetEditorIcon(Icon0,SingleIcon,-16,-16,32,32,1,143)
+endsub

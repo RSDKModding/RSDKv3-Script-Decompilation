@@ -1,0 +1,116 @@
+//------------Sonic CD LoseRing Script-------------//
+//--------Scripted by Christian Whitehead 'The Taxman'--------//
+//-------Unpacked By Rubberduckycooly's Script Unpacker-------//
+
+//-------Aliases-------//
+#alias 9: TYPE_LOSERING
+
+#alias Player.Value0:Player.Rings
+
+sub ObjectMain
+	Object.Value1+=6144
+	Object.XPos+=Object.Value0
+	Object.YPos+=Object.Value1
+	if Object.Value1>=0
+		ObjectTileCollision(0,0,8,0)
+		if CheckResult==1
+			TempValue0=Object.Value1
+			TempValue0>>=2
+			Object.Value1-=TempValue0
+			FlipSign(Object.Value1)
+			if Object.Value1>-65536
+				Object.Value1=-65536
+			endif
+		endif
+	endif
+	Object.Value2++
+	if Object.Value2==256
+		Object.Type=TypeName[BlankObject]
+		Object.Value0=0
+		Object.Value1=0
+		Object.Value2=0
+	else
+		Object.AnimationTimer+=Object.AnimationSpeed
+		if Object.AnimationTimer>255
+			Object.AnimationTimer-=256
+			Object.Frame++
+			if Object.Frame==8
+				Object.Frame=0
+				if Object.AnimationSpeed>16
+					Object.AnimationSpeed-=16
+				endif
+			endif
+		endif
+	endif
+endsub
+
+
+sub ObjectPlayerInteraction
+	if Player.State!=PlayerObject_Knockback
+		if Player.CollisionPlane==Object.PropertyValue
+			PlayerObjectCollision(C_TOUCH,-8,-8,8,8)
+			if CheckResult==1
+				Object.Type=TypeName[RingSparkle]
+				if Object.PropertyValue==0
+					Object.DrawOrder=4
+				else
+					Object.DrawOrder=2
+				endif
+				Object.Value0=0
+				Object.Value1=0
+				Object.Value2=0
+				Object.Frame=0
+				Player.Rings++
+				if Player.Rings>999
+					Player.Rings=999
+				endif
+				if Player.Rings>=Ring.ExtraLife
+					if Options.GameMode!=2
+						Player.Lives++
+						Ring.ExtraLife+=100
+						if Ring.ExtraLife>300
+							Ring.ExtraLife=1000
+						endif
+					endif
+					if Player.Rings>=200
+						if Stage.PlayerListPos==0
+							if Stage.DebugMode==0
+								SetAchievement(4,100)
+							endif
+						endif
+					endif
+				endif
+				if Ring.Pan==0
+					SetSfxAttributes(1,-1,-100)
+					Ring.Pan=1
+				else
+					SetSfxAttributes(2,-1,100)
+					Ring.Pan=0
+				endif
+			endif
+		endif
+	endif
+endsub
+
+
+sub ObjectDraw
+	DrawSprite(Object.Frame)
+endsub
+
+
+sub ObjectStartup
+	LoadSpriteSheet("Global/Items.gif")
+	SpriteFrame(-8,-8,16,16,1,1)
+	SpriteFrame(-8,-8,16,16,1,18)
+	SpriteFrame(-8,-8,16,16,1,35)
+	SpriteFrame(-8,-8,16,16,1,52)
+	SpriteFrame(-8,-8,16,16,1,69)
+	SpriteFrame(-8,-8,16,16,1,86)
+	SpriteFrame(-8,-8,16,16,1,103)
+	SpriteFrame(-8,-8,16,16,1,120)
+endsub
+
+sub RSDK
+	LoadSpriteSheet("Global/Display.gif")
+	SetEditorIcon(Icon0,SingleIcon,-16,-16,32,32,1,143)
+endsub

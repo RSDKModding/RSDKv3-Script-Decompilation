@@ -1,0 +1,189 @@
+//------------Sonic CD Moving Blocks Script-------------//
+//--------Scripted by Christian Whitehead 'The Taxman'--------//
+//-------Unpacked By Rubberduckycooly's Script Unpacker-------//
+
+//-------Aliases-------//
+#alias 45: TYPE_MOVINGBLOCKS
+
+// Function declarations
+#function MovingBlocks_Function50
+
+function MovingBlocks_Function50
+	switch Object.Value6
+	case 0
+		Object.Value1-=32768
+		if Object.AnimationTimer==64
+			Object.Value3=Object.Value1
+		endif
+		break
+	case 1
+		Object.Value1-=32768
+		break
+	case 2
+		Object.Value1+=32768
+		Object.Value5+=32768
+		if Object.AnimationTimer==64
+			Object.Value1=Object.Value5
+		endif
+		break
+	case 3
+		Object.Value1+=32768
+		Object.Value3+=32768
+		break
+	case 4
+		Object.Value1-=32768
+		Object.Value3-=32768
+		if Object.AnimationTimer==64
+			Object.Value1=Object.Value3
+		endif
+		break
+	case 5
+		Object.Value1-=32768
+		Object.Value5-=32768
+		break
+
+	endswitch
+endfunction
+
+
+sub ObjectMain
+	Object.Rotation-=2
+	if Object.Rotation<0
+		Object.Rotation+=512
+	endif
+	Object.AnimationTimer++
+	CallFunction(MovingBlocks_Function50)
+	if Object.AnimationTimer==64
+		Object.AnimationTimer=0
+		Object.Value6++
+		if Object.Value6>5
+			Object.Value6=2
+		endif
+	endif
+endsub
+
+
+sub ObjectPlayerInteraction
+	TempValue0=Object.XPos
+	TempValue1=Object.YPos
+	switch Object.Value6
+	case 0
+	case 1
+		Object.XPos=Object.Value2
+		Object.YPos=Object.Value3
+		PlayerObjectCollision(C_BOX,-16,-17,16,16)
+		if CheckResult==1
+			Player.YPos+=65536
+		endif
+		break
+	case 2
+		Object.XPos=Object.Value2
+		Object.YPos=Object.Value3
+		PlayerObjectCollision(C_BOX,-16,-17,16,16)
+		if CheckResult==1
+			Player.YPos+=65536
+		endif
+		Object.XPos=Object.Value4
+		Object.YPos=Object.Value5
+		PlayerObjectCollision(C_BOX,-16,-16,16,16)
+		if CheckResult==4
+			if Player.Gravity==0
+				PlaySfx(5,0)
+				Player.DrawOrder=5
+				Player.Speed=0
+				Player.XVelocity=0
+				Player.YVelocity=-425984
+				Player.State=PlayerObject_Death
+				Player.Animation=ANI_DYING
+				Player.TileCollisions=0
+				Player.ObjectInteraction=0
+				Screen.CameraEnabled=0
+			endif
+		endif
+		break
+	case 3
+	case 4
+		Object.XPos=Object.Value2
+		Object.YPos=Object.Value3
+		PlayerObjectCollision(C_BOX,-16,-17,16,16)
+		if CheckResult==1
+			Player.YPos+=65536
+		endif
+		Object.XPos=Object.Value4
+		Object.YPos=Object.Value5
+		PlayerObjectCollision(C_TOUCH,-12,-16,12,32)
+		if CheckResult==1
+			PlayerObjectCollision(C_BOX,-16,-16,16,16)
+			Object.XPos=Object.Value0
+			Object.YPos=Object.Value1
+			PlayerObjectCollision(C_BOX,-16,-16,16,16)
+			if CheckResult==4
+				if Player.Gravity==0
+					PlaySfx(5,0)
+					Player.DrawOrder=5
+					Player.Speed=0
+					Player.XVelocity=0
+					Player.YVelocity=-425984
+					Player.State=PlayerObject_Death
+					Player.Animation=ANI_DYING
+					Player.TileCollisions=0
+					Player.ObjectInteraction=0
+					Screen.CameraEnabled=0
+				endif
+			endif
+		else
+			PlayerObjectCollision(C_BOX,-16,-16,16,32)
+		endif
+		break
+	case 5
+		Object.XPos=Object.Value2
+		Object.YPos=Object.Value3
+		PlayerObjectCollision(C_BOX,-16,-17,16,16)
+		if CheckResult==1
+			Player.YPos+=65536
+		endif
+		Object.XPos=Object.Value0
+		Object.YPos=Object.Value1
+		PlayerObjectCollision(C_BOX,-16,-17,16,16)
+		if CheckResult==1
+			Player.YPos+=65536
+		endif
+		break
+
+	endswitch
+	Object.XPos=TempValue0
+	Object.YPos=TempValue1
+	PlayerObjectCollision(C_BOX,-16,-16,16,16)
+endsub
+
+
+sub ObjectDraw
+	DrawSpriteXY(0,Object.Value0,Object.Value1)
+	DrawSpriteXY(0,Object.Value2,Object.Value3)
+	DrawSpriteXY(0,Object.Value4,Object.Value5)
+	DrawSprite(0)
+endsub
+
+
+sub ObjectStartup
+	LoadSpriteSheet("R6/Objects.gif")
+	SpriteFrame(-16,-16,32,32,173,1)
+	ArrayPos0=32
+	while ArrayPos0<1056
+		if Object[ArrayPos0].Type==TypeName[MovingBlocks]
+			Object[ArrayPos0].Value0=Object[ArrayPos0].XPos
+			Object[ArrayPos0].Value1=Object[ArrayPos0].YPos
+			Object[ArrayPos0].Value2=Object[ArrayPos0].XPos
+			Object[ArrayPos0].Value3=Object[ArrayPos0].YPos
+			Object[ArrayPos0].Value4=Object[ArrayPos0].XPos
+			Object[ArrayPos0].Value5=Object[ArrayPos0].YPos
+			Object[ArrayPos0].Rotation=480
+		endif
+		ArrayPos0++
+	loop
+endsub
+
+sub RSDK
+	LoadSpriteSheet("Global/Display.gif")
+	SetEditorIcon(Icon0,SingleIcon,-16,-16,32,32,1,143)
+endsub

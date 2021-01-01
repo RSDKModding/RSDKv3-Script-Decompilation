@@ -1,0 +1,88 @@
+//------------Sonic CD Menu Control Script-------------//
+//--------Scripted by Christian Whitehead 'The Taxman'--------//
+//-------Unpacked By Rubberduckycooly's Script Unpacker-------//
+
+//-------Aliases-------//
+#alias 2: TYPE_MENUCONTROL
+
+
+sub ObjectMain
+#platform: Mobile
+	switch Object.State
+	case 0
+		Object.State=1
+		Object.Value0=384
+		SetScreenFade(0,0,0,255)
+		PlayMusic(0)
+		break
+	case 1
+		if Object.Value0>0
+			Object.Value0-=8
+			Object.Scale-=0x1000
+		else
+			Object.State=2
+		endif
+		SetScreenFade(0,0,0,Object.Value0)
+		break
+	case 2
+		if KeyPress.Left==1
+			Object.State=3
+			Object[32].State=4
+			PlaySfx(23,0)
+		endif
+		if KeyPress.Right==1
+			Object.State=3
+			Object[32].State=1
+			PlaySfx(23,0)
+		endif
+		if KeyPress.Up==1
+			Object.State=3
+			Object[32].State=10
+			PlaySfx(23,0)
+		endif
+		if KeyPress.Down==1
+			Object.State=3
+			Object[32].State=7
+			PlaySfx(23,0)
+		endif
+		if KeyPress.ButtonB==1
+			Object.State=4
+			StopMusic()
+			PlaySfx(27,0)
+		endif
+		break
+	case 3
+		break
+	case 4
+		if Object.Value0<384
+			Object.Value0+=8
+			Object.Scale+=0x1000
+		else
+			Stage.ListPos=1
+			LoadStage()
+		endif
+		SetScreenFade(0,0,0,Object.Value0)
+		EngineCallback(3)
+		break
+	endswitch
+#endplatform
+endsub
+
+
+sub ObjectStartup
+#platform: Mobile
+	if Options.Soundtrack==0
+		SetMusicTrack("JP/TimeAttack.ogg",0,0x188A0)
+	else
+		SetMusicTrack("US/DAGarden.ogg",0,0x1CA86)
+	endif
+	Object[0].Type=TypeName[MenuControl]
+	Object[0].DrawOrder=1
+	Options.PhysicalControls=0
+#endplatform
+endsub
+
+sub RSDK
+	LoadSpriteSheet("Global/Display.gif")
+	SetEditorIcon(Icon0,SingleIcon,-16,-16,32,32,1,143)
+endsub

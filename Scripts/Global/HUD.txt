@@ -1,0 +1,210 @@
+//------------Sonic CD HUD Script-------------//
+//--------Scripted by Christian Whitehead 'The Taxman'--------//
+//-------Unpacked By Rubberduckycooly's Script Unpacker-------//
+
+//-------Aliases-------//
+#alias 3: TYPE_HUD
+
+#alias Player.Value0:Player.Rings
+
+sub ObjectDraw
+	if Player.Rings==0
+		Object.Value4++
+		if Object.Value4==16
+			Object.Value4=0
+		endif
+	else
+		if Stage.Minutes==9
+			Object.Value4++
+			if Object.Value4==16
+				Object.Value4=0
+			endif
+		endif
+	endif
+#platform: Standard
+	DrawSpriteScreenXY(10,17,13)
+	if Stage.Minutes==9
+		if Object.Value4>7
+			DrawSpriteScreenXY(11,17,29)
+		endif
+	endif
+	if Player.Rings==0
+		if Object.Value4>7
+			DrawSpriteScreenXY(12,17,45)
+		endif
+	endif
+	DrawSpriteScreenXY(13,67,29)
+	DrawNumbers(0,104,13,Player.Score,6,8,0)
+	DrawNumbers(0,104,29,Stage.MilliSeconds,2,8,1)
+	DrawNumbers(0,80,29,Stage.Seconds,2,8,1)
+	DrawNumbers(0,56,29,Stage.Minutes,1,8,1)
+	DrawNumbers(0,80,45,Player.Rings,3,8,0)
+	if Stage.DebugMode==1
+		TempValue0=Player.XPos
+		TempValue0>>=16
+		TempValue1=Screen.XSize
+		TempValue1-=24
+		DrawNumbers(0,TempValue1,13,TempValue0,5,8,1)
+		TempValue0=Player.YPos
+		TempValue0>>=16
+		if TempValue0<0
+			FlipSign(TempValue0)
+		endif
+		DrawNumbers(0,TempValue1,29,TempValue0,5,8,1)
+		TempValue1-=42
+		DrawSpriteScreenXY(14,TempValue1,15)
+		DrawSpriteScreenXY(21,TempValue1,31)
+	endif
+	TempValue0=Object.PropertyValue
+	TempValue0+=17
+	DrawSpriteScreenXY(TempValue0,16,212)
+	DrawSpriteScreenXY(14,32,220)
+	if Player.Lives<10
+		DrawNumbers(0,40,217,Player.Lives,1,8,1)
+		TempValue1=52
+	else
+		DrawNumbers(0,48,217,Player.Lives,2,8,1)
+		TempValue1=60
+	endif
+	switch Warp.Destination
+	case 1
+		if Warp.Timer<100
+			DrawSpriteScreenXY(15,TempValue1,214)
+		else
+			TempValue0=Warp.Timer
+			TempValue0&=1
+			if TempValue0==0
+				DrawSpriteScreenXY(15,TempValue1,214)
+			endif
+		endif
+		break
+	case 2
+		if Warp.Timer<100
+			DrawSpriteScreenXY(16,TempValue1,214)
+		else
+			TempValue0=Warp.Timer
+			TempValue0&=1
+			if TempValue0==0
+				DrawSpriteScreenXY(16,TempValue1,214)
+			endif
+		endif
+		break
+
+	endswitch
+#endplatform
+
+#platform: Mobile
+	DrawSpriteScreenXY(10,17,9)
+	if Stage.Minutes==9
+		if Object.Value4>7
+			DrawSpriteScreenXY(11,17,25)
+		endif
+	endif
+	if Player.Value0==0
+		if Object.Value4>7
+			DrawSpriteScreenXY(12,17,41)
+		endif
+	endif
+	DrawSpriteScreenXY(13,67,25)
+	DrawNumbers(0,104,9,Player.Score,6,8,0)
+	DrawNumbers(0,104,25,Stage.MilliSeconds,2,8,1)
+	DrawNumbers(0,80,25,Stage.Seconds,2,8,1)
+	DrawNumbers(0,56,25,Stage.Minutes,1,8,1)
+	DrawNumbers(0,80,41,Player.Value0,3,8,0)
+	if Stage.DebugMode==1
+		TempValue0=Player.XPos
+		TempValue0>>=16
+		TempValue1=Screen.XSize
+		TempValue1-=16
+		DrawNumbers(0,TempValue1,25,TempValue0,5,8,1)
+		TempValue0=Player.YPos
+		TempValue0>>=16
+		if TempValue0<0
+			FlipSign(TempValue0)
+		endif
+		DrawNumbers(0,TempValue1,41,TempValue0,5,8,1)
+		TempValue1-=42
+		DrawSpriteScreenXY(14,TempValue1,27)
+		DrawSpriteScreenXY(21,TempValue1,43)
+	endif
+	TempValue1=Screen.XSize
+	TempValue1-=48
+	TempValue0=Object.PropertyValue
+	TempValue0+=17
+	DrawSpriteScreenXY(TempValue0,TempValue1,8)
+	TempValue1+=16
+	DrawSpriteScreenXY(14,TempValue1,16)
+	if Player.Lives<10
+		TempValue1+=8
+		DrawNumbers(0,TempValue1,13,Player.Lives,1,8,1)
+			   
+	else
+		TempValue1+=16
+		DrawNumbers(0,TempValue1,13,Player.Lives,2,8,1)
+		TempValue1-=8
+	endif
+	switch Warp.Destination
+	case 1
+		TempValue1-=79
+		if Warp.Timer<100
+			DrawSpriteScreenXY(15,TempValue1,8)
+		else
+			TempValue0=Warp.Timer
+			TempValue0&=1
+			if TempValue0==0
+				DrawSpriteScreenXY(15,TempValue1,8)
+			endif
+		endif
+		break
+	case 2
+		TempValue1-=79
+		if Warp.Timer<100
+			DrawSpriteScreenXY(16,TempValue1,8)
+		else
+			TempValue0=Warp.Timer
+			TempValue0&=1
+			if TempValue0==0
+				DrawSpriteScreenXY(16,TempValue1,8)
+			endif
+		endif
+		break
+
+	endswitch
+#endplatform
+endsub
+
+
+sub ObjectStartup
+	if Stage.PlayerListPos==0
+		LoadSpriteSheet("Global/Display.gif")
+	else
+		LoadSpriteSheet("Global/Display_t.gif")
+	endif
+	SpriteFrame(0,0,8,11,1,50)
+	SpriteFrame(0,0,8,11,10,50)
+	SpriteFrame(0,0,8,11,19,50)
+	SpriteFrame(0,0,8,11,28,50)
+	SpriteFrame(0,0,8,11,1,62)
+	SpriteFrame(0,0,8,11,10,62)
+	SpriteFrame(0,0,8,11,19,62)
+	SpriteFrame(0,0,8,11,28,62)
+	SpriteFrame(0,0,8,11,1,74)
+	SpriteFrame(0,0,8,11,10,74)
+	SpriteFrame(0,0,39,43,1,1)
+	SpriteFrame(0,0,31,11,1,119)
+	SpriteFrame(0,0,39,11,1,131)
+	SpriteFrame(0,0,29,4,1,45)
+	SpriteFrame(0,0,8,8,1,98)
+	SpriteFrame(0,0,32,16,90,67)
+	SpriteFrame(0,0,32,16,123,67)
+	SpriteFrame(0,0,16,16,187,189)
+	SpriteFrame(0,0,16,16,204,189)
+	SpriteFrame(0,0,16,16,237,223)
+	SpriteFrame(0,0,16,16,237,223)
+	SpriteFrame(0,0,8,8,10,98)
+endsub
+
+sub RSDK
+	LoadSpriteSheet("Global/Display.gif")
+	SetEditorIcon(Icon0,SingleIcon,-16,-16,32,32,1,143)
+endsub

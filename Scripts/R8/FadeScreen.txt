@@ -1,0 +1,165 @@
+//------------Sonic CD FadeScreen Script-------------//
+//--------Scripted by Christian Whitehead 'The Taxman'--------//
+//-------Unpacked By Rubberduckycooly's Script Unpacker-------//
+
+//-------Aliases-------//
+#alias 62: TYPE_FADESCREEN
+
+
+sub ObjectMain
+	switch Object.State
+	case 0
+		if Object.Value0<480
+			Object.Value0+=4
+			Music.Volume--
+		else
+			Object.Value0=224
+			if Object.PropertyValue==0
+				Object.State++
+			else
+				Object.State+=2
+			endif
+		endif
+		if Object.PropertyValue==1
+			SetScreenFade(0,0,0,Object.Value0)
+		else
+			SetScreenFade(224,224,224,Object.Value0)
+		endif
+		break
+	case 1
+		if Object.Value0>0
+			Music.Volume--
+			Object.Value0-=16
+		else
+			StopMusic()
+			if Options.GameMode==2
+				TimeAttack.Result=Stage.Seconds
+				TimeAttack.Result*=100
+				TempValue0=Stage.Minutes
+				TempValue0*=6000
+				TimeAttack.Result+=TempValue0
+				TimeAttack.Result+=Stage.MilliSeconds
+				TempValue0=Stage.ListPos
+				TempValue0%=10
+				TempValue0>>=2
+				TempValue1=Stage.ListPos
+				TempValue1/=10
+				TempValue1*=3
+				TempValue0+=TempValue1
+				TempValue0++
+				TempValue1=Stage.Seconds
+				TempValue1*=100
+				TempValue2=Stage.Minutes
+				TempValue2*=6000
+				TempValue1+=TempValue2
+				TempValue1+=Stage.MilliSeconds
+				SetLeaderboard(TempValue0,TempValue1)
+				Stage.ListPos=2
+			else
+				if Stage.PlayerListPos==0
+#platform: Mobile
+					EngineCallback(4)
+#endplatform
+#platform: Standard
+					if Stage.DebugMode==0
+						SetAchievement(7,100)
+					endif
+					TempValue0=Stage.ListPos
+					TempValue0%=10
+					TempValue0>>=2
+					TempValue1=Stage.ListPos
+					TempValue1/=10
+					TempValue1*=3
+					TempValue0+=TempValue1
+					TempValue0++
+					TempValue1=Stage.Seconds
+					TempValue1*=100
+					TempValue2=Stage.Minutes
+					TempValue2*=6000
+					TempValue1+=TempValue2
+					TempValue1+=Stage.MilliSeconds
+					SetLeaderboard(TempValue0,TempValue1)
+#endplatform
+					if Player.Score>0
+#platform: Mobile
+						if Options.GameMode==1
+							if Stage.DebugMode==0
+#endplatform
+								SetLeaderboard(0,Player.Score)
+#platform: Mobile
+						endif
+#endplatform
+					endif
+#platform: Standard
+					EngineCallback(4)
+#endplatform
+					if SpecialStage.TimeStones>126
+#platform: Standard
+						LoadVideo("Good_Ending")
+#endplatform
+#platform: Mobile
+						if Options.Soundtrack==0
+							LoadVideo("Good_Ending")
+						else
+							LoadVideo("Good_EndingUS")
+						endif
+#endplatform
+					else
+						if Good_Future_List>16382
+#platform: Standard
+							LoadVideo("Good_Ending")
+#endplatform
+#platform: Mobile
+							if Options.Soundtrack==0
+								LoadVideo("Good_Ending")
+							else
+								LoadVideo("Good_EndingUS")
+							endif
+#endplatform
+						else
+#platform: Standard
+							LoadVideo("Bad_Ending")
+#endplatform
+#platform: Mobile
+							if Options.Soundtrack==0
+								LoadVideo("Bad_Ending")
+							else
+								LoadVideo("Bad_EndingUS")
+							endif
+#endplatform
+						endif
+					endif
+					if SaveRAM[36]==0
+						SaveRAM[36]=1
+						WriteSaveRAM()
+						Stage.ListPos=8
+					else
+						Stage.ListPos=1
+					endif
+				else
+					Stage.ListPos=7
+				endif
+			endif
+			Stage.ActiveList=PRESENTATION_STAGE
+			LoadStage()
+		endif
+		SetScreenFade(Object.Value0,Object.Value0,Object.Value0,255)
+		break
+	case 2
+		if Object.Value0>0
+			Music.Volume--
+			Object.Value0-=16
+		else
+			StopMusic()
+			Stage.ListPos+=2
+			LoadStage()
+		endif
+		break
+
+	endswitch
+endsub
+
+sub RSDK
+	LoadSpriteSheet("Global/Display.gif")
+	SetEditorIcon(Icon0,SingleIcon,-16,-16,32,32,1,143)
+endsub

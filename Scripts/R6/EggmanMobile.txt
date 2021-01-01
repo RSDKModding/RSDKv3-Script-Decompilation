@@ -1,0 +1,445 @@
+//------------Sonic CD Eggman Mobile Script-------------//
+//--------Scripted by Christian Whitehead 'The Taxman'--------//
+//-------Unpacked By Rubberduckycooly's Script Unpacker-------//
+
+//-------Aliases-------//
+#alias 60: TYPE_EGGMANMOBILE
+
+// Function declarations
+#function EggmanMobile_Function51
+#function EggmanMobile_Function52
+#function EggmanMobile_Function53
+#function EggmanMobile_Function54
+#function EggmanMobile_Function55
+
+function EggmanMobile_Function51
+	Object.YPos+=Object.Value2
+	Object.Value2-=256
+	if Object.YPos>=Object.Value1
+		Object.YPos=Object.Value1
+		Object.Value2=0
+		Object.Value3=0
+		Object.Value4=0
+		Object.State++
+	endif
+endfunction
+
+
+function EggmanMobile_Function52
+	Object.YPos+=Object.Value2
+	Object.Value2-=4096
+	if Object.YPos<=Object.Value1
+		Object.YPos=Object.Value1
+		Object.Value2=0
+		Object.Value3=0
+		Object.Value4=0
+		Object.Value5=0
+		Object.AnimationTimer=0
+		Object.AnimationSpeed=0
+		Object.State++
+	endif
+endfunction
+
+
+function EggmanMobile_Function53
+	TempValue0=Object.YPos
+	TempValue0+=7864320
+	if Player.YPos<TempValue0
+		if Object[+1].State<4
+			Object[+1].State=0
+			Object[+1].Value0=0
+			if Object.PropertyValue>0
+				Object.Value0=1200
+			endif
+		else
+			if Object[+1].Value0>270
+				Object[+1].State=0
+				Object[+1].Value0=0
+			else
+				Object.Value0&=511
+			endif
+		endif
+		if Object.Value0<1200
+			if Object.Value0==0
+				Object.Value5=1
+				PlayStageSfx(10,0)
+			endif
+			Object.Value0+=4
+			TempValue0=Object.Value0
+			TempValue0&=511
+			Sin(Object.YPos,TempValue0)
+			Object.YPos<<=9
+			Object.YPos+=Object.Value1
+		else
+			Object.Value0=0
+			Object.Value2=-65536
+			Object.Value3=1
+			Object.Value4=0
+			Object[+1].State=1
+			Object.State++
+		endif
+	endif
+endfunction
+
+
+function EggmanMobile_Function54
+	TempValue0=Object.YPos
+	TempValue0+=7864320
+	if Player.YPos<TempValue0
+		Object.Scale=1
+		if Object[+1].State<4
+			Object[+1].State=0
+			Object[+1].Value0=0
+			if Object.PropertyValue>0
+				Object.Value0=1200
+			endif
+		else
+			if Object[+1].Value0>270
+				Object[+1].State=0
+				Object[+1].Value0=0
+			else
+				Object.Value0&=511
+			endif
+		endif
+		if Object.Value0<1200
+			if Object.Value0==0
+				Object.Value5=1
+				PlayStageSfx(10,0)
+			endif
+			Object.Value0+=4
+			TempValue0=Object.Value0
+			TempValue0&=511
+			Sin(Object.YPos,TempValue0)
+			Object.YPos<<=9
+			Object.YPos+=Object.Value1
+		else
+			Object.Value0=0
+			Object.Value2=-65536
+			Object.Value3=1
+			Object.Value4=0
+			Object[+1].State=1
+			Object.Scale=0
+			Object.State++
+		endif
+	else
+		if Object.OutOfBounds==1
+			Object.Value5=0
+			Object.AnimationTimer=0
+			Object.AnimationSpeed=0
+		endif
+		if Object[+1].State<3
+			if Object.Scale==1
+				Object[+1].State=3
+				Object[+1].Value0=0
+			endif
+		endif
+	endif
+endfunction
+
+
+function EggmanMobile_Function55
+	if Object.AnimationTimer==0
+		PlaySfx(22,0)
+	endif
+	if Object.AnimationTimer<12
+		CreateTempObject(TypeName[SteamCloud],0,Object.XPos,Object.YPos)
+		Object[TempObjectPos].YPos-=4718592
+		Rand(Object[TempObjectPos].Value1,512)
+		Object[TempObjectPos].Value1-=256
+		Object[TempObjectPos].Value1<<=10
+		Rand(Object[TempObjectPos].Value2,256)
+		Object[TempObjectPos].Value2*=-1024
+	endif
+endfunction
+
+
+sub ObjectMain
+	switch Object.State
+	case 0
+		if Player.XPos>Object.XPos
+			Object.State++
+			Object.Scale=0
+		endif
+		break
+	case 1
+		Object.Value0++
+		if Object.Value0==120
+			Object.Value0=0
+			Object.Value2=196608
+			Object.Value1=102760448
+			Object.Value3=1
+			Object.Value4=0
+			Object.State++
+		endif
+		break
+	case 2
+		CallFunction(EggmanMobile_Function51)
+		break
+	case 3
+		CallFunction(EggmanMobile_Function53)
+		if Object.State>3
+			Object.Value1=69730304
+		endif
+		break
+	case 4
+		CallFunction(EggmanMobile_Function52)
+		break
+	case 5
+		CallFunction(EggmanMobile_Function54)
+		if Object.State>5
+			Object.Value1=36175872
+		endif
+		break
+	case 6
+		CallFunction(EggmanMobile_Function52)
+		break
+	case 7
+		CallFunction(EggmanMobile_Function54)
+		if Object.State>7
+			Object.Value1=19922944
+		endif
+		break
+	case 8
+		CallFunction(EggmanMobile_Function52)
+		break
+	case 9
+		if Object.Value0==0
+			Object.XPos+=131072
+		else
+			Object.XPos-=131072
+		endif
+		Object.Value0++
+		Object.Value0&=1
+		break
+	case 10
+		Object.YPos+=Object.Value2
+		Object.Value2+=4096
+		Player.Speed=0
+		if Object.Value0==0
+			Object.XPos+=131072
+		else
+			Object.XPos-=131072
+		endif
+		Object.Value0++
+		Object.Value0&=1
+		if Object.YPos>=44040192
+			Object.YPos=44040192
+			Object.Value0=0
+			Object.Value2=0
+			Object.Value6=3
+			SetTileLayerEntry(500,0,20,5)
+			SetTileLayerEntry(501,0,21,5)
+			SetTileLayerEntry(506,0,22,5)
+			Object.State++
+		endif
+		if Player.XPos>Object.Value1
+			Player.XPos=Object.Value1
+			Player.XPos+=5242880
+		else
+			Player.XPos=Object.Value1
+			Player.XPos-=5242880
+		endif
+		CallFunction(EggmanMobile_Function55)
+		break
+	case 11
+		Player.Speed=0
+		if Player.XPos>Object.XPos
+			Player.XPos=Object.XPos
+			Player.XPos+=5242880
+		else
+			Player.XPos=Object.XPos
+			Player.XPos-=5242880
+		endif
+		CallFunction(EggmanMobile_Function55)
+		Object.Value0++
+		if Object.Value0==180
+			Object[-1].State=2
+		endif
+		if Object.Value0==240
+			Object.State++
+			Object.Value5=3
+			CreateTempObject(TypeName[FadeScreen],0,Object.XPos,Object.YPos)
+			Object[TempObjectPos].Value1=Object.EntityNo
+		endif
+		break
+	case 12
+		Player.Speed=0
+		if Player.XPos>Object.XPos
+			Player.XPos=Object.XPos
+			Player.XPos+=5242880
+		else
+			Player.XPos=Object.XPos
+			Player.XPos-=5242880
+		endif
+		break
+
+	endswitch
+endsub
+
+
+sub ObjectPlayerInteraction
+	PlayerObjectCollision(C_TOUCH,-22,40,22,64)
+	if CheckResult==1
+		CallFunction(PlayerObject_Hit)
+	endif
+	if Player.Animation!=ANI_HURT
+		if Object.PropertyValue==0
+			PlayerObjectCollision(C_TOUCH,-64,-48,64,16)
+			TempValue0=CheckResult
+			PlayerObjectCollision(C_TOUCH,-32,16,32,32)
+			TempValue0|=CheckResult
+			if TempValue0==1
+				if Player.Animation==ANI_JUMPING
+#platform: Use_Haptics
+					HapticEffect(75,0,0,0)
+#endplatform
+					Object.PropertyValue=120
+					FlipSign(Player.Speed)
+					Player.Speed>>=1
+					FlipSign(Player.YVelocity)
+					Player.YVelocity>>=1
+					Player.XVelocity=Player.Speed
+					if Object.State<9
+						PlayStageSfx(11,0)
+						Object.Value6=1
+						Object.Frame=0
+					else
+						Object.State=10
+						Object.Value5=2
+						Object.AnimationTimer=0
+						Object.Value6=2
+						Object.Value7=0
+						Object.Frame=0
+						Object.Value1=Object.XPos
+						Object[+1].Type=TypeName[BlankObject]
+						Copy16x16Tile(810,863)
+						PlaySfx(22,0)
+					endif
+				else
+					CallFunction(PlayerObject_Hit)
+				endif
+			endif
+		endif
+	endif
+endsub
+
+
+sub ObjectDraw
+	DrawSprite(0)
+	switch Object.Value6
+	case 0
+		TempValue0=Object.Value7
+		TempValue0/=10
+		TempValue0+=2
+		Object.Value7++
+		Object.Value7%=20
+		Object.Direction=Object.Frame
+		Object.Direction/=25
+		Object.Frame++
+		Object.Frame%=50
+		DrawSpriteFX(TempValue0,FX_FLIP,Object.XPos,Object.YPos)
+		break
+	case 1
+		Object.Direction=Object.Frame
+		Object.Direction/=10
+		Object.Frame++
+		Object.Frame%=20
+		DrawSpriteFX(4,FX_FLIP,Object.XPos,Object.YPos)
+		if Object.PropertyValue>0
+			Object.PropertyValue--
+		else
+			Object.Value6=0
+			Object.Value7=0
+			Object.Frame=0
+		endif
+		break
+	case 2
+		DrawSprite(5)
+		break
+	case 3
+		Object.Direction=Object.Frame
+		Object.Direction/=25
+		Object.Frame++
+		Object.Frame%=50
+		DrawSpriteFX(6,FX_FLIP,Object.XPos,Object.YPos)
+		break
+
+	endswitch
+	switch Object.Value5
+	case 0
+		DrawSprite(7)
+		break
+	case 1
+		TempValue0=Object.AnimationTimer
+		TempValue0>>=7
+		TempValue0+=7
+		DrawSprite(TempValue0)
+		Object.AnimationTimer+=Object.AnimationSpeed
+		Object.AnimationTimer&=511
+		if Object.AnimationSpeed<128
+			Object.AnimationSpeed++
+		endif
+		break
+	case 2
+		TempValue0=Object.AnimationTimer
+		TempValue0/=3
+		if TempValue0<4
+			TempValue0+=11
+			DrawSprite(TempValue0)
+		endif
+		Object.AnimationTimer++
+		Object.AnimationTimer%=30
+		break
+
+	endswitch
+	switch Object.Value3
+	case 0
+		TempValue0=Object.Value4
+		TempValue0>>=1
+		TempValue0+=19
+		DrawSprite(TempValue0)
+		Object.Value4++
+		Object.Value4&=3
+		break
+	case 1
+		TempValue0=Object.Value4
+		TempValue0/=3
+		TempValue0+=15
+		DrawSprite(TempValue0)
+		Object.Value4++
+		Object.Value4%=12
+		break
+
+	endswitch
+endsub
+
+
+sub ObjectStartup
+	LoadSpriteSheet("R6/Objects2.gif")
+	SpriteFrame(-64,-48,128,96,66,1)
+	SpriteFrame(-64,-16,128,32,66,98)
+	SpriteFrame(-24,-21,48,24,116,131)
+	SpriteFrame(-24,-21,48,24,116,156)
+	SpriteFrame(-24,-21,48,24,116,181)
+	SpriteFrame(-28,-37,48,40,124,215)
+	SpriteFrame(-24,-29,48,32,1,219)
+	SpriteFrame(-16,-80,32,32,195,1)
+	SpriteFrame(-16,-80,32,32,195,34)
+	SpriteFrame(-16,-80,32,32,195,67)
+	SpriteFrame(-16,-80,32,32,195,100)
+	SpriteFrame(-12,-80,24,32,228,51)
+	SpriteFrame(-12,-80,24,32,228,84)
+	SpriteFrame(-12,-80,24,32,231,117)
+	SpriteFrame(-12,-80,24,32,231,150)
+	SpriteFrame(-16,48,32,32,198,133)
+	SpriteFrame(-16,48,32,24,206,199)
+	SpriteFrame(-16,48,32,32,198,166)
+	SpriteFrame(-16,48,32,24,206,224)
+	SpriteFrame(-16,48,32,24,206,199)
+	SpriteFrame(-16,48,32,24,206,224)
+endsub
+
+sub RSDK
+	LoadSpriteSheet("Global/Display.gif")
+	SetEditorIcon(Icon0,SingleIcon,-16,-16,32,32,1,143)
+endsub

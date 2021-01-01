@@ -1,0 +1,234 @@
+//------------Sonic CD Title Card Script-------------//
+//--------Scripted by Christian Whitehead 'The Taxman'--------//
+//-------Unpacked By Rubberduckycooly's Script Unpacker-------//
+
+//-------Aliases-------//
+#alias 34: TYPE_TITLECARD
+
+#alias Object.Value0:Object.BarPos
+#alias Object.Value1:Object.TextPos
+#alias Object.Value2:Object.TextSize
+#alias Object.Value3:Object.FadeA
+#alias Object.Value4:Object.FadeR
+#alias Object.Value5:Object.FadeG
+#alias Object.Value6:Object.FadeB
+#alias Object.Value7:Object.CharPos
+
+#alias Object.Value4:Player.Invincible
+
+sub ObjectPlayerInteraction
+	Player.Timer=0
+endsub
+
+
+sub ObjectDraw
+	switch Object.State
+	case 0
+		Player.ControlMode=-1
+		Player.Up=0
+		Player.Down=0
+		Player.Left=0
+		Player.Right=0
+		Player.JumpPress=0
+		Player.JumpHold=0
+		if Warp.XPos<1
+			Player.Speed=0
+		endif
+		if Object.FadeA>0
+			if Object.FadeA==256
+				PlayMusic(0)
+				if Warp.XPos>0
+					Player.XPos=Warp.XPos
+					Player.YPos=Warp.YPos
+					Player.XVelocity=Warp.XVelocity
+					Player.YVelocity=Warp.YVelocity
+					Player.Speed=Warp.XVelocity
+					Player.State=Warp.State
+					Stage.MilliSeconds=Rec_Milliseconds
+					Stage.Seconds=Rec_Seconds
+					Stage.Minutes=Rec_Minutes
+					Player[0].Invincible=8000
+				endif
+				Warp.Timer=0
+				Warp.Frame=0
+			endif
+			SetScreenFade(Object.FadeR,Object.FadeG,Object.FadeB,Object.FadeA)
+			Object.FadeA-=8
+		else
+			Fade_Colour=0
+			CheckEqual(Warp.XPos,0)
+			TempValue0=CheckResult
+			CheckLower(LampPost.Check,32)
+			TempValue0&=CheckResult
+			if TempValue0==1
+				Object.State=1
+				Object.FadeA=0
+			else
+				Player.ControlMode=0
+				Stage.TimeEnabled=1
+				ResetObjectEntity(20,TypeName[BlankObject],0,0,0)
+				Warp.XPos=0
+			endif
+		endif
+		break
+	case 1
+		TempValue0=144
+		TempValue0+=Object.CharPos
+		if Object.TextPos>TempValue0
+			Object.TextPos-=8
+#platform: Mobile
+		else
+			if Object.BarPos==0
+				Object.State=2
+			endif
+#endplatform
+		endif
+		if Object.BarPos<0
+			Object.BarPos+=8
+#platform: Standard
+		else
+			Object.State=2
+#endplatform
+		endif
+		break
+	case 2
+		if Object.FadeA==90
+			Object.State=3
+		else
+			Object.FadeA++
+		endif
+		break
+	case 3
+		if Object.TextPos<408
+			Object.TextPos+=16
+			Object.BarPos-=16
+		else
+			Player.ControlMode=0
+			Stage.TimeEnabled=1
+			ResetObjectEntity(20,TypeName[BlankObject],0,0,0)
+			Warp.XPos=0
+		endif
+		break
+
+	endswitch
+	if Object.Type>TypeName[BlankObject]
+		TempValue0=136
+		TempValue0+=Object.CharPos
+		DrawSpriteScreenXY(0,TempValue0,Object.BarPos)
+		DrawSpriteScreenXY(Stage.ActNo,Object.TextPos,80)
+		DrawSpriteScreenXY(4,Object.TextPos,80)
+		DrawSpriteScreenXY(5,Object.TextPos,80)
+		DrawSpriteScreenXY(6,Object.TextPos,80)
+		DrawSpriteScreenXY(7,Object.TextPos,80)
+		TempValue0=8
+		while TempValue0<Object.TextSize
+			DrawSpriteScreenXY(TempValue0,Object.TextPos,80)
+			TempValue0++
+		loop
+	endif
+endsub
+
+
+sub ObjectStartup
+	if Stage.PlayerListPos==0
+		LoadSpriteSheet("Global/Display.gif")
+	else
+		LoadSpriteSheet("Global/Display_t.gif")
+	endif
+	if Options.Soundtrack==0
+		switch Object[24].PropertyValue
+		case 0
+			SetMusicTrack("JP/R3A.ogg",0,358725)
+			break
+		case 1
+			SetMusicTrack("R3B.ogg",0,166278)
+			break
+		case 2
+			SetMusicTrack("JP/R3C.ogg",0,1)
+			break
+		case 3
+			SetMusicTrack("JP/R3D.ogg",0,717648)
+			break
+
+		endswitch
+	else
+		switch Object[24].PropertyValue
+		case 0
+			SetMusicTrack("US/R3A.ogg",0,1)
+			break
+		case 1
+			SetMusicTrack("R3B.ogg",0,166278)
+			break
+		case 2
+			SetMusicTrack("US/R3C.ogg",0,173494)
+			break
+		case 3
+			SetMusicTrack("US/R3D.ogg",0,1)
+			break
+
+		endswitch
+	endif
+	Flower_TypeNo=TypeName[Flower]
+	Object[20].Type=TypeName[TitleCard]
+	if Warp.XPos>0
+		Object[20].FadeA=256
+	else
+		Object[20].FadeA=384
+	endif
+	if Stage.ActNo==3
+		Player.RoofBarrier=1
+	endif
+	Object[20].Priority=1
+	Object[20].DrawOrder=6
+	Object[20].BarPos=-216
+	Object[20].TextPos=336
+	Object[20].CharPos=Screen.CenterX
+	Object[20].CharPos-=160
+	if Object[20].CharPos>3
+		Object[20].CharPos-=4
+	endif
+	Object[20].CharPos&=248
+	Object[20].TextPos+=Object[20].CharPos
+	Object[20].TextPos+=Object[20].CharPos
+	Object[20].TextSize=14
+	Object[20].TextSize+=8
+	Object[20].FadeR=Fade_Colour
+	Object[20].FadeR>>=16
+	Object[20].FadeG=Fade_Colour
+	Object[20].FadeG&=65280
+	Object[20].FadeG>>=8
+	Object[20].FadeB=Fade_Colour
+	Object[20].FadeB&=255
+	SpriteFrame(0,0,32,200,223,1)
+	SpriteFrame(96,96,48,48,41,1)
+	SpriteFrame(96,96,48,48,90,1)
+	SpriteFrame(96,96,48,48,139,1)
+	SpriteFrame(64,97,48,16,41,67)
+#platform: Standard
+	SpriteFrame(64,81,160,16,41,50)
+#endplatform
+#platform: Mobile
+	SpriteFrame(72,81,160,16,49,50)
+#endplatform
+	SpriteFrame(16,81,160,16,41,50)
+	SpriteFrame(100,32,24,48,188,1)
+	SpriteFrame(0,0,16,55,66,133)
+	SpriteFrame(16,32,11,23,199,84)
+	SpriteFrame(28,32,9,23,159,84)
+	SpriteFrame(37,32,9,23,159,84)
+	SpriteFrame(46,32,6,23,169,108)
+	SpriteFrame(53,32,10,23,70,108)
+	SpriteFrame(64,32,6,23,169,108)
+	SpriteFrame(71,32,11,23,199,84)
+	SpriteFrame(83,32,11,23,187,84)
+	SpriteFrame(0,56,16,55,66,133)
+	SpriteFrame(16,56,11,23,119,84)
+	SpriteFrame(28,56,11,23,43,84)
+	SpriteFrame(40,56,11,23,199,84)
+	SpriteFrame(52,56,10,23,70,108)
+endsub
+
+sub RSDK
+	LoadSpriteSheet("Global/Display.gif")
+	SetEditorIcon(Icon0,SingleIcon,-16,-16,32,32,1,143)
+endsub

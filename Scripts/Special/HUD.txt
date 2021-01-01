@@ -1,0 +1,101 @@
+//------------Sonic CD HUD Script-------------//
+//--------Scripted by Christian Whitehead 'The Taxman'--------//
+//-------Unpacked By Rubberduckycooly's Script Unpacker-------//
+
+//-------Aliases-------//
+#alias 2: TYPE_HUD
+
+
+sub ObjectDraw
+	TempValue1=Screen.CenterX
+	TempValue1-=128
+	DrawSpriteScreenXY(10,TempValue1,10)
+	TempValue0=Object.Value0
+	TempValue0/=10
+	TempValue1+=24
+	DrawSpriteScreenXY(TempValue0,TempValue1,11)
+	TempValue0=Object.Value0
+	TempValue0%=10
+	TempValue1+=8
+	DrawSpriteScreenXY(TempValue0,TempValue1,11)
+	TempValue1+=48
+	DrawSpriteScreenXY(11,TempValue1,16)
+	if Options.GameMode<2
+		TempValue0=Object.Value1
+		TempValue0/=100
+		TempValue1+=40
+		DrawSpriteScreenXY(TempValue0,TempValue1,11)
+		TempValue0=Object.Value1
+		TempValue0%=100
+		TempValue0/=10
+		TempValue1+=8
+		DrawSpriteScreenXY(TempValue0,TempValue1,11)
+		TempValue0=Object.Value1
+		TempValue0%=10
+		TempValue1+=8
+		DrawSpriteScreenXY(TempValue0,TempValue1,11)
+		TempValue1+=64
+	else
+#platform: Mobile
+		if Stage.Minutes>29
+			Stage.Minutes=30
+			Stage.Seconds=0
+			Stage.MilliSeconds=0
+		endif
+#endplatform
+		TempValue1+=40
+		DrawNumbers(0,TempValue1,11,Stage.Minutes,2,8,1)
+		TempValue1+=8
+		DrawSpriteScreenXY(13,TempValue1,11)
+		TempValue1+=16
+		DrawNumbers(0,TempValue1,11,Stage.Seconds,2,8,1)
+		TempValue1+=8
+		DrawSpriteScreenXY(14,TempValue1,11)
+		TempValue1+=16
+		DrawNumbers(0,TempValue1,11,Stage.MilliSeconds,2,8,1)
+		TempValue1+=32
+	endif
+	DrawSpriteScreenXY(12,TempValue1,16)
+	TempValue0=Object.Value3
+	TempValue0/=100
+	TempValue1+=32
+	DrawSpriteScreenXY(TempValue0,TempValue1,11)
+	TempValue0=Object.Value3
+	TempValue0%=100
+	TempValue0/=10
+	TempValue1+=8
+	DrawSpriteScreenXY(TempValue0,TempValue1,11)
+	TempValue0=Object.Value3
+	TempValue0%=10
+	TempValue1+=8
+	DrawSpriteScreenXY(TempValue0,TempValue1,11)
+endsub
+
+
+sub ObjectStartup
+	LoadSpriteSheet("Special/Objects.gif")
+	Object[4].Type=TypeName[HUD]
+	Object[4].Priority=1
+	Object[4].DrawOrder=6
+	Object[4].Value4=-1
+	SpriteFrame(0,0,8,13,206,84)
+	SpriteFrame(0,0,8,13,215,84)
+	SpriteFrame(0,0,8,13,224,84)
+	SpriteFrame(0,0,8,13,233,84)
+	SpriteFrame(0,0,8,13,242,84)
+	SpriteFrame(0,0,8,13,206,98)
+	SpriteFrame(0,0,8,13,215,98)
+	SpriteFrame(0,0,8,13,224,98)
+	SpriteFrame(0,0,8,13,233,98)
+	SpriteFrame(0,0,8,13,242,98)
+	SpriteFrame(0,0,24,16,206,58)
+	SpriteFrame(0,0,24,8,231,58)
+	SpriteFrame(0,0,31,8,206,75)
+	SpriteFrame(0,0,8,13,224,112)
+	SpriteFrame(0,0,8,13,233,112)
+endsub
+
+sub RSDK
+	LoadSpriteSheet("Global/Display.gif")
+	SetEditorIcon(Icon0,SingleIcon,-16,-16,32,32,1,143)
+endsub

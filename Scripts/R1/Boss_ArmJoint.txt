@@ -1,0 +1,96 @@
+//------------Sonic CD BossArmJoint Script-------------//
+//--------Scripted by Christian Whitehead 'The Taxman'--------//
+//-------Unpacked By Rubberduckycooly's Script Unpacker-------//
+
+//-------Aliases-------//
+#alias 52: TYPE_BOSSARMJOINT
+
+// Function declarations
+#function BossArmJoint_Function68
+
+function BossArmJoint_Function68
+	TempValue0=Object.Value2
+	TempValue0+=64
+	Sin256(TempValue6,TempValue0)
+	TempValue6<<=12
+	Cos256(TempValue7,TempValue0)
+	TempValue7<<=12
+	ArrayPos0=Object.Value0
+	Object.XPos=Object[ArrayPos0].XPos
+	Object.XPos+=TempValue7
+	Object.YPos=Object[ArrayPos0].YPos
+	Object.YPos+=TempValue6
+	if Object.DrawOrder==2
+		Object.XPos-=655360
+	endif
+endfunction
+
+
+sub ObjectMain
+	switch Object.State
+	case 0
+		if Object.DrawOrder==3
+			Object.Value2=128
+		endif
+		Object.State=3
+		Object.Value2-=2
+		if Object.Value2<=0
+			Object.State=2
+			Object.Value2=0
+			SetBit(Object.Value4,0,1)
+		endif
+		CallFunction(BossArmJoint_Function68)
+		break
+	case 1
+		Object.Value2-=2
+		if Object.Value2<=0
+			Object.State=2
+			Object.Value2=0
+			SetBit(Object.Value4,0,1)
+		endif
+		CallFunction(BossArmJoint_Function68)
+		break
+	case 2
+		CallFunction(BossArmJoint_Function68)
+		break
+	case 3
+		Object.Value2+=2
+		if Object.Value2>=48
+			Object.State=4
+			Object.Value2=48
+			SetBit(Object.Value4,0,1)
+		endif
+		CallFunction(BossArmJoint_Function68)
+		break
+	case 4
+		CallFunction(BossArmJoint_Function68)
+		break
+	case 5
+		Object.Value2+=1536
+		Object.Value5+=7936
+		Object.XPos+=Object.Value2
+		Object.YPos+=Object.Value5
+		if Object.OutOfBounds==1
+			Object.Type=TypeName[BlankObject]
+			Object.Priority=0
+		endif
+		break
+
+	endswitch
+endsub
+
+
+sub ObjectDraw
+	DrawSprite(0)
+endsub
+
+
+sub ObjectStartup
+	LoadSpriteSheet("R1/Objects3.gif")
+	SpriteFrame(-8,-8,16,16,124,34)
+endsub
+
+sub RSDK
+	LoadSpriteSheet("Global/Display.gif")
+	SetEditorIcon(Icon0,SingleIcon,-16,-16,32,32,1,143)
+endsub

@@ -1,0 +1,300 @@
+//------------Sonic CD Amy2 Script-------------//
+//--------Scripted by Christian Whitehead 'The Taxman'--------//
+//-------Unpacked By Rubberduckycooly's Script Unpacker-------//
+
+//-------Aliases-------//
+#alias 55: TYPE_AMY2
+
+
+sub ObjectMain
+	if Player.XPos<Object.XPos
+		Object.Direction=FACING_LEFT
+	else
+		Object.Direction=FACING_RIGHT
+	endif
+	if Object.Value7<600
+		Object.Value7++
+	else
+		if Object.Value7==600
+			Object.Value7=601
+			Player.Left=0
+			Player.Right=0
+			Player.Up=0
+			Player.Down=0
+			Player.ControlMode=-1
+			CreateTempObject(TypeName[FadeMusic],3,Object.XPos,Object.YPos)
+		endif
+	endif
+	switch Object.State
+	case 0
+		Object.Value0++
+		switch Object.Frame
+		case 4
+		case 6
+			if Object.Value0==4
+				Object.Value0=0
+				Object.Frame++
+			endif
+			break
+		case 5
+		case 7
+			if Object.Value0==3
+				Object.Value0=0
+				Object.Frame++
+			endif
+			break
+
+		endswitch
+		if Object.Frame>7
+			Object.Frame=4
+		endif
+		if Object.Direction==FACING_RIGHT
+			if Object.Value1<131072
+				Object.Value1+=8192
+			endif
+			PlayerObjectCollision(C_TOUCH,-32,-360,4,360)
+			if CheckResult==1
+				if Player.Gravity==0
+					if Player.Direction==Object.Direction
+						PlayerObjectCollision(C_TOUCH,-32,-20,4,20)
+						if CheckResult==1
+							if Player.Animation==9
+								Object.State=3
+								Object.Frame=9
+								Object.Value2=-262144
+								Object.Value5=1
+								Object.Value1=-65536
+							else
+								if Object.Value7<600
+									Object.Value7=601
+									Player.Left=0
+									Player.Right=0
+									Player.Up=0
+									Player.Down=0
+									Player.ControlMode=-1
+									CreateTempObject(TypeName[FadeMusic],3,Object.XPos,Object.YPos)
+								endif
+#platform: Mobile
+								HapticEffect(52,0,0,0)
+#endplatform
+								Object.State=2
+								Object.Frame=8
+								Object.Value0=0
+								Player.State=PlayerObject_Hugged
+								PlayStageSfx(8,0)
+								SetAchievement(1,100)
+							endif
+						else
+							Object.State=1
+							Object.Frame=0
+							Object.Value0=0
+							Object.Value1=0
+						endif
+					else
+					endif
+				endif
+			endif
+			if Object.XPos<Object.Value4
+				Object.XPos+=Object.Value1
+			else
+				Object.Value1=0
+				Object.XPos=Object.Value4
+				Object.State=4
+				Object.Frame=0
+				Object.Value0=0
+			endif
+		else
+			if Object.Value1>-131072
+				Object.Value1-=8192
+			endif
+			PlayerObjectCollision(C_TOUCH,-4,-360,32,360)
+			if CheckResult==1
+				if Player.Gravity==0
+					if Player.Direction==Object.Direction
+						PlayerObjectCollision(C_TOUCH,-32,-20,4,20)
+						if CheckResult==1
+							if Player.Animation==9
+								Object.State=3
+								Object.Frame=9
+								Object.Value2=-262144
+								Object.Value5=1
+								Object.Value1=65536
+							else
+								if Object.Value7<600
+									Object.Value7=601
+									Player.Left=0
+									Player.Right=0
+									Player.Up=0
+									Player.Down=0
+									Player.ControlMode=-1
+									CreateTempObject(TypeName[FadeMusic],3,Object.XPos,Object.YPos)
+								endif
+								Object.State=2
+								Object.Frame=8
+								Object.Value0=0
+								Player.State=PlayerObject_Hugged
+								PlayStageSfx(8,0)
+								SetAchievement(1,100)
+#platform: Mobile
+								HapticEffect(52,0,0,0)
+#endplatform
+							endif
+						else
+							Object.State=1
+							Object.Frame=0
+							Object.Value0=0
+							Object.Value1=0
+						endif
+					else
+					endif
+				endif
+			endif
+			if Object.XPos>Object.Value3
+				Object.XPos+=Object.Value1
+			else
+				Object.Value1=0
+				Object.XPos=Object.Value3
+				Object.State=5
+				Object.Frame=0
+				Object.Value0=0
+			endif
+		endif
+		break
+	case 1
+		Object.Value0++
+		if Object.Value0==12
+			Object.Value0=0
+			Object.Frame++
+		endif
+		if Object.Frame>3
+			Object.Frame=0
+		endif
+		PlayerObjectCollision(C_TOUCH,-4,-360,4,360)
+		if CheckResult==0
+			if Player.Gravity==0
+				Object.State=0
+				Object.Frame=4
+				Object.Value0=0
+			endif
+		else
+			if Player.Gravity==1
+				Object.State=0
+				Object.Frame=4
+				Object.Value0=0
+			endif
+		endif
+		break
+	case 2
+		Player.Speed=0
+		Player.XVelocity=0
+		Player.Direction=Object.Direction
+		break
+	case 3
+		if Object.Value2>0
+			Object.Frame=10
+		endif
+		if Object.Value1>0
+			Object.Value1-=2048
+		endif
+		if Object.Value1<0
+			Object.Value1+=2048
+		endif
+		Object.XPos+=Object.Value1
+		if Object.Value5==0
+			if Object.Value0==16
+				Object.State=0
+				Object.Frame=4
+				Object.Value0=0
+			else
+				Object.Value0++
+			endif
+		endif
+		break
+	case 4
+		Object.Value0++
+		if Object.Value0==12
+			Object.Value0=0
+			Object.Frame++
+		endif
+		if Object.Frame>3
+			Object.Frame=0
+		endif
+		if Object.Direction==FACING_LEFT
+			Object.State=0
+			Object.Frame=4
+			Object.Value0=0
+		endif
+		break
+	case 5
+		Object.Value0++
+		if Object.Value0==12
+			Object.Value0=0
+			Object.Frame++
+		endif
+		if Object.Frame>3
+			Object.Frame=0
+		endif
+		if Object.Direction==FACING_RIGHT
+			Object.State=0
+			Object.Frame=4
+			Object.Value0=0
+		endif
+		break
+
+	endswitch
+	Object.Value6++
+	if Object.State==7
+		if Object.Value6>15
+			CreateTempObject(TypeName[LoveHeart],0,Object.XPos,Object.YPos)
+			Object[TempObjectPos].iYPos-=6
+			Object[TempObjectPos].InkEffect=2
+			Object[TempObjectPos].Alpha=255
+			Object.Value6=0
+		endif
+	else
+		if Object.Value6>41
+			CreateTempObject(TypeName[LoveHeart],0,Object.XPos,Object.YPos)
+			Object[TempObjectPos].iYPos-=6
+			Object[TempObjectPos].InkEffect=2
+			Object[TempObjectPos].Alpha=255
+			Object.Value6=0
+		endif
+	endif
+	if Object.Value5==0
+		ObjectTileGrip(0,0,19,0)
+	else
+		Object.Value2+=16384
+		Object.YPos+=Object.Value2
+		ObjectTileCollision(0,0,19,0)
+		if CheckResult==1
+			Object.Value2=0
+			Object.Value5=0
+		endif
+	endif
+endsub
+
+
+sub ObjectDraw
+	DrawSpriteFX(Object.Frame,FX_FLIP,Object.XPos,Object.YPos)
+endsub
+
+
+sub ObjectStartup
+	LoadSpriteSheet("R7/Objects2.gif")
+	SpriteFrame(-11,-20,22,40,34,208)
+	SpriteFrame(-11,-20,22,40,57,208)
+	SpriteFrame(-11,-20,22,40,34,208)
+	SpriteFrame(-11,-20,22,40,126,167)
+	SpriteFrame(-15,-20,30,40,68,167)
+	SpriteFrame(-10,-20,21,40,149,109)
+	SpriteFrame(-13,-20,26,40,99,167)
+	SpriteFrame(-10,-20,21,40,149,109)
+	SpriteFrame(-12,-20,24,40,181,208)
+	SpriteFrame(-13,-20,26,40,80,208)
+	SpriteFrame(-12,-20,24,40,107,208)
+endsub
+
+sub RSDK
+	LoadSpriteSheet("Global/Display.gif")
+	SetEditorIcon(Icon0,SingleIcon,-16,-16,32,32,1,143)
+endsub

@@ -1,0 +1,121 @@
+//------------Sonic CD Sega Script-------------//
+//--------Scripted by Christian Whitehead 'The Taxman'--------//
+//-------Unpacked By Rubberduckycooly's Script Unpacker-------//
+
+//-------Aliases-------//
+#alias 1: TYPE_SEGA
+
+
+sub ObjectMain
+	switch Object.State
+	case 0
+		ReadSaveRAM()
+		if SaveRAM[32]==1
+			Engine.BGMVolume=SaveRAM[33]
+			Engine.SFXVolume=SaveRAM[34]
+#platform: Use_Haptics
+			Engine.HapticsEnabled=SaveRAM[40]
+#endplatform
+		endif
+#platform: Mobile
+		Options.Soundtrack=SaveRAM[38]
+		Object.State=1
+		Object.Value0=384
+		Object.Alpha=255
+		Object.InkEffect=2
+		SetScreenFade(0,0,0,255)
+#endplatform
+		Object.iXPos=Screen.CenterX
+#platform: Standard
+		Object.Type=TypeName[Sonic]
+		EngineCallback(0)
+#endplatform
+#platform: Mobile
+		Engine.State=5
+#endplatform
+		break
+	case 1
+		if Object.Value0>0
+			Object.Value0-=8
+		else
+			if Engine.OnlineActive<2
+				Object.State=2
+			endif
+		endif
+		SetScreenFade(0,0,0,Object.Value0)
+		break
+	case 2
+		Object.Value0++
+		if Object.Value0==160
+			Object.Value0=0
+			Object.State=3
+		endif
+		if Object.Value0==2
+			PlayStageSfx(0,0)
+		endif
+		break
+	case 3
+#platform: Mobile
+		if Object.Value1<256
+			Object.Value1+=8
+		endif
+#endplatform
+		if Object.Alpha>7
+			Object.Alpha-=8
+		else
+			if Object.Value0==16
+				ResetObjectEntity(Object.EntityNo,TypeName[CWLogo],0,Object.XPos,Object.YPos)
+				Object.InkEffect=2
+				Object.Alpha=0
+				Object.Value0=0
+#platform: Mobile
+				Object.Value3=96
+#endplatform
+			else
+				Object.Value0++
+			endif
+		endif
+		endswitch
+#platform: Mobile
+		if Engine.PlatformID==RETRO_WP7
+			if KeyPress.ButtonB==1
+				EngineCallback(7)
+			endif
+		endif
+#endplatform
+endsub
+
+
+
+sub ObjectDraw
+	DrawRect(0,0,Screen.XSize,Screen.YSize,0,0,96,255)
+#platform: Standard
+	if Object.Alpha>8
+		DrawSpriteFX(0,FX_INK,Object.XPos,Object.YPos)
+	endif
+#endplatform
+
+#platform: Mobile
+	Object.Scale=128
+	DrawSpriteFX(0,FX_SCALE,Object.XPos,Object.YPos)
+	DrawRect(0,0,Screen.XSize,Screen.YSize,0,0,96,Object.Value1)
+#endplatform
+endsub
+
+
+sub ObjectStartup
+#platform: Standard
+	LoadSpriteSheet("Title/Title.gif")
+	SpriteFrame(-49,-16,98,31,106,1)
+#endplatform
+
+#platform: Mobile
+	LoadSpriteSheet("Title/Sega.gif")
+	SpriteFrame(-255,-87,510,174,1,1)
+#endplatform
+endsub
+
+sub RSDK
+	LoadSpriteSheet("Global/Display.gif")
+	SetEditorIcon(Icon0,SingleIcon,-16,-16,32,32,1,143)
+endsub
