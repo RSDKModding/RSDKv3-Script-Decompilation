@@ -37,19 +37,17 @@ sub ObjectDraw
 		TempValue0+=Object.CharPos
 		if Object.TextPos>TempValue0
 			Object.TextPos-=8
-#platform: Mobile
 		else
 			if Object.BarPos==0
 				Object.State=2
 			endif
-#endplatform
 		endif
 		if Object.BarPos<0
 			Object.BarPos+=8
-#platform: Standard
 		else
-			Object.State=2
-#endplatform
+			if Screen.CenterX<200
+				Object.State=2
+			endif
 		endif
 		break
 	case 2
@@ -60,7 +58,13 @@ sub ObjectDraw
 		endif
 		break
 	case 3
-		if Object.TextPos<408
+		TempValue0=400
+		if Screen.CenterX>200
+			TempValue0=Screen.CenterX
+			TempValue0*=2
+			TempValue0-=16
+		endif
+		if Object.TextPos<TempValue0
 			Object.TextPos+=16
 			Object.BarPos-=16
 		else
@@ -113,19 +117,21 @@ sub ObjectStartup
 	Object[20].FadeA=384
 	Object[20].Priority=1
 	Object[20].DrawOrder=6
-	Object[20].CharPos=Screen.CenterX
-	Object[20].CharPos-=160
 	Object[20].BarPos=-216
 	Object[20].TextPos=336
+	Object[20].CharPos=Screen.CenterX
+	Object[20].CharPos-=160
 #platform: Standard
+	Object[20].TextPos+=8
+#endplatform
+	if Screen.CenterX<174
+		Object[20].TextPos+=8
+	endif
 	TempValue0=Screen.CenterX
 	while TempValue0>200
-		Object[20].CharPos-=8
-		Object[20].BarPos-=32
-		Object[20].TextPos+=24
-		TempValue0-=12
+		Object[20].BarPos-=8
+		TempValue0-=8
 	loop
-#endplatform
 	if Object[20].CharPos>3
 		Object[20].CharPos-=4
 	endif

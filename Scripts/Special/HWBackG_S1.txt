@@ -84,21 +84,20 @@ sub ObjectDraw
 	VertexBuffer[ArrayPos0].u=Object.Value2
 	VertexBuffer[ArrayPos0].v=TempValue1
 	VertexBuffer[ArrayPos0].x=TempValue3
-#platform: Standard
-	ArrayPos0-=15
-#endplatform
-#platform: Mobile
-	ArrayPos0+=3
-	VertexBuffer[ArrayPos0].u=Object.Value1
-	VertexBuffer[ArrayPos0].v=TempValue1
-	VertexBuffer[ArrayPos0].x=TempValue3
-	ArrayPos0++
-	TempValue3+=128
-	VertexBuffer[ArrayPos0].u=Object.Value2
-	VertexBuffer[ArrayPos0].v=TempValue1
-	VertexBuffer[ArrayPos0].x=TempValue3
-	ArrayPos0-=19
-#endplatform
+	if Screen.CenterX<=200
+		ArrayPos0-=15
+	else
+		ArrayPos0+=3
+		VertexBuffer[ArrayPos0].u=Object.Value1
+		VertexBuffer[ArrayPos0].v=TempValue1
+		VertexBuffer[ArrayPos0].x=TempValue3
+		ArrayPos0++
+		TempValue3+=128
+		VertexBuffer[ArrayPos0].u=Object.Value2
+		VertexBuffer[ArrayPos0].v=TempValue1
+		VertexBuffer[ArrayPos0].x=TempValue3
+		ArrayPos0-=19
+	endif
 	TempValue1+=128
 	Sin(TempValue3,TempValue4)
 	TempValue3>>=2
@@ -147,23 +146,22 @@ sub ObjectDraw
 	VertexBuffer[ArrayPos0].u=Object.Value2
 	VertexBuffer[ArrayPos0].v=TempValue1
 	VertexBuffer[ArrayPos0].x=TempValue3
-#platform: Standard
-	3DScene.NoVertices=20
-	3DScene.NoFaces=5
-#endplatform
-#platform: Mobile
-	ArrayPos0+=3
-	VertexBuffer[ArrayPos0].u=Object.Value1
-	VertexBuffer[ArrayPos0].v=TempValue1
-	VertexBuffer[ArrayPos0].x=TempValue3
-	ArrayPos0++
-	TempValue3+=128
-	VertexBuffer[ArrayPos0].u=Object.Value2
-	VertexBuffer[ArrayPos0].v=TempValue1
-	VertexBuffer[ArrayPos0].x=TempValue3
-	3DScene.NoVertices=24
-	3DScene.NoFaces=6
-#endplatform
+	if Screen.CenterX<=200
+		3DScene.NoVertices=20
+		3DScene.NoFaces=5
+	else
+		ArrayPos0+=3
+		VertexBuffer[ArrayPos0].u=Object.Value1
+		VertexBuffer[ArrayPos0].v=TempValue1
+		VertexBuffer[ArrayPos0].x=TempValue3
+		ArrayPos0++
+		TempValue3+=128
+		VertexBuffer[ArrayPos0].u=Object.Value2
+		VertexBuffer[ArrayPos0].v=TempValue1
+		VertexBuffer[ArrayPos0].x=TempValue3
+		3DScene.NoVertices=24
+		3DScene.NoFaces=6
+	endif
 	Draw3DScene()
 endsub
 
@@ -182,12 +180,11 @@ sub ObjectStartup
 	Object[31].Value4=128
 	ArrayPos0=0
 	TempValue0=0
-#platform: Standard
-	while ArrayPos0<5
-#endplatform
-#platform: Mobile
-	while ArrayPos0<6
-#endplatform
+	TempValue1=5
+	if Screen.CenterX>200
+		TempValue1++
+	endif
+	while ArrayPos0<TempValue1
 		FaceBuffer[ArrayPos0].a=TempValue0
 		TempValue0++
 		FaceBuffer[ArrayPos0].b=TempValue0
@@ -200,12 +197,11 @@ sub ObjectStartup
 		ArrayPos0++
 	loop
 	ArrayPos0=0
-#platform: Standard
-	while ArrayPos0<20
-#endplatform
-#platform: Mobile
-	while ArrayPos0<24
-#endplatform
+	TempValue1=20
+	if Screen.CenterX>200
+		TempValue1+=4
+	endif
+	while ArrayPos0<TempValue1
 		VertexBuffer[ArrayPos0].z=1
 		ArrayPos0++
 	loop
@@ -231,16 +227,15 @@ sub ObjectStartup
 		VertexBuffer[ArrayPos0].y=TempValue0
 		ArrayPos0++
 		VertexBuffer[ArrayPos0].y=TempValue0
-#platform: Standard
-		ArrayPos0-=15
-#endplatform
-#platform: Mobile
-		ArrayPos0+=3
-		VertexBuffer[ArrayPos0].y=TempValue0
-		ArrayPos0++
-		VertexBuffer[ArrayPos0].y=TempValue0
-		ArrayPos0-=19
-#endplatform
+		if Screen.CenterX<=200
+			ArrayPos0-=15
+		else
+			ArrayPos0+=3
+			VertexBuffer[ArrayPos0].y=TempValue0
+			ArrayPos0++
+			VertexBuffer[ArrayPos0].y=TempValue0
+			ArrayPos0-=19
+		endif
 		TempValue0+=128
 		VertexBuffer[ArrayPos0].y=TempValue0
 		ArrayPos0++
@@ -261,12 +256,12 @@ sub ObjectStartup
 		VertexBuffer[ArrayPos0].y=TempValue0
 		ArrayPos0++
 		VertexBuffer[ArrayPos0].y=TempValue0
-#platform: Mobile
-		ArrayPos0+=3
-		VertexBuffer[ArrayPos0].y=TempValue0
-		ArrayPos0++
-		VertexBuffer[ArrayPos0].y=TempValue0
-#endplatform
+		if Screen.CenterX>200
+			ArrayPos0+=3
+			VertexBuffer[ArrayPos0].y=TempValue0
+			ArrayPos0++
+			VertexBuffer[ArrayPos0].y=TempValue0
+		endif
 		ArrayPos0++
 		CopyPalette(0,1)
 		LoadPalette("SS1H_PalCycle.act",1,208,0,32)
