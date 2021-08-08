@@ -34,8 +34,8 @@ function OptionsMenuH_Function6
 			DrawSpriteScreenFX(TempValue0,FX_INK,Object.XPos,Object.YPos)
 		endif
 		break
-
 	endswitch
+	
 	DrawSpriteScreenFX(8,FX_INK,Object.XPos,Object.YPos)
 	DrawSpriteScreenFX(ArrayPos0,FX_INK,Object.XPos,Object.YPos)
 #endplatform
@@ -179,7 +179,6 @@ sub ObjectMain
 					break
 				case 3
 					break
-
 				endswitch
 				PlaySfx(27,0)
 			endif
@@ -207,7 +206,9 @@ sub ObjectMain
 					SaveRAM[33]=100
 					SaveRAM[34]=100
 					SaveRAM[35]=0
+#platform: Use_Haptics
 					SaveRAM[40]=1
+#endplatform
 				endif
 				Object.State=4
 				Object.YPos=40
@@ -225,7 +226,6 @@ sub ObjectMain
 				Object.YPos+=Screen.CenterY
 				Object.YPos-=87
 				break
-
 			endswitch
 		endif
 		break
@@ -249,7 +249,6 @@ sub ObjectMain
 			case 3
 				Engine.State=RESET_GAME
 				break
-
 			endswitch
 		endif
 		TempValue0=Object.Value0
@@ -368,6 +367,7 @@ sub ObjectMain
 				endif
 				break
 			case 3
+#platform: Use_Haptics
 				if KeyPress.Left==1
 					SaveRAM[40]--
 					if SaveRAM[40]<0
@@ -383,8 +383,8 @@ sub ObjectMain
 					endif
 					PlaySfx(23,0)
 				endif
+#endplatform
 				break
-
 			endswitch
 			CheckTouchRect(0,0,Screen.XSize,Screen.YSize)
 			if CheckResult>-1
@@ -594,11 +594,13 @@ sub ObjectMain
 			else
 				if TempValue3<0
 					if Object[+4].Value1==9
+#platform: Use_Haptics
 						SaveRAM[40]=1
 						Engine.HapticsEnabled=1
 						PlaySfx(23,0)
-						Object[+4].Value1=-1
 						HapticEffect(30,0,0,0)
+#endplatform
+						Object[+4].Value1=-1
 					endif
 				else
 					if Object[+4].Value1==9
@@ -616,9 +618,11 @@ sub ObjectMain
 			else
 				if TempValue3<0
 					if Object[+4].Value1==10
+#platform: Use_Haptics
 						SaveRAM[40]=0
 						Engine.HapticsEnabled=0
 						PlaySfx(23,0)
+#endplatform
 						Object[+4].Value1=-1
 					endif
 				else
@@ -658,7 +662,9 @@ sub ObjectMain
 			Object.State=9
 			Object.Value0=248
 			Options.OriginalControls=SaveRAM[35]
+#platform: Use_Haptics
 			Engine.HapticsEnabled=SaveRAM[40]
+#endplatform
 			SaveRAM[32]=1
 			WriteSaveRAM()
 			PlayStageSfx(1,0)
@@ -811,7 +817,6 @@ sub ObjectMain
 #endplatform
 endsub
 
-
 sub ObjectDraw
 #platform: Mobile
 	switch Object.State
@@ -906,7 +911,6 @@ sub ObjectDraw
 				DrawSpriteScreenFX(35,FX_INK,TempValue0,132)
 				DrawSpriteScreenFX(43,FX_INK,TempValue0,167)
 				break
-
 			endswitch
 		else
 			DrawSpriteScreenFX(31,FX_INK,TempValue0,79)
@@ -1001,8 +1005,8 @@ sub ObjectStartup
 	case 5
 		LoadSpriteSheet("Menu/MenuGfx2_JP.gif")
 		break
-
 	endswitch
+	
 	if SaveRAM[32]==0
 		SaveRAM[33]=100
 		SaveRAM[34]=100
@@ -1071,7 +1075,7 @@ sub ObjectStartup
 	SpriteFrame(0,0,33,20,364,578)
 	SpriteFrame(0,0,33,20,398,578)
 	SpriteFrame(0,0,33,20,432,578)
-#platform: Mobile
+#endplatform
 endsub
 
 sub RSDK
