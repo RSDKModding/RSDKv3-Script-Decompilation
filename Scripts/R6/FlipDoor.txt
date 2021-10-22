@@ -7,15 +7,19 @@
 
 
 sub ObjectMain
+
 	if Object.Frame==0
 #platform: Mobile
 		if Player.ObjectInteraction==1
 #endplatform
 			PlayerObjectCollision(C_BOX,-4,-32,4,32)
 #platform: Mobile
+		endif
 #endplatform
 	endif
+
 	if Object.Direction==FACING_RIGHT
+
 		switch Object.State
 		case 0
 			Object.Frame=0
@@ -25,6 +29,7 @@ sub ObjectMain
 				PlayStageSfx(9,0)
 			endif
 			break
+
 		case 1
 			if Object.Value0<4
 				Object.Value0++
@@ -34,6 +39,7 @@ sub ObjectMain
 				Object.State=2
 			endif
 			break
+
 		case 2
 			Object.Frame=2
 			PlayerObjectCollision(C_TOUCH,-48,-32,64,64)
@@ -41,6 +47,7 @@ sub ObjectMain
 				Object.State=3
 			endif
 			break
+
 		case 3
 			if Object.Value0<4
 				Object.Value0++
@@ -52,7 +59,9 @@ sub ObjectMain
 			break
 
 		endswitch
+
 	else
+
 		switch Object.State
 		case 0
 			Object.Frame=0
@@ -62,6 +71,7 @@ sub ObjectMain
 				PlayStageSfx(9,0)
 			endif
 			break
+
 		case 1
 			if Object.Value0<4
 				Object.Value0++
@@ -71,6 +81,7 @@ sub ObjectMain
 				Object.State=2
 			endif
 			break
+
 		case 2
 			Object.Frame=2
 			PlayerObjectCollision(C_TOUCH,-64,-32,48,64)
@@ -78,6 +89,7 @@ sub ObjectMain
 				Object.State=3
 			endif
 			break
+
 		case 3
 			if Object.Value0<4
 				Object.Value0++
@@ -89,7 +101,9 @@ sub ObjectMain
 			break
 
 		endswitch
+
 	endif
+
 endsub
 
 
@@ -99,10 +113,15 @@ endsub
 
 
 sub ObjectStartup
+
 	LoadSpriteSheet("R6/Objects.gif")
+
+	// Sprite frames
 	SpriteFrame(-4,-32,8,64,230,1)
 	SpriteFrame(-4,-32,48,48,83,34)
 	SpriteFrame(-4,-32,64,8,132,34)
+
+	// Setup all FlipDoor objects
 	ArrayPos0=32
 	while ArrayPos0<1056
 		if Object[ArrayPos0].Type==TypeName[FlipDoor]
