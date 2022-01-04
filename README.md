@@ -1,18 +1,14 @@
-# Sonic-CD-2011-Script-Decompilation
+# Sonic CD 2011 Script Decompilation
 
-a full decompilation for the scripts in Sonic CD (2011)'s PC port
+A full decompilation for the scripts in Sonic CD's 2011 remake.
 
-- these scripts have been manually reverted back to what the original scripts could've looked like.
-- that means that:
-* function IDs have been recoverted back to function names
-* some function names have been given proper names
-* functions are in the proper order
-* default aliases have been re-added where possible
-* mobile/haptic code has been added into scripts via the use of `#platform:` markers
+These scripts have been manually reverted back to what the original scripts could've looked like. This means that:
+* Function IDs have been recoverted back to function names
+* Some function names have been given proper names
+* Functions are in the proper order
+* Default aliases have been re-added where possible
+* Mobile/Haptic code has been added into scripts via the use of `#platform:` markers
 
+To use these scripts in mods, extract the scripts folder to the exe's root directory: eg `[rootdir]/Scripts/` (if you're using an up-to-date version of the Steam mod loader, it will download and install these scripts automatically). Mods are only required to include the scripts that have been changed.
 
-
-
-- to use these scripts in mods, first extract the scripts folder to the exe's root directory: eg [rootdir]/Scripts/, then make sure the sonic CD mod loader is fully up to date, since the mod loader loads all default scripts from scripts/ so mods are only required to include the scripts that have been changed
-
-- for anyone curious about how Sonic CD's scripting language works, check out the handbook (Handbook.pdf) I made to help get people into using RSDKv3 & CD's scripting language
+For anyone curious about how Sonic CD's scripting language works, check out the handbook (RetroScript Handbook v3.pdf) we made to help get people into using RetroScript v3. We recommend downloading the handbook as it makes it easier to navigate.
