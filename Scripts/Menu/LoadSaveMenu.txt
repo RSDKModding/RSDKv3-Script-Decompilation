@@ -3,35 +3,142 @@
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
 //-------Aliases-------//
-#alias 6: TYPE_LOADSAVEMENU
+#alias Object.Value0:Object.FadeValue
+#alias Object.Value1:Object.SelectedOption //0-3 are saves, -1 is delete
+#alias Object.Direction:Object.ShowDeleteButton
+#alias Object[+4].Rotation:Object.SaveMode //0 means you aren't in delete mode, 2 means you are
+#alias Object[+4].Value1:DeleteConfirm.Highlight
+
+//Save Statuses
+//0 and 1 mean you aren't in delete mode, 2 and 3 mean you are
+//0 and 2 will make the option appear as if it weren't selected, 1 and 3 will make it appear as if it were
+#alias Object.Rotation:Object.SaveStatus //meant to be used with [+ArrayPos0]
+#alias Object.Rotation:Object.SaveOneStatus
+#alias Object[+1].Rotation:Object.SaveTwoStatus
+#alias Object[+2].Rotation:Object.SaveThreeStatus
+#alias Object[+3].Rotation:Object.SaveFourStatus
+
+//Save File Info
+#alias Object.Value3:Object.PlayerListPos
+#alias Object.Value6:Object.Lives
+#alias Object.Value5:Object.Score
+#alias Object.Value2:Object.StageListPos
+#alias Object.Value4:Object.TimeStones
+#alias Object.PropertyValue:Object.SpecialListPos
+#alias Object.Scale:Object.ScoreBonus
+#alias Object.Value7:Object.GoodFutureList
+
+//Delete Button
+#alias Object[+1].XPos:Delete.XPos
+#alias Object[+1].YPos:Delete.YPos
 
 // Function declarations
-#function LoadSaveMenu_Function2
-#function LoadSaveMenu_Function3
-#function LoadSaveMenu_Function4
-#function LoadSaveMenu_Function5
+#function LoadSaveMenu_DrawSaveFiles
+#function LoadSaveMenu_DrawDeleteNoSave
+#function LoadSaveMenu_CheckTouchSave
+#function LoadSaveMenu_SetShowDelete
 
-function LoadSaveMenu_Function2
-	switch Object[+ArrayPos0].Rotation
-	case 2
-		if Object[+ArrayPos0].Value2>0
+function LoadSaveMenu_DrawSaveFiles
+	switch Object[+ArrayPos0].SaveStatus
+	case 0 //normal mode
+		if ArrayPos0==Object.SelectedOption
+			DrawSpriteScreenFX(9,FX_INK,Object.XPos,Object.YPos)
+			TempValue0=Object[+ArrayPos0].StageListPos
+			if Object[+ArrayPos0].StageListPos>0 //Is save used?
+				TempValue0--
+				TempValue0/=10
+				if TempValue0>=8 //Is this a special stage?
+					TempValue0=8
+					TempValue1=Object[+ArrayPos0].SpecialListPos
+				else
+					TempValue2=TempValue0
+					TempValue2*=10
+					TempValue1=Object[+ArrayPos0].StageListPos
+					TempValue1--
+					TempValue1-=TempValue2
+					TempValue1>>=2
+				endif
+				TempValue0+=21
+				TempValue1+=67
+				DrawSpriteScreenFX(TempValue1,FX_INK,Object.XPos,Object.YPos)
+			else
+				TempValue0+=20 //New Game
+			endif
+			DrawSpriteScreenFX(TempValue0,FX_INK,Object.XPos,Object.YPos)
+		else
+			TempValue0=Object[+ArrayPos0].StageListPos
+			if Object[+ArrayPos0].StageListPos>0 //Is save used?
+				TempValue0--
+				TempValue0/=10
+				if TempValue0>=8 //Is this a special stage?
+					TempValue0=8
+					TempValue1=Object[+ArrayPos0].SpecialListPos
+				else
+					TempValue2=TempValue0
+					TempValue2*=10
+					TempValue1=Object[+ArrayPos0].StageListPos
+					TempValue1--
+					TempValue1-=TempValue2
+					TempValue1>>=2
+				endif
+				TempValue0+=11
+				TempValue1+=59
+				DrawSpriteScreenFX(TempValue1,FX_INK,Object.XPos,Object.YPos)
+			else
+				TempValue0+=10 //New Game
+			endif
+			DrawSpriteScreenFX(TempValue0,FX_INK,Object.XPos,Object.YPos)
+		endif
+		break
+	case 1 //normal selected
+		TempValue0=Object.FadeValue
+		TempValue0&=3
+		TempValue0>>=1
+		DrawSpriteScreenFX(9,FX_INK,Object.XPos,Object.YPos)
+		if TempValue0==0
+			TempValue0=Object[+ArrayPos0].StageListPos
+			if Object[+ArrayPos0].StageListPos>0 //Is save used?
+				TempValue0--
+				TempValue0/=10
+				if TempValue0>=8 //Is this a special stage?
+					TempValue0=8
+					TempValue1=Object[+ArrayPos0].SpecialListPos
+				else
+					TempValue2=TempValue0
+					TempValue2*=10
+					TempValue1=Object[+ArrayPos0].StageListPos
+					TempValue1--
+					TempValue1-=TempValue2
+					TempValue1>>=2
+				endif
+				TempValue0+=21
+				TempValue1+=67
+				DrawSpriteScreenFX(TempValue1,FX_INK,Object.XPos,Object.YPos)
+			else
+				TempValue0+=20 //New Game
+			endif
+			DrawSpriteScreenFX(TempValue0,FX_INK,Object.XPos,Object.YPos)
+		endif
+		break
+	case 2 //delete mode
+		if Object[+ArrayPos0].StageListPos>0 //Is save used?
 			Object.Alpha=64
 			DrawSpriteScreenFX(56,FX_INK,Object.XPos,Object.YPos)
 			Object.Alpha=255
 		endif
-		if ArrayPos0==Object.Value1
+		if ArrayPos0==Object.SelectedOption
 			DrawSpriteScreenFX(9,FX_INK,Object.XPos,Object.YPos)
-			TempValue0=Object[+ArrayPos0].Value2
-			if Object[+ArrayPos0].Value2>0
+			TempValue0=Object[+ArrayPos0].StageListPos
+			if Object[+ArrayPos0].StageListPos>0 //Is save used?
 				TempValue0--
 				TempValue0/=10
-				if TempValue0>=8
+				if TempValue0>=8 //Is this a special stage?
 					TempValue0=8
-					TempValue1=Object[+ArrayPos0].PropertyValue
+					TempValue1=Object[+ArrayPos0].SpecialListPos
 				else
 					TempValue2=TempValue0
 					TempValue2*=10
-					TempValue1=Object[+ArrayPos0].Value2
+					TempValue1=Object[+ArrayPos0].StageListPos
 					TempValue1--
 					TempValue1-=TempValue2
 					TempValue1>>=2
@@ -40,21 +147,21 @@ function LoadSaveMenu_Function2
 				TempValue1+=67
 				DrawSpriteScreenFX(TempValue1,FX_INK,Object.XPos,Object.YPos)
 			else
-				TempValue0+=20
+				TempValue0+=20 //New Game
 			endif
 			DrawSpriteScreenFX(TempValue0,FX_INK,Object.XPos,Object.YPos)
 		else
-			TempValue0=Object[+ArrayPos0].Value2
-			if Object[+ArrayPos0].Value2>0
+			TempValue0=Object[+ArrayPos0].StageListPos
+			if Object[+ArrayPos0].StageListPos>0 //Is save used?
 				TempValue0--
 				TempValue0/=10
-				if TempValue0>=8
+				if TempValue0>=8 //Is this a special stage?
 					TempValue0=8
-					TempValue1=Object[+ArrayPos0].PropertyValue
+					TempValue1=Object[+ArrayPos0].SpecialListPos
 				else
 					TempValue2=TempValue0
 					TempValue2*=10
-					TempValue1=Object[+ArrayPos0].Value2
+					TempValue1=Object[+ArrayPos0].StageListPos
 					TempValue1--
 					TempValue1-=TempValue2
 					TempValue1>>=2
@@ -63,81 +170,31 @@ function LoadSaveMenu_Function2
 				TempValue1+=59
 				DrawSpriteScreenFX(TempValue1,FX_INK,Object.XPos,Object.YPos)
 			else
-				TempValue0+=10
+				TempValue0+=10 //New Game
 			endif
 			DrawSpriteScreenFX(TempValue0,FX_INK,Object.XPos,Object.YPos)
 		endif
 		break
-	case 0
-		if ArrayPos0==Object.Value1
-			DrawSpriteScreenFX(9,FX_INK,Object.XPos,Object.YPos)
-			TempValue0=Object[+ArrayPos0].Value2
-			if Object[+ArrayPos0].Value2>0
-				TempValue0--
-				TempValue0/=10
-				if TempValue0>=8
-					TempValue0=8
-					TempValue1=Object[+ArrayPos0].PropertyValue
-				else
-					TempValue2=TempValue0
-					TempValue2*=10
-					TempValue1=Object[+ArrayPos0].Value2
-					TempValue1--
-					TempValue1-=TempValue2
-					TempValue1>>=2
-				endif
-				TempValue0+=21
-				TempValue1+=67
-				DrawSpriteScreenFX(TempValue1,FX_INK,Object.XPos,Object.YPos)
-			else
-				TempValue0+=20
-			endif
-			DrawSpriteScreenFX(TempValue0,FX_INK,Object.XPos,Object.YPos)
-		else
-			TempValue0=Object[+ArrayPos0].Value2
-			if Object[+ArrayPos0].Value2>0
-				TempValue0--
-				TempValue0/=10
-				if TempValue0>=8
-					TempValue0=8
-					TempValue1=Object[+ArrayPos0].PropertyValue
-				else
-					TempValue2=TempValue0
-					TempValue2*=10
-					TempValue1=Object[+ArrayPos0].Value2
-					TempValue1--
-					TempValue1-=TempValue2
-					TempValue1>>=2
-				endif
-				TempValue0+=11
-				TempValue1+=59
-				DrawSpriteScreenFX(TempValue1,FX_INK,Object.XPos,Object.YPos)
-			else
-				TempValue0+=10
-			endif
-			DrawSpriteScreenFX(TempValue0,FX_INK,Object.XPos,Object.YPos)
-		endif
-		break
-	case 3
+	case 3 //delete selected
 		Object.Alpha=64
 		DrawSpriteScreenFX(56,FX_INK,Object.XPos,Object.YPos)
 		Object.Alpha=255
-		TempValue0=Object.Value0
+		TempValue0=Object.FadeValue
 		TempValue0&=3
 		TempValue0>>=1
 		DrawSpriteScreenFX(9,FX_INK,Object.XPos,Object.YPos)
 		if TempValue0==0
-			TempValue0=Object[+ArrayPos0].Value2
-			if Object[+ArrayPos0].Value2>0
+			TempValue0=Object[+ArrayPos0].StageListPos
+			if Object[+ArrayPos0].StageListPos>0 //Is save used?
 				TempValue0--
 				TempValue0/=10
-				if TempValue0>=8
+				if TempValue0>=8 //Is this a special stage?
 					TempValue0=8
-					TempValue1=Object[+ArrayPos0].PropertyValue
+					TempValue1=Object[+ArrayPos0].SpecialListPos
 				else
 					TempValue2=TempValue0
 					TempValue2*=10
-					TempValue1=Object[+ArrayPos0].Value2
+					TempValue1=Object[+ArrayPos0].StageListPos
 					TempValue1--
 					TempValue1-=TempValue2
 					TempValue1>>=2
@@ -146,45 +203,15 @@ function LoadSaveMenu_Function2
 				TempValue1+=67
 				DrawSpriteScreenFX(TempValue1,FX_INK,Object.XPos,Object.YPos)
 			else
-				TempValue0+=20
-			endif
-			DrawSpriteScreenFX(TempValue0,FX_INK,Object.XPos,Object.YPos)
-		endif
-		break
-	case 1
-		TempValue0=Object.Value0
-		TempValue0&=3
-		TempValue0>>=1
-		DrawSpriteScreenFX(9,FX_INK,Object.XPos,Object.YPos)
-		if TempValue0==0
-			TempValue0=Object[+ArrayPos0].Value2
-			if Object[+ArrayPos0].Value2>0
-				TempValue0--
-				TempValue0/=10
-				if TempValue0>=8
-					TempValue0=8
-					TempValue1=Object[+ArrayPos0].PropertyValue
-				else
-					TempValue2=TempValue0
-					TempValue2*=10
-					TempValue1=Object[+ArrayPos0].Value2
-					TempValue1--
-					TempValue1-=TempValue2
-					TempValue1>>=2
-				endif
-				TempValue0+=21
-				TempValue1+=67
-				DrawSpriteScreenFX(TempValue1,FX_INK,Object.XPos,Object.YPos)
-			else
-				TempValue0+=20
+				TempValue0+=20 //New Game
 			endif
 			DrawSpriteScreenFX(TempValue0,FX_INK,Object.XPos,Object.YPos)
 		endif
 		break
 	endswitch
 	DrawSpriteScreenFX(8,FX_INK,Object.XPos,Object.YPos)
-	if Object[+ArrayPos0].Value2>0
-		TempValue0=Object[+ArrayPos0].Value3
+	if Object[+ArrayPos0].StageListPos>0 //Is save used?
+		TempValue0=Object[+ArrayPos0].PlayerListPos
 		TempValue0<<=1
 		TempValue0+=4
 		TempValue1=Object.AnimationTimer
@@ -195,7 +222,7 @@ function LoadSaveMenu_Function2
 		TempValue1=38
 		while TempValue0<7
 			TempValue2=TempValue1
-			GetBit(CheckResult,Object[+ArrayPos0].Value4,TempValue0)
+			GetBit(CheckResult,Object[+ArrayPos0].TimeStones,TempValue0)
 			if CheckResult==0
 				TempValue2+=7
 			endif
@@ -209,35 +236,35 @@ function LoadSaveMenu_Function2
 endfunction
 
 
-function LoadSaveMenu_Function3
-	if Object[+4].Rotation>1
-		if Object.Value1==4
-			DrawSpriteScreenXY(55,Object[+1].XPos,Object[+1].YPos)
+function LoadSaveMenu_DrawDeleteNoSave
+	if Object.SaveMode>1
+		if Object.SelectedOption==4
+			DrawSpriteScreenXY(55,Delete.XPos,Delete.YPos)
 		else
-			DrawSpriteScreenXY(54,Object[+1].XPos,Object[+1].YPos)
+			DrawSpriteScreenXY(54,Delete.XPos,Delete.YPos)
 		endif
 	else
-		if Object.Value1==4
-			DrawSpriteScreenXY(53,Object[+1].XPos,Object[+1].YPos)
+		if Object.SelectedOption==4
+			DrawSpriteScreenXY(53,Delete.XPos,Delete.YPos)
 		else
-			DrawSpriteScreenXY(52,Object[+1].XPos,Object[+1].YPos)
+			DrawSpriteScreenXY(52,Delete.XPos,Delete.YPos)
 		endif
 	endif
-	if Object.Direction==FACING_LEFT
-		if Object[+1].YPos>14
-			Object[+1].YPos-=2
-			DrawRect(Object[+1].XPos,32,64,18,96,96,128,255)
+	if Object.ShowDeleteButton==FACING_LEFT
+		if Delete.YPos>14
+			Delete.YPos-=2
+			DrawRect(Delete.XPos,32,64,18,96,96,128,255)
 		endif
 	else
-		if Object[+1].YPos<32
-			Object[+1].YPos+=2
+		if Delete.YPos<32
+			Delete.YPos+=2
 		endif
-		DrawRect(Object[+1].XPos,32,64,18,96,96,128,255)
+		DrawRect(Delete.XPos,32,64,18,96,96,128,255)
 	endif
 endfunction
 
 
-function LoadSaveMenu_Function4
+function LoadSaveMenu_CheckTouchSave
 	TempValue0*=40
 	TempValue0+=Screen.CenterY
 	TempValue0-=87
@@ -249,12 +276,12 @@ function LoadSaveMenu_Function4
 endfunction
 
 
-function LoadSaveMenu_Function5
-	Object.Direction=FACING_RIGHT
+function LoadSaveMenu_SetShowDelete
+	Object.ShowDeleteButton=FACING_RIGHT
 	ArrayPos0=0
 	while ArrayPos0<4
-		if Object[+ArrayPos0].Value2>0
-			Object.Direction=FACING_LEFT
+		if Object[+ArrayPos0].StageListPos>0 //Is save used?
+			Object.ShowDeleteButton=FACING_LEFT
 		endif
 		ArrayPos0++
 	loop
@@ -263,55 +290,55 @@ endfunction
 
 sub ObjectMain
 	switch Object.State
-	case 0
+	case 0 //setup
 #platform: Mobile
 		if Options.PhysicalControls==0
-			Object.Value1=-1
+			Object.SelectedOption=-1
 		endif
 #endplatform
 		Object.XPos=Screen.CenterX
 		Object.XPos-=126
-		if Object.Value0==0
-			CallFunction(LoadSaveMenu_Function5)
+		if Object.FadeValue==0
+			CallFunction(LoadSaveMenu_SetShowDelete)
 			ArrayPos0=0
 			ArrayPos1=0
 			while ArrayPos0<4
-				Object[+ArrayPos0].Value3=SaveRAM[ArrayPos1]
+				Object[+ArrayPos0].PlayerListPos=SaveRAM[ArrayPos1]
 				ArrayPos1++
-				Object[+ArrayPos0].Value6=SaveRAM[ArrayPos1]
+				Object[+ArrayPos0].Lives=SaveRAM[ArrayPos1]
 				ArrayPos1++
-				Object[+ArrayPos0].Value5=SaveRAM[ArrayPos1]
+				Object[+ArrayPos0].Score=SaveRAM[ArrayPos1]
 				ArrayPos1++
-				Object[+ArrayPos0].Value2=SaveRAM[ArrayPos1]
+				Object[+ArrayPos0].StageListPos=SaveRAM[ArrayPos1]
 				ArrayPos1++
-				Object[+ArrayPos0].Value4=SaveRAM[ArrayPos1]
+				Object[+ArrayPos0].TimeStones=SaveRAM[ArrayPos1]
 				ArrayPos1++
-				Object[+ArrayPos0].PropertyValue=SaveRAM[ArrayPos1]
+				Object[+ArrayPos0].SpecialListPos=SaveRAM[ArrayPos1]
 				ArrayPos1++
-				Object[+ArrayPos0].Scale=SaveRAM[ArrayPos1]
+				Object[+ArrayPos0].ScoreBonus=SaveRAM[ArrayPos1]
 				ArrayPos1++
-				Object[+ArrayPos0].Value7=SaveRAM[ArrayPos1]
+				Object[+ArrayPos0].GoodFutureList=SaveRAM[ArrayPos1]
 				ArrayPos1++
-				if Object[+ArrayPos0].Value2>0
-					Object.Direction=FACING_LEFT
+				if Object[+ArrayPos0].StageListPos>0 //Is save used?
+					Object.ShowDeleteButton=FACING_LEFT
 				endif
 				ArrayPos0++
 			loop
 		endif
-		Object[+1].XPos=Screen.CenterX
-		Object[+1].XPos-=120
-		Object[+1].YPos=32
-		if Object.Value0<256
-			Object.Alpha=Object.Value0
-			Object.Value0+=6
+		Delete.XPos=Screen.CenterX
+		Delete.XPos-=120
+		Delete.YPos=32
+		if Object.FadeValue<256
+			Object.Alpha=Object.FadeValue
+			Object.FadeValue+=6
 		else
-			Object.Value0=0
+			Object.FadeValue=0
 			Object.Alpha=255
 			Object.State++
 		endif
 		break
-	case 1
-		if Object[+4].Rotation==3
+	case 1 //main save menu
+		if Object.SaveMode==3
 			Object.AnimationTimer++
 			Object.AnimationTimer&=63
 		else
@@ -320,34 +347,34 @@ sub ObjectMain
 #platform: Mobile
 		if Options.PhysicalControls==1
 #endplatform
-			if Object.Direction==FACING_RIGHT
+			if Object.ShowDeleteButton==FACING_RIGHT
 				if KeyPress.Up==1
-					Object.Value1--
+					Object.SelectedOption--
 					PlaySfx(23,0)
-					if Object.Value1<0
-						Object.Value1=3
+					if Object.SelectedOption<0
+						Object.SelectedOption=3
 					endif
 				endif
 				if KeyPress.Down==1
-					Object.Value1++
+					Object.SelectedOption++
 					PlaySfx(23,0)
-					if Object.Value1>3
-						Object.Value1=0
+					if Object.SelectedOption>3
+						Object.SelectedOption=0
 					endif
 				endif
 			else
 				if KeyPress.Up==1
-					Object.Value1--
+					Object.SelectedOption--
 					PlaySfx(23,0)
-					if Object.Value1<0
-						Object.Value1=4
+					if Object.SelectedOption<0
+						Object.SelectedOption=4
 					endif
 				endif
 				if KeyPress.Down==1
-					Object.Value1++
+					Object.SelectedOption++
 					PlaySfx(23,0)
-					if Object.Value1>4
-						Object.Value1=0
+					if Object.SelectedOption>4
+						Object.SelectedOption=0
 					endif
 				endif
 			endif
@@ -355,13 +382,13 @@ sub ObjectMain
 			CheckTouchRect(0,0,Screen.XSize,Screen.YSize)
 			if CheckResult>-1
 				Options.PhysicalControls=0
-				Object.Value1=-1
+				Object.SelectedOption=-1
 			endif
 		else
 			CheckTouchRect(0,0,Screen.XSize,Screen.YSize)
 			TempValue3=CheckResult
-			if Object.Direction==FACING_LEFT
-				TempValue0=Object[+1].XPos
+			if Object.ShowDeleteButton==FACING_LEFT
+				TempValue0=Delete.XPos
 				TempValue0-=4
 				TempValue1=TempValue0
 				TempValue1+=72
@@ -370,88 +397,88 @@ sub ObjectMain
 				CheckResult=-1
 			endif
 			if CheckResult>-1
-				Object.Value1=4
+				Object.SelectedOption=4
 			else
 				if TempValue3<0
-					if Object.Value1==4
+					if Object.SelectedOption==4
 						KeyPress.Start=1
 					endif
 				else
-					if Object.Value1==4
-						Object.Value1=-1
+					if Object.SelectedOption==4
+						Object.SelectedOption=-1
 					endif
 				endif
 			endif
 			TempValue0=0
-			CallFunction(LoadSaveMenu_Function4)
+			CallFunction(LoadSaveMenu_CheckTouchSave)
 			if CheckResult>-1
-				Object.Value1=0
+				Object.SelectedOption=0
 			else
 				if TempValue3<0
-					if Object.Value1==0
+					if Object.SelectedOption==0
 						KeyPress.Start=1
 					endif
 				else
-					if Object.Value1==0
-						Object.Value1=-1
+					if Object.SelectedOption==0
+						Object.SelectedOption=-1
 					endif
 				endif
 			endif
 			TempValue0=1
-			CallFunction(LoadSaveMenu_Function4)
+			CallFunction(LoadSaveMenu_CheckTouchSave)
 			if CheckResult>-1
-				Object.Value1=1
+				Object.SelectedOption=1
 			else
 				if TempValue3<0
-					if Object.Value1==1
+					if Object.SelectedOption==1
 						KeyPress.Start=1
 					endif
 				else
-					if Object.Value1==1
-						Object.Value1=-1
+					if Object.SelectedOption==1
+						Object.SelectedOption=-1
 					endif
 				endif
 			endif
 			TempValue0=2
-			CallFunction(LoadSaveMenu_Function4)
+			CallFunction(LoadSaveMenu_CheckTouchSave)
 			if CheckResult>-1
-				Object.Value1=2
+				Object.SelectedOption=2
 			else
 				if TempValue3<0
-					if Object.Value1==2
+					if Object.SelectedOption==2
 						KeyPress.Start=1
 					endif
 				else
-					if Object.Value1==2
-						Object.Value1=-1
+					if Object.SelectedOption==2
+						Object.SelectedOption=-1
 					endif
 				endif
 			endif
 			TempValue0=3
-			CallFunction(LoadSaveMenu_Function4)
+			CallFunction(LoadSaveMenu_CheckTouchSave)
 			if CheckResult>-1
-				Object.Value1=3
+				Object.SelectedOption=3
 			else
 				if TempValue3<0
-					if Object.Value1==3
+					if Object.SelectedOption==3
 						KeyPress.Start=1
 					endif
 				else
-					if Object.Value1==3
-						Object.Value1=-1
+					if Object.SelectedOption==3
+						Object.SelectedOption=-1
 					endif
 				endif
 			endif
 			CallFunction(MenuHeading_Function0)
 			if KeyPress.Up==1
-				Object.Value1=3
+				Object.SelectedOption=3
 				Options.PhysicalControls=1
 			endif
 			if KeyPress.Down==1
-				if Object.Direction==FACING_RIGHT
-					Object.Value1=0
+				if Object.ShowDeleteButton==FACING_RIGHT
+					Object.SelectedOption=0
 				else
-					Object.Value1=4
+					Object.SelectedOption=4
 				endif
 				Options.PhysicalControls=1
 			endif
@@ -459,7 +486,7 @@ sub ObjectMain
 #endplatform
 		CheckResult=0
 #platform: Mobile
-		if Object.Value1>-1
+		if Object.SelectedOption>-1
 #endplatform		 
 			if KeyPress.Start==1
 				CheckResult=1
@@ -471,15 +498,15 @@ sub ObjectMain
 		endif
 #endplatform
 		if CheckResult==1
-			if Object.Value1<4
-				switch Object[+4].Rotation
+			if Object.SelectedOption<4
+				switch Object.SaveMode
 				case 0
-					Object.Direction=FACING_RIGHT
-					ArrayPos0=Object.Value1
-					Object[+ArrayPos0].Rotation=1
+					Object.ShowDeleteButton=FACING_RIGHT
+					ArrayPos0=Object.SelectedOption
+					Object[+ArrayPos0].SaveStatus=1
 					Object.State++
 					PlaySfx(27,0)
-					if Object[+ArrayPos0].Value2>0
+					if Object[+ArrayPos0].StageListPos>0 //Is save used?
 						StopMusic()
 					else
 						if Options.TailsUnlocked==2
@@ -488,58 +515,58 @@ sub ObjectMain
 					endif
 					break
 				case 2
-					ArrayPos0=Object.Value1
-					if Object[+ArrayPos0].Value2>0
-						Object.Direction=FACING_RIGHT
+					ArrayPos0=Object.SelectedOption
+					if Object[+ArrayPos0].StageListPos>0 //Is save used?
+						Object.ShowDeleteButton=FACING_RIGHT
 						Object.State=13
-						Object.Rotation=0
-						Object[+1].Rotation=0
-						Object[+2].Rotation=0
-						Object[+3].Rotation=0
-						Object[+ArrayPos0].Rotation=3
-						Object[+4].Rotation=0
+						Object.SaveOneStatus=0
+						Object.SaveTwoStatus=0
+						Object.SaveThreeStatus=0
+						Object.SaveFourStatus=0
+						Object[+ArrayPos0].SaveStatus=3
+						Object.SaveMode=0
 						PlaySfx(9,0)
 					else
-						Object.Rotation=0
-						Object[+1].Rotation=0
-						Object[+2].Rotation=0
-						Object[+3].Rotation=0
-						Object[+4].Rotation=0
+						Object.SaveOneStatus=0
+						Object.SaveTwoStatus=0
+						Object.SaveThreeStatus=0
+						Object.SaveFourStatus=0
+						Object.SaveMode=0
 #platform: Mobile
 						if Options.PhysicalControls==0
-							Object.Value1=-1
+							Object.SelectedOption=-1
 						endif
 #endplatform
 					endif
 					break
 				endswitch
 			endif
-			if Object.Value1==4
+			if Object.SelectedOption==4
 				PlaySfx(9,0)
 				Object.State=12
 			endif
 		endif
 		if KeyPress.ButtonB==1
-			Object.Direction=FACING_RIGHT
-			Object.Value0=248
+			Object.ShowDeleteButton=FACING_RIGHT
+			Object.FadeValue=248
 			Object.State=11
 			PlayStageSfx(1,0)
 		endif
 		break
-	case 2
-		if Object.Value0<30
-			Object.Value0++
+	case 2 //save selected
+		if Object.FadeValue<30
+			Object.FadeValue++
 		else
-			Object.Value0=0
-			ArrayPos0=Object.Value1
-			Object[+ArrayPos0].Rotation=0
-			if Object[+ArrayPos0].Value2>0
+			Object.FadeValue=0
+			ArrayPos0=Object.SelectedOption
+			Object[+ArrayPos0].SaveStatus=0
+			if Object[+ArrayPos0].StageListPos>0 //Is save used?
 				Object.State=3
 			else
 				if Options.TailsUnlocked<2
 					Object.State=4
 					Object.YPos=40
-					Object.YPos*=Object.Value1
+					Object.YPos*=Object.SelectedOption
 					Object.YPos+=Screen.CenterY
 					Object.YPos-=87
 				else
@@ -548,27 +575,27 @@ sub ObjectMain
 			endif
 		endif
 		break
-	case 3
-		if Object.Value0<256
-			Object.Value0+=8
+	case 3 //load save game
+		if Object.FadeValue<256
+			Object.FadeValue+=8
 		else
-			ArrayPos0=Object.Value1
+			ArrayPos0=Object.SelectedOption
 			Options.GameMode=1
-			Options.SaveSlot=Object.Value1
-			Player.Lives=Object[+ArrayPos0].Value6
-			Player.Score=Object[+ArrayPos0].Value5
-			Player.ScoreBonus=Object[+ArrayPos0].Scale
-			Good_Future_List=Object[+ArrayPos0].Value7
+			Options.SaveSlot=Object.SelectedOption
+			Player.Lives=Object[+ArrayPos0].Lives
+			Player.Score=Object[+ArrayPos0].Score
+			Player.ScoreBonus=Object[+ArrayPos0].ScoreBonus
+			Good_Future_List=Object[+ArrayPos0].GoodFutureList
 			Good_Future_List&=65535
 			Good_Future_Count=0
 			Good_Future=0
-			MetalSonic_List=Object[+ArrayPos0].Value7
+			MetalSonic_List=Object[+ArrayPos0].GoodFutureList
 			MetalSonic_List>>=16
-			SpecialStage.TimeStones=Object[+ArrayPos0].Value4
-			SpecialStage.ListPos=Object[+ArrayPos0].PropertyValue
+			SpecialStage.TimeStones=Object[+ArrayPos0].TimeStones
+			SpecialStage.ListPos=Object[+ArrayPos0].SpecialListPos
 			LampPost.Check=0
 			Stage.ActiveList=REGULAR_STAGE
-			Stage.ListPos=Object[+ArrayPos0].Value2
+			Stage.ListPos=Object[+ArrayPos0].StageListPos
 			Stage.ListPos--
 			if Stage.ListPos<0
 				Stage.ListPos=0
@@ -602,12 +629,12 @@ sub ObjectMain
 					Good_Future_Count+=TempValue0
 				endif
 			endif
-			Stage.PlayerListPos=Object[+ArrayPos0].Value3
+			Stage.PlayerListPos=Object[+ArrayPos0].PlayerListPos
 			LoadStage()
 		endif
-		SetScreenFade(0,0,0,Object.Value0)
+		SetScreenFade(0,0,0,Object.FadeValue)
 		break
-	case 4
+	case 4 //new game selected
 		TempValue0=Screen.CenterY
 		TempValue0-=87
 		if Object.YPos>TempValue0
@@ -620,50 +647,50 @@ sub ObjectMain
 			Object.Alpha=0
 #platform: Mobile
 			if Options.PhysicalControls==0
-				ArrayPos0=Object.Value1
-				Object[+ArrayPos0].Value3=-1
+				ArrayPos0=Object.SelectedOption
+				Object[+ArrayPos0].PlayerListPos=-1
 			endif
 #endplatform
 		endif
 		break
-	case 5
-		if Object.Value0<256
-			Object.Alpha=Object.Value0
-			Object.Value0+=8
+	case 5 //transition from save select to character select
+		if Object.FadeValue<256
+			Object.Alpha=Object.FadeValue
+			Object.FadeValue+=8
 		else
-			Object.Value0=0
+			Object.FadeValue=0
 			Object.Alpha=255
 			Object.State++
 		endif
 		break
-	case 6
-		ArrayPos0=Object.Value1
+	case 6 //character select
+		ArrayPos0=Object.SelectedOption
 #platform: Mobile
 		if Options.PhysicalControls==1
 #endplatform
 			if KeyPress.Left==1
-				Object[+ArrayPos0].Value3--
+				Object[+ArrayPos0].PlayerListPos--
 				PlaySfx(23,0)
-				if Object[+ArrayPos0].Value3<0
-					Object[+ArrayPos0].Value3=1
+				if Object[+ArrayPos0].PlayerListPos<0
+					Object[+ArrayPos0].PlayerListPos=1
 				endif
 			endif
 			if KeyPress.Right==1
-				Object[+ArrayPos0].Value3++
+				Object[+ArrayPos0].PlayerListPos++
 				PlaySfx(23,0)
-				if Object[+ArrayPos0].Value3>1
-					Object[+ArrayPos0].Value3=0
+				if Object[+ArrayPos0].PlayerListPos>1
+					Object[+ArrayPos0].PlayerListPos=0
 				endif
 			endif
 #platform: Mobile
 			CheckTouchRect(0,0,Screen.XSize,Screen.YSize)
 			if CheckResult>-1
 				Options.PhysicalControls=0
-				Object[+ArrayPos0].Value3=-1
+				Object[+ArrayPos0].PlayerListPos=-1
 			endif
 		else
 			if Engine.Message==2
-				Object[+ArrayPos0].Value3=-1
+				Object[+ArrayPos0].PlayerListPos=-1
 			endif
 			CheckTouchRect(0,0,Screen.XSize,Screen.YSize)
 			TempValue3=CheckResult
@@ -673,15 +700,15 @@ sub ObjectMain
 			TempValue1-=8
 			CheckTouchRect(TempValue0,126,TempValue1,184)
 			if CheckResult>-1
-				Object[+ArrayPos0].Value3=0
+				Object[+ArrayPos0].PlayerListPos=0
 			else
 				if TempValue3<0
-					if Object[+ArrayPos0].Value3==0
+					if Object[+ArrayPos0].PlayerListPos==0
 						KeyPress.Start=1
 					endif
 				else
-					if Object[+ArrayPos0].Value3==0
-						Object[+ArrayPos0].Value3=-1
+					if Object[+ArrayPos0].PlayerListPos==0
+						Object[+ArrayPos0].PlayerListPos=-1
 					endif
 				endif
 			endif
@@ -691,15 +718,15 @@ sub ObjectMain
 			TempValue1+=56
 			CheckTouchRect(TempValue0,126,TempValue1,184)
 			if CheckResult>-1
-				Object[+ArrayPos0].Value3=1
+				Object[+ArrayPos0].PlayerListPos=1
 			else
 				if TempValue3<0
-					if Object[+ArrayPos0].Value3==1
+					if Object[+ArrayPos0].PlayerListPos==1
 						KeyPress.Start=1
 					endif
 				else
-					if Object[+ArrayPos0].Value3==1
-						Object[+ArrayPos0].Value3=-1
+					if Object[+ArrayPos0].PlayerListPos==1
+						Object[+ArrayPos0].PlayerListPos=-1
 					endif
 				endif
 			endif
@@ -707,26 +734,26 @@ sub ObjectMain
 			TempValue0-=76
 			CheckTouchRect(TempValue0,192,Screen.XSize,Screen.YSize)
 			if CheckResult>-1
-				Object[+ArrayPos0].Value3=2
+				Object[+ArrayPos0].PlayerListPos=2
 				Object[1].Value4=1
 			else
 				Object[1].Value4=0
 				if TempValue3<0
-					if Object[+ArrayPos0].Value3==2
+					if Object[+ArrayPos0].PlayerListPos==2
 						KeyPress.ButtonB=1
 					endif
 				else
-					if Object[+ArrayPos0].Value3==2
-						Object[+ArrayPos0].Value3=-1
+					if Object[+ArrayPos0].PlayerListPos==2
+						Object[+ArrayPos0].PlayerListPos=-1
 					endif
 				endif
 			endif
 			if KeyPress.Left==1
-				Object[+ArrayPos0].Value3=1
+				Object[+ArrayPos0].PlayerListPos=1
 				Options.PhysicalControls=1
 			endif
 			if KeyPress.Right==1
-				Object[+ArrayPos0].Value3=0
+				Object[+ArrayPos0].PlayerListPos=0
 				Options.PhysicalControls=1
 			endif
 		endif
@@ -744,39 +771,39 @@ sub ObjectMain
 				StopMusic()
 				Object.State++
 			else
-				if Object[+ArrayPos0].Value3==0
+				if Object[+ArrayPos0].PlayerListPos==0
 					PlaySfx(27,0)
 					StopMusic()
 					Object.State++
 				else
 #platform: Mobile
-					Object[+ArrayPos0].Value3=-1	
+					Object[+ArrayPos0].PlayerListPos=-1	
 #endplatform					
 				endif
 			endif
 		endif
 		if KeyPress.ButtonB==1
 			Object.State=9
-			Object.Value0=248
+			Object.FadeValue=248
 			PlayStageSfx(1,0)
 		endif
 		break
-	case 7
-		if Object.Value0<30
-			Object.Value0++
+	case 7 //character selected
+		if Object.FadeValue<30
+			Object.FadeValue++
 		else
-			Object.Value0=0
+			Object.FadeValue=0
 			Object.State++
 		endif
 		break
-	case 8
-		if Object.Value0<256
-			Object.Value0+=8
+	case 8 //start new game
+		if Object.FadeValue<256
+			Object.FadeValue+=8
 		else
-			ArrayPos0=Object.Value1
-			ArrayPos1=Object.Value1
+			ArrayPos0=Object.SelectedOption
+			ArrayPos1=Object.SelectedOption
 			ArrayPos1<<=3
-			SaveRAM[ArrayPos1]=Object[+ArrayPos0].Value3
+			SaveRAM[ArrayPos1]=Object[+ArrayPos0].PlayerListPos
 			ArrayPos1++
 			SaveRAM[ArrayPos1]=3
 			ArrayPos1++
@@ -793,7 +820,7 @@ sub ObjectMain
 			SaveRAM[ArrayPos1]=0
 			WriteSaveRAM()
 			Options.GameMode=1
-			Options.SaveSlot=Object.Value1
+			Options.SaveSlot=Object.SelectedOption
 			Player.Lives=3
 			Player.Score=0
 			Player.ScoreBonus=50000
@@ -809,13 +836,13 @@ sub ObjectMain
 			SpecialStage.ListPos=0
 			LampPost.Check=0
 			Stage.ActiveList=REGULAR_STAGE
-			ArrayPos0=Object.Value1
-			Stage.ListPos=Object[+ArrayPos0].Value2
+			ArrayPos0=Object.SelectedOption
+			Stage.ListPos=Object[+ArrayPos0].StageListPos
 			Stage.ListPos--
 			if Stage.ListPos<0
 				Stage.ListPos=0
 			endif
-			Stage.PlayerListPos=Object[+ArrayPos0].Value3
+			Stage.PlayerListPos=Object[+ArrayPos0].PlayerListPos
 			LoadStage()
 			if Stage.PlayerListPos==0
 #platform: Standard
@@ -831,19 +858,19 @@ sub ObjectMain
 #endplatform
 			endif
 		endif
-		SetScreenFade(0,0,0,Object.Value0)
+		SetScreenFade(0,0,0,Object.FadeValue)
 		break
-	case 9
-		if Object.Value0>0
-			Object.Alpha=Object.Value0
-			Object.Value0-=8
+	case 9 //fade out of character select
+		if Object.FadeValue>0
+			Object.Alpha=Object.FadeValue
+			Object.FadeValue-=8
 		else
 			Object.Alpha=0
 			Object.State++
 		endif
 		break
-	case 10
-		TempValue0=Object.Value1
+	case 10 //return to main save menu
+		TempValue0=Object.SelectedOption
 		TempValue0*=40
 		TempValue0+=Screen.CenterY
 		TempValue0-=87
@@ -856,23 +883,23 @@ sub ObjectMain
 		else
 #platform: Mobile
 			if Options.PhysicalControls==0
-				Object.Value1=-1
+				Object.SelectedOption=-1
 			endif
 #endplatform
 			Object.State=1
 			Object.Alpha=255
-			Object.Rotation=0
-			Object[+1].Rotation=0
-			Object[+2].Rotation=0
-			Object[+3].Rotation=0
-			Object[+4].Rotation=0
-			CallFunction(LoadSaveMenu_Function5)
+			Object.SaveOneStatus=0
+			Object.SaveTwoStatus=0
+			Object.SaveThreeStatus=0
+			Object.SaveFourStatus=0
+			Object.SaveMode=0
+			CallFunction(LoadSaveMenu_SetShowDelete)
 		endif
 		break
-	case 11
-		if Object.Value0>0
-			Object.Alpha=Object.Value0
-			Object.Value0-=8
+	case 11 //exit menu
+		if Object.FadeValue>0
+			Object.Alpha=Object.FadeValue
+			Object.FadeValue-=8
 		else
 			Object.Type=TypeName[BlankObject]
 			Object[-1].State=3
@@ -889,52 +916,52 @@ sub ObjectMain
 			Object[33].PropertyValue=5
 		endif
 		break
-	case 12
-		if Object.Value0<30
-			Object.Value0++
+	case 12 //toggle deletion mode
+		if Object.FadeValue<30
+			Object.FadeValue++
 		else
-			Object.Value0=0
+			Object.FadeValue=0
 			Object.State=1
 #platform: Standard		 
-			Object.Value1=0
+			Object.SelectedOption=0
 #endplatform
 #platform: Mobile
 			if Options.PhysicalControls==1
-				Object.Value1=0
+				Object.SelectedOption=0
 			else
-				Object.Value1=-1
+				Object.SelectedOption=-1
 			endif
 #endplatform
-			if Object[+4].Rotation>0
-				Object.Rotation=0
-				Object[+1].Rotation=0
-				Object[+2].Rotation=0
-				Object[+3].Rotation=0
-				Object[+4].Rotation=0
+			if Object.SaveMode>0
+				Object.SaveOneStatus=0
+				Object.SaveTwoStatus=0
+				Object.SaveThreeStatus=0
+				Object.SaveFourStatus=0
+				Object.SaveMode=0
 			else
-				Object.Rotation=2
-				Object[+1].Rotation=2
-				Object[+2].Rotation=2
-				Object[+3].Rotation=2
-				Object[+4].Rotation=2
+				Object.SaveOneStatus=2
+				Object.SaveTwoStatus=2
+				Object.SaveThreeStatus=2
+				Object.SaveFourStatus=2
+				Object.SaveMode=2
 			endif
 		endif
 		break
-	case 13
-		if Object.Value0<30
-			Object.Value0++
+	case 13 //select save in delete mode
+		if Object.FadeValue<30
+			Object.FadeValue++
 		else
-			Object.Value0=0
-			ArrayPos0=Object.Value1
-			Object[+ArrayPos0].Rotation=2
+			Object.FadeValue=0
+			ArrayPos0=Object.SelectedOption
+			Object[+ArrayPos0].SaveStatus=2
 			Object.State=14
 			Object.YPos=40
-			Object.YPos*=Object.Value1
+			Object.YPos*=Object.SelectedOption
 			Object.YPos+=Screen.CenterY
 			Object.YPos-=87
 		endif
 		break
-	case 14
+	case 14 //move save up for delete confirm menu
 		TempValue0=Screen.CenterY
 		TempValue0-=87
 		if Object.YPos>TempValue0
@@ -946,57 +973,57 @@ sub ObjectMain
 			Object.State++
 			Object.Alpha=0
 #platform: Standard	 
-			Object[+4].Value1=0
+			DeleteConfirm.Highlight=0
 #endplatform
 #platform: Mobile
 			if Options.PhysicalControls==1
-				Object[+4].Value1=0
+				DeleteConfirm.Highlight=0
 			else
-				Object[+4].Value1=-1
+				DeleteConfirm.Highlight=-1
 			endif
 #endplatform
 		endif
 		break
-	case 15
-		if Object.Value0<256
-			Object.Alpha=Object.Value0
-			Object.Value0+=8
+	case 15 //fade in to delete confirm menu
+		if Object.FadeValue<256
+			Object.Alpha=Object.FadeValue
+			Object.FadeValue+=8
 		else
-			Object.Value0=0
+			Object.FadeValue=0
 			Object.Alpha=255
 			Object.State++
 		endif
 		break
-	case 16
-		ArrayPos0=Object.Value1
+	case 16 //delete confirm menu
+		ArrayPos0=Object.SelectedOption
 		Object.AnimationTimer++
 		Object.AnimationTimer&=63
 #platform: Mobile
 		if Options.PhysicalControls==1
 #endplatform
 			if KeyPress.Up==1
-				Object[+4].Value1--
+				DeleteConfirm.Highlight--
 				PlaySfx(23,0)
-				if Object[+4].Value1<0
-					Object[+4].Value1=1
+				if DeleteConfirm.Highlight<0
+					DeleteConfirm.Highlight=1
 				endif
 			endif
 			if KeyPress.Down==1
-				Object[+4].Value1++
+				DeleteConfirm.Highlight++
 				PlaySfx(23,0)
-				if Object[+4].Value1>1
-					Object[+4].Value1=0
+				if DeleteConfirm.Highlight>1
+					DeleteConfirm.Highlight=0
 				endif
 			endif
 #platform: Mobile
 			CheckTouchRect(0,0,Screen.XSize,Screen.YSize)
 			if CheckResult>-1
 				Options.PhysicalControls=0
-				Object[+4].Value1=-1
+				DeleteConfirm.Highlight=-1
 			endif
 		else
 			if Engine.Message==2
-				Object[+4].Value1=-1
+				DeleteConfirm.Highlight=-1
 			endif
 			CheckTouchRect(0,0,Screen.XSize,Screen.YSize)
 			TempValue3=CheckResult
@@ -1006,29 +1033,29 @@ sub ObjectMain
 			TempValue1+=34
 			CheckTouchRect(TempValue0,110,TempValue1,135)
 			if CheckResult>-1
-				Object[+4].Value1=0
+				DeleteConfirm.Highlight=0
 			else
 				if TempValue3<0
-					if Object[+4].Value1==0
+					if DeleteConfirm.Highlight==0
 						KeyPress.Start=1
 					endif
 				else
-					if Object[+4].Value1==0
-						Object[+4].Value1=-1
+					if DeleteConfirm.Highlight==0
+						DeleteConfirm.Highlight=-1
 					endif
 				endif
 			endif
 			CheckTouchRect(TempValue0,144,TempValue1,169)
 			if CheckResult>-1
-				Object[+4].Value1=1
+				DeleteConfirm.Highlight=1
 			else
 				if TempValue3<0
-					if Object[+4].Value1==1
+					if DeleteConfirm.Highlight==1
 						KeyPress.Start=1
 					endif
 				else
-					if Object[+4].Value1==1
-						Object[+4].Value1=-1
+					if DeleteConfirm.Highlight==1
+						DeleteConfirm.Highlight=-1
 					endif
 				endif
 			endif
@@ -1036,26 +1063,26 @@ sub ObjectMain
 			TempValue0-=76
 			CheckTouchRect(TempValue0,192,Screen.XSize,Screen.YSize)
 			if CheckResult>-1
-				Object[+4].Value1=2
+				DeleteConfirm.Highlight=2
 				Object[1].Value4=1
 			else
 				Object[1].Value4=0
 				if TempValue3<0
-					if Object[+4].Value1==2
+					if DeleteConfirm.Highlight==2
 						KeyPress.ButtonB=1
 					endif
 				else
-					if Object[+4].Value1==2
-						Object[+4].Value1=-1
+					if DeleteConfirm.Highlight==2
+						DeleteConfirm.Highlight=-1
 					endif
 				endif
 			endif
 			if KeyPress.Up==1
-				Object[+4].Value1=1
+				DeleteConfirm.Highlight=1
 				Options.PhysicalControls=1
 			endif
 			if KeyPress.Down==1
-				Object[+4].Value1=0
+				DeleteConfirm.Highlight=0
 				Options.PhysicalControls=1
 			endif
 		endif
@@ -1063,7 +1090,7 @@ sub ObjectMain
 		CheckResult=0
 
 #platform: Mobile
-		if Object[+4].Value1>-1
+		if DeleteConfirm.Highlight>-1
 #endplatform		 
 			if KeyPress.Start==1
 				CheckResult=1
@@ -1075,7 +1102,7 @@ sub ObjectMain
 		endif
 #endplatform
 		if CheckResult==1
-			if Object[+4].Value1==0
+			if DeleteConfirm.Highlight==0
 				PlayStageSfx(0,0)
 			else
 				PlaySfx(27,0)
@@ -1084,32 +1111,34 @@ sub ObjectMain
 			Object.State++
 		endif
 		if KeyPress.ButtonB==1
-			ArrayPos0=Object.Value1
-			Object[+ArrayPos0].Rotation=0
+			ArrayPos0=Object.SelectedOption
+			Object[+ArrayPos0].SaveStatus=0
 			Object.State=18
-			Object.Value0=248
+			Object.FadeValue=248
 			Object.AnimationTimer=0
 			PlayStageSfx(1,0)
 		endif
 		break
-	case 17
-		if Object.Value0<30
-			Object.Value0++
+	case 17 //delete save file
+		if Object.FadeValue<30
+			Object.FadeValue++
 		else
 			Object.State=18
-			Object.Value0=248
-			ArrayPos0=Object.Value1
-			Object[+ArrayPos0].Rotation=0
-			if Object[+4].Value1==0
-				Object[+ArrayPos0].Value3=0
-				Object[+ArrayPos0].Value6=3
-				Object[+ArrayPos0].Value5=0
-				Object[+ArrayPos0].Value2=0
-				Object[+ArrayPos0].Value4=0
-				Object[+ArrayPos0].PropertyValue=0
-				Object[+ArrayPos0].Scale=50000
-				Object[+ArrayPos0].Value7=0
-				ArrayPos1=Object.Value1
+			Object.FadeValue=248
+			ArrayPos0=Object.SelectedOption
+			Object[+ArrayPos0].SaveStatus=0
+			if DeleteConfirm.Highlight==0
+				//delete this save in the menu
+				Object[+ArrayPos0].PlayerListPos=0
+				Object[+ArrayPos0].Lives=3
+				Object[+ArrayPos0].Score=0
+				Object[+ArrayPos0].StageListPos=0
+				Object[+ArrayPos0].TimeStones=0
+				Object[+ArrayPos0].SpecialListPos=0
+				Object[+ArrayPos0].ScoreBonus=50000
+				Object[+ArrayPos0].GoodFutureList=0
+				//now delete it in saveram
+				ArrayPos1=Object.SelectedOption
 				ArrayPos1<<=3
 				SaveRAM[ArrayPos1]=0
 				ArrayPos1++
@@ -1130,10 +1159,10 @@ sub ObjectMain
 			WriteSaveRAM()
 		endif
 		break
-	case 18
-		if Object.Value0>0
-			Object.Alpha=Object.Value0
-			Object.Value0-=8
+	case 18 //fade out of delete confirm menu
+		if Object.FadeValue>0
+			Object.Alpha=Object.FadeValue
+			Object.FadeValue-=8
 		else
 			Object.Alpha=0
 			Object.State=10
@@ -1152,27 +1181,27 @@ sub ObjectDraw
 	case 11
 	case 13
 		if Object.State>0
-			CallFunction(LoadSaveMenu_Function3)
+			CallFunction(LoadSaveMenu_DrawDeleteNoSave)
 		endif
 		Object.YPos=Screen.CenterY
 		Object.YPos-=87
 		ArrayPos0=0
-		CallFunction(LoadSaveMenu_Function2)
+		CallFunction(LoadSaveMenu_DrawSaveFiles)
 		Object.YPos+=40
 		ArrayPos0++
-		CallFunction(LoadSaveMenu_Function2)
+		CallFunction(LoadSaveMenu_DrawSaveFiles)
 		Object.YPos+=40
 		ArrayPos0++
-		CallFunction(LoadSaveMenu_Function2)
+		CallFunction(LoadSaveMenu_DrawSaveFiles)
 		Object.YPos+=40
 		ArrayPos0++
-		CallFunction(LoadSaveMenu_Function2)
+		CallFunction(LoadSaveMenu_DrawSaveFiles)
 		break
 	case 4
 	case 14
-		CallFunction(LoadSaveMenu_Function3)
-		ArrayPos0=Object.Value1
-		CallFunction(LoadSaveMenu_Function2)
+		CallFunction(LoadSaveMenu_DrawDeleteNoSave)
+		ArrayPos0=Object.SelectedOption
+		CallFunction(LoadSaveMenu_DrawSaveFiles)
 		break
 	case 5
 	case 6
@@ -1182,8 +1211,8 @@ sub ObjectDraw
 		DrawSpriteScreenFX(30,FX_INK,Screen.CenterX,84)
 		TempValue0=Screen.CenterX
 		TempValue0-=32
-		ArrayPos0=Object.Value1
-		if Object[+ArrayPos0].Value3==0
+		ArrayPos0=Object.SelectedOption
+		if Object[+ArrayPos0].PlayerListPos==0
 			DrawSpriteScreenFX(31,FX_INK,TempValue0,136)
 			DrawSpriteScreenFX(36,FX_INK,TempValue0,164)
 			DrawSpriteScreenFX(33,FX_INK,TempValue0,136)
@@ -1192,7 +1221,7 @@ sub ObjectDraw
 			DrawSpriteScreenFX(34,FX_INK,TempValue0,164)
 		endif
 		TempValue0+=64
-		if Object[+ArrayPos0].Value3==1
+		if Object[+ArrayPos0].PlayerListPos==1
 			DrawSpriteScreenFX(32,FX_INK,TempValue0,136)
 			DrawSpriteScreenFX(37,FX_INK,TempValue0,164)
 			DrawSpriteScreenFX(33,FX_INK,TempValue0,136)
@@ -1201,17 +1230,17 @@ sub ObjectDraw
 			DrawSpriteScreenFX(35,FX_INK,TempValue0,164)
 		endif
 		Object.Alpha=255
-		CallFunction(LoadSaveMenu_Function2)
+		CallFunction(LoadSaveMenu_DrawSaveFiles)
 		break
 	case 7
 		DrawSpriteScreenFX(30,FX_INK,Screen.CenterX,84)
 		TempValue0=Screen.CenterX
 		TempValue0-=32
-		ArrayPos0=Object.Value1
-		TempValue1=Object.Value0
+		ArrayPos0=Object.SelectedOption
+		TempValue1=Object.FadeValue
 		TempValue1&=3
 		TempValue1>>=1
-		if Object[+ArrayPos0].Value3==0
+		if Object[+ArrayPos0].PlayerListPos==0
 			if TempValue1==0
 				DrawSpriteScreenFX(31,FX_INK,TempValue0,136)
 			endif
@@ -1222,7 +1251,7 @@ sub ObjectDraw
 			DrawSpriteScreenFX(34,FX_INK,TempValue0,164)
 		endif
 		TempValue0+=64
-		if Object[+ArrayPos0].Value3==1
+		if Object[+ArrayPos0].PlayerListPos==1
 			if TempValue1==0
 				DrawSpriteScreenFX(32,FX_INK,TempValue0,136)
 			endif
@@ -1233,63 +1262,63 @@ sub ObjectDraw
 			DrawSpriteScreenFX(35,FX_INK,TempValue0,164)
 		endif
 		Object.Alpha=255
-		CallFunction(LoadSaveMenu_Function2)
+		CallFunction(LoadSaveMenu_DrawSaveFiles)
 		break
 	case 12
-		TempValue0=Object.Value0
+		TempValue0=Object.FadeValue
 		TempValue0&=3
 		TempValue0>>=1
-		if Object.Rotation==2
+		if Object.SaveOneStatus==2
 			if TempValue0==0
-				DrawSpriteScreenXY(55,Object[+1].XPos,Object[+1].YPos)
+				DrawSpriteScreenXY(55,Delete.XPos,Delete.YPos)
 			else
-				DrawSpriteScreenXY(54,Object[+1].XPos,Object[+1].YPos)
+				DrawSpriteScreenXY(54,Delete.XPos,Delete.YPos)
 			endif
 		else
 			if TempValue0==0
-				DrawSpriteScreenXY(53,Object[+1].XPos,Object[+1].YPos)
+				DrawSpriteScreenXY(53,Delete.XPos,Delete.YPos)
 			else
-				DrawSpriteScreenXY(52,Object[+1].XPos,Object[+1].YPos)
+				DrawSpriteScreenXY(52,Delete.XPos,Delete.YPos)
 			endif
 		endif
 		Object.YPos=Screen.CenterY
 		Object.YPos-=87
 		ArrayPos0=0
-		CallFunction(LoadSaveMenu_Function2)
+		CallFunction(LoadSaveMenu_DrawSaveFiles)
 		Object.YPos+=40
 		ArrayPos0++
-		CallFunction(LoadSaveMenu_Function2)
+		CallFunction(LoadSaveMenu_DrawSaveFiles)
 		Object.YPos+=40
 		ArrayPos0++
-		CallFunction(LoadSaveMenu_Function2)
+		CallFunction(LoadSaveMenu_DrawSaveFiles)
 		Object.YPos+=40
 		ArrayPos0++
-		CallFunction(LoadSaveMenu_Function2)
+		CallFunction(LoadSaveMenu_DrawSaveFiles)
 		break
 	case 15
 	case 16
 	case 18
 		DrawSpriteScreenFX(57,FX_INK,Screen.CenterX,84)
-		if Object[+4].Value1==0
+		if DeleteConfirm.Highlight==0
 			DrawSpriteScreenFX(76,FX_INK,Screen.CenterX,112)
 		else
 			DrawSpriteScreenFX(75,FX_INK,Screen.CenterX,112)
 		endif
-		if Object[+4].Value1==1
+		if DeleteConfirm.Highlight==1
 			DrawSpriteScreenFX(78,FX_INK,Screen.CenterX,146)
 		else
 			DrawSpriteScreenFX(77,FX_INK,Screen.CenterX,146)
 		endif
-		ArrayPos0=Object.Value1
+		ArrayPos0=Object.SelectedOption
 		Object.Alpha=255
-		CallFunction(LoadSaveMenu_Function2)
+		CallFunction(LoadSaveMenu_DrawSaveFiles)
 		break
 	case 17
-		TempValue0=Object.Value0
+		TempValue0=Object.FadeValue
 		TempValue0&=3
 		TempValue0>>=1
 		DrawSpriteScreenFX(57,FX_INK,Screen.CenterX,84)
-		if Object[+4].Value1==0
+		if DeleteConfirm.Highlight==0
 			if TempValue0==0
 				DrawSpriteScreenFX(76,FX_INK,Screen.CenterX,112)
 			else
@@ -1298,7 +1327,7 @@ sub ObjectDraw
 		else
 			DrawSpriteScreenFX(75,FX_INK,Screen.CenterX,112)
 		endif
-		if Object[+4].Value1==1
+		if DeleteConfirm.Highlight==1
 			if TempValue0==0
 				DrawSpriteScreenFX(78,FX_INK,Screen.CenterX,146)
 			else
@@ -1307,9 +1336,9 @@ sub ObjectDraw
 		else
 			DrawSpriteScreenFX(77,FX_INK,Screen.CenterX,146)
 		endif
-		ArrayPos0=Object.Value1
+		ArrayPos0=Object.SelectedOption
 		Object.Alpha=255
-		CallFunction(LoadSaveMenu_Function2)
+		CallFunction(LoadSaveMenu_DrawSaveFiles)
 		break
 	endswitch
 endsub
