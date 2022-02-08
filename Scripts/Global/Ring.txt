@@ -8,78 +8,78 @@
 #alias Player.Value0:Player.Rings
 
 sub ObjectPlayerInteraction
-	if Player.State!=PlayerObject_Knockback
-		if Player.CollisionPlane==Object.PropertyValue
-			PlayerObjectCollision(C_TOUCH,-8,-8,8,8)
-			if CheckResult==1
-				Object.Type=TypeName[RingSparkle]
+	if Player.State != PlayerObject_Knockback
+		if Player.CollisionPlane == Object.PropertyValue
+			PlayerObjectCollision(C_TOUCH, -8, -8, 8, 8)
+			if CheckResult == 1
+				Object.Type = TypeName[RingSparkle]
 				Player.Rings++
-				if Player.Rings>999
-					Player.Rings=999
-				endif
-				if Player.Rings>=Ring.ExtraLife
-					if Options.GameMode!=2
+				if Player.Rings > 999
+					Player.Rings = 999
+				end if
+				if Player.Rings >= Ring.ExtraLife
+					if Options.GameMode != 2
 						Player.Lives++
-						if Stage.PlayerListPos==0
-							PlaySfx(20,0)
+						if Stage.PlayerListPos == 0
+							PlaySfx(20, 0)
 						else
-							PlaySfx(21,0)
-						endif
-					endif
-					Ring.ExtraLife+=100
-					if Ring.ExtraLife>300
-						Ring.ExtraLife=1000
-					endif
-					if Player.Rings>=200
-						if Stage.PlayerListPos==0
-							if Stage.DebugMode==0
-								SetAchievement(4,100)
-							endif
-						endif
-					endif
-				endif
-				if Ring.Pan==0
-					SetSfxAttributes(1,-1,-100)
-					Ring.Pan=1
+							PlaySfx(21, 0)
+						end if
+					end if
+					Ring.ExtraLife += 100
+					if Ring.ExtraLife > 300
+						Ring.ExtraLife = 1000
+					end if
+					if Player.Rings >= 200
+						if Stage.PlayerListPos == 0
+							if Stage.DebugMode == 0
+								SetAchievement(4, 100)
+							end if
+						end if
+					end if
+				end if
+				if Ring.Pan == 0
+					SetSfxAttributes(1, -1, -100)
+					Ring.Pan = 1
 				else
-					SetSfxAttributes(2,-1,100)
-					Ring.Pan=0
-				endif
-			endif
-		endif
-	endif
-endsub
+					SetSfxAttributes(2, -1, 100)
+					Ring.Pan = 0
+				end if
+			end if
+		end if
+	end if
+end sub
 
 
 sub ObjectDraw
 	DrawSprite(Ring.Frame)
-endsub
+end sub
 
 
 sub ObjectStartup
 	LoadSpriteSheet("Global/Items.gif")
-	ArrayPos0=32
-	while ArrayPos0<1056
-		if Object[ArrayPos0].Type==TypeName[Ring]
-			if Object[ArrayPos0].PropertyValue==0
-				Object[ArrayPos0].DrawOrder=4
+	ArrayPos0 = 32
+	while ArrayPos0 < 1056
+		if Object[ArrayPos0].Type == TypeName[Ring]
+			if Object[ArrayPos0].PropertyValue == 0
+				Object[ArrayPos0].DrawOrder = 4
 			else
-				Object[ArrayPos0].DrawOrder=2
-			endif
-		endif
+				Object[ArrayPos0].DrawOrder = 2
+			end if
+		end if
 		ArrayPos0++
 	loop
-	SpriteFrame(-8,-8,16,16,1,1)
-	SpriteFrame(-8,-8,16,16,1,18)
-	SpriteFrame(-8,-8,16,16,1,35)
-	SpriteFrame(-8,-8,16,16,1,52)
-	SpriteFrame(-8,-8,16,16,1,69)
-	SpriteFrame(-8,-8,16,16,1,86)
-	SpriteFrame(-8,-8,16,16,1,103)
-	SpriteFrame(-8,-8,16,16,1,120)
-endsub
+	SpriteFrame(-8, -8, 16, 16, 1, 1)
+	SpriteFrame(-8, -8, 16, 16, 1, 18)
+	SpriteFrame(-8, -8, 16, 16, 1, 35)
+	SpriteFrame(-8, -8, 16, 16, 1, 52)
+	SpriteFrame(-8, -8, 16, 16, 1, 69)
+	SpriteFrame(-8, -8, 16, 16, 1, 86)
+	SpriteFrame(-8, -8, 16, 16, 1, 103)
+	SpriteFrame(-8, -8, 16, 16, 1, 120)
+end sub
 
 sub RSDK
 	LoadSpriteSheet("Global/Display.gif")
-	SetEditorIcon(Icon0,SingleIcon,-16,-16,32,32,1,143)
-endsub
+	SetEditorIcon(Icon0, SingleIcon, -16, -16, 32, 32, 1, 143)
+end sub

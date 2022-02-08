@@ -7,117 +7,117 @@
 
 
 sub ObjectMain
-	if Object.PropertyValue==0
+	if Object.PropertyValue == 0
 		Object.Frame++
-		if Object.Frame>39
-			Object.Frame=0
-		endif
+		if Object.Frame > 39
+			Object.Frame = 0
+		end if
 		switch Object.State
 		case 0
-			Sin(Object.YPos,Object.Value0)
-			Object.YPos<<=12
-			Object.YPos+=Object.Value1
-			Object.XPos-=32768
-			Object.Value0-=4
-			if Object.Value0==0
-				Object.State=1
-				Object.Direction=FACING_LEFT
-			endif
+			Sin(Object.YPos, Object.Value0)
+			Object.YPos <<= 12
+			Object.YPos += Object.Value1
+			Object.XPos -= 32768
+			Object.Value0 -= 4
+			if Object.Value0 == 0
+				Object.State = 1
+				Object.Direction = FACING_LEFT
+			end if
 			break
 		case 1
-			Sin(Object.YPos,Object.Value0)
+			Sin(Object.YPos, Object.Value0)
 			FlipSign(Object.YPos)
-			Object.YPos<<=12
-			Object.YPos+=Object.Value1
-			Object.XPos+=32768
-			Object.Value0+=4
-			if Object.Value0==2048
-				Object.State=0
-				Object.Direction=FACING_RIGHT
-			endif
+			Object.YPos <<= 12
+			Object.YPos += Object.Value1
+			Object.XPos += 32768
+			Object.Value0 += 4
+			if Object.Value0 == 2048
+				Object.State = 0
+				Object.Direction = FACING_RIGHT
+			end if
 			break
-		endswitch
+		end switch
 	else
 		Object.Frame++
-		if Object.Frame>39
-			Object.Frame=20
-		endif
+		if Object.Frame > 39
+			Object.Frame = 20
+		end if
 		switch Object.State
 		case 0
-			Sin(Object.YPos,Object.Value0)
-			Object.YPos<<=11
-			Object.YPos+=Object.Value1
-			Object.XPos-=16384
-			Object.Value0-=2
-			if Object.Value0==0
-				Object.State=1
-				Object.Direction=FACING_LEFT
-			endif
+			Sin(Object.YPos, Object.Value0)
+			Object.YPos <<= 11
+			Object.YPos += Object.Value1
+			Object.XPos -= 16384
+			Object.Value0 -= 2
+			if Object.Value0 == 0
+				Object.State = 1
+				Object.Direction = FACING_LEFT
+			end if
 			break
 		case 1
-			Sin(Object.YPos,Object.Value0)
+			Sin(Object.YPos, Object.Value0)
 			FlipSign(Object.YPos)
-			Object.YPos<<=11
-			Object.YPos+=Object.Value1
-			Object.XPos+=16384
-			Object.Value0+=2
-			if Object.Value0==2048
-				Object.State=0
-				Object.Direction=FACING_RIGHT
-			endif
+			Object.YPos <<= 11
+			Object.YPos += Object.Value1
+			Object.XPos += 16384
+			Object.Value0 += 2
+			if Object.Value0 == 2048
+				Object.State = 0
+				Object.Direction = FACING_RIGHT
+			end if
 			break
-		endswitch
-	endif
+		end switch
+	end if
 	CallFunction(StageSetup_CheckGoodFuture)
-endsub
+end sub
 
 
 sub ObjectPlayerInteraction
-	PlayerObjectCollision(C_TOUCH,-14,-14,14,14)
-	if CheckResult==1
+	PlayerObjectCollision(C_TOUCH, -14, -14, 14, 14)
+	if CheckResult == 1
 		CallFunction(PlayerObject_BadnikBreak)
-	endif
-endsub
+	end if
+end sub
 
 
 sub ObjectDraw
-	if Object.PropertyValue==0
-		TempValue0=Object.Frame
-		TempValue0>>=3
-		DrawSpriteFX(TempValue0,FX_FLIP,Object.XPos,Object.YPos)
+	if Object.PropertyValue == 0
+		TempValue0 = Object.Frame
+		TempValue0 >>= 3
+		DrawSpriteFX(TempValue0, FX_FLIP, Object.XPos, Object.YPos)
 	else
-		TempValue0=Object.Frame
-		TempValue0>>=2
-		DrawSpriteFX(TempValue0,FX_FLIP,Object.XPos,Object.YPos)
-	endif
-endsub
+		TempValue0 = Object.Frame
+		TempValue0 >>= 2
+		DrawSpriteFX(TempValue0, FX_FLIP, Object.XPos, Object.YPos)
+	end if
+end sub
 
 
 sub ObjectStartup
 	LoadSpriteSheet("R1/Objects.gif")
-	ArrayPos0=32
-	while ArrayPos0<1056
-		if Object[ArrayPos0].Type==TypeName[PataBata]
-			Object[ArrayPos0].Value1=Object[ArrayPos0].YPos
-			Object[ArrayPos0].Value0=1024
-			Object[ArrayPos0].Frame=Object[ArrayPos0].PropertyValue
-			Object[ArrayPos0].Frame*=20
-		endif
+	ArrayPos0 = 32
+	while ArrayPos0 < 1056
+		if Object[ArrayPos0].Type == TypeName[PataBata]
+			Object[ArrayPos0].Value1 = Object[ArrayPos0].YPos
+			Object[ArrayPos0].Value0 = 1024
+			Object[ArrayPos0].Frame = Object[ArrayPos0].PropertyValue
+			Object[ArrayPos0].Frame *= 20
+		end if
 		ArrayPos0++
 	loop
-	SpriteFrame(-16,-16,32,32,1,51)
-	SpriteFrame(-16,-8,32,16,1,84)
-	SpriteFrame(-16,-16,32,32,117,1)
-	SpriteFrame(-16,-8,32,16,1,84)
-	SpriteFrame(-16,-16,32,32,1,51)
-	SpriteFrame(-16,-16,32,32,150,1)
-	SpriteFrame(-16,-8,32,16,1,84)
-	SpriteFrame(-16,-16,32,32,183,1)
-	SpriteFrame(-16,-8,32,16,1,84)
-	SpriteFrame(-16,-16,32,32,150,1)
-endsub
+	SpriteFrame(-16, -16, 32, 32, 1, 51)
+	SpriteFrame(-16, -8, 32, 16, 1, 84)
+	SpriteFrame(-16, -16, 32, 32, 117, 1)
+	SpriteFrame(-16, -8, 32, 16, 1, 84)
+	SpriteFrame(-16, -16, 32, 32, 1, 51)
+	SpriteFrame(-16, -16, 32, 32, 150, 1)
+	SpriteFrame(-16, -8, 32, 16, 1, 84)
+	SpriteFrame(-16, -16, 32, 32, 183, 1)
+	SpriteFrame(-16, -8, 32, 16, 1, 84)
+	SpriteFrame(-16, -16, 32, 32, 150, 1)
+end sub
 
 sub RSDK
 	LoadSpriteSheet("Global/Display.gif")
-	SetEditorIcon(Icon0,SingleIcon,-16,-16,32,32,1,143)
-endsub
+	SetEditorIcon(Icon0, SingleIcon, -16, -16, 32, 32, 1, 143)
+end sub

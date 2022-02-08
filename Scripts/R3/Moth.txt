@@ -9,121 +9,121 @@
 sub ObjectMain
 	switch Object.State
 	case 0
-		PlayerObjectCollision(C_TOUCH,-96,-256,96,256)
-		if CheckResult==1
-			Object.DrawOrder=5
-			Object.State=2
-			Object.Value3=0
-			Object.Frame=0
-			Object.Priority=1
-			Object.Value4=Object.XPos
-			Object.Value5=Object.YPos
-		endif
+		PlayerObjectCollision(C_TOUCH, -96, -256, 96, 256)
+		if CheckResult == 1
+			Object.DrawOrder = 5
+			Object.State = 2
+			Object.Value3 = 0
+			Object.Frame = 0
+			Object.Priority = 1
+			Object.Value4 = Object.XPos
+			Object.Value5 = Object.YPos
+		end if
 		break
 	case 1
-		if Object.OutOfBounds==1
-			Object.State=0
-			Object.Priority=0
-		endif
+		if Object.OutOfBounds == 1
+			Object.State = 0
+			Object.Priority = 0
+		end if
 		break
 	case 2
-		if Object.Value0<110
+		if Object.Value0 < 110
 			Object.Value0++
-			if Object.Value0==30
+			if Object.Value0 == 30
 				Object.Frame++
-			endif
-			if Object.Value0==60
+			end if
+			if Object.Value0 == 60
 				Object.Frame++
-			endif
+			end if
 		else
-			if Object.XPos>Player.XPos
-				Object.Value1=-32768
-				Object.Direction=FACING_RIGHT
+			if Object.XPos > Player.XPos
+				Object.Value1 = -32768
+				Object.Direction = FACING_RIGHT
 			else
-				Object.Value1=32768
-				Object.Direction=FACING_LEFT
-			endif
-			Object.State=3
-			Object.Value0=0
-			if Object.PropertyValue>0
-				Object.Value1>>=1
-			endif
-			Object.Value2=32768
-		endif
-		if Object.OutOfBounds==1
-			Object.State=1
-			Object.Value0=0
-			Object.XPos=Object.Value4
-			Object.YPos=Object.Value5
-		endif
+				Object.Value1 = 32768
+				Object.Direction = FACING_LEFT
+			end if
+			Object.State = 3
+			Object.Value0 = 0
+			if Object.PropertyValue > 0
+				Object.Value1 >>= 1
+			end if
+			Object.Value2 = 32768
+		end if
+		if Object.OutOfBounds == 1
+			Object.State = 1
+			Object.Value0 = 0
+			Object.XPos = Object.Value4
+			Object.YPos = Object.Value5
+		end if
 		break
 	case 3
-		Object.XPos+=Object.Value1
-		Object.YPos+=Object.Value2
-		if Object.Value0<65
+		Object.XPos += Object.Value1
+		Object.YPos += Object.Value2
+		if Object.Value0 < 65
 			Object.Value0++
 		else
-			Object.Value0=0
+			Object.Value0 = 0
 			FlipSign(Object.Value2)
-			if Object.PropertyValue==0
-				CreateTempObject(TypeName[MothSparkle],0,Object.XPos,Object.YPos)
-				Object[TempObjectPos].DrawOrder=5
-			endif
-		endif
+			if Object.PropertyValue == 0
+				CreateTempObject(TypeName[MothSparkle], 0, Object.XPos, Object.YPos)
+				Object[TempObjectPos].DrawOrder = 5
+			end if
+		end if
 		Object.Value3++
-		Object.Value3%=20
-		Object.Frame=Object.Value3
-		Object.Frame/=5
-		if Object.PropertyValue==0
-			Object.Frame+=3
+		Object.Value3 %= 20
+		Object.Frame = Object.Value3
+		Object.Frame /= 5
+		if Object.PropertyValue == 0
+			Object.Frame += 3
 		else
-			Object.Frame+=7
-		endif
-		if Object.OutOfBounds==1
-			Object.State=1
-			Object.Value0=0
-			Object.XPos=Object.Value4
-			Object.YPos=Object.Value5
-		endif
+			Object.Frame += 7
+		end if
+		if Object.OutOfBounds == 1
+			Object.State = 1
+			Object.Value0 = 0
+			Object.XPos = Object.Value4
+			Object.YPos = Object.Value5
+		end if
 		break
-	endswitch
+	end switch
 	CallFunction(StageSetup_CheckGoodFuture)
-endsub
+end sub
 
 
 sub ObjectPlayerInteraction
-	if Object.State>2
-		PlayerObjectCollision(C_TOUCH,-16,-8,16,8)
-		if CheckResult==1
+	if Object.State > 2
+		PlayerObjectCollision(C_TOUCH, -16, -8, 16, 8)
+		if CheckResult == 1
 			CallFunction(PlayerObject_BadnikBreak)
-		endif
-	endif
-endsub
+		end if
+	end if
+end sub
 
 
 sub ObjectDraw
-	if Object.State>1
-		DrawSpriteFX(Object.Frame,FX_FLIP,Object.XPos,Object.YPos)
-	endif
-endsub
+	if Object.State > 1
+		DrawSpriteFX(Object.Frame, FX_FLIP, Object.XPos, Object.YPos)
+	end if
+end sub
 
 
 sub ObjectStartup
 	LoadSpriteSheet("R3/Objects.gif")
-	SpriteFrame(-12,-16,24,16,1,216)
-	SpriteFrame(-12,-16,24,24,26,216)
-	SpriteFrame(-12,-20,24,32,231,170)
-	SpriteFrame(-12,-12,32,24,34,191)
-	SpriteFrame(-12,-8,32,16,165,183)
-	SpriteFrame(-12,-8,32,16,166,233)
-	SpriteFrame(-12,-8,32,16,165,183)
-	SpriteFrame(-12,-12,32,24,1,157)
-	SpriteFrame(-12,-8,32,16,1,182)
-	SpriteFrame(-12,-8,32,16,1,199)
-	SpriteFrame(-12,-8,32,16,1,182)
-endsub
+	SpriteFrame(-12, -16, 24, 16, 1, 216)
+	SpriteFrame(-12, -16, 24, 24, 26, 216)
+	SpriteFrame(-12, -20, 24, 32, 231, 170)
+	SpriteFrame(-12, -12, 32, 24, 34, 191)
+	SpriteFrame(-12, -8, 32, 16, 165, 183)
+	SpriteFrame(-12, -8, 32, 16, 166, 233)
+	SpriteFrame(-12, -8, 32, 16, 165, 183)
+	SpriteFrame(-12, -12, 32, 24, 1, 157)
+	SpriteFrame(-12, -8, 32, 16, 1, 182)
+	SpriteFrame(-12, -8, 32, 16, 1, 199)
+	SpriteFrame(-12, -8, 32, 16, 1, 182)
+end sub
 
 sub RSDK
 	LoadSpriteSheet("Global/Display.gif")
-	SetEditorIcon(Icon0,SingleIcon,-16,-16,32,32,1,143)
-endsub
+	SetEditorIcon(Icon0, SingleIcon, -16, -16, 32, 32, 1, 143)
+end sub

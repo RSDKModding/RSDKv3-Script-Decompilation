@@ -7,97 +7,97 @@
 
 
 sub ObjectMain
-	if Player.XPos>Object.XPos
-		Stage.YBoundary2=2048
-		if Object.OutOfBounds==1
-			Object.Priority=0
-		endif
-		if Stage.NewWaterLevel>Object.Value1
-			Stage.NewWaterLevel=Object.Value1
-			ArrayPos0=Object.Value0
-			Object[ArrayPos0].YPos=Screen.YOffset
-			Object[ArrayPos0].YPos+=256
-			Object[ArrayPos0].YPos<<=16
-			if Object.Value2==1
-				if Object[ArrayPos0].YPos<Object.Value1
-					Object[ArrayPos0].YPos=Object.Value1
-				endif
-			endif
-		endif
+	if Player.XPos > Object.XPos
+		Stage.YBoundary2 = 2048
+		if Object.OutOfBounds == 1
+			Object.Priority = 0
+		end if
+		if Stage.NewWaterLevel > Object.Value1
+			Stage.NewWaterLevel = Object.Value1
+			ArrayPos0 = Object.Value0
+			Object[ArrayPos0].YPos = Screen.YOffset
+			Object[ArrayPos0].YPos += 256
+			Object[ArrayPos0].YPos <<= 16
+			if Object.Value2 == 1
+				if Object[ArrayPos0].YPos < Object.Value1
+					Object[ArrayPos0].YPos = Object.Value1
+				end if
+			end if
+		end if
 	else
-		if Object.PropertyValue==0
-			if Stage.NewWaterLevel<201326592
-				Stage.NewWaterLevel=201326592
-				ArrayPos0=Object.Value0
-				Object[ArrayPos0].YPos=201326592
-			endif
+		if Object.PropertyValue == 0
+			if Stage.NewWaterLevel < 201326592
+				Stage.NewWaterLevel = 201326592
+				ArrayPos0 = Object.Value0
+				Object[ArrayPos0].YPos = 201326592
+			end if
 		else
-			if Player.YPos>Object.YPos
-				if Stage.NewWaterLevel<201326592
-					Stage.NewWaterLevel=201326592
-					ArrayPos0=Object.Value0
-					Object[ArrayPos0].YPos=201326592
-				endif
-			endif
-		endif
-		Stage.YBoundary2=2304
-		Object.Priority=1
-		if Player.YVelocity>=0
-			if Screen.YOffset>2047
-				Player.YPos-=134217728
-				Screen.YOffset-=2048
-			endif
-		endif
-		if Player.YVelocity<=0
-			if Screen.YOffset<1
-				Player.YPos+=134217728
-				Screen.YOffset+=2048
-			endif
-		endif
-	endif
-endsub
+			if Player.YPos > Object.YPos
+				if Stage.NewWaterLevel < 201326592
+					Stage.NewWaterLevel = 201326592
+					ArrayPos0 = Object.Value0
+					Object[ArrayPos0].YPos = 201326592
+				end if
+			end if
+		end if
+		Stage.YBoundary2 = 2304
+		Object.Priority = 1
+		if Player.YVelocity >= 0
+			if Screen.YOffset > 2047
+				Player.YPos -= 134217728
+				Screen.YOffset -= 2048
+			end if
+		end if
+		if Player.YVelocity <= 0
+			if Screen.YOffset < 1
+				Player.YPos += 134217728
+				Screen.YOffset += 2048
+			end if
+		end if
+	end if
+end sub
 
 
 sub ObjectStartup
-	ArrayPos0=32
-	while ArrayPos0<1056
-		if Object[ArrayPos0].Type==TypeName[Water]
-			TempValue0=ArrayPos0
-		endif
+	ArrayPos0 = 32
+	while ArrayPos0 < 1056
+		if Object[ArrayPos0].Type == TypeName[Water]
+			TempValue0 = ArrayPos0
+		end if
 		ArrayPos0++
 	loop
-	ArrayPos0=32
-	while ArrayPos0<1056
-		if Object[ArrayPos0].Type==TypeName[VerticalWrap]
-			Object[ArrayPos0].Value0=TempValue0
+	ArrayPos0 = 32
+	while ArrayPos0 < 1056
+		if Object[ArrayPos0].Type == TypeName[VerticalWrap]
+			Object[ArrayPos0].Value0 = TempValue0
 			switch Object[ArrayPos0].PropertyValue
 			case 0
 			case 1
-				Object[ArrayPos0].Value1=87293952
-				Object[ArrayPos0].Value2=0
+				Object[ArrayPos0].Value1 = 87293952
+				Object[ArrayPos0].Value2 = 0
 				break
 			case 2
 			case 3
-				Object[ArrayPos0].PropertyValue-=2
-				Object[ArrayPos0].Value1=94371840
-				Object[ArrayPos0].Value2=1
+				Object[ArrayPos0].PropertyValue -= 2
+				Object[ArrayPos0].Value1 = 94371840
+				Object[ArrayPos0].Value2 = 1
 				break
 			case 4
 			case 5
-				Object[ArrayPos0].PropertyValue-=2
-				Object[ArrayPos0].Value1=84934656
-				Object[ArrayPos0].Value2=0
+				Object[ArrayPos0].PropertyValue -= 2
+				Object[ArrayPos0].Value1 = 84934656
+				Object[ArrayPos0].Value2 = 0
 				break
-			endswitch
-		endif
+			end switch
+		end if
 		ArrayPos0++
 	loop
-	if Player.XPos>52428800
-		Stage.YBoundary2=2048
-	endif
-endsub
+	if Player.XPos > 52428800
+		Stage.YBoundary2 = 2048
+	end if
+end sub
 
 sub RSDK
 	LoadSpriteSheet("Global/Display.gif")
-	SetEditorIcon(Icon0,SingleIcon,-16,-16,32,32,1,143)
-endsub
+	SetEditorIcon(Icon0, SingleIcon, -16, -16, 32, 32, 1, 143)
+end sub

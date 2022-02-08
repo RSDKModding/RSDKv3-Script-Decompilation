@@ -9,107 +9,107 @@
 sub ObjectMain
 	switch Object.State
 	case 0
-		if Object.Value0<96
+		if Object.Value0 < 96
 			Object.Value0++
-			if Object.PropertyValue==0
-				Object.XPos+=65536
+			if Object.PropertyValue == 0
+				Object.XPos += 65536
 			else
-				Object.YPos+=65536
-			endif
+				Object.YPos += 65536
+			end if
 		else
-			Object.State=1
-		endif
+			Object.State = 1
+		end if
 		break
 	case 1
-		if Object.Value0>-96
+		if Object.Value0 > -96
 			Object.Value0--
-			if Object.PropertyValue==0
-				Object.XPos-=65536
+			if Object.PropertyValue == 0
+				Object.XPos -= 65536
 			else
-				Object.YPos-=65536
-			endif
+				Object.YPos -= 65536
+			end if
 		else
-			Object.State=0
-		endif
+			Object.State = 0
+		end if
 		break
-	endswitch
-endsub
+	end switch
+end sub
 
 
 sub ObjectPlayerInteraction
-	TempValue0=0
-	PlayerObjectCollision(C_TOUCH,-34,-16,-28,16)
-	TempValue1=CheckResult
-	PlayerObjectCollision(C_TOUCH,28,-16,34,16)
-	TempValue2=CheckResult
-	PlayerObjectCollision(C_BOX,-32,-14,32,14)
+	TempValue0 = 0
+	PlayerObjectCollision(C_TOUCH, -34, -16, -28, 16)
+	TempValue1 = CheckResult
+	PlayerObjectCollision(C_TOUCH, 28, -16, 34, 16)
+	TempValue2 = CheckResult
+	PlayerObjectCollision(C_BOX, -32, -14, 32, 14)
 	switch CheckResult
 	case 1
-		if Player.State==PlayerObject_HandleTailsFlight
-			Player.YVelocity=-262144
+		if Player.State == PlayerObject_HandleTailsFlight
+			Player.YVelocity = -262144
 		else
-			Player.YVelocity=-458752
-			Player.Timer=0
-		endif
-		Player.Gravity=1
-		TempValue0=1
+			Player.YVelocity = -458752
+			Player.Timer = 0
+		end if
+		Player.Gravity = 1
+		TempValue0 = 1
 		break
 	case 4
-		if Player.State==PlayerObject_HandleTailsFlight
-			Player.YVelocity=262144
+		if Player.State == PlayerObject_HandleTailsFlight
+			Player.YVelocity = 262144
 		else
-			Player.YVelocity=458752
-			Player.Timer=0
-		endif
-		Player.Timer=0
-		Player.Gravity=1
-		TempValue0=1
+			Player.YVelocity = 458752
+			Player.Timer = 0
+		end if
+		Player.Timer = 0
+		Player.Gravity = 1
+		TempValue0 = 1
 		break
-	endswitch
-	if TempValue1==1
-		Player.Speed=-458752
-		Player.XVelocity=-458752
-		TempValue0=1
-	endif
-	if TempValue2==1
-		Player.Speed=458752
-		Player.XVelocity=458752
-		TempValue0=1
-	endif
-	PlayerObjectCollision(C_TOUCH,-16,-14,16,0)
-	if CheckResult==1
-		if Player.State==PlayerObject_HandleTailsFlight
-			Player.YVelocity=-262144
+	end switch
+	if TempValue1 == 1
+		Player.Speed = -458752
+		Player.XVelocity = -458752
+		TempValue0 = 1
+	end if
+	if TempValue2 == 1
+		Player.Speed = 458752
+		Player.XVelocity = 458752
+		TempValue0 = 1
+	end if
+	PlayerObjectCollision(C_TOUCH, -16, -14, 16, 0)
+	if CheckResult == 1
+		if Player.State == PlayerObject_HandleTailsFlight
+			Player.YVelocity = -262144
 		else
-			Player.YVelocity=-458752
-			Player.Timer=0
-		endif
-		Player.Gravity=1
-		TempValue0=1
-	endif
-	PlayerObjectCollision(C_TOUCH,-16,0,16,14)
-	if CheckResult==1
-		if Player.State==PlayerObject_HandleTailsFlight
-			Player.YVelocity=262144
+			Player.YVelocity = -458752
+			Player.Timer = 0
+		end if
+		Player.Gravity = 1
+		TempValue0 = 1
+	end if
+	PlayerObjectCollision(C_TOUCH, -16, 0, 16, 14)
+	if CheckResult == 1
+		if Player.State == PlayerObject_HandleTailsFlight
+			Player.YVelocity = 262144
 		else
-			Player.YVelocity=458752
-			Player.Timer=0
-		endif
-		Player.Gravity=1
-		TempValue0=1
-	endif
-	if TempValue0==1
-		PlayStageSfx(1,0)
+			Player.YVelocity = 458752
+			Player.Timer = 0
+		end if
+		Player.Gravity = 1
+		TempValue0 = 1
+	end if
+	if TempValue0 == 1
+		PlayStageSfx(1, 0)
 #platform: Use_Haptics
-		HapticEffect(10,0,0,0)
+		HapticEffect(10, 0, 0, 0)
 #endplatform
-	endif
-endsub
+	end if
+end sub
 
 
 sub ObjectDraw
 	DrawSprite(0)
-endsub
+end sub
 
 
 sub ObjectStartup
@@ -117,20 +117,20 @@ sub ObjectStartup
 	case 0
 	case 1
 		LoadSpriteSheet("R3/Objects.gif")
-		SpriteFrame(-32,-16,64,32,1,75)
+		SpriteFrame(-32, -16, 64, 32, 1, 75)
 		break
 	case 2
 		LoadSpriteSheet("R3/Objects3.gif")
-		SpriteFrame(-32,-16,64,32,132,67)
+		SpriteFrame(-32, -16, 64, 32, 132, 67)
 		break
 	case 3
 		LoadSpriteSheet("R3/Objects3.gif")
-		SpriteFrame(-32,-16,64,32,132,100)
+		SpriteFrame(-32, -16, 64, 32, 132, 100)
 		break
-	endswitch
-endsub
+	end switch
+end sub
 
 sub RSDK
 	LoadSpriteSheet("Global/Display.gif")
-	SetEditorIcon(Icon0,SingleIcon,-16,-16,32,32,1,143)
-endsub
+	SetEditorIcon(Icon0, SingleIcon, -16, -16, 32, 32, 1, 143)
+end sub

@@ -15,214 +15,214 @@
 #alias Object.Value7:Object.CharPos
 
 sub ObjectPlayerInteraction
-	Player.Timer=0
-endsub
+	Player.Timer = 0
+end sub
 
 
 sub ObjectDraw
 	switch Object.State
 	case 0
-		Player.ControlMode=-1
-		Player.Up=0
-		Player.Down=0
-		Player.Left=0
-		Player.Right=0
-		Player.JumpPress=0
-		Player.JumpHold=0
-		if Warp.XPos<1
-			Player.Speed=0
-		endif
-		if Object.FadeA>0
-			if Object.FadeA==256
+		Player.ControlMode = -1
+		Player.Up = 0
+		Player.Down = 0
+		Player.Left = 0
+		Player.Right = 0
+		Player.JumpPress = 0
+		Player.JumpHold = 0
+		if Warp.XPos < 1
+			Player.Speed = 0
+		end if
+		if Object.FadeA > 0
+			if Object.FadeA == 256
 				PlayMusic(0)
-				if Warp.XPos>0
-					Player.XPos=Warp.XPos
-					Player.YPos=Warp.YPos
-					Player.XVelocity=Warp.XVelocity
-					Player.YVelocity=Warp.YVelocity
-					Player.Speed=Warp.XVelocity
-					Player.State=Warp.State
-					Stage.MilliSeconds=Rec_Milliseconds
-					Stage.Seconds=Rec_Seconds
-					Stage.Minutes=Rec_Minutes
-					Object[0].FadeR=8000
-				endif
-				Warp.Timer=0
-				Warp.Frame=0
-			endif
-			SetScreenFade(Object.FadeR,Object.FadeG,Object.FadeB,Object.FadeA)
-			Object.FadeA-=8
+				if Warp.XPos > 0
+					Player.XPos = Warp.XPos
+					Player.YPos = Warp.YPos
+					Player.XVelocity = Warp.XVelocity
+					Player.YVelocity = Warp.YVelocity
+					Player.Speed = Warp.XVelocity
+					Player.State = Warp.State
+					Stage.MilliSeconds = Rec_Milliseconds
+					Stage.Seconds = Rec_Seconds
+					Stage.Minutes = Rec_Minutes
+					Object[0].FadeR = 8000
+				end if
+				Warp.Timer = 0
+				Warp.Frame = 0
+			end if
+			SetScreenFade(Object.FadeR, Object.FadeG, Object.FadeB, Object.FadeA)
+			Object.FadeA -= 8
 		else
-			Fade_Colour=0
-			CheckEqual(Warp.XPos,0)
-			TempValue0=CheckResult
-			CheckLower(LampPost.Check,32)
-			TempValue0&=CheckResult
-			if TempValue0==1
-				Object.State=1
-				Object.FadeA=0
+			Fade_Colour = 0
+			CheckEqual(Warp.XPos, 0)
+			TempValue0 = CheckResult
+			CheckLower(LampPost.Check, 32)
+			TempValue0 &= CheckResult
+			if TempValue0 == 1
+				Object.State = 1
+				Object.FadeA = 0
 			else
-				Player.ControlMode=0
-				Stage.TimeEnabled=1
-				ResetObjectEntity(20,TypeName[BlankObject],0,0,0)
-				Warp.XPos=0
-			endif
-		endif
+				Player.ControlMode = 0
+				Stage.TimeEnabled = 1
+				ResetObjectEntity(20, TypeName[BlankObject], 0, 0, 0)
+				Warp.XPos = 0
+			end if
+		end if
 		break
 	case 1
-		TempValue0=144
-		TempValue0+=Object.CharPos
-		if Object.TextPos>TempValue0
-			Object.TextPos-=8
+		TempValue0 = 144
+		TempValue0 += Object.CharPos
+		if Object.TextPos > TempValue0
+			Object.TextPos -= 8
 #platform: Mobile
 		else
-			if Object.BarPos==0
-				Object.State=2
-			endif
+			if Object.BarPos == 0
+				Object.State = 2
+			end if
 #endplatform
-		endif
-		if Object.BarPos<0
-			Object.BarPos+=8
+		end if
+		if Object.BarPos < 0
+			Object.BarPos += 8
 #platform: Standard
 		else
-			Object.State=2
+			Object.State = 2
 #endplatform
-		endif
+		end if
 		break
 	case 2
-		if Object.FadeA==90
-			Object.State=3
+		if Object.FadeA == 90
+			Object.State = 3
 		else
 			Object.FadeA++
-		endif
+		end if
 		break
 	case 3
-		if Object.TextPos<408
-			Object.TextPos+=16
-			Object.BarPos-=16
+		if Object.TextPos < 408
+			Object.TextPos += 16
+			Object.BarPos -= 16
 		else
-			Player.ControlMode=0
-			Stage.TimeEnabled=1
-			ResetObjectEntity(20,TypeName[BlankObject],0,0,0)
-			Warp.XPos=0
-		endif
+			Player.ControlMode = 0
+			Stage.TimeEnabled = 1
+			ResetObjectEntity(20, TypeName[BlankObject], 0, 0, 0)
+			Warp.XPos = 0
+		end if
 		break
-	endswitch
-	if Object.Type>TypeName[BlankObject]
-		TempValue0=136
-		TempValue0+=Object.CharPos
-		DrawSpriteScreenXY(0,TempValue0,Object.BarPos)
-		DrawSpriteScreenXY(Stage.ActNo,Object.TextPos,80)
-		DrawSpriteScreenXY(4,Object.TextPos,80)
-		DrawSpriteScreenXY(5,Object.TextPos,80)
-		DrawSpriteScreenXY(6,Object.TextPos,80)
-		DrawSpriteScreenXY(7,Object.TextPos,80)
-		TempValue0=8
-		while TempValue0<Object.TextSize
-			DrawSpriteScreenXY(TempValue0,Object.TextPos,80)
+	end switch
+	if Object.Type > TypeName[BlankObject]
+		TempValue0 = 136
+		TempValue0 += Object.CharPos
+		DrawSpriteScreenXY(0, TempValue0, Object.BarPos)
+		DrawSpriteScreenXY(Stage.ActNo, Object.TextPos, 80)
+		DrawSpriteScreenXY(4, Object.TextPos, 80)
+		DrawSpriteScreenXY(5, Object.TextPos, 80)
+		DrawSpriteScreenXY(6, Object.TextPos, 80)
+		DrawSpriteScreenXY(7, Object.TextPos, 80)
+		TempValue0 = 8
+		while TempValue0 < Object.TextSize
+			DrawSpriteScreenXY(TempValue0, Object.TextPos, 80)
 			TempValue0++
 		loop
-	endif
-endsub
+	end if
+end sub
 
 
 sub ObjectStartup
-	if Stage.PlayerListPos==0
+	if Stage.PlayerListPos == 0
 		LoadSpriteSheet("Global/Display.gif")
 	else
 		LoadSpriteSheet("Global/Display_t.gif")
-	endif
-	if Options.Soundtrack==0
+	end if
+	if Options.Soundtrack == 0
 		switch Object[24].PropertyValue
 		case 0
-			SetMusicTrack("JP/R1A.ogg",0,142428)
+			SetMusicTrack("JP/R1A.ogg", 0, 142428)
 			break
 		case 1
-			SetMusicTrack("R1B.ogg",0,354890)
+			SetMusicTrack("R1B.ogg", 0, 354890)
 			break
 		case 2
-			SetMusicTrack("JP/R1C.ogg",0,142902)
+			SetMusicTrack("JP/R1C.ogg", 0, 142902)
 			break
 		case 3
-			SetMusicTrack("JP/R1D.ogg",0,1)
+			SetMusicTrack("JP/R1D.ogg", 0, 1)
 			break
-		endswitch
+		end switch
 	else
 		switch Object[24].PropertyValue
 		case 0
-			SetMusicTrack("US/R1A.ogg",0,153038)
+			SetMusicTrack("US/R1A.ogg", 0, 153038)
 			break
 		case 1
-			SetMusicTrack("R1B.ogg",0,354890)
+			SetMusicTrack("R1B.ogg", 0, 354890)
 			break
 		case 2
-			SetMusicTrack("US/R1C.ogg",0,152346)
+			SetMusicTrack("US/R1C.ogg", 0, 152346)
 			break
 		case 3
-			SetMusicTrack("US/R1D.ogg",0,774998)
+			SetMusicTrack("US/R1D.ogg", 0, 774998)
 			break
-		endswitch
-	endif
-	Flower_TypeNo=TypeName[Flower]
-	Object[20].Type=TypeName[TitleCard]
-	if Warp.XPos>0
-		Object[20].FadeA=256
+		end switch
+	end if
+	Flower_TypeNo = TypeName[Flower]
+	Object[20].Type = TypeName[TitleCard]
+	if Warp.XPos > 0
+		Object[20].FadeA = 256
 	else
-		Object[20].FadeA=384
-	endif
-	if Stage.ActNo==3
-		Player.RoofBarrier=1
-	endif
-	Object[20].Priority=1
-	Object[20].DrawOrder=6
-	Object[20].BarPos=-216
-	Object[20].TextPos=336
-	Object[20].CharPos=Screen.CenterX
-	Object[20].CharPos-=160
-	if Object[20].CharPos>3
-		Object[20].CharPos-=4
-	endif
-	Object[20].CharPos&=248
-	Object[20].TextPos+=Object[20].CharPos
-	Object[20].TextPos+=Object[20].CharPos
-	Object[20].TextSize=13
-	Object[20].TextSize+=8
-	Object[20].FadeR=Fade_Colour
-	Object[20].FadeR>>=16
-	Object[20].FadeG=Fade_Colour
-	Object[20].FadeG&=65280
-	Object[20].FadeG>>=8
-	Object[20].FadeB=Fade_Colour
-	Object[20].FadeB&=255
-	SpriteFrame(0,0,32,200,223,1)
-	SpriteFrame(96,96,48,48,41,1)
-	SpriteFrame(96,96,48,48,90,1)
-	SpriteFrame(96,96,48,48,139,1)
-	SpriteFrame(64,97,48,16,41,67)
+		Object[20].FadeA = 384
+	end if
+	if Stage.ActNo == 3
+		Player.RoofBarrier = 1
+	end if
+	Object[20].Priority = 1
+	Object[20].DrawOrder = 6
+	Object[20].BarPos = -216
+	Object[20].TextPos = 336
+	Object[20].CharPos = Screen.CenterX
+	Object[20].CharPos -= 160
+	if Object[20].CharPos > 3
+		Object[20].CharPos -= 4
+	end if
+	Object[20].CharPos &= 248
+	Object[20].TextPos += Object[20].CharPos
+	Object[20].TextPos += Object[20].CharPos
+	Object[20].TextSize = 13
+	Object[20].TextSize += 8
+	Object[20].FadeR = Fade_Colour
+	Object[20].FadeR >>= 16
+	Object[20].FadeG = Fade_Colour
+	Object[20].FadeG &= 65280
+	Object[20].FadeG >>= 8
+	Object[20].FadeB = Fade_Colour
+	Object[20].FadeB &= 255
+	SpriteFrame(0, 0, 32, 200, 223, 1)
+	SpriteFrame(96, 96, 48, 48, 41, 1)
+	SpriteFrame(96, 96, 48, 48, 90, 1)
+	SpriteFrame(96, 96, 48, 48, 139, 1)
+	SpriteFrame(64, 97, 48, 16, 41, 67)
 #platform: Standard
-	SpriteFrame(64,81,160,16,41,50)
+	SpriteFrame(64, 81, 160, 16, 41, 50)
 #endplatform
 #platform: Mobile
-	SpriteFrame(72,81,160,16,49,50)
+	SpriteFrame(72, 81, 160, 16, 49, 50)
 #endplatform
-	SpriteFrame(16,81,160,16,41,50)
-	SpriteFrame(100,32,24,48,188,1)
-	SpriteFrame(0,0,24,56,41,132)
-	SpriteFrame(24,32,11,23,43,84)
-	SpriteFrame(36,32,9,23,159,84)
-	SpriteFrame(45,32,17,23,169,84)
-	SpriteFrame(62,32,10,23,81,108)
-	SpriteFrame(72,32,12,23,57,108)
-	SpriteFrame(84,32,9,23,88,84)
-	SpriteFrame(93,32,9,23,88,84)
-	SpriteFrame(0,56,24,56,41,132)
-	SpriteFrame(24,56,11,23,43,84)
-	SpriteFrame(36,56,11,23,187,84)
-	SpriteFrame(48,56,5,23,131,84)
-	SpriteFrame(54,56,8,23,67,84)
-endsub
+	SpriteFrame(16, 81, 160, 16, 41, 50)
+	SpriteFrame(100, 32, 24, 48, 188, 1)
+	SpriteFrame(0, 0, 24, 56, 41, 132)
+	SpriteFrame(24, 32, 11, 23, 43, 84)
+	SpriteFrame(36, 32, 9, 23, 159, 84)
+	SpriteFrame(45, 32, 17, 23, 169, 84)
+	SpriteFrame(62, 32, 10, 23, 81, 108)
+	SpriteFrame(72, 32, 12, 23, 57, 108)
+	SpriteFrame(84, 32, 9, 23, 88, 84)
+	SpriteFrame(93, 32, 9, 23, 88, 84)
+	SpriteFrame(0, 56, 24, 56, 41, 132)
+	SpriteFrame(24, 56, 11, 23, 43, 84)
+	SpriteFrame(36, 56, 11, 23, 187, 84)
+	SpriteFrame(48, 56, 5, 23, 131, 84)
+	SpriteFrame(54, 56, 8, 23, 67, 84)
+end sub
 
 sub RSDK
 	LoadSpriteSheet("Global/Display.gif")
-	SetEditorIcon(Icon0,SingleIcon,-16,-16,32,32,1,143)
-endsub
+	SetEditorIcon(Icon0, SingleIcon, -16, -16, 32, 32, 1, 143)
+end sub

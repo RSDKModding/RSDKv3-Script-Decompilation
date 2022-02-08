@@ -7,88 +7,88 @@
 
 
 sub ObjectMain
-	Object.XPos+=Object.Value1
-	Object.YPos+=Object.Value2
-	Object.Value0+=Object.Value3
-	Object.Value2-=8192
-	if Object.YPos<0
-		Object.YPos=0
+	Object.XPos += Object.Value1
+	Object.YPos += Object.Value2
+	Object.Value0 += Object.Value3
+	Object.Value2 -= 8192
+	if Object.YPos < 0
+		Object.YPos = 0
 		FlipSign(Object.Value2)
-	endif
-	TempValue0=Object.XPos
-	TempValue0-=TileLayer[0].XPos
-	TempValue0>>=8
-	TempValue1=Object.Value0
-	TempValue1-=TileLayer[0].ZPos
-	TempValue1>>=8
-	Sin(TempValue2,TileLayer[0].Angle)
-	TempValue2*=TempValue1
-	Cos(TempValue3,TileLayer[0].Angle)
-	TempValue3*=TempValue0
-	Object.Value6=TempValue2
-	Object.Value6-=TempValue3
-	Object.Value6>>=9
-	Cos(TempValue2,TileLayer[0].Angle)
-	TempValue2*=TempValue1
-	Sin(TempValue3,TileLayer[0].Angle)
-	TempValue3*=TempValue0
-	Object.Value5=TempValue2
-	Object.Value5+=TempValue3
-	Object.Value5>>=9
+	end if
+	TempValue0 = Object.XPos
+	TempValue0 -= TileLayer[0].XPos
+	TempValue0 >>= 8
+	TempValue1 = Object.Value0
+	TempValue1 -= TileLayer[0].ZPos
+	TempValue1 >>= 8
+	Sin(TempValue2, TileLayer[0].Angle)
+	TempValue2 *= TempValue1
+	Cos(TempValue3, TileLayer[0].Angle)
+	TempValue3 *= TempValue0
+	Object.Value6 = TempValue2
+	Object.Value6 -= TempValue3
+	Object.Value6 >>= 9
+	Cos(TempValue2, TileLayer[0].Angle)
+	TempValue2 *= TempValue1
+	Sin(TempValue3, TileLayer[0].Angle)
+	TempValue3 *= TempValue0
+	Object.Value5 = TempValue2
+	Object.Value5 += TempValue3
+	Object.Value5 >>= 9
 	Object.Value4++
-	if Object.Value4==160
-		Object.Type=TypeName[BlankObject]
-	endif
-endsub
+	if Object.Value4 == 160
+		Object.Type = TypeName[BlankObject]
+	end if
+end sub
 
 
 sub ObjectDraw
-	if Object.Value5>256
-		Object.Scale=12582912
-		Object.Scale/=Object.Value5
-		TempValue0=768
-		TempValue0-=Object.Scale
-		TempValue0/=6
-		TempValue1=Object.Value5
-		TempValue1>>=12
-		if TempValue0>0
-			Object.Scale+=TempValue0
-			Object.Scale-=TempValue1
-		endif
-		TempValue0=Object.Value6
-		TempValue0*=192
-		TempValue0/=Object.Value5
-		TempValue0+=Screen.CenterX
-		TempValue1=TileLayer[0].YPos
-		TempValue1-=Object.YPos
-		TempValue1>>=8
-		TempValue1*=96
-		TempValue1/=Object.Value5
-		TempValue1+=128
-		TempValue2=Object.Value4
-		TempValue2&=31
-		TempValue2>>=3
-		DrawSpriteScreenFX(TempValue2,FX_SCALE,TempValue0,TempValue1)
-		TempValue1=TileLayer[0].YPos
-		TempValue1>>=8
-		TempValue1*=96
-		TempValue1/=Object.Value5
-		TempValue1+=128
-		DrawSpriteScreenFX(4,FX_SCALE,TempValue0,TempValue1)
-	endif
-endsub
+	if Object.Value5 > 256
+		Object.Scale = 12582912
+		Object.Scale /= Object.Value5
+		TempValue0 = 768
+		TempValue0 -= Object.Scale
+		TempValue0 /= 6
+		TempValue1 = Object.Value5
+		TempValue1 >>= 12
+		if TempValue0 > 0
+			Object.Scale += TempValue0
+			Object.Scale -= TempValue1
+		end if
+		TempValue0 = Object.Value6
+		TempValue0 *= 192
+		TempValue0 /= Object.Value5
+		TempValue0 += Screen.CenterX
+		TempValue1 = TileLayer[0].YPos
+		TempValue1 -= Object.YPos
+		TempValue1 >>= 8
+		TempValue1 *= 96
+		TempValue1 /= Object.Value5
+		TempValue1 += 128
+		TempValue2 = Object.Value4
+		TempValue2 &= 31
+		TempValue2 >>= 3
+		DrawSpriteScreenFX(TempValue2, FX_SCALE, TempValue0, TempValue1)
+		TempValue1 = TileLayer[0].YPos
+		TempValue1 >>= 8
+		TempValue1 *= 96
+		TempValue1 /= Object.Value5
+		TempValue1 += 128
+		DrawSpriteScreenFX(4, FX_SCALE, TempValue0, TempValue1)
+	end if
+end sub
 
 
 sub ObjectStartup
 	LoadSpriteSheet("Special/Objects.gif")
-	SpriteFrame(-10,-24,20,24,52,59)
-	SpriteFrame(-7,-24,15,24,73,59)
-	SpriteFrame(-4,-24,9,24,89,59)
-	SpriteFrame(-7,-24,15,24,99,59)
-	SpriteFrame(-9,-4,18,8,83,117)
-endsub
+	SpriteFrame(-10, -24, 20, 24, 52, 59)
+	SpriteFrame(-7, -24, 15, 24, 73, 59)
+	SpriteFrame(-4, -24, 9, 24, 89, 59)
+	SpriteFrame(-7, -24, 15, 24, 99, 59)
+	SpriteFrame(-9, -4, 18, 8, 83, 117)
+end sub
 
 sub RSDK
 	LoadSpriteSheet("Global/Display.gif")
-	SetEditorIcon(Icon0,SingleIcon,-16,-16,32,32,1,143)
-endsub
+	SetEditorIcon(Icon0, SingleIcon, -16, -16, 32, 32, 1, 143)
+end sub

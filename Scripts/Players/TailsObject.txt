@@ -7,180 +7,180 @@
 
 
 sub ObjectMain
-	ArrayPos0=Player.DrawOrder
-	Screen[ArrayPos0].DrawListSize=2
-	GetDrawListEntityRef(TempValue0,ArrayPos0,0)
-	SetDrawListEntityRef(Object.EntityNo,ArrayPos0,0)
-	SetDrawListEntityRef(TempValue0,ArrayPos0,1)
-endsub
+	ArrayPos0 = Player.DrawOrder
+	Screen[ArrayPos0].DrawListSize = 2
+	GetDrawListEntityRef(TempValue0, ArrayPos0, 0)
+	SetDrawListEntityRef(Object.EntityNo, ArrayPos0, 0)
+	SetDrawListEntityRef(TempValue0, ArrayPos0, 1)
+end sub
 
 
 sub ObjectDraw
-	if Object.Value1!=Player.Animation
+	if Object.Value1 != Player.Animation
 #platform: Mobile
-		if Player.Animation>4
-			Object.Frame=0
-		endif
-		if Object.Value1>4
-			Object.Frame=0
-		endif
+		if Player.Animation > 4
+			Object.Frame = 0
+		end if
+		if Object.Value1 > 4
+			Object.Frame = 0
+		end if
 #endplatform
-		Object.Value1=Player.Animation
+		Object.Value1 = Player.Animation
 #platform: Standard
-		Object.Frame=0
+		Object.Frame = 0
 #endplatform
-	endif
-	Object.Direction=Player.Direction
+	end if
+	Object.Direction = Player.Direction
 	switch Object.Value1
 	case 0
-		if Player.Frame==0
-			TempValue0=Object.Frame
-			TempValue0>>=3
-			if Player.Visible==1
-				DrawSpriteFX(TempValue0,FX_FLIP,Player.XPos,Player.YPos)
-			endif
+		if Player.Frame == 0
+			TempValue0 = Object.Frame
+			TempValue0 >>= 3
+			if Player.Visible == 1
+				DrawSpriteFX(TempValue0, FX_FLIP, Player.XPos, Player.YPos)
+			end if
 			Object.Frame++
-			Object.Frame%=40
-		endif
+			Object.Frame %= 40
+		end if
 		break
 	case 1
 	case 3
 	case 4
-		TempValue0=Object.Frame
-		TempValue0>>=3
-		if Player.Visible==1
-			DrawSpriteFX(TempValue0,FX_FLIP,Player.XPos,Player.YPos)
-		endif
+		TempValue0 = Object.Frame
+		TempValue0 >>= 3
+		if Player.Visible == 1
+			DrawSpriteFX(TempValue0, FX_FLIP, Player.XPos, Player.YPos)
+		end if
 		Object.Frame++
-		Object.Frame%=40
+		Object.Frame %= 40
 		break
 	case 7
 	case 9
-		TempValue0=Object.Frame
-		TempValue0>>=2
-		TempValue0+=11
-		if Player.Visible==1
-			DrawSpriteFX(TempValue0,FX_FLIP,Player.XPos,Player.YPos)
-		endif
+		TempValue0 = Object.Frame
+		TempValue0 >>= 2
+		TempValue0 += 11
+		if Player.Visible == 1
+			DrawSpriteFX(TempValue0, FX_FLIP, Player.XPos, Player.YPos)
+		end if
 		Object.Frame++
-		Object.Frame%=12
+		Object.Frame %= 12
 		break
 	case 10
 	case 43
-		TempValue0=Object.Frame
-		TempValue0>>=2
-		CheckEqual(Player.XVelocity,0)
-		TempValue1=CheckResult
-		CheckEqual(Player.YVelocity,0)
-		TempValue1&=CheckResult
-		if TempValue1==0
-			ATan2(Object.Rotation,Player.XVelocity,Player.YVelocity)
-			Object.Rotation+=16
-			Object.Rotation&=255
-			Object.Rotation>>=5
+		TempValue0 = Object.Frame
+		TempValue0 >>= 2
+		CheckEqual(Player.XVelocity, 0)
+		TempValue1 = CheckResult
+		CheckEqual(Player.YVelocity, 0)
+		TempValue1 &= CheckResult
+		if TempValue1 == 0
+			ATan2(Object.Rotation, Player.XVelocity, Player.YVelocity)
+			Object.Rotation += 16
+			Object.Rotation &= 255
+			Object.Rotation >>= 5
 			switch Object.Rotation
 			case 0
 			case 8
-				TempValue0+=5
-				Object.Rotation=0
+				TempValue0 += 5
+				Object.Rotation = 0
 				break
 			case 1
-				TempValue0+=8
-				if Object.Direction==FACING_RIGHT
-					Object.Rotation=64
+				TempValue0 += 8
+				if Object.Direction == FACING_RIGHT
+					Object.Rotation = 64
 				else
-					Object.Rotation=0
-				endif
+					Object.Rotation = 0
+				end if
 				break
 			case 2
-				TempValue0+=5
-				Object.Rotation=64
+				TempValue0 += 5
+				Object.Rotation = 64
 				break
 			case 3
-				TempValue0+=8
-				if Object.Direction==FACING_RIGHT
-					Object.Rotation=128
+				TempValue0 += 8
+				if Object.Direction == FACING_RIGHT
+					Object.Rotation = 128
 				else
-					Object.Rotation=64
-				endif
+					Object.Rotation = 64
+				end if
 				break
 			case 4
-				TempValue0+=5
-				Object.Rotation=128
+				TempValue0 += 5
+				Object.Rotation = 128
 				break
 			case 5
-				TempValue0+=8
-				if Object.Direction==FACING_RIGHT
-					Object.Rotation=192
+				TempValue0 += 8
+				if Object.Direction == FACING_RIGHT
+					Object.Rotation = 192
 				else
-					Object.Rotation=128
-				endif
+					Object.Rotation = 128
+				end if
 				break
 			case 6
-				TempValue0+=5
-				Object.Rotation=192
+				TempValue0 += 5
+				Object.Rotation = 192
 				break
 			case 7
-				TempValue0+=8
-				if Object.Direction==FACING_RIGHT
-					Object.Rotation=0
+				TempValue0 += 8
+				if Object.Direction == FACING_RIGHT
+					Object.Rotation = 0
 				else
-					Object.Rotation=192
-				endif
+					Object.Rotation = 192
+				end if
 				break
-			endswitch
-			if Object.Direction==FACING_LEFT
-				Object.Rotation+=128
-			endif
+			end switch
+			if Object.Direction == FACING_LEFT
+				Object.Rotation += 128
+			end if
 		else
-			TempValue0+=5
-			Object.Rotation=0
-		endif
-		Object.Rotation<<=1
-		if Player.Visible==1
-			DrawSpriteFX(TempValue0,FX_ROTATE,Player.XPos,Player.YPos)
-		endif
+			TempValue0 += 5
+			Object.Rotation = 0
+		end if
+		Object.Rotation <<= 1
+		if Player.Visible == 1
+			DrawSpriteFX(TempValue0, FX_ROTATE, Player.XPos, Player.YPos)
+		end if
 		Object.Frame++
-		Object.Frame%=12
+		Object.Frame %= 12
 		break
 	case 17
-		TempValue0=Object.Frame
-		TempValue0/=10
-		TempValue0+=11
-		if Player.Visible==1
-			DrawSpriteFX(TempValue0,FX_FLIP,Player.XPos,Player.YPos)
-		endif
+		TempValue0 = Object.Frame
+		TempValue0 /= 10
+		TempValue0 += 11
+		if Player.Visible == 1
+			DrawSpriteFX(TempValue0, FX_FLIP, Player.XPos, Player.YPos)
+		end if
 		Object.Frame++
-		Object.Frame%=30
+		Object.Frame %= 30
 		break
-	endswitch
-endsub
+	end switch
+end sub
 
 
 sub ObjectStartup
-	if Stage.PlayerListPos==1
+	if Stage.PlayerListPos == 1
 		LoadSpriteSheet("Players/Tails1.gif")
-		Object[1].Type=TypeName[TailsObject]
-		Object[1].DrawOrder=7
-		Object[1].Priority=1
-		SpriteFrame(-22,-8,16,24,82,199)
-		SpriteFrame(-26,-8,20,24,99,199)
-		SpriteFrame(-26,-8,20,24,120,199)
-		SpriteFrame(-26,-8,20,24,141,199)
-		SpriteFrame(-26,-8,20,24,162,199)
-		SpriteFrame(-35,-8,24,16,231,166)
-		SpriteFrame(-35,-8,24,16,231,183)
-		SpriteFrame(-35,-8,24,16,231,200)
-		SpriteFrame(-25,9,20,16,235,217)
-		SpriteFrame(-25,9,18,16,237,234)
-		SpriteFrame(-25,9,20,16,216,234)
-		SpriteFrame(-30,-6,24,16,231,166)
-		SpriteFrame(-30,-6,24,16,231,183)
-		SpriteFrame(-30,-6,24,16,231,200)
-	endif
-endsub
+		Object[1].Type = TypeName[TailsObject]
+		Object[1].DrawOrder = 7
+		Object[1].Priority = 1
+		SpriteFrame(-22, -8, 16, 24, 82, 199)
+		SpriteFrame(-26, -8, 20, 24, 99, 199)
+		SpriteFrame(-26, -8, 20, 24, 120, 199)
+		SpriteFrame(-26, -8, 20, 24, 141, 199)
+		SpriteFrame(-26, -8, 20, 24, 162, 199)
+		SpriteFrame(-35, -8, 24, 16, 231, 166)
+		SpriteFrame(-35, -8, 24, 16, 231, 183)
+		SpriteFrame(-35, -8, 24, 16, 231, 200)
+		SpriteFrame(-25, 9, 20, 16, 235, 217)
+		SpriteFrame(-25, 9, 18, 16, 237, 234)
+		SpriteFrame(-25, 9, 20, 16, 216, 234)
+		SpriteFrame(-30, -6, 24, 16, 231, 166)
+		SpriteFrame(-30, -6, 24, 16, 231, 183)
+		SpriteFrame(-30, -6, 24, 16, 231, 200)
+	end if
+end sub
 
 sub RSDK
 	LoadSpriteSheet("Global/Display.gif")
-	SetEditorIcon(Icon0,SingleIcon,-16,-16,32,32,1,143)
-endsub
+	SetEditorIcon(Icon0, SingleIcon, -16, -16, 32, 32, 1, 143)
+end sub

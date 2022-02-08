@@ -7,57 +7,57 @@
 
 
 sub ObjectMain
-	Object.Value3=Oscillation
-	Object.Value3<<=1
-	if Object.PropertyValue==1
-		Object.Value3+=256
-	endif
-	Sin(Object.Value2,Object.Value3)
-	Object.Value2<<=13
-	Object.Value2+=Object.XPos
-	Object.Value2&=-65536
-	Object.Value2-=Object.Value1
-endsub
+	Object.Value3 = Oscillation
+	Object.Value3 <<= 1
+	if Object.PropertyValue == 1
+		Object.Value3 += 256
+	end if
+	Sin(Object.Value2, Object.Value3)
+	Object.Value2 <<= 13
+	Object.Value2 += Object.XPos
+	Object.Value2 &= -65536
+	Object.Value2 -= Object.Value1
+end sub
 
 
 sub ObjectPlayerInteraction
-	TempValue0=Object.XPos
-	Object.XPos=Object.Value1
-	PlayerObjectCollision(C_PLATFORM,-24,-12,24,8)
-	if CheckResult==1
-		Player.XPos+=Object.Value2
-		if Player.State==PlayerObject_SpinningTop
-			Player.State=PlayerObject_HandleGround
-		endif
-	endif
-	Object.XPos=TempValue0
-endsub
+	TempValue0 = Object.XPos
+	Object.XPos = Object.Value1
+	PlayerObjectCollision(C_PLATFORM, -24, -12, 24, 8)
+	if CheckResult == 1
+		Player.XPos += Object.Value2
+		if Player.State == PlayerObject_SpinningTop
+			Player.State = PlayerObject_HandleGround
+		end if
+	end if
+	Object.XPos = TempValue0
+end sub
 
 
 sub ObjectDraw
-	Sin(Object.Value1,Object.Value3)
-	Object.Value1<<=13
-	Object.Value1+=Object.XPos
-	Object.Value1&=-65536
-	DrawSpriteXY(0,Object.Value1,Object.YPos)
-	DrawSpriteXY(1,Object.Value1,Object.YPos)
-endsub
+	Sin(Object.Value1, Object.Value3)
+	Object.Value1 <<= 13
+	Object.Value1 += Object.XPos
+	Object.Value1 &= -65536
+	DrawSpriteXY(0, Object.Value1, Object.YPos)
+	DrawSpriteXY(1, Object.Value1, Object.YPos)
+end sub
 
 
 sub ObjectStartup
 	LoadSpriteSheet("R6/Objects.gif")
-	SpriteFrame(-24,-16,48,32,1,84)
-	SpriteFrame(-8,16,16,16,35,117)
-	ArrayPos0=32
-	while ArrayPos0<1056
-		if Object[ArrayPos0].Type==TypeName[HPlatform]
-			Object[ArrayPos0].DrawOrder=4
-		endif
+	SpriteFrame(-24, -16, 48, 32, 1, 84)
+	SpriteFrame(-8, 16, 16, 16, 35, 117)
+	ArrayPos0 = 32
+	while ArrayPos0 < 1056
+		if Object[ArrayPos0].Type == TypeName[HPlatform]
+			Object[ArrayPos0].DrawOrder = 4
+		end if
 		ArrayPos0++
 	loop
-endsub
+end sub
 
 sub RSDK
 	LoadSpriteSheet("Global/Display.gif")
-	SetEditorIcon(Icon0,SingleIcon,-16,-16,32,32,1,143)
-endsub
+	SetEditorIcon(Icon0, SingleIcon, -16, -16, 32, 32, 1, 143)
+end sub

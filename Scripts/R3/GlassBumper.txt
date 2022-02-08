@@ -7,92 +7,92 @@
 
 
 sub ObjectMain
-	if Object.State==1
+	if Object.State == 1
 		Object.Value0++
-		if Object.Value0>15
-			Object.Type=TypeName[BlankObject]
-		endif
-	endif
-endsub
+		if Object.Value0 > 15
+			Object.Type = TypeName[BlankObject]
+		end if
+	end if
+end sub
 
 
 sub ObjectPlayerInteraction
-	if Player.Animation!=ANI_HURT
-		if Object.State==0
-			PlayerObjectCollision(C_TOUCH,-14,-14,14,14)
-			if CheckResult==1
-				PlayStageSfx(8,0)
+	if Player.Animation != ANI_HURT
+		if Object.State == 0
+			PlayerObjectCollision(C_TOUCH, -14, -14, 14, 14)
+			if CheckResult == 1
+				PlayStageSfx(8, 0)
 #platform: Use_Haptics
-				HapticEffect(10,0,0,0)
+				HapticEffect(10, 0, 0, 0)
 #endplatform
-				CreateTempObject(TypeName[ObjectScore],0,Object.XPos,Object.YPos)
-				Player.Score+=100
-				Object.State=1
-				Object.Priority=1
-				TempValue0=Player.XPos
-				TempValue0-=Object.XPos
-				TempValue1=Player.YPos
-				TempValue1-=Object.YPos
-				ATan2(TempValue2,TempValue0,TempValue1)
-				Cos256(TempValue0,TempValue2)
-				Sin256(TempValue1,TempValue2)
-				TempValue0*=1792
-				TempValue1*=1792
-				Player.XVelocity=TempValue0
-				Player.YVelocity=TempValue1
-				Player.Speed=Player.XVelocity
-				Player.Gravity=1
-				Player.Timer=0
-				TempValue0=Object.iXPos
-				TempValue1=Object.iYPos
-				TempValue0-=8
-				TempValue1-=8
-				Set16x16TileInfo(0,TempValue0,TempValue1,0)
-				TempValue0+=16
-				Set16x16TileInfo(0,TempValue0,TempValue1,0)
-				TempValue0-=16
-				TempValue1+=16
-				Set16x16TileInfo(0,TempValue0,TempValue1,0)
-				TempValue0+=16
-				Set16x16TileInfo(0,TempValue0,TempValue1,0)
-			endif
-		endif
-	endif
-endsub
+				CreateTempObject(TypeName[ObjectScore], 0, Object.XPos, Object.YPos)
+				Player.Score += 100
+				Object.State = 1
+				Object.Priority = 1
+				TempValue0 = Player.XPos
+				TempValue0 -= Object.XPos
+				TempValue1 = Player.YPos
+				TempValue1 -= Object.YPos
+				ATan2(TempValue2, TempValue0, TempValue1)
+				Cos256(TempValue0, TempValue2)
+				Sin256(TempValue1, TempValue2)
+				TempValue0 *= 1792
+				TempValue1 *= 1792
+				Player.XVelocity = TempValue0
+				Player.YVelocity = TempValue1
+				Player.Speed = Player.XVelocity
+				Player.Gravity = 1
+				Player.Timer = 0
+				TempValue0 = Object.iXPos
+				TempValue1 = Object.iYPos
+				TempValue0 -= 8
+				TempValue1 -= 8
+				Set16x16TileInfo(0, TempValue0, TempValue1, 0)
+				TempValue0 += 16
+				Set16x16TileInfo(0, TempValue0, TempValue1, 0)
+				TempValue0 -= 16
+				TempValue1 += 16
+				Set16x16TileInfo(0, TempValue0, TempValue1, 0)
+				TempValue0 += 16
+				Set16x16TileInfo(0, TempValue0, TempValue1, 0)
+			end if
+		end if
+	end if
+end sub
 
 
 sub ObjectDraw
-	if Object.State==1
-		TempValue0=Object.Value0
-		TempValue0>>=3
+	if Object.State == 1
+		TempValue0 = Object.Value0
+		TempValue0 >>= 3
 		DrawSprite(TempValue0)
-	endif
-endsub
+	end if
+end sub
 
 
 sub ObjectStartup
 	LoadSpriteSheet("R3/Objects3.gif")
 	switch Object[24].PropertyValue
 	case 0
-		SpriteFrame(-16,-16,32,32,66,1)
-		SpriteFrame(-16,-16,32,32,99,1)
+		SpriteFrame(-16, -16, 32, 32, 66, 1)
+		SpriteFrame(-16, -16, 32, 32, 99, 1)
 		break
 	case 1
-		SpriteFrame(-16,-16,32,32,66,34)
-		SpriteFrame(-16,-16,32,32,99,34)
+		SpriteFrame(-16, -16, 32, 32, 66, 34)
+		SpriteFrame(-16, -16, 32, 32, 99, 34)
 		break
 	case 2
-		SpriteFrame(-16,-16,32,32,66,67)
-		SpriteFrame(-16,-16,32,32,99,67)
+		SpriteFrame(-16, -16, 32, 32, 66, 67)
+		SpriteFrame(-16, -16, 32, 32, 99, 67)
 		break
 	case 3
-		SpriteFrame(-16,-16,32,32,66,100)
-		SpriteFrame(-16,-16,32,32,99,100)
+		SpriteFrame(-16, -16, 32, 32, 66, 100)
+		SpriteFrame(-16, -16, 32, 32, 99, 100)
 		break
-	endswitch
-endsub
+	end switch
+end sub
 
 sub RSDK
 	LoadSpriteSheet("Global/Display.gif")
-	SetEditorIcon(Icon0,SingleIcon,-16,-16,32,32,1,143)
-endsub
+	SetEditorIcon(Icon0, SingleIcon, -16, -16, 32, 32, 1, 143)
+end sub

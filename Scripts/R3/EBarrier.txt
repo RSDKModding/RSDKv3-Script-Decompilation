@@ -9,71 +9,71 @@
 sub ObjectMain
 	switch Object.State
 	case 1
-		if Object.YPos>84934656
-			Object.YPos-=163840
+		if Object.YPos > 84934656
+			Object.YPos -= 163840
 		else
-			Object.YPos=84934656
-			Object.State=2
+			Object.YPos = 84934656
+			Object.State = 2
 #platform: Use_Haptics
-			HapticEffect(76,0,0,0)
+			HapticEffect(76, 0, 0, 0)
 #endplatform
-		endif
+		end if
 		Object.Frame++
-		Object.Frame%=9
+		Object.Frame %= 9
 		break
 	case 2
-		TempValue0=Object.Value0
-		TempValue0&=3
-		if TempValue0==0
-			Rand(TempValue0,96)
-			TempValue0-=48
-			TempValue0<<=16
-			TempValue0+=Object.XPos
-			Rand(TempValue1,40)
-			TempValue1-=20
-			TempValue1<<=16
-			TempValue1+=Object.YPos
-			CreateTempObject(TypeName[Explosion],0,TempValue0,TempValue1)
-			PlaySfx(22,0)
-		endif
+		TempValue0 = Object.Value0
+		TempValue0 &= 3
+		if TempValue0 == 0
+			Rand(TempValue0, 96)
+			TempValue0 -= 48
+			TempValue0 <<= 16
+			TempValue0 += Object.XPos
+			Rand(TempValue1, 40)
+			TempValue1 -= 20
+			TempValue1 <<= 16
+			TempValue1 += Object.YPos
+			CreateTempObject(TypeName[Explosion], 0, TempValue0, TempValue1)
+			PlaySfx(22, 0)
+		end if
 		Object.Value0++
-		if Object.Value0==120
-			Object.Type=TypeName[BlankObject]
-		endif
+		if Object.Value0 == 120
+			Object.Type = TypeName[BlankObject]
+		end if
 		break
-	endswitch
-endsub
+	end switch
+end sub
 
 
 sub ObjectPlayerInteraction
-	if Object.State==0
-		PlayerObjectCollision(C_TOUCH,-48,-16,48,16)
-		if CheckResult==1
-			Object.State=1
-			Player.YVelocity=0
-			PlaySfx(22,0)
-		endif
-	endif
-endsub
+	if Object.State == 0
+		PlayerObjectCollision(C_TOUCH, -48, -16, 48, 16)
+		if CheckResult == 1
+			Object.State = 1
+			Player.YVelocity = 0
+			PlaySfx(22, 0)
+		end if
+	end if
+end sub
 
 
 sub ObjectDraw
 	DrawSprite(3)
-	TempValue0=Object.Frame
-	TempValue0/=3
+	TempValue0 = Object.Frame
+	TempValue0 /= 3
 	DrawSprite(TempValue0)
-endsub
+end sub
 
 
 sub ObjectStartup
 	LoadSpriteSheet("R3/Objects2.gif")
-	SpriteFrame(-64,-16,32,32,134,0)
-	SpriteFrame(-64,-16,32,32,167,0)
-	SpriteFrame(-64,-16,32,32,200,0)
-	SpriteFrame(-48,-16,96,32,1,67)
-endsub
+	SpriteFrame(-64, -16, 32, 32, 134, 0)
+	SpriteFrame(-64, -16, 32, 32, 167, 0)
+	SpriteFrame(-64, -16, 32, 32, 200, 0)
+	SpriteFrame(-48, -16, 96, 32, 1, 67)
+end sub
 
 sub RSDK
 	LoadSpriteSheet("Global/Display.gif")
-	SetEditorIcon(Icon0,SingleIcon,-16,-16,32,32,1,143)
-endsub
+	SetEditorIcon(Icon0, SingleIcon, -16, -16, 32, 32, 1, 143)
+end sub

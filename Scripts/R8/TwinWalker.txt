@@ -7,158 +7,158 @@
 
 
 sub ObjectMain
-	if Object.OutOfBounds==1
-		Object.State=2
-		Object.XPos=Object.Value6
-		Object.YPos=Object.Value7
-		Object.Value1=Object.Value6
-		Object.Value1-=4194304
-		Object.Value2=Object.Value7
-		Object.Value5=256
-	endif
+	if Object.OutOfBounds == 1
+		Object.State = 2
+		Object.XPos = Object.Value6
+		Object.YPos = Object.Value7
+		Object.Value1 = Object.Value6
+		Object.Value1 -= 4194304
+		Object.Value2 = Object.Value7
+		Object.Value5 = 256
+	end if
 	switch Object.State
 	case 0
-		Cos(Object.Value3,Object.Value5)
-		Object.Value3*=8192
-		Object.Value3+=Object.XPos
-		Object.Value3&=-65536
-		Object.Value3-=Object.Value1
-		Sin(Object.Value4,Object.Value5)
-		Object.Value4*=8192
-		Object.Value4+=Object.YPos
-		Object.Value4&=-65536
-		Object.Value4-=Object.Value2
+		Cos(Object.Value3, Object.Value5)
+		Object.Value3 *= 8192
+		Object.Value3 += Object.XPos
+		Object.Value3 &= -65536
+		Object.Value3 -= Object.Value1
+		Sin(Object.Value4, Object.Value5)
+		Object.Value4 *= 8192
+		Object.Value4 += Object.YPos
+		Object.Value4 &= -65536
+		Object.Value4 -= Object.Value2
 		break
 	case 1
-		Object.Value5+=4
-		Object.Value5&=511
-		Cos(Object.Value3,Object.Value5)
-		Object.Value3*=8192
-		Object.Value3+=Object.XPos
-		Object.Value3&=-65536
-		Sin(Object.Value4,Object.Value5)
-		Object.Value4*=8192
-		Object.Value4+=Object.YPos
-		Object.Value4&=-65536
-		TempValue0=Object.XPos
-		TempValue1=Object.YPos
-		Object.XPos=Object.Value3
-		Object.YPos=Object.Value4
-		ObjectTileCollision(0,0,40,0)
-		if CheckResult==1
-			Object.Value1=TempValue0
-			Object.Value2=TempValue1
-			Object.Value3=0
-			Object.Value4=0
-			Object.Value5+=252
-			Object.Value5&=511
-			Cos(TempValue0,Object.Value5)
-			TempValue0*=8192
-			TempValue0+=Object.XPos
-			TempValue0&=-65536
-			TempValue0-=Object.Value1
-			Object.XPos-=TempValue0
-			Object.State=0
+		Object.Value5 += 4
+		Object.Value5 &= 511
+		Cos(Object.Value3, Object.Value5)
+		Object.Value3 *= 8192
+		Object.Value3 += Object.XPos
+		Object.Value3 &= -65536
+		Sin(Object.Value4, Object.Value5)
+		Object.Value4 *= 8192
+		Object.Value4 += Object.YPos
+		Object.Value4 &= -65536
+		TempValue0 = Object.XPos
+		TempValue1 = Object.YPos
+		Object.XPos = Object.Value3
+		Object.YPos = Object.Value4
+		ObjectTileCollision(0, 0, 40, 0)
+		if CheckResult == 1
+			Object.Value1 = TempValue0
+			Object.Value2 = TempValue1
+			Object.Value3 = 0
+			Object.Value4 = 0
+			Object.Value5 += 252
+			Object.Value5 &= 511
+			Cos(TempValue0, Object.Value5)
+			TempValue0 *= 8192
+			TempValue0 += Object.XPos
+			TempValue0 &= -65536
+			TempValue0 -= Object.Value1
+			Object.XPos -= TempValue0
+			Object.State = 0
 		else
-			Object.XPos=TempValue0
-			Object.YPos=TempValue1
-			Object.Value3-=Object.Value1
-			Object.Value4-=Object.Value2
-		endif
+			Object.XPos = TempValue0
+			Object.YPos = TempValue1
+			Object.Value3 -= Object.Value1
+			Object.Value4 -= Object.Value2
+		end if
 		break
 	case 2
-		if Object.OutOfBounds==1
-			Object.State=0
-			Object.Priority=0
-		endif
+		if Object.OutOfBounds == 1
+			Object.State = 0
+			Object.Priority = 0
+		end if
 		break
-	endswitch
-endsub
+	end switch
+end sub
 
 
 sub ObjectPlayerInteraction
-	if Object.State<2
-		PlayerObjectCollision(C_PLATFORM,-24,-40,24,-24)
-		TempValue0=Object.XPos
-		TempValue1=Object.YPos
-		Object.XPos=Object.Value1
-		Object.YPos=Object.Value2
-		PlayerObjectCollision(C_PLATFORM,-24,-40,24,-24)
-		if CheckResult==1
-			Player.XPos+=Object.Value3
-			Player.YPos+=Object.Value4
-			TempValue2=Object.Value1
-			TempValue2-=Object.Value6
-			if TempValue2<41943040
-				if Object.State==0
-					Object.State=1
-					Object.Priority=1
-				endif
-			endif
-		endif
-		Object.XPos=TempValue0
-		Object.YPos=TempValue1
-	endif
-endsub
+	if Object.State < 2
+		PlayerObjectCollision(C_PLATFORM, -24, -40, 24, -24)
+		TempValue0 = Object.XPos
+		TempValue1 = Object.YPos
+		Object.XPos = Object.Value1
+		Object.YPos = Object.Value2
+		PlayerObjectCollision(C_PLATFORM, -24, -40, 24, -24)
+		if CheckResult == 1
+			Player.XPos += Object.Value3
+			Player.YPos += Object.Value4
+			TempValue2 = Object.Value1
+			TempValue2 -= Object.Value6
+			if TempValue2 < 41943040
+				if Object.State == 0
+					Object.State = 1
+					Object.Priority = 1
+				end if
+			end if
+		end if
+		Object.XPos = TempValue0
+		Object.YPos = TempValue1
+	end if
+end sub
 
 
 sub ObjectDraw
-	if Object.State<2
-		TempValue1=64
-		Cos(Object.Value1,Object.Value5)
-		Object.Value1*=TempValue1
-		Object.Value1<<=7
-		Object.Value1+=Object.XPos
-		Object.Value1&=-65536
-		Sin(Object.Value2,Object.Value5)
-		Object.Value2*=TempValue1
-		Object.Value2<<=7
-		Object.Value2+=Object.YPos
-		Object.Value2&=-65536
-		DrawSpriteXY(0,Object.Value1,Object.Value2)
-		DrawSpriteXY(1,Object.Value1,Object.Value2)
+	if Object.State < 2
+		TempValue1 = 64
+		Cos(Object.Value1, Object.Value5)
+		Object.Value1 *= TempValue1
+		Object.Value1 <<= 7
+		Object.Value1 += Object.XPos
+		Object.Value1 &= -65536
+		Sin(Object.Value2, Object.Value5)
+		Object.Value2 *= TempValue1
+		Object.Value2 <<= 7
+		Object.Value2 += Object.YPos
+		Object.Value2 &= -65536
+		DrawSpriteXY(0, Object.Value1, Object.Value2)
+		DrawSpriteXY(1, Object.Value1, Object.Value2)
 		DrawSprite(0)
 		DrawSprite(1)
-		TempValue0=0
-		TempValue1=8
-		while TempValue0<7
-			Cos(TempValue2,Object.Value5)
-			TempValue2*=TempValue1
-			TempValue2<<=7
-			TempValue2+=Object.XPos
-			TempValue2&=-65536
-			Sin(TempValue3,Object.Value5)
-			TempValue3*=TempValue1
-			TempValue3<<=7
-			TempValue3+=Object.YPos
-			TempValue3&=-65536
-			DrawSpriteXY(1,TempValue2,TempValue3)
+		TempValue0 = 0
+		TempValue1 = 8
+		while TempValue0 < 7
+			Cos(TempValue2, Object.Value5)
+			TempValue2 *= TempValue1
+			TempValue2 <<= 7
+			TempValue2 += Object.XPos
+			TempValue2 &= -65536
+			Sin(TempValue3, Object.Value5)
+			TempValue3 *= TempValue1
+			TempValue3 <<= 7
+			TempValue3 += Object.YPos
+			TempValue3 &= -65536
+			DrawSpriteXY(1, TempValue2, TempValue3)
 			TempValue0++
-			TempValue1+=8
+			TempValue1 += 8
 		loop
-	endif
-endsub
+	end if
+end sub
 
 
 sub ObjectStartup
 	LoadSpriteSheet("R8/Objects2.gif")
-	SpriteFrame(-24,-40,48,80,51,1)
-	SpriteFrame(-4,-4,8,8,19,67)
-	ArrayPos0=32
-	while ArrayPos0<1056
-		if Object[ArrayPos0].Type==TypeName[TwinWalker]
-			Object[ArrayPos0].Value1=Object[ArrayPos0].XPos
-			Object[ArrayPos0].XPos+=4194304
-			Object[ArrayPos0].Value2=Object[ArrayPos0].YPos
-			Object[ArrayPos0].Value5=256
-			Object[ArrayPos0].Value6=Object[ArrayPos0].XPos
-			Object[ArrayPos0].Value7=Object[ArrayPos0].YPos
-		endif
+	SpriteFrame(-24, -40, 48, 80, 51, 1)
+	SpriteFrame(-4, -4, 8, 8, 19, 67)
+	ArrayPos0 = 32
+	while ArrayPos0 < 1056
+		if Object[ArrayPos0].Type == TypeName[TwinWalker]
+			Object[ArrayPos0].Value1 = Object[ArrayPos0].XPos
+			Object[ArrayPos0].XPos += 4194304
+			Object[ArrayPos0].Value2 = Object[ArrayPos0].YPos
+			Object[ArrayPos0].Value5 = 256
+			Object[ArrayPos0].Value6 = Object[ArrayPos0].XPos
+			Object[ArrayPos0].Value7 = Object[ArrayPos0].YPos
+		end if
 		ArrayPos0++
 	loop
-endsub
+end sub
 
 sub RSDK
 	LoadSpriteSheet("Global/Display.gif")
-	SetEditorIcon(Icon0,SingleIcon,-16,-16,32,32,1,143)
-endsub
+	SetEditorIcon(Icon0, SingleIcon, -16, -16, 32, 32, 1, 143)
+end sub

@@ -7,86 +7,86 @@
 
 
 sub ObjectDraw
-	DrawRect(0,0,Screen.XSize,Screen.YSize,0,0,96,255)
+	DrawRect(0, 0, Screen.XSize, Screen.YSize, 0, 0, 96, 255)
 	switch Object.State
 	case 0
-		if Object.Alpha>8
-			DrawSpriteFX(0,FX_INK,Object.XPos,Object.YPos)
-		endif
-		if Object.Value0<256
-			Object.Value0+=8
-			if Object.Value0<256
-				Object.Alpha=Object.Value0
+		if Object.Alpha > 8
+			DrawSpriteFX(0, FX_INK, Object.XPos, Object.YPos)
+		end if
+		if Object.Value0 < 256
+			Object.Value0 += 8
+			if Object.Value0 < 256
+				Object.Alpha = Object.Value0
 			else
-				Object.Alpha=255
-			endif
+				Object.Alpha = 255
+			end if
 #platform: Standard
-			TempValue0=255
-			TempValue0-=Object.Alpha
-			SetScreenFade(0,0,0,TempValue0)
+			TempValue0 = 255
+			TempValue0 -= Object.Alpha
+			SetScreenFade(0, 0, 0, TempValue0)
 #endplatform
 		else
-			if Object.Value0<272
+			if Object.Value0 < 272
 				Object.Value0++
 			else
-				Object.Value0=0
-				Object.State=1
-				LampPost.Check=0
-				Player.ControlMode=0
-				Stage.PlayerListPos=0
+				Object.Value0 = 0
+				Object.State = 1
+				LampPost.Check = 0
+				Player.ControlMode = 0
+				Stage.PlayerListPos = 0
 				PlayMusic(Options.Soundtrack)
-			endif
-		endif
+			end if
+		end if
 		break
 	case 1
-		TempValue0=Object.Value0
-		TempValue0>>=2
+		TempValue0 = Object.Value0
+		TempValue0 >>= 2
 		DrawSprite(TempValue0)
-		TempValue0=11
-		TempValue0+=Screen.CenterX
-		if Object.Value0>15
-			DrawSpriteScreenXY(5,TempValue0,72)
-		endif
+		TempValue0 = 11
+		TempValue0 += Screen.CenterX
+		if Object.Value0 > 15
+			DrawSpriteScreenXY(5, TempValue0, 72)
+		end if
 		Object.Value0++
-		if Object.Value0>19
-			ResetObjectEntity(Object.EntityNo,TypeName[Logo],0,Object.XPos,Object.YPos)
-			Object.Value0=256
-			ArrayPos0=Object.EntityNo
-			ArrayPos0-=2
-			Object[ArrayPos0].Type=TypeName[Background]
-			Object[ArrayPos0].DrawOrder=0
-			Stage[2].ActiveLayer=9
+		if Object.Value0 > 19
+			ResetObjectEntity(Object.EntityNo, TypeName[Logo], 0, Object.XPos, Object.YPos)
+			Object.Value0 = 256
+			ArrayPos0 = Object.EntityNo
+			ArrayPos0 -= 2
+			Object[ArrayPos0].Type = TypeName[Background]
+			Object[ArrayPos0].DrawOrder = 0
+			Stage[2].ActiveLayer = 9
 			ArrayPos0++
-			Object[ArrayPos0].Type=TypeName[Clouds]
+			Object[ArrayPos0].Type = TypeName[Clouds]
 #platform: Mobile
-			if Engine.TrialMode==1
-				if Engine.PlatformID==RETRO_ANDROID
-					ArrayPos0=Object.EntityNo
-					ArrayPos0+=2
-					ResetObjectEntity(ArrayPos0,TypeName[LiteRibbon],0,0,0)
-					Object[ArrayPos0].DrawOrder=6
-				endif
-			endif
+			if Engine.TrialMode == 1
+				if Engine.PlatformID == RETRO_ANDROID
+					ArrayPos0 = Object.EntityNo
+					ArrayPos0 += 2
+					ResetObjectEntity(ArrayPos0, TypeName[LiteRibbon], 0, 0, 0)
+					Object[ArrayPos0].DrawOrder = 6
+				end if
+			end if
 #endplatform
-		endif
+		end if
 		break
-	endswitch
-endsub
+	end switch
+end sub
 
 
 sub ObjectStartup
-	SetMusicTrack("JP/TitleScreen.ogg",0,0)
-	SetMusicTrack("US/TitleScreen.ogg",1,0)
+	SetMusicTrack("JP/TitleScreen.ogg", 0, 0)
+	SetMusicTrack("US/TitleScreen.ogg", 1, 0)
 	LoadSpriteSheet("Title/Title.gif")
-	SpriteFrame(-47,-89,96,112,1,203)
-	SpriteFrame(-47,-89,104,120,98,203)
-	SpriteFrame(-47,-96,96,120,1,316)
-	SpriteFrame(-47,-96,104,120,98,324)
-	SpriteFrame(-47,-96,104,120,1,1)
-	SpriteFrame(0,0,45,55,210,203)
-endsub
+	SpriteFrame(-47, -89, 96, 112, 1, 203)
+	SpriteFrame(-47, -89, 104, 120, 98, 203)
+	SpriteFrame(-47, -96, 96, 120, 1, 316)
+	SpriteFrame(-47, -96, 104, 120, 98, 324)
+	SpriteFrame(-47, -96, 104, 120, 1, 1)
+	SpriteFrame(0, 0, 45, 55, 210, 203)
+end sub
 
 sub RSDK
 	LoadSpriteSheet("Global/Display.gif")
-	SetEditorIcon(Icon0,SingleIcon,-16,-16,32,32,1,143)
-endsub
+	SetEditorIcon(Icon0, SingleIcon, -16, -16, 32, 32, 1, 143)
+end sub

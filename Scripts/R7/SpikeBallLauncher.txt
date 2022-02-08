@@ -9,57 +9,57 @@
 sub ObjectMain
 	switch Object.State
 	case 0
-		Object.Priority=1
-		if Object.Value0<150
+		Object.Priority = 1
+		if Object.Value0 < 150
 			Object.Value0++
 		else
-			Object.Value0=0
-			Object.Value1=0
+			Object.Value0 = 0
+			Object.Value1 = 0
 			Object.State++
-		endif
+		end if
 		break
 	case 1
-		if Object.Value0<32
+		if Object.Value0 < 32
 			Object.Value0++
-			Object.Value1-=32768
+			Object.Value1 -= 32768
 		else
-			Object.Value0=0
+			Object.Value0 = 0
 			Object.State++
-		endif
+		end if
 		break
 	case 2
-		if Object.Value0<30
+		if Object.Value0 < 30
 			Object.Value0++
 		else
-			Object.Value0=0
-			Object.Value2=-393216
+			Object.Value0 = 0
+			Object.Value2 = -393216
 			Object.State++
-		endif
+		end if
 		break
 	case 3
-		if Object.Value1<0
-			Object.Value2+=16384
-			Object.Value1+=Object.Value2
+		if Object.Value1 < 0
+			Object.Value2 += 16384
+			Object.Value1 += Object.Value2
 		else
 			Object.State++
-		endif
+		end if
 		break
 	case 4
-		if Object.Value0<40
+		if Object.Value0 < 40
 			Object.Value0++
 		else
-			Object.Value0=0
-			Object.Value1=0
-			Object.State=1
-		endif
+			Object.Value0 = 0
+			Object.Value1 = 0
+			Object.State = 1
+		end if
 		break
-	endswitch
-	if Object.OutOfBounds==1
-		Object.State=0
-		Object.Value0=0
-		Object.Priority=0
-	endif
-endsub
+	end switch
+	if Object.OutOfBounds == 1
+		Object.State = 0
+		Object.Value0 = 0
+		Object.Priority = 0
+	end if
+end sub
 
 
 sub ObjectPlayerInteraction
@@ -67,86 +67,86 @@ sub ObjectPlayerInteraction
 	case 1
 	case 2
 	case 3
-		TempValue0=Object.XPos
-		TempValue1=Object.YPos
+		TempValue0 = Object.XPos
+		TempValue1 = Object.YPos
 		switch Object.PropertyValue
 		case 0
-			Object.YPos+=Object.Value1
+			Object.YPos += Object.Value1
 			break
 		case 1
-			Object.YPos-=Object.Value1
+			Object.YPos -= Object.Value1
 			break
 		case 2
-			Object.XPos+=Object.Value1
+			Object.XPos += Object.Value1
 			break
 		case 3
-			Object.XPos-=Object.Value1
+			Object.XPos -= Object.Value1
 			break
-		endswitch
-		PlayerObjectCollision(C_TOUCH,-12,-12,12,12)
-		if CheckResult==1
+		end switch
+		PlayerObjectCollision(C_TOUCH, -12, -12, 12, 12)
+		if CheckResult == 1
 			CallFunction(PlayerObject_Hit)
-		endif
-		Object.XPos=TempValue0
-		Object.YPos=TempValue1
+		end if
+		Object.XPos = TempValue0
+		Object.YPos = TempValue1
 		break
-	endswitch
-endsub
+	end switch
+end sub
 
 
 
 sub ObjectDraw
-	if Object.DrawOrder==3
+	if Object.DrawOrder == 3
 		switch Object.State
 		case 1
 		case 2
 		case 3
 			switch Object.PropertyValue
 			case 0
-				TempValue0=Object.YPos
-				TempValue0+=Object.Value1
-				DrawSpriteXY(4,Object.XPos,TempValue0)
+				TempValue0 = Object.YPos
+				TempValue0 += Object.Value1
+				DrawSpriteXY(4, Object.XPos, TempValue0)
 				break
 			case 1
-				TempValue0=Object.YPos
-				TempValue0-=Object.Value1
-				DrawSpriteXY(4,Object.XPos,TempValue0)
+				TempValue0 = Object.YPos
+				TempValue0 -= Object.Value1
+				DrawSpriteXY(4, Object.XPos, TempValue0)
 				break
 			case 2
-				TempValue0=Object.XPos
-				TempValue0+=Object.Value1
-				DrawSpriteXY(4,TempValue0,Object.YPos)
+				TempValue0 = Object.XPos
+				TempValue0 += Object.Value1
+				DrawSpriteXY(4, TempValue0, Object.YPos)
 				break
 			case 3
-				TempValue0=Object.XPos
-				TempValue0-=Object.Value1
-				DrawSpriteXY(4,TempValue0,Object.YPos)
+				TempValue0 = Object.XPos
+				TempValue0 -= Object.Value1
+				DrawSpriteXY(4, TempValue0, Object.YPos)
 				break
-			endswitch
+			end switch
 			break
-		endswitch
-			SetDrawListEntityRef(Object.EntityNo,4,Screen[4].DrawListSize)
+		end switch
+			SetDrawListEntityRef(Object.EntityNo, 4, Screen[4].DrawListSize)
 			Screen[4].DrawListSize++
-			Object.DrawOrder=4
+			Object.DrawOrder = 4
 		else
 			DrawSprite(Object.PropertyValue)
-			Object.DrawOrder=3
-		endif
-	endif
-endsub
+			Object.DrawOrder = 3
+		end if
+	end if
+end sub
 
 
 
 sub ObjectStartup
 	LoadSpriteSheet("R7/Objects.gif")
-	SpriteFrame(-16,-16,32,16,133,1)
-	SpriteFrame(-16,0,32,16,166,1)
-	SpriteFrame(-16,-16,16,32,1,166)
-	SpriteFrame(0,-16,16,32,17,166)
-	SpriteFrame(-16,-16,32,32,1,199)
-endsub
+	SpriteFrame(-16, -16, 32, 16, 133, 1)
+	SpriteFrame(-16, 0, 32, 16, 166, 1)
+	SpriteFrame(-16, -16, 16, 32, 1, 166)
+	SpriteFrame(0, -16, 16, 32, 17, 166)
+	SpriteFrame(-16, -16, 32, 32, 1, 199)
+end sub
 
 sub RSDK
 	LoadSpriteSheet("Global/Display.gif")
-	SetEditorIcon(Icon0,SingleIcon,-16,-16,32,32,1,143)
-endsub
+	SetEditorIcon(Icon0, SingleIcon, -16, -16, 32, 32, 1, 143)
+end sub

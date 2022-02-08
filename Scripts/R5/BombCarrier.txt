@@ -9,104 +9,104 @@
 sub ObjectMain
 	switch Object.State
 	case 0
-		TempValue0=Object.XPos
-		TempValue0+=2097152
-		if Player.XPos>TempValue0
-			CreateTempObject(TypeName[FadeMusic],0,0,0)
-			Object.State=1
-		endif
+		TempValue0 = Object.XPos
+		TempValue0 += 2097152
+		if Player.XPos > TempValue0
+			CreateTempObject(TypeName[FadeMusic], 0, 0, 0)
+			Object.State = 1
+		end if
 		break
 	case 2
-		if Object[+3].State<6
-			if Object.Value0<180
+		if Object[+3].State < 6
+			if Object.Value0 < 180
 				Object.Value0++
 			else
-				Object.State=4
-				PlayStageSfx(5,0)
-				if Object[+4].State<8
-					Object[+3].State=1
+				Object.State = 4
+				PlayStageSfx(5, 0)
+				if Object[+4].State < 8
+					Object[+3].State = 1
 				else
-					Object[+3].State=5
-					Object[+3].Value0=0
-					Object[+3].Frame=0
-				endif
-			endif
+					Object[+3].State = 5
+					Object[+3].Value0 = 0
+					Object[+3].Frame = 0
+				end if
+			end if
 		else
-			ResetObjectEntity(Object.EntityNo,TypeName[BlankObject],0,0,0)
-		endif
+			ResetObjectEntity(Object.EntityNo, TypeName[BlankObject], 0, 0, 0)
+		end if
 		break
 	case 3
-		if Object.XPos<Object[+1].XPos
-			Object.XPos+=122880
+		if Object.XPos < Object[+1].XPos
+			Object.XPos += 122880
 		else
-			Object.State=2
-			Object.XPos=Object[+1].XPos
-			Object.Value0=0
-			if Object[+4].State>8
-				if Object[+4].State>9
-					ResetObjectEntity(Object.EntityNo,TypeName[BlankObject],0,0,0)
-				endif
-				if Object[+4].Value5>640
-					ResetObjectEntity(Object.EntityNo,TypeName[BlankObject],0,0,0)
-				endif
-			endif
-		endif
+			Object.State = 2
+			Object.XPos = Object[+1].XPos
+			Object.Value0 = 0
+			if Object[+4].State > 8
+				if Object[+4].State > 9
+					ResetObjectEntity(Object.EntityNo, TypeName[BlankObject], 0, 0, 0)
+				end if
+				if Object[+4].Value5 > 640
+					ResetObjectEntity(Object.EntityNo, TypeName[BlankObject], 0, 0, 0)
+				end if
+			end if
+		end if
 		break
 	case 4
-		if Object.XPos>Player.XPos
-			Object.XPos-=49152
-			if Object.XPos<=Player.XPos
-				Object.State=5
-				Object.XPos=Player.XPos
-				if Object[+4].State<8
-					Object[+3].State=0
-				endif
-				Object.Value0=0
-			endif
+		if Object.XPos > Player.XPos
+			Object.XPos -= 49152
+			if Object.XPos <= Player.XPos
+				Object.State = 5
+				Object.XPos = Player.XPos
+				if Object[+4].State < 8
+					Object[+3].State = 0
+				end if
+				Object.Value0 = 0
+			end if
 		else
-			Object.State=5
-			Object.XPos=Player.XPos
-			Object[+3].State=0
-			Object.Value0=0
-		endif
-		TempValue0=Object[+1].XPos
-		TempValue0-=3145728
-		if Object.XPos>TempValue0
-			Object.Value1=384
+			Object.State = 5
+			Object.XPos = Player.XPos
+			Object[+3].State = 0
+			Object.Value0 = 0
+		end if
+		TempValue0 = Object[+1].XPos
+		TempValue0 -= 3145728
+		if Object.XPos > TempValue0
+			Object.Value1 = 384
 		else
-			Object.Value1+=8
-			Object.Value1&=511
-		endif
-		Object[-1].XPos=Object.XPos
-		Sin(Object[-1].YPos,Object.Value1)
-		Object[-1].YPos<<=9
-		Object[-1].YPos+=Object.YPos
-		Object[-1].YPos+=1835008
+			Object.Value1 += 8
+			Object.Value1 &= 511
+		end if
+		Object[-1].XPos = Object.XPos
+		Sin(Object[-1].YPos, Object.Value1)
+		Object[-1].YPos <<= 9
+		Object[-1].YPos += Object.YPos
+		Object[-1].YPos += 1835008
 		break
 	case 5
-		if Object.Value0<30
+		if Object.Value0 < 30
 			Object.Value0++
 		else
-			Object.State=6
-			Object.Value0=0
-			Object[-1].State=1
-		endif
-		Object.Value1+=8
-		Object.Value1&=511
-		Sin(Object[-1].YPos,Object.Value1)
-		Object[-1].YPos<<=9
-		Object[-1].YPos+=Object.YPos
-		Object[-1].YPos+=1835008
+			Object.State = 6
+			Object.Value0 = 0
+			Object[-1].State = 1
+		end if
+		Object.Value1 += 8
+		Object.Value1 &= 511
+		Sin(Object[-1].YPos, Object.Value1)
+		Object[-1].YPos <<= 9
+		Object[-1].YPos += Object.YPos
+		Object[-1].YPos += 1835008
 		break
 	case 6
-		if Object.Value0<90
+		if Object.Value0 < 90
 			Object.Value0++
 		else
-			Object.State=3
-		endif
+			Object.State = 3
+		end if
 		break
-	endswitch
-endsub
+	end switch
+end sub
 
 
 sub ObjectDraw
@@ -121,26 +121,26 @@ sub ObjectDraw
 	case 4
 	case 5
 		DrawSprite(1)
-		TempValue0=Object.Frame
-		TempValue0>>=2
-		TempValue0+=2
+		TempValue0 = Object.Frame
+		TempValue0 >>= 2
+		TempValue0 += 2
 		DrawSprite(TempValue0)
 		Object.Frame++
-		Object.Frame&=7
+		Object.Frame &= 7
 		break
-	endswitch
-endsub
+	end switch
+end sub
 
 
 sub ObjectStartup
 	LoadSpriteSheet("R5/Objects2.gif")
-	SpriteFrame(-16,-12,32,24,33,215)
-	SpriteFrame(-16,-12,32,24,100,113)
-	SpriteFrame(-16,12,32,16,33,239)
-	SpriteFrame(-16,12,32,16,1,239)
-endsub
+	SpriteFrame(-16, -12, 32, 24, 33, 215)
+	SpriteFrame(-16, -12, 32, 24, 100, 113)
+	SpriteFrame(-16, 12, 32, 16, 33, 239)
+	SpriteFrame(-16, 12, 32, 16, 1, 239)
+end sub
 
 sub RSDK
 	LoadSpriteSheet("Global/Display.gif")
-	SetEditorIcon(Icon0,SingleIcon,-16,-16,32,32,1,143)
-endsub
+	SetEditorIcon(Icon0, SingleIcon, -16, -16, 32, 32, 1, 143)
+end sub

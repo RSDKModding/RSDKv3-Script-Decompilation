@@ -9,182 +9,182 @@
 #function IceBlock_Function49
 
 function IceBlock_Function49
-	CreateTempObject(TypeName[IceBlock],1,Object.XPos,Object.YPos)
-	Object[TempObjectPos].DrawOrder=4
-	Object[TempObjectPos].XPos-=1114112
-	Object[TempObjectPos].YPos-=851968
-	Object[TempObjectPos].Value1=-65536
-	Object[TempObjectPos].Value2=-65536
-	Object[TempObjectPos].Direction=FACING_RIGHT
-	CreateTempObject(TypeName[IceBlock],1,Object.XPos,Object.YPos)
-	Object[TempObjectPos].DrawOrder=4
-	Object[TempObjectPos].XPos+=1114112
-	Object[TempObjectPos].YPos-=851968
-	Object[TempObjectPos].Value1=65536
-	Object[TempObjectPos].Value2=-65536
-	Object[TempObjectPos].Direction=FACING_LEFT
-	CreateTempObject(TypeName[IceBlock],1,Object.XPos,Object.YPos)
-	Object[TempObjectPos].DrawOrder=4
-	Object[TempObjectPos].XPos-=1114112
-	Object[TempObjectPos].YPos+=851968
-	Object[TempObjectPos].Value1=-65536
-	Object[TempObjectPos].Value2=65536
-	Object[TempObjectPos].Direction=2
-	CreateTempObject(TypeName[IceBlock],1,Object.XPos,Object.YPos)
-	Object[TempObjectPos].DrawOrder=4
-	Object[TempObjectPos].XPos+=1114112
-	Object[TempObjectPos].YPos+=851968
-	Object[TempObjectPos].Value1=65536
-	Object[TempObjectPos].Value2=65536
-	Object[TempObjectPos].Direction=3
-	CreateTempObject(TypeName[IceBlock],3,Object.XPos,Object.YPos)
-	Object[TempObjectPos].DrawOrder=4
-	Object[TempObjectPos].Direction=FACING_RIGHT
-	CreateTempObject(TypeName[IceBlock],2,Object.XPos,Object.YPos)
-	Object[TempObjectPos].DrawOrder=4
-	Object[TempObjectPos].YPos-=1114112
-	Object[TempObjectPos].Value2=-65536
-	Object[TempObjectPos].Direction=FACING_LEFT
-	CreateTempObject(TypeName[IceBlock],2,Object.XPos,Object.YPos)
-	Object[TempObjectPos].DrawOrder=4
-	Object[TempObjectPos].YPos+=1114112
-	Object[TempObjectPos].Value2=65536
-	Object[TempObjectPos].Direction=3
+	CreateTempObject(TypeName[IceBlock], 1, Object.XPos, Object.YPos)
+	Object[TempObjectPos].DrawOrder = 4
+	Object[TempObjectPos].XPos -= 1114112
+	Object[TempObjectPos].YPos -= 851968
+	Object[TempObjectPos].Value1 = -65536
+	Object[TempObjectPos].Value2 = -65536
+	Object[TempObjectPos].Direction = FACING_RIGHT
+	CreateTempObject(TypeName[IceBlock], 1, Object.XPos, Object.YPos)
+	Object[TempObjectPos].DrawOrder = 4
+	Object[TempObjectPos].XPos += 1114112
+	Object[TempObjectPos].YPos -= 851968
+	Object[TempObjectPos].Value1 = 65536
+	Object[TempObjectPos].Value2 = -65536
+	Object[TempObjectPos].Direction = FACING_LEFT
+	CreateTempObject(TypeName[IceBlock], 1, Object.XPos, Object.YPos)
+	Object[TempObjectPos].DrawOrder = 4
+	Object[TempObjectPos].XPos -= 1114112
+	Object[TempObjectPos].YPos += 851968
+	Object[TempObjectPos].Value1 = -65536
+	Object[TempObjectPos].Value2 = 65536
+	Object[TempObjectPos].Direction = 2
+	CreateTempObject(TypeName[IceBlock], 1, Object.XPos, Object.YPos)
+	Object[TempObjectPos].DrawOrder = 4
+	Object[TempObjectPos].XPos += 1114112
+	Object[TempObjectPos].YPos += 851968
+	Object[TempObjectPos].Value1 = 65536
+	Object[TempObjectPos].Value2 = 65536
+	Object[TempObjectPos].Direction = 3
+	CreateTempObject(TypeName[IceBlock], 3, Object.XPos, Object.YPos)
+	Object[TempObjectPos].DrawOrder = 4
+	Object[TempObjectPos].Direction = FACING_RIGHT
+	CreateTempObject(TypeName[IceBlock], 2, Object.XPos, Object.YPos)
+	Object[TempObjectPos].DrawOrder = 4
+	Object[TempObjectPos].YPos -= 1114112
+	Object[TempObjectPos].Value2 = -65536
+	Object[TempObjectPos].Direction = FACING_LEFT
+	CreateTempObject(TypeName[IceBlock], 2, Object.XPos, Object.YPos)
+	Object[TempObjectPos].DrawOrder = 4
+	Object[TempObjectPos].YPos += 1114112
+	Object[TempObjectPos].Value2 = 65536
+	Object[TempObjectPos].Direction = 3
 #platform: Use_Haptics
-	HapticEffect(11,0,0,0)
+	HapticEffect(11, 0, 0, 0)
 #endplatform
-endfunction
+end function
 
 
 sub ObjectMain
 	switch Object.PropertyValue
 	case 0
-		if Object.State==0
-			Object.YPos+=Object.Value2
-			Object.Value2+=Player.GravityStrength
-			if Object.Value2>1310720
-				Object.Value2=1310720
-			endif
-			ObjectTileCollision(0,0,24,0)
-			if CheckResult==1
-				Object.State=1
-				Object.Value2=0
-				PlayStageSfx(4,0)
-			endif
-			Player.XPos=Object.XPos
-			Player.YPos=Object.YPos
+		if Object.State == 0
+			Object.YPos += Object.Value2
+			Object.Value2 += Player.GravityStrength
+			if Object.Value2 > 1310720
+				Object.Value2 = 1310720
+			end if
+			ObjectTileCollision(0, 0, 24, 0)
+			if CheckResult == 1
+				Object.State = 1
+				Object.Value2 = 0
+				PlayStageSfx(4, 0)
+			end if
+			Player.XPos = Object.XPos
+			Player.YPos = Object.YPos
 		else
-			if Object.Value0<16
+			if Object.Value0 < 16
 				Object.Value0++
-				if Object[0].Type==TypeName[PlayerObject]
-					if Player.JumpPress==1
+				if Object[0].Type == TypeName[PlayerObject]
+					if Player.JumpPress == 1
 						CallFunction(IceBlock_Function49)
-						Object.Type=TypeName[BlankObject]
+						Object.Type = TypeName[BlankObject]
 						CallFunction(PlayerObject_StartJump)
-						Player.Visible=1
-						Player.ObjectInteraction=1
-					endif
-				endif
+						Player.Visible = 1
+						Player.ObjectInteraction = 1
+					end if
+				end if
 			else
 				CallFunction(IceBlock_Function49)
-				Object.Type=TypeName[BlankObject]
-				Player.State=PlayerObject_HandleAir
+				Object.Type = TypeName[BlankObject]
+				Player.State = PlayerObject_HandleAir
 				CallFunction(PlayerObject_Hit)
-				Player.Visible=1
-				Player.ObjectInteraction=1
-			endif
-		endif
+				Player.Visible = 1
+				Player.ObjectInteraction = 1
+			end if
+		end if
 		break
 	case 1
-		if Object.Value0<10
+		if Object.Value0 < 10
 			Object.Value0++
-			Object.XPos+=Object.Value1
-			Object.YPos+=Object.Value2
+			Object.XPos += Object.Value1
+			Object.YPos += Object.Value2
 		else
-			Object.Type=TypeName[BlankObject]
-			CreateTempObject(TypeName[IceBlock],4,Object.XPos,Object.YPos)
-			Object[TempObjectPos].DrawOrder=4
-			Object[TempObjectPos].Value1=0
-			Object[TempObjectPos].Value2=-65536
-			CreateTempObject(TypeName[IceBlock],4,Object.XPos,Object.YPos)
-			Object[TempObjectPos].DrawOrder=4
-			Object[TempObjectPos].Value1=-65536
-			Object[TempObjectPos].Value2=0
-			CreateTempObject(TypeName[IceBlock],4,Object.XPos,Object.YPos)
-			Object[TempObjectPos].DrawOrder=4
-			Object[TempObjectPos].Value1=65536
-			Object[TempObjectPos].Value2=0
-			CreateTempObject(TypeName[IceBlock],4,Object.XPos,Object.YPos)
-			Object[TempObjectPos].DrawOrder=4
-			Object[TempObjectPos].Value1=0
-			Object[TempObjectPos].Value2=65536
-		endif
+			Object.Type = TypeName[BlankObject]
+			CreateTempObject(TypeName[IceBlock], 4, Object.XPos, Object.YPos)
+			Object[TempObjectPos].DrawOrder = 4
+			Object[TempObjectPos].Value1 = 0
+			Object[TempObjectPos].Value2 = -65536
+			CreateTempObject(TypeName[IceBlock], 4, Object.XPos, Object.YPos)
+			Object[TempObjectPos].DrawOrder = 4
+			Object[TempObjectPos].Value1 = -65536
+			Object[TempObjectPos].Value2 = 0
+			CreateTempObject(TypeName[IceBlock], 4, Object.XPos, Object.YPos)
+			Object[TempObjectPos].DrawOrder = 4
+			Object[TempObjectPos].Value1 = 65536
+			Object[TempObjectPos].Value2 = 0
+			CreateTempObject(TypeName[IceBlock], 4, Object.XPos, Object.YPos)
+			Object[TempObjectPos].DrawOrder = 4
+			Object[TempObjectPos].Value1 = 0
+			Object[TempObjectPos].Value2 = 65536
+		end if
 		break
 	case 2
-		if Object.Value0<16
+		if Object.Value0 < 16
 			Object.Value0++
-			Object.XPos+=Object.Value1
-			Object.YPos+=Object.Value2
+			Object.XPos += Object.Value1
+			Object.YPos += Object.Value2
 		else
-			Object.Type=TypeName[BlankObject]
-			CreateTempObject(TypeName[IceBlock],4,Object.XPos,Object.YPos)
-			Object[TempObjectPos].DrawOrder=4
-			Object[TempObjectPos].Value1=0
-			Object[TempObjectPos].Value2=-65536
-			CreateTempObject(TypeName[IceBlock],4,Object.XPos,Object.YPos)
-			Object[TempObjectPos].DrawOrder=4
-			Object[TempObjectPos].Value1=-65536
-			Object[TempObjectPos].Value2=65536
-			CreateTempObject(TypeName[IceBlock],4,Object.XPos,Object.YPos)
-			Object[TempObjectPos].DrawOrder=4
-			Object[TempObjectPos].Value1=65536
-			Object[TempObjectPos].Value2=65536
-		endif
+			Object.Type = TypeName[BlankObject]
+			CreateTempObject(TypeName[IceBlock], 4, Object.XPos, Object.YPos)
+			Object[TempObjectPos].DrawOrder = 4
+			Object[TempObjectPos].Value1 = 0
+			Object[TempObjectPos].Value2 = -65536
+			CreateTempObject(TypeName[IceBlock], 4, Object.XPos, Object.YPos)
+			Object[TempObjectPos].DrawOrder = 4
+			Object[TempObjectPos].Value1 = -65536
+			Object[TempObjectPos].Value2 = 65536
+			CreateTempObject(TypeName[IceBlock], 4, Object.XPos, Object.YPos)
+			Object[TempObjectPos].DrawOrder = 4
+			Object[TempObjectPos].Value1 = 65536
+			Object[TempObjectPos].Value2 = 65536
+		end if
 		break
 	case 3
-		if Object.Value0<1
+		if Object.Value0 < 1
 			Object.Value0++
 		else
-			Object.Type=TypeName[BlankObject]
-		endif
+			Object.Type = TypeName[BlankObject]
+		end if
 		break
 	case 4
-		if Object.Value0<12
+		if Object.Value0 < 12
 			Object.Value0++
-			Object.XPos+=Object.Value1
-			Object.YPos+=Object.Value2
+			Object.XPos += Object.Value1
+			Object.YPos += Object.Value2
 		else
-			Object.Type=TypeName[BlankObject]
-		endif
+			Object.Type = TypeName[BlankObject]
+		end if
 		break
-	endswitch
-endsub
+	end switch
+end sub
 
 
 sub ObjectDraw
-	DrawSpriteFX(Object.PropertyValue,FX_FLIP,Object.XPos,Object.YPos)
-endsub
+	DrawSpriteFX(Object.PropertyValue, FX_FLIP, Object.XPos, Object.YPos)
+end sub
 
 
 sub ObjectStartup
-	if Stage.PlayerListPos==0
+	if Stage.PlayerListPos == 0
 		LoadSpriteSheet("R6/Objects.gif")
-		SpriteFrame(-24,-24,48,48,34,18)
-		SpriteFrame(-8,-12,16,24,206,1)
-		SpriteFrame(-8,-8,16,16,66,1)
-		SpriteFrame(-8,-8,16,16,66,1)
-		SpriteFrame(-4,-4,8,8,34,67)
+		SpriteFrame(-24, -24, 48, 48, 34, 18)
+		SpriteFrame(-8, -12, 16, 24, 206, 1)
+		SpriteFrame(-8, -8, 16, 16, 66, 1)
+		SpriteFrame(-8, -8, 16, 16, 66, 1)
+		SpriteFrame(-4, -4, 8, 8, 34, 67)
 	else
 		LoadSpriteSheet("R6/Objects3.gif")
-		SpriteFrame(-24,-24,48,48,1,101)
-		SpriteFrame(-8,-12,16,24,50,86)
-		SpriteFrame(-8,-8,16,16,50,111)
-		SpriteFrame(-8,-8,16,16,50,111)
-		SpriteFrame(-4,-4,8,8,50,128)
-	endif
-endsub
+		SpriteFrame(-24, -24, 48, 48, 1, 101)
+		SpriteFrame(-8, -12, 16, 24, 50, 86)
+		SpriteFrame(-8, -8, 16, 16, 50, 111)
+		SpriteFrame(-8, -8, 16, 16, 50, 111)
+		SpriteFrame(-4, -4, 8, 8, 50, 128)
+	end if
+end sub
 
 sub RSDK
 	LoadSpriteSheet("Global/Display.gif")
-	SetEditorIcon(Icon0,SingleIcon,-16,-16,32,32,1,143)
-endsub
+	SetEditorIcon(Icon0, SingleIcon, -16, -16, 32, 32, 1, 143)
+end sub

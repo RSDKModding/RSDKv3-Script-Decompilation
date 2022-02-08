@@ -7,226 +7,226 @@
 
 
 sub ObjectMain
-	if Object.OutOfBounds==1
-		Object.State=0
-		Object.Value0=0
-		Object.Value2=0
-		Object.YPos=Object.Value1
-		Object.Priority=0
-	endif
-	if Object.PropertyValue==0
+	if Object.OutOfBounds == 1
+		Object.State = 0
+		Object.Value0 = 0
+		Object.Value2 = 0
+		Object.YPos = Object.Value1
+		Object.Priority = 0
+	end if
+	if Object.PropertyValue == 0
 		switch Object.State
 		case 0
-			Object.Frame=0
-			if Object.Value0>0
+			Object.Frame = 0
+			if Object.Value0 > 0
 				Object.Value0--
-			endif
+			end if
 			break
 		case 1
-			if Object.Value0<12
-				Object.YPos+=524288
+			if Object.Value0 < 12
+				Object.YPos += 524288
 				Object.Value0++
 			else
-				Object.Value0=0
+				Object.Value0 = 0
 				Object.State++
-			endif
+			end if
 			break
 		case 2
-			if Object.Value2<30
+			if Object.Value2 < 30
 				Object.Value2++
 			else
-				Object.Value2=0
+				Object.Value2 = 0
 				Object.State++
-				Object.Frame=3
-			endif
+				Object.Frame = 3
+			end if
 			break
 		case 3
 			Object.State++
-			Object.Frame=4
-			PlayStageSfx(8,0)
+			Object.Frame = 4
+			PlayStageSfx(8, 0)
 			break
 		case 4
-			if Object.Value2<3
+			if Object.Value2 < 3
 				Object.Value2++
 			else
-				Object.Value2=0
+				Object.Value2 = 0
 				Object.State++
-				Object.Frame=3
-			endif
+				Object.Frame = 3
+			end if
 			break
 		case 5
 			Object.State++
-			Object.Frame=0
+			Object.Frame = 0
 			break
 		case 6
 			Object.State++
-			Object.Frame=3
+			Object.Frame = 3
 			break
 		case 7
 			Object.State++
-			Object.Frame=4
+			Object.Frame = 4
 			break
 		case 8
-			if Object.Value2<30
+			if Object.Value2 < 30
 				Object.Value2++
 			else
-				Object.Value2=0
+				Object.Value2 = 0
 				Object.State++
-				Object.Frame=3
-			endif
+				Object.Frame = 3
+			end if
 			break
 		case 9
-			Object.Frame=0
-			if Object.Value0<2
-				Object.State=2
+			Object.Frame = 0
+			if Object.Value0 < 2
+				Object.State = 2
 				Object.Value0++
 			else
 				Object.State++
-				Object.Value0=0
-			endif
+				Object.Value0 = 0
+			end if
 			break
 		case 10
-			if Object.Value0<20
+			if Object.Value0 < 20
 				Object.Value0++
 			else
-				Object.Value0=0
+				Object.Value0 = 0
 				Object.State++
-			endif
+			end if
 			break
 		case 11
-			if Object.Value0<12
-				Object.YPos-=524288
+			if Object.Value0 < 12
+				Object.YPos -= 524288
 				Object.Value0++
 			else
-				Object.Value0=120
-				Object.State=0
-			endif
+				Object.Value0 = 120
+				Object.State = 0
+			end if
 			break
-		endswitch
+		end switch
 	else
 		switch Object.State
 		case 0
-			Object.Frame=1
-			if Object.Value0>0
+			Object.Frame = 1
+			if Object.Value0 > 0
 				Object.Value0--
-			endif
+			end if
 			break
 		case 1
-			Object.Frame=1
-			if Object.Value0<12
-				Object.YPos+=524288
+			Object.Frame = 1
+			if Object.Value0 < 12
+				Object.YPos += 524288
 				Object.Value0++
 			else
-				Object.Value0=0
+				Object.Value0 = 0
 				Object.State++
-			endif
+			end if
 			break
 		case 2
-			if Object.Value2<10
+			if Object.Value2 < 10
 				Object.Value2++
 			else
-				Object.Value2=0
+				Object.Value2 = 0
 				Object.State++
-				Object.Frame=2
-			endif
+				Object.Frame = 2
+			end if
 			break
 		case 3
-			if Object.Value2<10
+			if Object.Value2 < 10
 				Object.Value2++
 			else
-				Object.Value2=0
-				Object.Frame=1
+				Object.Value2 = 0
+				Object.Frame = 1
 				Object.Value0++
-				if Object.Value0==3
-					Object.Value0=0
+				if Object.Value0 == 3
+					Object.Value0 = 0
 					Object.State++
 				else
-					Object.State=2
-				endif
-			endif
+					Object.State = 2
+				end if
+			end if
 			break
 		case 4
-			if Object.Value0<48
-				Object.YPos-=131072
+			if Object.Value0 < 48
+				Object.YPos -= 131072
 				Object.Value0++
 			else
-				Object.Value0=120
-				Object.State=0
-			endif
+				Object.Value0 = 120
+				Object.State = 0
+			end if
 			break
-		endswitch
-	endif
+		end switch
+	end if
 	CallFunction(StageSetup_CheckGoodFuture)
-endsub
+end sub
 
 
 sub ObjectPlayerInteraction
-	PlayerObjectCollision(C_TOUCH,-8,-6,8,22)
-	if CheckResult==1
+	PlayerObjectCollision(C_TOUCH, -8, -6, 8, 22)
+	if CheckResult == 1
 		CallFunction(PlayerObject_BadnikBreak)
-	endif
-	if Object.PropertyValue==0
-		if Object.Type==TypeName[Minomusi]
-			if Object.Frame>2
-				PlayerObjectCollision(C_TOUCH,-17,-4,17,20)
-				if CheckResult==1
+	end if
+	if Object.PropertyValue == 0
+		if Object.Type == TypeName[Minomusi]
+			if Object.Frame > 2
+				PlayerObjectCollision(C_TOUCH, -17, -4, 17, 20)
+				if CheckResult == 1
 					CallFunction(PlayerObject_Hit)
-				endif
-			endif
-		endif
-	endif
-	if Object.State==0
-		if Object.Value0==0
-			PlayerObjectCollision(C_TOUCH,-64,0,64,128)
-			if CheckResult==1
-				Object.State=1
-				Object.Priority=1
-			endif
-		endif
-	endif
-endsub
+				end if
+			end if
+		end if
+	end if
+	if Object.State == 0
+		if Object.Value0 == 0
+			PlayerObjectCollision(C_TOUCH, -64, 0, 64, 128)
+			if CheckResult == 1
+				Object.State = 1
+				Object.Priority = 1
+			end if
+		end if
+	end if
+end sub
 
 
 sub ObjectDraw
-	TempValue0=Object.YPos
-	TempValue0-=Object.Value1
-	TempValue0>>=19
-	TempValue0+=5
-	DrawSpriteXY(TempValue0,Object.XPos,Object.Value1)
+	TempValue0 = Object.YPos
+	TempValue0 -= Object.Value1
+	TempValue0 >>= 19
+	TempValue0 += 5
+	DrawSpriteXY(TempValue0, Object.XPos, Object.Value1)
 	DrawSprite(Object.Frame)
-endsub
+end sub
 
 
 sub ObjectStartup
 	LoadSpriteSheet("R6/Objects.gif")
-	SpriteFrame(-8,-8,16,32,82,134)
-	SpriteFrame(-8,-8,16,32,17,184)
-	SpriteFrame(-8,-8,16,32,1,184)
-	SpriteFrame(-12,-8,24,32,133,166)
-	SpriteFrame(-16,-8,32,32,1,151)
-	SpriteFrame(-4,16,8,0,246,91)
-	SpriteFrame(-4,16,8,8,246,91)
-	SpriteFrame(-4,16,8,16,246,91)
-	SpriteFrame(-4,16,8,24,246,91)
-	SpriteFrame(-4,16,8,32,246,91)
-	SpriteFrame(-4,16,8,40,246,91)
-	SpriteFrame(-4,16,8,48,246,91)
-	SpriteFrame(-4,16,8,56,246,91)
-	SpriteFrame(-4,16,8,64,246,91)
-	SpriteFrame(-4,16,8,72,246,91)
-	SpriteFrame(-4,16,8,72,246,91)
-	SpriteFrame(-4,16,8,72,246,91)
-	SpriteFrame(-4,16,8,72,246,91)
-	ArrayPos0=32
-	while ArrayPos0<1056
-		if Object[ArrayPos0].Type==TypeName[Minomusi]
-			Object[ArrayPos0].Value1=Object[ArrayPos0].YPos
-		endif
+	SpriteFrame(-8, -8, 16, 32, 82, 134)
+	SpriteFrame(-8, -8, 16, 32, 17, 184)
+	SpriteFrame(-8, -8, 16, 32, 1, 184)
+	SpriteFrame(-12, -8, 24, 32, 133, 166)
+	SpriteFrame(-16, -8, 32, 32, 1, 151)
+	SpriteFrame(-4, 16, 8, 0, 246, 91)
+	SpriteFrame(-4, 16, 8, 8, 246, 91)
+	SpriteFrame(-4, 16, 8, 16, 246, 91)
+	SpriteFrame(-4, 16, 8, 24, 246, 91)
+	SpriteFrame(-4, 16, 8, 32, 246, 91)
+	SpriteFrame(-4, 16, 8, 40, 246, 91)
+	SpriteFrame(-4, 16, 8, 48, 246, 91)
+	SpriteFrame(-4, 16, 8, 56, 246, 91)
+	SpriteFrame(-4, 16, 8, 64, 246, 91)
+	SpriteFrame(-4, 16, 8, 72, 246, 91)
+	SpriteFrame(-4, 16, 8, 72, 246, 91)
+	SpriteFrame(-4, 16, 8, 72, 246, 91)
+	SpriteFrame(-4, 16, 8, 72, 246, 91)
+	ArrayPos0 = 32
+	while ArrayPos0 < 1056
+		if Object[ArrayPos0].Type == TypeName[Minomusi]
+			Object[ArrayPos0].Value1 = Object[ArrayPos0].YPos
+		end if
 		ArrayPos0++
 	loop
-endsub
+end sub
 
 sub RSDK
 	LoadSpriteSheet("Global/Display.gif")
-	SetEditorIcon(Icon0,SingleIcon,-16,-16,32,32,1,143)
-endsub
+	SetEditorIcon(Icon0, SingleIcon, -16, -16, 32, 32, 1, 143)
+end sub

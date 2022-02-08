@@ -9,142 +9,142 @@
 sub ObjectMain
 	switch Object.PropertyValue
 	case 1
-		Object.XPos=Object.Value4
-		Object.XPos+=Object[29].Value2
+		Object.XPos = Object.Value4
+		Object.XPos += Object[29].Value2
 		break
 	case 2
-		Object.XPos=Object.Value4
-		Object.XPos-=Object[29].Value2
+		Object.XPos = Object.Value4
+		Object.XPos -= Object[29].Value2
 		break
 	case 3
-		if Object.Value3==0
-			if Object.Value2<3670016
-				Object.Value2+=65536
+		if Object.Value3 == 0
+			if Object.Value2 < 3670016
+				Object.Value2 += 65536
 			else
-				Object.Value3=1
-			endif
+				Object.Value3 = 1
+			end if
 		else
-			if Object.Value2>-3670016
-				Object.Value2-=65536
+			if Object.Value2 > -3670016
+				Object.Value2 -= 65536
 			else
-				Object.Value3=0
-			endif
-		endif
-		Object.YPos=Object.Value5
-		Object.YPos+=Object.Value2
+				Object.Value3 = 0
+			end if
+		end if
+		Object.YPos = Object.Value5
+		Object.YPos += Object.Value2
 		break
 	case 4
-		if Object.Value3==0
-			if Object.Value2<3670016
-				Object.Value2+=65536
+		if Object.Value3 == 0
+			if Object.Value2 < 3670016
+				Object.Value2 += 65536
 			else
-				Object.Value3=1
-			endif
+				Object.Value3 = 1
+			end if
 		else
-			if Object.Value2>-3670016
-				Object.Value2-=65536
+			if Object.Value2 > -3670016
+				Object.Value2 -= 65536
 			else
-				Object.Value3=0
-			endif
-		endif
-		Object.YPos=Object.Value5
-		Object.YPos-=Object.Value2
+				Object.Value3 = 0
+			end if
+		end if
+		Object.YPos = Object.Value5
+		Object.YPos -= Object.Value2
 		break
 	case 5
-		Object.YPos=Object.Value5
-		Object.YPos+=Object[29].Value2
+		Object.YPos = Object.Value5
+		Object.YPos += Object[29].Value2
 		break
 	case 6
-		Object.YPos=Object.Value5
-		Object.YPos-=Object[29].Value2
+		Object.YPos = Object.Value5
+		Object.YPos -= Object[29].Value2
 		break
-	endswitch
-	if Object.State>0
-		Object.Frame=Object.Value0
-		Object.Frame/=5
+	end switch
+	if Object.State > 0
+		Object.Frame = Object.Value0
+		Object.Frame /= 5
 		Object.Frame++
 		Object.Value0++
-		if Object.Value0>22
-			Object.Value0=0
-			Object.State=0
-			Object.Frame=0
-		endif
-	endif
-	if Object.OutOfBounds==1
-		Object.Value1=0
-		Object.Priority=0
-	endif
-endsub
+		if Object.Value0 > 22
+			Object.Value0 = 0
+			Object.State = 0
+			Object.Frame = 0
+		end if
+	end if
+	if Object.OutOfBounds == 1
+		Object.Value1 = 0
+		Object.Priority = 0
+	end if
+end sub
 
 
 sub ObjectPlayerInteraction
-	if Player.Animation!=12
-		PlayerObjectCollision(C_TOUCH,-14,-14,14,14)
-		if CheckResult==1
-			if Object.State==0
-				PlayStageSfx(0,0)
+	if Player.Animation != 12
+		PlayerObjectCollision(C_TOUCH, -14, -14, 14, 14)
+		if CheckResult == 1
+			if Object.State == 0
+				PlayStageSfx(0, 0)
 #platform: Use_Haptics
-				HapticEffect(9,0,0,0)
+				HapticEffect(9, 0, 0, 0)
 #endplatform
-				if Object.Value1<5
-					CreateTempObject(TypeName[ObjectScore],0,Object.XPos,Object.YPos)
-					Player.Score+=100
+				if Object.Value1 < 5
+					CreateTempObject(TypeName[ObjectScore], 0, Object.XPos, Object.YPos)
+					Player.Score += 100
 					Object.Value1++
-				endif
-			endif
-			if Object.Value0>5
-				PlayStageSfx(0,0)
-			endif
-			Object.State=1
-			Object.Priority=1
-			TempValue0=Player.XPos
-			TempValue0-=Object.XPos
-			TempValue1=Player.YPos
-			TempValue1-=Object.YPos
-			ATan2(TempValue2,TempValue0,TempValue1)
-			Cos256(TempValue0,TempValue2)
-			Sin256(TempValue1,TempValue2)
-			if Player.State==PlayerObject_HandleTailsFlight
-				TempValue0<<=10
-				TempValue1<<=10
+				end if
+			end if
+			if Object.Value0 > 5
+				PlayStageSfx(0, 0)
+			end if
+			Object.State = 1
+			Object.Priority = 1
+			TempValue0 = Player.XPos
+			TempValue0 -= Object.XPos
+			TempValue1 = Player.YPos
+			TempValue1 -= Object.YPos
+			ATan2(TempValue2, TempValue0, TempValue1)
+			Cos256(TempValue0, TempValue2)
+			Sin256(TempValue1, TempValue2)
+			if Player.State == PlayerObject_HandleTailsFlight
+				TempValue0 <<= 10
+				TempValue1 <<= 10
 			else
-				TempValue0*=1792
-				TempValue1*=1792
-				Player.Timer=0
-			endif
-			Player.XVelocity=TempValue0
-			Player.YVelocity=TempValue1
-			Player.Speed=Player.XVelocity
-			Player.Gravity=1
-		endif
-	endif
-endsub
+				TempValue0 *= 1792
+				TempValue1 *= 1792
+				Player.Timer = 0
+			end if
+			Player.XVelocity = TempValue0
+			Player.YVelocity = TempValue1
+			Player.Speed = Player.XVelocity
+			Player.Gravity = 1
+		end if
+	end if
+end sub
 
 
 sub ObjectDraw
 	DrawSprite(Object.Frame)
-endsub
+end sub
 
 
 sub ObjectStartup
 	LoadSpriteSheet("R3/Objects.gif")
-	ArrayPos0=32
-	while ArrayPos0<1056
-		if Object[ArrayPos0].Type==TypeName[Bumper]
-			Object[ArrayPos0].Value4=Object[ArrayPos0].XPos
-			Object[ArrayPos0].Value5=Object[ArrayPos0].YPos
-		endif
+	ArrayPos0 = 32
+	while ArrayPos0 < 1056
+		if Object[ArrayPos0].Type == TypeName[Bumper]
+			Object[ArrayPos0].Value4 = Object[ArrayPos0].XPos
+			Object[ArrayPos0].Value5 = Object[ArrayPos0].YPos
+		end if
 		ArrayPos0++
 	loop
-	SpriteFrame(-16,-16,32,32,67,167)
-	SpriteFrame(-12,-12,24,24,206,170)
-	SpriteFrame(-20,-20,40,40,215,203)
-	SpriteFrame(-12,-12,24,24,206,170)
-	SpriteFrame(-20,-20,40,40,215,203)
-	SpriteFrame(-20,-20,40,40,215,203)
-endsub
+	SpriteFrame(-16, -16, 32, 32, 67, 167)
+	SpriteFrame(-12, -12, 24, 24, 206, 170)
+	SpriteFrame(-20, -20, 40, 40, 215, 203)
+	SpriteFrame(-12, -12, 24, 24, 206, 170)
+	SpriteFrame(-20, -20, 40, 40, 215, 203)
+	SpriteFrame(-20, -20, 40, 40, 215, 203)
+end sub
 
 sub RSDK
 	LoadSpriteSheet("Global/Display.gif")
-	SetEditorIcon(Icon0,SingleIcon,-16,-16,32,32,1,143)
-endsub
+	SetEditorIcon(Icon0, SingleIcon, -16, -16, 32, 32, 1, 143)
+end sub

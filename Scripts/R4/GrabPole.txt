@@ -7,83 +7,83 @@
 
 
 sub ObjectMain
-	if Object.State==1
-		if Player.State==PlayerObject_Death
-			Object.State=0
-		endif
-		if Player.State==PlayerObject_Drown
-			Object.State=0
-		endif
-		if Object.State>0
-			if Object.Value0<180
+	if Object.State == 1
+		if Player.State == PlayerObject_Death
+			Object.State = 0
+		end if
+		if Player.State == PlayerObject_Drown
+			Object.State = 0
+		end if
+		if Object.State > 0
+			if Object.Value0 < 180
 				Object.Value0++
-				Player.XPos=Object.XPos
-				Player.Direction=FACING_RIGHT
-				if Stage.PlayerListPos==0
-					Player.XPos+=1310720
+				Player.XPos = Object.XPos
+				Player.Direction = FACING_RIGHT
+				if Stage.PlayerListPos == 0
+					Player.XPos += 1310720
 				else
-					Player.XPos+=1048576
-				endif
+					Player.XPos += 1048576
+				end if
 			else
-				Object.Frame=1
-				Object.State=2
-				Player.State=PlayerObject_HandleAir
-			endif
-		endif
-	endif
-endsub
+				Object.Frame = 1
+				Object.State = 2
+				Player.State = PlayerObject_HandleAir
+			end if
+		end if
+	end if
+end sub
 
 
 sub ObjectPlayerInteraction
 	switch Object.State
 	case 0
-		PlayerObjectCollision(C_TOUCH,16,-28,32,28)
-		if CheckResult==1
-			Object.State=1
-			Player.State=PlayerObject_Blank
-			Player.Animation=ANI_CLINGING
-			Player.Direction=FACING_RIGHT
-			Player.Speed=0
-			Player.XVelocity=0
-			Player.YVelocity=0
-		endif
+		PlayerObjectCollision(C_TOUCH, 16, -28, 32, 28)
+		if CheckResult == 1
+			Object.State = 1
+			Player.State = PlayerObject_Blank
+			Player.Animation = ANI_CLINGING
+			Player.Direction = FACING_RIGHT
+			Player.Speed = 0
+			Player.XVelocity = 0
+			Player.YVelocity = 0
+		end if
 		break
 	case 1
-		if Player.Up==1
-			Player.YPos-=65536
-		endif
-		if Player.Down==1
-			Player.YPos+=65536
-		endif
-		if Player.JumpPress==1
-			Object.Frame=1
-			Object.State=2
-			Player.State=PlayerObject_HandleAir
-		endif
-		PlayerObjectCollision(C_BOX,0,-64,32,-46)
-		PlayerObjectCollision(C_BOX,0,46,32,64)
+		if Player.Up == 1
+			Player.YPos -= 65536
+		end if
+		if Player.Down == 1
+			Player.YPos += 65536
+		end if
+		if Player.JumpPress == 1
+			Object.Frame = 1
+			Object.State = 2
+			Player.State = PlayerObject_HandleAir
+		end if
+		PlayerObjectCollision(C_BOX, 0, -64, 32, -46)
+		PlayerObjectCollision(C_BOX, 0, 46, 32, 64)
 		break
-	endswitch
-endsub
+	end switch
+end sub
 
 
 sub ObjectDraw
 	DrawSprite(Object.Frame)
-endsub
+end sub
 
 
 sub ObjectStartup
 	LoadSpriteSheet("R4/Objects3.gif")
-	if Object[24].PropertyValue<3
-		SpriteFrame(-4,-46,8,92,134,46)
-		SpriteFrame(-4,-46,16,92,117,46)
+	if Object[24].PropertyValue < 3
+		SpriteFrame(-4, -46, 8, 92, 134, 46)
+		SpriteFrame(-4, -46, 16, 92, 117, 46)
 	else
-		SpriteFrame(-4,-46,8,92,51,163)
-		SpriteFrame(-4,-46,16,92,34,163)
-	endif
-endsub
+		SpriteFrame(-4, -46, 8, 92, 51, 163)
+		SpriteFrame(-4, -46, 16, 92, 34, 163)
+	end if
+end sub
 
 sub RSDK
 	LoadSpriteSheet("Global/Display.gif")
-	SetEditorIcon(Icon0,SingleIcon,-16,-16,32,32,1,143)
-endsub
+	SetEditorIcon(Icon0, SingleIcon, -16, -16, 32, 32, 1, 143)
+end sub

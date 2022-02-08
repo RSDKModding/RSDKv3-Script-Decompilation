@@ -6,74 +6,74 @@
 #alias 11: TYPE_MONITOR
 
 sub ObjectMain
-	if Object.State==1
-		Object.Value1+=14336
-		Object.YPos+=Object.Value1
-		if Object.Value1>=0
-			ObjectTileCollision(0,0,16,0)
-			if CheckResult==1
-				Object.Value1=0
-				Object.State=0
-			endif
-		endif
-	endif
-endsub
+	if Object.State == 1
+		Object.Value1 += 14336
+		Object.YPos += Object.Value1
+		if Object.Value1 >= 0
+			ObjectTileCollision(0, 0, 16, 0)
+			if CheckResult == 1
+				Object.Value1 = 0
+				Object.State = 0
+			end if
+		end if
+	end if
+end sub
 
 
 sub ObjectPlayerInteraction
-	if Player.CollisionPlane==Object.Value2
+	if Player.CollisionPlane == Object.Value2
 #platform: Mobile
-		TempValue0=0
-		if Player.Gravity==1
-			if Player.YVelocity<0
-				TempValue0=1
-			endif
-		endif
-		if TempValue0==0		
+		TempValue0 = 0
+		if Player.Gravity == 1
+			if Player.YVelocity < 0
+				TempValue0 = 1
+			end if
+		end if
+		if TempValue0 == 0		
 #endplatform
 #platform: Standard	  
-		if Player.YVelocity>=0
+		if Player.YVelocity >= 0
 #endplatform				
-			if Player.Animation==ANI_JUMPING
-				PlayerObjectCollision(C_TOUCH,-16,-14,16,16)
-				if CheckResult==1
-					Object.State=0
-					CreateTempObject(TypeName[SmokePuff],0,Object.XPos,Object.YPos)
-					Object[TempObjectPos].DrawOrder=4
+			if Player.Animation == ANI_JUMPING
+				PlayerObjectCollision(C_TOUCH, -16, -14, 16, 16)
+				if CheckResult == 1
+					Object.State = 0
+					CreateTempObject(TypeName[SmokePuff], 0, Object.XPos, Object.YPos)
+					Object[TempObjectPos].DrawOrder = 4
 					FlipSign(Player.YVelocity)
-					if Player.YVelocity>-131072
-						Player.YVelocity=-131072
-					endif
-					Object.Type=TypeName[BrokenMonitor]
-					Object.Priority=1
-					Object.Alpha=255
-					Object.Value0=Object.YPos
-					Object.Value1=-196608
-					PlaySfx(8,0)
+					if Player.YVelocity > -131072
+						Player.YVelocity = -131072
+					end if
+					Object.Type = TypeName[BrokenMonitor]
+					Object.Priority = 1
+					Object.Alpha = 255
+					Object.Value0 = Object.YPos
+					Object.Value1 = -196608
+					PlaySfx(8, 0)
 #platform: Use_Haptics
-					HapticEffect(16,0,0,0)
+					HapticEffect(16, 0, 0, 0)
 #endplatform
-				endif
+				end if
 			else
-				PlayerObjectCollision(C_BOX,-15,-14,15,16)
-			endif
+				PlayerObjectCollision(C_BOX, -15, -14, 15, 16)
+			end if
 		else
-			PlayerObjectCollision(C_BOX,-15,-16,15,16)
-			if CheckResult==4
-				Object.State=1
-				Object.Value1=-131072
-				Player.YVelocity=131072
-			endif
-		endif
-	endif
-endsub
+			PlayerObjectCollision(C_BOX, -15, -16, 15, 16)
+			if CheckResult == 4
+				Object.State = 1
+				Object.Value1 = -131072
+				Player.YVelocity = 131072
+			end if
+		end if
+	end if
+end sub
 
 
 sub ObjectDraw
 	Object.Frame++
-	if Object.Frame>17
-		Object.Frame=0
-	endif
+	if Object.Frame > 17
+		Object.Frame = 0
+	end if
 	switch Object.Frame
 	case 0
 	case 1
@@ -90,60 +90,60 @@ sub ObjectDraw
 	default
 		DrawSprite(Object.PropertyValue)
 		break
-	endswitch
-endsub
+	end switch
+end sub
 
 
 
 sub ObjectStartup
 	LoadSpriteSheet("Global/Items.gif")
-	SpriteFrame(-16,-16,32,32,51,67)
-	SpriteFrame(-16,-16,32,32,18,1)
-	SpriteFrame(-16,-16,32,32,18,34)
-	SpriteFrame(-16,-16,32,32,18,67)
-	SpriteFrame(-16,-16,32,32,18,100)
-	SpriteFrame(-16,-16,32,32,18,133)
-	SpriteFrame(-16,-16,32,32,18,166)
-	SpriteFrame(-16,-16,32,32,51,100)
-	SpriteFrame(-16,-16,32,32,51,133)
-	SpriteFrame(-16,-16,32,32,51,1)
-	SpriteFrame(-16,-16,32,32,51,34)
-	ArrayPos0=32
-	while ArrayPos0<1056
-		if Object[ArrayPos0].Type==TypeName[Monitor]
-			if Object[ArrayPos0].PropertyValue>9
-				Object[ArrayPos0].PropertyValue-=10
-				Object[ArrayPos0].DrawOrder=1
-				Object[ArrayPos0].Value2=1
-			endif
-		endif
+	SpriteFrame(-16, -16, 32, 32, 51, 67)
+	SpriteFrame(-16, -16, 32, 32, 18, 1)
+	SpriteFrame(-16, -16, 32, 32, 18, 34)
+	SpriteFrame(-16, -16, 32, 32, 18, 67)
+	SpriteFrame(-16, -16, 32, 32, 18, 100)
+	SpriteFrame(-16, -16, 32, 32, 18, 133)
+	SpriteFrame(-16, -16, 32, 32, 18, 166)
+	SpriteFrame(-16, -16, 32, 32, 51, 100)
+	SpriteFrame(-16, -16, 32, 32, 51, 133)
+	SpriteFrame(-16, -16, 32, 32, 51, 1)
+	SpriteFrame(-16, -16, 32, 32, 51, 34)
+	ArrayPos0 = 32
+	while ArrayPos0 < 1056
+		if Object[ArrayPos0].Type == TypeName[Monitor]
+			if Object[ArrayPos0].PropertyValue > 9
+				Object[ArrayPos0].PropertyValue -= 10
+				Object[ArrayPos0].DrawOrder = 1
+				Object[ArrayPos0].Value2 = 1
+			end if
+		end if
 		ArrayPos0++
 	loop
-	if Stage.PlayerListPos==1
-		ArrayPos0=32
-		while ArrayPos0<1056
-			if Object[ArrayPos0].Type==TypeName[Monitor]
-				if Object[ArrayPos0].PropertyValue==5
-					Object[ArrayPos0].PropertyValue=7
-				endif
-			endif
+	if Stage.PlayerListPos == 1
+		ArrayPos0 = 32
+		while ArrayPos0 < 1056
+			if Object[ArrayPos0].Type == TypeName[Monitor]
+				if Object[ArrayPos0].PropertyValue == 5
+					Object[ArrayPos0].PropertyValue = 7
+				end if
+			end if
 			ArrayPos0++
 		loop
-	endif
-	if Options.GameMode==2
-		ArrayPos0=32
-		while ArrayPos0<1056
-			if Object[ArrayPos0].Type==TypeName[Monitor]
-				if Object[ArrayPos0].PropertyValue==5
-					Object[ArrayPos0].Type=TypeName[BlankObject]
-				endif
-			endif
+	end if
+	if Options.GameMode == 2
+		ArrayPos0 = 32
+		while ArrayPos0 < 1056
+			if Object[ArrayPos0].Type == TypeName[Monitor]
+				if Object[ArrayPos0].PropertyValue == 5
+					Object[ArrayPos0].Type = TypeName[BlankObject]
+				end if
+			end if
 			ArrayPos0++
 		loop
-	endif
-endsub
+	end if
+end sub
 
 sub RSDK
 	LoadSpriteSheet("Global/Display.gif")
-	SetEditorIcon(Icon0,SingleIcon,-16,-16,32,32,1,143)
-endsub
+	SetEditorIcon(Icon0, SingleIcon, -16, -16, 32, 32, 1, 143)
+end sub

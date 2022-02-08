@@ -9,106 +9,106 @@
 sub ObjectMain
 	switch Object.State
 	case 1
-		if Object.Value0<6
-			Object.Value1-=524288
+		if Object.Value0 < 6
+			Object.Value1 -= 524288
 			Object.Value0++
 		else
-			Object.Value0=0
+			Object.Value0 = 0
 			Object.State++
-		endif
+		end if
 		break
 	case 2
-		if Object.Value0<6
-			Object.Value1+=524288
+		if Object.Value0 < 6
+			Object.Value1 += 524288
 			Object.Value0++
 		else
-			Object.Value0=0
-			Object.State=0
-			Object.Priority=0
-		endif
+			Object.Value0 = 0
+			Object.State = 0
+			Object.Priority = 0
+		end if
 		break
 	case 3
-		if Object.Value0<6
-			Object.Value1+=524288
+		if Object.Value0 < 6
+			Object.Value1 += 524288
 			Object.Value0++
 		else
-			Object.Value0=0
+			Object.Value0 = 0
 			Object.State++
-		endif
+		end if
 		break
 	case 4
-		if Object.Value0<6
-			Object.Value1-=524288
+		if Object.Value0 < 6
+			Object.Value1 -= 524288
 			Object.Value0++
 		else
-			Object.Value0=0
-			Object.State=0
-			Object.Priority=0
-		endif
+			Object.Value0 = 0
+			Object.State = 0
+			Object.Priority = 0
+		end if
 		break
-	endswitch
-endsub
+	end switch
+end sub
 
 
 sub ObjectPlayerInteraction
-	if Object.State==0
-		if Player.State!=PlayerObject_HandleAir
-			PlayerObjectCollision(C_TOUCH,-32,-12,32,4)
-			if CheckResult==1
-				Object.Priority=1
-				PlayStageSfx(0,0)
+	if Object.State == 0
+		if Player.State != PlayerObject_HandleAir
+			PlayerObjectCollision(C_TOUCH, -32, -12, 32, 4)
+			if CheckResult == 1
+				Object.Priority = 1
+				PlayStageSfx(0, 0)
 #platform: Use_Haptics
-				HapticEffect(30,0,0,0)
+				HapticEffect(30, 0, 0, 0)
 #endplatform
-				if Player.Speed>0
-					Object.State=1
-					Player.Speed=1048576
-					Player.Direction=FACING_RIGHT
-					CreateTempObject(TypeName[FireTrail],0,Object.XPos,Object.YPos)
-					Object[TempObjectPos].XPos-=1572864
-					Object[TempObjectPos].YPos-=393216
-					CreateTempObject(TypeName[BoosterCartridge],0,Object.XPos,Object.YPos)
-					Object[TempObjectPos].Value1=-131072
-					Object[TempObjectPos].Value2=-458752
+				if Player.Speed > 0
+					Object.State = 1
+					Player.Speed = 1048576
+					Player.Direction = FACING_RIGHT
+					CreateTempObject(TypeName[FireTrail], 0, Object.XPos, Object.YPos)
+					Object[TempObjectPos].XPos -= 1572864
+					Object[TempObjectPos].YPos -= 393216
+					CreateTempObject(TypeName[BoosterCartridge], 0, Object.XPos, Object.YPos)
+					Object[TempObjectPos].Value1 = -131072
+					Object[TempObjectPos].Value2 = -458752
 				else
-					Object.State=3
-					Player.Speed=-1048576
-					Player.Direction=FACING_LEFT
-					CreateTempObject(TypeName[FireTrail],0,Object.XPos,Object.YPos)
-					Object[TempObjectPos].XPos+=1572864
-					Object[TempObjectPos].YPos-=393216
-					Object[TempObjectPos].Direction=FACING_LEFT
-					CreateTempObject(TypeName[BoosterCartridge],0,Object.XPos,Object.YPos)
-					Object[TempObjectPos].Value1=131072
-					Object[TempObjectPos].Value2=-458752
-					Object[TempObjectPos].Direction=FACING_LEFT
-				endif
-			endif
-		endif
-	endif
-endsub
+					Object.State = 3
+					Player.Speed = -1048576
+					Player.Direction = FACING_LEFT
+					CreateTempObject(TypeName[FireTrail], 0, Object.XPos, Object.YPos)
+					Object[TempObjectPos].XPos += 1572864
+					Object[TempObjectPos].YPos -= 393216
+					Object[TempObjectPos].Direction = FACING_LEFT
+					CreateTempObject(TypeName[BoosterCartridge], 0, Object.XPos, Object.YPos)
+					Object[TempObjectPos].Value1 = 131072
+					Object[TempObjectPos].Value2 = -458752
+					Object[TempObjectPos].Direction = FACING_LEFT
+				end if
+			end if
+		end if
+	end if
+end sub
 
 
 sub ObjectDraw
-	TempValue0=Object.Value1
-	TempValue0+=Object.XPos
-	DrawSpriteXY(0,TempValue0,Object.YPos)
-endsub
+	TempValue0 = Object.Value1
+	TempValue0 += Object.XPos
+	DrawSpriteXY(0, TempValue0, Object.YPos)
+end sub
 
 
 sub ObjectStartup
 	LoadSpriteSheet("R7/Objects.gif")
-	SpriteFrame(-32,-12,64,24,34,96)
-	ArrayPos0=32
-	while ArrayPos0<1056
-		if Object[ArrayPos0].Type==TypeName[SpeedBooster]
-			Object[ArrayPos0].DrawOrder=4
-		endif
+	SpriteFrame(-32, -12, 64, 24, 34, 96)
+	ArrayPos0 = 32
+	while ArrayPos0 < 1056
+		if Object[ArrayPos0].Type == TypeName[SpeedBooster]
+			Object[ArrayPos0].DrawOrder = 4
+		end if
 		ArrayPos0++
 	loop
-endsub
+end sub
 
 sub RSDK
 	LoadSpriteSheet("Global/Display.gif")
-	SetEditorIcon(Icon0,SingleIcon,-16,-16,32,32,1,143)
-endsub
+	SetEditorIcon(Icon0, SingleIcon, -16, -16, 32, 32, 1, 143)
+end sub

@@ -8,128 +8,128 @@
 
 
 sub ObjectPlayerInteraction
-	PlayerObjectCollision(C_TOUCH,-16,-16,16,16)
-	if CheckResult==1
+	PlayerObjectCollision(C_TOUCH, -16, -16, 16, 16)
+	if CheckResult == 1
 		switch Object.PropertyValue
 		case 0
-			if Player.Speed>0
-				if Player.State!=PlayerObject_Tunnel
-					PlaySfx(7,0)
-				endif
-				Player.Direction=FACING_RIGHT
-				Player.State=PlayerObject_Tunnel
-				Player.Animation=ANI_JUMPING
-				Player.MinRollSpeed=655360
-				if Player.Speed<655360
-					Player.Speed=655360
-				endif
+			if Player.Speed > 0
+				if Player.State != PlayerObject_Tunnel
+					PlaySfx(7, 0)
+				end if
+				Player.Direction = FACING_RIGHT
+				Player.State = PlayerObject_Tunnel
+				Player.Animation = ANI_JUMPING
+				Player.MinRollSpeed = 655360
+				if Player.Speed < 655360
+					Player.Speed = 655360
+				end if
 			else
-				if Player.Gravity==0
-					if Player.Speed>-131072
-						Player.Speed=-131072
-					endif
-				endif
-				Player.State=PlayerObject_HandleRolling
-				Player.Animation=ANI_JUMPING
-			endif
+				if Player.Gravity == 0
+					if Player.Speed > -131072
+						Player.Speed = -131072
+					end if
+				end if
+				Player.State = PlayerObject_HandleRolling
+				Player.Animation = ANI_JUMPING
+			end if
 			break
 		case 1
-			if Player.State!=PlayerObject_Tunnel
-				PlaySfx(7,0)
-			endif
-			Player.Gravity=0
-			Player.State=PlayerObject_Tunnel
-			Player.Animation=ANI_JUMPING
-			Player.CollisionMode=3
-			Player.Angle=64
-			Player.Speed=1048576
-			Player.MinRollSpeed=1048576
+			if Player.State != PlayerObject_Tunnel
+				PlaySfx(7, 0)
+			end if
+			Player.Gravity = 0
+			Player.State = PlayerObject_Tunnel
+			Player.Animation = ANI_JUMPING
+			Player.CollisionMode = 3
+			Player.Angle = 64
+			Player.Speed = 1048576
+			Player.MinRollSpeed = 1048576
 			break
 		case 2
-			if Object.Value0==0
-				if Player.CollisionMode==0
-					Player.CollisionMode=2
+			if Object.Value0 == 0
+				if Player.CollisionMode == 0
+					Player.CollisionMode = 2
 					FlipSign(Player.Speed)
-					Player.Angle=128
+					Player.Angle = 128
 				else
-					Player.CollisionMode=0
+					Player.CollisionMode = 0
 					FlipSign(Player.Speed)
-					Player.Angle=0
-					Player.YPos+=262144
-				endif
-				Player.State=PlayerObject_Tunnel
-				Player.Animation=ANI_JUMPING
-			endif
+					Player.Angle = 0
+					Player.YPos += 262144
+				end if
+				Player.State = PlayerObject_Tunnel
+				Player.Animation = ANI_JUMPING
+			end if
 			break
 		case 3
-			if Player.YVelocity<0
-				Player.Gravity=0
-				Player.State=PlayerObject_Tunnel
-				Player.Animation=ANI_JUMPING
-				Player.CollisionMode=1
-				Player.Angle=192
-				Player.MinRollSpeed=655360
-				Player.Speed=Player.YVelocity
+			if Player.YVelocity < 0
+				Player.Gravity = 0
+				Player.State = PlayerObject_Tunnel
+				Player.Animation = ANI_JUMPING
+				Player.CollisionMode = 1
+				Player.Angle = 192
+				Player.MinRollSpeed = 655360
+				Player.Speed = Player.YVelocity
 				FlipSign(Player.Speed)
-			endif
+			end if
 			break
 		case 4
-			if Player.Speed<0
-				if Player.State!=PlayerObject_Tunnel
-					PlaySfx(7,0)
-				endif
-				Player.State=PlayerObject_Tunnel
-				Player.Animation=ANI_JUMPING
-				Player.MinRollSpeed=655360
+			if Player.Speed < 0
+				if Player.State != PlayerObject_Tunnel
+					PlaySfx(7, 0)
+				end if
+				Player.State = PlayerObject_Tunnel
+				Player.Animation = ANI_JUMPING
+				Player.MinRollSpeed = 655360
 			else
-				Player.State=PlayerObject_HandleRolling
-				Player.Animation=ANI_JUMPING
-			endif
+				Player.State = PlayerObject_HandleRolling
+				Player.Animation = ANI_JUMPING
+			end if
 			break
 		case 5
-			if Player.Gravity==1
-				Player.XVelocity=Object.Value1
-				Player.Speed=Object.Value1
+			if Player.Gravity == 1
+				Player.XVelocity = Object.Value1
+				Player.Speed = Object.Value1
 			else
-				if Player.CollisionMode==1
-					Player.Angle=196
-					Cos256(TempValue0,Player.Angle)
-					TempValue0*=Player.Speed
-					TempValue0>>=8
-					if TempValue0!=0
-						Object.Value1=TempValue0
-					endif
-				endif
-			endif
+				if Player.CollisionMode == 1
+					Player.Angle = 196
+					Cos256(TempValue0, Player.Angle)
+					TempValue0 *= Player.Speed
+					TempValue0 >>= 8
+					if TempValue0 != 0
+						Object.Value1 = TempValue0
+					end if
+				end if
+			end if
 			break
 		case 6
-			if Player.State==PlayerObject_Tunnel
-				if Player.YVelocity<-393216
-					Player.YVelocity=-393216
-				endif
+			if Player.State == PlayerObject_Tunnel
+				if Player.YVelocity < -393216
+					Player.YVelocity = -393216
+				end if
 			else
-				Player.Animation=ANI_JUMPING
-			endif
+				Player.Animation = ANI_JUMPING
+			end if
 			break
 		case 7
-			if Player.State==PlayerObject_Tunnel
-				Object.PropertyValue=8
-			endif
+			if Player.State == PlayerObject_Tunnel
+				Object.PropertyValue = 8
+			end if
 			break
 		case 8
-			if Player.Gravity==1
-				Player.YVelocity=-688128
-				Object.PropertyValue=7
-			endif
+			if Player.Gravity == 1
+				Player.YVelocity = -688128
+				Object.PropertyValue = 7
+			end if
 			break
-		endswitch
-		Object.Value0=1
+		end switch
+		Object.Value0 = 1
 	else
-		Object.Value0=0
-	endif
-endsub
+		Object.Value0 = 0
+	end if
+end sub
 
 sub RSDK
 	LoadSpriteSheet("Global/Display.gif")
-	SetEditorIcon(Icon0,SingleIcon,-16,-16,32,32,1,143)
-endsub
+	SetEditorIcon(Icon0, SingleIcon, -16, -16, 32, 32, 1, 143)
+end sub

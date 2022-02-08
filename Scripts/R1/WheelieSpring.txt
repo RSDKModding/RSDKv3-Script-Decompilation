@@ -7,72 +7,72 @@
 
 
 sub ObjectMain
-	if Object.State==0
-		if Object.Value0<Object.PropertyValue
+	if Object.State == 0
+		if Object.Value0 < Object.PropertyValue
 			Object.Value0++
-			Object.XPos+=98304
+			Object.XPos += 98304
 		else
-			Object.State=1
-			Object.Value0=Object.PropertyValue
+			Object.State = 1
+			Object.Value0 = Object.PropertyValue
 			FlipSign(Object.Value0)
-		endif
+		end if
 	else
-		if Object.Value0<Object.PropertyValue
+		if Object.Value0 < Object.PropertyValue
 			Object.Value0++
-			Object.XPos-=98304
+			Object.XPos -= 98304
 		else
-			Object.State=0
-			Object.Value0=Object.PropertyValue
+			Object.State = 0
+			Object.Value0 = Object.PropertyValue
 			FlipSign(Object.Value0)
-		endif
-	endif
-	ObjectTileGrip(0,0,15,0)
-endsub
+		end if
+	end if
+	ObjectTileGrip(0, 0, 15, 0)
+end sub
 
 
 sub ObjectPlayerInteraction
-	if Player.YVelocity>=0
-		PlayerObjectCollision(C_BOX,-16,-16,16,16)
-		PlayerObjectCollision(C_TOUCH,-15,-18,15,-12)
-		if CheckResult==1
-			Object.Frame=1
-			Player.State=PlayerObject_HandleAir
-			Player.Gravity=1
-			Player.YVelocity=-1048576
-			Player.Animation=11
-			Player.Timer=0
-			PlaySfx(11,0)
+	if Player.YVelocity >= 0
+		PlayerObjectCollision(C_BOX, -16, -16, 16, 16)
+		PlayerObjectCollision(C_TOUCH, -15, -18, 15, -12)
+		if CheckResult == 1
+			Object.Frame = 1
+			Player.State = PlayerObject_HandleAir
+			Player.Gravity = 1
+			Player.YVelocity = -1048576
+			Player.Animation = 11
+			Player.Timer = 0
+			PlaySfx(11, 0)
 #platform: Use_Haptics
-			HapticEffect(9,0,0,0)
+			HapticEffect(9, 0, 0, 0)
 #endplatform
-		endif
-	endif
-	if Player.Gravity==0
-		PlayerObjectCollision(C_BOX,-16,-20,16,16)
-		PlayerObjectCollision(C_TOUCH,-15,-18,15,-12)
-		if CheckResult==1
-			Object.Frame=1
-			Player.State=PlayerObject_HandleAir
-			Player.Gravity=1
-			Player.YVelocity=-1048576
-			Player.Animation=11
-			Player.Timer=0
-			PlaySfx(11,0)
+		end if
+	end if
+	if Player.Gravity == 0
+		PlayerObjectCollision(C_BOX, -16, -20, 16, 16)
+		PlayerObjectCollision(C_TOUCH, -15, -18, 15, -12)
+		if CheckResult == 1
+			Object.Frame = 1
+			Player.State = PlayerObject_HandleAir
+			Player.Gravity = 1
+			Player.YVelocity = -1048576
+			Player.Animation = 11
+			Player.Timer = 0
+			PlaySfx(11, 0)
 #platform: Use_Haptics
-			HapticEffect(9,0,0,0)
+			HapticEffect(9, 0, 0, 0)
 #endplatform
-		endif
-	endif
-endsub
+		end if
+	end if
+end sub
 
 
 sub ObjectDraw
-	if Object.Frame==0
+	if Object.Frame == 0
 		DrawSprite(0)
 	else
 		Object.Frame++
-		TempValue0=Object.Frame
-		TempValue0>>=1
+		TempValue0 = Object.Frame
+		TempValue0 >>= 1
 		switch TempValue0
 		case 0
 		case 1
@@ -87,30 +87,30 @@ sub ObjectDraw
 		case 5
 			DrawSprite(2)
 			break
-		endswitch
-		if Object.Frame>12
-			Object.Frame=0
-		endif
-	endif
-	TempValue0=Object.Value0
-	TempValue0+=Object.PropertyValue
-	TempValue0%=18
-	TempValue0/=9
-	TempValue0+=3
+		end switch
+		if Object.Frame > 12
+			Object.Frame = 0
+		end if
+	end if
+	TempValue0 = Object.Value0
+	TempValue0 += Object.PropertyValue
+	TempValue0 %= 18
+	TempValue0 /= 9
+	TempValue0 += 3
 	DrawSprite(TempValue0)
-endsub
+end sub
 
 
 sub ObjectStartup
 	LoadSpriteSheet("Global/Items.gif")
-	SpriteFrame(-16,-16,32,16,84,1)
-	SpriteFrame(-16,-8,32,8,84,1)
-	SpriteFrame(-16,-40,32,40,84,18)
-	SpriteFrame(-8,0,16,16,233,0)
-	SpriteFrame(-8,0,16,16,233,17)
-endsub
+	SpriteFrame(-16, -16, 32, 16, 84, 1)
+	SpriteFrame(-16, -8, 32, 8, 84, 1)
+	SpriteFrame(-16, -40, 32, 40, 84, 18)
+	SpriteFrame(-8, 0, 16, 16, 233, 0)
+	SpriteFrame(-8, 0, 16, 16, 233, 17)
+end sub
 
 sub RSDK
 	LoadSpriteSheet("Global/Display.gif")
-	SetEditorIcon(Icon0,SingleIcon,-16,-16,32,32,1,143)
-endsub
+	SetEditorIcon(Icon0, SingleIcon, -16, -16, 32, 32, 1, 143)
+end sub

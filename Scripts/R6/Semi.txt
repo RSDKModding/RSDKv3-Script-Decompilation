@@ -7,81 +7,81 @@
 
 
 sub ObjectMain
-	if Object.OutOfBounds==1
-		Object.State=3
-		Object.Value0=0
-		Object.XPos=Object.Value3
-		Object.YPos=Object.Value4
-	endif
+	if Object.OutOfBounds == 1
+		Object.State = 3
+		Object.Value0 = 0
+		Object.XPos = Object.Value3
+		Object.YPos = Object.Value4
+	end if
 	switch Object.State
 	case 1
-		Object.Priority=1
-		Object.XPos+=Object.Value1
-		Object.YPos+=Object.Value2
-		if Object.Value0<96
+		Object.Priority = 1
+		Object.XPos += Object.Value1
+		Object.YPos += Object.Value2
+		if Object.Value0 < 96
 			Object.Value0++
 		else
-			Object.Value0=0
+			Object.Value0 = 0
 			Object.State++
-		endif
+		end if
 		break
 	case 2
-		Object.XPos+=Object.Value1
-		if Object.PropertyValue==0
-			if Object.Value0==0
-				Object.Value0=60
-				CreateTempObject(TypeName[SemiBomb],0,Object.XPos,Object.YPos)
-				Object[TempObjectPos].YPos+=786432
+		Object.XPos += Object.Value1
+		if Object.PropertyValue == 0
+			if Object.Value0 == 0
+				Object.Value0 = 60
+				CreateTempObject(TypeName[SemiBomb], 0, Object.XPos, Object.YPos)
+				Object[TempObjectPos].YPos += 786432
 			else
 				Object.Value0--
-			endif
-		endif
+			end if
+		end if
 		break
 	case 3
-		if Object.OutOfBounds==1
-			Object.State=0
-			Object.Priority=0
-		endif
+		if Object.OutOfBounds == 1
+			Object.State = 0
+			Object.Priority = 0
+		end if
 		break
-	endswitch
+	end switch
 	CallFunction(StageSetup_CheckGoodFuture)
-endsub
+end sub
 
 
 sub ObjectPlayerInteraction
 	switch Object.State
 	case 0
-		PlayerObjectCollision(C_TOUCH,-96,-128,96,128)
-		if CheckResult==1
-			Object.State=1
-			if Object.XPos>Player.XPos
-				if Object.PropertyValue==0
-					Object.Value1=65536
-					Object.Value2=-32768
+		PlayerObjectCollision(C_TOUCH, -96, -128, 96, 128)
+		if CheckResult == 1
+			Object.State = 1
+			if Object.XPos > Player.XPos
+				if Object.PropertyValue == 0
+					Object.Value1 = 65536
+					Object.Value2 = -32768
 				else
-					Object.Value1=49152
-					Object.Value2=24576
-				endif
+					Object.Value1 = 49152
+					Object.Value2 = 24576
+				end if
 			else
-				if Object.PropertyValue==0
-					Object.Value1=-65536
-					Object.Value2=-32768
+				if Object.PropertyValue == 0
+					Object.Value1 = -65536
+					Object.Value2 = -32768
 				else
-					Object.Value1=-49152
-					Object.Value2=24576
-				endif
-			endif
-		endif
+					Object.Value1 = -49152
+					Object.Value2 = 24576
+				end if
+			end if
+		end if
 		break
 	case 1
 	case 2
-		PlayerObjectCollision(C_TOUCH,-14,-12,14,12)
-		if CheckResult==1
+		PlayerObjectCollision(C_TOUCH, -14, -12, 14, 12)
+		if CheckResult == 1
 			CallFunction(PlayerObject_BadnikBreak)
-		endif
+		end if
 		break
-	endswitch
-endsub
+	end switch
+end sub
 
 
 sub ObjectDraw
@@ -91,50 +91,50 @@ sub ObjectDraw
 		break
 	case 1
 	case 2
-		TempValue0=Object.Frame
-		TempValue0>>=2
-		if Object.PropertyValue==0
-			TempValue0+=2
+		TempValue0 = Object.Frame
+		TempValue0 >>= 2
+		if Object.PropertyValue == 0
+			TempValue0 += 2
 		else
-			TempValue0+=6
-		endif
-		if Object.Frame>7
-			Object.Direction=FACING_LEFT
+			TempValue0 += 6
+		end if
+		if Object.Frame > 7
+			Object.Direction = FACING_LEFT
 		else
-			Object.Direction=FACING_RIGHT
-		endif
-		DrawSpriteFX(TempValue0,FX_FLIP,Object.XPos,Object.YPos)
+			Object.Direction = FACING_RIGHT
+		end if
+		DrawSpriteFX(TempValue0, FX_FLIP, Object.XPos, Object.YPos)
 		Object.Frame++
-		Object.Frame&=15
+		Object.Frame &= 15
 		break
-	endswitch
-endsub
+	end switch
+end sub
 
 
 sub ObjectStartup
 	LoadSpriteSheet("R6/Objects.gif")
-	SpriteFrame(-16,-16,32,32,1,224)
-	SpriteFrame(-16,-16,32,32,158,166)
-	SpriteFrame(-16,-16,32,32,34,224)
-	SpriteFrame(-20,-16,40,32,67,224)
-	SpriteFrame(-16,-16,32,32,34,224)
-	SpriteFrame(-20,-16,40,32,67,224)
-	SpriteFrame(-16,-16,32,32,108,224)
-	SpriteFrame(-20,-16,40,32,141,224)
-	SpriteFrame(-16,-16,32,32,108,224)
-	SpriteFrame(-20,-16,40,32,141,224)
-	ArrayPos0=32
-	while ArrayPos0<1056
-		if Object[ArrayPos0].Type==TypeName[Semi]
-			Object[ArrayPos0].Value3=Object[ArrayPos0].XPos
-			Object[ArrayPos0].Value4=Object[ArrayPos0].YPos
-			Object[ArrayPos0].DrawOrder=5
-		endif
+	SpriteFrame(-16, -16, 32, 32, 1, 224)
+	SpriteFrame(-16, -16, 32, 32, 158, 166)
+	SpriteFrame(-16, -16, 32, 32, 34, 224)
+	SpriteFrame(-20, -16, 40, 32, 67, 224)
+	SpriteFrame(-16, -16, 32, 32, 34, 224)
+	SpriteFrame(-20, -16, 40, 32, 67, 224)
+	SpriteFrame(-16, -16, 32, 32, 108, 224)
+	SpriteFrame(-20, -16, 40, 32, 141, 224)
+	SpriteFrame(-16, -16, 32, 32, 108, 224)
+	SpriteFrame(-20, -16, 40, 32, 141, 224)
+	ArrayPos0 = 32
+	while ArrayPos0 < 1056
+		if Object[ArrayPos0].Type == TypeName[Semi]
+			Object[ArrayPos0].Value3 = Object[ArrayPos0].XPos
+			Object[ArrayPos0].Value4 = Object[ArrayPos0].YPos
+			Object[ArrayPos0].DrawOrder = 5
+		end if
 		ArrayPos0++
 	loop
-endsub
+end sub
 
 sub RSDK
 	LoadSpriteSheet("Global/Display.gif")
-	SetEditorIcon(Icon0,SingleIcon,-16,-16,32,32,1,143)
-endsub
+	SetEditorIcon(Icon0, SingleIcon, -16, -16, 32, 32, 1, 143)
+end sub

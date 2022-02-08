@@ -9,55 +9,55 @@
 sub ObjectMain
 	switch Object.State
 	case 0
-		if Object.Value0<64
+		if Object.Value0 < 64
 			Object.Value0++
-			if Object.Value0>27
-				Object.XPos+=32768
-				Object.YPos-=131072
-			endif
+			if Object.Value0 > 27
+				Object.XPos += 32768
+				Object.YPos -= 131072
+			end if
 		else
-			Object.Value0=0
-			Object.State=2
-			Object.Value4=Object.YPos
-		endif
+			Object.Value0 = 0
+			Object.State = 2
+			Object.Value4 = Object.YPos
+		end if
 		break
 	case 2
-		Object.Value3+=3
-		Object.Value3&=255
-		Sin256(TempValue0,Object.Value3)
-		TempValue0<<=11
-		Object.XPos+=163840
-		Object.YPos=Object.Value4
-		Object.YPos-=TempValue0
-		if Object.OutOfBounds==1
-			Object.Type=TypeName[BlankObject]
-			Object[-1].State=5
-			Object[-1].Rotation=0
-		endif
+		Object.Value3 += 3
+		Object.Value3 &= 255
+		Sin256(TempValue0, Object.Value3)
+		TempValue0 <<= 11
+		Object.XPos += 163840
+		Object.YPos = Object.Value4
+		Object.YPos -= TempValue0
+		if Object.OutOfBounds == 1
+			Object.Type = TypeName[BlankObject]
+			Object[-1].State = 5
+			Object[-1].Rotation = 0
+		end if
 		break
-	endswitch
-endsub
+	end switch
+end sub
 
 
 sub ObjectDraw
-	TempValue0=Object.Frame
-	TempValue0>>=2
-	TempValue0+=Object.State
+	TempValue0 = Object.Frame
+	TempValue0 >>= 2
+	TempValue0 += Object.State
 	DrawSprite(TempValue0)
 	Object.Frame++
-	Object.Frame&=7
-endsub
+	Object.Frame &= 7
+end sub
 
 
 sub ObjectStartup
 	LoadSpriteSheet("R1/Objects3.gif")
-	SpriteFrame(-28,-24,56,56,1,107)
-	SpriteFrame(-28,-24,56,56,1,164)
-	SpriteFrame(-28,-24,56,56,58,107)
-	SpriteFrame(-28,-24,56,56,58,164)
-endsub
+	SpriteFrame(-28, -24, 56, 56, 1, 107)
+	SpriteFrame(-28, -24, 56, 56, 1, 164)
+	SpriteFrame(-28, -24, 56, 56, 58, 107)
+	SpriteFrame(-28, -24, 56, 56, 58, 164)
+end sub
 
 sub RSDK
 	LoadSpriteSheet("Global/Display.gif")
-	SetEditorIcon(Icon0,SingleIcon,-16,-16,32,32,1,143)
-endsub
+	SetEditorIcon(Icon0, SingleIcon, -16, -16, 32, 32, 1, 143)
+end sub

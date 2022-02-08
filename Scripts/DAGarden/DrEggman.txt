@@ -7,59 +7,59 @@
 
 
 sub ObjectMain
-	if Object.Direction==FACING_LEFT
-		Object.XPos+=32768
+	if Object.Direction == FACING_LEFT
+		Object.XPos += 32768
 	else
-		Object.XPos-=32768
-	endif
+		Object.XPos -= 32768
+	end if
 	switch Object.State
 	case 0
-		Object.Value1=Object.YPos
+		Object.Value1 = Object.YPos
 		Object.State++
 		break
 	case 1
-		Object.Value2+=Object.PropertyValue
-		Object.Value2&=511
-		Sin(Object.YPos,Object.Value2)
-		Object.YPos<<=11
-		Object.YPos+=Object.Value1
-		Object.Value1-=16384
+		Object.Value2 += Object.PropertyValue
+		Object.Value2 &= 511
+		Sin(Object.YPos, Object.Value2)
+		Object.YPos <<= 11
+		Object.YPos += Object.Value1
+		Object.Value1 -= 16384
 		break
-	endswitch
-	if Object.OutOfBounds==1
-		Object.Type=TypeName[BlankObject]
-	endif
-endsub
+	end switch
+	if Object.OutOfBounds == 1
+		Object.Type = TypeName[BlankObject]
+	end if
+end sub
 
 
 sub ObjectDraw
-	TempValue0=Object.AnimationTimer
-	TempValue0>>=1
-	TempValue0+=2
-	DrawSpriteFX(TempValue0,FX_FLIP,Object.XPos,Object.YPos)
+	TempValue0 = Object.AnimationTimer
+	TempValue0 >>= 1
+	TempValue0 += 2
+	DrawSpriteFX(TempValue0, FX_FLIP, Object.XPos, Object.YPos)
 	Object.AnimationTimer++
-	Object.AnimationTimer%=12
-	TempValue0=Object.AnimationSpeed
-	TempValue0>>=5
-	DrawSpriteFX(TempValue0,FX_FLIP,Object.XPos,Object.YPos)
+	Object.AnimationTimer %= 12
+	TempValue0 = Object.AnimationSpeed
+	TempValue0 >>= 5
+	DrawSpriteFX(TempValue0, FX_FLIP, Object.XPos, Object.YPos)
 	Object.AnimationSpeed++
-	Object.AnimationSpeed&=63
-endsub
+	Object.AnimationSpeed &= 63
+end sub
 
 
 sub ObjectStartup
 	LoadSpriteSheet("DAGarden/Objects.gif")
-	SpriteFrame(-24,-20,48,40,267,705)
-	SpriteFrame(-24,-20,48,40,316,705)
-	SpriteFrame(8,0,24,24,265,746)
-	SpriteFrame(8,0,24,24,290,746)
-	SpriteFrame(8,0,24,24,315,746)
-	SpriteFrame(8,0,24,24,340,746)
-	SpriteFrame(8,0,0,0,265,746)
-	SpriteFrame(8,0,0,0,265,746)
-endsub
+	SpriteFrame(-24, -20, 48, 40, 267, 705)
+	SpriteFrame(-24, -20, 48, 40, 316, 705)
+	SpriteFrame(8, 0, 24, 24, 265, 746)
+	SpriteFrame(8, 0, 24, 24, 290, 746)
+	SpriteFrame(8, 0, 24, 24, 315, 746)
+	SpriteFrame(8, 0, 24, 24, 340, 746)
+	SpriteFrame(8, 0, 0, 0, 265, 746)
+	SpriteFrame(8, 0, 0, 0, 265, 746)
+end sub
 
 sub RSDK
 	LoadSpriteSheet("Global/Display.gif")
-	SetEditorIcon(Icon0,SingleIcon,-16,-16,32,32,1,143)
-endsub
+	SetEditorIcon(Icon0, SingleIcon, -16, -16, 32, 32, 1, 143)
+end sub

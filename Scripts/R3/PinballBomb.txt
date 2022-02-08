@@ -7,79 +7,79 @@
 
 
 sub ObjectMain
-	Object.Value2+=8192
-	if Object.Value2>262144
-		Object.DrawOrder=3
-	endif
-	Object.XPos+=Object.Value1
-	Object.YPos+=Object.Value2
+	Object.Value2 += 8192
+	if Object.Value2 > 262144
+		Object.DrawOrder = 3
+	end if
+	Object.XPos += Object.Value1
+	Object.YPos += Object.Value2
 	Object.Value0++
-	Object.Value0&=3
-	if Object.Value1>0
-		ObjectTileCollision(1,8,0,0)
+	Object.Value0 &= 3
+	if Object.Value1 > 0
+		ObjectTileCollision(1, 8, 0, 0)
 	else
-		ObjectTileCollision(3,-8,0,0)
-	endif
-	if CheckResult==1
+		ObjectTileCollision(3, -8, 0, 0)
+	end if
+	if CheckResult == 1
 		FlipSign(Object.Value1)
-	endif
-	ObjectTileCollision(0,0,8,0)
-	if CheckResult==1
+	end if
+	ObjectTileCollision(0, 0, 8, 0)
+	if CheckResult == 1
 		FlipSign(Object.Value2)
-		Object.Value2>>=1
-		if Object.Value3<1
+		Object.Value2 >>= 1
+		if Object.Value3 < 1
 			Object.Value3++
 		else
-			PlaySfx(22,0)
-			ResetObjectEntity(Object.EntityNo,TypeName[Explosion],0,Object.XPos,Object.YPos)
-		endif
-	endif
-endsub
+			PlaySfx(22, 0)
+			ResetObjectEntity(Object.EntityNo, TypeName[Explosion], 0, Object.XPos, Object.YPos)
+		end if
+	end if
+end sub
 
 
 sub ObjectPlayerInteraction
-	PlayerObjectCollision(C_TOUCH,-8,-8,8,8)
-	if CheckResult==1
-		PlaySfx(22,0)
+	PlayerObjectCollision(C_TOUCH, -8, -8, 8, 8)
+	if CheckResult == 1
+		PlaySfx(22, 0)
 #platform: Use_Haptics
-		HapticEffect(96,0,0,0)
+		HapticEffect(96, 0, 0, 0)
 #endplatform
-		ResetObjectEntity(Object.EntityNo,TypeName[Explosion],0,Object.XPos,Object.YPos)
-		Object.Priority=1
-		TempValue0=Player.XPos
-		TempValue0-=Object.XPos
-		TempValue1=Player.YPos
-		TempValue1-=Object.YPos
-		ATan2(TempValue2,TempValue0,TempValue1)
-		Cos256(TempValue0,TempValue2)
-		Sin256(TempValue1,TempValue2)
-		TempValue0*=1792
-		TempValue1*=1792
-		Player.XVelocity=TempValue0
-		Player.YVelocity=TempValue1
-		Player.Speed=Player.XVelocity
-		Player.Gravity=1
-		Player.Timer=0
-	endif
-endsub
+		ResetObjectEntity(Object.EntityNo, TypeName[Explosion], 0, Object.XPos, Object.YPos)
+		Object.Priority = 1
+		TempValue0 = Player.XPos
+		TempValue0 -= Object.XPos
+		TempValue1 = Player.YPos
+		TempValue1 -= Object.YPos
+		ATan2(TempValue2, TempValue0, TempValue1)
+		Cos256(TempValue0, TempValue2)
+		Sin256(TempValue1, TempValue2)
+		TempValue0 *= 1792
+		TempValue1 *= 1792
+		Player.XVelocity = TempValue0
+		Player.YVelocity = TempValue1
+		Player.Speed = Player.XVelocity
+		Player.Gravity = 1
+		Player.Timer = 0
+	end if
+end sub
 
 
 sub ObjectDraw
-	if Object.Value0==0
+	if Object.Value0 == 0
 		DrawSprite(0)
 	else
 		DrawSprite(1)
-	endif
-endsub
+	end if
+end sub
 
 
 sub ObjectStartup
 	LoadSpriteSheet("R3/Objects2.gif")
-	SpriteFrame(-12,-12,24,24,232,0)
-	SpriteFrame(-8,-8,16,16,130,67)
-endsub
+	SpriteFrame(-12, -12, 24, 24, 232, 0)
+	SpriteFrame(-8, -8, 16, 16, 130, 67)
+end sub
 
 sub RSDK
 	LoadSpriteSheet("Global/Display.gif")
-	SetEditorIcon(Icon0,SingleIcon,-16,-16,32,32,1,143)
-endsub
+	SetEditorIcon(Icon0, SingleIcon, -16, -16, 32, 32, 1, 143)
+end sub

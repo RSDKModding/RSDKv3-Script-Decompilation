@@ -10,98 +10,98 @@ sub ObjectMain
 	switch Object.State
 	case 0
 		Object.Value0++
-		Object.Value0%=40
+		Object.Value0 %= 40
 		break
 	case 1
-		if Object.Value1<41
+		if Object.Value1 < 41
 			Object.Value1++
 		else
-			Object.Value1=0
-			Object.Value0=0
-			if Object[+1].State<5
-				Object.State=0
+			Object.Value1 = 0
+			Object.Value0 = 0
+			if Object[+1].State < 5
+				Object.State = 0
 			else
-				Object.State=2
-			endif
-		endif
+				Object.State = 2
+			end if
+		end if
 		break
 	case 2
 		Object.Value0++
-		Object.Value0&=31
+		Object.Value0 &= 31
 		break
 	case 3
 		Object.Value0++
-		Object.Value0&=7
+		Object.Value0 &= 7
 		break
-	endswitch
-endsub
+	end switch
+end sub
 
 
 sub ObjectDraw
 	switch Object.State
 	case 0
 		DrawSprite(4)
-		TempValue0=Object.Value0
-		TempValue0/=10
+		TempValue0 = Object.Value0
+		TempValue0 /= 10
 		DrawSprite(TempValue0)
 		break
 	case 1
-		TempValue1=Object.Value1
-		TempValue1<<=8
-		TempValue1/=40
-		Sin(TempValue0,TempValue1)
-		TempValue0<<=11
+		TempValue1 = Object.Value1
+		TempValue1 <<= 8
+		TempValue1 /= 40
+		Sin(TempValue0, TempValue1)
+		TempValue0 <<= 11
 		FlipSign(TempValue0)
-		TempValue0+=Object.YPos
-		TempValue1=Object.Value1
-		TempValue1&=15
-		TempValue1>>=3
-		TempValue1+=7
-		DrawSpriteXY(TempValue1,Object.XPos,TempValue0)
-		TempValue0=Object[+1].Value5
-		TempValue0&=1
-		TempValue0+=4
+		TempValue0 += Object.YPos
+		TempValue1 = Object.Value1
+		TempValue1 &= 15
+		TempValue1 >>= 3
+		TempValue1 += 7
+		DrawSpriteXY(TempValue1, Object.XPos, TempValue0)
+		TempValue0 = Object[+1].Value5
+		TempValue0 &= 1
+		TempValue0 += 4
 		DrawSprite(TempValue0)
 		DrawSprite(6)
 		break
 	case 2
-		TempValue0=Object.Value0
-		TempValue0>>=4
-		TempValue0+=9
+		TempValue0 = Object.Value0
+		TempValue0 >>= 4
+		TempValue0 += 9
 		DrawSprite(TempValue0)
 		break
 	case 3
-		TempValue0=Object.Value0
-		TempValue0>>=2
-		TempValue0+=11
+		TempValue0 = Object.Value0
+		TempValue0 >>= 2
+		TempValue0 += 11
 		DrawSprite(TempValue0)
-		Object.XPos+=262144
-		if Object.OutOfBounds==1
-			ResetObjectEntity(Object.EntityNo,TypeName[BlankObject],0,0,0)
-		endif
+		Object.XPos += 262144
+		if Object.OutOfBounds == 1
+			ResetObjectEntity(Object.EntityNo, TypeName[BlankObject], 0, 0, 0)
+		end if
 		break
-	endswitch
-endsub
+	end switch
+end sub
 
 
 sub ObjectStartup
 	LoadSpriteSheet("R3/Objects2.gif")
-	SpriteFrame(-24,-56,48,24,1,166)
-	SpriteFrame(-24,-56,48,24,50,166)
-	SpriteFrame(-24,-56,48,24,148,174)
-	SpriteFrame(-24,-56,48,24,99,166)
-	SpriteFrame(-24,-32,48,16,148,107)
-	SpriteFrame(-24,-32,48,16,148,124)
-	SpriteFrame(-16,-48,32,16,84,50)
-	SpriteFrame(-32,-67,56,64,199,134)
-	SpriteFrame(-23,-67,56,64,199,69)
-	SpriteFrame(-24,-56,48,56,197,199)
-	SpriteFrame(-24,-56,48,56,147,199)
-	SpriteFrame(-16,-56,72,64,1,191)
-	SpriteFrame(-16,-56,72,64,74,191)
-endsub
+	SpriteFrame(-24, -56, 48, 24, 1, 166)
+	SpriteFrame(-24, -56, 48, 24, 50, 166)
+	SpriteFrame(-24, -56, 48, 24, 148, 174)
+	SpriteFrame(-24, -56, 48, 24, 99, 166)
+	SpriteFrame(-24, -32, 48, 16, 148, 107)
+	SpriteFrame(-24, -32, 48, 16, 148, 124)
+	SpriteFrame(-16, -48, 32, 16, 84, 50)
+	SpriteFrame(-32, -67, 56, 64, 199, 134)
+	SpriteFrame(-23, -67, 56, 64, 199, 69)
+	SpriteFrame(-24, -56, 48, 56, 197, 199)
+	SpriteFrame(-24, -56, 48, 56, 147, 199)
+	SpriteFrame(-16, -56, 72, 64, 1, 191)
+	SpriteFrame(-16, -56, 72, 64, 74, 191)
+end sub
 
 sub RSDK
 	LoadSpriteSheet("Global/Display.gif")
-	SetEditorIcon(Icon0,SingleIcon,-16,-16,32,32,1,143)
-endsub
+	SetEditorIcon(Icon0, SingleIcon, -16, -16, 32, 32, 1, 143)
+end sub

@@ -7,64 +7,64 @@
 
 
 sub ObjectPlayerInteraction
-	if Object[-1].PropertyValue==1
-		Object.PropertyValue=1
-		PlayerObjectCollision(C_TOUCH,Object.Value1,-32,Object.Value2,32)
-		if CheckResult==1
-			if Player.State!=PlayerObject_Knockback
-				if Player.State!=PlayerObject_Death
-					if Player.State!=PlayerObject_Drown
-						if Player.State!=PlayerObject_Blank
-							Player.State=PlayerObject_DebugMode
-							Player.Animation=ANI_FANROTATE
-							if Player.Up==0
-								if Player.Down==0
-									if Player.YPos<Object.YPos
-										Player.YPos+=65536
-									endif
-									if Player.YPos>Object.YPos
-										Player.YPos-=65536
-									endif
-								endif
-							endif
-							Player.XVelocity=-262144
-							Player.Speed=-262144
-							if Player.WaterStream==0
-								Player.YVelocity=0
-								Player.WaterStream=1
-							endif
-						endif
-					endif
-				endif
-			endif
+	if Object[-1].PropertyValue == 1
+		Object.PropertyValue = 1
+		PlayerObjectCollision(C_TOUCH, Object.Value1, -32, Object.Value2, 32)
+		if CheckResult == 1
+			if Player.State != PlayerObject_Knockback
+				if Player.State != PlayerObject_Death
+					if Player.State != PlayerObject_Drown
+						if Player.State != PlayerObject_Blank
+							Player.State = PlayerObject_DebugMode
+							Player.Animation = ANI_FANROTATE
+							if Player.Up == 0
+								if Player.Down == 0
+									if Player.YPos < Object.YPos
+										Player.YPos += 65536
+									end if
+									if Player.YPos > Object.YPos
+										Player.YPos -= 65536
+									end if
+								end if
+							end if
+							Player.XVelocity = -262144
+							Player.Speed = -262144
+							if Player.WaterStream == 0
+								Player.YVelocity = 0
+								Player.WaterStream = 1
+							end if
+						end if
+					end if
+				end if
+			end if
 		else
-			if Player.State==PlayerObject_DebugMode
-				if Player.WaterStream==0
-					Player.State=PlayerObject_HandleAir
-					Player.ControlMode=0
-					Player.Animation=ANI_WALKING
-				endif
-			endif
-		endif
-	endif
-endsub
+			if Player.State == PlayerObject_DebugMode
+				if Player.WaterStream == 0
+					Player.State = PlayerObject_HandleAir
+					Player.ControlMode = 0
+					Player.Animation = ANI_WALKING
+				end if
+			end if
+		end if
+	end if
+end sub
 
 
 sub ObjectStartup
-	ArrayPos0=32
-	while ArrayPos0<1056
-		if Object[ArrayPos0].Type==TypeName[WaterStreamL]
-			Object[ArrayPos0].Value1=Object[ArrayPos0].PropertyValue
-			Object[ArrayPos0].Value1<<=3
-			Object[ArrayPos0].Value2=Object[ArrayPos0].Value1
+	ArrayPos0 = 32
+	while ArrayPos0 < 1056
+		if Object[ArrayPos0].Type == TypeName[WaterStreamL]
+			Object[ArrayPos0].Value1 = Object[ArrayPos0].PropertyValue
+			Object[ArrayPos0].Value1 <<= 3
+			Object[ArrayPos0].Value2 = Object[ArrayPos0].Value1
 			FlipSign(Object[ArrayPos0].Value1)
-			Object[ArrayPos0].PropertyValue=0
-		endif
+			Object[ArrayPos0].PropertyValue = 0
+		end if
 		ArrayPos0++
 	loop
-endsub
+end sub
 
 sub RSDK
 	LoadSpriteSheet("Global/Display.gif")
-	SetEditorIcon(Icon0,SingleIcon,-16,-16,32,32,1,143)
-endsub
+	SetEditorIcon(Icon0, SingleIcon, -16, -16, 32, 32, 1, 143)
+end sub

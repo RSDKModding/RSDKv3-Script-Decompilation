@@ -71,2347 +71,2347 @@
 #function PlayerObject_SizeChange
 
 function PlayerObject_BadnikBreak
-	CheckEqual(Player.Animation,ANI_JUMPING)
-	TempValue0=CheckResult
-	CheckEqual(Player.Animation,ANI_SPINDASH)
-	TempValue0|=CheckResult
-	ArrayPos0=Player.EntityNo
-	ArrayPos0+=2
-	CheckEqual(Object[ArrayPos0].Type,TypeName[Invincibility])
-	TempValue0|=CheckResult
-	if Warp.Timer>0
-		TempValue0|=1
-	endif
-	if Player.Animation==ANI_FLYING
-		CheckGreater(Player.YPos,Object.YPos)
-		TempValue0|=CheckResult
-	endif
-	if TempValue0==1
-		ResetObjectEntity(Object.EntityNo,Flower_TypeNo,0,Object.XPos,Object.YPos)
-		Object.DrawOrder=4
-		CreateTempObject(TypeName[SmokePuff],0,Object.XPos,Object.YPos)
-		Object[TempObjectPos].DrawOrder=4
-		CreateTempObject(TypeName[ObjectScore],Object[26].Value0,Object.XPos,Object.YPos)
-		Object[TempObjectPos].DrawOrder=4
-		PlaySfx(8,0)
-		if Player.YVelocity>0
+	CheckEqual(Player.Animation, ANI_JUMPING)
+	TempValue0 = CheckResult
+	CheckEqual(Player.Animation, ANI_SPINDASH)
+	TempValue0 |= CheckResult
+	ArrayPos0 = Player.EntityNo
+	ArrayPos0 += 2
+	CheckEqual(Object[ArrayPos0].Type, TypeName[Invincibility])
+	TempValue0 |= CheckResult
+	if Warp.Timer > 0
+		TempValue0 |= 1
+	end if
+	if Player.Animation == ANI_FLYING
+		CheckGreater(Player.YPos, Object.YPos)
+		TempValue0 |= CheckResult
+	end if
+	if TempValue0 == 1
+		ResetObjectEntity(Object.EntityNo, Flower_TypeNo, 0, Object.XPos, Object.YPos)
+		Object.DrawOrder = 4
+		CreateTempObject(TypeName[SmokePuff], 0, Object.XPos, Object.YPos)
+		Object[TempObjectPos].DrawOrder = 4
+		CreateTempObject(TypeName[ObjectScore], Object[26].Value0, Object.XPos, Object.YPos)
+		Object[TempObjectPos].DrawOrder = 4
+		PlaySfx(8, 0)
+		if Player.YVelocity > 0
 			FlipSign(Player.YVelocity)
 		else
-			Player.YVelocity+=49152
-		endif
+			Player.YVelocity += 49152
+		end if
 		switch Object[26].Value0
 		case 0
-			Player.Score+=100
+			Player.Score += 100
 			break
 		case 1
-			Player.Score+=200
+			Player.Score += 200
 			break
 		case 2
-			Player.Score+=500
+			Player.Score += 500
 			break
 		case 3
-			Player.Score+=1000
+			Player.Score += 1000
 			break
-		endswitch
+		end switch
 #platform: Use_Haptics
-		HapticEffect(16,0,0,0)
+		HapticEffect(16, 0, 0, 0)
 #endplatform
 	else
-		if Player.Invincible==0
-			Player.State=PlayerObject_Hurt
-			if Player.XPos>Object.XPos
-				Player.Speed=131072
+		if Player.Invincible == 0
+			Player.State = PlayerObject_Hurt
+			if Player.XPos > Object.XPos
+				Player.Speed = 131072
 			else
-				Player.Speed=-131072
-			endif
-		endif
-	endif
-endfunction
+				Player.Speed = -131072
+			end if
+		end if
+	end if
+end function
 
 
 function PlayerObject_Hit
-	ArrayPos0=Player.EntityNo
-	ArrayPos0+=2
-	if Object[ArrayPos0].Type!=TypeName[Invincibility]
-		if Player.Invincible==0
-			Player.State=PlayerObject_Hurt
-			if Player.XPos>Object.XPos
-				Player.Speed=131072
+	ArrayPos0 = Player.EntityNo
+	ArrayPos0 += 2
+	if Object[ArrayPos0].Type != TypeName[Invincibility]
+		if Player.Invincible == 0
+			Player.State = PlayerObject_Hurt
+			if Player.XPos > Object.XPos
+				Player.Speed = 131072
 			else
-				Player.Speed=-131072
-			endif
-		endif
-	endif
-endfunction
+				Player.Speed = -131072
+			end if
+		end if
+	end if
+end function
 
 
 function PlayerObject_Kill
-	PlaySfx(5,0)
-	Player.DrawOrder=5
-	Player.Speed=0
-	Player.XVelocity=0
-	Player.YVelocity=-425984
-	Player.State=PlayerObject_Death
-	Player.Animation=ANI_DYING
-	Player.TileCollisions=0
-	Player.ObjectInteraction=0
-	Screen.CameraEnabled=0
+	PlaySfx(5, 0)
+	Player.DrawOrder = 5
+	Player.Speed = 0
+	Player.XVelocity = 0
+	Player.YVelocity = -425984
+	Player.State = PlayerObject_Death
+	Player.Animation = ANI_DYING
+	Player.TileCollisions = 0
+	Player.ObjectInteraction = 0
+	Screen.CameraEnabled = 0
 #platform: Use_Haptics
-	HapticEffect(28,0,0,0)
+	HapticEffect(28, 0, 0, 0)
 #endplatform
-endfunction
+end function
 
 function PlayerObject_ProcessPlayer
 #platform: Standard
-	if Options.AttractMode==0
-		if Player.ControlMode==0
-			if Object[9].Type==TypeName[BlankObject]
-				if KeyPress.Start==1
-					KeyPress.Start=0
-					if Options.DevMenuFlag==1
-						Stage.State=STAGE_PAUSED
+	if Options.AttractMode == 0
+		if Player.ControlMode == 0
+			if Object[9].Type == TypeName[BlankObject]
+				if KeyPress.Start == 1
+					KeyPress.Start = 0
+					if Options.DevMenuFlag == 1
+						Stage.State = STAGE_PAUSED
 						PauseMusic()
-						PlaySfx(27,0)
+						PlaySfx(27, 0)
 						StopSfx(24)
 						StopSfx(25)
-						Object[9].Type=TypeName[PauseMenu]
-						Object[9].DrawOrder=6
-						Object[9].Priority=2
+						Object[9].Type = TypeName[PauseMenu]
+						Object[9].DrawOrder = 6
+						Object[9].Priority = 2
 					else
 						EngineCallback(13)
-					endif
-				endif
-			endif
-		endif
+					end if
+				end if
+			end if
+		end if
 		ProcessPlayerControl()
-	endif
+	end if
 #endplatform
 
 #platform: Mobile
-	if Options.AttractMode==false
-		if Options.TouchControls==true
-			if Player.ControlMode==0
-				CheckTouchRect(0,96,Screen.CenterX,Screen.YSize)
-				if CheckResult>-1
-					ArrayPos0=CheckResult
-					TempValue0=TouchScreen[ArrayPos0].XPos
-					TempValue0-=Options.DPadX
-					TempValue1=TouchScreen[ArrayPos0].YPos
-					TempValue1-=192
-					ATan2(TempValue2,TempValue0,TempValue1)
-					TempValue2+=32
-					TempValue2&=255
-					TempValue2>>=6
+	if Options.AttractMode == false
+		if Options.TouchControls == true
+			if Player.ControlMode == 0
+				CheckTouchRect(0, 96, Screen.CenterX, Screen.YSize)
+				if CheckResult > -1
+					ArrayPos0 = CheckResult
+					TempValue0 = TouchScreen[ArrayPos0].XPos
+					TempValue0 -= Options.DPadX
+					TempValue1 = TouchScreen[ArrayPos0].YPos
+					TempValue1 -= 192
+					ATan2(TempValue2, TempValue0, TempValue1)
+					TempValue2 += 32
+					TempValue2 &= 255
+					TempValue2 >>= 6
 					switch TempValue2
 					case 0
-						KeyDown.Right=1
+						KeyDown.Right = 1
 						break
 					case 1
-						KeyDown.Down=1
+						KeyDown.Down = 1
 						break
 					case 2
-						KeyDown.Left=1
+						KeyDown.Left = 1
 						break
 					case 3
-						KeyDown.Up=1
+						KeyDown.Up = 1
 						break
-					endswitch
-				endif
-				CheckTouchRect(Screen.CenterX,96,Screen.XSize,240)
-				if CheckResult>-1
-					KeyDown.ButtonA=1
-				endif
-				if Object[25].Value7==0
-					KeyPress.ButtonA|=KeyDown.ButtonA
-				endif
-				Object[25].Value7=KeyDown.ButtonA
-				if Object[9].Type==TypeName[BlankObject]
-					CheckTouchRect(240,0,Screen.XSize,40)
-					if CheckResult>-1
-						Stage.State=STAGE_PAUSED
+					end switch
+				end if
+				CheckTouchRect(Screen.CenterX, 96, Screen.XSize, 240)
+				if CheckResult > -1
+					KeyDown.ButtonA = 1
+				end if
+				if Object[25].Value7 == 0
+					KeyPress.ButtonA |= KeyDown.ButtonA
+				end if
+				Object[25].Value7 = KeyDown.ButtonA
+				if Object[9].Type == TypeName[BlankObject]
+					CheckTouchRect(240, 0, Screen.XSize, 40)
+					if CheckResult > -1
+						Stage.State = STAGE_PAUSED
 						PauseMusic()
-						PlaySfx(27,0)
+						PlaySfx(27, 0)
 						StopSfx(24)
 						StopSfx(25)
-						Object[9].Type=TypeName[PauseMenu]
-						Object[9].DrawOrder=6
-						Object[9].Priority=2
-						if Engine.FrameSkipTimer>-1
-							Engine.FrameSkipTimer=-1
-						endif
-					endif
-					if Engine.Message==2
-						Stage.State=STAGE_PAUSED
+						Object[9].Type = TypeName[PauseMenu]
+						Object[9].DrawOrder = 6
+						Object[9].Priority = 2
+						if Engine.FrameSkipTimer > -1
+							Engine.FrameSkipTimer = -1
+						end if
+					end if
+					if Engine.Message == 2
+						Stage.State = STAGE_PAUSED
 						PauseMusic()
-						PlaySfx(27,0)
+						PlaySfx(27, 0)
 						StopSfx(24)
 						StopSfx(25)
-						Object[9].Type=TypeName[PauseMenu]
-						Object[9].DrawOrder=6
-						Object[9].Priority=2
-						if Engine.FrameSkipTimer>-1
-							Engine.FrameSkipTimer=-1
-						endif
-					endif
-				endif
-			endif
+						Object[9].Type = TypeName[PauseMenu]
+						Object[9].DrawOrder = 6
+						Object[9].Priority = 2
+						if Engine.FrameSkipTimer > -1
+							Engine.FrameSkipTimer = -1
+						end if
+					end if
+				end if
+			end if
 		else
-			if Player.ControlMode==0
-				if Object[9].Type==TypeName[BlankObject]
-					if KeyPress.Start==1
-						KeyPress.Start=0
-						Stage.State=STAGE_PAUSED
+			if Player.ControlMode == 0
+				if Object[9].Type == TypeName[BlankObject]
+					if KeyPress.Start == 1
+						KeyPress.Start = 0
+						Stage.State = STAGE_PAUSED
 						PauseMusic()
-						PlaySfx(27,0)
+						PlaySfx(27, 0)
 						StopSfx(24)
 						StopSfx(25)
-						Object[9].Type=TypeName[PauseMenu]
-						Object[9].DrawOrder=6
-						Object[9].Priority=2
-						if Engine.FrameSkipTimer>-1
-							Engine.FrameSkipTimer=-1
-						endif
-					endif
-					if Engine.Message==2
-						Stage.State=STAGE_PAUSED
+						Object[9].Type = TypeName[PauseMenu]
+						Object[9].DrawOrder = 6
+						Object[9].Priority = 2
+						if Engine.FrameSkipTimer > -1
+							Engine.FrameSkipTimer = -1
+						end if
+					end if
+					if Engine.Message == 2
+						Stage.State = STAGE_PAUSED
 						PauseMusic()
-						PlaySfx(27,0)
+						PlaySfx(27, 0)
 						StopSfx(24)
 						StopSfx(25)
-						Object[9].Type=TypeName[PauseMenu]
-						Object[9].DrawOrder=6
-						Object[9].Priority=2
-						if Engine.FrameSkipTimer>-1
-							Engine.FrameSkipTimer=-1
-						endif
-					endif
-				endif
-			endif
-		endif
+						Object[9].Type = TypeName[PauseMenu]
+						Object[9].DrawOrder = 6
+						Object[9].Priority = 2
+						if Engine.FrameSkipTimer > -1
+							Engine.FrameSkipTimer = -1
+						end if
+					end if
+				end if
+			end if
+		end if
 		ProcessPlayerControl()
-	endif
+	end if
 #endplatform
 
-	if Player.SpeedShoes>0
+	if Player.SpeedShoes > 0
 		Player.SpeedShoes--
-		if Player.SpeedShoes==0
-			Player.Acceleration=3072
-			Player.AirAcceleration=6144
-			Player.TopSpeed=393216
-			if Music.CurrentTrack==3
+		if Player.SpeedShoes == 0
+			Player.Acceleration = 3072
+			Player.AirAcceleration = 6144
+			Player.TopSpeed = 393216
+			if Music.CurrentTrack == 3
 				PlayMusic(0)
-			endif
-		endif
-	endif
-	if Player.Invincible>0
-		if Player.State!=PlayerObject_Knockback
-			if Player.Invincible>2000
-				Player.Invincible=120
-				Player.BlinkTimer=3
-			endif
-		endif
-		if Player.BlinkTimer>0
+			end if
+		end if
+	end if
+	if Player.Invincible > 0
+		if Player.State != PlayerObject_Knockback
+			if Player.Invincible > 2000
+				Player.Invincible = 120
+				Player.BlinkTimer = 3
+			end if
+		end if
+		if Player.BlinkTimer > 0
 			Player.BlinkTimer++
-			if Player.BlinkTimer>8
-				Player.BlinkTimer=1
-			endif
-			if Player.BlinkTimer>4
-				Player.Visible=0
+			if Player.BlinkTimer > 8
+				Player.BlinkTimer = 1
+			end if
+			if Player.BlinkTimer > 4
+				Player.Visible = 0
 			else
-				Player.Visible=1
-			endif
-		endif
+				Player.Visible = 1
+			end if
+		end if
 		Player.Invincible--
-		if Player.Invincible==0
-			Player.BlinkTimer=0
-			Player.Visible=1
-			if Music.CurrentTrack==2
+		if Player.Invincible == 0
+			Player.BlinkTimer = 0
+			Player.Visible = 1
+			if Music.CurrentTrack == 2
 				PlayMusic(0)
-			endif
-			if Object[+2].Type==TypeName[Invincibility]
+			end if
+			if Object[+2].Type == TypeName[Invincibility]
 				switch Object[+2].PropertyValue
 				case 0
-					TempValue0=Player.EntityNo
-					TempValue0+=2
-					ResetObjectEntity(TempValue0,TypeName[BlankObject],0,0,0)
+					TempValue0 = Player.EntityNo
+					TempValue0 += 2
+					ResetObjectEntity(TempValue0, TypeName[BlankObject], 0, 0, 0)
 					break
 				case 1
-					TempValue0=Player.EntityNo
-					TempValue0+=2
-					ResetObjectEntity(TempValue0,TypeName[BlankObject],0,0,0)
-					Object[+2].Type=TypeName[BlueShield]
-					Object[+2].PropertyValue=1
-					Object[+2].Priority=1
-					Object[+2].DrawOrder=4
-					Object[+2].InkEffect=2
-					Object[+2].Alpha=160
-					Object[+2].XPos=Player.XPos
-					Object[+2].YPos=Player.YPos
+					TempValue0 = Player.EntityNo
+					TempValue0 += 2
+					ResetObjectEntity(TempValue0, TypeName[BlankObject], 0, 0, 0)
+					Object[+2].Type = TypeName[BlueShield]
+					Object[+2].PropertyValue = 1
+					Object[+2].Priority = 1
+					Object[+2].DrawOrder = 4
+					Object[+2].InkEffect = 2
+					Object[+2].Alpha = 160
+					Object[+2].XPos = Player.XPos
+					Object[+2].YPos = Player.YPos
 					break
-				endswitch
-			endif
-		endif
-	endif
-	if Player.State!=PlayerObject_LookingUp
-		if Player.State!=PlayerObject_Crouching
-			if Player.LookPos>0
-				Player.LookPos-=2
-			endif
-			if Player.LookPos<0
-				Player.LookPos+=2
-			endif
-		endif
-	endif
-	if Warp.Timer>0
+				end switch
+			end if
+		end if
+	end if
+	if Player.State != PlayerObject_LookingUp
+		if Player.State != PlayerObject_Crouching
+			if Player.LookPos > 0
+				Player.LookPos -= 2
+			end if
+			if Player.LookPos < 0
+				Player.LookPos += 2
+			end if
+		end if
+	end if
+	if Warp.Timer > 0
 		Warp.Timer++
 #platform: Standard
-		if Warp.Timer==220
+		if Warp.Timer == 220
 #endplatform
 #platform: Mobile
-		if Warp.Timer==204
+		if Warp.Timer == 204
 #endplatform
-			Screen.CameraEnabled=0
-			CreateTempObject(TypeName[TimeWarp],0,0,0)
-			Object[TempObjectPos].DrawOrder=6
-		endif
-	endif
-	if Player.ScrollDelay>0
+			Screen.CameraEnabled = 0
+			CreateTempObject(TypeName[TimeWarp], 0, 0, 0)
+			Object[TempObjectPos].DrawOrder = 6
+		end if
+	end if
+	if Player.ScrollDelay > 0
 		Player.ScrollDelay--
-		if Player.ScrollDelay==0
-			Screen.CameraStyle=0
-		endif
-	endif
-	if Player.State!=PlayerObject_HandleTailsFlight
-		if Player.FlightGravity!=0
+		if Player.ScrollDelay == 0
+			Screen.CameraStyle = 0
+		end if
+	end if
+	if Player.State != PlayerObject_HandleTailsFlight
+		if Player.FlightGravity != 0
 			StopSfx(24)
 			StopSfx(25)
-			Player.FlightGravity=0
-		endif
-	endif
+			Player.FlightGravity = 0
+		end if
+	end if
 
-endfunction
+end function
 
 
 function PlayerObject_Blank
-	CheckResult=0
-endfunction
+	CheckResult = 0
+end function
 
 
 
 function PlayerObject_RollAnimSpeed
 #platform: Mobile
-	if Stage.PlayerListPos==1
-		Player.CustomAnimSpeed=120
+	if Stage.PlayerListPos == 1
+		Player.CustomAnimSpeed = 120
 	else
-		Player.CustomAnimSpeed=Player.Speed
-		if Player.CustomAnimSpeed<0
+		Player.CustomAnimSpeed = Player.Speed
+		if Player.CustomAnimSpeed < 0
 			FlipSign(Player.CustomAnimSpeed)
-		endif
-		Player.CustomAnimSpeed*=240
-		Player.CustomAnimSpeed/=393216
-		Player.CustomAnimSpeed+=48
-	endif
+		end if
+		Player.CustomAnimSpeed *= 240
+		Player.CustomAnimSpeed /= 393216
+		Player.CustomAnimSpeed += 48
+	end if
 #endplatform					
 #platform: Standard
-	Player.CustomAnimSpeed=Player.Speed
-	if Player.CustomAnimSpeed<0
+	Player.CustomAnimSpeed = Player.Speed
+	if Player.CustomAnimSpeed < 0
 		FlipSign(Player.CustomAnimSpeed)
-	endif
-	Player.CustomAnimSpeed*=240
-	Player.CustomAnimSpeed/=393216
-	Player.CustomAnimSpeed+=48
+	end if
+	Player.CustomAnimSpeed *= 240
+	Player.CustomAnimSpeed /= 393216
+	Player.CustomAnimSpeed += 48
 #endplatform
-endfunction
+end function
 
 
 function PlayerObject_WalkAnimSpeed
-	Player.AnimationSpeed=Player.Speed
-	if Player.AnimationSpeed<0
+	Player.AnimationSpeed = Player.Speed
+	if Player.AnimationSpeed < 0
 		FlipSign(Player.AnimationSpeed)
-	endif
-	Player.AnimationSpeed*=60
-	Player.AnimationSpeed/=393216
-	Player.AnimationSpeed+=20
-endfunction
+	end if
+	Player.AnimationSpeed *= 60
+	Player.AnimationSpeed /= 393216
+	Player.AnimationSpeed += 20
+end function
 
 
 function PlayerObject_RunAnimSpeed
-	Player.AnimationSpeed=Player.Speed
-	if Player.AnimationSpeed<0
+	Player.AnimationSpeed = Player.Speed
+	if Player.AnimationSpeed < 0
 		FlipSign(Player.AnimationSpeed)
-	endif
-	Player.AnimationSpeed*=80
-	Player.AnimationSpeed/=393216
-endfunction
+	end if
+	Player.AnimationSpeed *= 80
+	Player.AnimationSpeed /= 393216
+end function
 
 
 function PlayerObject_HandleMovement
-	if Player.ControlLock>0
+	if Player.ControlLock > 0
 		Player.ControlLock--
-		Sin256(TempValue0,Player.Angle)
-		TempValue0*=8192
-		TempValue0>>=8
-		Player.Speed+=TempValue0
+		Sin256(TempValue0, Player.Angle)
+		TempValue0 *= 8192
+		TempValue0 >>= 8
+		Player.Speed += TempValue0
 	else
-		if Player.Left==1
-			TempValue0=Player.TopSpeed
+		if Player.Left == 1
+			TempValue0 = Player.TopSpeed
 			FlipSign(TempValue0)
-			if Player.Speed>TempValue0
-				if Player.Speed>0
-					if Player.CollisionMode==0
-						if Player.Speed>262144
-							Player.Skidding=16
-						endif
-					endif
-					if Player.Speed<32768
-						Player.Speed=-32768
-						Player.Skidding=0
+			if Player.Speed > TempValue0
+				if Player.Speed > 0
+					if Player.CollisionMode == 0
+						if Player.Speed > 262144
+							Player.Skidding = 16
+						end if
+					end if
+					if Player.Speed < 32768
+						Player.Speed = -32768
+						Player.Skidding = 0
 					else
-						Player.Speed-=32768
-					endif
+						Player.Speed -= 32768
+					end if
 				else
-					Player.Speed-=Player.Acceleration
-					Player.Skidding=0
-				endif
-			endif
-			if Player.Speed<=0
-				Player.Direction=FACING_LEFT
-			endif
-		endif
-		if Player.Right==1
-			if Player.Speed<Player.TopSpeed
-				if Player.Speed<0
-					if Player.CollisionMode==0
-						if Player.Speed<-262144
-							Player.Skidding=16
-						endif
-					endif
-					if Player.Speed>-32768
-						Player.Speed=32768
-						Player.Skidding=0
+					Player.Speed -= Player.Acceleration
+					Player.Skidding = 0
+				end if
+			end if
+			if Player.Speed <= 0
+				Player.Direction = FACING_LEFT
+			end if
+		end if
+		if Player.Right == 1
+			if Player.Speed < Player.TopSpeed
+				if Player.Speed < 0
+					if Player.CollisionMode == 0
+						if Player.Speed < -262144
+							Player.Skidding = 16
+						end if
+					end if
+					if Player.Speed > -32768
+						Player.Speed = 32768
+						Player.Skidding = 0
 					else
-						Player.Speed+=32768
-					endif
+						Player.Speed += 32768
+					end if
 				else
-					Player.Speed+=Player.Acceleration
-					Player.Skidding=0
-				endif
-			endif
-			if Player.Speed>=0
-				Player.Direction=FACING_RIGHT
-			endif
-		endif
-		TempValue0=Player.Left
-		TempValue0|=Player.Right
-		if TempValue0==0
-			if Player.Speed>0
-				Player.Speed-=Player.Deceleration
-				if Player.Speed<0
-					Player.Speed=0
-				endif
+					Player.Speed += Player.Acceleration
+					Player.Skidding = 0
+				end if
+			end if
+			if Player.Speed >= 0
+				Player.Direction = FACING_RIGHT
+			end if
+		end if
+		TempValue0 = Player.Left
+		TempValue0 |= Player.Right
+		if TempValue0 == 0
+			if Player.Speed > 0
+				Player.Speed -= Player.Deceleration
+				if Player.Speed < 0
+					Player.Speed = 0
+				end if
 			else
-				Player.Speed+=Player.Deceleration
-				if Player.Speed>0
-					Player.Speed=0
-				endif
-			endif
-			if Player.Speed>8192
-				Sin256(TempValue0,Player.Angle)
-				TempValue0*=8192
-				TempValue0>>=8
-				Player.Speed+=TempValue0
-			endif
-			if Player.Speed<-8192
-				Sin256(TempValue0,Player.Angle)
-				TempValue0*=8192
-				TempValue0>>=8
-				Player.Speed+=TempValue0
-			endif
-			if Player.Angle>192
-				if Player.Angle<228
-					if Player.Speed>-65536
-						if Player.Speed<65536
-							Player.ControlLock=30
-						endif
-					endif
-				endif
-			endif
-			if Player.Angle>28
-				if Player.Angle<64
-					if Player.Speed>-65536
-						if Player.Speed<65536
-							Player.ControlLock=30
-						endif
-					endif
-				endif
-			endif
+				Player.Speed += Player.Deceleration
+				if Player.Speed > 0
+					Player.Speed = 0
+				end if
+			end if
+			if Player.Speed > 8192
+				Sin256(TempValue0, Player.Angle)
+				TempValue0 *= 8192
+				TempValue0 >>= 8
+				Player.Speed += TempValue0
+			end if
+			if Player.Speed < -8192
+				Sin256(TempValue0, Player.Angle)
+				TempValue0 *= 8192
+				TempValue0 >>= 8
+				Player.Speed += TempValue0
+			end if
+			if Player.Angle > 192
+				if Player.Angle < 228
+					if Player.Speed > -65536
+						if Player.Speed < 65536
+							Player.ControlLock = 30
+						end if
+					end if
+				end if
+			end if
+			if Player.Angle > 28
+				if Player.Angle < 64
+					if Player.Speed > -65536
+						if Player.Speed < 65536
+							Player.ControlLock = 30
+						end if
+					end if
+				end if
+			end if
 		else
-			Sin256(TempValue0,Player.Angle)
-			TempValue0*=8192
-			TempValue0>>=8
-			Player.Speed+=TempValue0
-			if Player.Right==1
-				if Player.Left==0
-					if Player.Angle>192
-						if Player.Angle<228
-							if Player.Speed<163840
-								if Player.Speed>-131072
-									Player.ControlLock=30
-								endif
-							endif
-						endif
-					endif
-				endif
+			Sin256(TempValue0, Player.Angle)
+			TempValue0 *= 8192
+			TempValue0 >>= 8
+			Player.Speed += TempValue0
+			if Player.Right == 1
+				if Player.Left == 0
+					if Player.Angle > 192
+						if Player.Angle < 228
+							if Player.Speed < 163840
+								if Player.Speed > -131072
+									Player.ControlLock = 30
+								end if
+							end if
+						end if
+					end if
+				end if
 			else
-				if Player.Left==1
-					if Player.Angle>28
-						if Player.Angle<64
-							if Player.Speed>-163840
-								if Player.Speed<131072
-									Player.ControlLock=30
-								endif
-							endif
-						endif
-					endif
-				endif
-			endif
-		endif
-	endif
-endfunction
+				if Player.Left == 1
+					if Player.Angle > 28
+						if Player.Angle < 64
+							if Player.Speed > -163840
+								if Player.Speed < 131072
+									Player.ControlLock = 30
+								end if
+							end if
+						end if
+					end if
+				end if
+			end if
+		end if
+	end if
+end function
 
 
 function PlayerObject_HandleAirSpeed
-	if Player.YVelocity>-262144
-		if Player.YVelocity<0
-			TempValue0=Player.Speed
-			TempValue0>>=5
-			Player.Speed-=TempValue0
-		endif
-	endif
-	TempValue0=Player.TopSpeed
+	if Player.YVelocity > -262144
+		if Player.YVelocity < 0
+			TempValue0 = Player.Speed
+			TempValue0 >>= 5
+			Player.Speed -= TempValue0
+		end if
+	end if
+	TempValue0 = Player.TopSpeed
 	FlipSign(TempValue0)
-	if Player.Speed>TempValue0
-		if Player.Left==1
-			Player.Speed-=Player.AirAcceleration
-			Player.Direction=FACING_LEFT
-		endif
+	if Player.Speed > TempValue0
+		if Player.Left == 1
+			Player.Speed -= Player.AirAcceleration
+			Player.Direction = FACING_LEFT
+		end if
 	else
-		if Player.Left==1
-			Player.Direction=FACING_LEFT
-		endif
-	endif
-	if Player.Speed<Player.TopSpeed
-		if Player.Right==1
-			Player.Speed+=Player.AirAcceleration
-			Player.Direction=FACING_RIGHT
-		endif
+		if Player.Left == 1
+			Player.Direction = FACING_LEFT
+		end if
+	end if
+	if Player.Speed < Player.TopSpeed
+		if Player.Right == 1
+			Player.Speed += Player.AirAcceleration
+			Player.Direction = FACING_RIGHT
+		end if
 	else
-		if Player.Right==1
-			Player.Direction=FACING_RIGHT
-		endif
-	endif
-	if Options.OriginalControls==1
+		if Player.Right == 1
+			Player.Direction = FACING_RIGHT
+		end if
+	end if
+	if Options.OriginalControls == 1
 #platform: Standard
-		if Player.Left==1
-			if Player.Speed<-393216
-				Player.Speed=-393216
-			endif
-		endif
-		if Player.Right==1
-			if Player.Speed>393216
-				Player.Speed=393216
-			endif
-		endif
+		if Player.Left == 1
+			if Player.Speed < -393216
+				Player.Speed = -393216
+			end if
+		end if
+		if Player.Right == 1
+			if Player.Speed > 393216
+				Player.Speed = 393216
+			end if
+		end if
 #endplatform
 #platform: Mobile
-		if Player.Left==1
-			TempValue0=Player.TopSpeed
+		if Player.Left == 1
+			TempValue0 = Player.TopSpeed
 			FlipSign(TempValue0)
-			if Player.Speed<TempValue0
-				Player.Speed=TempValue0
-			endif
-		endif
-		if Player.Right==1
-			if Player.Speed>Player.TopSpeed
-				Player.Speed=Player.TopSpeed
-			endif
-		endif
+			if Player.Speed < TempValue0
+				Player.Speed = TempValue0
+			end if
+		end if
+		if Player.Right == 1
+			if Player.Speed > Player.TopSpeed
+				Player.Speed = Player.TopSpeed
+			end if
+		end if
 #endplatform
-	endif
-endfunction
+	end if
+end function
 
 
 function PlayerObject_HandleRollDecel
-	if Player.Right==1
-		if Player.Speed<0
-			Player.Speed+=Player.RollingDeceleration
-		endif
-	endif
-	if Player.Left==1
-		if Player.Speed>0
-			Player.Speed-=Player.RollingDeceleration
-		endif
-	endif
-	if Player.Speed>0
-		Player.Speed-=Player.AirDeceleration
-		if Player.Speed<0
-			Player.Speed=0
-		endif
-		if Player.Speed==0
-			if Player.Angle>224
-				Player.State=PlayerObject_HandleGround
-			endif
-			if Player.Angle<32
-				Player.State=PlayerObject_HandleGround
-			endif
-		endif
-		Sin256(TempValue0,Player.Angle)
-		if TempValue0>0
-			Sin256(TempValue0,Player.Angle)
-			TempValue0*=20480
+	if Player.Right == 1
+		if Player.Speed < 0
+			Player.Speed += Player.RollingDeceleration
+		end if
+	end if
+	if Player.Left == 1
+		if Player.Speed > 0
+			Player.Speed -= Player.RollingDeceleration
+		end if
+	end if
+	if Player.Speed > 0
+		Player.Speed -= Player.AirDeceleration
+		if Player.Speed < 0
+			Player.Speed = 0
+		end if
+		if Player.Speed == 0
+			if Player.Angle > 224
+				Player.State = PlayerObject_HandleGround
+			end if
+			if Player.Angle < 32
+				Player.State = PlayerObject_HandleGround
+			end if
+		end if
+		Sin256(TempValue0, Player.Angle)
+		if TempValue0 > 0
+			Sin256(TempValue0, Player.Angle)
+			TempValue0 *= 20480
 		else
-			Sin256(TempValue0,Player.Angle)
-			TempValue0*=7680
-		endif
-		TempValue0>>=8
-		Player.Speed+=TempValue0
+			Sin256(TempValue0, Player.Angle)
+			TempValue0 *= 7680
+		end if
+		TempValue0 >>= 8
+		Player.Speed += TempValue0
 	else
-		Player.Speed+=Player.AirDeceleration
-		if Player.Speed>0
-			Player.Speed=0
-		endif
-		if Player.Speed==0
-			if Player.Angle>224
-				Player.State=PlayerObject_HandleGround
-			endif
-			if Player.Angle<32
-				Player.State=PlayerObject_HandleGround
-			endif
-		endif
-		Sin256(TempValue0,Player.Angle)
-		if TempValue0<0
-			Sin256(TempValue0,Player.Angle)
-			TempValue0*=20480
+		Player.Speed += Player.AirDeceleration
+		if Player.Speed > 0
+			Player.Speed = 0
+		end if
+		if Player.Speed == 0
+			if Player.Angle > 224
+				Player.State = PlayerObject_HandleGround
+			end if
+			if Player.Angle < 32
+				Player.State = PlayerObject_HandleGround
+			end if
+		end if
+		Sin256(TempValue0, Player.Angle)
+		if TempValue0 < 0
+			Sin256(TempValue0, Player.Angle)
+			TempValue0 *= 20480
 		else
-			Sin256(TempValue0,Player.Angle)
-			TempValue0*=7680
-		endif
-		TempValue0>>=8
-		Player.Speed+=TempValue0
-	endif
-	if Player.Speed>1572864
-		Player.Speed=1572864
-	endif
-	if Player.Speed<-1572864
-		Player.Speed=-1572864
-	endif
-endfunction
+			Sin256(TempValue0, Player.Angle)
+			TempValue0 *= 7680
+		end if
+		TempValue0 >>= 8
+		Player.Speed += TempValue0
+	end if
+	if Player.Speed > 1572864
+		Player.Speed = 1572864
+	end if
+	if Player.Speed < -1572864
+		Player.Speed = -1572864
+	end if
+end function
 
 
 function PlayerObject_HandleAirMovement
-	Player.TrackScroll=1
-	Player.YVelocity+=Player.GravityStrength
-	if Player.YVelocity<Player.JumpCap
-		if Player.JumpHold==0
-			if Player.Timer>0
-				Player.YVelocity=Player.JumpCap
-				TempValue0=Player.Speed
-				TempValue0>>=5
-				Player.Speed-=TempValue0
-			endif
-		endif
-	endif
-	Player.XVelocity=Player.Speed
-	if Player.Rotation<256
-		if Player.Rotation>0
-			Player.Rotation-=4
+	Player.TrackScroll = 1
+	Player.YVelocity += Player.GravityStrength
+	if Player.YVelocity < Player.JumpCap
+		if Player.JumpHold == 0
+			if Player.Timer > 0
+				Player.YVelocity = Player.JumpCap
+				TempValue0 = Player.Speed
+				TempValue0 >>= 5
+				Player.Speed -= TempValue0
+			end if
+		end if
+	end if
+	Player.XVelocity = Player.Speed
+	if Player.Rotation < 256
+		if Player.Rotation > 0
+			Player.Rotation -= 4
 		else
-			Player.Rotation=0
-		endif
+			Player.Rotation = 0
+		end if
 	else
-		if Player.Rotation<512
-			Player.Rotation+=4
+		if Player.Rotation < 512
+			Player.Rotation += 4
 		else
-			Player.Rotation=0
-		endif
-	endif
-	Player.CollisionMode=0
-	if Player.Animation==ANI_JUMPING
-		Player.AnimationSpeed=Player.CustomAnimSpeed
-	endif
-endfunction
+			Player.Rotation = 0
+		end if
+	end if
+	Player.CollisionMode = 0
+	if Player.Animation == ANI_JUMPING
+		Player.AnimationSpeed = Player.CustomAnimSpeed
+	end if
+end function
 
 
 function PlayerObject_ResetOnFloor
-	Player.TrackScroll=0
-	Cos256(TempValue0,Player.Angle)
-	TempValue0*=Player.Speed
-	TempValue0>>=8
-	Player.XVelocity=TempValue0
-	Sin256(TempValue0,Player.Angle)
-	TempValue0*=Player.Speed
-	TempValue0>>=8
-	Player.YVelocity=TempValue0
-endfunction
+	Player.TrackScroll = 0
+	Cos256(TempValue0, Player.Angle)
+	TempValue0 *= Player.Speed
+	TempValue0 >>= 8
+	Player.XVelocity = TempValue0
+	Sin256(TempValue0, Player.Angle)
+	TempValue0 *= Player.Speed
+	TempValue0 >>= 8
+	Player.YVelocity = TempValue0
+end function
 
 
 function PlayerObject_StartJump
-	CheckResult=0
-	if Player.CollisionMode==0
-		TempValue6=Object.XPos
-		TempValue7=Object.YPos
-		Object.XPos=Player.XPos
-		Object.YPos=Player.YPos
-		TempValue0=Player.CollisionTop
-		TempValue0-=2
-		ObjectTileCollision(2,0,TempValue0,0)
-		Object.XPos=TempValue6
-		Object.YPos=TempValue7
-	endif
-	if CheckResult==0
-		Player.ControlLock=0
-		Player.Gravity=1
-		Player.AbilityTimer=8
-		Sin256(Player.XVelocity,Player.Angle)
-		Player.XVelocity*=Player.JumpStrength
-		Cos256(TempValue0,Player.Angle)
-		TempValue0*=Player.Speed
-		Player.XVelocity+=TempValue0
-		Player.XVelocity>>=8
-		Sin256(Player.YVelocity,Player.Angle)
-		Player.YVelocity*=Player.Speed
-		Cos256(TempValue0,Player.Angle)
-		TempValue0*=Player.JumpStrength
-		Player.YVelocity-=TempValue0
-		Player.YVelocity>>=8
-		Player.Speed=Player.XVelocity
-		Player.TrackScroll=1
-		Player.Animation=ANI_JUMPING
-		Player.Angle=0
-		Player.CollisionMode=0
-		Player.Timer=1
+	CheckResult = 0
+	if Player.CollisionMode == 0
+		TempValue6 = Object.XPos
+		TempValue7 = Object.YPos
+		Object.XPos = Player.XPos
+		Object.YPos = Player.YPos
+		TempValue0 = Player.CollisionTop
+		TempValue0 -= 2
+		ObjectTileCollision(2, 0, TempValue0, 0)
+		Object.XPos = TempValue6
+		Object.YPos = TempValue7
+	end if
+	if CheckResult == 0
+		Player.ControlLock = 0
+		Player.Gravity = 1
+		Player.AbilityTimer = 8
+		Sin256(Player.XVelocity, Player.Angle)
+		Player.XVelocity *= Player.JumpStrength
+		Cos256(TempValue0, Player.Angle)
+		TempValue0 *= Player.Speed
+		Player.XVelocity += TempValue0
+		Player.XVelocity >>= 8
+		Sin256(Player.YVelocity, Player.Angle)
+		Player.YVelocity *= Player.Speed
+		Cos256(TempValue0, Player.Angle)
+		TempValue0 *= Player.JumpStrength
+		Player.YVelocity -= TempValue0
+		Player.YVelocity >>= 8
+		Player.Speed = Player.XVelocity
+		Player.TrackScroll = 1
+		Player.Animation = ANI_JUMPING
+		Player.Angle = 0
+		Player.CollisionMode = 0
+		Player.Timer = 1
 		CallFunction(PlayerObject_RollAnimSpeed)
-		Player.State=PlayerObject_HandleAir
-		PlaySfx(0,0)
-	endif
-endfunction
+		Player.State = PlayerObject_HandleAir
+		PlaySfx(0, 0)
+	end if
+end function
 
 
 function PlayerObject_StartSpindashS2
-	Player.State=PlayerObject_HandleSpindashS2
-	Player.Animation=ANI_SPINDASH
-	Player.AbilityTimer=0
-	PlaySfx(6,0)
-	CreateTempObject(TypeName[DustPuff],Object.EntityNo,Player.XPos,Player.YPos)
-	Object[TempObjectPos].iYPos=Player.CollisionBottom
-	Object[TempObjectPos].YPos+=Player.YPos
-	Object[TempObjectPos].Frame=4
-	Object[TempObjectPos].DrawOrder=4
-	Object[TempObjectPos].Direction=Player.Direction
+	Player.State = PlayerObject_HandleSpindashS2
+	Player.Animation = ANI_SPINDASH
+	Player.AbilityTimer = 0
+	PlaySfx(6, 0)
+	CreateTempObject(TypeName[DustPuff], Object.EntityNo, Player.XPos, Player.YPos)
+	Object[TempObjectPos].iYPos = Player.CollisionBottom
+	Object[TempObjectPos].YPos += Player.YPos
+	Object[TempObjectPos].Frame = 4
+	Object[TempObjectPos].DrawOrder = 4
+	Object[TempObjectPos].Direction = Player.Direction
 #platform: Use_Haptics
-	HapticEffect(112,0,0,0)
+	HapticEffect(112, 0, 0, 0)
 #endplatform
-endfunction
+end function
 
 
 function PlayerObject_StartSpindashCD
-	Player.State=PlayerObject_HandleSpindashCD
-	Player.Animation=ANI_JUMPING
-	Player.YPos+=327680
-	Player.AbilityTimer=0
-	PlaySfx(6,0)
+	Player.State = PlayerObject_HandleSpindashCD
+	Player.Animation = ANI_JUMPING
+	Player.YPos += 327680
+	Player.AbilityTimer = 0
+	PlaySfx(6, 0)
 #platform: Use_Haptics
-	HapticEffect(112,0,0,0)
+	HapticEffect(112, 0, 0, 0)
 #endplatform
-endfunction
+end function
 
 
 function PlayerObject_StartPeeloutS2
-	Player.State=PlayerObject_HandlePeeloutS2
-	Player.AbilityTimer=0
-	PlaySfx(6,0)
+	Player.State = PlayerObject_HandlePeeloutS2
+	Player.AbilityTimer = 0
+	PlaySfx(6, 0)
 #platform: Use_Haptics
-	HapticEffect(115,0,0,0)
+	HapticEffect(115, 0, 0, 0)
 #endplatform
-endfunction
+end function
 
 
 function PlayerObject_StartPeeloutCD
-	Player.State=PlayerObject_HandlePeeloutCD
-	Player.AbilityTimer=0
-	PlaySfx(6,0)
+	Player.State = PlayerObject_HandlePeeloutCD
+	Player.AbilityTimer = 0
+	PlaySfx(6, 0)
 #platform: Use_Haptics
-	HapticEffect(115,0,0,0)
+	HapticEffect(115, 0, 0, 0)
 #endplatform
-endfunction
+end function
 
 
 function PlayerObject_StartTailsFlight
-	if Player.AbilityTimer>0
+	if Player.AbilityTimer > 0
 		Player.AbilityTimer--
 	else
-		if Player.JumpPress==1
-			Player.Timer=0
-			Player.State=PlayerObject_HandleTailsFlight
-			Player.FlightGravity=2048
-			if Player.GravityStrength==14336
-				PlaySfx(24,1)
-				Player.Animation=ANI_FLYING
+		if Player.JumpPress == 1
+			Player.Timer = 0
+			Player.State = PlayerObject_HandleTailsFlight
+			Player.FlightGravity = 2048
+			if Player.GravityStrength == 14336
+				PlaySfx(24, 1)
+				Player.Animation = ANI_FLYING
 			else
-				Player.Animation=ANI_SWIMMING
-			endif
-		endif
-	endif
-endfunction
+				Player.Animation = ANI_SWIMMING
+			end if
+		end if
+	end if
+end function
 
 
 function PlayerObject_HandleGround
-	if Player.Animation!=ANI_SKIDDING
-		TempValue7=1
+	if Player.Animation != ANI_SKIDDING
+		TempValue7 = 1
 	else
-		TempValue7=0
-	endif
+		TempValue7 = 0
+	end if
 	CallFunction(PlayerObject_HandleMovement)
-	if Player.Gravity==1
-		Player.State=PlayerObject_HandleAir
+	if Player.Gravity == 1
+		Player.State = PlayerObject_HandleAir
 		CallFunction(PlayerObject_HandleAirMovement)
 	else
 		CallFunction(PlayerObject_ResetOnFloor)
-		if Player.Speed==0
-			if Warp.Destination>0
-				if Warp.Timer>99
+		if Player.Speed == 0
+			if Warp.Destination > 0
+				if Warp.Timer > 99
 #platform: Standard
-					if Warp.Timer<220
+					if Warp.Timer < 220
 #endplatform
 #platform: Mobile
-					if Warp.Timer<204
+					if Warp.Timer < 204
 #endplatform
-						Warp.Destination=0
-					endif
-				endif
-				Warp.Timer=0
-			endif
-			if Player.CollisionMode==0
-				if Player.Timer<240
-					Player.Animation=ANI_STOPPED
+						Warp.Destination = 0
+					end if
+				end if
+				Warp.Timer = 0
+			end if
+			if Player.CollisionMode == 0
+				if Player.Timer < 240
+					Player.Animation = ANI_STOPPED
 					Player.Timer++
 				else
-					Player.Animation=ANI_WAITING
-					if Stage.PlayerListPos==0
+					Player.Animation = ANI_WAITING
+					if Stage.PlayerListPos == 0
 						Player.Timer++
-						if Player.Timer==10620
-							Player.Timer=0
-							PlaySfx(26,0)
-							Player.State=PlayerObject_OuttaHere
-							Player.Animation=ANI_BORED
-						endif
-					endif
-				endif
-				if Player[1].Flailing==0
-					if Player[2].Flailing==0
-						Player.Timer=0
-						if Player.Direction==FACING_LEFT
-							Player.Animation=ANI_FLAILINGLEFT
+						if Player.Timer == 10620
+							Player.Timer = 0
+							PlaySfx(26, 0)
+							Player.State = PlayerObject_OuttaHere
+							Player.Animation = ANI_BORED
+						end if
+					end if
+				end if
+				if Player[1].Flailing == 0
+					if Player[2].Flailing == 0
+						Player.Timer = 0
+						if Player.Direction == FACING_LEFT
+							Player.Animation = ANI_FLAILINGLEFT
 						else
-							Player.Animation=ANI_FLAILINGRIGHT
-						endif
-					endif
-					if Player[0].Flailing==0
-						Player.Timer=0
-						if Player.Direction==FACING_RIGHT
-							Player.Animation=ANI_FLAILINGLEFT
+							Player.Animation = ANI_FLAILINGRIGHT
+						end if
+					end if
+					if Player[0].Flailing == 0
+						Player.Timer = 0
+						if Player.Direction == FACING_RIGHT
+							Player.Animation = ANI_FLAILINGLEFT
 						else
-							Player.Animation=ANI_FLAILINGRIGHT
-						endif
-					endif
-				endif
-			endif
+							Player.Animation = ANI_FLAILINGRIGHT
+						end if
+					end if
+				end if
+			end if
 		else
-			Player.Timer=0
-			if Player.Speed>0
-				if Player.Speed<390594
-					Player.Animation=ANI_WALKING
+			Player.Timer = 0
+			if Player.Speed > 0
+				if Player.Speed < 390594
+					Player.Animation = ANI_WALKING
 					CallFunction(PlayerObject_WalkAnimSpeed)
-					if Warp.Destination>0
-						if Warp.Timer>99
+					if Warp.Destination > 0
+						if Warp.Timer > 99
 #platform: Standard
-							if Warp.Timer<220
+							if Warp.Timer < 220
 #endplatform
 #platform: Mobile
-							if Warp.Timer<204
+							if Warp.Timer < 204
 #endplatform
-								Warp.Destination=0
-							endif
-						endif
-						Warp.Timer=0
-					endif
+								Warp.Destination = 0
+							end if
+						end if
+						Warp.Timer = 0
+					end if
 				else
-					if Warp.Destination>0
-						if Warp.Timer==0
-							Warp.Timer=1
-							ResetObjectEntity(3,TypeName[WarpStar],0,Player.XPos,Player.YPos)
-							Object[3].Value0=7
-							Object[3].DrawOrder=4
-						endif
-					endif
-					if Player.Speed>655359
-						Player.Animation=ANI_PEELOUT
+					if Warp.Destination > 0
+						if Warp.Timer == 0
+							Warp.Timer = 1
+							ResetObjectEntity(3, TypeName[WarpStar], 0, Player.XPos, Player.YPos)
+							Object[3].Value0 = 7
+							Object[3].DrawOrder = 4
+						end if
+					end if
+					if Player.Speed > 655359
+						Player.Animation = ANI_PEELOUT
 					else
-						Player.Animation=ANI_RUNNING
-					endif
+						Player.Animation = ANI_RUNNING
+					end if
 					CallFunction(PlayerObject_RunAnimSpeed)
-				endif
+				end if
 			else
-				if Player.Speed>-390594
-					Player.Animation=ANI_WALKING
+				if Player.Speed > -390594
+					Player.Animation = ANI_WALKING
 					CallFunction(PlayerObject_WalkAnimSpeed)
-					if Warp.Destination>0
-						if Warp.Timer>99
+					if Warp.Destination > 0
+						if Warp.Timer > 99
 #platform: Standard
-							if Warp.Timer<220
+							if Warp.Timer < 220
 #endplatform
 #platform: Mobile
-							if Warp.Timer<204
+							if Warp.Timer < 204
 #endplatform
-								Warp.Destination=0
-							endif
-						endif
-						Warp.Timer=0
-						Object[3].Type=TypeName[BlankObject]
-					endif
+								Warp.Destination = 0
+							end if
+						end if
+						Warp.Timer = 0
+						Object[3].Type = TypeName[BlankObject]
+					end if
 				else
-					if Warp.Destination>0
-						if Warp.Timer==0
-							Warp.Timer=1
-							ResetObjectEntity(3,TypeName[WarpStar],0,Player.XPos,Player.YPos)
-							Object[3].Value0=7
-							Object[3].DrawOrder=4
-						endif
-					endif
-					if Player.Speed<-655359
-						Player.Animation=ANI_PEELOUT
+					if Warp.Destination > 0
+						if Warp.Timer == 0
+							Warp.Timer = 1
+							ResetObjectEntity(3, TypeName[WarpStar], 0, Player.XPos, Player.YPos)
+							Object[3].Value0 = 7
+							Object[3].DrawOrder = 4
+						end if
+					end if
+					if Player.Speed < -655359
+						Player.Animation = ANI_PEELOUT
 					else
-						Player.Animation=ANI_RUNNING
-					endif
+						Player.Animation = ANI_RUNNING
+					end if
 					CallFunction(PlayerObject_RunAnimSpeed)
-				endif
-			endif
-		endif
-		if Player.Skidding>0
-			if TempValue7==1
-				PlaySfx(3,0)
-			endif
-			Player.Animation=ANI_SKIDDING
-			Player.AnimationSpeed=0
+				end if
+			end if
+		end if
+		if Player.Skidding > 0
+			if TempValue7 == 1
+				PlaySfx(3, 0)
+			end if
+			Player.Animation = ANI_SKIDDING
+			Player.AnimationSpeed = 0
 			Player.Skidding--
-			if Ring.AniCount==0
-				CreateTempObject(TypeName[DustPuff],0,Player.XPos,Player.YPos)
-				Object[TempObjectPos].iYPos+=Player.CollisionBottom
-				Object[TempObjectPos].DrawOrder=Player.DrawOrder
-			endif
-			if Player.Speed>0
-				Player.Direction=FACING_RIGHT
+			if Ring.AniCount == 0
+				CreateTempObject(TypeName[DustPuff], 0, Player.XPos, Player.YPos)
+				Object[TempObjectPos].iYPos += Player.CollisionBottom
+				Object[TempObjectPos].DrawOrder = Player.DrawOrder
+			end if
+			if Player.Speed > 0
+				Player.Direction = FACING_RIGHT
 			else
-				Player.Direction=FACING_LEFT
-			endif
-		endif
-		if Player.CollisionMode==0
-			if Player.Pushing==2
-				Player.Animation=ANI_PUSHING
-				Player.AnimationSpeed=0
-			endif
-		endif
-		if Player.JumpPress==1
+				Player.Direction = FACING_LEFT
+			end if
+		end if
+		if Player.CollisionMode == 0
+			if Player.Pushing == 2
+				Player.Animation = ANI_PUSHING
+				Player.AnimationSpeed = 0
+			end if
+		end if
+		if Player.JumpPress == 1
 			CallFunction(PlayerObject_StartJump)
 		else
-			if Player.Up==1
-				if Player.Speed==0
-					if Player.Animation!=ANI_FLAILINGLEFT
-						if Player.Animation!=ANI_FLAILINGRIGHT
-							Player.State=PlayerObject_LookingUp
-							Player.Animation=ANI_LOOKINGUP
-							Player.Timer=0
-						endif
-					endif
-				endif
-			endif
-			if Player.Down==1
-				if Player.Speed==0
-					if Player.Animation!=ANI_FLAILINGLEFT
-						if Player.Animation!=ANI_FLAILINGRIGHT
-							Player.State=PlayerObject_Crouching
-							Player.Animation=ANI_LOOKINGDOWN
-							Player.Timer=0
-						endif
-					endif
+			if Player.Up == 1
+				if Player.Speed == 0
+					if Player.Animation != ANI_FLAILINGLEFT
+						if Player.Animation != ANI_FLAILINGRIGHT
+							Player.State = PlayerObject_LookingUp
+							Player.Animation = ANI_LOOKINGUP
+							Player.Timer = 0
+						end if
+					end if
+				end if
+			end if
+			if Player.Down == 1
+				if Player.Speed == 0
+					if Player.Animation != ANI_FLAILINGLEFT
+						if Player.Animation != ANI_FLAILINGRIGHT
+							Player.State = PlayerObject_Crouching
+							Player.Animation = ANI_LOOKINGDOWN
+							Player.Timer = 0
+						end if
+					end if
 				else
-					if Player.Left==0
-						if Player.Right==0
-							if Player.Speed>0
-								if Player.Speed>34816
-									Player.State=PlayerObject_HandleRolling
-									Player.Animation=ANI_JUMPING
-									Player.iYPos-=Player.CameraOffset
-									Player.AbilityTimer=1024
-								endif
+					if Player.Left == 0
+						if Player.Right == 0
+							if Player.Speed > 0
+								if Player.Speed > 34816
+									Player.State = PlayerObject_HandleRolling
+									Player.Animation = ANI_JUMPING
+									Player.iYPos -= Player.CameraOffset
+									Player.AbilityTimer = 1024
+								end if
 							else
-								if Player.Speed<-34816
-									Player.State=PlayerObject_HandleRolling
-									Player.Animation=ANI_JUMPING
-									Player.iYPos-=Player.CameraOffset
-									Player.AbilityTimer=1024
-								endif
-							endif
-						endif
-					endif
-				endif
-			endif
-		endif
-	endif
-endfunction
+								if Player.Speed < -34816
+									Player.State = PlayerObject_HandleRolling
+									Player.Animation = ANI_JUMPING
+									Player.iYPos -= Player.CameraOffset
+									Player.AbilityTimer = 1024
+								end if
+							end if
+						end if
+					end if
+				end if
+			end if
+		end if
+	end if
+end function
 
 
 function PlayerObject_HandleAir
 	CallFunction(PlayerObject_HandleAirSpeed)
-	if Player.Gravity==1
+	if Player.Gravity == 1
 		CallFunction(PlayerObject_HandleAirMovement)
-		if Warp.Destination>0
-			TempValue0=Player.YVelocity
-			if TempValue0<0
+		if Warp.Destination > 0
+			TempValue0 = Player.YVelocity
+			if TempValue0 < 0
 				FlipSign(TempValue0)
-			endif
-			if TempValue0<393216
-				TempValue0=Player.XVelocity
-				if TempValue0<0
+			end if
+			if TempValue0 < 393216
+				TempValue0 = Player.XVelocity
+				if TempValue0 < 0
 					FlipSign(TempValue0)
-				endif
-				if TempValue0<393216
-					TempValue0=Player.XVelocity
-					TempValue0-=Warp.SpeedCompare
-					if TempValue0<0
+				end if
+				if TempValue0 < 393216
+					TempValue0 = Player.XVelocity
+					TempValue0 -= Warp.SpeedCompare
+					if TempValue0 < 0
 						FlipSign(TempValue0)
-					endif
-					if TempValue0>262144
-						if Warp.Timer>99
+					end if
+					if TempValue0 > 262144
+						if Warp.Timer > 99
 #platform: Standard
-							if Warp.Timer<220
+							if Warp.Timer < 220
 #endplatform
 #platform: Mobile
-							if Warp.Timer<204
+							if Warp.Timer < 204
 #endplatform
-								Warp.Destination=0
-							endif
-						endif
-						Warp.Timer=0
-					endif
-				endif
-			endif
-			Warp.SpeedCompare=Player.XVelocity
-		endif
-		if Player.YVelocity>131072
-			if Player.Animation==ANI_FLAILINGLEFT
-				Player.Animation=ANI_WALKING
-			endif
-			if Player.Animation==ANI_FLAILINGRIGHT
-				Player.Animation=ANI_WALKING
-			endif
-		endif
-		if Player.Animation==ANI_BOUNCING
-			if Player.YVelocity>=0
-				if Player.AnimationCheck==ANI_STOPPED
-					Player.AnimationCheck=ANI_WALKING
-				endif
-				Player.Animation=Player.AnimationCheck
-			endif
-		endif
-		if Player.Animation==ANI_HURT
-			if Player.YVelocity>=0
-				if Player.AnimationCheck==ANI_STOPPED
-					Player.AnimationCheck=ANI_WALKING
-				endif
-				Player.Animation=Player.AnimationCheck
-			endif
-		endif
-		if Player.Animation==ANI_JUMPING
+								Warp.Destination = 0
+							end if
+						end if
+						Warp.Timer = 0
+					end if
+				end if
+			end if
+			Warp.SpeedCompare = Player.XVelocity
+		end if
+		if Player.YVelocity > 131072
+			if Player.Animation == ANI_FLAILINGLEFT
+				Player.Animation = ANI_WALKING
+			end if
+			if Player.Animation == ANI_FLAILINGRIGHT
+				Player.Animation = ANI_WALKING
+			end if
+		end if
+		if Player.Animation == ANI_BOUNCING
+			if Player.YVelocity >= 0
+				if Player.AnimationCheck == ANI_STOPPED
+					Player.AnimationCheck = ANI_WALKING
+				end if
+				Player.Animation = Player.AnimationCheck
+			end if
+		end if
+		if Player.Animation == ANI_HURT
+			if Player.YVelocity >= 0
+				if Player.AnimationCheck == ANI_STOPPED
+					Player.AnimationCheck = ANI_WALKING
+				end if
+				Player.Animation = Player.AnimationCheck
+			end if
+		end if
+		if Player.Animation == ANI_JUMPING
 			CallFunction(Player.FlightFunction)
-		endif
+		end if
 	else
-		Player.State=PlayerObject_HandleGround
+		Player.State = PlayerObject_HandleGround
 		CallFunction(PlayerObject_ResetOnFloor)
-		Player.Skidding=0
-	endif
-endfunction
+		Player.Skidding = 0
+	end if
+end function
 
 
 function PlayerObject_HandleRolling
 	CallFunction(PlayerObject_HandleRollDecel)
-	if Player.Gravity==1
-		Player.State=PlayerObject_HandleAir
-		Player.Timer=0
+	if Player.Gravity == 1
+		Player.State = PlayerObject_HandleAir
+		Player.Timer = 0
 		CallFunction(PlayerObject_HandleAirMovement)
 	else
 		CallFunction(PlayerObject_RollAnimSpeed)
-		Player.AnimationSpeed=Player.CustomAnimSpeed
-		TempValue0=Player.Speed
-		if TempValue0<0
+		Player.AnimationSpeed = Player.CustomAnimSpeed
+		TempValue0 = Player.Speed
+		if TempValue0 < 0
 			FlipSign(TempValue0)
-		endif
-		if TempValue0<390594
-			if Warp.Destination>0
-				if Warp.Timer>99
+		end if
+		if TempValue0 < 390594
+			if Warp.Destination > 0
+				if Warp.Timer > 99
 #platform: Standard
-					if Warp.Timer<220
+					if Warp.Timer < 220
 #endplatform
 #platform: Mobile
-					if Warp.Timer<204
+					if Warp.Timer < 204
 #endplatform
-						Warp.Destination=0
-					endif
-				endif
-				Warp.Timer=0
-			endif
+						Warp.Destination = 0
+					end if
+				end if
+				Warp.Timer = 0
+			end if
 		else
-			if Warp.Destination>0
-				if Warp.Timer==0
-					Warp.Timer=1
-					ResetObjectEntity(3,TypeName[WarpStar],0,Player.XPos,Player.YPos)
-					Object[3].Value0=7
-					Object[3].DrawOrder=4
-				endif
-			endif
-		endif
+			if Warp.Destination > 0
+				if Warp.Timer == 0
+					Warp.Timer = 1
+					ResetObjectEntity(3, TypeName[WarpStar], 0, Player.XPos, Player.YPos)
+					Object[3].Value0 = 7
+					Object[3].DrawOrder = 4
+				end if
+			end if
+		end if
 		CallFunction(PlayerObject_ResetOnFloor)
-		if Player.JumpPress==1
+		if Player.JumpPress == 1
 			CallFunction(PlayerObject_StartJump)
-		endif
-	endif
-endfunction
+		end if
+	end if
+end function
 
 
 function PlayerObject_AirControlLock
-	Player.Left=0
-	Player.Right=0
+	Player.Left = 0
+	Player.Right = 0
 	CallFunction(PlayerObject_HandleAirSpeed)
-	if Player.Gravity==1
+	if Player.Gravity == 1
 		CallFunction(PlayerObject_HandleAirMovement)
 	else
-		Player.State=PlayerObject_HandleGround
+		Player.State = PlayerObject_HandleGround
 		CallFunction(PlayerObject_ResetOnFloor)
-		Player.Skidding=0
-	endif
-endfunction
+		Player.Skidding = 0
+	end if
+end function
 
 
 function PlayerObject_LookingUp
-	if Player.Up==0
-		Player.State=PlayerObject_HandleGround
-		Player.Timer=0
+	if Player.Up == 0
+		Player.State = PlayerObject_HandleGround
+		Player.Timer = 0
 	else
-		if Player.Timer<60
+		if Player.Timer < 60
 			Player.Timer++
 		else
-			if Player.LookPos>-112
-				Player.LookPos-=2
-			endif
-		endif
-		if Player.Gravity==1
-			Player.State=PlayerObject_HandleAir
-			Player.Timer=0
+			if Player.LookPos > -112
+				Player.LookPos -= 2
+			end if
+		end if
+		if Player.Gravity == 1
+			Player.State = PlayerObject_HandleAir
+			Player.Timer = 0
 		else
-			if Player.JumpPress==1
+			if Player.JumpPress == 1
 				CallFunction(Player.PeeloutFunction)
-			endif
-		endif
-	endif
-endfunction
+			end if
+		end if
+	end if
+end function
 
 
 function PlayerObject_Crouching
-	if Player.Down==0
-		Player.State=PlayerObject_HandleGround
-		Player.Timer=0
+	if Player.Down == 0
+		Player.State = PlayerObject_HandleGround
+		Player.Timer = 0
 	else
-		if Player.Timer<60
+		if Player.Timer < 60
 			Player.Timer++
 		else
-			if Player.LookPos<96
-				Player.LookPos+=2
-			endif
-		endif
-		if Player.Gravity==1
-			Player.State=PlayerObject_HandleAir
-			Player.Timer=0
+			if Player.LookPos < 96
+				Player.LookPos += 2
+			end if
+		end if
+		if Player.Gravity == 1
+			Player.State = PlayerObject_HandleAir
+			Player.Timer = 0
 		else
-			if Player.JumpPress==1
+			if Player.JumpPress == 1
 				CallFunction(Player.SpindashFunction)
-			endif
-		endif
-	endif
-endfunction
+			end if
+		end if
+	end if
+end function
 
 
 function PlayerObject_HandleSpindashS2
-	if Player.Gravity==1
-		Player.State=PlayerObject_HandleAir
-		Player.Speed=0
-	endif
-	if Player.JumpPress==1
-		if Player.AbilityTimer<512
-			Player.AbilityTimer+=64
-		endif
-		Player.Frame=0
-		PlaySfx(6,0)
+	if Player.Gravity == 1
+		Player.State = PlayerObject_HandleAir
+		Player.Speed = 0
+	end if
+	if Player.JumpPress == 1
+		if Player.AbilityTimer < 512
+			Player.AbilityTimer += 64
+		end if
+		Player.Frame = 0
+		PlaySfx(6, 0)
 	else
-		if Player.AbilityTimer>0
+		if Player.AbilityTimer > 0
 			Player.AbilityTimer--
-		endif
-	endif
-	if Player.Down==0
-		Player.Timer=0
-		Player.State=PlayerObject_HandleRolling
-		Player.Animation=ANI_JUMPING
-		Player.iYPos-=Player.CameraOffset
-		Player.ScrollDelay=15
-		Screen.CameraStyle=4
-		TempValue0=Player.AbilityTimer
-		TempValue0<<=9
-		TempValue0+=524288
-		if Player.Direction==FACING_RIGHT
-			Player.Speed=TempValue0
+		end if
+	end if
+	if Player.Down == 0
+		Player.Timer = 0
+		Player.State = PlayerObject_HandleRolling
+		Player.Animation = ANI_JUMPING
+		Player.iYPos -= Player.CameraOffset
+		Player.ScrollDelay = 15
+		Screen.CameraStyle = 4
+		TempValue0 = Player.AbilityTimer
+		TempValue0 <<= 9
+		TempValue0 += 524288
+		if Player.Direction == FACING_RIGHT
+			Player.Speed = TempValue0
 		else
-			Player.Speed=TempValue0
+			Player.Speed = TempValue0
 			FlipSign(Player.Speed)
-		endif
-		PlaySfx(7,0)
+		end if
+		PlaySfx(7, 0)
 		CallFunction(PlayerObject_ResetOnFloor)
 #platform: Use_Haptics
-	HapticEffect(42,0,0,0)
+	HapticEffect(42, 0, 0, 0)
 #endplatform
-	endif
-endfunction
+	end if
+end function
 
 
 function PlayerObject_HandleSpindashCD
-	if Player.Direction==FACING_RIGHT
-		Screen.CameraStyle=2
+	if Player.Direction == FACING_RIGHT
+		Screen.CameraStyle = 2
 	else
-		Screen.CameraStyle=3
-	endif
-	if Player.Gravity==1
-		Player.State=PlayerObject_HandleAir
-		Player.Speed=0
-		Screen.CameraStyle=1
-	endif
-	if Player.GravityStrength==4096
-		if Player.AbilityTimer<524288
-			Player.AbilityTimer+=24576
-		endif
+		Screen.CameraStyle = 3
+	end if
+	if Player.Gravity == 1
+		Player.State = PlayerObject_HandleAir
+		Player.Speed = 0
+		Screen.CameraStyle = 1
+	end if
+	if Player.GravityStrength == 4096
+		if Player.AbilityTimer < 524288
+			Player.AbilityTimer += 24576
+		end if
 	else
-		if Player.AbilityTimer<786432
-			Player.AbilityTimer+=24576
-		endif
-	endif
-	if Player.Down==0
-		Screen.CameraStyle=1
-		Player.Timer=0
-		if Player.AbilityTimer<195297
-			Player.Speed=0
-			Player.State=PlayerObject_HandleGround
+		if Player.AbilityTimer < 786432
+			Player.AbilityTimer += 24576
+		end if
+	end if
+	if Player.Down == 0
+		Screen.CameraStyle = 1
+		Player.Timer = 0
+		if Player.AbilityTimer < 195297
+			Player.Speed = 0
+			Player.State = PlayerObject_HandleGround
 		else
-			Player.State=PlayerObject_HandleRolling
-			Player.Animation=ANI_JUMPING
-			Player.Speed=Player.AbilityTimer
-			if Player.Direction==FACING_LEFT
+			Player.State = PlayerObject_HandleRolling
+			Player.Animation = ANI_JUMPING
+			Player.Speed = Player.AbilityTimer
+			if Player.Direction == FACING_LEFT
 				FlipSign(Player.Speed)
-			endif
-			PlaySfx(7,0)
-		endif
+			end if
+			PlaySfx(7, 0)
+		end if
 		CallFunction(PlayerObject_ResetOnFloor)
 #platform: Use_Haptics
-	HapticEffect(42,0,0,0)
+	HapticEffect(42, 0, 0, 0)
 #endplatform
-	endif
-endfunction
+	end if
+end function
 
 
 function PlayerObject_HandlePeeloutS2
-	if Player.Gravity==1
-		Player.State=PlayerObject_HandleAir
-		Player.Speed=0
-	endif
-	if Player.GravityStrength==4096
-		if Player.AbilityTimer<393216
-			Player.AbilityTimer+=24576
-		endif
+	if Player.Gravity == 1
+		Player.State = PlayerObject_HandleAir
+		Player.Speed = 0
+	end if
+	if Player.GravityStrength == 4096
+		if Player.AbilityTimer < 393216
+			Player.AbilityTimer += 24576
+		end if
 	else
-		if Player.AbilityTimer<786432
-			Player.AbilityTimer+=24576
-		endif
-	endif
-	if Player.AbilityTimer<390594
-		Player.Animation=ANI_WALKING
-		TempValue0=Player.AbilityTimer
-		TempValue0>>=16
-		TempValue0*=80
-		TempValue0/=6
-		TempValue0+=20
+		if Player.AbilityTimer < 786432
+			Player.AbilityTimer += 24576
+		end if
+	end if
+	if Player.AbilityTimer < 390594
+		Player.Animation = ANI_WALKING
+		TempValue0 = Player.AbilityTimer
+		TempValue0 >>= 16
+		TempValue0 *= 80
+		TempValue0 /= 6
+		TempValue0 += 20
 	else
-		TempValue0=Player.AbilityTimer
-		TempValue0>>=16
-		TempValue0*=80
-		TempValue0/=6
-		if Player.AbilityTimer>655359
-			Player.Animation=ANI_PEELOUT
+		TempValue0 = Player.AbilityTimer
+		TempValue0 >>= 16
+		TempValue0 *= 80
+		TempValue0 /= 6
+		if Player.AbilityTimer > 655359
+			Player.Animation = ANI_PEELOUT
 		else
-			Player.Animation=ANI_RUNNING
-		endif
-	endif
-	if Player.Up==0
-		Player.ScrollDelay=15
-		Screen.CameraStyle=4
-		Player.State=PlayerObject_HandleGround
-		if Player.AbilityTimer<390594
-			Player.Speed=0
+			Player.Animation = ANI_RUNNING
+		end if
+	end if
+	if Player.Up == 0
+		Player.ScrollDelay = 15
+		Screen.CameraStyle = 4
+		Player.State = PlayerObject_HandleGround
+		if Player.AbilityTimer < 390594
+			Player.Speed = 0
 		else
-			Player.Speed=Player.AbilityTimer
-			if Player.Direction==FACING_LEFT
+			Player.Speed = Player.AbilityTimer
+			if Player.Direction == FACING_LEFT
 				FlipSign(Player.Speed)
-			endif
-			PlaySfx(7,0)
-		endif
+			end if
+			PlaySfx(7, 0)
+		end if
 		CallFunction(PlayerObject_ResetOnFloor)
 #platform: Use_Haptics
-	HapticEffect(42,0,0,0)
+	HapticEffect(42, 0, 0, 0)
 #endplatform
-	endif
-	Player.AnimationSpeed=TempValue0
-endfunction
+	end if
+	Player.AnimationSpeed = TempValue0
+end function
 
 
 function PlayerObject_HandlePeeloutCD
-	if Player.Direction==FACING_RIGHT
-		Screen.CameraStyle=2
+	if Player.Direction == FACING_RIGHT
+		Screen.CameraStyle = 2
 	else
-		Screen.CameraStyle=3
-	endif
-	if Player.Gravity==1
-		Player.State=PlayerObject_HandleAir
-		Player.Speed=0
-		Screen.CameraStyle=1
-	endif
-	if Player.GravityStrength==4096
-		if Player.AbilityTimer<393216
-			Player.AbilityTimer+=24576
-		endif
+		Screen.CameraStyle = 3
+	end if
+	if Player.Gravity == 1
+		Player.State = PlayerObject_HandleAir
+		Player.Speed = 0
+		Screen.CameraStyle = 1
+	end if
+	if Player.GravityStrength == 4096
+		if Player.AbilityTimer < 393216
+			Player.AbilityTimer += 24576
+		end if
 	else
-		if Player.AbilityTimer<786432
-			Player.AbilityTimer+=24576
-		endif
-	endif
-	if Player.AbilityTimer<390594
-		Player.Animation=ANI_WALKING
-		TempValue0=Player.AbilityTimer
-		TempValue0>>=16
-		TempValue0*=80
-		TempValue0/=6
-		TempValue0+=20
+		if Player.AbilityTimer < 786432
+			Player.AbilityTimer += 24576
+		end if
+	end if
+	if Player.AbilityTimer < 390594
+		Player.Animation = ANI_WALKING
+		TempValue0 = Player.AbilityTimer
+		TempValue0 >>= 16
+		TempValue0 *= 80
+		TempValue0 /= 6
+		TempValue0 += 20
 	else
-		TempValue0=Player.AbilityTimer
-		TempValue0>>=16
-		TempValue0*=80
-		TempValue0/=6
-		if Player.AbilityTimer>655359
-			Player.Animation=ANI_PEELOUT
+		TempValue0 = Player.AbilityTimer
+		TempValue0 >>= 16
+		TempValue0 *= 80
+		TempValue0 /= 6
+		if Player.AbilityTimer > 655359
+			Player.Animation = ANI_PEELOUT
 		else
-			Player.Animation=ANI_RUNNING
-		endif
-	endif
-	if Player.Up==0
-		Screen.CameraStyle=1
-		Player.State=PlayerObject_HandleGround
-		if Player.AbilityTimer<390594
-			Player.Speed=0
+			Player.Animation = ANI_RUNNING
+		end if
+	end if
+	if Player.Up == 0
+		Screen.CameraStyle = 1
+		Player.State = PlayerObject_HandleGround
+		if Player.AbilityTimer < 390594
+			Player.Speed = 0
 		else
-			Player.Speed=Player.AbilityTimer
-			if Player.Direction==FACING_LEFT
+			Player.Speed = Player.AbilityTimer
+			if Player.Direction == FACING_LEFT
 				FlipSign(Player.Speed)
-			endif
-			PlaySfx(7,0)
-		endif
+			end if
+			PlaySfx(7, 0)
+		end if
 		CallFunction(PlayerObject_ResetOnFloor)
 #platform: Use_Haptics
-	HapticEffect(42,0,0,0)
+	HapticEffect(42, 0, 0, 0)
 #endplatform
-	endif
-	Player.AnimationSpeed=TempValue0
-endfunction
+	end if
+	Player.AnimationSpeed = TempValue0
+end function
 
 
 function PlayerObject_HandleTailsFlight
 	CallFunction(PlayerObject_HandleAirSpeed)
-	if Player.Gravity==1
-		Player.XVelocity=Player.Speed
-		if Warp.Destination>0
-			TempValue0=Player.XVelocity
-			if TempValue0<0
+	if Player.Gravity == 1
+		Player.XVelocity = Player.Speed
+		if Warp.Destination > 0
+			TempValue0 = Player.XVelocity
+			if TempValue0 < 0
 				FlipSign(TempValue0)
-			endif
-			TempValue1=Player.YVelocity
-			if TempValue1<0
+			end if
+			TempValue1 = Player.YVelocity
+			if TempValue1 < 0
 				FlipSign(TempValue1)
-			endif
-			TempValue0+=TempValue1
-			if TempValue0<262144
-				if Warp.Timer>99
+			end if
+			TempValue0 += TempValue1
+			if TempValue0 < 262144
+				if Warp.Timer > 99
 #platform: Standard
-					if Warp.Timer<220
+					if Warp.Timer < 220
 #endplatform
 #platform: Mobile
-					if Warp.Timer<204
+					if Warp.Timer < 204
 #endplatform
-						Warp.Destination=0
-					endif
-				endif
-				Warp.Timer=0
-			endif
-		endif
-		if Player.YVelocity<-65536
-			Player.FlightGravity=2048
+						Warp.Destination = 0
+					end if
+				end if
+				Warp.Timer = 0
+			end if
+		end if
+		if Player.YVelocity < -65536
+			Player.FlightGravity = 2048
 		else
-			if Player.YVelocity<1
-				if Player.AbilityTimer<60
+			if Player.YVelocity < 1
+				if Player.AbilityTimer < 60
 					Player.AbilityTimer++
 				else
-					Player.FlightGravity=2048
-				endif
-			endif
-		endif
-		Player.YVelocity+=Player.FlightGravity
-		if Player.Timer<480
-			if Player.GravityStrength==14336
-				Player.Animation=ANI_FLYING
+					Player.FlightGravity = 2048
+				end if
+			end if
+		end if
+		Player.YVelocity += Player.FlightGravity
+		if Player.Timer < 480
+			if Player.GravityStrength == 14336
+				Player.Animation = ANI_FLYING
 			else
-				Player.Animation=ANI_SWIMMING
-			endif
+				Player.Animation = ANI_SWIMMING
+			end if
 			Player.Timer++
-			if Player.Timer==480
-				if Player.GravityStrength==14336
-					Player.Animation=ANI_FLYINGTIRED
+			if Player.Timer == 480
+				if Player.GravityStrength == 14336
+					Player.Animation = ANI_FLYINGTIRED
 					StopSfx(24)
-					PlaySfx(25,1)
+					PlaySfx(25, 1)
 				else
-					Player.Animation=ANI_SWIMMINGTIRED
-				endif
+					Player.Animation = ANI_SWIMMINGTIRED
+				end if
 			else
-				if Player.JumpPress==1
-					Player.FlightGravity=-8192
-					Player.AbilityTimer=0
-				endif
-			endif
+				if Player.JumpPress == 1
+					Player.FlightGravity = -8192
+					Player.AbilityTimer = 0
+				end if
+			end if
 		else
-			if Player.GravityStrength==14336
-				Player.Animation=ANI_FLYINGTIRED
+			if Player.GravityStrength == 14336
+				Player.Animation = ANI_FLYINGTIRED
 			else
-				Player.Animation=ANI_SWIMMINGTIRED
-			endif
-		endif
+				Player.Animation = ANI_SWIMMINGTIRED
+			end if
+		end if
 	else
-		Player.State=PlayerObject_HandleGround
+		Player.State = PlayerObject_HandleGround
 		CallFunction(PlayerObject_ResetOnFloor)
-	endif
-	if Player.RoofBarrier==1
-		TempValue0=Player.YPos
-		TempValue0>>=16
-		if TempValue0<Player.CollisionBottom
-			Player.YPos=Player.CollisionBottom
-			Player.YPos<<=16
-		endif
-	endif
-endfunction
+	end if
+	if Player.RoofBarrier == 1
+		TempValue0 = Player.YPos
+		TempValue0 >>= 16
+		if TempValue0 < Player.CollisionBottom
+			Player.YPos = Player.CollisionBottom
+			Player.YPos <<= 16
+		end if
+	end if
+end function
 
 
 function PlayerObject_Hurt
-	ArrayPos0=Player.EntityNo
-	ArrayPos0+=2
-	if Object[ArrayPos0].PropertyValue>0
-		TempValue0=1
-		ResetObjectEntity(ArrayPos0,TypeName[BlankObject],0,0,0)
-		PlaySfx(5,0)
+	ArrayPos0 = Player.EntityNo
+	ArrayPos0 += 2
+	if Object[ArrayPos0].PropertyValue > 0
+		TempValue0 = 1
+		ResetObjectEntity(ArrayPos0, TypeName[BlankObject], 0, 0, 0)
+		PlaySfx(5, 0)
 	else
-		if Object[0].Value0==0
-			PlaySfx(5,0)
-			TempValue0=3
+		if Object[0].Value0 == 0
+			PlaySfx(5, 0)
+			TempValue0 = 3
 		else
-			PlaySfx(4,0)
-			TempValue0=2
-		endif
-	endif
+			PlaySfx(4, 0)
+			TempValue0 = 2
+		end if
+	end if
 	switch TempValue0
 	case 1
 #platform: Use_Haptics
-	HapticEffect(16,0,0,0)
+	HapticEffect(16, 0, 0, 0)
 #endplatform
-		Player.State=PlayerObject_Knockback
-		Player.Animation=ANI_HURT
-		Player.YVelocity=-262144
-		Player.Gravity=1
-		Player.TrackScroll=1
-		Player.Invincible=8000
-		if Player.GravityStrength==4096
-			Player.Speed>>=1
-			Player.YVelocity>>=1
-		endif
+		Player.State = PlayerObject_Knockback
+		Player.Animation = ANI_HURT
+		Player.YVelocity = -262144
+		Player.Gravity = 1
+		Player.TrackScroll = 1
+		Player.Invincible = 8000
+		if Player.GravityStrength == 4096
+			Player.Speed >>= 1
+			Player.YVelocity >>= 1
+		end if
 		break
 	case 2
 #platform: Use_Haptics
-	HapticEffect(16,0,0,0)
+	HapticEffect(16, 0, 0, 0)
 #endplatform
-		if Player.CollisionPlane==0
-			TempValue4=3
+		if Player.CollisionPlane == 0
+			TempValue4 = 3
 		else
-			TempValue4=1
-		endif
-		Player.State=PlayerObject_Knockback
-		Player.Animation=ANI_HURT
-		Player.YVelocity=-262144
-		Player.Gravity=1
-		Player.TrackScroll=1
-		Player.Invincible=8000
-		if Player.GravityStrength==4096
-			Player.Speed>>=1
-			Player.YVelocity>>=1
-		endif
-		TempValue0=Object[0].Value0
-		if TempValue0>16
-			TempValue1=TempValue0
-			TempValue1-=16
-			TempValue0=16
+			TempValue4 = 1
+		end if
+		Player.State = PlayerObject_Knockback
+		Player.Animation = ANI_HURT
+		Player.YVelocity = -262144
+		Player.Gravity = 1
+		Player.TrackScroll = 1
+		Player.Invincible = 8000
+		if Player.GravityStrength == 4096
+			Player.Speed >>= 1
+			Player.YVelocity >>= 1
+		end if
+		TempValue0 = Object[0].Value0
+		if TempValue0 > 16
+			TempValue1 = TempValue0
+			TempValue1 -= 16
+			TempValue0 = 16
 		else
-			TempValue1=0
-		endif
-		if TempValue1>16
-			TempValue1=16
-		endif
-		TempValue3=TempValue1
-		TempValue3>>=1
-		TempValue3<<=5
-		TempValue2=384
-		TempValue2-=TempValue3
-		TempValue3>>=4
-		if TempValue3==TempValue1
-			TempValue2+=16
+			TempValue1 = 0
+		end if
+		if TempValue1 > 16
+			TempValue1 = 16
+		end if
+		TempValue3 = TempValue1
+		TempValue3 >>= 1
+		TempValue3 <<= 5
+		TempValue2 = 384
+		TempValue2 -= TempValue3
+		TempValue3 >>= 4
+		if TempValue3 == TempValue1
+			TempValue2 += 16
 		else
-			TempValue2-=16
-		endif
-		TempValue3=0
-		while TempValue3<TempValue1
-			CreateTempObject(TypeName[LoseRing],Player.CollisionPlane,Player.XPos,Player.YPos)
-			Cos(Object[TempObjectPos].Value0,TempValue2)
-			Sin(Object[TempObjectPos].Value1,TempValue2)
-			Object[TempObjectPos].Value0<<=8
-			Object[TempObjectPos].Value1<<=8
-			Object[TempObjectPos].DrawOrder=TempValue4
-			Object[TempObjectPos].AnimationSpeed=256
+			TempValue2 -= 16
+		end if
+		TempValue3 = 0
+		while TempValue3 < TempValue1
+			CreateTempObject(TypeName[LoseRing], Player.CollisionPlane, Player.XPos, Player.YPos)
+			Cos(Object[TempObjectPos].Value0, TempValue2)
+			Sin(Object[TempObjectPos].Value1, TempValue2)
+			Object[TempObjectPos].Value0 <<= 8
+			Object[TempObjectPos].Value1 <<= 8
+			Object[TempObjectPos].DrawOrder = TempValue4
+			Object[TempObjectPos].AnimationSpeed = 256
 			TempValue3++
-			TempValue2+=32
+			TempValue2 += 32
 		loop
-		TempValue3=TempValue0
-		TempValue3>>=1
-		TempValue3<<=5
-		TempValue2=384
-		TempValue2-=TempValue3
-		TempValue3>>=4
-		if TempValue3==TempValue0
-			TempValue2+=16
+		TempValue3 = TempValue0
+		TempValue3 >>= 1
+		TempValue3 <<= 5
+		TempValue2 = 384
+		TempValue2 -= TempValue3
+		TempValue3 >>= 4
+		if TempValue3 == TempValue0
+			TempValue2 += 16
 		else
-			TempValue2-=16
-		endif
-		TempValue3=0
-		while TempValue3<TempValue0
-			CreateTempObject(TypeName[LoseRing],Player.CollisionPlane,Player.XPos,Player.YPos)
-			Cos(Object[TempObjectPos].Value0,TempValue2)
-			Sin(Object[TempObjectPos].Value1,TempValue2)
-			Object[TempObjectPos].Value0<<=9
-			Object[TempObjectPos].Value1<<=9
-			Object[TempObjectPos].DrawOrder=TempValue4
-			Object[TempObjectPos].AnimationSpeed=256
+			TempValue2 -= 16
+		end if
+		TempValue3 = 0
+		while TempValue3 < TempValue0
+			CreateTempObject(TypeName[LoseRing], Player.CollisionPlane, Player.XPos, Player.YPos)
+			Cos(Object[TempObjectPos].Value0, TempValue2)
+			Sin(Object[TempObjectPos].Value1, TempValue2)
+			Object[TempObjectPos].Value0 <<= 9
+			Object[TempObjectPos].Value1 <<= 9
+			Object[TempObjectPos].DrawOrder = TempValue4
+			Object[TempObjectPos].AnimationSpeed = 256
 			TempValue3++
-			TempValue2+=32
+			TempValue2 += 32
 		loop
-		Object[0].Value0=0
-		Ring.ExtraLife=100
+		Object[0].Value0 = 0
+		Ring.ExtraLife = 100
 		break
 	case 3
 #platform: Use_Haptics
-	HapticEffect(28,0,0,0)
+	HapticEffect(28, 0, 0, 0)
 #endplatform
-		Object.DrawOrder=5
-		Player.Speed=0
-		Player.YVelocity=-458752
-		Player.XVelocity=0
-		Player.State=PlayerObject_Death
-		Player.Animation=ANI_DYING
-		Player.TileCollisions=0
-		Player.ObjectInteraction=0
-		if Player.EntityNo==0
-			Screen.CameraEnabled=0
-		endif
+		Object.DrawOrder = 5
+		Player.Speed = 0
+		Player.YVelocity = -458752
+		Player.XVelocity = 0
+		Player.State = PlayerObject_Death
+		Player.Animation = ANI_DYING
+		Player.TileCollisions = 0
+		Player.ObjectInteraction = 0
+		if Player.EntityNo == 0
+			Screen.CameraEnabled = 0
+		end if
 		break
-	endswitch
-	if Warp.Destination>0
-		if Warp.Timer>99
+	end switch
+	if Warp.Destination > 0
+		if Warp.Timer > 99
 #platform: Standard
-			if Warp.Timer<220
+			if Warp.Timer < 220
 #endplatform
 #platform: Mobile
-			if Warp.Timer<204
+			if Warp.Timer < 204
 #endplatform
-				Warp.Destination=0
-			endif
-		endif
-		Warp.Timer=0
-	endif
-endfunction
+				Warp.Destination = 0
+			end if
+		end if
+		Warp.Timer = 0
+	end if
+end function
 
 
 function PlayerObject_Knockback
-	if Player.Gravity==1
-		Player.TrackScroll=1
-		if Player.GravityStrength==14336
-			Player.YVelocity+=12288
+	if Player.Gravity == 1
+		Player.TrackScroll = 1
+		if Player.GravityStrength == 14336
+			Player.YVelocity += 12288
 		else
-			Player.YVelocity+=3840
-		endif
-		Player.XVelocity=Player.Speed
+			Player.YVelocity += 3840
+		end if
+		Player.XVelocity = Player.Speed
 	else
-		Player.State=PlayerObject_HandleGround
-		Player.Invincible=120
-		Player.BlinkTimer=3
-		Player.Speed=0
-		Player.XVelocity=0
+		Player.State = PlayerObject_HandleGround
+		Player.Invincible = 120
+		Player.BlinkTimer = 3
+		Player.Speed = 0
+		Player.XVelocity = 0
 		CallFunction(PlayerObject_ResetOnFloor)
-	endif
-endfunction
+	end if
+end function
 
 
 function PlayerObject_OuttaHere
-	if Player.Timer<140
+	if Player.Timer < 140
 		Player.Timer++
 	else
-		Player.Timer=0
-		Player.DrawOrder=5
-		if Player.Direction==FACING_RIGHT
-			Player.Speed=65536
-			Player.XVelocity=65536
+		Player.Timer = 0
+		Player.DrawOrder = 5
+		if Player.Direction == FACING_RIGHT
+			Player.Speed = 65536
+			Player.XVelocity = 65536
 		else
-			Player.Speed=-65536
-			Player.XVelocity=-65536
-		endif
-		Player.YVelocity=-360448
-		Player.State=PlayerObject_Death
-		Player.TileCollisions=0
-		Player.ObjectInteraction=0
-		Screen.CameraEnabled=0
-	endif
-endfunction
+			Player.Speed = -65536
+			Player.XVelocity = -65536
+		end if
+		Player.YVelocity = -360448
+		Player.State = PlayerObject_Death
+		Player.TileCollisions = 0
+		Player.ObjectInteraction = 0
+		Screen.CameraEnabled = 0
+	end if
+end function
 
 
 function PlayerObject_Death
-	Player.ControlMode=-1
-	Player.YVelocity+=14336
-	if Player.Animation!=ANI_BORED
-		Player.Animation=ANI_DYING
-	endif
-	if Player.YVelocity>1048576
-		if Player.Lives>0
-			if Player.Animation==ANI_BORED
-				Player.Lives=0
+	Player.ControlMode = -1
+	Player.YVelocity += 14336
+	if Player.Animation != ANI_BORED
+		Player.Animation = ANI_DYING
+	end if
+	if Player.YVelocity > 1048576
+		if Player.Lives > 0
+			if Player.Animation == ANI_BORED
+				Player.Lives = 0
 			else
 				Player.Lives--
-			endif
-		endif
-		Stage.TimeEnabled=0
-		Object.Type=TypeName[DeathEvent]
-		Object.DrawOrder=6
-		Object.Value1=Screen.CenterX
-		Object.Value1-=264
-		Object.Value2=Screen.CenterX
-		Object.Value2+=200
-		if Options.GameMode==2
-			Object.Value3=0
-			Object.State=3
+			end if
+		end if
+		Stage.TimeEnabled = 0
+		Object.Type = TypeName[DeathEvent]
+		Object.DrawOrder = 6
+		Object.Value1 = Screen.CenterX
+		Object.Value1 -= 264
+		Object.Value2 = Screen.CenterX
+		Object.Value2 += 200
+		if Options.GameMode == 2
+			Object.Value3 = 0
+			Object.State = 3
 		else
-			if Player.Lives==0
-				Object.Value3=-2880
-				Object.State=0
+			if Player.Lives == 0
+				Object.Value3 = -2880
+				Object.State = 0
 				PlayMusic(5)
-				Stage.PauseEnabled=0
+				Stage.PauseEnabled = 0
 			else
-				Object.Value3=0
-				Object.State=2
-				if Stage.Minutes==9
-					if Stage.Seconds==59
-						Object.Value3=-2880
-						Object.State=1
+				Object.Value3 = 0
+				Object.State = 2
+				if Stage.Minutes == 9
+					if Stage.Seconds == 59
+						Object.Value3 = -2880
+						Object.State = 1
 						PlayMusic(5)
-						Stage.PauseEnabled=0
-					endif
-				endif
-			endif
-		endif
-	endif
-endfunction
+						Stage.PauseEnabled = 0
+					end if
+				end if
+			end if
+		end if
+	end if
+end function
 
 
 function PlayerObject_Drown
-	Player.ControlMode=-1
-	Player.YVelocity+=Player.GravityStrength
-	Player.Animation=ANI_DROWNING
-	if Player.YVelocity>524288
-		if Player.Lives>0
+	Player.ControlMode = -1
+	Player.YVelocity += Player.GravityStrength
+	Player.Animation = ANI_DROWNING
+	if Player.YVelocity > 524288
+		if Player.Lives > 0
 			Player.Lives--
-		endif
-		Stage.TimeEnabled=0
-		Object.Type=TypeName[DeathEvent]
-		Object.DrawOrder=6
-		Object.Value1=Screen.CenterX
-		Object.Value1-=264
-		Object.Value2=Screen.CenterX
-		Object.Value2+=200
-		if Options.GameMode==2
-			Object.Value3=0
-			Object.State=3
+		end if
+		Stage.TimeEnabled = 0
+		Object.Type = TypeName[DeathEvent]
+		Object.DrawOrder = 6
+		Object.Value1 = Screen.CenterX
+		Object.Value1 -= 264
+		Object.Value2 = Screen.CenterX
+		Object.Value2 += 200
+		if Options.GameMode == 2
+			Object.Value3 = 0
+			Object.State = 3
 		else
-			if Player.Lives==0
-				Object.Value3=-2880
-				Object.State=0
+			if Player.Lives == 0
+				Object.Value3 = -2880
+				Object.State = 0
 				PlayMusic(5)
-				Stage.PauseEnabled=0
+				Stage.PauseEnabled = 0
 			else
-				Object.Value3=0
-				Object.State=2
-			endif
-		endif
-	endif
-endfunction
+				Object.Value3 = 0
+				Object.State = 2
+			end if
+		end if
+	end if
+end function
 
 //Could be named better
 function PlayerObject_CheckTile
-	if Player.Left==1
-		Player.Direction=FACING_LEFT
-		Player.Speed=-131072
-		Player.AnimationSpeed=30
+	if Player.Left == 1
+		Player.Direction = FACING_LEFT
+		Player.Speed = -131072
+		Player.AnimationSpeed = 30
 	else
-		if Player.Right==1
-			Player.Direction=FACING_RIGHT
-			Player.Speed=131072
-			Player.AnimationSpeed=30
+		if Player.Right == 1
+			Player.Direction = FACING_RIGHT
+			Player.Speed = 131072
+			Player.AnimationSpeed = 30
 		else
-			Player.Speed=0
-			Player.AnimationSpeed=0
-		endif
-	endif
-	TempValue1=Player.XPos
-	TempValue1>>=16
-	TempValue2=Player.YPos
-	TempValue2>>=16
-	TempValue2+=Player.CollisionTop
-	Get16x16TileInfo(TempValue0,TempValue1,TempValue2,8)
-	if TempValue0!=3
-		Player.State=PlayerObject_HandleAir
-		Player.Speed=0
-		Player.AnimationSpeed=0
-		Player.YVelocity=0
-	endif
-	if Player.JumpPress==1
-		Player.State=PlayerObject_HandleAir
-		Player.YVelocity=0
-		Player.Speed=0
-		Player.AnimationSpeed=0
-		Player.YPos+=262144
-	endif
-	Player.XVelocity=Player.Speed
-	if Warp.Destination>0
-		if Warp.Timer>99
+			Player.Speed = 0
+			Player.AnimationSpeed = 0
+		end if
+	end if
+	TempValue1 = Player.XPos
+	TempValue1 >>= 16
+	TempValue2 = Player.YPos
+	TempValue2 >>= 16
+	TempValue2 += Player.CollisionTop
+	Get16x16TileInfo(TempValue0, TempValue1, TempValue2, 8)
+	if TempValue0 != 3
+		Player.State = PlayerObject_HandleAir
+		Player.Speed = 0
+		Player.AnimationSpeed = 0
+		Player.YVelocity = 0
+	end if
+	if Player.JumpPress == 1
+		Player.State = PlayerObject_HandleAir
+		Player.YVelocity = 0
+		Player.Speed = 0
+		Player.AnimationSpeed = 0
+		Player.YPos += 262144
+	end if
+	Player.XVelocity = Player.Speed
+	if Warp.Destination > 0
+		if Warp.Timer > 99
 #platform: Standard
-			if Warp.Timer<220
+			if Warp.Timer < 220
 #endplatform
 #platform: Mobile
-			if Warp.Timer<204
+			if Warp.Timer < 204
 #endplatform
-				Warp.Destination=0
-			endif
-		endif
-		Warp.Timer=0
-	endif
-endfunction
+				Warp.Destination = 0
+			end if
+		end if
+		Warp.Timer = 0
+	end if
+end function
 
 //Could be named better
 function PlayerObject_CorkscrewRun
-	Player.Angle=0
+	Player.Angle = 0
 	CallFunction(PlayerObject_HandleMovement)
-	Player.Animation=34
-	if Player.Speed<393216
-		if Player.Speed>-393216
-			Player.Animation=ANI_WALKING
-			Player.State=PlayerObject_HandleAir
-			Player.Rotation=0
-			if Player.Speed<0
-				Player.Direction=FACING_LEFT
-			endif
-		endif
-	endif
-	if Player.Down==1
-		if Player.Speed>6554
-			Player.State=PlayerObject_CorkscrewRoll
-			Player.Animation=ANI_JUMPING
-		endif
-		if Player.Speed<-6554
-			Player.State=PlayerObject_CorkscrewRoll
-			Player.Animation=ANI_JUMPING
-		endif
-	endif
-	if Player.Skidding>0
-		if Player.Skidding==16
-			PlaySfx(8,0)
-		endif
-		Player.Animation=ANI_SKIDDING
+	Player.Animation = 34
+	if Player.Speed < 393216
+		if Player.Speed > -393216
+			Player.Animation = ANI_WALKING
+			Player.State = PlayerObject_HandleAir
+			Player.Rotation = 0
+			if Player.Speed < 0
+				Player.Direction = FACING_LEFT
+			end if
+		end if
+	end if
+	if Player.Down == 1
+		if Player.Speed > 6554
+			Player.State = PlayerObject_CorkscrewRoll
+			Player.Animation = ANI_JUMPING
+		end if
+		if Player.Speed < -6554
+			Player.State = PlayerObject_CorkscrewRoll
+			Player.Animation = ANI_JUMPING
+		end if
+	end if
+	if Player.Skidding > 0
+		if Player.Skidding == 16
+			PlaySfx(8, 0)
+		end if
+		Player.Animation = ANI_SKIDDING
 		Player.Skidding--
-	endif
-	if Player.JumpPress==1
+	end if
+	if Player.JumpPress == 1
 		CallFunction(PlayerObject_StartJump)
 	else
 		CallFunction(PlayerObject_ResetOnFloor)
-	endif
-endfunction
+	end if
+end function
 
 //Could be named better
 function PlayerObject_CorkscrewRoll
-	Player.Angle=0
+	Player.Angle = 0
 	CallFunction(PlayerObject_HandleRollDecel)
-	if Player.Speed<393216
-		if Player.Speed>-393216
-			Player.State=PlayerObject_HandleAir
-		endif
-	endif
-	if Player.JumpPress==1
+	if Player.Speed < 393216
+		if Player.Speed > -393216
+			Player.State = PlayerObject_HandleAir
+		end if
+	end if
+	if Player.JumpPress == 1
 		CallFunction(PlayerObject_StartJump)
 	else
 		CallFunction(PlayerObject_ResetOnFloor)
-	endif
-endfunction
+	end if
+end function
 
 
 function PlayerObject_Tunnel
-	if Player.Gravity==1
-		Player.State=PlayerObject_HandleAir
-		Player.Timer=0
+	if Player.Gravity == 1
+		Player.State = PlayerObject_HandleAir
+		Player.Timer = 0
 		CallFunction(PlayerObject_HandleAirMovement)
 	else
-		if Player.Speed>0
-			if Player.Speed<Player.MinRollSpeed
-				Player.Speed=Player.MinRollSpeed
-			endif
-			if Player.Speed>1048576
-				Player.Speed=1048576
-			endif
+		if Player.Speed > 0
+			if Player.Speed < Player.MinRollSpeed
+				Player.Speed = Player.MinRollSpeed
+			end if
+			if Player.Speed > 1048576
+				Player.Speed = 1048576
+			end if
 		else
-			TempValue0=Player.MinRollSpeed
+			TempValue0 = Player.MinRollSpeed
 			FlipSign(TempValue0)
-			if Player.Speed>TempValue0
-				Player.Speed=TempValue0
+			if Player.Speed > TempValue0
+				Player.Speed = TempValue0
 				CallFunction(PlayerObject_ResetOnFloor)
-			endif
-			if Player.Speed<-1048576
-				Player.Speed=-1048576
-			endif
-		endif
-		TempValue0=Player.Speed
-		if TempValue0<0
+			end if
+			if Player.Speed < -1048576
+				Player.Speed = -1048576
+			end if
+		end if
+		TempValue0 = Player.Speed
+		if TempValue0 < 0
 			FlipSign(TempValue0)
-		endif
-		if TempValue0<390594
-			if Warp.Destination>0
-				if Warp.Timer>99
+		end if
+		if TempValue0 < 390594
+			if Warp.Destination > 0
+				if Warp.Timer > 99
 #platform: Standard
-					if Warp.Timer<220
+					if Warp.Timer < 220
 #endplatform
 #platform: Mobile
-					if Warp.Timer<204
+					if Warp.Timer < 204
 #endplatform
-						Warp.Destination=0
-					endif
-				endif
-				Warp.Timer=0
-			endif
+						Warp.Destination = 0
+					end if
+				end if
+				Warp.Timer = 0
+			end if
 		else
-			if Warp.Destination>0
-				if Warp.Timer==0
-					Warp.Timer=1
-					CreateTempObject(TypeName[WarpStar],0,Player.XPos,Player.YPos)
-					Object[TempObjectPos].Value0=7
-					Object[TempObjectPos].DrawOrder=4
-				endif
-			endif
-		endif
+			if Warp.Destination > 0
+				if Warp.Timer == 0
+					Warp.Timer = 1
+					CreateTempObject(TypeName[WarpStar], 0, Player.XPos, Player.YPos)
+					Object[TempObjectPos].Value0 = 7
+					Object[TempObjectPos].DrawOrder = 4
+				end if
+			end if
+		end if
 		CallFunction(PlayerObject_HandleRollDecel)
 		CallFunction(PlayerObject_RollAnimSpeed)
-		Player.AnimationSpeed=Player.CustomAnimSpeed
+		Player.AnimationSpeed = Player.CustomAnimSpeed
 		CallFunction(PlayerObject_ResetOnFloor)
-	endif
-endfunction
+	end if
+end function
 
 
 function PlayerObject_StartTTCtrlLock
-	Player.Right=0
-	Player.Left=0
-	if Player.Gravity==1
-		Player.State=PlayerObject_HandleAir
-		Player.Timer=0
+	Player.Right = 0
+	Player.Left = 0
+	if Player.Gravity == 1
+		Player.State = PlayerObject_HandleAir
+		Player.Timer = 0
 		CallFunction(PlayerObject_HandleAirMovement)
 	else
-		if Player.Speed>0
-			Player.Speed=Player.MinRollSpeed
+		if Player.Speed > 0
+			Player.Speed = Player.MinRollSpeed
 		else
-			TempValue0=Player.MinRollSpeed
+			TempValue0 = Player.MinRollSpeed
 			FlipSign(TempValue0)
-			Player.Speed=TempValue0
-		endif
-		TempValue0=Player.Speed
-		if TempValue0<0
+			Player.Speed = TempValue0
+		end if
+		TempValue0 = Player.Speed
+		if TempValue0 < 0
 			FlipSign(TempValue0)
-		endif
-		if TempValue0<390594
-			if Warp.Destination>0
-				if Warp.Timer>99
+		end if
+		if TempValue0 < 390594
+			if Warp.Destination > 0
+				if Warp.Timer > 99
 #platform: Standard
-					if Warp.Timer<220
+					if Warp.Timer < 220
 #endplatform
 #platform: Mobile
-					if Warp.Timer<204
+					if Warp.Timer < 204
 #endplatform
-						Warp.Destination=0
-					endif
-				endif
-				Warp.Timer=0
-			endif
+						Warp.Destination = 0
+					end if
+				end if
+				Warp.Timer = 0
+			end if
 		else
-			if Warp.Destination>0
-				if Warp.Timer==0
-					Warp.Timer=1
-					CreateTempObject(TypeName[WarpStar],0,Player.XPos,Player.YPos)
-					Object[TempObjectPos].Value0=7
-					Object[TempObjectPos].DrawOrder=4
-				endif
-			endif
-		endif
+			if Warp.Destination > 0
+				if Warp.Timer == 0
+					Warp.Timer = 1
+					CreateTempObject(TypeName[WarpStar], 0, Player.XPos, Player.YPos)
+					Object[TempObjectPos].Value0 = 7
+					Object[TempObjectPos].DrawOrder = 4
+				end if
+			end if
+		end if
 		CallFunction(PlayerObject_HandleRollDecel)
 		CallFunction(PlayerObject_RollAnimSpeed)
-		Player.AnimationSpeed=Player.CustomAnimSpeed
+		Player.AnimationSpeed = Player.CustomAnimSpeed
 		CallFunction(PlayerObject_ResetOnFloor)
-	endif
-endfunction
+	end if
+end function
 
 
 function PlayerObject_SpinningTop
-	Player.Timer+=Player.MinRollSpeed
-	if Player.Gravity==1
-		Player.State=PlayerObject_HandleAir
-		Player.Animation=ANI_WALKING
-		Player.Timer=0
+	Player.Timer += Player.MinRollSpeed
+	if Player.Gravity == 1
+		Player.State = PlayerObject_HandleAir
+		Player.Animation = ANI_WALKING
+		Player.Timer = 0
 		CallFunction(PlayerObject_HandleAirMovement)
 	else
 		CallFunction(PlayerObject_ResetOnFloor)
-	endif
-endfunction
+	end if
+end function
 
 
 function PlayerObject_Hugged
-	if Player.Gravity==1
-		Player.State=PlayerObject_HandleAir
-		Player.Animation=ANI_WALKING
-		Player.Timer=0
+	if Player.Gravity == 1
+		Player.State = PlayerObject_HandleAir
+		Player.Animation = ANI_WALKING
+		Player.Timer = 0
 		CallFunction(PlayerObject_HandleAirMovement)
 	else
 		CallFunction(PlayerObject_ResetOnFloor)
-		if Player.Timer<240
-			Player.Animation=ANI_STOPPED
+		if Player.Timer < 240
+			Player.Animation = ANI_STOPPED
 			Player.Timer++
 		else
-			Player.Animation=ANI_WAITING
-		endif
-		if Warp.Destination>0
-			if Warp.Timer>99
+			Player.Animation = ANI_WAITING
+		end if
+		if Warp.Destination > 0
+			if Warp.Timer > 99
 #platform: Standard
-				if Warp.Timer<220
+				if Warp.Timer < 220
 #endplatform
 #platform: Mobile
-				if Warp.Timer<204
+				if Warp.Timer < 204
 #endplatform
-					Warp.Destination=0
-				endif
-			endif
-			Warp.Timer=0
-		endif
-		if Player.JumpPress==1
+					Warp.Destination = 0
+				end if
+			end if
+			Warp.Timer = 0
+		end if
+		if Player.JumpPress == 1
 			CallFunction(PlayerObject_StartJump)
-		endif
-	endif
-endfunction
+		end if
+	end if
+end function
 
 
 function PlayerObject_Handle3DRampAnims
 	CallFunction(PlayerObject_HandleMovement)
-	if Player.Gravity==1
-		Player.State=PlayerObject_HandleAir
-		Player.Timer=0
+	if Player.Gravity == 1
+		Player.State = PlayerObject_HandleAir
+		Player.Timer = 0
 		CallFunction(PlayerObject_HandleAirMovement)
-		if Player.Direction==FACING_LEFT
-			if Player.Animation==ANI_RAMP_RUNNING3
-				Player.Animation=ANI_RAMP_RUNNING5
-			endif
-			if Player.Animation==ANI_RAMP_RUNNING2
-				Player.Animation=ANI_RAMP_RUNNING6
-			endif
-		endif
+		if Player.Direction == FACING_LEFT
+			if Player.Animation == ANI_RAMP_RUNNING3
+				Player.Animation = ANI_RAMP_RUNNING5
+			end if
+			if Player.Animation == ANI_RAMP_RUNNING2
+				Player.Animation = ANI_RAMP_RUNNING6
+			end if
+		end if
 	else
 		CallFunction(PlayerObject_ResetOnFloor)
-		if Player.Speed==0
-			if Warp.Destination>0
-				if Warp.Timer>99
+		if Player.Speed == 0
+			if Warp.Destination > 0
+				if Warp.Timer > 99
 #platform: Standard
-					if Warp.Timer<220
+					if Warp.Timer < 220
 #endplatform
 #platform: Mobile
-					if Warp.Timer<204
+					if Warp.Timer < 204
 #endplatform
-						Warp.Destination=0
-					endif
-				endif
-				Warp.Timer=0
-			endif
-			if Player.Timer<240
-				Player.Animation=ANI_STOPPED
+						Warp.Destination = 0
+					end if
+				end if
+				Warp.Timer = 0
+			end if
+			if Player.Timer < 240
+				Player.Animation = ANI_STOPPED
 				Player.Timer++
 			else
-				Player.Animation=ANI_WAITING
-			endif
+				Player.Animation = ANI_WAITING
+			end if
 		else
-			if Player.Angle==0
-				Player.Animation=ANI_RAMP_RUNNING1
-			endif
-			if Player.Angle>200
-				if Player.Direction==FACING_RIGHT
-					Player.Animation=ANI_RAMP_RUNNING3
+			if Player.Angle == 0
+				Player.Animation = ANI_RAMP_RUNNING1
+			end if
+			if Player.Angle > 200
+				if Player.Direction == FACING_RIGHT
+					Player.Animation = ANI_RAMP_RUNNING3
 				else
-					Player.Animation=ANI_RAMP_RUNNING5
-				endif
-			endif
-			if Player.Angle>216
-				if Player.Direction==FACING_RIGHT
-					Player.Animation=ANI_RAMP_RUNNING2
+					Player.Animation = ANI_RAMP_RUNNING5
+				end if
+			end if
+			if Player.Angle > 216
+				if Player.Direction == FACING_RIGHT
+					Player.Animation = ANI_RAMP_RUNNING2
 				else
-					Player.Animation=ANI_RAMP_RUNNING6
-				endif
-			endif
-			if Player.Angle>232
-				Player.Animation=ANI_RAMP_RUNNING1
-			endif
-			if Player.Angle==192
-				Player.Animation=ANI_RAMP_RUNNING4
-			endif
-		endif
-		if Player.JumpPress==1
+					Player.Animation = ANI_RAMP_RUNNING6
+				end if
+			end if
+			if Player.Angle > 232
+				Player.Animation = ANI_RAMP_RUNNING1
+			end if
+			if Player.Angle == 192
+				Player.Animation = ANI_RAMP_RUNNING4
+			end if
+		end if
+		if Player.JumpPress == 1
 			CallFunction(PlayerObject_StartJump)
 		else
-			if Player.Up==1
-				if Player.Speed==0
-					Player.State=PlayerObject_LookingUp
-					Player.Animation=ANI_LOOKINGUP
-					Player.Timer=0
-				endif
-			endif
-			if Player.Down==1
-				if Player.Speed==0
-					Player.State=PlayerObject_Crouching
-					Player.Animation=ANI_LOOKINGDOWN
-					Player.Timer=0
+			if Player.Up == 1
+				if Player.Speed == 0
+					Player.State = PlayerObject_LookingUp
+					Player.Animation = ANI_LOOKINGUP
+					Player.Timer = 0
+				end if
+			end if
+			if Player.Down == 1
+				if Player.Speed == 0
+					Player.State = PlayerObject_Crouching
+					Player.Animation = ANI_LOOKINGDOWN
+					Player.Timer = 0
 				else
-					if Player.Speed>6554
-						Player.ControlLock=0
-						Player.State=PlayerObject_HandleRolling
-						Player.Animation=ANI_JUMPING
-					endif
-					if Player.Speed<-6554
-						Player.ControlLock=0
-						Player.State=PlayerObject_HandleRolling
-						Player.Animation=ANI_JUMPING
-					endif
-				endif
-			endif
-		endif
-	endif
-	if Player.Animation!=ANI_STOPPED
-		Player.AnimationSpeed=Player.Speed
-		if Player.AnimationSpeed<0
+					if Player.Speed > 6554
+						Player.ControlLock = 0
+						Player.State = PlayerObject_HandleRolling
+						Player.Animation = ANI_JUMPING
+					end if
+					if Player.Speed < -6554
+						Player.ControlLock = 0
+						Player.State = PlayerObject_HandleRolling
+						Player.Animation = ANI_JUMPING
+					end if
+				end if
+			end if
+		end if
+	end if
+	if Player.Animation != ANI_STOPPED
+		Player.AnimationSpeed = Player.Speed
+		if Player.AnimationSpeed < 0
 			FlipSign(Player.AnimationSpeed)
-		endif
-		Player.AnimationSpeed*=60
-		Player.AnimationSpeed/=393216
-		Player.AnimationSpeed+=20
+		end if
+		Player.AnimationSpeed *= 60
+		Player.AnimationSpeed /= 393216
+		Player.AnimationSpeed += 20
 	else
-		Player.AnimationSpeed=0
-	endif
-endfunction
+		Player.AnimationSpeed = 0
+	end if
+end function
 
 
 function PlayerObject_DebugMode
-	Player.Gravity=1
-	if Player.Up==1
-		Player.YPos-=131072
-	endif
-	if Player.Down==1
-		Player.YPos+=131072
-	endif
-	if Player.Left==1
-		Player.XPos-=131072
-	endif
-	if Player.Right==1
-		Player.XPos+=131072
-	endif
-endfunction
+	Player.Gravity = 1
+	if Player.Up == 1
+		Player.YPos -= 131072
+	end if
+	if Player.Down == 1
+		Player.YPos += 131072
+	end if
+	if Player.Left == 1
+		Player.XPos -= 131072
+	end if
+	if Player.Right == 1
+		Player.XPos += 131072
+	end if
+end function
 
 
 function PlayerObject_SizeChange
-	if Player.Gravity==1
-		Player.TrackScroll=1
-		Player.YVelocity+=12288
-		Player.XVelocity=Player.Speed
+	if Player.Gravity == 1
+		Player.TrackScroll = 1
+		Player.YVelocity += 12288
+		Player.XVelocity = Player.Speed
 	else
-		Player.State=PlayerObject_HandleGround
-		Player.Invincible=120
-		Player.BlinkTimer=3
-		Player.Speed=0
-		Player.XVelocity=0
+		Player.State = PlayerObject_HandleGround
+		Player.Invincible = 120
+		Player.BlinkTimer = 3
+		Player.Speed = 0
+		Player.XVelocity = 0
 		CallFunction(PlayerObject_ResetOnFloor)
-		if Mini_PlayerFlag==0
-			Mini_PlayerFlag=1
-			Player.CameraOffset=-1
+		if Mini_PlayerFlag == 0
+			Mini_PlayerFlag = 1
+			Player.CameraOffset = -1
 			switch Stage.PlayerListPos
 			case 0
 				LoadAnimation("MiniSonic.Ani")
 				break
 			case 1
 				LoadAnimation("MiniTails.Ani")
-				Object[1].Type=TypeName[BlankObject]
+				Object[1].Type = TypeName[BlankObject]
 				break
-			endswitch
+			end switch
 		else
-			Mini_PlayerFlag=0
+			Mini_PlayerFlag = 0
 			switch Stage.PlayerListPos
 			case 0
 				LoadAnimation("Sonic.Ani")
-				Player.CameraOffset=-5
+				Player.CameraOffset = -5
 				break
 			case 1
 				LoadAnimation("Tails.Ani")
-				Player.CameraOffset=-1
-				Object[1].Type=TypeName[TailsObject]
+				Player.CameraOffset = -1
+				Object[1].Type = TypeName[TailsObject]
 				break
-			endswitch
-		endif
-		BindPlayerToObject(0,0)
-	endif
-endfunction
+			end switch
+		end if
+		BindPlayerToObject(0, 0)
+	end if
+end function
 
 
 sub ObjectMain
 #platform: Standard
-	if Stage.DebugMode==1
-		if KeyPress.ButtonB==1
-			Object.Type=TypeName[DebugMode]
-			Player.YVelocity=0
-			Player.State=PlayerObject_Blank
-			Player.Frame=0
-			Player.Rotation=0
-			Player.ObjectInteraction=false
-			Player.TileCollisions=true
-			Player.DrawOrder=4
-			Player.AbilityTimer=0
-			Player.MinRollSpeed=0
-			Screen.CameraEnabled=true
-			Screen.CameraStyle=Options.OriginalControls
+	if Stage.DebugMode == 1
+		if KeyPress.ButtonB == 1
+			Object.Type = TypeName[DebugMode]
+			Player.YVelocity = 0
+			Player.State = PlayerObject_Blank
+			Player.Frame = 0
+			Player.Rotation = 0
+			Player.ObjectInteraction = false
+			Player.TileCollisions = true
+			Player.DrawOrder = 4
+			Player.AbilityTimer = 0
+			Player.MinRollSpeed = 0
+			Screen.CameraEnabled = true
+			Screen.CameraStyle = Options.OriginalControls
 		else
 			CallFunction(PlayerObject_ProcessPlayer)
 			CallFunction(Player.State)
 			ProcessAnimation()
-			if Player.Animation==ANI_JUMPING
-				Screen.AdjustCameraY=Player.CameraOffset
+			if Player.Animation == ANI_JUMPING
+				Screen.AdjustCameraY = Player.CameraOffset
 			else
-				if Screen.AdjustCameraY==Player.CameraOffset
-					Screen.AdjustCameraY=0
-					Player.iYPos+=Player.CameraOffset
-				endif
-			endif
-			if Player.YVelocity>1048576
-				Player.YVelocity=1048576
-			endif
+				if Screen.AdjustCameraY == Player.CameraOffset
+					Screen.AdjustCameraY = 0
+					Player.iYPos += Player.CameraOffset
+				end if
+			end if
+			if Player.YVelocity > 1048576
+				Player.YVelocity = 1048576
+			end if
 			PlayerTileCollision()
-			if CheckResult==true
-				if Player.Animation==ANI_JUMPING
-					if Player.Down==false
-						Player.Animation=ANI_WALKING
-						Screen.AdjustCameraY=0
-						Player.iYPos+=Player.CameraOffset
-					endif
-				endif
-			endif
-		endif
+			if CheckResult == true
+				if Player.Animation == ANI_JUMPING
+					if Player.Down == false
+						Player.Animation = ANI_WALKING
+						Screen.AdjustCameraY = 0
+						Player.iYPos += Player.CameraOffset
+					end if
+				end if
+			end if
+		end if
 	else
 		CallFunction(PlayerObject_ProcessPlayer)
 		CallFunction(Player.State)
 		ProcessAnimation()
-		if Player.Animation==ANI_JUMPING
-			Screen.AdjustCameraY=Player.CameraOffset
+		if Player.Animation == ANI_JUMPING
+			Screen.AdjustCameraY = Player.CameraOffset
 		else
-			if Screen.AdjustCameraY==Player.CameraOffset
-				Screen.AdjustCameraY=0
-				Player.iYPos+=Player.CameraOffset
-			endif
-		endif
-		if Player.YVelocity>1048576
-			Player.YVelocity=1048576
-		endif
+			if Screen.AdjustCameraY == Player.CameraOffset
+				Screen.AdjustCameraY = 0
+				Player.iYPos += Player.CameraOffset
+			end if
+		end if
+		if Player.YVelocity > 1048576
+			Player.YVelocity = 1048576
+		end if
 		PlayerTileCollision()
-		if CheckResult==true
-			if Player.Animation==ANI_JUMPING
-				if Player.Down==false
-					Player.Animation=ANI_WALKING
-					Screen.AdjustCameraY=0
-					Player.iYPos+=Player.CameraOffset
-				endif
-			endif
-		endif
-	endif
+		if CheckResult == true
+			if Player.Animation == ANI_JUMPING
+				if Player.Down == false
+					Player.Animation = ANI_WALKING
+					Screen.AdjustCameraY = 0
+					Player.iYPos += Player.CameraOffset
+				end if
+			end if
+		end if
+	end if
 #endplatform
 
 #platform: Mobile
 	CallFunction(PlayerObject_ProcessPlayer)
 	CallFunction(Player.State)
 	ProcessAnimation()
-	if Player.Animation==ANI_JUMPING
-		Screen.AdjustCameraY=Player.CameraOffset
+	if Player.Animation == ANI_JUMPING
+		Screen.AdjustCameraY = Player.CameraOffset
 	else
-		if Screen.AdjustCameraY==Player.CameraOffset
-			Screen.AdjustCameraY=0
-			Player.iYPos+=Player.CameraOffset
-		endif
-	endif
-	if Player.YVelocity>1048576
-		Player.YVelocity=1048576
-	endif
+		if Screen.AdjustCameraY == Player.CameraOffset
+			Screen.AdjustCameraY = 0
+			Player.iYPos += Player.CameraOffset
+		end if
+	end if
+	if Player.YVelocity > 1048576
+		Player.YVelocity = 1048576
+	end if
 	PlayerTileCollision()
-	if CheckResult==true
-		if Player.Animation==ANI_JUMPING
-			if Player.Down==false
-				Player.Animation=ANI_WALKING
-				Screen.AdjustCameraY=0
-				Player.iYPos+=Player.CameraOffset
-			endif
-		endif
-	endif
+	if CheckResult == true
+		if Player.Animation == ANI_JUMPING
+			if Player.Down == false
+				Player.Animation = ANI_WALKING
+				Screen.AdjustCameraY = 0
+				Player.iYPos += Player.CameraOffset
+			end if
+		end if
+	end if
 #endplatform
-endsub
+end sub
 
 
 sub ObjectDraw
-	if Player.Animation!=Player.PrevAnimation
-		Player.PrevAnimation=Player.Animation
-		Player.Frame=0
-		Player.AnimationTimer=0
-		Player.AnimationSpeed=0
-	endif
+	if Player.Animation != Player.PrevAnimation
+		Player.PrevAnimation = Player.Animation
+		Player.Frame = 0
+		Player.AnimationTimer = 0
+		Player.AnimationSpeed = 0
+	end if
 	DrawPlayerAnimation()
-endsub
+end sub
 
 
 sub ObjectStartup
-	ArrayPos0=32
-	while ArrayPos0<1056
-		if Object[ArrayPos0].Type==TypeName[PlayerObject]
+	ArrayPos0 = 32
+	while ArrayPos0 < 1056
+		if Object[ArrayPos0].Type == TypeName[PlayerObject]
 			switch Stage.PlayerListPos
 			case 0
-				ResetObjectEntity(0,TypeName[PlayerObject],0,Object[ArrayPos0].XPos,Object[ArrayPos0].YPos)
-				Player.XPos=Object[ArrayPos0].XPos
-				Player.YPos=Object[ArrayPos0].YPos
+				ResetObjectEntity(0, TypeName[PlayerObject], 0, Object[ArrayPos0].XPos, Object[ArrayPos0].YPos)
+				Player.XPos = Object[ArrayPos0].XPos
+				Player.YPos = Object[ArrayPos0].YPos
 				LoadAnimation("Sonic.Ani")
-				BindPlayerToObject(0,0)
-				Player.State=PlayerObject_HandleAir
-				Player.Priority=1
-				Player.DrawOrder=4
-				Player.TopSpeed=393216
-				Player.Acceleration=3072
-				Player.Deceleration=3072
-				Player.AirAcceleration=6144
-				Player.AirDeceleration=1536
-				Player.GravityStrength=14336
-				Player.JumpStrength=425984
-				Player.JumpCap=-262144
-				Player.RollingDeceleration=8192
-				Player.CameraOffset=-5
-				Player.FlightFunction=PlayerObject_Blank
-				if Options.OriginalControls==0
-					Player.PeeloutFunction=PlayerObject_StartPeeloutS2
-					Player.SpindashFunction=PlayerObject_StartSpindashS2
+				BindPlayerToObject(0, 0)
+				Player.State = PlayerObject_HandleAir
+				Player.Priority = 1
+				Player.DrawOrder = 4
+				Player.TopSpeed = 393216
+				Player.Acceleration = 3072
+				Player.Deceleration = 3072
+				Player.AirAcceleration = 6144
+				Player.AirDeceleration = 1536
+				Player.GravityStrength = 14336
+				Player.JumpStrength = 425984
+				Player.JumpCap = -262144
+				Player.RollingDeceleration = 8192
+				Player.CameraOffset = -5
+				Player.FlightFunction = PlayerObject_Blank
+				if Options.OriginalControls == 0
+					Player.PeeloutFunction = PlayerObject_StartPeeloutS2
+					Player.SpindashFunction = PlayerObject_StartSpindashS2
 				else
-					Player.PeeloutFunction=PlayerObject_StartPeeloutCD
-					Player.SpindashFunction=PlayerObject_StartSpindashCD
-				endif
+					Player.PeeloutFunction = PlayerObject_StartPeeloutCD
+					Player.SpindashFunction = PlayerObject_StartSpindashCD
+				end if
 				break
 			case 1
-				ResetObjectEntity(0,TypeName[PlayerObject],0,Object[ArrayPos0].XPos,Object[ArrayPos0].YPos)
-				Player.XPos=Object[ArrayPos0].XPos
-				Player.YPos=Object[ArrayPos0].YPos
+				ResetObjectEntity(0, TypeName[PlayerObject], 0, Object[ArrayPos0].XPos, Object[ArrayPos0].YPos)
+				Player.XPos = Object[ArrayPos0].XPos
+				Player.YPos = Object[ArrayPos0].YPos
 				LoadAnimation("Tails.Ani")
-				BindPlayerToObject(0,0)
-				Player.State=PlayerObject_HandleAir
-				Player.Priority=1
-				Player.DrawOrder=4
-				Player.TopSpeed=393216
-				Player.Acceleration=3072
-				Player.Deceleration=3072
-				Player.AirAcceleration=6144
-				Player.AirDeceleration=1536
-				Player.GravityStrength=14336
-				Player.JumpStrength=425984
-				Player.JumpCap=-262144
-				Player.RollingDeceleration=8192
-				Player.CameraOffset=-1
-				Player.FlightFunction=PlayerObject_StartTailsFlight
-				Player.PeeloutFunction=PlayerObject_StartJump
-				if Options.OriginalControls==0
-					Player.SpindashFunction=PlayerObject_StartSpindashS2
+				BindPlayerToObject(0, 0)
+				Player.State = PlayerObject_HandleAir
+				Player.Priority = 1
+				Player.DrawOrder = 4
+				Player.TopSpeed = 393216
+				Player.Acceleration = 3072
+				Player.Deceleration = 3072
+				Player.AirAcceleration = 6144
+				Player.AirDeceleration = 1536
+				Player.GravityStrength = 14336
+				Player.JumpStrength = 425984
+				Player.JumpCap = -262144
+				Player.RollingDeceleration = 8192
+				Player.CameraOffset = -1
+				Player.FlightFunction = PlayerObject_StartTailsFlight
+				Player.PeeloutFunction = PlayerObject_StartJump
+				if Options.OriginalControls == 0
+					Player.SpindashFunction = PlayerObject_StartSpindashS2
 				else
-					Player.SpindashFunction=PlayerObject_StartSpindashCD
-				endif
+					Player.SpindashFunction = PlayerObject_StartSpindashCD
+				end if
 				break
-			endswitch
-			GetAnimationByName(ANI_SPINNING_TOP,"Spinning Top")
-			GetAnimationByName(ANI_RAMP_RUNNING1,"3D Ramp 1")
-			GetAnimationByName(ANI_RAMP_RUNNING2,"3D Ramp 2")
-			GetAnimationByName(ANI_RAMP_RUNNING3,"3D Ramp 3")
-			GetAnimationByName(ANI_RAMP_RUNNING4,"3D Ramp 4")
-			GetAnimationByName(ANI_RAMP_RUNNING5,"3D Ramp 5")
-			GetAnimationByName(ANI_RAMP_RUNNING6,"3D Ramp 6")
-			GetAnimationByName(ANI_ROLL3D,"3D Ramp 7")
-			GetAnimationByName(ANI_SIZE_CHANGE,"Size Change")
-			ResetObjectEntity(ArrayPos0,TypeName[BlankObject],0,0,0)
-		endif
+			end switch
+			GetAnimationByName(ANI_SPINNING_TOP, "Spinning Top")
+			GetAnimationByName(ANI_RAMP_RUNNING1, "3D Ramp 1")
+			GetAnimationByName(ANI_RAMP_RUNNING2, "3D Ramp 2")
+			GetAnimationByName(ANI_RAMP_RUNNING3, "3D Ramp 3")
+			GetAnimationByName(ANI_RAMP_RUNNING4, "3D Ramp 4")
+			GetAnimationByName(ANI_RAMP_RUNNING5, "3D Ramp 5")
+			GetAnimationByName(ANI_RAMP_RUNNING6, "3D Ramp 6")
+			GetAnimationByName(ANI_ROLL3D, "3D Ramp 7")
+			GetAnimationByName(ANI_SIZE_CHANGE, "Size Change")
+			ResetObjectEntity(ArrayPos0, TypeName[BlankObject], 0, 0, 0)
+		end if
 		ArrayPos0++
 	loop
-endsub
+end sub
 
 sub RSDK
 	LoadSpriteSheet("Global/Display.gif")
-	SetEditorIcon(Icon0,SingleIcon,-16,-16,32,32,1,143)
-endsub
+	SetEditorIcon(Icon0, SingleIcon, -16, -16, 32, 32, 1, 143)
+end sub

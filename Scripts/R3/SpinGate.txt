@@ -7,54 +7,54 @@
 
 
 sub ObjectMain
-	if Object.State==1
-		if Object.Value0<96
+	if Object.State == 1
+		if Object.Value0 < 96
 			Object.Value0++
 		else
-			Object.Value0=0
-			Object.State=0
-		endif
-	endif
-endsub
+			Object.Value0 = 0
+			Object.State = 0
+		end if
+	end if
+end sub
 
 
 sub ObjectPlayerInteraction
-	if Object.State==0
-		PlayerObjectCollision(C_TOUCH,-8,-8,8,8)
-		if CheckResult==1
-			if Object.Value1==0
-				Object.State=1
+	if Object.State == 0
+		PlayerObjectCollision(C_TOUCH, -8, -8, 8, 8)
+		if CheckResult == 1
+			if Object.Value1 == 0
+				Object.State = 1
 				Object.Value2++
-				Object.Value2&=3
-				Object.Value1=1
+				Object.Value2 &= 3
+				Object.Value1 = 1
 				switch Object.Value2
 				case 0
-					Object[+1].Type=TypeName[BlankObject]
-					Object[+2].Type=TypeName[BlankObject]
-					Object[+3].Type=TypeName[BlankObject]
+					Object[+1].Type = TypeName[BlankObject]
+					Object[+2].Type = TypeName[BlankObject]
+					Object[+3].Type = TypeName[BlankObject]
 					break
 				case 1
-					Object[+1].Type=TypeName[GateLight]
+					Object[+1].Type = TypeName[GateLight]
 					break
 				case 2
-					Object[+2].Type=TypeName[GateLight]
+					Object[+2].Type = TypeName[GateLight]
 					break
 				case 3
-					Object[+3].Type=TypeName[GateLight]
+					Object[+3].Type = TypeName[GateLight]
 					break
-				endswitch
-			endif
+				end switch
+			end if
 		else
-			Object.Value1=0
-		endif
-	endif
-endsub
+			Object.Value1 = 0
+		end if
+	end if
+end sub
 
 
 sub ObjectDraw
-	TempValue0=Object.Value0
-	TempValue0>>=2
-	TempValue0&=3
+	TempValue0 = Object.Value0
+	TempValue0 >>= 2
+	TempValue0 &= 3
 	switch TempValue0
 	case 0
 	case 1
@@ -62,22 +62,22 @@ sub ObjectDraw
 		DrawSprite(TempValue0)
 		break
 	case 3
-		Object.Direction=2
-		DrawSpriteFX(3,FX_FLIP,Object.XPos,Object.YPos)
+		Object.Direction = 2
+		DrawSpriteFX(3, FX_FLIP, Object.XPos, Object.YPos)
 		break
-	endswitch
-endsub
+	end switch
+end sub
 
 
 sub ObjectStartup
 	LoadSpriteSheet("R3/Objects2.gif")
-	SpriteFrame(-16,-8,32,16,18,50)
-	SpriteFrame(-16,-16,32,32,51,0)
-	SpriteFrame(-16,-16,32,32,84,0)
-	SpriteFrame(-16,-16,32,32,51,0)
-endsub
+	SpriteFrame(-16, -8, 32, 16, 18, 50)
+	SpriteFrame(-16, -16, 32, 32, 51, 0)
+	SpriteFrame(-16, -16, 32, 32, 84, 0)
+	SpriteFrame(-16, -16, 32, 32, 51, 0)
+end sub
 
 sub RSDK
 	LoadSpriteSheet("Global/Display.gif")
-	SetEditorIcon(Icon0,SingleIcon,-16,-16,32,32,1,143)
-endsub
+	SetEditorIcon(Icon0, SingleIcon, -16, -16, 32, 32, 1, 143)
+end sub

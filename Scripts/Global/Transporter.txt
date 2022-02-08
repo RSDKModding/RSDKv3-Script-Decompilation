@@ -7,125 +7,125 @@
 
 
 sub ObjectMain
-	if Object.PropertyValue==0
+	if Object.PropertyValue == 0
 		switch Object.State
 		case 0
 			Object.Value2++
-			if Object.Value2==32
-				Object.Value3=8192
-				Object.Value2=0
-				Object.State=1
-			endif
+			if Object.Value2 == 32
+				Object.Value3 = 8192
+				Object.Value2 = 0
+				Object.State = 1
+			end if
 			break
 		case 1
 			Object.Value2++
-			if Object.Value2==32
-				Object.Value3=-8192
-				Object.Value2=0
-				Object.State=0
-			endif
+			if Object.Value2 == 32
+				Object.Value3 = -8192
+				Object.Value2 = 0
+				Object.State = 0
+			end if
 			break
 		case 2
-			Rand(TempValue0,80)
-			TempValue0-=40
-			TempValue0<<=16
-			TempValue0+=Object.XPos
-			Rand(TempValue1,64)
-			TempValue1-=32
-			TempValue1<<=16
-			TempValue1+=Object.YPos
-			CreateTempObject(TypeName[Explosion],0,TempValue0,TempValue1)
-			TempValue0=Object.Value2
-			TempValue0&=3
-			if TempValue0==0
-				PlaySfx(22,0)
-			endif
+			Rand(TempValue0, 80)
+			TempValue0 -= 40
+			TempValue0 <<= 16
+			TempValue0 += Object.XPos
+			Rand(TempValue1, 64)
+			TempValue1 -= 32
+			TempValue1 <<= 16
+			TempValue1 += Object.YPos
+			CreateTempObject(TypeName[Explosion], 0, TempValue0, TempValue1)
+			TempValue0 = Object.Value2
+			TempValue0 &= 3
+			if TempValue0 == 0
+				PlaySfx(22, 0)
+			end if
 			Object.Value2++
-			if Object.Value2==60
-				Object.Priority=0
-				Object.Value2=0
-				Object.State=0
-				Object.PropertyValue=2
-				Object.iYPos+=16
-				PlaySfx(21,0)
-			endif
+			if Object.Value2 == 60
+				Object.Priority = 0
+				Object.Value2 = 0
+				Object.State = 0
+				Object.PropertyValue = 2
+				Object.iYPos += 16
+				PlaySfx(21, 0)
+			end if
 			break
-		endswitch
-	endif
-endsub
+		end switch
+	end if
+end sub
 
 
 sub ObjectPlayerInteraction
-	if Object.PropertyValue==0
-		if Object.State<2
-			if Player.Animation==ANI_JUMPING
-				PlayerObjectCollision(C_TOUCH,-38,-32,38,32)
-				if CheckResult==1
-					Object.State=2
-					Object.YPos=Object.Value1
-					Transporter_Destroyed=1
-					Good_Future=1
-					Object.Priority=1
-					Player.Score+=1500
-					if Stage.ActNo<3
-						TempValue0=Stage.ListPos
-						TempValue0/=10
-						TempValue0<<=1
-						TempValue0+=Stage.ActNo
+	if Object.PropertyValue == 0
+		if Object.State < 2
+			if Player.Animation == ANI_JUMPING
+				PlayerObjectCollision(C_TOUCH, -38, -32, 38, 32)
+				if CheckResult == 1
+					Object.State = 2
+					Object.YPos = Object.Value1
+					Transporter_Destroyed = 1
+					Good_Future = 1
+					Object.Priority = 1
+					Player.Score += 1500
+					if Stage.ActNo < 3
+						TempValue0 = Stage.ListPos
+						TempValue0 /= 10
+						TempValue0 <<= 1
+						TempValue0 += Stage.ActNo
 						TempValue0--
-						SetBit(Good_Future_List,TempValue0,1)
-					endif
-					if Stage.PlayerListPos==0
-						if Stage.DebugMode==0
-							if Good_Future_List>16382
-								if MetalSonic_List>11
-									SetAchievement(11,100)
-								endif
-							endif
-						endif
-					endif
+						SetBit(Good_Future_List, TempValue0, 1)
+					end if
+					if Stage.PlayerListPos == 0
+						if Stage.DebugMode == 0
+							if Good_Future_List > 16382
+								if MetalSonic_List > 11
+									SetAchievement(11, 100)
+								end if
+							end if
+						end if
+					end if
 #platform: Use_Haptics
-					HapticEffect(90,0,0,0)
+					HapticEffect(90, 0, 0, 0)
 #endplatform
-				endif
+				end if
 			else
-				PlayerObjectCollision(C_BOX,-38,-32,38,36)
-				if CheckResult==1
-					Player.YPos+=Object.Value3
-				endif
-			endif
-		endif
-	endif
-endsub
+				PlayerObjectCollision(C_BOX, -38, -32, 38, 36)
+				if CheckResult == 1
+					Player.YPos += Object.Value3
+				end if
+			end if
+		end if
+	end if
+end sub
 
 
 sub ObjectDraw
 	switch Object.PropertyValue
 	case 0
-		if Object.State<2
-			Object.YPos+=Object.Value3
+		if Object.State < 2
+			Object.YPos += Object.Value3
 			DrawSprite(Object.Frame)
-			DrawSpriteFX(Object.Frame,FX_FLIP,Object.XPos,Object.YPos)
-			TempValue0=Object.Frame
-			TempValue0+=4
+			DrawSpriteFX(Object.Frame, FX_FLIP, Object.XPos, Object.YPos)
+			TempValue0 = Object.Frame
+			TempValue0 += 4
 			DrawSprite(TempValue0)
-			TempValue0+=4
+			TempValue0 += 4
 			DrawSprite(TempValue0)
-			TempValue0+=4
+			TempValue0 += 4
 			DrawSprite(TempValue0)
 			Object.Value0++
-			if Object.Value0>3
-				Object.Value0=0
+			if Object.Value0 > 3
+				Object.Value0 = 0
 				Object.Frame++
-				if Object.Frame>3
-					Object.Frame=0
-				endif
-			endif
-		endif
+				if Object.Frame > 3
+					Object.Frame = 0
+				end if
+			end if
+		end if
 		break
 	case 1
 		DrawSprite(17)
-		DrawSpriteFX(17,FX_FLIP,Object.XPos,Object.YPos)
+		DrawSpriteFX(17, FX_FLIP, Object.XPos, Object.YPos)
 		break
 	case 2
 		DrawSprite(16)
@@ -133,57 +133,57 @@ sub ObjectDraw
 	case 3
 		DrawSprite(18)
 		break
-	endswitch
-endsub
+	end switch
+end sub
 
 
 sub ObjectStartup
 	LoadSpriteSheet("Global/Items3.gif")
-	ArrayPos0=32
-	while ArrayPos0<1056
-		if Object[ArrayPos0].Type==TypeName[Transporter]
-			Object[ArrayPos0].Direction=2
-			if Transporter_Destroyed==1
+	ArrayPos0 = 32
+	while ArrayPos0 < 1056
+		if Object[ArrayPos0].Type == TypeName[Transporter]
+			Object[ArrayPos0].Direction = 2
+			if Transporter_Destroyed == 1
 				switch Object[ArrayPos0].PropertyValue
 				case 0
-					Object[ArrayPos0].PropertyValue=2
+					Object[ArrayPos0].PropertyValue = 2
 					break
 				case 1
-					Object[ArrayPos0].PropertyValue=3
+					Object[ArrayPos0].PropertyValue = 3
 					break
-				endswitch
+				end switch
 			else
-				if Object[ArrayPos0].PropertyValue==0
-					Object[ArrayPos0].iYPos-=16
-				endif
-				Object[ArrayPos0].Value1=Object[ArrayPos0].YPos
-				Object[ArrayPos0].Value3=-8192
-			endif
-		endif
+				if Object[ArrayPos0].PropertyValue == 0
+					Object[ArrayPos0].iYPos -= 16
+				end if
+				Object[ArrayPos0].Value1 = Object[ArrayPos0].YPos
+				Object[ArrayPos0].Value3 = -8192
+			end if
+		end if
 		ArrayPos0++
 	loop
-	SpriteFrame(-40,-32,80,24,175,61)
-	SpriteFrame(-40,-32,80,24,175,86)
-	SpriteFrame(-40,-32,80,24,175,111)
-	SpriteFrame(-40,-32,80,24,175,86)
-	SpriteFrame(-6,-8,12,16,149,1)
-	SpriteFrame(-6,-8,12,16,162,1)
-	SpriteFrame(-6,-8,12,16,149,18)
-	SpriteFrame(-6,-8,12,16,162,18)
-	SpriteFrame(-22,-8,12,16,149,1)
-	SpriteFrame(-22,-8,12,16,162,1)
-	SpriteFrame(-22,-8,12,16,149,18)
-	SpriteFrame(-22,-8,12,16,162,18)
-	SpriteFrame(10,-8,12,16,149,1)
-	SpriteFrame(10,-8,12,16,162,1)
-	SpriteFrame(10,-8,12,16,149,18)
-	SpriteFrame(10,-8,12,16,162,18)
-	SpriteFrame(-40,16,80,16,175,44)
-	SpriteFrame(-40,-32,80,25,175,18)
-	SpriteFrame(-40,16,80,16,175,1)
-endsub
+	SpriteFrame(-40, -32, 80, 24, 175, 61)
+	SpriteFrame(-40, -32, 80, 24, 175, 86)
+	SpriteFrame(-40, -32, 80, 24, 175, 111)
+	SpriteFrame(-40, -32, 80, 24, 175, 86)
+	SpriteFrame(-6, -8, 12, 16, 149, 1)
+	SpriteFrame(-6, -8, 12, 16, 162, 1)
+	SpriteFrame(-6, -8, 12, 16, 149, 18)
+	SpriteFrame(-6, -8, 12, 16, 162, 18)
+	SpriteFrame(-22, -8, 12, 16, 149, 1)
+	SpriteFrame(-22, -8, 12, 16, 162, 1)
+	SpriteFrame(-22, -8, 12, 16, 149, 18)
+	SpriteFrame(-22, -8, 12, 16, 162, 18)
+	SpriteFrame(10, -8, 12, 16, 149, 1)
+	SpriteFrame(10, -8, 12, 16, 162, 1)
+	SpriteFrame(10, -8, 12, 16, 149, 18)
+	SpriteFrame(10, -8, 12, 16, 162, 18)
+	SpriteFrame(-40, 16, 80, 16, 175, 44)
+	SpriteFrame(-40, -32, 80, 25, 175, 18)
+	SpriteFrame(-40, 16, 80, 16, 175, 1)
+end sub
 
 sub RSDK
 	LoadSpriteSheet("Global/Display.gif")
-	SetEditorIcon(Icon0,SingleIcon,-16,-16,32,32,1,143)
-endsub
+	SetEditorIcon(Icon0, SingleIcon, -16, -16, 32, 32, 1, 143)
+end sub

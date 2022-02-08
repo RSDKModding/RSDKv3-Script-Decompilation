@@ -10,92 +10,92 @@ sub ObjectMain
 	switch Object.State
 	case 0
 		Warp.Count++
-		if Warp.Count>2
-			Warp.Count=0
-		endif
+		if Warp.Count > 2
+			Warp.Count = 0
+		end if
 		Object.Value0--
-		if Object.Value0<1
-			if Warp.Timer>0
-				Warp.Frame=Object.Frame
-				Object.State=1
-				Object.InkEffect=2
-				Object.Alpha=255
-				CreateTempObject(TypeName[WarpStar],0,Player.XPos,Player.YPos)
-				if Player.Speed<0
-					Object[TempObjectPos].Value0=Player.Speed
+		if Object.Value0 < 1
+			if Warp.Timer > 0
+				Warp.Frame = Object.Frame
+				Object.State = 1
+				Object.InkEffect = 2
+				Object.Alpha = 255
+				CreateTempObject(TypeName[WarpStar], 0, Player.XPos, Player.YPos)
+				if Player.Speed < 0
+					Object[TempObjectPos].Value0 = Player.Speed
 					FlipSign(Object[TempObjectPos].Value0)
 				else
-					Object[TempObjectPos].Value0=Player.Speed
-				endif
-				Object[TempObjectPos].Value0>>=19
-				Object[TempObjectPos].Value0+=7
-				Object[TempObjectPos].DrawOrder=4
-				Object[TempObjectPos].Frame=Object.Frame
+					Object[TempObjectPos].Value0 = Player.Speed
+				end if
+				Object[TempObjectPos].Value0 >>= 19
+				Object[TempObjectPos].Value0 += 7
+				Object[TempObjectPos].DrawOrder = 4
+				Object[TempObjectPos].Frame = Object.Frame
 			else
-				Object.Type=TypeName[BlankObject]
-			endif
+				Object.Type = TypeName[BlankObject]
+			end if
 		else
-			if Warp.Timer==0
-				Object.Type=TypeName[BlankObject]
-			endif
-		endif
+			if Warp.Timer == 0
+				Object.Type = TypeName[BlankObject]
+			end if
+		end if
 		break
 	case 1
 		Object.Value0++
-		Object.Alpha-=8
-		if Object.Value0==16
-			Object.Type=TypeName[BlankObject]
-		endif
+		Object.Alpha -= 8
+		if Object.Value0 == 16
+			Object.Type = TypeName[BlankObject]
+		end if
 		break
 	case 2
-		Object.Value2+=12288
-		Object.YPos+=Object.Value2
+		Object.Value2 += 12288
+		Object.YPos += Object.Value2
 		Object.Value0++
-		if Object.Value0==Object.Value1
-			Object.Type=TypeName[BlankObject]
-		endif
+		if Object.Value0 == Object.Value1
+			Object.Type = TypeName[BlankObject]
+		end if
 		break
-	endswitch
-endsub
+	end switch
+end sub
 
 
 sub ObjectDraw
 	switch Object.State
 	case 0
-		if Warp.Timer>0
+		if Warp.Timer > 0
 			DrawSprite(Object.Frame)
-		endif
+		end if
 		Object.Frame++
-		Object.Frame&=3
+		Object.Frame &= 3
 		break
 	case 1
-		if Warp.Count!=2
-			if Warp.Timer>0
-				DrawSpriteFX(Warp.Frame,FX_INK,Object.XPos,Object.YPos)
-			endif
-		endif
+		if Warp.Count != 2
+			if Warp.Timer > 0
+				DrawSpriteFX(Warp.Frame, FX_INK, Object.XPos, Object.YPos)
+			end if
+		end if
 		break
 	case 2
-		TempValue0=Object.Frame
-		TempValue0>>=1
+		TempValue0 = Object.Frame
+		TempValue0 >>= 1
 		DrawSprite(TempValue0)
 		Object.Frame++
-		Object.Frame&=7
+		Object.Frame &= 7
 		break
-	endswitch
-endsub
+	end switch
+end sub
 
 
 sub ObjectStartup
 	LoadSpriteSheet("Global/Items3.gif")
-	SpriteFrame(-16,-16,32,32,50,133)
-	SpriteFrame(-16,-16,32,32,50,166)
-	SpriteFrame(-24,-24,48,48,1,197)
-	SpriteFrame(-16,-16,32,32,50,199)
-	SpriteFrame(-12,-12,24,24,148,152)
-endsub
+	SpriteFrame(-16, -16, 32, 32, 50, 133)
+	SpriteFrame(-16, -16, 32, 32, 50, 166)
+	SpriteFrame(-24, -24, 48, 48, 1, 197)
+	SpriteFrame(-16, -16, 32, 32, 50, 199)
+	SpriteFrame(-12, -12, 24, 24, 148, 152)
+end sub
 
 sub RSDK
 	LoadSpriteSheet("Global/Display.gif")
-	SetEditorIcon(Icon0,SingleIcon,-16,-16,32,32,1,143)
-endsub
+	SetEditorIcon(Icon0, SingleIcon, -16, -16, 32, 32, 1, 143)
+end sub

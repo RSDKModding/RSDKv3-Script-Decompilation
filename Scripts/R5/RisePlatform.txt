@@ -9,121 +9,121 @@
 sub ObjectMain
 	switch Object.State
 	case 0
-		Object.Value2=0
-		if Object.Value0==1
-			Object.State=1
-			Object.Priority=1
-			Object.Value3=0
-			Object.Value5=0
-		endif
+		Object.Value2 = 0
+		if Object.Value0 == 1
+			Object.State = 1
+			Object.Priority = 1
+			Object.Value3 = 0
+			Object.Value5 = 0
+		end if
 		break
 	case 1
-		Object.Value2=Object.Value3
-		if Object.Value5<8
+		Object.Value2 = Object.Value3
+		if Object.Value5 < 8
 			Object.Value5++
 		else
-			Object.Value5=0
+			Object.Value5 = 0
 			Object.State++
-		endif
+		end if
 		break
 	case 2
-		if Object.Value3>-327680
-			Object.Value3-=4096
+		if Object.Value3 > -327680
+			Object.Value3 -= 4096
 		else
 			Object.State++
-		endif
-		Object.Value2=Object.Value3
+		end if
+		Object.Value2 = Object.Value3
 		break
 	case 3
-		if Object.Value5<80
+		if Object.Value5 < 80
 			Object.Value5++
 		else
-			Object.Value5=0
+			Object.Value5 = 0
 			Object.State++
-		endif
-		Object.Value2=Object.Value3
+		end if
+		Object.Value2 = Object.Value3
 		break
 	case 4
-		if Object.Value3<0
-			Object.Value3+=4096
+		if Object.Value3 < 0
+			Object.Value3 += 4096
 		else
 			Object.State++
-		endif
-		Object.Value2=Object.Value3
+		end if
+		Object.Value2 = Object.Value3
 		break
 	case 5
-		if Object.Value0==1
-			if Object.Value1<16
+		if Object.Value0 == 1
+			if Object.Value1 < 16
 				Object.Value1++
-				TempValue0=Object.Value1
-				TempValue0&=3
-				if TempValue0==3
-					Object.Value2=65536
+				TempValue0 = Object.Value1
+				TempValue0 &= 3
+				if TempValue0 == 3
+					Object.Value2 = 65536
 				else
-					Object.Value2=0
-				endif
+					Object.Value2 = 0
+				end if
 			else
-				Object.Value2=0
-			endif
+				Object.Value2 = 0
+			end if
 		else
-			if Object.Value1>0
+			if Object.Value1 > 0
 				Object.Value1--
-				TempValue0=Object.Value1
-				TempValue0&=3
-				if TempValue0==3
-					Object.Value2=-65536
+				TempValue0 = Object.Value1
+				TempValue0 &= 3
+				if TempValue0 == 3
+					Object.Value2 = -65536
 				else
-					Object.Value2=0
-				endif
+					Object.Value2 = 0
+				end if
 			else
-				Object.Value2=0
-			endif
-		endif
+				Object.Value2 = 0
+			end if
+		end if
 		break
-	endswitch
-	if Object.OutOfBounds==1
-		TempValue0=Object.YPos
-		Object.YPos=Object.Value4
-		if Object.OutOfBounds==1
-			Object.Value1=0
-			Object.State=0
+	end switch
+	if Object.OutOfBounds == 1
+		TempValue0 = Object.YPos
+		Object.YPos = Object.Value4
+		if Object.OutOfBounds == 1
+			Object.Value1 = 0
+			Object.State = 0
 		else
-			Object.YPos=TempValue0
-		endif
-	endif
-	Object.Value0=0
-endsub
+			Object.YPos = TempValue0
+		end if
+	end if
+	Object.Value0 = 0
+end sub
 
 
 sub ObjectPlayerInteraction
-	PlayerObjectCollision(C_PLATFORM,-16,-16,16,12)
-	if CheckResult==1
-		Object.Value0=1
-		Player.YPos+=Object.Value2
-	endif
-endsub
+	PlayerObjectCollision(C_PLATFORM, -16, -16, 16, 12)
+	if CheckResult == 1
+		Object.Value0 = 1
+		Player.YPos += Object.Value2
+	end if
+end sub
 
 
 sub ObjectDraw
-	Object.YPos+=Object.Value2
+	Object.YPos += Object.Value2
 	DrawSprite(0)
-endsub
+end sub
 
 
 sub ObjectStartup
 	LoadSpriteSheet("R5/Objects.gif")
-	SpriteFrame(-16,-16,32,32,1,51)
-	ArrayPos0=32
-	while ArrayPos0<1056
-		if Object[ArrayPos0].Type==TypeName[RisePlatform]
-			Object[ArrayPos0].Value4=Object[ArrayPos0].YPos
-			Object[ArrayPos0].Priority=3
-		endif
+	SpriteFrame(-16, -16, 32, 32, 1, 51)
+	ArrayPos0 = 32
+	while ArrayPos0 < 1056
+		if Object[ArrayPos0].Type == TypeName[RisePlatform]
+			Object[ArrayPos0].Value4 = Object[ArrayPos0].YPos
+			Object[ArrayPos0].Priority = 3
+		end if
 		ArrayPos0++
 	loop
-endsub
+end sub
 
 sub RSDK
 	LoadSpriteSheet("Global/Display.gif")
-	SetEditorIcon(Icon0,SingleIcon,-16,-16,32,32,1,143)
-endsub
+	SetEditorIcon(Icon0, SingleIcon, -16, -16, 32, 32, 1, 143)
+end sub

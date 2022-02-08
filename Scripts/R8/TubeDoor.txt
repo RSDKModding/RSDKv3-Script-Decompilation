@@ -7,89 +7,89 @@
 
 
 sub ObjectMain
-	if Object.OutOfBounds==1
-		Object.State=0
-		Object.Value1=0
-		Object.Priority=0
-	endif
+	if Object.OutOfBounds == 1
+		Object.State = 0
+		Object.Value1 = 0
+		Object.Priority = 0
+	end if
 	switch Object.State
 	case 0
-		Object.Priority=1
-		if Object[-1].PropertyValue==1
-			if Object.PropertyValue==0
-				Object.State=1
-			endif
+		Object.Priority = 1
+		if Object[-1].PropertyValue == 1
+			if Object.PropertyValue == 0
+				Object.State = 1
+			end if
 		else
-			if Player.State==PlayerObject_Blank
-				if Player.Animation==ANI_JUMPING
-					Object.State=3
-					Object.Value1=1048576
-				endif
-			endif
-		endif
+			if Player.State == PlayerObject_Blank
+				if Player.Animation == ANI_JUMPING
+					Object.State = 3
+					Object.Value1 = 1048576
+				end if
+			end if
+		end if
 		break
 	case 1
-		if Object.Value1<1048576
-			Object.Value1+=131072
-		endif
-		if Player.State==PlayerObject_Blank
-			if Player.Animation==ANI_JUMPING
-				if Player.YPos>Object.YPos
-					Object.State=3
-				endif
-			endif
-		endif
+		if Object.Value1 < 1048576
+			Object.Value1 += 131072
+		end if
+		if Player.State == PlayerObject_Blank
+			if Player.Animation == ANI_JUMPING
+				if Player.YPos > Object.YPos
+					Object.State = 3
+				end if
+			end if
+		end if
 		break
 	case 2
-		if Object.Value1>0
-			Object.Value1-=131072
+		if Object.Value1 > 0
+			Object.Value1 -= 131072
 		else
-			Object.State=0
-		endif
+			Object.State = 0
+		end if
 		break
 	case 3
-		TempValue0=Object.YPos
-		TempValue0-=Player.YPos
-		if TempValue0>1048576
-			Object.State=2
-		endif
+		TempValue0 = Object.YPos
+		TempValue0 -= Player.YPos
+		if TempValue0 > 1048576
+			Object.State = 2
+		end if
 		break
-	endswitch
-endsub
+	end switch
+end sub
 
 
 sub ObjectPlayerInteraction
-	if Object.State==0
-		PlayerObjectCollision(C_PLATFORM,-8,-4,56,32)
+	if Object.State == 0
+		PlayerObjectCollision(C_PLATFORM, -8, -4, 56, 32)
 	else
-		PlayerObjectCollision(C_PLATFORM,-8,-4,4,32)
-		PlayerObjectCollision(C_PLATFORM,44,-4,56,32)
-	endif
-endsub
+		PlayerObjectCollision(C_PLATFORM, -8, -4, 4, 32)
+		PlayerObjectCollision(C_PLATFORM, 44, -4, 56, 32)
+	end if
+end sub
 
 
 sub ObjectDraw
-	TempValue0=Object.Value1
+	TempValue0 = Object.Value1
 	FlipSign(TempValue0)
-	TempValue0+=Object.XPos
-	DrawSpriteXY(2,TempValue0,Object.YPos)
-	TempValue0=Object.Value1
-	TempValue0+=Object.XPos
-	DrawSpriteXY(3,TempValue0,Object.YPos)
+	TempValue0 += Object.XPos
+	DrawSpriteXY(2, TempValue0, Object.YPos)
+	TempValue0 = Object.Value1
+	TempValue0 += Object.XPos
+	DrawSpriteXY(3, TempValue0, Object.YPos)
 	DrawSprite(0)
 	DrawSprite(1)
-endsub
+end sub
 
 
 sub ObjectStartup
 	LoadSpriteSheet("R8/Objects2.gif")
-	SpriteFrame(-8,-4,16,8,19,75)
-	SpriteFrame(40,-4,16,8,133,26)
-	SpriteFrame(8,-4,16,8,100,26)
-	SpriteFrame(24,-4,16,8,116,26)
-endsub
+	SpriteFrame(-8, -4, 16, 8, 19, 75)
+	SpriteFrame(40, -4, 16, 8, 133, 26)
+	SpriteFrame(8, -4, 16, 8, 100, 26)
+	SpriteFrame(24, -4, 16, 8, 116, 26)
+end sub
 
 sub RSDK
 	LoadSpriteSheet("Global/Display.gif")
-	SetEditorIcon(Icon0,SingleIcon,-16,-16,32,32,1,143)
-endsub
+	SetEditorIcon(Icon0, SingleIcon, -16, -16, 32, 32, 1, 143)
+end sub

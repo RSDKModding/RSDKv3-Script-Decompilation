@@ -7,176 +7,176 @@
 
 
 sub ObjectMain
-	if Object.OutOfBounds==1
-		Object.State=2
-		Object.Value0=0
-		Object.Value1=256
-		Object.Direction=FACING_RIGHT
-		Object.XPos=Object.Value2
-		Object.YPos=Object.Value3
-	endif
-	if Object.PropertyValue==0
+	if Object.OutOfBounds == 1
+		Object.State = 2
+		Object.Value0 = 0
+		Object.Value1 = 256
+		Object.Direction = FACING_RIGHT
+		Object.XPos = Object.Value2
+		Object.YPos = Object.Value3
+	end if
+	if Object.PropertyValue == 0
 		switch Object.State
 		case 0
-			Object.Priority=1
-			Object.XPos-=16384
+			Object.Priority = 1
+			Object.XPos -= 16384
 			Object.Value0++
-			if Object.Value0==256
-				Object.State=1
-				Object.Direction=FACING_LEFT
-			endif
+			if Object.Value0 == 256
+				Object.State = 1
+				Object.Direction = FACING_LEFT
+			end if
 			break
 		case 1
-			Object.XPos+=16384
+			Object.XPos += 16384
 			Object.Value0--
-			if Object.Value0==0
-				Object.State=0
-				Object.Direction=FACING_RIGHT
-			endif
+			if Object.Value0 == 0
+				Object.State = 0
+				Object.Direction = FACING_RIGHT
+			end if
 			break
 		case 2
-			if Object.OutOfBounds==1
-				Object.State=0
-				Object.Priority=0
-			endif
+			if Object.OutOfBounds == 1
+				Object.State = 0
+				Object.Priority = 0
+			end if
 			break
-		endswitch
-		Object.Value1+=4
-		Object.Value1&=511
-		Object.Frame=Object.AnimationTimer
-		Object.Frame>>=1
+		end switch
+		Object.Value1 += 4
+		Object.Value1 &= 511
+		Object.Frame = Object.AnimationTimer
+		Object.Frame >>= 1
 		Object.AnimationTimer++
-		Object.AnimationTimer&=3
+		Object.AnimationTimer &= 3
 	else
 		switch Object.State
 		case 0
-			Object.Priority=1
-			Object.XPos-=16384
+			Object.Priority = 1
+			Object.XPos -= 16384
 			Object.Value0++
-			if Object.Value0==256
-				Object.State=1
-				Object.Direction=FACING_LEFT
-			endif
+			if Object.Value0 == 256
+				Object.State = 1
+				Object.Direction = FACING_LEFT
+			end if
 			break
 		case 1
-			Object.XPos+=16384
+			Object.XPos += 16384
 			Object.Value0--
-			if Object.Value0==0
-				Object.State=0
-				Object.Direction=FACING_RIGHT
-			endif
+			if Object.Value0 == 0
+				Object.State = 0
+				Object.Direction = FACING_RIGHT
+			end if
 			break
 		case 2
-			if Object.OutOfBounds==1
-				Object.State=0
-				Object.Priority=0
-			endif
+			if Object.OutOfBounds == 1
+				Object.State = 0
+				Object.Priority = 0
+			end if
 			break
-		endswitch
-		Object.Value1+=2
-		Object.Value1&=511
-		Object.Frame=Object.AnimationTimer
-		Object.Frame>>=2
-		Object.Frame+=6
+		end switch
+		Object.Value1 += 2
+		Object.Value1 &= 511
+		Object.Frame = Object.AnimationTimer
+		Object.Frame >>= 2
+		Object.Frame += 6
 		Object.AnimationTimer++
-		Object.AnimationTimer&=7
-	endif
-	Sin(Object.YPos,Object.Value1)
-	if Object.Value1<128
-		Object.DrawOrder=5
-		Object.Value4=0
-		if Object.YPos<-384
-			Object.Value4=2
-		endif
-		if Object.YPos>384
-			Object.Value4=2
-		endif
+		Object.AnimationTimer &= 7
+	end if
+	Sin(Object.YPos, Object.Value1)
+	if Object.Value1 < 128
+		Object.DrawOrder = 5
+		Object.Value4 = 0
+		if Object.YPos < -384
+			Object.Value4 = 2
+		end if
+		if Object.YPos > 384
+			Object.Value4 = 2
+		end if
 	else
-		if Object.Value1>384
-			Object.DrawOrder=5
-			Object.Value4=0
-			if Object.YPos<-384
-				Object.Value4=2
-			endif
-			if Object.YPos>384
-				Object.Value4=2
-			endif
+		if Object.Value1 > 384
+			Object.DrawOrder = 5
+			Object.Value4 = 0
+			if Object.YPos < -384
+				Object.Value4 = 2
+			end if
+			if Object.YPos > 384
+				Object.Value4 = 2
+			end if
 		else
-			Object.DrawOrder=Object.Value5
-			Object.Value4=4
-			if Object.YPos<-384
-				Object.Value4=2
-			endif
-			if Object.YPos>384
-				Object.Value4=2
-			endif
-		endif
-	endif
-	Object.Frame+=Object.Value4
-	Object.YPos<<=13
-	Object.YPos+=Object.Value3
+			Object.DrawOrder = Object.Value5
+			Object.Value4 = 4
+			if Object.YPos < -384
+				Object.Value4 = 2
+			end if
+			if Object.YPos > 384
+				Object.Value4 = 2
+			end if
+		end if
+	end if
+	Object.Frame += Object.Value4
+	Object.YPos <<= 13
+	Object.YPos += Object.Value3
 	CallFunction(StageSetup_CheckGoodFuture)
-endsub
+end sub
 
 
 sub ObjectPlayerInteraction
-	if Object.State<2
-		if Object.Value4==0
-			PlayerObjectCollision(C_TOUCH,-14,-14,14,14)
-			if CheckResult==1
+	if Object.State < 2
+		if Object.Value4 == 0
+			PlayerObjectCollision(C_TOUCH, -14, -14, 14, 14)
+			if CheckResult == 1
 				CallFunction(PlayerObject_BadnikBreak)
-			endif
+			end if
 		else
-			if Player.Animation==ANI_JUMPING
-				PlayerObjectCollision(C_TOUCH,-14,-14,14,14)
-				if CheckResult==1
+			if Player.Animation == ANI_JUMPING
+				PlayerObjectCollision(C_TOUCH, -14, -14, 14, 14)
+				if CheckResult == 1
 					CallFunction(PlayerObject_BadnikBreak)
-				endif
-			endif
-		endif
-	endif
-endsub
+				end if
+			end if
+		end if
+	end if
+end sub
 
 
 sub ObjectDraw
-	if Object.State<2
-		DrawSpriteFX(Object.Frame,FX_FLIP,Object.XPos,Object.YPos)
-	endif
-endsub
+	if Object.State < 2
+		DrawSpriteFX(Object.Frame, FX_FLIP, Object.XPos, Object.YPos)
+	end if
+end sub
 
 
 sub ObjectStartup
 	LoadSpriteSheet("R7/Objects.gif")
-	SpriteFrame(-16,-16,32,32,1,100)
-	SpriteFrame(-16,-16,32,32,1,133)
-	SpriteFrame(-12,-12,24,24,34,71)
-	SpriteFrame(-12,-12,27,27,62,43)
-	SpriteFrame(-12,-12,24,24,59,71)
-	SpriteFrame(-12,-12,24,24,84,71)
-	SpriteFrame(-16,-16,32,32,1,34)
-	SpriteFrame(-16,-16,32,32,1,67)
-	SpriteFrame(-12,-12,24,24,34,18)
-	SpriteFrame(-12,-12,27,27,34,43)
-	SpriteFrame(-12,-12,24,24,59,18)
-	SpriteFrame(-12,-12,24,24,84,18)
-	ArrayPos0=32
-	while ArrayPos0<1056
-		if Object[ArrayPos0].Type==TypeName[Kanabun]
-			Object[ArrayPos0].Value1=256
-			Object[ArrayPos0].Value2=Object[ArrayPos0].XPos
-			Object[ArrayPos0].Value3=Object[ArrayPos0].YPos
-			if Object[ArrayPos0].PropertyValue==2
-				Object[ArrayPos0].PropertyValue=0
-				Object[ArrayPos0].Value5=3
+	SpriteFrame(-16, -16, 32, 32, 1, 100)
+	SpriteFrame(-16, -16, 32, 32, 1, 133)
+	SpriteFrame(-12, -12, 24, 24, 34, 71)
+	SpriteFrame(-12, -12, 27, 27, 62, 43)
+	SpriteFrame(-12, -12, 24, 24, 59, 71)
+	SpriteFrame(-12, -12, 24, 24, 84, 71)
+	SpriteFrame(-16, -16, 32, 32, 1, 34)
+	SpriteFrame(-16, -16, 32, 32, 1, 67)
+	SpriteFrame(-12, -12, 24, 24, 34, 18)
+	SpriteFrame(-12, -12, 27, 27, 34, 43)
+	SpriteFrame(-12, -12, 24, 24, 59, 18)
+	SpriteFrame(-12, -12, 24, 24, 84, 18)
+	ArrayPos0 = 32
+	while ArrayPos0 < 1056
+		if Object[ArrayPos0].Type == TypeName[Kanabun]
+			Object[ArrayPos0].Value1 = 256
+			Object[ArrayPos0].Value2 = Object[ArrayPos0].XPos
+			Object[ArrayPos0].Value3 = Object[ArrayPos0].YPos
+			if Object[ArrayPos0].PropertyValue == 2
+				Object[ArrayPos0].PropertyValue = 0
+				Object[ArrayPos0].Value5 = 3
 			else
-				Object[ArrayPos0].Value5=2
-			endif
-		endif
+				Object[ArrayPos0].Value5 = 2
+			end if
+		end if
 		ArrayPos0++
 	loop
-endsub
+end sub
 
 sub RSDK
 	LoadSpriteSheet("Global/Display.gif")
-	SetEditorIcon(Icon0,SingleIcon,-16,-16,32,32,1,143)
-endsub
+	SetEditorIcon(Icon0, SingleIcon, -16, -16, 32, 32, 1, 143)
+end sub

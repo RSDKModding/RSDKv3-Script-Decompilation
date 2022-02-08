@@ -9,85 +9,85 @@
 sub ObjectMain
 	switch Object.State
 	case 0
-		if Object.Value0<20
+		if Object.Value0 < 20
 			Object.Value0++
 		else
 			Object.State++
-		endif
+		end if
 		break
 	case 1
 		Object.State++
 		break
 	case 3
-		if Object.Value0<22
+		if Object.Value0 < 22
 			Object.Value0++
 		else
 			Object.State++
-		endif
+		end if
 		break
 	case 4
-		if Object.Value0<42
+		if Object.Value0 < 42
 			Object.Value0++
 		else
-			Object.Type=TypeName[BlankObject]
-		endif
+			Object.Type = TypeName[BlankObject]
+		end if
 		break
-	endswitch
-endsub
+	end switch
+end sub
 
 
 sub ObjectPlayerInteraction
-	if Object.State==2
-		if Player.Animation==ANI_JUMPING
-			PlayerObjectCollision(C_TOUCH,-8,-8,8,8)
-			if CheckResult==1
-				Object.State=3
+	if Object.State == 2
+		if Player.Animation == ANI_JUMPING
+			PlayerObjectCollision(C_TOUCH, -8, -8, 8, 8)
+			if CheckResult == 1
+				Object.State = 3
 				FlipSign(Player.Speed)
 				FlipSign(Player.XVelocity)
-				Player.YVelocity=262144
-				Player.Animation=ANI_BREATHING
-				Player.AirTimer=0
-				PlayStageSfx(6,0)
+				Player.YVelocity = 262144
+				Player.Animation = ANI_BREATHING
+				Player.AirTimer = 0
+				PlayStageSfx(6, 0)
 #platform: Use_Haptics
-				HapticEffect(19,0,0,0)
+				HapticEffect(19, 0, 0, 0)
 #endplatform
-			endif
-		endif
-		if Player.Animation==ANI_FLYING
-			PlayerObjectCollision(C_TOUCH,-8,-8,8,8)
-			if CheckResult==1
-				Object.State=3
+			end if
+		end if
+		if Player.Animation == ANI_FLYING
+			PlayerObjectCollision(C_TOUCH, -8, -8, 8, 8)
+			if CheckResult == 1
+				Object.State = 3
 				FlipSign(Player.Speed)
 				FlipSign(Player.XVelocity)
-				Player.YVelocity=262144
-				Player.Animation=ANI_BREATHING
-				Player.State=PlayerObject_HandleAir
-				Player.AirTimer=0
-				PlayStageSfx(6,0)
+				Player.YVelocity = 262144
+				Player.Animation = ANI_BREATHING
+				Player.State = PlayerObject_HandleAir
+				Player.AirTimer = 0
+				PlayStageSfx(6, 0)
 #platform: Use_Haptics
-				HapticEffect(19,0,0,0)
+				HapticEffect(19, 0, 0, 0)
 #endplatform
-			endif
-		endif
-	endif
-endsub
+			end if
+		end if
+	end if
+end sub
 
 
 sub ObjectDraw
 	DrawSprite(Object.State)
-endsub
+end sub
 
 
 sub ObjectStartup
 	LoadSpriteSheet("R4/Objects2.gif")
-	SpriteFrame(-8,-8,16,16,99,118)
-	SpriteFrame(-12,-12,24,24,116,126)
-	SpriteFrame(-16,-16,32,32,222,115)
-	SpriteFrame(-16,-16,32,32,189,115)
-	SpriteFrame(-16,-16,32,32,156,126)
-endsub
+	SpriteFrame(-8, -8, 16, 16, 99, 118)
+	SpriteFrame(-12, -12, 24, 24, 116, 126)
+	SpriteFrame(-16, -16, 32, 32, 222, 115)
+	SpriteFrame(-16, -16, 32, 32, 189, 115)
+	SpriteFrame(-16, -16, 32, 32, 156, 126)
+end sub
 
 sub RSDK
 	LoadSpriteSheet("Global/Display.gif")
-	SetEditorIcon(Icon0,SingleIcon,-16,-16,32,32,1,143)
-endsub
+	SetEditorIcon(Icon0, SingleIcon, -16, -16, 32, 32, 1, 143)
+end sub

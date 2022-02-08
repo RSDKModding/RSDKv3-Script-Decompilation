@@ -9,256 +9,256 @@
 sub ObjectMain
 	switch Object.State
 	case 0
-		Object.State=1
-		Object.Value0=384
-		SetScreenFade(0,0,0,255)
+		Object.State = 1
+		Object.Value0 = 384
+		SetScreenFade(0, 0, 0, 255)
 		PlayMusic(Options.Soundtrack)
-		if Engine.FrameSkipTimer>-1
-			Engine.FrameSkipTimer=-1
-		endif
+		if Engine.FrameSkipTimer > -1
+			Engine.FrameSkipTimer = -1
+		end if
 		break
 	case 1
-		if Object.Value0>0
-			Object.Value0-=8
+		if Object.Value0 > 0
+			Object.Value0 -= 8
 		else
-			Object.State=6
-		endif
-		SetScreenFade(0,0,0,Object.Value0)
+			Object.State = 6
+		end if
+		SetScreenFade(0, 0, 0, Object.Value0)
 		break
 	case 2
 #platform: Mobile
-		if Options.PhysicalControls==1
+		if Options.PhysicalControls == 1
 #endplatform
-			if KeyPress.Up==1
+			if KeyPress.Up == 1
 				Object.Value3--
-				if Object.Value3<1
-					Object.Value3=1
+				if Object.Value3 < 1
+					Object.Value3 = 1
 				else
-					PlaySfx(23,0)
-				endif
-			endif
-			if KeyPress.Down==1
+					PlaySfx(23, 0)
+				end if
+			end if
+			if KeyPress.Down == 1
 				Object.Value3++
-				if Object.Value3>Object[1].Value2
-					Object.Value3=Object[1].Value2
+				if Object.Value3 > Object[1].Value2
+					Object.Value3 = Object[1].Value2
 				else
-					PlaySfx(23,0)
-				endif
-			endif
-			TempValue0=Object.Value3
-			TempValue0-=Object.Value4
-			if TempValue0<1
+					PlaySfx(23, 0)
+				end if
+			end if
+			TempValue0 = Object.Value3
+			TempValue0 -= Object.Value4
+			if TempValue0 < 1
 				Object.Value4--
-				Object.Direction=3
-			endif
-			if TempValue0>4
+				Object.Direction = 3
+			end if
+			if TempValue0 > 4
 				Object.Value4++
-				Object.Direction=FACING_RIGHT
-			endif
-			TempValue0=Object.Value1
-			TempValue0-=32
-			TempValue1=Object.Value4
-			TempValue1*=-60
-			TempValue1-=TempValue0
-			TempValue1+=Object.Direction
-			TempValue1>>=2
-			Object.Value1+=TempValue1
+				Object.Direction = FACING_RIGHT
+			end if
+			TempValue0 = Object.Value1
+			TempValue0 -= 32
+			TempValue1 = Object.Value4
+			TempValue1 *= -60
+			TempValue1 -= TempValue0
+			TempValue1 += Object.Direction
+			TempValue1 >>= 2
+			Object.Value1 += TempValue1
 #platform: Mobile
-			CheckTouchRect(0,0,Screen.XSize,Screen.YSize)
-			if CheckResult>-1
-				Options.PhysicalControls=0
-				Object.Value3=0
-				Object.Value2=0
-			endif
+			CheckTouchRect(0, 0, Screen.XSize, Screen.YSize)
+			if CheckResult > -1
+				Options.PhysicalControls = 0
+				Object.Value3 = 0
+				Object.Value2 = 0
+			end if
 		else
-			if Engine.Message==2
-				Object.Value3=0
-				Object.Value2=0
-			endif
-			if Object.Value2>0
-				Object.Value3=Object.Value2
+			if Engine.Message == 2
+				Object.Value3 = 0
+				Object.Value2 = 0
+			end if
+			if Object.Value2 > 0
+				Object.Value3 = Object.Value2
 			else
-				Object.Value3=0
-			endif
-			if Object[1].Value2>4
-				CheckTouchRect(0,0,Screen.XSize,Screen.YSize)
-				if CheckResult>-1
-					ArrayPos0=CheckResult
-					if Object.Value5==0
-						Object.Value5=1
-						Object[1].Value0=Object.Value1
-						Object.Value6=TouchScreen[ArrayPos0].YPos
+				Object.Value3 = 0
+			end if
+			if Object[1].Value2 > 4
+				CheckTouchRect(0, 0, Screen.XSize, Screen.YSize)
+				if CheckResult > -1
+					ArrayPos0 = CheckResult
+					if Object.Value5 == 0
+						Object.Value5 = 1
+						Object[1].Value0 = Object.Value1
+						Object.Value6 = TouchScreen[ArrayPos0].YPos
 					else
-						TempValue0=TouchScreen[ArrayPos0].YPos
-						TempValue0-=Object.Value6
-						TempValue0+=Object[1].Value0
-						Object[1].Value6=Object[1].Value5
-						Object[1].Value5=Object[1].Value4
-						Object[1].Value4=Object.Value7
-						Object.Value7=TempValue0
-						Object.Value7-=Object.Value1
-						Object.Value1=TempValue0
-					endif
-					TempValue0=Object.Value7
-					TempValue0>>=2
-					if TempValue0!=0
-						Object.Value3=0
-						Object.Value2=0
-					endif
+						TempValue0 = TouchScreen[ArrayPos0].YPos
+						TempValue0 -= Object.Value6
+						TempValue0 += Object[1].Value0
+						Object[1].Value6 = Object[1].Value5
+						Object[1].Value5 = Object[1].Value4
+						Object[1].Value4 = Object.Value7
+						Object.Value7 = TempValue0
+						Object.Value7 -= Object.Value1
+						Object.Value1 = TempValue0
+					end if
+					TempValue0 = Object.Value7
+					TempValue0 >>= 2
+					if TempValue0 != 0
+						Object.Value3 = 0
+						Object.Value2 = 0
+					end if
 				else
-					if Object.Value5==1
-						Object.Value5=0
-						Object.Value6=Object.Value1
-						Object.Value6<<=8
-						Object.Value7+=Object[1].Value4
-						Object.Value7+=Object[1].Value5
-						Object.Value7+=Object[1].Value6
-						Object.Value7>>=2
-						Object.Value7<<=7
-						if Object.Value7==0
-							if Object.Value3==0
-								Object.Value7=1
-							endif
-						endif
-					endif
-					if Object.Value7!=0
-						Object.Value6+=Object.Value7
-						if Object.Value6<Object[1].Value3
-							Object.Value6=Object[1].Value3
-							Object.Value7=0
-						endif
-						if Object.Value6>23040
-							Object.Value6=23040
-							Object.Value7=0
-						endif
-						if Object.Value7>0
-							Object.Value7-=32
-							if Object.Value7<0
-								Object.Value7=0
-							endif
+					if Object.Value5 == 1
+						Object.Value5 = 0
+						Object.Value6 = Object.Value1
+						Object.Value6 <<= 8
+						Object.Value7 += Object[1].Value4
+						Object.Value7 += Object[1].Value5
+						Object.Value7 += Object[1].Value6
+						Object.Value7 >>= 2
+						Object.Value7 <<= 7
+						if Object.Value7 == 0
+							if Object.Value3 == 0
+								Object.Value7 = 1
+							end if
+						end if
+					end if
+					if Object.Value7 != 0
+						Object.Value6 += Object.Value7
+						if Object.Value6 < Object[1].Value3
+							Object.Value6 = Object[1].Value3
+							Object.Value7 = 0
+						end if
+						if Object.Value6 > 23040
+							Object.Value6 = 23040
+							Object.Value7 = 0
+						end if
+						if Object.Value7 > 0
+							Object.Value7 -= 32
+							if Object.Value7 < 0
+								Object.Value7 = 0
+							end if
 						else
-							Object.Value7+=32
-							if Object.Value7>0
-								Object.Value7=0
-							endif
-						endif
-						Object.Value1=Object.Value6
-						Object.Value1>>=8
-						if Object.Value7==0
-							Object.Value4=Object.Value1
-							Object.Value4-=32
-							Object.Value4/=-60
-							if Object.Value4<0
-								Object.Value4=0
-							endif
-							TempValue0=Object[1].Value2
-							TempValue0-=4
-							if Object.Value4>TempValue0
-								Object.Value4=TempValue0
-							endif
-						endif
+							Object.Value7 += 32
+							if Object.Value7 > 0
+								Object.Value7 = 0
+							end if
+						end if
+						Object.Value1 = Object.Value6
+						Object.Value1 >>= 8
+						if Object.Value7 == 0
+							Object.Value4 = Object.Value1
+							Object.Value4 -= 32
+							Object.Value4 /= -60
+							if Object.Value4 < 0
+								Object.Value4 = 0
+							end if
+							TempValue0 = Object[1].Value2
+							TempValue0 -= 4
+							if Object.Value4 > TempValue0
+								Object.Value4 = TempValue0
+							end if
+						end if
 					else
-						TempValue0=Object.Value1
-						TempValue0-=32
-						Object[1].Value1=Object.Value4
-						Object[1].Value1*=-60
-						Object[1].Value1-=TempValue0
-						Object[1].Value1>>=2
-						if Object[1].Value1<-4
-							Object[1].Value1=-4
-						endif
-						if Object[1].Value1>4
-							Object[1].Value1=4
-						endif
-						Object.Value1+=Object[1].Value1
-					endif
-				endif
-			endif
-			if KeyPress.Up==1
-				Object.Value3=Object[1].Value2
-				Options.PhysicalControls=1
-			endif
-			if KeyPress.Down==1
-				Object.Value3=1
-				Options.PhysicalControls=1
-			endif
-		endif
+						TempValue0 = Object.Value1
+						TempValue0 -= 32
+						Object[1].Value1 = Object.Value4
+						Object[1].Value1 *= -60
+						Object[1].Value1 -= TempValue0
+						Object[1].Value1 >>= 2
+						if Object[1].Value1 < -4
+							Object[1].Value1 = -4
+						end if
+						if Object[1].Value1 > 4
+							Object[1].Value1 = 4
+						end if
+						Object.Value1 += Object[1].Value1
+					end if
+				end if
+			end if
+			if KeyPress.Up == 1
+				Object.Value3 = Object[1].Value2
+				Options.PhysicalControls = 1
+			end if
+			if KeyPress.Down == 1
+				Object.Value3 = 1
+				Options.PhysicalControls = 1
+			end if
+		end if
 #endplatform
 		break
 	case 3
 		break
 	case 4
-		if Object.Value0<320
-			Object.Value0+=8
+		if Object.Value0 < 320
+			Object.Value0 += 8
 		else
-			Stage.ListPos=2
+			Stage.ListPos = 2
 			LoadStage()
-		endif
-		SetScreenFade(0,0,0,Object.Value0)
+		end if
+		SetScreenFade(0, 0, 0, Object.Value0)
 		break
 	case 5
-		if Object.Value0<320
-			Object.Value0+=8
+		if Object.Value0 < 320
+			Object.Value0 += 8
 		else
 #platform: Mobile
-			if Engine.PlatformID!=RETRO_WP7
-				if Options.Soundtrack==0
+			if Engine.PlatformID != RETRO_WP7
+				if Options.Soundtrack == 0
 					LoadVideo("Opening")
 				else
 					LoadVideo("OpeningUS")
-				endif
-			endif
+				end if
+			end if
 #endplatform
-			Stage.ActiveList=REGULAR_STAGE
-			Stage.ListPos=0
+			Stage.ActiveList = REGULAR_STAGE
+			Stage.ListPos = 0
 			LoadStage()
-		endif
-		SetScreenFade(0,0,0,Object.Value0)
+		end if
+		SetScreenFade(0, 0, 0, Object.Value0)
 		break
 	case 6
-		if Object[34].State==2
-			Object.State=2
-		endif
+		if Object[34].State == 2
+			Object.State = 2
+		end if
 		break
 #platform: Mobile
 		case 7
-		if Object.Value0<320
-			Object.Value0+=8
+		if Object.Value0 < 320
+			Object.Value0 += 8
 		else
-			Stage.ListPos=9
+			Stage.ListPos = 9
 			LoadStage()
-		endif
-		SetScreenFade(0,0,0,Object.Value0)
+		end if
+		SetScreenFade(0, 0, 0, Object.Value0)
 		break
 	case 8
-		if Object.Value0<320
-			Object.Value0+=8
+		if Object.Value0 < 320
+			Object.Value0 += 8
 		else
-			Stage.ListPos=10
+			Stage.ListPos = 10
 			LoadStage()
-		endif
-		SetScreenFade(0,0,0,Object.Value0)
+		end if
+		SetScreenFade(0, 0, 0, Object.Value0)
 		break
 #endplatform
-	endswitch
-endsub
+	end switch
+end sub
 
 
 sub ObjectStartup
-	SetMusicTrack("JP/SpecialStage.ogg",0,1)
-	SetMusicTrack("US/SpecialStage.ogg",1,270972)
-	Object[0].Type=TypeName[MenuControl]
-	Object[0].Value1=32
+	SetMusicTrack("JP/SpecialStage.ogg", 0, 1)
+	SetMusicTrack("US/SpecialStage.ogg", 1, 270972)
+	Object[0].Type = TypeName[MenuControl]
+	Object[0].Value1 = 32
 #platform: Standard
-	Object[0].Value3=1
+	Object[0].Value3 = 1
 #endplatform
 #platform: Mobile
-	Options.PhysicalControls=0
+	Options.PhysicalControls = 0
 #endplatform
-	Object[0].Value2=0
-endsub
+	Object[0].Value2 = 0
+end sub
 
 sub RSDK
 	LoadSpriteSheet("Global/Display.gif")
-	SetEditorIcon(Icon0,SingleIcon,-16,-16,32,32,1,143)
-endsub
+	SetEditorIcon(Icon0, SingleIcon, -16, -16, 32, 32, 1, 143)
+end sub

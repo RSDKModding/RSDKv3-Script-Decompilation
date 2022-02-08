@@ -8,267 +8,267 @@
 
 
 sub ObjectMain
-	TempValue0=Object.Value4
-	TempValue0&=1
-	if TempValue0==0
-		TempValue0=Object.Value4
-		TempValue0>>=1
-		TempValue0+=808
-		Copy16x16Tile(579,TempValue0)
-	endif
+	TempValue0 = Object.Value4
+	TempValue0 &= 1
+	if TempValue0 == 0
+		TempValue0 = Object.Value4
+		TempValue0 >>= 1
+		TempValue0 += 808
+		Copy16x16Tile(579, TempValue0)
+	end if
 	Object.Value4++
-	Object.Value4%=24
+	Object.Value4 %= 24
 	Object.Value0++
-	Object.Value0%=120
-	if Object.Value0<31
-		TempValue0=Object.Value5
-		TempValue0%=5
-		if TempValue0==0
-			TempValue0=Object.Value5
-			TempValue0/=5
-			TempValue0+=820
-			Copy16x16Tile(580,TempValue0)
-			TempValue0+=3
-			Copy16x16Tile(581,TempValue0)
-		endif
+	Object.Value0 %= 120
+	if Object.Value0 < 31
+		TempValue0 = Object.Value5
+		TempValue0 %= 5
+		if TempValue0 == 0
+			TempValue0 = Object.Value5
+			TempValue0 /= 5
+			TempValue0 += 820
+			Copy16x16Tile(580, TempValue0)
+			TempValue0 += 3
+			Copy16x16Tile(581, TempValue0)
+		end if
 		Object.Value5++
-		Object.Value5%=15
+		Object.Value5 %= 15
 	else
-		Copy16x16Tile(580,832)
-		Copy16x16Tile(581,832)
-	endif
-	TempValue0=Object.Value6
-	TempValue0&=1
-	if TempValue0==0
-		TempValue0=Object.Value7
-		TempValue0+=826
+		Copy16x16Tile(580, 832)
+		Copy16x16Tile(581, 832)
+	end if
+	TempValue0 = Object.Value6
+	TempValue0 &= 1
+	if TempValue0 == 0
+		TempValue0 = Object.Value7
+		TempValue0 += 826
 		Object.Value7++
-		Object.Value7%=6
-		Copy16x16Tile(543,TempValue0)
-	endif
+		Object.Value7 %= 6
+		Copy16x16Tile(543, TempValue0)
+	end if
 	Object.Value6++
-	Object.Value6&=511
-	Object.Scale=1
-	TempValue0=Object.Value1
-	TempValue0>>=1
-	SetActivePalette(TempValue0,0,Screen.YSize)
+	Object.Value6 &= 511
+	Object.Scale = 1
+	TempValue0 = Object.Value1
+	TempValue0 >>= 1
+	SetActivePalette(TempValue0, 0, Screen.YSize)
 	Object.Value1++
-	Object.Value1%=6
-endsub
+	Object.Value1 %= 6
+end sub
 
 
 sub ObjectPlayerInteraction
-	TempValue2=Player.XPos
-	TempValue2>>=16
-	TempValue2+=Player.CollisionRight
-	TempValue3=Player.YPos
-	TempValue3>>=16
-	TempValue3+=Player.CollisionBottom
-	TempValue3+=2
-	Get16x16TileInfo(TempValue0,TempValue2,TempValue3,8)
-	TempValue2=Player.XPos
-	TempValue2>>=16
-	TempValue2+=Player.CollisionLeft
-	Get16x16TileInfo(TempValue1,TempValue2,TempValue3,8)
-	TempValue0|=TempValue1
-	if TempValue0==1
-		if Object.Scale==1
-			if Player.YVelocity>-1
-				Player.Animation=ANI_JUMPING
-				Player.Gravity=1
-				Player.Timer=0
-				Player.YVelocity=-1441792
-				Player.State=PlayerObject_HandleAir
-				PlayStageSfx(0,0)
+	TempValue2 = Player.XPos
+	TempValue2 >>= 16
+	TempValue2 += Player.CollisionRight
+	TempValue3 = Player.YPos
+	TempValue3 >>= 16
+	TempValue3 += Player.CollisionBottom
+	TempValue3 += 2
+	Get16x16TileInfo(TempValue0, TempValue2, TempValue3, 8)
+	TempValue2 = Player.XPos
+	TempValue2 >>= 16
+	TempValue2 += Player.CollisionLeft
+	Get16x16TileInfo(TempValue1, TempValue2, TempValue3, 8)
+	TempValue0 |= TempValue1
+	if TempValue0 == 1
+		if Object.Scale == 1
+			if Player.YVelocity > -1
+				Player.Animation = ANI_JUMPING
+				Player.Gravity = 1
+				Player.Timer = 0
+				Player.YVelocity = -1441792
+				Player.State = PlayerObject_HandleAir
+				PlayStageSfx(0, 0)
 #platform: Use_Haptics
-				HapticEffect(60,0,0,0)
+				HapticEffect(60, 0, 0, 0)
 #endplatform
-			endif
-		endif
-	endif
-	TempValue2-=Player.CollisionLeft
-	TempValue3-=Player.CollisionBottom
-	TempValue3-=2
-	Get16x16TileInfo(TempValue0,TempValue2,TempValue3,8)
+			end if
+		end if
+	end if
+	TempValue2 -= Player.CollisionLeft
+	TempValue3 -= Player.CollisionBottom
+	TempValue3 -= 2
+	Get16x16TileInfo(TempValue0, TempValue2, TempValue3, 8)
 	switch TempValue0
 	case 2
-		if Object.Value0<31
-			if Player.Invincible==0
-				Player.State=PlayerObject_Hurt
-				if Player.Direction==FACING_LEFT
-					Player.Speed=131072
+		if Object.Value0 < 31
+			if Player.Invincible == 0
+				Player.State = PlayerObject_Hurt
+				if Player.Direction == FACING_LEFT
+					Player.Speed = 131072
 				else
-					Player.Speed=-131072
-				endif
-			endif
-		endif
+					Player.Speed = -131072
+				end if
+			end if
+		end if
 		break
 	case 5
-		if Object.State==2
-			if Player.Invincible==0
-				Player.State=PlayerObject_Hurt
-				if Player.Direction==FACING_LEFT
-					Player.Speed=131072
+		if Object.State == 2
+			if Player.Invincible == 0
+				Player.State = PlayerObject_Hurt
+				if Player.Direction == FACING_LEFT
+					Player.Speed = 131072
 				else
-					Player.Speed=-131072
-				endif
-			endif
-		endif
+					Player.Speed = -131072
+				end if
+			end if
+		end if
 		break
 	case 6
-		if Object.State==2
-			if Object.Direction==FACING_RIGHT
-				if Player.Invincible==0
-					Player.State=PlayerObject_Hurt
-					if Player.Direction==FACING_LEFT
-						Player.Speed=131072
+		if Object.State == 2
+			if Object.Direction == FACING_RIGHT
+				if Player.Invincible == 0
+					Player.State = PlayerObject_Hurt
+					if Player.Direction == FACING_LEFT
+						Player.Speed = 131072
 					else
-						Player.Speed=-131072
-					endif
-				endif
-			endif
-		endif
+						Player.Speed = -131072
+					end if
+				end if
+			end if
+		end if
 		break
 	case 7
-		if Object.State==2
-			if Object.Direction==FACING_LEFT
-				if Player.Invincible==0
-					Player.State=PlayerObject_Hurt
-					if Player.Direction==FACING_LEFT
-						Player.Speed=131072
+		if Object.State == 2
+			if Object.Direction == FACING_LEFT
+				if Player.Invincible == 0
+					Player.State = PlayerObject_Hurt
+					if Player.Direction == FACING_LEFT
+						Player.Speed = 131072
 					else
-						Player.Speed=-131072
-					endif
-				endif
-			endif
-		endif
+						Player.Speed = -131072
+					end if
+				end if
+			end if
+		end if
 		break
 	case 8
-		if Object.State==2
-			if Object.Direction==2
-				if Player.Invincible==0
-					Player.State=PlayerObject_Hurt
-					if Player.Direction==FACING_LEFT
-						Player.Speed=131072
+		if Object.State == 2
+			if Object.Direction == 2
+				if Player.Invincible == 0
+					Player.State = PlayerObject_Hurt
+					if Player.Direction == FACING_LEFT
+						Player.Speed = 131072
 					else
-						Player.Speed=-131072
-					endif
-				endif
-			endif
-		endif
+						Player.Speed = -131072
+					end if
+				end if
+			end if
+		end if
 		break
-	endswitch
-	TempValue3-=4
-	Get16x16TileInfo(TempValue0,TempValue2,TempValue3,8)
+	end switch
+	TempValue3 -= 4
+	Get16x16TileInfo(TempValue0, TempValue2, TempValue3, 8)
 	switch TempValue0
 	case 2
 #platform: Mobile
-		if Object.Value0<31		
+		if Object.Value0 < 31		
 #endplatform 
-			if Player.Invincible==0
-				Player.State=PlayerObject_Hurt
-				if Player.Direction==FACING_LEFT
-					Player.Speed=131072
+			if Player.Invincible == 0
+				Player.State = PlayerObject_Hurt
+				if Player.Direction == FACING_LEFT
+					Player.Speed = 131072
 				else
-					Player.Speed=-131072
-				endif
-			endif
+					Player.Speed = -131072
+				end if
+			end if
 #platform: Mobile
-		endif
+		end if
 #endplatform
 		break
 	case 5
-		if Object.State==2
-			if Player.Invincible==0
-				Player.State=PlayerObject_Hurt
-				if Player.Direction==FACING_LEFT
-					Player.Speed=131072
+		if Object.State == 2
+			if Player.Invincible == 0
+				Player.State = PlayerObject_Hurt
+				if Player.Direction == FACING_LEFT
+					Player.Speed = 131072
 				else
-					Player.Speed=-131072
-				endif
-			endif
-		endif
+					Player.Speed = -131072
+				end if
+			end if
+		end if
 		break
 	case 6
-		if Object.State==2
-			if Object.Direction==FACING_RIGHT
-				if Player.Invincible==0
-					Player.State=PlayerObject_Hurt
-					if Player.Direction==FACING_LEFT
-						Player.Speed=131072
+		if Object.State == 2
+			if Object.Direction == FACING_RIGHT
+				if Player.Invincible == 0
+					Player.State = PlayerObject_Hurt
+					if Player.Direction == FACING_LEFT
+						Player.Speed = 131072
 					else
-						Player.Speed=-131072
-					endif
-				endif
-			endif
-		endif
+						Player.Speed = -131072
+					end if
+				end if
+			end if
+		end if
 		break
 	case 7
-		if Object.State==2
-			if Object.Direction==FACING_LEFT
-				if Player.Invincible==0
-					Player.State=PlayerObject_Hurt
-					if Player.Direction==FACING_LEFT
-						Player.Speed=131072
+		if Object.State == 2
+			if Object.Direction == FACING_LEFT
+				if Player.Invincible == 0
+					Player.State = PlayerObject_Hurt
+					if Player.Direction == FACING_LEFT
+						Player.Speed = 131072
 					else
-						Player.Speed=-131072
-					endif
-				endif
-			endif
-		endif
+						Player.Speed = -131072
+					end if
+				end if
+			end if
+		end if
 		break
 	case 8
-		if Object.State==2
-			if Object.Direction==2
-				if Player.Invincible==0
-					Player.State=PlayerObject_Hurt
-					if Player.Direction==FACING_LEFT
-						Player.Speed=131072
+		if Object.State == 2
+			if Object.Direction == 2
+				if Player.Invincible == 0
+					Player.State = PlayerObject_Hurt
+					if Player.Direction == FACING_LEFT
+						Player.Speed = 131072
 					else
-						Player.Speed=-131072
-					endif
-				endif
-			endif
-		endif
+						Player.Speed = -131072
+					end if
+				end if
+			end if
+		end if
 		break
-	endswitch
-	TempValue3+=4
-	TempValue3+=Player.CollisionTop
-	Get16x16TileInfo(TempValue0,TempValue2,TempValue3,8)
-	if TempValue0==3
-		TempValue4=TempValue3
-		TempValue4&=15
-		if TempValue4<8
-			if Player.State!=PlayerObject_CheckTile
-				Player.State=PlayerObject_CheckTile
-				Player.YVelocity=0
-				Player.Animation=ANI_HANGING
-				TempValue3&=32752
-				TempValue3+=4
-				TempValue3-=Player.CollisionTop
-				Player.iYPos=TempValue3
-				PlayStageSfx(2,0)
-				Screen.AdjustCameraY=0
-			endif
-		endif
-	endif
-endsub
+	end switch
+	TempValue3 += 4
+	TempValue3 += Player.CollisionTop
+	Get16x16TileInfo(TempValue0, TempValue2, TempValue3, 8)
+	if TempValue0 == 3
+		TempValue4 = TempValue3
+		TempValue4 &= 15
+		if TempValue4 < 8
+			if Player.State != PlayerObject_CheckTile
+				Player.State = PlayerObject_CheckTile
+				Player.YVelocity = 0
+				Player.Animation = ANI_HANGING
+				TempValue3 &= 32752
+				TempValue3 += 4
+				TempValue3 -= Player.CollisionTop
+				Player.iYPos = TempValue3
+				PlayStageSfx(2, 0)
+				Screen.AdjustCameraY = 0
+			end if
+		end if
+	end if
+end sub
 
 
 sub ObjectStartup
-	Object[19].Type=TypeName[R6Setup]
-	Object[19].Priority=1
-	Object[19].DrawOrder=2
-	TempValue0=1
-	while TempValue0<3
-		RotatePalette(161,163,0)
-		CopyPalette(0,TempValue0)
+	Object[19].Type = TypeName[R6Setup]
+	Object[19].Priority = 1
+	Object[19].DrawOrder = 2
+	TempValue0 = 1
+	while TempValue0 < 3
+		RotatePalette(161, 163, 0)
+		CopyPalette(0, TempValue0)
 		TempValue0++
 	loop
-	RotatePalette(161,163,0)
-endsub
+	RotatePalette(161, 163, 0)
+end sub
 
 sub RSDK
 	LoadSpriteSheet("Global/Display.gif")
-	SetEditorIcon(Icon0,SingleIcon,-16,-16,32,32,1,143)
-endsub
+	SetEditorIcon(Icon0, SingleIcon, -16, -16, 32, 32, 1, 143)
+end sub

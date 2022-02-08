@@ -7,100 +7,100 @@
 
 
 sub ObjectMain
-	if Object.State==1
-		if Object.Value0<39
+	if Object.State == 1
+		if Object.Value0 < 39
 			Object.Value0++
 		else
-			Object.State=0
-			Object.Value0=0
-			Object.Priority=0
-		endif
-		PathSwap_Frame=Object.Value0
-		PathSwap_Frame/=5
-	endif
-	if PathSwap_Flag==0
-		TempValue0=Object.Value5
+			Object.State = 0
+			Object.Value0 = 0
+			Object.Priority = 0
+		end if
+		PathSwap_Frame = Object.Value0
+		PathSwap_Frame /= 5
+	end if
+	if PathSwap_Flag == 0
+		TempValue0 = Object.Value5
 	else
-		TempValue0=Object.Value6
-	endif
-	if Object.PropertyValue!=1
-		SetTileLayerEntry(TempValue0,0,Object.Value1,Object.Value2)
+		TempValue0 = Object.Value6
+	end if
+	if Object.PropertyValue != 1
+		SetTileLayerEntry(TempValue0, 0, Object.Value1, Object.Value2)
 		TempValue0++
-		SetTileLayerEntry(TempValue0,0,Object.Value3,Object.Value2)
+		SetTileLayerEntry(TempValue0, 0, Object.Value3, Object.Value2)
 		TempValue0++
-		SetTileLayerEntry(TempValue0,0,Object.Value1,Object.Value4)
+		SetTileLayerEntry(TempValue0, 0, Object.Value1, Object.Value4)
 		TempValue0++
-		SetTileLayerEntry(TempValue0,0,Object.Value3,Object.Value4)
-	endif
-endsub
+		SetTileLayerEntry(TempValue0, 0, Object.Value3, Object.Value4)
+	end if
+end sub
 
 
 sub ObjectPlayerInteraction
-	if Object.PropertyValue<2
-		if Object.State==0
-			if PathSwap_Frame==0
-				PlayerObjectCollision(C_TOUCH,-16,-16,16,16)
-				if CheckResult==1
-					if Object.Value7==0
-						Object.State=1
-						Object.Priority=1
-						Object.Value7=1
+	if Object.PropertyValue < 2
+		if Object.State == 0
+			if PathSwap_Frame == 0
+				PlayerObjectCollision(C_TOUCH, -16, -16, 16, 16)
+				if CheckResult == 1
+					if Object.Value7 == 0
+						Object.State = 1
+						Object.Priority = 1
+						Object.Value7 = 1
 						PathSwap_Flag++
-						PathSwap_Flag&=1
+						PathSwap_Flag &= 1
 #platform: Use_Haptics
-						HapticEffect(19,0,0,0)
+						HapticEffect(19, 0, 0, 0)
 #endplatform
-					endif
+					end if
 				else
-					Object.Value7=0
-				endif
-			endif
-		endif
-	endif
-endsub
+					Object.Value7 = 0
+				end if
+			end if
+		end if
+	end if
+end sub
 
 
 sub ObjectDraw
-	if Object.PropertyValue<2
+	if Object.PropertyValue < 2
 		DrawSprite(PathSwap_Frame)
-	endif
-endsub
+	end if
+end sub
 
 
 sub ObjectStartup
 	LoadSpriteSheet("R7/Objects.gif")
-	SpriteFrame(-24,-15,48,40,109,18)
-	SpriteFrame(-24,-11,48,36,158,22)
-	SpriteFrame(-24,-7,48,32,207,26)
-	SpriteFrame(-24,-11,48,36,158,63)
-	SpriteFrame(-24,-15,48,40,109,59)
-	SpriteFrame(-24,-11,48,36,158,63)
-	SpriteFrame(-24,-7,48,32,207,26)
-	SpriteFrame(-24,-11,48,36,158,22)
-	PathSwap_Flag=0
-	PathSwap_Frame=0
-	ArrayPos0=32
-	while ArrayPos0<1056
-		if Object[ArrayPos0].Type==TypeName[PathSwap]
-			Object[ArrayPos0].Value1=Object[ArrayPos0].iXPos
-			Object[ArrayPos0].Value1>>=8
-			Object[ArrayPos0].Value1<<=1
-			Object[ArrayPos0].Value3=Object[ArrayPos0].Value1
+	SpriteFrame(-24, -15, 48, 40, 109, 18)
+	SpriteFrame(-24, -11, 48, 36, 158, 22)
+	SpriteFrame(-24, -7, 48, 32, 207, 26)
+	SpriteFrame(-24, -11, 48, 36, 158, 63)
+	SpriteFrame(-24, -15, 48, 40, 109, 59)
+	SpriteFrame(-24, -11, 48, 36, 158, 63)
+	SpriteFrame(-24, -7, 48, 32, 207, 26)
+	SpriteFrame(-24, -11, 48, 36, 158, 22)
+	PathSwap_Flag = 0
+	PathSwap_Frame = 0
+	ArrayPos0 = 32
+	while ArrayPos0 < 1056
+		if Object[ArrayPos0].Type == TypeName[PathSwap]
+			Object[ArrayPos0].Value1 = Object[ArrayPos0].iXPos
+			Object[ArrayPos0].Value1 >>= 8
+			Object[ArrayPos0].Value1 <<= 1
+			Object[ArrayPos0].Value3 = Object[ArrayPos0].Value1
 			Object[ArrayPos0].Value3++
-			Object[ArrayPos0].Value2=Object[ArrayPos0].iYPos
-			Object[ArrayPos0].Value2>>=8
-			Object[ArrayPos0].Value2<<=1
-			Object[ArrayPos0].Value4=Object[ArrayPos0].Value2
+			Object[ArrayPos0].Value2 = Object[ArrayPos0].iYPos
+			Object[ArrayPos0].Value2 >>= 8
+			Object[ArrayPos0].Value2 <<= 1
+			Object[ArrayPos0].Value4 = Object[ArrayPos0].Value2
 			Object[ArrayPos0].Value4++
-			GetTileLayerEntry(Object[ArrayPos0].Value5,0,Object[ArrayPos0].Value1,Object[ArrayPos0].Value2)
-			Object[ArrayPos0].Value6=Object[ArrayPos0].Value5
-			Object[ArrayPos0].Value6+=4
-		endif
+			GetTileLayerEntry(Object[ArrayPos0].Value5, 0, Object[ArrayPos0].Value1, Object[ArrayPos0].Value2)
+			Object[ArrayPos0].Value6 = Object[ArrayPos0].Value5
+			Object[ArrayPos0].Value6 += 4
+		end if
 		ArrayPos0++
 	loop
-endsub
+end sub
 
 sub RSDK
 	LoadSpriteSheet("Global/Display.gif")
-	SetEditorIcon(Icon0,SingleIcon,-16,-16,32,32,1,143)
-endsub
+	SetEditorIcon(Icon0, SingleIcon, -16, -16, 32, 32, 1, 143)
+end sub

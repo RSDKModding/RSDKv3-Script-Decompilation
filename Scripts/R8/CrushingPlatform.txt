@@ -8,150 +8,150 @@
 
 
 sub ObjectMain
-	if Object.Value5==0
-		Object.Value3+=Object.Value6
-		Object.Value3&=511
-		if Object.PropertyValue==1
-			Object.Value3+=256
-		endif
-		Sin(Object.Value2,Object.Value3)
-		Object.Value2*=Object.Value4
-		Object.Value2+=Object.YPos
-		Object.Value2&=-65536
-		Object.Value2-=Object.Value1
+	if Object.Value5 == 0
+		Object.Value3 += Object.Value6
+		Object.Value3 &= 511
+		if Object.PropertyValue == 1
+			Object.Value3 += 256
+		end if
+		Sin(Object.Value2, Object.Value3)
+		Object.Value2 *= Object.Value4
+		Object.Value2 += Object.YPos
+		Object.Value2 &= -65536
+		Object.Value2 -= Object.Value1
 	else
 		switch Object.State
 		case 0
-			Object.Value3+=4
-			Object.Value3&=511
-			if Object.Value3==128
+			Object.Value3 += 4
+			Object.Value3 &= 511
+			if Object.Value3 == 128
 				Object.State++
-			endif
+			end if
 			break
 		case 1
-			if Object.Value0<64
+			if Object.Value0 < 64
 				Object.Value0++
 			else
-				Object.Value0=0
+				Object.Value0 = 0
 				Object.State++
-			endif
+			end if
 			break
 		case 2
-			Object.Value3+=4
-			Object.Value3&=511
-			if Object.Value3==384
+			Object.Value3 += 4
+			Object.Value3 &= 511
+			if Object.Value3 == 384
 				Object.State++
-			endif
+			end if
 			break
 		case 3
-			if Object.Value0<64
+			if Object.Value0 < 64
 				Object.Value0++
 			else
-				Object.Value0=0
-				Object.State=0
-			endif
+				Object.Value0 = 0
+				Object.State = 0
+			end if
 			break
-		endswitch
-		Sin(Object.Value2,Object.Value3)
-		Object.Value2*=Object.Value4
-		Object.Value2+=Object.YPos
-		Object.Value2&=-65536
-		Object.Value2-=Object.Value1
-	endif
-endsub
+		end switch
+		Sin(Object.Value2, Object.Value3)
+		Object.Value2 *= Object.Value4
+		Object.Value2 += Object.YPos
+		Object.Value2 &= -65536
+		Object.Value2 -= Object.Value1
+	end if
+end sub
 
 
 sub ObjectPlayerInteraction
-	TempValue0=Object.YPos
-	TempValue1=Player.YPos
-	Object.YPos=Object.Value1
-	if Object.Value5==0
-		PlayerObjectCollision(C_BOX,-32,-32,32,32)
-		if CheckResult==1
-			Player.YPos+=Object.Value2
+	TempValue0 = Object.YPos
+	TempValue1 = Player.YPos
+	Object.YPos = Object.Value1
+	if Object.Value5 == 0
+		PlayerObjectCollision(C_BOX, -32, -32, 32, 32)
+		if CheckResult == 1
+			Player.YPos += Object.Value2
 		else
-			if CheckResult==4
-				if Player.Gravity==0
-					if Object.Value2>0
+			if CheckResult == 4
+				if Player.Gravity == 0
+					if Object.Value2 > 0
 						CallFunction(PlayerObject_Kill)
 					else
-						Player.YPos=TempValue1
-					endif
-				endif
-			endif
-		endif
+						Player.YPos = TempValue1
+					end if
+				end if
+			end if
+		end if
 	else
-		PlayerObjectCollision(C_BOX,-32,-96,32,96)
-		if CheckResult==1
-			Player.YPos+=Object.Value2
-			if Object.Value3==320
-				Player.State=PlayerObject_HandleAir
-				Player.Timer=0
-				Player.YVelocity=-1048576
-				Player.Animation=ANI_BOUNCING
-				Player.Gravity=1
-				Player.AnimationCheck=ANI_WALKING
-			endif
+		PlayerObjectCollision(C_BOX, -32, -96, 32, 96)
+		if CheckResult == 1
+			Player.YPos += Object.Value2
+			if Object.Value3 == 320
+				Player.State = PlayerObject_HandleAir
+				Player.Timer = 0
+				Player.YVelocity = -1048576
+				Player.Animation = ANI_BOUNCING
+				Player.Gravity = 1
+				Player.AnimationCheck = ANI_WALKING
+			end if
 		else
-			if CheckResult==4
-				if Player.Gravity==0
-					if Object.Value2>0
+			if CheckResult == 4
+				if Player.Gravity == 0
+					if Object.Value2 > 0
 						CallFunction(PlayerObject_Kill)
 					else
-						Player.YPos=TempValue1
-					endif
-				endif
-			endif
-		endif
-	endif
-	Object.YPos=TempValue0
-endsub
+						Player.YPos = TempValue1
+					end if
+				end if
+			end if
+		end if
+	end if
+	Object.YPos = TempValue0
+end sub
 
 
 sub ObjectDraw
-	Sin(Object.Value1,Object.Value3)
-	Object.Value1*=Object.Value4
-	Object.Value1+=Object.YPos
-	Object.Value1&=-65536
-	DrawSpriteXY(0,Object.XPos,Object.Value1)
-	if Object.Value5==1
-		DrawSpriteXY(1,Object.XPos,Object.Value1)
-		DrawSpriteXY(2,Object.XPos,Object.Value1)
-	endif
-endsub
+	Sin(Object.Value1, Object.Value3)
+	Object.Value1 *= Object.Value4
+	Object.Value1 += Object.YPos
+	Object.Value1 &= -65536
+	DrawSpriteXY(0, Object.XPos, Object.Value1)
+	if Object.Value5 == 1
+		DrawSpriteXY(1, Object.XPos, Object.Value1)
+		DrawSpriteXY(2, Object.XPos, Object.Value1)
+	end if
+end sub
 
 
 sub ObjectStartup
 	LoadSpriteSheet("R8/Objects.gif")
-	SpriteFrame(-32,-32,64,64,1,1)
-	SpriteFrame(-32,-96,64,64,1,1)
-	SpriteFrame(-32,32,64,64,1,1)
-	ArrayPos0=32
-	while ArrayPos0<1056
-		if Object[ArrayPos0].Type==TypeName[CrushPlatform]
-			Object[ArrayPos0].Value6=2
-			if Object[ArrayPos0].PropertyValue==0
-				Object[ArrayPos0].Value4=4096
+	SpriteFrame(-32, -32, 64, 64, 1, 1)
+	SpriteFrame(-32, -96, 64, 64, 1, 1)
+	SpriteFrame(-32, 32, 64, 64, 1, 1)
+	ArrayPos0 = 32
+	while ArrayPos0 < 1056
+		if Object[ArrayPos0].Type == TypeName[CrushPlatform]
+			Object[ArrayPos0].Value6 = 2
+			if Object[ArrayPos0].PropertyValue == 0
+				Object[ArrayPos0].Value4 = 4096
 			else
-				Object[ArrayPos0].Value4=6144
-			endif
-			if Object[ArrayPos0].PropertyValue==5
-				Object[ArrayPos0].Value5=1
-				Object[ArrayPos0].Value4=4096
-			endif
-			if Object[ArrayPos0].PropertyValue==69
-				Object[ArrayPos0].Value5=1
-				Object[ArrayPos0].Value4=6144
-			endif
-			if Object[ArrayPos0].PropertyValue==72
-				Object[ArrayPos0].Value6=6
-			endif
-		endif
+				Object[ArrayPos0].Value4 = 6144
+			end if
+			if Object[ArrayPos0].PropertyValue == 5
+				Object[ArrayPos0].Value5 = 1
+				Object[ArrayPos0].Value4 = 4096
+			end if
+			if Object[ArrayPos0].PropertyValue == 69
+				Object[ArrayPos0].Value5 = 1
+				Object[ArrayPos0].Value4 = 6144
+			end if
+			if Object[ArrayPos0].PropertyValue == 72
+				Object[ArrayPos0].Value6 = 6
+			end if
+		end if
 		ArrayPos0++
 	loop
-endsub
+end sub
 
 sub RSDK
 	LoadSpriteSheet("Global/Display.gif")
-	SetEditorIcon(Icon0,SingleIcon,-16,-16,32,32,1,143)
-endsub
+	SetEditorIcon(Icon0, SingleIcon, -16, -16, 32, 32, 1, 143)
+end sub

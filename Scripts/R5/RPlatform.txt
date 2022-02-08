@@ -9,103 +9,103 @@
 sub ObjectMain
 	switch Object.PropertyValue
 	case 1
-		Object.Value0-=2
-		if Object.Value0<0
-			Object.Value0+=512
-		endif
+		Object.Value0 -= 2
+		if Object.Value0 < 0
+			Object.Value0 += 512
+		end if
 		break
 	case 2
-		Object.Value5+=2
-		Object.Value5&=511
-		Sin(Object.Value0,Object.Value5)
-		Object.Value0>>=2
-		Object.Value0+=128
+		Object.Value5 += 2
+		Object.Value5 &= 511
+		Sin(Object.Value0, Object.Value5)
+		Object.Value0 >>= 2
+		Object.Value0 += 128
 		break
 	case 3
-		Object.Value5+=2
-		Object.Value5&=511
-		Sin(Object.Value0,Object.Value5)
+		Object.Value5 += 2
+		Object.Value5 &= 511
+		Sin(Object.Value0, Object.Value5)
 		FlipSign(Object.Value0)
-		Object.Value0>>=2
-		Object.Value0+=384
-		Object.Value0&=511
+		Object.Value0 >>= 2
+		Object.Value0 += 384
+		Object.Value0 &= 511
 		break
-	endswitch
-	TempValue1=96
-	Cos(Object.Value3,Object.Value0)
-	Object.Value3*=TempValue1
-	Object.Value3<<=7
-	Object.Value3+=Object.XPos
-	Object.Value3&=-65536
-	Object.Value3-=Object.Value1
-	Sin(Object.Value4,Object.Value0)
-	Object.Value4*=TempValue1
-	Object.Value4<<=7
-	Object.Value4+=Object.YPos
-	Object.Value4&=-65536
-	Object.Value4-=Object.Value2
-endsub
+	end switch
+	TempValue1 = 96
+	Cos(Object.Value3, Object.Value0)
+	Object.Value3 *= TempValue1
+	Object.Value3 <<= 7
+	Object.Value3 += Object.XPos
+	Object.Value3 &= -65536
+	Object.Value3 -= Object.Value1
+	Sin(Object.Value4, Object.Value0)
+	Object.Value4 *= TempValue1
+	Object.Value4 <<= 7
+	Object.Value4 += Object.YPos
+	Object.Value4 &= -65536
+	Object.Value4 -= Object.Value2
+end sub
 
 
 sub ObjectPlayerInteraction
-	TempValue0=Object.XPos
-	TempValue1=Object.YPos
-	Object.XPos=Object.Value1
-	Object.YPos=Object.Value2
-	PlayerObjectCollision(C_PLATFORM,-32,-8,32,8)
-	if CheckResult==1
-		Player.XPos+=Object.Value3
-		Player.YPos+=Object.Value4
-		if ConveyorBelt_Flag==0
-			Player.XPos+=ConveyorBelt_Speed
+	TempValue0 = Object.XPos
+	TempValue1 = Object.YPos
+	Object.XPos = Object.Value1
+	Object.YPos = Object.Value2
+	PlayerObjectCollision(C_PLATFORM, -32, -8, 32, 8)
+	if CheckResult == 1
+		Player.XPos += Object.Value3
+		Player.YPos += Object.Value4
+		if ConveyorBelt_Flag == 0
+			Player.XPos += ConveyorBelt_Speed
 		else
-			Player.XPos-=ConveyorBelt_Speed
-		endif
-	endif
-	Object.XPos=TempValue0
-	Object.YPos=TempValue1
-endsub
+			Player.XPos -= ConveyorBelt_Speed
+		end if
+	end if
+	Object.XPos = TempValue0
+	Object.YPos = TempValue1
+end sub
 
 
 sub ObjectDraw
 	DrawSprite(0)
-	TempValue0=0
-	TempValue1=16
-	while TempValue0<5
-		Cos(TempValue2,Object.Value0)
-		TempValue2*=TempValue1
-		TempValue2<<=7
-		TempValue2+=Object.XPos
-		Sin(TempValue3,Object.Value0)
-		TempValue3*=TempValue1
-		TempValue3<<=7
-		TempValue3+=Object.YPos
-		DrawSpriteXY(1,TempValue2,TempValue3)
+	TempValue0 = 0
+	TempValue1 = 16
+	while TempValue0 < 5
+		Cos(TempValue2, Object.Value0)
+		TempValue2 *= TempValue1
+		TempValue2 <<= 7
+		TempValue2 += Object.XPos
+		Sin(TempValue3, Object.Value0)
+		TempValue3 *= TempValue1
+		TempValue3 <<= 7
+		TempValue3 += Object.YPos
+		DrawSpriteXY(1, TempValue2, TempValue3)
 		TempValue0++
-		TempValue1+=16
+		TempValue1 += 16
 	loop
-	Cos(Object.Value1,Object.Value0)
-	Object.Value1*=TempValue1
-	Object.Value1<<=7
-	Object.Value1+=Object.XPos
-	Object.Value1&=-65536
-	Sin(Object.Value2,Object.Value0)
-	Object.Value2*=TempValue1
-	Object.Value2<<=7
-	Object.Value2+=Object.YPos
-	Object.Value2&=-65536
-	DrawSpriteXY(2,Object.Value1,Object.Value2)
-endsub
+	Cos(Object.Value1, Object.Value0)
+	Object.Value1 *= TempValue1
+	Object.Value1 <<= 7
+	Object.Value1 += Object.XPos
+	Object.Value1 &= -65536
+	Sin(Object.Value2, Object.Value0)
+	Object.Value2 *= TempValue1
+	Object.Value2 <<= 7
+	Object.Value2 += Object.YPos
+	Object.Value2 &= -65536
+	DrawSpriteXY(2, Object.Value1, Object.Value2)
+end sub
 
 
 sub ObjectStartup
 	LoadSpriteSheet("R5/Objects.gif")
-	SpriteFrame(-8,-8,16,16,1,1)
-	SpriteFrame(-8,-8,16,16,18,1)
-	SpriteFrame(-32,-8,64,16,1,208)
-endsub
+	SpriteFrame(-8, -8, 16, 16, 1, 1)
+	SpriteFrame(-8, -8, 16, 16, 18, 1)
+	SpriteFrame(-32, -8, 64, 16, 1, 208)
+end sub
 
 sub RSDK
 	LoadSpriteSheet("Global/Display.gif")
-	SetEditorIcon(Icon0,SingleIcon,-16,-16,32,32,1,143)
-endsub
+	SetEditorIcon(Icon0, SingleIcon, -16, -16, 32, 32, 1, 143)
+end sub

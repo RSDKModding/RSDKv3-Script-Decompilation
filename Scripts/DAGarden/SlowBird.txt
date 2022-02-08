@@ -8,59 +8,59 @@
 
 sub ObjectMain
 	Object.Value3++
-	Object.Value3%=192
-	if Object.Value3>133
-		if Object.Direction==FACING_RIGHT
-			Object.XPos+=65536
+	Object.Value3 %= 192
+	if Object.Value3 > 133
+		if Object.Direction == FACING_RIGHT
+			Object.XPos += 65536
 		else
-			Object.XPos-=65536
-		endif
+			Object.XPos -= 65536
+		end if
 	else
-		if Object.Direction==FACING_RIGHT
-			Object.XPos+=16384
+		if Object.Direction == FACING_RIGHT
+			Object.XPos += 16384
 		else
-			Object.XPos-=16384
-		endif
-	endif
+			Object.XPos -= 16384
+		end if
+	end if
 	switch Object.State
 	case 0
-		Object.Value1=Object.YPos
+		Object.Value1 = Object.YPos
 		Object.State++
 		break
 	case 1
-		Object.Value2+=Object.PropertyValue
-		Object.Value2&=511
-		Sin(Object.YPos,Object.Value2)
-		Object.YPos<<=10
-		Object.YPos+=Object.Value1
+		Object.Value2 += Object.PropertyValue
+		Object.Value2 &= 511
+		Sin(Object.YPos, Object.Value2)
+		Object.YPos <<= 10
+		Object.YPos += Object.Value1
 		break
-	endswitch
-	if Object.OutOfBounds==1
-		Object.Type=TypeName[BlankObject]
-	endif
-endsub
+	end switch
+	if Object.OutOfBounds == 1
+		Object.Type = TypeName[BlankObject]
+	end if
+end sub
 
 
 sub ObjectDraw
-	TempValue0=Object.AnimationSpeed
-	TempValue0>>=4
-	DrawSpriteFX(TempValue0,FX_FLIP,Object.XPos,Object.YPos)
-	if Object.Value3>133
-		Object.AnimationSpeed+=4
+	TempValue0 = Object.AnimationSpeed
+	TempValue0 >>= 4
+	DrawSpriteFX(TempValue0, FX_FLIP, Object.XPos, Object.YPos)
+	if Object.Value3 > 133
+		Object.AnimationSpeed += 4
 	else
 		Object.AnimationSpeed++
-	endif
-	Object.AnimationSpeed&=31
-endsub
+	end if
+	Object.AnimationSpeed &= 31
+end sub
 
 
 sub ObjectStartup
 	LoadSpriteSheet("DAGarden/Objects.gif")
-	SpriteFrame(-8,-9,16,16,466,577)
-	SpriteFrame(-8,-8,16,16,483,577)
-endsub
+	SpriteFrame(-8, -9, 16, 16, 466, 577)
+	SpriteFrame(-8, -8, 16, 16, 483, 577)
+end sub
 
 sub RSDK
 	LoadSpriteSheet("Global/Display.gif")
-	SetEditorIcon(Icon0,SingleIcon,-16,-16,32,32,1,143)
-endsub
+	SetEditorIcon(Icon0, SingleIcon, -16, -16, 32, 32, 1, 143)
+end sub

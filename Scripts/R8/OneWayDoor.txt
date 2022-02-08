@@ -7,102 +7,102 @@
 
 
 sub ObjectMain
-	if Object.State==0
-		if Object.Value1>0
-			Object.Value1-=131072
-		endif
+	if Object.State == 0
+		if Object.Value1 > 0
+			Object.Value1 -= 131072
+		end if
 	else
-		if Object.Value1<2097152
-			Object.Value1+=131072
-		endif
-	endif
-endsub
+		if Object.Value1 < 2097152
+			Object.Value1 += 131072
+		end if
+	end if
+end sub
 
 
 sub ObjectPlayerInteraction
-	TempValue0=Object.YPos
-	TempValue1=Player.YPos
-	Object.YPos-=Object.Value1
-	PlayerObjectCollision(C_BOX,-8,-48,8,-16)
-	if CheckResult>1
-		Player.YPos=TempValue1
-	endif
-	Object.YPos=TempValue0
-	Object.YPos+=Object.Value1
-	PlayerObjectCollision(C_BOX,-8,-16,8,16)
-	if CheckResult>1
-		Player.YPos=TempValue1
-	endif
-	Object.YPos=TempValue0
-	if Object.PropertyValue==2
-		PlayerObjectCollision(C_TOUCH,-96,-48,8,16)
+	TempValue0 = Object.YPos
+	TempValue1 = Player.YPos
+	Object.YPos -= Object.Value1
+	PlayerObjectCollision(C_BOX, -8, -48, 8, -16)
+	if CheckResult > 1
+		Player.YPos = TempValue1
+	end if
+	Object.YPos = TempValue0
+	Object.YPos += Object.Value1
+	PlayerObjectCollision(C_BOX, -8, -16, 8, 16)
+	if CheckResult > 1
+		Player.YPos = TempValue1
+	end if
+	Object.YPos = TempValue0
+	if Object.PropertyValue == 2
+		PlayerObjectCollision(C_TOUCH, -96, -48, 8, 16)
 	else
-		PlayerObjectCollision(C_TOUCH,-8,-48,96,16)
-	endif
-	Object.State=CheckResult
-endsub
+		PlayerObjectCollision(C_TOUCH, -8, -48, 96, 16)
+	end if
+	Object.State = CheckResult
+end sub
 
 
 sub ObjectDraw
-	Object.Frame=Object.AnimationTimer
-	Object.Frame/=3
+	Object.Frame = Object.AnimationTimer
+	Object.Frame /= 3
 	switch Object.PropertyValue
 	case 1
-		TempValue0=Object.Value1
+		TempValue0 = Object.Value1
 		FlipSign(TempValue0)
-		TempValue0+=Object.YPos
-		DrawSpriteXY(0,Object.XPos,TempValue0)
-		Object.Frame+=6
-		DrawSpriteXY(Object.Frame,Object.XPos,TempValue0)
-		TempValue0=Object.Value1
-		TempValue0+=Object.YPos
-		DrawSpriteXY(1,Object.XPos,TempValue0)
-		Object.Frame+=2
-		DrawSpriteXY(Object.Frame,Object.XPos,TempValue0)
+		TempValue0 += Object.YPos
+		DrawSpriteXY(0, Object.XPos, TempValue0)
+		Object.Frame += 6
+		DrawSpriteXY(Object.Frame, Object.XPos, TempValue0)
+		TempValue0 = Object.Value1
+		TempValue0 += Object.YPos
+		DrawSpriteXY(1, Object.XPos, TempValue0)
+		Object.Frame += 2
+		DrawSpriteXY(Object.Frame, Object.XPos, TempValue0)
 		break
 	case 2
-		TempValue0=Object.Value1
+		TempValue0 = Object.Value1
 		FlipSign(TempValue0)
-		TempValue0+=Object.YPos
-		DrawSpriteXY(0,Object.XPos,TempValue0)
-		Object.Frame+=2
-		DrawSpriteXY(Object.Frame,Object.XPos,TempValue0)
-		TempValue0=Object.Value1
-		TempValue0+=Object.YPos
-		DrawSpriteXY(1,Object.XPos,TempValue0)
-		Object.Frame+=2
-		DrawSpriteXY(Object.Frame,Object.XPos,TempValue0)
+		TempValue0 += Object.YPos
+		DrawSpriteXY(0, Object.XPos, TempValue0)
+		Object.Frame += 2
+		DrawSpriteXY(Object.Frame, Object.XPos, TempValue0)
+		TempValue0 = Object.Value1
+		TempValue0 += Object.YPos
+		DrawSpriteXY(1, Object.XPos, TempValue0)
+		Object.Frame += 2
+		DrawSpriteXY(Object.Frame, Object.XPos, TempValue0)
 		break
 	case 3
-		TempValue0=Object.Value1
+		TempValue0 = Object.Value1
 		FlipSign(TempValue0)
-		TempValue0+=Object.YPos
-		DrawSpriteXY(0,Object.XPos,TempValue0)
-		TempValue0=Object.Value1
-		TempValue0+=Object.YPos
-		DrawSpriteXY(1,Object.XPos,TempValue0)
+		TempValue0 += Object.YPos
+		DrawSpriteXY(0, Object.XPos, TempValue0)
+		TempValue0 = Object.Value1
+		TempValue0 += Object.YPos
+		DrawSpriteXY(1, Object.XPos, TempValue0)
 		break
-	endswitch
+	end switch
 	Object.AnimationTimer++
-	Object.AnimationTimer%=6
-endsub
+	Object.AnimationTimer %= 6
+end sub
 
 
 sub ObjectStartup
 	LoadSpriteSheet("R8/Objects.gif")
-	SpriteFrame(-8,-48,16,32,58,131)
-	SpriteFrame(-8,-16,16,32,58,131)
-	SpriteFrame(-16,-36,8,8,50,173)
-	SpriteFrame(-16,-36,8,8,59,173)
-	SpriteFrame(-16,-4,8,8,50,173)
-	SpriteFrame(-16,-4,8,8,59,173)
-	SpriteFrame(8,-36,8,8,50,164)
-	SpriteFrame(8,-36,8,8,59,164)
-	SpriteFrame(8,-4,8,8,50,164)
-	SpriteFrame(8,-4,8,8,59,164)
-endsub
+	SpriteFrame(-8, -48, 16, 32, 58, 131)
+	SpriteFrame(-8, -16, 16, 32, 58, 131)
+	SpriteFrame(-16, -36, 8, 8, 50, 173)
+	SpriteFrame(-16, -36, 8, 8, 59, 173)
+	SpriteFrame(-16, -4, 8, 8, 50, 173)
+	SpriteFrame(-16, -4, 8, 8, 59, 173)
+	SpriteFrame(8, -36, 8, 8, 50, 164)
+	SpriteFrame(8, -36, 8, 8, 59, 164)
+	SpriteFrame(8, -4, 8, 8, 50, 164)
+	SpriteFrame(8, -4, 8, 8, 59, 164)
+end sub
 
 sub RSDK
 	LoadSpriteSheet("Global/Display.gif")
-	SetEditorIcon(Icon0,SingleIcon,-16,-16,32,32,1,143)
-endsub
+	SetEditorIcon(Icon0, SingleIcon, -16, -16, 32, 32, 1, 143)
+end sub

@@ -9,111 +9,111 @@
 sub ObjectMain
 	switch Object.State
 	case 1
-		if Object.Value0>0
+		if Object.Value0 > 0
 			Object.Value0--
 		else
-			Object.Value1+=20480
-			Object.YPos+=Object.Value1
-		endif
-		if Object.OutOfBounds==1
-			Object.Type=TypeName[BlankObject]
-		endif
+			Object.Value1 += 20480
+			Object.YPos += Object.Value1
+		end if
+		if Object.OutOfBounds == 1
+			Object.Type = TypeName[BlankObject]
+		end if
 		break
 	case 2
-		if Object.OutOfBounds==1
-			Object.State=0
-			Object.Priority=0
-		endif
+		if Object.OutOfBounds == 1
+			Object.State = 0
+			Object.Priority = 0
+		end if
 		break
-	endswitch
-endsub
+	end switch
+end sub
 
 
 sub ObjectPlayerInteraction
 	switch Object.PropertyValue
 	case 0
-		if Object.State==0
-			PlayerObjectCollision(C_PLATFORM,-40,-24,40,-8)
-			if CheckResult==1
-				Object.Priority=0
-				Object.Type=TypeName[BlankObject]
-				TempValue0=1
-				TempValue1=0
-				TempValue4=Object.XPos
-				TempValue4-=2097152
-				while TempValue1<5
-					TempValue2=0
-					TempValue5=Object.YPos
-					TempValue5+=2097152
+		if Object.State == 0
+			PlayerObjectCollision(C_PLATFORM, -40, -24, 40, -8)
+			if CheckResult == 1
+				Object.Priority = 0
+				Object.Type = TypeName[BlankObject]
+				TempValue0 = 1
+				TempValue1 = 0
+				TempValue4 = Object.XPos
+				TempValue4 -= 2097152
+				while TempValue1 < 5
+					TempValue2 = 0
+					TempValue5 = Object.YPos
+					TempValue5 += 2097152
 					switch TempValue1
 					case 0
-						TempValue3=10
+						TempValue3 = 10
 						break
 					case 1
-						TempValue3=22
+						TempValue3 = 22
 						break
 					case 2
-						TempValue3=34
+						TempValue3 = 34
 						break
 					case 3
-						TempValue3=46
+						TempValue3 = 46
 						break
 					case 4
-						TempValue3=58
+						TempValue3 = 58
 						break
-					endswitch
-					while TempValue2<5
-						CreateTempObject(TypeName[CrumbleLedge1],TempValue0,TempValue4,TempValue5)
-						Object[TempObjectPos].Value0=TempValue3
-						Object[TempObjectPos].State=1
-						TempValue3+=5
+					end switch
+					while TempValue2 < 5
+						CreateTempObject(TypeName[CrumbleLedge1], TempValue0, TempValue4, TempValue5)
+						Object[TempObjectPos].Value0 = TempValue3
+						Object[TempObjectPos].State = 1
+						TempValue3 += 5
 						TempValue0++
 						TempValue2++
-						TempValue5-=1048576
+						TempValue5 -= 1048576
 					loop
-					TempValue3-=8
+					TempValue3 -= 8
 					TempValue1++
-					TempValue4+=1048576
+					TempValue4 += 1048576
 				loop
-				PlayStageSfx(0,0)
-			endif
-		endif
+				PlayStageSfx(0, 0)
+			end if
+		end if
 		break
 	case 4
 	case 9
 	case 14
 	case 19
 	case 24
-		if Object.Value0>0
-			PlayerObjectCollision(C_PLATFORM,-8,-8,8,8)
-		endif
+		if Object.Value0 > 0
+			PlayerObjectCollision(C_PLATFORM, -8, -8, 8, 8)
+		end if
 		break
-	endswitch
-endsub
+	end switch
+end sub
 
 
 sub ObjectDraw
-	if Object.State<2
+	if Object.State < 2
 		DrawSprite(Object.PropertyValue)
-	endif
-endsub
+	end if
+end sub
 
 
 sub ObjectStartup
 	LoadSpriteSheet("R1/Objects2.gif")
-	SpriteFrame(-40,-40,80,80,1,1)
-	TempValue1=1
-	while TempValue1<80
-		TempValue0=65
-		while TempValue0>0
-			SpriteFrame(-8,-8,16,16,TempValue1,TempValue0)
-			TempValue0-=16
+	SpriteFrame(-40, -40, 80, 80, 1, 1)
+	TempValue1 = 1
+	while TempValue1 < 80
+		TempValue0 = 65
+		while TempValue0 > 0
+			SpriteFrame(-8, -8, 16, 16, TempValue1, TempValue0)
+			TempValue0 -= 16
 		loop
-		TempValue1+=16
+		TempValue1 += 16
 	loop
-endsub
+end sub
 
 sub RSDK
 	LoadSpriteSheet("Global/Display.gif")
-	SetEditorIcon(Icon0,SingleIcon,-16,-16,32,32,1,143)
-endsub
+	SetEditorIcon(Icon0, SingleIcon, -16, -16, 32, 32, 1, 143)
+end sub

@@ -15,105 +15,105 @@ sub ObjectDraw
 		DrawSprite(1)
 		break
 	case 2
-		TempValue0=Object.Frame
-		TempValue0>>=3
-		TempValue0+=2
+		TempValue0 = Object.Frame
+		TempValue0 >>= 3
+		TempValue0 += 2
 		DrawSprite(TempValue0)
 		Object.Frame++
-		Object.Frame&=15
-		if Object.Value0<4
-			TempValue0+=8
+		Object.Frame &= 15
+		if Object.Value0 < 4
+			TempValue0 += 8
 			DrawSprite(TempValue0)
-		endif
+		end if
 		Object.Value0++
-		Object.Value0&=7
+		Object.Value0 &= 7
 		break
 	case 3
-		TempValue0=Object.Frame
-		TempValue0&=15
-		TempValue0>>=3
-		TempValue0+=4
+		TempValue0 = Object.Frame
+		TempValue0 &= 15
+		TempValue0 >>= 3
+		TempValue0 += 4
 		DrawSprite(TempValue0)
 		Object.Frame++
-		if Object.Value0<4
-			TempValue0+=6
+		if Object.Value0 < 4
+			TempValue0 += 6
 			DrawSprite(TempValue0)
-		endif
+		end if
 		Object.Value0++
-		Object.Value0&=7
-		if Object.Frame==48
-			Object.Value0=0
-			Object.Frame=0
-			Object.State=4
-		endif
+		Object.Value0 &= 7
+		if Object.Frame == 48
+			Object.Value0 = 0
+			Object.Frame = 0
+			Object.State = 4
+		end if
 		break
 	case 4
 		DrawSprite(0)
-		if Object.Value0<20
+		if Object.Value0 < 20
 			Object.Value0++
 		else
-			Object.Value0=0
-			Object.State=3
-		endif
+			Object.Value0 = 0
+			Object.State = 3
+		end if
 		break
 	case 5
 		DrawSprite(1)
-		if Object.Value0<20
+		if Object.Value0 < 20
 			Object.Value0++
 		else
-			Object.Value0=0
-			Object.Frame=0
-			Object.State=3
-		endif
+			Object.Value0 = 0
+			Object.Frame = 0
+			Object.State = 3
+		end if
 		break
 	case 6
-		TempValue0=Object.Frame
-		TempValue0/=6
-		TempValue0+=6
+		TempValue0 = Object.Frame
+		TempValue0 /= 6
+		TempValue0 += 6
 		DrawSprite(TempValue0)
 		Object.Frame++
-		Object.Frame%=24
-		TempValue0=Object.Value0
-		TempValue0/=6
-		TempValue0+=12
-		TempValue1=Object.Value0
-		TempValue1%=6
-		if TempValue1<3
-			Object.Direction=FACING_LEFT
-			DrawSpriteFX(TempValue0,FX_FLIP,Object.XPos,Object.YPos)
-			Object.Direction=FACING_RIGHT
-		endif
+		Object.Frame %= 24
+		TempValue0 = Object.Value0
+		TempValue0 /= 6
+		TempValue0 += 12
+		TempValue1 = Object.Value0
+		TempValue1 %= 6
+		if TempValue1 < 3
+			Object.Direction = FACING_LEFT
+			DrawSpriteFX(TempValue0, FX_FLIP, Object.XPos, Object.YPos)
+			Object.Direction = FACING_RIGHT
+		end if
 		Object.Value0++
-		Object.Value0%=12
-		Object.XPos+=65536
-		if Object.OutOfBounds==1
-			ResetObjectEntity(Object.EntityNo,TypeName[BlankObject],0,0,0)
-		endif
+		Object.Value0 %= 12
+		Object.XPos += 65536
+		if Object.OutOfBounds == 1
+			ResetObjectEntity(Object.EntityNo, TypeName[BlankObject], 0, 0, 0)
+		end if
 		break
-	endswitch
-endsub
+	end switch
+end sub
 
 
 sub ObjectStartup
 	LoadSpriteSheet("R5/Objects2.gif")
-	SpriteFrame(-24,-24,40,56,174,181)
-	SpriteFrame(-24,-24,40,56,215,181)
-	SpriteFrame(-24,-24,48,48,158,18)
-	SpriteFrame(-24,-24,48,48,207,18)
-	SpriteFrame(-24,-24,48,56,158,67)
-	SpriteFrame(-24,-24,48,56,207,67)
-	SpriteFrame(-32,-25,64,48,66,138)
-	SpriteFrame(-32,-23,48,56,150,124)
-	SpriteFrame(-32,-21,56,56,199,124)
-	SpriteFrame(-32,-23,48,56,150,124)
-	SpriteFrame(-24,-40,48,16,158,1)
-	SpriteFrame(-24,-40,48,16,207,1)
-	SpriteFrame(-20,-40,0,0,158,1)
-	SpriteFrame(-20,-40,48,16,158,1)
-	SpriteFrame(-20,-40,48,16,207,1)
-endsub
+	SpriteFrame(-24, -24, 40, 56, 174, 181)
+	SpriteFrame(-24, -24, 40, 56, 215, 181)
+	SpriteFrame(-24, -24, 48, 48, 158, 18)
+	SpriteFrame(-24, -24, 48, 48, 207, 18)
+	SpriteFrame(-24, -24, 48, 56, 158, 67)
+	SpriteFrame(-24, -24, 48, 56, 207, 67)
+	SpriteFrame(-32, -25, 64, 48, 66, 138)
+	SpriteFrame(-32, -23, 48, 56, 150, 124)
+	SpriteFrame(-32, -21, 56, 56, 199, 124)
+	SpriteFrame(-32, -23, 48, 56, 150, 124)
+	SpriteFrame(-24, -40, 48, 16, 158, 1)
+	SpriteFrame(-24, -40, 48, 16, 207, 1)
+	SpriteFrame(-20, -40, 0, 0, 158, 1)
+	SpriteFrame(-20, -40, 48, 16, 158, 1)
+	SpriteFrame(-20, -40, 48, 16, 207, 1)
+end sub
 
 sub RSDK
 	LoadSpriteSheet("Global/Display.gif")
-	SetEditorIcon(Icon0,SingleIcon,-16,-16,32,32,1,143)
-endsub
+	SetEditorIcon(Icon0, SingleIcon, -16, -16, 32, 32, 1, 143)
+end sub

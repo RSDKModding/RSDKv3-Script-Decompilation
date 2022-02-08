@@ -9,68 +9,68 @@
 sub ObjectMain
 	switch Object.State
 	case 0
-		if Object.Value1>0
-			Object.Value1-=2
+		if Object.Value1 > 0
+			Object.Value1 -= 2
 		else
-			Object.State=1
-			Object.Direction=FACING_LEFT
-		endif
+			Object.State = 1
+			Object.Direction = FACING_LEFT
+		end if
 		break
 	case 1
-		if Object.Value1<256
-			Object.Value1+=2
+		if Object.Value1 < 256
+			Object.Value1 += 2
 		else
-			Object.State=0
-			Object.Direction=FACING_RIGHT
-		endif
+			Object.State = 0
+			Object.Direction = FACING_RIGHT
+		end if
 		break
-	endswitch
+	end switch
 	Object.Value0++
-	if Object.Value0>19
-		Object.Value0=0
+	if Object.Value0 > 19
+		Object.Value0 = 0
 		Object.Frame++
-		Object.Frame&=1
-	endif
-endsub
+		Object.Frame &= 1
+	end if
+end sub
 
 
 sub ObjectDraw
-	if MetalSonic_Destroyed==1
-		Cos(TempValue0,Object.Value1)
-		TempValue0<<=14
-		TempValue0+=Object.XPos
-		Sin(TempValue1,Object.Value1)
-		TempValue1<<=14
-		TempValue1+=Object.YPos
-		DrawSpriteFX(Object.Frame,FX_FLIP,TempValue0,TempValue1)
+	if MetalSonic_Destroyed == 1
+		Cos(TempValue0, Object.Value1)
+		TempValue0 <<= 14
+		TempValue0 += Object.XPos
+		Sin(TempValue1, Object.Value1)
+		TempValue1 <<= 14
+		TempValue1 += Object.YPos
+		DrawSpriteFX(Object.Frame, FX_FLIP, TempValue0, TempValue1)
 	else
-		if Object[24].PropertyValue==2
-			Cos(TempValue0,Object.Value1)
-			TempValue0<<=14
-			TempValue0+=Object.XPos
-			Sin(TempValue1,Object.Value1)
-			TempValue1<<=14
-			TempValue1+=Object.YPos
-			DrawSpriteFX(Object.Frame,FX_FLIP,TempValue0,TempValue1)
-		endif
-	endif
-endsub
+		if Object[24].PropertyValue == 2
+			Cos(TempValue0, Object.Value1)
+			TempValue0 <<= 14
+			TempValue0 += Object.XPos
+			Sin(TempValue1, Object.Value1)
+			TempValue1 <<= 14
+			TempValue1 += Object.YPos
+			DrawSpriteFX(Object.Frame, FX_FLIP, TempValue0, TempValue1)
+		end if
+	end if
+end sub
 
 
 sub ObjectStartup
 	LoadSpriteSheet("R8/Objects2.gif")
-	SpriteFrame(-8,-8,16,16,143,110)
-	SpriteFrame(-8,-8,16,16,143,127)
-	ArrayPos0=32
-	while ArrayPos0<1056
-		if Object[ArrayPos0].Type==TypeName[FlyingBird]
-			Object[ArrayPos0].DrawOrder=5
-		endif
+	SpriteFrame(-8, -8, 16, 16, 143, 110)
+	SpriteFrame(-8, -8, 16, 16, 143, 127)
+	ArrayPos0 = 32
+	while ArrayPos0 < 1056
+		if Object[ArrayPos0].Type == TypeName[FlyingBird]
+			Object[ArrayPos0].DrawOrder = 5
+		end if
 		ArrayPos0++
 	loop
-endsub
+end sub
 
 sub RSDK
 	LoadSpriteSheet("Global/Display.gif")
-	SetEditorIcon(Icon0,SingleIcon,-16,-16,32,32,1,143)
-endsub
+	SetEditorIcon(Icon0, SingleIcon, -16, -16, 32, 32, 1, 143)
+end sub
