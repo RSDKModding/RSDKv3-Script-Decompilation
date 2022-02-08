@@ -3,12 +3,24 @@
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
 //-------Aliases-------//
-#alias 1: TYPE_SEGA
+#alias Object.Value0 : SEGA.Fade
+#alias Object.Value1 : SEGA.RectAlpha //Only Used in Mobile
 
+//-------States--------//
+#alias 0 : SEGA_SETUP
+#alias 1 : SEGA_FADEIN
+#alias 2 : SEGA_JINGLE
+#alias 3 : SEGA_FADEOUT
+
+//--Callbacks & Engine States--//
+#alias 0 : CALLBACK_DISPLAYLOGOS
+#alias 7 : CALLBACK_EXIT_SELECTED
+
+#alias 5 : ENGINE_ENTER_HIRESMODE
 
 sub ObjectMain
 	switch Object.State
-	case 0
+	case SEGA_SETUP
 		ReadSaveRAM()
 		if SaveRAM[32] == 1
 			Engine.BGMVolume = SaveRAM[33]
@@ -19,8 +31,8 @@ sub ObjectMain
 		end if
 #platform: Mobile
 		Options.Soundtrack = SaveRAM[38]
-		Object.State = 1
-		Object.Value0 = 384
+		Object.State = SEGA_FADEIN
+		SEGA.Fade = 384
 		Object.Alpha = 255
 		Object.InkEffect = 2
 		SetScreenFade(0, 0, 0, 255)
@@ -28,59 +40,64 @@ sub ObjectMain
 		Object.iXPos = Screen.CenterX
 #platform: Standard
 		Object.Type = TypeName[Sonic]
-		EngineCallback(0)
+		EngineCallback(CALLBACK_DISPLAYLOGOS)
 #endplatform
 #platform: Mobile
-		Engine.State = 5
+		Engine.State = ENGINE_ENTER_HIRESMODE
 #endplatform
 		break
-	case 1
-		if Object.Value0 > 0
-			Object.Value0 -= 8
+
+	case SEGA_FADEIN
+		if SEGA.Fade > 0
+			SEGA.Fade -= 8
 		else
 			if Engine.OnlineActive < 2
-				Object.State = 2
+				Object.State = SEGA_JINGLE
 			end if
 		end if
-		SetScreenFade(0, 0, 0, Object.Value0)
+		SetScreenFade(0, 0, 0, SEGA.Fade)
 		break
-	case 2
-		Object.Value0++
-		if Object.Value0 == 160
-			Object.Value0 = 0
-			Object.State = 3
+
+	case SEGA_JINGLE
+		SEGA.Fade++
+		if SEGA.Fade == 160
+			SEGA.Fade = 0
+			Object.State = SEGA_FADEOUT
 		end if
-		if Object.Value0 == 2
+		if SEGA.Fade == 2
 			PlayStageSfx(0, 0)
 		end if
 		break
-	case 3
+
+	case SEGA_FADEOUT
 #platform: Mobile
-		if Object.Value1 < 256
-			Object.Value1 += 8
+		if SEGA.RectAlpha < 256
+			SEGA.RectAlpha += 8
 		end if
 #endplatform
 		if Object.Alpha > 7
 			Object.Alpha -= 8
 		else
-			if Object.Value0 == 16
+			if SEGA.Fade == 16
 				ResetObjectEntity(Object.EntityNo, TypeName[CWLogo], 0, Object.XPos, Object.YPos)
 				Object.InkEffect = 2
 				Object.Alpha = 0
-				Object.Value0 = 0
+				SEGA.Fade = 0
 #platform: Mobile
-				Object.Value3 = 96
+				Object.Value3 = 96	//Unknown Use
 #endplatform
 			else
-				Object.Value0++
+				SEGA.Fade++
 			end if
 		end if
 		break
+		
 	end switch
+	
 #platform: Mobile
 	if Engine.PlatformID == RETRO_WP7
 		if KeyPress.ButtonB == 1
-			EngineCallback(7)
+			EngineCallback(CALLBACK_EXIT_SELECTED)
 		end if
 	end if
 #endplatform
@@ -99,7 +116,7 @@ sub ObjectDraw
 #platform: Mobile
 	Object.Scale = 128
 	DrawSpriteFX(0, FX_SCALE, Object.XPos, Object.YPos)
-	DrawRect(0, 0, Screen.XSize, Screen.YSize, 0, 0, 96, Object.Value1)
+	DrawRect(0, 0, Screen.XSize, Screen.YSize, 0, 0, 96, SEGA.RectAlpha)
 #endplatform
 end sub
 
@@ -107,12 +124,12 @@ end sub
 sub ObjectStartup
 #platform: Standard
 	LoadSpriteSheet("Title/Title.gif")
-	SpriteFrame(-49, -16, 98, 31, 106, 1)
+	SpriteFrame(-49, -16, 98, 31, 106, 1)	// #0 - '93 Sega Logo(Unused)
 #endplatform
 
 #platform: Mobile
 	LoadSpriteSheet("Title/Sega.gif")
-	SpriteFrame(-255, -87, 510, 174, 1, 1)
+	SpriteFrame(-255, -87, 510, 174, 1, 1)	// #0 - Sega Logo
 #endplatform
 end sub
 

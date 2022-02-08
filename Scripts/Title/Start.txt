@@ -1,10 +1,34 @@
-//------------Sonic CD TouchStart Script-------------//
+//------------Sonic CD TouchStart/Start Script-------------//
 //--------Scripted by Christian Whitehead 'The Taxman'--------//
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
 //-------Aliases-------//
-#alias 6: TYPE_TOUCHSTART
+#alias Object.Value0 : Start.Fade
+#alias Object.Value1 : Start.StageSelectCheatPos
+#alias Object.Value2 : Start.SoundTestCheatPos
+#alias Object.Value3 : Start.DemoTimer
 
+//-------States--------//
+#alias 0 : START_SETUP
+#alias 1 : STAGE_GOTO_MENU
+#alias 2 : STAGE_GOTO_STAGESELECT
+#alias 3 : STAGE_GOTO_SOUNDTEST
+#alias 4 : STAGE_GOTO_DEMO
+
+//--Callbacks & Engine States--//
+#alias 1  : CALLBACK_PRESS_START
+#alias 7  : CALLBACK_EXIT_SELECTED
+#alias 16 : CALLBACK_MOREGAMES
+
+//--------Languages--------//
+#alias 0 : ENGLISH
+#alias 1 : FRENCH
+#alias 2 : ITALIAN
+#alias 3 : GERMAN
+#alias 4 : SPANISH
+#alias 5 : JAPANESE
+
+#function TouchStart_HandleCheatCode	//Entirely functional yet unused
 
 function TouchStart_HandleCheatCode
 	TempValue0 = 0
@@ -29,132 +53,145 @@ function TouchStart_HandleCheatCode
 	if KeyPress.ButtonC == 1
 		TempValue0 = 7
 	end if
-	switch Object.Value1
+	switch Start.StageSelectCheatPos	// UP - DOWN - DOWN - LEFT - RIGHT - B
 	case 0
 		if TempValue0 == 1
-			Object.Value1++
+			Start.StageSelectCheatPos++
 		else
 			if TempValue0 != 0
-				Object.Value1 = 0
+				Start.StageSelectCheatPos = 0
 			end if
 		end if
 		break
+
 	case 1
 		if TempValue0 == 2
-			Object.Value1++
+			Start.StageSelectCheatPos++
 		else
 			if TempValue0 != 0
-				Object.Value1 = 0
+				Start.StageSelectCheatPos = 0
 			end if
 		end if
 		break
+
 	case 2
 		if TempValue0 == 2
-			Object.Value1++
+			Start.StageSelectCheatPos++
 		else
 			if TempValue0 != 0
-				Object.Value1 = 0
+				Start.StageSelectCheatPos = 0
 			end if
 		end if
 		break
+
 	case 3
 		if TempValue0 == 3
-			Object.Value1++
+			Start.StageSelectCheatPos++
 		else
 			if TempValue0 != 0
-				Object.Value1 = 0
+				Start.StageSelectCheatPos = 0
 			end if
 		end if
 		break
+
 	case 4
 		if TempValue0 == 4
-			Object.Value1++
+			Start.StageSelectCheatPos++
 		else
 			if TempValue0 != 0
-				Object.Value1 = 0
+				Start.StageSelectCheatPos = 0
 			end if
 		end if
 		break
+
 	case 5
 		if TempValue0 == 6
-			Object.Value1 = 0
-			Object.State = 2
+			Start.StageSelectCheatPos = 0
+			Object.State = STAGE_GOTO_STAGESELECT
 			StopMusic()
 			PlaySfx(1, 0)
 		else
 			if TempValue0 != 0
-				Object.Value1 = 0
+				Start.StageSelectCheatPos = 0
 			end if
 		end if
 		break
+
 	end switch
-	switch Object.Value2
+
+	switch Start.SoundTestCheatPos	// DOWN - DOWN - DOWN - LEFT - RIGHT - A
 	case 0
 		if TempValue0 == 2
-			Object.Value2++
+			Start.SoundTestCheatPos++
 		else
 			if TempValue0 != 0
-				Object.Value2 = 0
+				Start.SoundTestCheatPos = 0
 			end if
 		end if
 		break
+
 	case 1
 		if TempValue0 == 2
-			Object.Value2++
+			Start.SoundTestCheatPos++
 		else
 			if TempValue0 != 0
-				Object.Value2 = 0
+				Start.SoundTestCheatPos = 0
 			end if
 		end if
 		break
+
 	case 2
 		if TempValue0 == 2
-			Object.Value2++
+			Start.SoundTestCheatPos++
 		else
 			if TempValue0 != 0
-				Object.Value2 = 0
+				Start.SoundTestCheatPos = 0
 			end if
 		end if
 		break
+
 	case 3
 		if TempValue0 == 3
-			Object.Value2++
+			Start.SoundTestCheatPos++
 		else
 			if TempValue0 != 0
-				Object.Value2 = 0
+				Start.SoundTestCheatPos = 0
 			end if
 		end if
 		break
+
 	case 4
 		if TempValue0 == 4
-			Object.Value2++
+			Start.SoundTestCheatPos++
 		else
 			if TempValue0 != 0
-				Object.Value2 = 0
+				Start.SoundTestCheatPos = 0
 			end if
 		end if
 		break
+
 	case 5
 		if TempValue0 == 5
-			Object.Value2 = 0
-			Object.State = 3
+			Start.SoundTestCheatPos = 0
+			Object.State = STAGE_GOTO_SOUNDTEST
 			StopMusic()
 			PlaySfx(1, 0)
 		else
 			if TempValue0 != 0
-				Object.Value2 = 0
+				Start.SoundTestCheatPos = 0
 			end if
 		end if
 		break
+
 	end switch
 end function
 
 
 sub ObjectMain
 	switch Object.State
-	case 0
-#platform: Standard						  
-		if KeyPress.AnyStart == 1
+	case START_SETUP
+#platform: Standard
+		CheckEqual(KeyPress.AnyStart,1)
 #endplatform
 
 #platform: Mobile
@@ -162,9 +199,10 @@ sub ObjectMain
 		if KeyPress.Start == 1
 			CheckResult = 0
 		end if
-		if CheckResult > -1
+		CheckGreater(CheckResult,-1)
 #endplatform   
-			Object.State = 1
+		if CheckResult == 1
+			Object.State = STAGE_GOTO_MENU
 			StopMusic()
 			PlaySfx(27, 0)
 #platform: Use_Haptics
@@ -172,56 +210,61 @@ sub ObjectMain
 #endplatform
 
 #platform: Standard
-			EngineCallback(1)
+			EngineCallback(CALLBACK_PRESS_START)
 #endplatform
 		else
-			Object.Value3++
-			if Object.Value3 == 1550
-				Object.State = 4
+			Start.DemoTimer++
+			if Start.DemoTimer == 1550
+				Object.State = STAGE_GOTO_DEMO
 			end if
 		end if
+
 #platform: Mobile
 		if Engine.PlatformID == RETRO_WP7
 			if KeyPress.ButtonB == 1
-				EngineCallback(7)
+				EngineCallback(CALLBACK_EXIT_SELECTED)
 			end if
 		end if
 #endplatform
 		break
-	case 1
-		Object.Value0 += 4
+
+	case STAGE_GOTO_MENU
+		Start.Fade += 4
 #platform: Standard
-		if Object.Value0 == 380
-			EngineCallback(16)
+		if Start.Fade == 380
+			EngineCallback(CALLBACK_MOREGAMES)	//SONIC DASH PLAY NOW!
 		end if
 #endplatform
-		if Object.Value0 == 384
+		if Start.Fade == 384
 			Stage.ListPos = 1
 			LoadStage()
 		end if
-		SetScreenFade(0, 0, 0, Object.Value0)
+		SetScreenFade(0, 0, 0, Start.Fade)
 		break
-	case 2
-		Object.Value0 += 4
-		if Object.Value0 == 384
+
+	case STAGE_GOTO_STAGESELECT
+		Start.Fade += 4
+		if Start.Fade == 384
 			Options.GameMode = 0
 			Stage.ListPos = 3
 			LoadStage()
 		end if
-		SetScreenFade(0, 0, 0, Object.Value0)
+		SetScreenFade(0, 0, 0, Start.Fade)
 		break
-	case 3
-		Object.Value0 += 4
-		if Object.Value0 == 384
+
+	case STAGE_GOTO_SOUNDTEST
+		Start.Fade += 4
+		if Start.Fade == 384
 			Options.GameMode = 0
 			Stage.ListPos = 4
 			LoadStage()
 		end if
-		SetScreenFade(0, 0, 0, Object.Value0)
+		SetScreenFade(0, 0, 0, Start.Fade)
 		break
-	case 4
-		Object.Value0 += 4
-		if Object.Value0 == 384
+
+	case STAGE_GOTO_DEMO
+		Start.Fade += 4
+		if Start.Fade == 384
 #platform: Use_Haptics
 			Engine.HapticsEnabled = 0
 #endplatform
@@ -244,33 +287,39 @@ sub ObjectMain
 			end if
 #endplatform
 			switch Options.DemoNumber
-			case 0
+			case 0	//Palmtree Panic 1 Present Demo
 				Stage.ActiveList = REGULAR_STAGE
 				Stage.ListPos = 0
 				break
-			case 1
+
+			case 1	//Special Stage 1 Demo
 				Stage.ActiveList = SPECIAL_STAGE
 				Stage.ListPos = 0
 				break
-			case 2
+
+			case 2	//Tidal Tempest 3 Good Future Demo
 				Stage.ActiveList = REGULAR_STAGE
 				Stage.ListPos = 28
 				break
-			case 3
+
+			case 3	//Special Stage 5 Demo
 				Stage.ActiveList = SPECIAL_STAGE
 				Stage.ListPos = 5
 				break
-			case 4
+
+			case 4	//Metallic Madness 2 Present Demo
 				Stage.ActiveList = REGULAR_STAGE
 				Stage.ListPos = 64
 				break
+
 			end switch
 			Options.DemoNumber++
 			Options.DemoNumber %= 5
 			LoadStage()
 		end if
-		SetScreenFade(0, 0, 0, Object.Value0)
+		SetScreenFade(0, 0, 0, Start.Fade)
 		break
+
 	end switch
 end sub
 
@@ -290,43 +339,53 @@ sub ObjectStartup
 	LoadSpriteSheet("Title/Title.gif")
 #platform: Standard
 	switch Engine.Language
-	case 0
-	case 5
-		SpriteFrame(-43, 0, 87, 11, 106, 103)
+	case ENGLISH
+	case JAPANESE
+		SpriteFrame(-43, 0, 87, 11, 106, 103)	//	English Press Start
 		break
-	case 1
-		SpriteFrame(-60, 0, 120, 11, 391, 387)
+
+	case FRENCH
+		SpriteFrame(-60, 0, 120, 11, 391, 387)	//	French Press Start
 		break
-	case 2
-		SpriteFrame(-44, 0, 88, 11, 270, 411)
+
+	case ITALIAN
+		SpriteFrame(-44, 0, 88, 11, 270, 411)	//	Italian Press Start
 		break
-	case 3
-		SpriteFrame(-52, -2, 106, 13, 405, 373)
+		
+	case GERMAN
+		SpriteFrame(-52, -2, 106, 13, 405, 373)	//	German Press Start
 		break
-	case 4
-		SpriteFrame(-43, 0, 87, 11, 274, 435)
+
+	case SPANISH
+		SpriteFrame(-43, 0, 87, 11, 274, 435)	//	Spanish Press Start
 		break
+
 	end switch
 #endplatform
 
 #platform: Mobile
 	switch Engine.Language
-	case 0
-	case 5
-		SpriteFrame(-56, 0, 117, 11, 106, 91)
+	case ENGLISH
+	case JAPANESE
+		SpriteFrame(-56, 0, 117, 11, 106, 91)	//	English Touch to Start
 		break
-	case 1
-		SpriteFrame(-94, 0, 189, 11, 322, 399)
+
+	case FRENCH
+		SpriteFrame(-94, 0, 189, 11, 322, 399)	//	French Touch to Start
 		break
-	case 2
-		SpriteFrame(-76, 0, 152, 11, 359, 411)
+
+	case ITALIAN
+		SpriteFrame(-76, 0, 152, 11, 359, 411)	//	Italian Touch To Start
 		break
-	case 3
-		SpriteFrame(-87, 0, 175, 11, 336, 423)
+
+	case GERMAN
+		SpriteFrame(-87, 0, 175, 11, 336, 423)	//	German Touch to Start
 		break
-	case 4
-		SpriteFrame(-74, 0, 149, 11, 362, 435)
+
+	case SPANISH
+		SpriteFrame(-74, 0, 149, 11, 362, 435)	//	Spanish Touch To Start
 		break
+
 	end switch
 #endplatform
 end sub

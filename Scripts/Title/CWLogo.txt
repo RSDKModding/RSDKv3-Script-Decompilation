@@ -1,109 +1,135 @@
 //------------Sonic CD CWLogo Script-------------//
 //--------Scripted by Christian Whitehead 'The Taxman'--------//
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
+//---This Object is normally only used by Mobile Data files---//
 
 //-------Aliases-------//
-#alias 7: TYPE_CWLOGO
+#alias Object.Value0	: CWLogo.Timer
+#alias Object.Value1	: CWLogo.RectAlpha	//Only used in mobile
+#alias Object.Value2 	: CWLogo.BGScale
 
+#alias Object.Rotation	: CWLogo.Rotation
+#alias Object.Alpha		: CWLogo.Alpha
+#alias Object.Scale		: CWLogo.Scale
+
+//-------States--------//
+#alias 0 : CWLOGO_SETUP
+#alias 1 : CWLOGO_BGSCALE_INCREASE_1
+#alias 2 : CWLOGO_BGSCALE_INCREASE_2
+#alias 3 : CWLOGO_LOGO_FADEIN
+#alias 4 : CWLOGO_BGSCALE_DECREASE
+#alias 5 : CWLOGO_LOGO_FADEOUT
+
+//--Callbacks & Engine States--//
+#alias 7 : CALLBACK_EXIT_SELECTED
+
+#alias 6 : ENGINE_EXIT_HIRESMODE
 
 sub ObjectMain
 	switch Object.State
-	case 0
-		Object.Rotation = 0
-		Object.Value2 = 0
+	case CWLOGO_SETUP
+		CWLogo.Rotation = 0
+		CWLogo.BGScale = 0
 		Object.State++
 		break
-	case 1
-		if Object.Value2 < 2048
-			if Object.Value2 < 2048
-				Object.Value2 += 64
+
+	case CWLOGO_BGSCALE_INCREASE_1
+		if CWLogo.BGScale < 2048
+			if CWLogo.BGScale < 2048
+				CWLogo.BGScale += 64
 			else
-				Object.Value2 += 128
+				CWLogo.BGScale += 128
 			end if
 		else
-			Object.Value1 = 256
+			CWLogo.RectAlpha = 256
 			Object.State++
 		end if
-		Object.Rotation += 8
-		Object.Rotation &= 511
+		CWLogo.Rotation += 8
+		CWLogo.Rotation &= 511
 		break
-	case 2
-		if Object.Value2 < 4096
-			if Object.Value2 < 2048
-				Object.Value2 += 64
+
+	case CWLOGO_BGSCALE_INCREASE_2
+		if CWLogo.BGScale < 4096
+			if CWLogo.BGScale < 2048
+				CWLogo.BGScale += 64
 			else
-				Object.Value2 += 128
+				CWLogo.BGScale += 128
 			end if
-			Object.Rotation += 8
-			Object.Rotation &= 511
+			CWLogo.Rotation += 8
+			CWLogo.Rotation &= 511
 		end if
-		if Object.Value1 > 0
-			Object.Value1 -= 8
+		if CWLogo.RectAlpha > 0
+			CWLogo.RectAlpha -= 8
 		else
 			Object.State++
 		end if
 		break
-	case 3
-		if Object.Value0 < 144
-			Object.Value0++
+
+	case CWLOGO_LOGO_FADEIN
+		if CWLogo.Timer < 144
+			CWLogo.Timer++
 		else
-			Object.Value0 = 0
+			CWLogo.Timer = 0
 #platform: Mobile
-			Object.Value3 = 0
+			Object.Value3 = 0	//Unknown Usage
 #endplatform
 			Object.State++
 		end if
 		break
-	case 4
-		if Object.Value2 > 0
-			if Object.Value2 < 2048
-				Object.Value2 -= 64
+
+	case CWLOGO_BGSCALE_DECREASE
+		if CWLogo.BGScale > 0
+			if CWLogo.BGScale < 2048
+				CWLogo.BGScale -= 64
 			else
-				Object.Value2 -= 128
+				CWLogo.BGScale -= 128
 			end if
 			Object.Rotation -= 8
 			if Object.Rotation < 0
 				Object.Rotation += 512
 			end if
 		end if
-		if Object.Value1 < 256
-			Object.Value1 += 10
+		if CWLogo.RectAlpha < 256
+			CWLogo.RectAlpha += 10
 		else
-			Object.Value1 = 256
 			Object.State++
+			CWLogo.RectAlpha = 256
 		end if
 		break
-	case 5
-		if Object.Value2 > 0
-			if Object.Value2 < 2048
-				Object.Value2 -= 64
+
+	case CWLOGO_LOGO_FADEOUT
+		if CWLogo.BGScale > 0
+			if CWLogo.BGScale < 2048
+				CWLogo.BGScale -= 64
 			else
-				Object.Value2 -= 128
+				CWLogo.BGScale -= 128
 			end if
 			Object.Rotation -= 8
 			if Object.Rotation < 0
 				Object.Rotation += 512
 			end if
 		else
-			if Object.Value0 == 16
+			if CWLogo.Timer == 16
 				ResetObjectEntity(Object.EntityNo, TypeName[Sonic], 0, Object.XPos, Object.YPos)
 				Object.InkEffect = 2
-				Object.Alpha = 0
-				Object.Value0 = 0
+				CWLogo.Alpha = 0
+				CWLogo.Timer = 0
 #platform: Mobile
-				Engine.State = 6
-				Object.Value1 = 256
+				Engine.State = ENGINE_EXIT_HIRESMODE
+				CWLogo.RectAlpha = 256
 #endplatform
 			else
-				Object.Value0++
+				CWLogo.Timer++
 			end if
 		end if
 		break
+
 	end switch
+
 #platform: Mobile
 	if Engine.PlatformID == RETRO_WP7
 		if KeyPress.ButtonB == 1
-			EngineCallback(7)
+			EngineCallback(CALLBACK_EXIT_SELECTED)
 		end if
 	end if
 #endplatform
@@ -111,37 +137,40 @@ end sub
 
 
 sub ObjectDraw
+	//8 Point Star Pattern
 	DrawRect(0, 0, Screen.XSize, Screen.YSize, 0, 0, 96, 255)
-	Object.Scale = Object.Value2
+	CWLogo.Scale = CWLogo.BGScale
 	DrawSpriteFX(1, FX_ROTOZOOM, Object.XPos, Object.YPos)
 	Object.Rotation += 64
 	DrawSpriteFX(1, FX_ROTOZOOM, Object.XPos, Object.YPos)
 	Object.Rotation -= 64
+	//Logo Fade In-Out
 	switch Object.State
-	case 2
-	case 3
-	case 4
+	case CWLOGO_BGSCALE_INCREASE_2
+	case CWLOGO_LOGO_FADEIN
+	case CWLOGO_BGSCALE_DECREASE
 #platform: Standard
-		Object.Scale = 160
+		CWLogo.Scale = 160
 #endplatform
 #platform: Mobile
-		Object.Scale = 192
+		CWLogo.Scale = 192
 #endplatform
 		DrawSpriteFX(0, FX_SCALE, Object.XPos, Object.YPos)
 		TempValue0 = Screen.CenterX
 		TempValue0 -= 96
 		TempValue1 = Screen.CenterY
 		TempValue1 -= 48
-		DrawRect(TempValue0, TempValue1, 192, 96, 255, 149, 18, Object.Value1)
+		DrawRect(TempValue0, TempValue1, 192, 96, 255, 149, 18, CWLogo.RectAlpha)
 		break
+		
 	end switch
 end sub
 
 
 sub ObjectStartup
 	LoadSpriteSheet("Title/CWLogo.gif")
-	SpriteFrame(-255, -117, 510, 235, 1, 1)
-	SpriteFrame(-32, -32, 64, 64, 1, 1)
+	SpriteFrame(-255, -117, 510, 235, 1, 1)	// #0 - Cristian Whitehead Logo 
+	SpriteFrame(-32, -32, 64, 64, 1, 1)		// #1 - Background
 end sub
 
 sub RSDK

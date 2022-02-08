@@ -3,19 +3,26 @@
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
 //-------Aliases-------//
-#alias 4: TYPE_BACKGROUND
-
+#alias Object.Value0 : BG.LPlanetYOffset
 
 sub ObjectDraw
+	//Sets a solid background color
 	TempValue0 = Screen.CenterX
 	TempValue0 <<= 1
 	DrawRect(0, 0, TempValue0, 100, 0, 0, 96, 255)
-	Sin(TempValue0, Object.Value0)
+	#platform: Use_Decomp
+		DrawRect(0, 0, TempValue0, 180, 0, 0, 96, 255)	//Fixes gray rectangle with Non-Mobile Datafile
+	#endplatform
+	
+	//Little Planet Movement
+	Sin(TempValue0, BG.LPlanetYOffset)
 	TempValue0 >>= 7
 	TempValue0 -= 16
 	DrawSpriteScreenXY(2, 280, TempValue0)
-	Object.Value0++
-	Object.Value0 &= 511
+	BG.LPlanetYOffset++
+	BG.LPlanetYOffset &= 511
+
+	//Water Movement
 	TempValue0 = 3
 	TempValue1 = 16
 	ArrayPos0 = 40
@@ -33,6 +40,7 @@ sub ObjectDraw
 		TempValue0++
 		TempValue1 += 8192
 	loop
+	//Unknown Use
 	Object.Value1++
 	Object.Value1 &= 511
 end sub
@@ -40,14 +48,16 @@ end sub
 
 sub ObjectStartup
 	LoadSpriteSheet("Title/Title.gif")
-	SpriteFrame(0, 0, 176, 68, 256, 4)
+	SpriteFrame(0, 0, 176, 68, 256, 4)		// #0 - Left Mountain
 #platform: Standard
-	SpriteFrame(-124, 0, 124, 68, 256, 77)
+	SpriteFrame(-124, 0, 124, 68, 256, 77)	// #1 - Right Mountain
 #endplatform
 #platform: Mobile
-	SpriteFrame(-174, 0, 174, 68, 246, 267)
+	SpriteFrame(-174, 0, 174, 68, 246, 267)	// #2 - Right Mountain (Mobile Data Only)
 #endplatform
-	SpriteFrame(0, 0, 120, 104, 257, 146)
+	SpriteFrame(0, 0, 120, 104, 257, 146)	// #3 - Little Planet
+	
+	//#4 - #20 rows of water sprites, from back to front
 	TempValue0 = 447
 	TempValue1 = 168
 	while TempValue0 < 511
@@ -56,6 +66,7 @@ sub ObjectStartup
 		TempValue0 += 4
 		TempValue1 += 4
 	loop
+	//#21 - #22 rows of water sprites, from back to front
 	TempValue0 -= 16
 	while TempValue1 < 240
 		SpriteFrame(0, TempValue1, 512, 4, 0, TempValue0)

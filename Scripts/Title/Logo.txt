@@ -3,8 +3,15 @@
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
 //-------Aliases-------//
-#alias 3: TYPE_LOGO
+#alias Object.Value0: Object.Fade
 
+//-------States--------//
+#alias 0 : LOGO_WHITE_FADEIN
+#alias 1 : LOGO_SONIC_ANIMATE
+#alias 2 : LOGO_SONIC_RESET
+
+//--Callbacks & Engine States--//
+#alias 7 : CALLBACK_EXIT_SELECTED
 
 sub ObjectDraw
 	TempValue0 = Screen.CenterX
@@ -12,8 +19,8 @@ sub ObjectDraw
 	DrawSpriteScreenXY(16, 0, 100)
 	DrawSpriteScreenXY(17, TempValue0, 100)
 	switch Object.State
-	case 0
-		SetScreenFade(255, 255, 255, Object.Value0)
+	case LOGO_WHITE_FADEIN
+		SetScreenFade(255, 255, 255, Object.Fade)
 		Object.Direction = FACING_RIGHT
 		DrawSpriteScreenFX(0, FX_FLIP, Screen.CenterX, 40)
 		Object.Direction = FACING_LEFT
@@ -24,14 +31,15 @@ sub ObjectDraw
 		DrawSpriteScreenXY(1, TempValue0, 135)
 		TempValue0 += 121
 		DrawSpriteScreenXY(4, TempValue0, 110)
-		if Object.Value0 > 0
-			Object.Value0 -= 8
+		if Object.Fade > 0
+			Object.Fade -= 8
 		else
-			Object.State = 1
+			Object.State = LOGO_SONIC_ANIMATE
 			Object.Frame = 4
-		end if
+		endif
 		break
-	case 1
+
+	case LOGO_SONIC_ANIMATE
 		Object.Direction = FACING_RIGHT
 		DrawSpriteScreenFX(0, FX_FLIP, Screen.CenterX, 40)
 		Object.Direction = FACING_LEFT
@@ -42,26 +50,27 @@ sub ObjectDraw
 				TempValue0 = Screen.CenterX
 				TempValue0 -= 43
 				DrawSpriteScreenXY(3, TempValue0, 48)
-			end if
-		end if
+			endif
+		endif
 		TempValue0 = Screen.CenterX
 		TempValue0 -= 110
 		DrawSpriteScreenXY(1, TempValue0, 135)
 		TempValue0 += 121
 		DrawSpriteScreenXY(Object.Frame, TempValue0, 110)
-		Object.Value0++
-		if Object.Value0 > 1
-			Object.Value0 = 0
+		Object.Fade++
+		if Object.Fade > 1
+			Object.Fade = 0
 			Object.Frame++
 			if Object.Frame > 15
-				Object.State = 2
-				Object[+1].Type = TypeName[TouchStart]
+				Object.State = LOGO_SONIC_RESET
+				Object[+1].Type = TypeName[Touch Start]
 				Object[+1].iXPos = Screen.CenterX
 				Object[+1].iYPos = 200
-			end if
-		end if
+			endif
+		endif
 		break
-	case 2
+
+	case LOGO_SONIC_RESET
 		Object.Direction = FACING_RIGHT
 		DrawSpriteScreenFX(0, FX_FLIP, Screen.CenterX, 40)
 		Object.Direction = FACING_LEFT
@@ -73,45 +82,49 @@ sub ObjectDraw
 		TempValue0 += 121
 		DrawSpriteScreenXY(4, TempValue0, 110)
 		break
+
 	end switch
+
 #platform: Mobile
 	if Engine.PlatformID == RETRO_WP7
 		if KeyPress.ButtonB == 1
-			EngineCallback(7)
-		end if
-	end if
+			EngineCallback(CALLBACK_EXIT_SELECTED)
+		endif
+	endif
 #endplatform
-end sub
+endsub
 
 
 sub ObjectStartup
 	LoadSpriteSheet("Title/Title.gif")
-	SpriteFrame(-130, 0, 130, 152, 381, 73)
-	SpriteFrame(0, 0, 220, 80, 1, 122)
-	SpriteFrame(-47, -96, 104, 120, 1, 1)
-	SpriteFrame(0, 0, 56, 48, 106, 33)
-	SpriteFrame(0, -38, 45, 55, 210, 203)
-	SpriteFrame(0, -44, 32, 61, 223, 125)
-	SpriteFrame(-1, -44, 25, 61, 230, 63)
-	SpriteFrame(-10, -44, 30, 61, 225, 1)
-	SpriteFrame(-1, -44, 25, 61, 230, 63)
-	SpriteFrame(0, -44, 32, 61, 223, 125)
-	SpriteFrame(0, -38, 45, 55, 210, 203)
-	SpriteFrame(0, -44, 32, 61, 223, 125)
-	SpriteFrame(-1, -44, 25, 61, 230, 63)
-	SpriteFrame(-10, -44, 30, 61, 225, 1)
-	SpriteFrame(-1, -44, 25, 61, 230, 63)
-	SpriteFrame(0, -44, 32, 61, 223, 125)
-	SpriteFrame(0, 0, 176, 68, 256, 4)
+	SpriteFrame(-130, 0, 130, 152, 381, 73)	// #0  - Logo Ring
+	SpriteFrame(0, 0, 220, 80, 1, 122)		// #1  - Logo Ribbon
+	SpriteFrame(-47, -96, 104, 120, 1, 1)	// #2  - Sonic
+	SpriteFrame(0, 0, 56, 48, 106, 33)		// #3  - Sonic Eyes
+	SpriteFrame(0, -38, 45, 55, 210, 203)	// #4  - Sonic Arm Frame 1
+	SpriteFrame(0, -44, 32, 61, 223, 125)	// #5  - Sonic Arm Frame 2
+	SpriteFrame(-1, -44, 25, 61, 230, 63)	// #6  - Sonic Arm Frame 3
+	SpriteFrame(-10, -44, 30, 61, 225, 1)	// #7  - Sonic Arm Frame 4
+	SpriteFrame(-1, -44, 25, 61, 230, 63)	// #8  - Sonic Arm Frame 5
+	SpriteFrame(0, -44, 32, 61, 223, 125)	// #9  - Sonic Arm Frame 6
+	SpriteFrame(0, -38, 45, 55, 210, 203)	// #10 - Sonic Arm Frame 7
+	SpriteFrame(0, -44, 32, 61, 223, 125)	// #11 - Sonic Arm Frame 8
+	SpriteFrame(-1, -44, 25, 61, 230, 63)	// #12 - Sonic Arm Frame 9
+	SpriteFrame(-10, -44, 30, 61, 225, 1)	// #13 - Sonic Arm Frame 10
+	SpriteFrame(-1, -44, 25, 61, 230, 63)	// #14 - Sonic Arm Frame 11
+	SpriteFrame(0, -44, 32, 61, 223, 125)	// #15 - Sonic Arm Frame 12
+	SpriteFrame(0, 0, 176, 68, 256, 4)		// #16 - Left Mountain
+
 #platform: Standard
-	SpriteFrame(-124, 0, 124, 68, 256, 77)
+	SpriteFrame(-124, 0, 124, 68, 256, 77)	// #17 - Right Mountain PC
 #endplatform
+
 #platform: Mobile
-	SpriteFrame(-174, 0, 174, 68, 246, 267)
+	SpriteFrame(-174, 0, 174, 68, 246, 267)	// #17 - Right Mountain Mobile (Mobile Data Only)
 #endplatform
-end sub
+endsub
 
 sub RSDK
 	LoadSpriteSheet("Global/Display.gif")
 	SetEditorIcon(Icon0, SingleIcon, -16, -16, 32, 32, 1, 143)
-end sub
+endsub

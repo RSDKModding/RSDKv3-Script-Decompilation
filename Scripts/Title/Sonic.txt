@@ -3,20 +3,23 @@
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
 //-------Aliases-------//
-#alias 2: TYPE_SONIC
+#alias Object.Value0 : Sonic.Fade
 
+//-------States--------//
+#alias 0 : SONIC_SETUP
+#alias 1 : SONIC_TURNING
 
 sub ObjectDraw
 	DrawRect(0, 0, Screen.XSize, Screen.YSize, 0, 0, 96, 255)
 	switch Object.State
-	case 0
+	case SONIC_SETUP
 		if Object.Alpha > 8
 			DrawSpriteFX(0, FX_INK, Object.XPos, Object.YPos)
 		end if
-		if Object.Value0 < 256
-			Object.Value0 += 8
-			if Object.Value0 < 256
-				Object.Alpha = Object.Value0
+		if Sonic.Fade < 256
+			Sonic.Fade += 8
+			if Sonic.Fade < 256
+				Object.Alpha = Sonic.Fade
 			else
 				Object.Alpha = 255
 			end if
@@ -26,11 +29,11 @@ sub ObjectDraw
 			SetScreenFade(0, 0, 0, TempValue0)
 #endplatform
 		else
-			if Object.Value0 < 272
-				Object.Value0++
+			if Sonic.Fade < 272
+				Sonic.Fade++
 			else
-				Object.Value0 = 0
-				Object.State = 1
+				Sonic.Fade = 0
+				Object.State = SONIC_TURNING
 				LampPost.Check = 0
 				Player.ControlMode = 0
 				Stage.PlayerListPos = 0
@@ -38,19 +41,20 @@ sub ObjectDraw
 			end if
 		end if
 		break
-	case 1
-		TempValue0 = Object.Value0
+
+	case SONIC_TURNING
+		TempValue0 = Sonic.Fade
 		TempValue0 >>= 2
 		DrawSprite(TempValue0)
 		TempValue0 = 11
 		TempValue0 += Screen.CenterX
-		if Object.Value0 > 15
+		if Sonic.Fade > 15
 			DrawSpriteScreenXY(5, TempValue0, 72)
 		end if
-		Object.Value0++
-		if Object.Value0 > 19
+		Sonic.Fade++
+		if Sonic.Fade > 19
 			ResetObjectEntity(Object.EntityNo, TypeName[Logo], 0, Object.XPos, Object.YPos)
-			Object.Value0 = 256
+			Sonic.Fade = 256
 			ArrayPos0 = Object.EntityNo
 			ArrayPos0 -= 2
 			Object[ArrayPos0].Type = TypeName[Background]
@@ -59,7 +63,7 @@ sub ObjectDraw
 			ArrayPos0++
 			Object[ArrayPos0].Type = TypeName[Clouds]
 #platform: Mobile
-			if Engine.TrialMode == 1
+			if Engine.TrialMode == 1	//Check if for some reason you are using a "Lite" version of Sonic CD Mobile
 				if Engine.PlatformID == RETRO_ANDROID
 					ArrayPos0 = Object.EntityNo
 					ArrayPos0 += 2
@@ -70,6 +74,7 @@ sub ObjectDraw
 #endplatform
 		end if
 		break
+		
 	end switch
 end sub
 
@@ -78,12 +83,12 @@ sub ObjectStartup
 	SetMusicTrack("JP/TitleScreen.ogg", 0, 0)
 	SetMusicTrack("US/TitleScreen.ogg", 1, 0)
 	LoadSpriteSheet("Title/Title.gif")
-	SpriteFrame(-47, -89, 96, 112, 1, 203)
-	SpriteFrame(-47, -89, 104, 120, 98, 203)
-	SpriteFrame(-47, -96, 96, 120, 1, 316)
-	SpriteFrame(-47, -96, 104, 120, 98, 324)
-	SpriteFrame(-47, -96, 104, 120, 1, 1)
-	SpriteFrame(0, 0, 45, 55, 210, 203)
+	SpriteFrame(-47, -89, 96, 112, 1, 203)		// #0 - Sonic Turning Frame 0
+	SpriteFrame(-47, -89, 104, 120, 98, 203)	// #1 - Sonic Turning Frame 1
+	SpriteFrame(-47, -96, 96, 120, 1, 316)		// #2 - Sonic Turning Frame 2
+	SpriteFrame(-47, -96, 104, 120, 98, 324)	// #3 - Sonic Turning Frame 3
+	SpriteFrame(-47, -96, 104, 120, 1, 1)		// #4 - Sonic Base Frame
+	SpriteFrame(0, 0, 45, 55, 210, 203)			// #5 - Sonic Base Arm Frame
 end sub
 
 sub RSDK
