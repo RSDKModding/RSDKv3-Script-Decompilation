@@ -2,57 +2,78 @@
 //--------Scripted by Christian Whitehead 'The Taxman'--------//
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
-//-------Aliases-------//
-#alias 11: TYPE_SOUNDTRACKMENU
+// Aliases
+#alias Object.Value0 : Object.FadeValue
+#alias Object.Value1 : Object.SelectedOption
+#alias Object.Value2 : Object.EggmanAnimTimer
+#alias Object.Value3 : Object.NoteOscillation
+
+// Soundtrack Options
+#alias -1 : OST_NONE // Touching nothing on mobile
+#alias  0 : OST_JP
+#alias  1 : OST_US
+
+// States
+#alias 0 : STATE_INITIALIZE
+#alias 1 : STATE_OST_SELECTION
+#alias 2 : STATE_OST_SELECTED
+#alias 3 : STATE_EXIT
 
 
 sub ObjectMain
 	switch Object.State
-	case 0
+	case STATE_INITIALIZE
 #platform: Standard
-		Object.Value1 = Options.Soundtrack
+		Object.SelectedOption = Options.Soundtrack
 #endplatform
 #platform: Mobile
-		if Options.PhysicalControls == 0
-			Object.Value1 = -1
+		if Options.PhysicalControls == false
+			Object.SelectedOption = OST_NONE
 		else
-			Object.Value1 = Options.Soundtrack
+			Object.SelectedOption = Options.Soundtrack
 		end if
 #endplatform
-		if Object.Value0 < 256
-			Object.Alpha = Object.Value0
-			Object.Value0 += 6
+
+		if Object.FadeValue < 256
+			Object.Alpha = Object.FadeValue
+			Object.FadeValue += 6
 		else
-			Object.Value0 = 0
+			Object.FadeValue = 0
 			Object.Alpha = 255
-			Object.State++
+			Object.State = STATE_OST_SELECTION
 		end if
 		break
-	case 1
+		
+	case STATE_OST_SELECTION
 #platform: Mobile
-		if Options.PhysicalControls == 1
+		if Options.PhysicalControls == true
 #endplatform
-			if KeyPress.Left == 1
-				Object.Value1--
-				if Object.Value1 < 0
-					Object.Value1 = 1
+			// Physical Controls
+			if KeyPress.Left == true
+				Object.SelectedOption--
+				if Object.SelectedOption < OST_JP
+					Object.SelectedOption = OST_US
 				end if
 				PlaySfx(23, 0)
 			end if
-			if KeyPress.Right == 1
-				Object.Value1++
-				if Object.Value1 > 1
-					Object.Value1 = 0
+			if KeyPress.Right == true
+				Object.SelectedOption++
+				if Object.SelectedOption > OST_US
+					Object.SelectedOption = OST_JP
 				end if
 				PlaySfx(23, 0)
 			end if
 #platform: Mobile
+			// Enable touch controls if the screen is touched
 			CheckTouchRect(0, 0, Screen.XSize, Screen.YSize)
 			if CheckResult > -1
-				Options.PhysicalControls = 0
-				Object.Value1 = -1
+				Options.PhysicalControls = false
+				Object.SelectedOption = OST_NONE
 			end if
 		else
+			// Touch Controls
+			
+			// Check if JP button is touched
 			CheckTouchRect(0, 0, Screen.XSize, Screen.YSize)
 			TempValue3 = CheckResult
 			TempValue0 = Screen.CenterX
@@ -61,88 +82,98 @@ sub ObjectMain
 			TempValue1 -= 22
 			CheckTouchRect(TempValue0, 112, TempValue1, 144)
 			if CheckResult > -1
-				Object.Value1 = 0
+				Object.SelectedOption = OST_JP
 			else
 				if TempValue3 < 0
-					if Object.Value1 == 0
-						KeyPress.Start = 1
+					if Object.SelectedOption == OST_JP
+						KeyPress.Start = true
 					end if
 				else
-					if Object.Value1 == 0
-						Object.Value1 = -1
+					if Object.SelectedOption == OST_JP
+						Object.SelectedOption = OST_NONE
 					end if
 				end if
 			end if
+			
+			// Check if US button is touched
 			TempValue0 = Screen.CenterX
 			TempValue0 += 22
 			TempValue1 = Screen.CenterX
 			TempValue1 += 90
 			CheckTouchRect(TempValue0, 112, TempValue1, 144)
 			if CheckResult > -1
-				Object.Value1 = 1
+				Object.SelectedOption = OST_US
 			else
 				if TempValue3 < 0
-					if Object.Value1 == 1
-						KeyPress.Start = 1
+					if Object.SelectedOption == OST_US
+						KeyPress.Start = true
 					end if
 				else
-					if Object.Value1 == 1
-						Object.Value1 = -1
+					if Object.SelectedOption == OST_US
+						Object.SelectedOption = OST_NONE
 					end if
 				end if
 			end if
-			CallFunction(MenuHeading_Function0)
-			if KeyPress.Left == 1
-				Object.Value1 = 1
-				Options.PhysicalControls = 1
+			
+			CallFunction(MenuHeading_CheckTouchBack)
+			
+			// Enable physical controls if a button is pressed
+			if KeyPress.Left == true
+				Object.SelectedOption = OST_US
+				Options.PhysicalControls = true
 			end if
-			if KeyPress.Right == 1
-				Object.Value1 = 0
-				Options.PhysicalControls = 1
+			if KeyPress.Right == true
+				Object.SelectedOption = OST_JP
+				Options.PhysicalControls = true
 			end if
 		end if
 #endplatform
-		CheckResult = 0
+
+		CheckResult = false
 #platform: Mobile				
-		if Object.Value1 > -1
+		if Object.SelectedOption > OST_NONE // If a button was touched
 #endplatform
-			if KeyPress.Start == 1
-				CheckResult = 1
+			if KeyPress.Start == true
+				CheckResult = true
 			end if
-			if KeyPress.ButtonA == 1
-				CheckResult = 1
+			if KeyPress.ButtonA == true
+				CheckResult = true
 			end if
 #platform: Mobile	
 		end if
 #endplatform
-		if CheckResult == 1
-			Options.Soundtrack = Object.Value1
+		if CheckResult == true
+			Options.Soundtrack = Object.SelectedOption
 			SaveRAM[38] = Options.Soundtrack
-			Object.State++
+			Object.State = STATE_OST_SELECTED
 			StopMusic()
 			PlaySfx(27, 0)
 			WriteSaveRAM()
 		end if
-		if KeyPress.ButtonB == 1
-			Object.Value0 = 248
-			Object.State = 3
+		
+		if KeyPress.ButtonB == true
+			Object.FadeValue = 248
+			Object.State = STATE_EXIT
 			PlayStageSfx(1, 0)
 		end if
 		break
-	case 2
+		
+	case STATE_OST_SELECTED
 		if Object.AnimationTimer < 30
 			Object.AnimationTimer++
 		else
 			Object.AnimationTimer = 0
-			Object.State = 3
+			Object.State = STATE_EXIT
 			PlayMusic(Options.Soundtrack)
 		end if
 		break
-	case 3
-		if Object.Value0 > 0
-			Object.Alpha = Object.Value0
-			Object.Value0 -= 8
+		
+	case STATE_EXIT
+		if Object.FadeValue > 0
+			Object.Alpha = Object.FadeValue
+			Object.FadeValue -= 8
 		else
+			// Tell the other objects the menu is being exited
 			Object.Type = TypeName[BlankObject]
 			Object[-1].State = 3
 			Object[34].State = 1
@@ -155,7 +186,7 @@ sub ObjectMain
 			Object[41].State = 1
 			Object[42].State = 1
 			Object[33].State = 1
-			Object[33].PropertyValue = 5
+			Object[33].PropertyValue = 5 // Set the heading to "MAIN MENU"
 		end if
 		break
 	end switch
@@ -163,29 +194,36 @@ end sub
 
 
 sub ObjectDraw
-	TempValue0 = Object.Value2
+	// Animate and draw Eggman
+	TempValue0 = Object.EggmanAnimTimer
 	TempValue0 >>= 5
 	DrawSpriteScreenFX(TempValue0, FX_INK, Screen.CenterX, Screen.CenterY)
-	Object.Value2++
-	Object.Value2 &= 63
-	Sin(TempValue0, Object.Value3)
+	Object.EggmanAnimTimer++
+	Object.EggmanAnimTimer &= 63
+	
+	// Oscillate and draw the music notes
+	Sin(TempValue0, Object.NoteOscillation)
 	TempValue0 >>= 6
 	TempValue0 += Screen.CenterY
 	DrawSpriteScreenFX(6, FX_INK, Screen.CenterX, TempValue0)
-	Sin(TempValue0, Object.Value3)
+	Sin(TempValue0, Object.NoteOscillation)
 	TempValue0 >>= 6
 	FlipSign(TempValue0)
 	TempValue0 += Screen.CenterY
 	DrawSpriteScreenFX(7, FX_INK, Screen.CenterX, TempValue0)
-	Object.Value3 += 2
-	Object.Value3 &= 511
+	Object.NoteOscillation += 2
+	Object.NoteOscillation &= 511
+	
+	// Set up the positioning for the buttons
 	TempValue0 = Screen.CenterX
 	TempValue0 -= 56
 	TempValue1 = Screen.CenterX
 	TempValue1 += 56
 	TempValue3 = Screen.CenterY
 	TempValue3 += 8
-	if Object.Value1 == 0
+	
+	// Draw the JP button
+	if Object.SelectedOption == OST_JP
 		TempValue2 = Object.AnimationTimer
 		TempValue2 &= 3
 		TempValue2 >>= 1
@@ -194,7 +232,9 @@ sub ObjectDraw
 	else
 		DrawSpriteScreenFX(3, FX_INK, TempValue0, TempValue3)
 	end if
-	if Object.Value1 == 1
+	
+	// Draw the US button
+	if Object.SelectedOption == OST_US
 		TempValue2 = Object.AnimationTimer
 		TempValue2 &= 3
 		TempValue2 >>= 1
@@ -203,7 +243,9 @@ sub ObjectDraw
 	else
 		DrawSpriteScreenFX(5, FX_INK, TempValue1, TempValue3)
 	end if
-	if Options.Soundtrack == 0
+	
+	// Draw the border for the soundtrack that's currently playing
+	if Options.Soundtrack == OST_JP
 		DrawSpriteScreenFX(8, FX_INK, TempValue0, TempValue3)
 	else
 		DrawSpriteScreenFX(8, FX_INK, TempValue1, TempValue3)
@@ -213,34 +255,35 @@ end sub
 
 sub ObjectStartup
 	switch Engine.Language
-	case 0
+	case 0 // English
 		LoadSpriteSheet("Menu/MenuGfx2_EN.gif")
 		break
-	case 1
+	case 1 // French
 		LoadSpriteSheet("Menu/MenuGfx2_FR.gif")
 		break
-	case 2
+	case 2 // Italian
 		LoadSpriteSheet("Menu/MenuGfx2_IT.gif")
 		break
-	case 3
+	case 3 // Dutch
 		LoadSpriteSheet("Menu/MenuGfx2_DE.gif")
 		break
-	case 4
+	case 4 // Spanish
 		LoadSpriteSheet("Menu/MenuGfx2_ES.gif")
 		break
-	case 5
+	case 5 // Japanese
 		LoadSpriteSheet("Menu/MenuGfx2_JP.gif")
 		break
 	end switch
-	SpriteFrame(-20, -56, 40, 40, 259, 513)
-	SpriteFrame(-20, -56, 40, 40, 259, 554)
-	SpriteFrame(-32, -10, 64, 21, 300, 535)
-	SpriteFrame(-32, -10, 64, 21, 300, 513)
-	SpriteFrame(-32, -10, 64, 21, 365, 535)
-	SpriteFrame(-32, -10, 64, 21, 365, 513)
-	SpriteFrame(-46, -48, 11, 19, 300, 557)
-	SpriteFrame(32, -48, 17, 16, 312, 557)
-	SpriteFrame(-35, -13, 70, 27, 430, 497)
+	
+	SpriteFrame(-20, -56, 40, 40, 259, 513) // Eggman 1
+	SpriteFrame(-20, -56, 40, 40, 259, 554) // Eggman 2
+	SpriteFrame(-32, -10, 64, 21, 300, 535) // JP Selected
+	SpriteFrame(-32, -10, 64, 21, 300, 513) // JP Unselected
+	SpriteFrame(-32, -10, 64, 21, 365, 535) // US Selected
+	SpriteFrame(-32, -10, 64, 21, 365, 513) // US Unselected
+	SpriteFrame(-46, -48, 11, 19, 300, 557) // Music Notes 1
+	SpriteFrame(32, -48, 17, 16, 312, 557)  // Music Notes 2
+	SpriteFrame(-35, -13, 70, 27, 430, 497) // Current Soundtrack Border
 end sub
 
 sub RSDK
