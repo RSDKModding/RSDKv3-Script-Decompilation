@@ -59,7 +59,7 @@
 #function PlayerObject_OuttaHere
 #function PlayerObject_Death
 #function PlayerObject_Drown
-#function PlayerObject_CheckTile
+#function PlayerObject_HangingBar
 #function PlayerObject_CorkscrewRun
 #function PlayerObject_CorkscrewRoll
 #function PlayerObject_Tunnel
@@ -1795,14 +1795,14 @@ function PlayerObject_Drown
 	end if
 end function
 
-//Could be named better
-function PlayerObject_CheckTile
-	if Player.Left == 1
+// Wacky Workbench hanging bar gimmick
+function PlayerObject_HangingBar
+	if Player.Left == true
 		Player.Direction = FACING_LEFT
 		Player.Speed = -131072
 		Player.AnimationSpeed = 30
 	else
-		if Player.Right == 1
+		if Player.Right == true
 			Player.Direction = FACING_RIGHT
 			Player.Speed = 131072
 			Player.AnimationSpeed = 30
@@ -1811,6 +1811,7 @@ function PlayerObject_CheckTile
 			Player.AnimationSpeed = 0
 		end if
 	end if
+
 	TempValue1 = Player.XPos
 	TempValue1 >>= 16
 	TempValue2 = Player.YPos
@@ -1823,13 +1824,15 @@ function PlayerObject_CheckTile
 		Player.AnimationSpeed = 0
 		Player.YVelocity = 0
 	end if
-	if Player.JumpPress == 1
+
+	if Player.JumpPress == true
 		Player.State = PlayerObject_HandleAir
 		Player.YVelocity = 0
 		Player.Speed = 0
 		Player.AnimationSpeed = 0
 		Player.YPos += 262144
 	end if
+
 	Player.XVelocity = Player.Speed
 	if Warp.Destination > 0
 		if Warp.Timer > 99
@@ -1842,59 +1845,68 @@ function PlayerObject_CheckTile
 				Warp.Destination = 0
 			end if
 		end if
+
 		Warp.Timer = 0
 	end if
 end function
 
-//Could be named better
+// Unused leftover from Sonic Nexus (2008)
 function PlayerObject_CorkscrewRun
 	Player.Angle = 0
 	CallFunction(PlayerObject_HandleMovement)
-	Player.Animation = 34
+	Player.Animation = 34 // Corkscrew animation, it uses Nexus values and as such, it just looks like a jumbled mess in-game
+
 	if Player.Speed < 393216
 		if Player.Speed > -393216
 			Player.Animation = ANI_WALKING
 			Player.State = PlayerObject_HandleAir
 			Player.Rotation = 0
+			
 			if Player.Speed < 0
 				Player.Direction = FACING_LEFT
 			end if
 		end if
 	end if
-	if Player.Down == 1
+
+	if Player.Down == true
 		if Player.Speed > 6554
 			Player.State = PlayerObject_CorkscrewRoll
 			Player.Animation = ANI_JUMPING
 		end if
+
 		if Player.Speed < -6554
 			Player.State = PlayerObject_CorkscrewRoll
 			Player.Animation = ANI_JUMPING
 		end if
 	end if
+
 	if Player.Skidding > 0
 		if Player.Skidding == 16
-			PlaySfx(8, 0)
+			PlaySfx(8, 0) // Would be Skidding SFX if using Nexus SFX list
 		end if
 		Player.Animation = ANI_SKIDDING
 		Player.Skidding--
 	end if
-	if Player.JumpPress == 1
+
+	if Player.JumpPress == true
 		CallFunction(PlayerObject_StartJump)
 	else
 		CallFunction(PlayerObject_ResetOnFloor)
 	end if
 end function
 
-//Could be named better
+// Unused leftover from Sonic Nexus (2008)
 function PlayerObject_CorkscrewRoll
 	Player.Angle = 0
 	CallFunction(PlayerObject_HandleRollDecel)
+
 	if Player.Speed < 393216
 		if Player.Speed > -393216
 			Player.State = PlayerObject_HandleAir
 		end if
 	end if
-	if Player.JumpPress == 1
+
+	if Player.JumpPress == true
 		CallFunction(PlayerObject_StartJump)
 	else
 		CallFunction(PlayerObject_ResetOnFloor)
