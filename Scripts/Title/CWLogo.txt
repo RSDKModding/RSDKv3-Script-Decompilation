@@ -4,13 +4,13 @@
 //---This Object is normally only used by Mobile Data files---//
 
 // Aliases
-#alias Object.Value0	: CWLogo.Timer
-#alias Object.Value1	: CWLogo.RectAlpha	//Only used in mobile
-#alias Object.Value2 	: CWLogo.BGScale
+#alias Object.Value0	: Object.Timer
+#alias Object.Value1	: Object.RectAlpha	//Only used in mobile
+#alias Object.Value2 	: Object.BGScale
 
-#alias Object.Rotation	: CWLogo.Rotation
-#alias Object.Alpha		: CWLogo.Alpha
-#alias Object.Scale		: CWLogo.Scale
+#alias Object.Rotation	: Object.Rotation
+#alias Object.Alpha		: Object.Alpha
+#alias Object.Scale		: Object.Scale
 
 //-------States--------//
 #alias 0 : CWLOGO_SETUP
@@ -28,48 +28,48 @@
 sub ObjectMain
 	switch Object.State
 	case CWLOGO_SETUP
-		CWLogo.Rotation = 0
-		CWLogo.BGScale = 0
+		Object.Rotation = 0
+		Object.BGScale = 0
 		Object.State++
 		break
 
 	case CWLOGO_BGSCALE_INCREASE_1
-		if CWLogo.BGScale < 2048
-			if CWLogo.BGScale < 2048
-				CWLogo.BGScale += 64
+		if Object.BGScale < 2048
+			if Object.BGScale < 2048
+				Object.BGScale += 64
 			else
-				CWLogo.BGScale += 128
+				Object.BGScale += 128
 			end if
 		else
-			CWLogo.RectAlpha = 256
+			Object.RectAlpha = 256
 			Object.State++
 		end if
-		CWLogo.Rotation += 8
-		CWLogo.Rotation &= 511
+		Object.Rotation += 8
+		Object.Rotation &= 511
 		break
 
 	case CWLOGO_BGSCALE_INCREASE_2
-		if CWLogo.BGScale < 4096
-			if CWLogo.BGScale < 2048
-				CWLogo.BGScale += 64
+		if Object.BGScale < 4096
+			if Object.BGScale < 2048
+				Object.BGScale += 64
 			else
-				CWLogo.BGScale += 128
+				Object.BGScale += 128
 			end if
-			CWLogo.Rotation += 8
-			CWLogo.Rotation &= 511
+			Object.Rotation += 8
+			Object.Rotation &= 511
 		end if
-		if CWLogo.RectAlpha > 0
-			CWLogo.RectAlpha -= 8
+		if Object.RectAlpha > 0
+			Object.RectAlpha -= 8
 		else
 			Object.State++
 		end if
 		break
 
 	case CWLOGO_LOGO_FADEIN
-		if CWLogo.Timer < 144
-			CWLogo.Timer++
+		if Object.Timer < 144
+			Object.Timer++
 		else
-			CWLogo.Timer = 0
+			Object.Timer = 0
 #platform: Mobile
 			Object.Value3 = 0	//Unknown Usage
 #endplatform
@@ -78,48 +78,48 @@ sub ObjectMain
 		break
 
 	case CWLOGO_BGSCALE_DECREASE
-		if CWLogo.BGScale > 0
-			if CWLogo.BGScale < 2048
-				CWLogo.BGScale -= 64
+		if Object.BGScale > 0
+			if Object.BGScale < 2048
+				Object.BGScale -= 64
 			else
-				CWLogo.BGScale -= 128
+				Object.BGScale -= 128
 			end if
 			Object.Rotation -= 8
 			if Object.Rotation < 0
 				Object.Rotation += 512
 			end if
 		end if
-		if CWLogo.RectAlpha < 256
-			CWLogo.RectAlpha += 10
+		if Object.RectAlpha < 256
+			Object.RectAlpha += 10
 		else
 			Object.State++
-			CWLogo.RectAlpha = 256
+			Object.RectAlpha = 256
 		end if
 		break
 
 	case CWLOGO_LOGO_FADEOUT
-		if CWLogo.BGScale > 0
-			if CWLogo.BGScale < 2048
-				CWLogo.BGScale -= 64
+		if Object.BGScale > 0
+			if Object.BGScale < 2048
+				Object.BGScale -= 64
 			else
-				CWLogo.BGScale -= 128
+				Object.BGScale -= 128
 			end if
 			Object.Rotation -= 8
 			if Object.Rotation < 0
 				Object.Rotation += 512
 			end if
 		else
-			if CWLogo.Timer == 16
+			if Object.Timer == 16
 				ResetObjectEntity(Object.EntityNo, TypeName[Sonic], 0, Object.XPos, Object.YPos)
 				Object.InkEffect = 2
-				CWLogo.Alpha = 0
-				CWLogo.Timer = 0
+				Object.Alpha = 0
+				Object.Timer = 0
 #platform: Mobile
 				Engine.State = ENGINE_EXIT_HIRESMODE
-				CWLogo.RectAlpha = 256
+				Object.RectAlpha = 256
 #endplatform
 			else
-				CWLogo.Timer++
+				Object.Timer++
 			end if
 		end if
 		break
@@ -139,7 +139,7 @@ end sub
 sub ObjectDraw
 	//8 Point Star Pattern
 	DrawRect(0, 0, Screen.XSize, Screen.YSize, 0, 0, 96, 255)
-	CWLogo.Scale = CWLogo.BGScale
+	Object.Scale = Object.BGScale
 	DrawSpriteFX(1, FX_ROTOZOOM, Object.XPos, Object.YPos)
 	Object.Rotation += 64
 	DrawSpriteFX(1, FX_ROTOZOOM, Object.XPos, Object.YPos)
@@ -150,17 +150,17 @@ sub ObjectDraw
 	case CWLOGO_LOGO_FADEIN
 	case CWLOGO_BGSCALE_DECREASE
 #platform: Standard
-		CWLogo.Scale = 160
+		Object.Scale = 160
 #endplatform
 #platform: Mobile
-		CWLogo.Scale = 192
+		Object.Scale = 192
 #endplatform
 		DrawSpriteFX(0, FX_SCALE, Object.XPos, Object.YPos)
 		TempValue0 = Screen.CenterX
 		TempValue0 -= 96
 		TempValue1 = Screen.CenterY
 		TempValue1 -= 48
-		DrawRect(TempValue0, TempValue1, 192, 96, 255, 149, 18, CWLogo.RectAlpha)
+		DrawRect(TempValue0, TempValue1, 192, 96, 255, 149, 18, Object.RectAlpha)
 		break
 		
 	end switch

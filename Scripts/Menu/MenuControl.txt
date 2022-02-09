@@ -2,159 +2,199 @@
 //--------Scripted by Christian Whitehead 'The Taxman'--------//
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
-// Aliases
-#alias 3: TYPE_MENUCONTROL
+//-------Aliases-------//
+#alias Object.Value0 : Object.Fade
+#alias Object.Value1 : Object.ButtonYOffset
+#alias Object.Value2 : Object.DragCurrentSelection
+#alias Object.Value3 : Object.CurrentSelection
+#alias Object.Value4 : Object.ButtonScroll
+#alias Object.Value5 : Object.DragEnabled
+#alias Object.Value6 : Object.DragYOffset
+#alias Object.Value7 : Object.DragSmooth
 
+//-------States--------//
+#alias 0 : MENUCONTROL_SETUP
+#alias 1 : MENUCONTROL_BUTTONS_MOVEIN
+#alias 2 : MENUCONTROL_CONTROLS
+#alias 3 : MENUCONTROL_BLANK
+#alias 4 : MENUCONTROL_ENTER_TIMEATTACK
+#alias 5 : MENUCONTROL_ENTER_DEMO
+#alias 6 : MENUCONTROL_MENUBUTTON_CHECK
+#alias 7 : MENUCONTROL_ENTER_TROPHIES
+#alias 8 : MENUCONTROL_ENTER_LEADERBOARS
+
+
+//Object[1] is a blank object only used to share values across the menu objects
+
+//Object[1].Value0 and Object[1].Value1 are edited in MenuControl (you are currently here)
+
+//Object[1].Value2 comes from MenuButton and sets the maximum amount of button to move around
+//Object[1].Value3 comes from MenuButton and what it does i'll leave you to you imagination
+
+//Object[1].Value4 gets values from most of the "Menu" Objects
+//Object[1].Value5 and Object[1].Value6 get their values set by TrophiesMenu
 
 sub ObjectMain
+
 	switch Object.State
-	case 0
-		Object.State = 1
-		Object.Value0 = 384
+	case MENUCONTROL_SETUP
+		Object.State = MENUCONTROL_BUTTONS_MOVEIN
+		Object.Fade = 384
 		SetScreenFade(0, 0, 0, 255)
 		PlayMusic(Options.Soundtrack)
 		if Engine.FrameSkipTimer > -1
 			Engine.FrameSkipTimer = -1
 		end if
 		break
-	case 1
-		if Object.Value0 > 0
-			Object.Value0 -= 8
+
+	case MENUCONTROL_BUTTONS_MOVEIN
+		if Object.Fade > 0
+			Object.Fade -= 8
 		else
-			Object.State = 6
+			Object.State = MENUCONTROL_MENUBUTTON_CHECK
 		end if
-		SetScreenFade(0, 0, 0, Object.Value0)
+		SetScreenFade(0, 0, 0, Object.Fade)
 		break
-	case 2
-#platform: Mobile
-		if Options.PhysicalControls == 1
-#endplatform
+
+	case MENUCONTROL_CONTROLS
+		#platform: Mobile
+			CheckEqual(Options.PhysicalControls,1)
+		#endplatform
+
+		#platform: Standard
+			CheckResult = 1
+		#endplatform
+
+		if CheckResult == 1
 			if KeyPress.Up == 1
-				Object.Value3--
-				if Object.Value3 < 1
-					Object.Value3 = 1
+				Object.CurrentSelection--
+				if Object.CurrentSelection < 1
+					Object.CurrentSelection = 1
 				else
 					PlaySfx(23, 0)
 				end if
 			end if
 			if KeyPress.Down == 1
-				Object.Value3++
-				if Object.Value3 > Object[1].Value2
-					Object.Value3 = Object[1].Value2
+				Object.CurrentSelection++
+				if Object.CurrentSelection > Object[1].Value2
+					Object.CurrentSelection = Object[1].Value2
 				else
 					PlaySfx(23, 0)
 				end if
 			end if
-			TempValue0 = Object.Value3
-			TempValue0 -= Object.Value4
+			TempValue0 = Object.CurrentSelection
+			TempValue0 -= Object.ButtonScroll
 			if TempValue0 < 1
-				Object.Value4--
+				Object.ButtonScroll--
 				Object.Direction = 3
 			end if
 			if TempValue0 > 4
-				Object.Value4++
+				Object.ButtonScroll++
 				Object.Direction = FACING_RIGHT
 			end if
 			TempValue0 = Object.Value1
 			TempValue0 -= 32
-			TempValue1 = Object.Value4
+			TempValue1 = Object.ButtonScroll
 			TempValue1 *= -60
 			TempValue1 -= TempValue0
 			TempValue1 += Object.Direction
 			TempValue1 >>= 2
 			Object.Value1 += TempValue1
+		end if
 #platform: Mobile
+		if Options.PhysicalControls == 1
 			CheckTouchRect(0, 0, Screen.XSize, Screen.YSize)
 			if CheckResult > -1
 				Options.PhysicalControls = 0
-				Object.Value3 = 0
+				Object.CurrentSelection = 0
 				Object.Value2 = 0
 			end if
 		else
 			if Engine.Message == 2
-				Object.Value3 = 0
+				Object.CurrentSelection = 0
 				Object.Value2 = 0
 			end if
 			if Object.Value2 > 0
-				Object.Value3 = Object.Value2
+				Object.CurrentSelection = Object.Value2
 			else
-				Object.Value3 = 0
+				Object.CurrentSelection = 0
 			end if
 			if Object[1].Value2 > 4
 				CheckTouchRect(0, 0, Screen.XSize, Screen.YSize)
 				if CheckResult > -1
 					ArrayPos0 = CheckResult
-					if Object.Value5 == 0
-						Object.Value5 = 1
+					if Object.DragEnabled == 0
+						Object.DragEnabled = 1
 						Object[1].Value0 = Object.Value1
-						Object.Value6 = TouchScreen[ArrayPos0].YPos
+						Object.DragYOffset = TouchScreen[ArrayPos0].YPos
 					else
 						TempValue0 = TouchScreen[ArrayPos0].YPos
-						TempValue0 -= Object.Value6
+						TempValue0 -= Object.DragYOffset
 						TempValue0 += Object[1].Value0
 						Object[1].Value6 = Object[1].Value5
 						Object[1].Value5 = Object[1].Value4
-						Object[1].Value4 = Object.Value7
-						Object.Value7 = TempValue0
-						Object.Value7 -= Object.Value1
+						Object[1].Value4 = Object.DragSmooth
+						Object.DragSmooth = TempValue0
+						Object.DragSmooth -= Object.Value1
 						Object.Value1 = TempValue0
 					end if
-					TempValue0 = Object.Value7
+					TempValue0 = Object.DragSmooth
 					TempValue0 >>= 2
 					if TempValue0 != 0
-						Object.Value3 = 0
+						Object.CurrentSelection = 0
 						Object.Value2 = 0
 					end if
 				else
-					if Object.Value5 == 1
-						Object.Value5 = 0
-						Object.Value6 = Object.Value1
-						Object.Value6 <<= 8
-						Object.Value7 += Object[1].Value4
-						Object.Value7 += Object[1].Value5
-						Object.Value7 += Object[1].Value6
-						Object.Value7 >>= 2
-						Object.Value7 <<= 7
-						if Object.Value7 == 0
-							if Object.Value3 == 0
-								Object.Value7 = 1
+					if Object.DragEnabled == 1
+						Object.DragEnabled = 0
+						Object.DragYOffset = Object.Value1
+						Object.DragYOffset <<= 8
+						Object.DragSmooth += Object[1].Value4
+						Object.DragSmooth += Object[1].Value5
+						Object.DragSmooth += Object[1].Value6
+						Object.DragSmooth >>= 2
+						Object.DragSmooth <<= 7
+						if Object.DragSmooth == 0
+							if Object.CurrentSelection == 0
+								Object.DragSmooth = 1
 							end if
 						end if
 					end if
-					if Object.Value7 != 0
-						Object.Value6 += Object.Value7
-						if Object.Value6 < Object[1].Value3
-							Object.Value6 = Object[1].Value3
-							Object.Value7 = 0
+					if Object.DragSmooth != 0
+						Object.DragYOffset += Object.DragSmooth
+						if Object.DragYOffset < Object[1].Value3
+							Object.DragYOffset = Object[1].Value3
+							Object.DragSmooth = 0
 						end if
-						if Object.Value6 > 23040
-							Object.Value6 = 23040
-							Object.Value7 = 0
+						if Object.DragYOffset > 23040
+							Object.DragYOffset = 23040
+							Object.DragSmooth = 0
 						end if
-						if Object.Value7 > 0
-							Object.Value7 -= 32
-							if Object.Value7 < 0
-								Object.Value7 = 0
+						if Object.DragSmooth > 0
+							Object.DragSmooth -= 32
+							if Object.DragSmooth < 0
+								Object.DragSmooth = 0
 							end if
 						else
-							Object.Value7 += 32
-							if Object.Value7 > 0
-								Object.Value7 = 0
+							Object.DragSmooth += 32
+							if Object.DragSmooth > 0
+								Object.DragSmooth = 0
 							end if
 						end if
-						Object.Value1 = Object.Value6
+						Object.Value1 = Object.DragYOffset
 						Object.Value1 >>= 8
-						if Object.Value7 == 0
-							Object.Value4 = Object.Value1
-							Object.Value4 -= 32
-							Object.Value4 /= -60
-							if Object.Value4 < 0
-								Object.Value4 = 0
+						//This re-centers the dragging based on the current button on top of the screen
+						if Object.DragSmooth == 0
+							Object.ButtonScroll = Object.Value1
+							Object.ButtonScroll -= 32
+							Object.ButtonScroll /= -60
+							if Object.ButtonScroll < 0
+								Object.ButtonScroll = 0
 							end if
 							TempValue0 = Object[1].Value2
 							TempValue0 -= 4
-							if Object.Value4 > TempValue0
-								Object.Value4 = TempValue0
+							if Object.ButtonScroll > TempValue0
+								Object.ButtonScroll = TempValue0
 							end if
 						end if
 					else
@@ -175,30 +215,33 @@ sub ObjectMain
 				end if
 			end if
 			if KeyPress.Up == 1
-				Object.Value3 = Object[1].Value2
+				Object.CurrentSelection = Object[1].Value2
 				Options.PhysicalControls = 1
 			end if
 			if KeyPress.Down == 1
-				Object.Value3 = 1
+				Object.CurrentSelection = 1
 				Options.PhysicalControls = 1
 			end if
 		end if
 #endplatform
 		break
-	case 3
+
+	case MENUCONTROL_BLANK //Used to stop the controls temporarily
 		break
-	case 4
-		if Object.Value0 < 320
-			Object.Value0 += 8
+
+	case MENUCONTROL_ENTER_TIMEATTACK
+		if Object.Fade < 320
+			Object.Fade += 8
 		else
 			Stage.ListPos = 2
 			LoadStage()
 		end if
-		SetScreenFade(0, 0, 0, Object.Value0)
+		SetScreenFade(0, 0, 0, Object.Fade)
 		break
-	case 5
-		if Object.Value0 < 320
-			Object.Value0 += 8
+
+	case MENUCONTROL_ENTER_DEMO	//Only used in Demo versions of the game
+		if Object.Fade < 320
+			Object.Fade += 8
 		else
 #platform: Mobile
 			if Engine.PlatformID != RETRO_WP7
@@ -213,33 +256,39 @@ sub ObjectMain
 			Stage.ListPos = 0
 			LoadStage()
 		end if
-		SetScreenFade(0, 0, 0, Object.Value0)
+		SetScreenFade(0, 0, 0, Object.Fade)
 		break
-	case 6
+
+	case MENUCONTROL_MENUBUTTON_CHECK
 		if Object[34].State == 2
-			Object.State = 2
+			Object.State = MENUCONTROL_CONTROLS
 		end if
 		break
-#platform: Mobile
-		case 7
-		if Object.Value0 < 320
-			Object.Value0 += 8
-		else
-			Stage.ListPos = 9
-			LoadStage()
-		end if
-		SetScreenFade(0, 0, 0, Object.Value0)
+
+	case MENUCONTROL_ENTER_TROPHIES		//Mobile Only
+		#platform: Mobile
+			if Object.Fade < 320
+				Object.Fade += 8
+			else
+				Stage.ListPos = 9
+				LoadStage()
+			end if
+			SetScreenFade(0, 0, 0, Object.Fade)
+		#endplatform
 		break
-	case 8
-		if Object.Value0 < 320
-			Object.Value0 += 8
-		else
-			Stage.ListPos = 10
-			LoadStage()
-		end if
-		SetScreenFade(0, 0, 0, Object.Value0)
+
+	case MENUCONTROL_ENTER_LEADERBOARS	//Mobile Only
+		#platform: Mobile
+			if Object.Fade < 320
+				Object.Fade += 8
+			else
+				Stage.ListPos = 10
+				LoadStage()
+			end if
+			SetScreenFade(0, 0, 0, Object.Fade)
+		#endplatform
 		break
-#endplatform
+
 	end switch
 end sub
 
@@ -248,14 +297,14 @@ sub ObjectStartup
 	SetMusicTrack("JP/SpecialStage.ogg", 0, 1)
 	SetMusicTrack("US/SpecialStage.ogg", 1, 270972)
 	Object[0].Type = TypeName[MenuControl]
-	Object[0].Value1 = 32
+	Object[0].ButtonYOffset = 32
 #platform: Standard
-	Object[0].Value3 = 1
+	Object[0].CurrentSelection = 1
 #endplatform
 #platform: Mobile
 	Options.PhysicalControls = 0
 #endplatform
-	Object[0].Value2 = 0
+	Object[0].DragCurrentSelection = 0
 end sub
 
 sub RSDK
