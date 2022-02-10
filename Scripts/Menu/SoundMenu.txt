@@ -19,6 +19,13 @@
 #alias 2 : STATE_OST_SELECTED
 #alias 3 : STATE_EXIT
 
+// Languages
+#alias 0 : ENGLISH
+#alias 1 : FRENCH
+#alias 2 : ITALIAN
+#alias 3 : DEUTSCH
+#alias 4 : SPANISH
+#alias 5 : JAPANESE
 
 sub ObjectMain
 	switch Object.State
@@ -45,9 +52,16 @@ sub ObjectMain
 		break
 		
 	case STATE_OST_SELECTION
+
 #platform: Mobile
-		if Options.PhysicalControls == true
+		CheckEqual(Options.PhysicalControls,true)
 #endplatform
+
+#platform: Standard
+		CheckResult = true
+#endplatform
+
+		if CheckResult == true
 			// Physical Controls
 			if KeyPress.Left == true
 				Object.SelectedOption--
@@ -63,7 +77,9 @@ sub ObjectMain
 				end if
 				PlaySfx(23, 0)
 			end if
+		end if
 #platform: Mobile
+		if Options.PhysicalControls == true
 			// Enable touch controls if the screen is touched
 			CheckTouchRect(0, 0, Screen.XSize, Screen.YSize)
 			if CheckResult > -1
@@ -130,18 +146,27 @@ sub ObjectMain
 #endplatform
 
 		CheckResult = false
+
 #platform: Mobile				
 		if Object.SelectedOption > OST_NONE // If a button was touched
-#endplatform
 			if KeyPress.Start == true
 				CheckResult = true
 			end if
 			if KeyPress.ButtonA == true
 				CheckResult = true
 			end if
-#platform: Mobile	
 		end if
 #endplatform
+
+#platform: Standard
+		if KeyPress.Start == true
+			CheckResult = true
+		end if
+		if KeyPress.ButtonA == true
+			CheckResult = true
+		end if
+#endplatform
+
 		if CheckResult == true
 			Options.Soundtrack = Object.SelectedOption
 			SaveRAM[38] = Options.Soundtrack
@@ -255,22 +280,22 @@ end sub
 
 sub ObjectStartup
 	switch Engine.Language
-	case 0 // English
+	case ENGLISH
 		LoadSpriteSheet("Menu/MenuGfx2_EN.gif")
 		break
-	case 1 // French
+	case FRENCH
 		LoadSpriteSheet("Menu/MenuGfx2_FR.gif")
 		break
-	case 2 // Italian
+	case ITALIAN
 		LoadSpriteSheet("Menu/MenuGfx2_IT.gif")
 		break
-	case 3 // Dutch
+	case DEUTSCH
 		LoadSpriteSheet("Menu/MenuGfx2_DE.gif")
 		break
-	case 4 // Spanish
+	case SPANISH
 		LoadSpriteSheet("Menu/MenuGfx2_ES.gif")
 		break
-	case 5 // Japanese
+	case JAPANESE
 		LoadSpriteSheet("Menu/MenuGfx2_JP.gif")
 		break
 	end switch

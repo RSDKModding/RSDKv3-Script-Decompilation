@@ -5,6 +5,14 @@
 // Aliases
 #alias 7: TYPE_PAUSEMENU
 
+// Languages
+#alias 0 : ENGLISH
+#alias 1 : FRENCH
+#alias 2 : ITALIAN
+#alias 3 : DEUTSCH
+#alias 4 : SPANISH
+#alias 5 : JAPANESE
+
 
 sub ObjectMain
 	switch Object.State
@@ -16,20 +24,20 @@ sub ObjectMain
 		Object.InkEffect = 2
 		Object.Alpha = 0
 		switch Engine.Language
-		case 0
-		case 5
+		case ENGLISH
+		case JAPANESE
 			Object.PropertyValue = 12
 			break
-		case 1
+		case FRENCH
 			Object.PropertyValue = 15
 			break
-		case 2
+		case ITALIAN
 			Object.PropertyValue = 13
 			break
-		case 3
+		case DEUTSCH
 			Object.PropertyValue = 13
 			break
-		case 4
+		case SPANISH
 			Object.PropertyValue = 13
 			break
 		end switch
@@ -93,8 +101,12 @@ sub ObjectMain
 		break
 	case 3
 #platform: Mobile
-		if Options.PhysicalControls == 1
+		CheckEqual(Options.PhysicalControls,true)
 #endplatform
+#platform: Standard
+		CheckResult = true
+#endplatform
+		if CheckResult == true
 			if KeyPress.Up == 1
 				PlaySfx(23, 0)
 				Object.Value0 = 0
@@ -151,7 +163,9 @@ sub ObjectMain
 				Object.Alpha = 248
 				Object.Value0 = 0
 			end if
+		end if
 #platform: Mobile
+		if Options.PhysicalControls == true
 			CheckTouchRect(0, 0, Screen.XSize, Screen.YSize)
 			if CheckResult > -1
 				Options.PhysicalControls = 0
@@ -373,11 +387,12 @@ sub ObjectMain
 		break
 	case 6
 #platform: Standard
-		if Object.XPos > -32
+		CheckGreater(Object.XPos, -32)
 #endplatform
 #platform: Mobile
-		if Object.XPos > -64
+		CheckGreater(Object.XPos, -64)
 #endplatform
+		if CheckResult == 1
 			Object.XPos -= 16
 			Object.Value2 += 16
 		else
@@ -493,8 +508,9 @@ sub ObjectDraw
 				DrawSpriteScreenFX(5, FX_INK, Object.Value2, TempValue1)
 				DrawSpriteScreenFX(Object.Frame, FX_INK, TempValue0, TempValue1)
 			end if
+		end if
 #platform: Mobile
-		else
+		if Options.DevMenuFlag == 0
 			if Engine.TrialMode == 1
 				DrawSpriteScreenFX(10, FX_INK, TempValue0, TempValue1)
 				if Object.Value1 == 3
@@ -502,8 +518,8 @@ sub ObjectDraw
 					DrawSpriteScreenFX(Object.Frame, FX_INK, TempValue0, TempValue1)
 				end if
 			end if
-#endplatform
 		end if
+#endplatform
 		break
 	case 3
 		DrawSpriteScreenXY(3, Object.XPos, 0)
@@ -564,8 +580,9 @@ sub ObjectDraw
 				DrawSpriteScreenFX(5, FX_INK, Object.Value2, TempValue1)
 				DrawSpriteScreenFX(Object.Frame, FX_INK, TempValue0, TempValue1)
 			end if
+		end if
 #platform: Mobile
-		else
+		if Options.DevMenuFlag == 0
 			if Engine.TrialMode == 1
 				DrawSpriteScreenFX(10, FX_INK, TempValue0, TempValue1)
 				if Object.Value1 == 3
@@ -573,8 +590,8 @@ sub ObjectDraw
 					DrawSpriteScreenFX(Object.Frame, FX_INK, TempValue0, TempValue1)
 				end if
 			end if
-#endplatform
 		end if
+#endplatform
 		break
 	case 4
 		DrawSpriteScreenXY(3, Object.XPos, 0)
@@ -645,8 +662,9 @@ sub ObjectDraw
 			else
 				DrawSpriteScreenFX(9, FX_INK, TempValue0, TempValue1)
 			end if
+		end if
 #platform: Mobile
-		else
+		if Options.DevMenuFlag == 0
 			if Engine.TrialMode == 1
 				if Object.Value1 == 3
 					if Object.Value0 < 2
@@ -658,8 +676,8 @@ sub ObjectDraw
 					DrawSpriteScreenFX(10, FX_INK, TempValue0, TempValue1)
 				end if
 			end if
-#endplatform
 		end if
+#endplatform
 		break
 	case 5
 		if Object.Alpha < 128
@@ -695,14 +713,15 @@ sub ObjectDraw
 			if Options.DevMenuFlag == 1
 				DrawSpriteScreenXY(9, Object.Value2, 192)
 				DrawSpriteScreenXY(Object.Frame, Object.Value2, 192)
+			end if
 #platform: Mobile
-			else
+			if Options.DevMenuFlag == 0
 				if Engine.TrialMode == 1
 					DrawSpriteScreenXY(10, Object.Value2, 192)
 					DrawSpriteScreenXY(Object.Frame, Object.Value2, 192)
 				end if
-#endplatform
 			end if
+#endplatform
 			break
 		end switch
 		break
@@ -738,14 +757,15 @@ sub ObjectDraw
 			if Options.DevMenuFlag == 1
 				DrawSpriteScreenXY(9, Object.Value2, 192)
 				DrawSpriteScreenXY(Object.Frame, Object.Value2, 192)
+			end if
 #platform: Mobile
-			else
+			if Options.DevMenuFlag == 0
 				if Engine.TrialMode == 1
 					DrawSpriteScreenXY(10, Object.Value2, 192)
 					DrawSpriteScreenXY(Object.Frame, Object.Value2, 192)
-				end if									   
+				end if
+			end if				   
 #endplatform
-			end if
 			break
 		end switch
 		break
@@ -755,20 +775,20 @@ end sub
 
 sub ObjectStartup
 	switch Engine.Language
-	case 0
-	case 5
+	case ENGLISH
+	case JAPANESE
 		LoadSpriteSheet("Global/Pause_EN.gif")
 		break
-	case 1
+	case FRENCH
 		LoadSpriteSheet("Global/Pause_FR.gif")
 		break
-	case 2
+	case ITALIAN
 		LoadSpriteSheet("Global/Pause_IT.gif")
 		break
-	case 3
+	case DEUTSCH
 		LoadSpriteSheet("Global/Pause_DE.gif")
 		break
-	case 4
+	case SPANISH
 		LoadSpriteSheet("Global/Pause_ES.gif")
 		break
 	end switch
@@ -785,8 +805,8 @@ sub ObjectStartup
 	SpriteFrame(0, -19, 128, 32, 0, 32)
 	SpriteFrame(-6, 7, 128, 3, 0, 65)
 	switch Engine.Language
-	case 0
-	case 5
+	case ENGLISH
+	case JAPANESE
 		SpriteFrame(0, -5, 65, 11, 0, 69)
 		SpriteFrame(0, -5, 55, 11, 0, 81)
 		SpriteFrame(0, -5, 30, 11, 66, 69)
@@ -798,7 +818,7 @@ sub ObjectStartup
 		SpriteFrame(0, -5, 72, 11, 0, 92)
 #endplatform
 		break
-	case 1
+	case FRENCH
 		SpriteFrame(0, -5, 73, 11, 0, 69)
 		SpriteFrame(0, -5, 95, 11, 0, 81)
 		SpriteFrame(0, -5, 53, 11, 74, 69)
@@ -810,7 +830,7 @@ sub ObjectStartup
 		SpriteFrame(0, -5, 72, 11, 0, 92)
 #endplatform
 		break
-	case 2
+	case ITALIAN
 		SpriteFrame(0, -5, 65, 11, 0, 69)
 		SpriteFrame(0, -5, 78, 11, 0, 81)
 		SpriteFrame(0, -5, 28, 11, 66, 69)
@@ -822,7 +842,7 @@ sub ObjectStartup
 		SpriteFrame(0, -5, 72, 11, 0, 92)
 #endplatform
 		break
-	case 3
+	case DEUTSCH
 		SpriteFrame(0, -5, 48, 11, 0, 69)
 		SpriteFrame(0, -5, 65, 11, 0, 81)
 		SpriteFrame(0, -5, 71, 11, 49, 69)
@@ -834,7 +854,7 @@ sub ObjectStartup
 		SpriteFrame(0, -5, 72, 11, 0, 92)
 #endplatform
 		break
-	case 4
+	case SPANISH
 		SpriteFrame(0, -5, 73, 11, 0, 69)
 		SpriteFrame(0, -5, 67, 11, 0, 81)
 		SpriteFrame(0, -5, 36, 11, 74, 69)

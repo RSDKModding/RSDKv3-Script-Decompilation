@@ -5,6 +5,14 @@
 // Aliases
 #alias 4: TYPE_MENUBUTTON
 
+// Languages
+#alias 0 : ENGLISH
+#alias 1 : FRENCH
+#alias 2 : ITALIAN
+#alias 3 : DEUTSCH
+#alias 4 : SPANISH
+#alias 5 : JAPANESE
+
 // Function declarations
 #function MenuButton_SetupMenuWindow
 
@@ -762,22 +770,22 @@ end sub
 
 sub ObjectStartup
 	switch Engine.Language
-	case 0
+	case ENGLISH
 		LoadSpriteSheet("Menu/MenuGfx2_EN.gif")
 		break
-	case 1
+	case FRENCH
 		LoadSpriteSheet("Menu/MenuGfx2_FR.gif")
 		break
-	case 2
+	case ITALIAN
 		LoadSpriteSheet("Menu/MenuGfx2_IT.gif")
 		break
-	case 3
+	case DEUTSCH
 		LoadSpriteSheet("Menu/MenuGfx2_DE.gif")
 		break
-	case 4
+	case SPANISH
 		LoadSpriteSheet("Menu/MenuGfx2_ES.gif")
 		break
-	case 5
+	case JAPANESE
 		LoadSpriteSheet("Menu/MenuGfx2_JP.gif")
 		break
 	end switch
@@ -792,10 +800,10 @@ sub ObjectStartup
 		ArrayPos0++
 	loop
 	switch Engine.PlatformID
-	case 0
-	case 1
+	case RETRO_WIN
+	case RETRO_OSX
 #platform: Standard
-		if Engine.TrialMode == 1
+		if Engine.TrialMode == true
 			Object[34].PropertyValue = 1
 			Object[35].PropertyValue = 2
 			Object[36].PropertyValue = 4
@@ -819,7 +827,7 @@ sub ObjectStartup
 #endplatform
 
 #platform: Mobile
-	if Options.DevMenuFlag == 1
+	if Options.DevMenuFlag == true
 			Object[34].PropertyValue = 1
 			Object[35].PropertyValue = 2
 			Object[36].PropertyValue = 5
@@ -830,7 +838,7 @@ sub ObjectStartup
 			Object[39].PropertyValue = 9
 			Object[1].Value2 = 6
 		else
-			if Engine.TrialMode == 1
+			if Engine.TrialMode == true
 				Object[34].PropertyValue = 1
 				Object[35].PropertyValue = 2
 				Object[36].PropertyValue = 4
@@ -854,7 +862,7 @@ sub ObjectStartup
 		end if
 #endplatform
 		break
-	case 2
+	case RETRO_XBOX_360
 		if Engine.TrialMode == 1
 			Object[34].PropertyValue = 1
 			Object[35].PropertyValue = 2
@@ -877,8 +885,8 @@ sub ObjectStartup
 			Object[1].Value2 = 8
 		end if
 		break
-	case 3
-		if Engine.TrialMode == 1
+	case RETRO_PS3
+		if Engine.TrialMode == true
 			Object[34].PropertyValue = 1
 			Object[35].PropertyValue = 2
 			Object[36].PropertyValue = 3
@@ -898,65 +906,19 @@ sub ObjectStartup
 			Object[1].Value2 = 7
 		end if
 		break
+	case RETRO_iOS
+	case RETRO_ANDROID
+	case RETRO_WP7
+	
 #platform: Standard
-	case 4
-	case 5
-	case 6
-#endplatform
-#platform: Mobile
-	case 5
-#endplatform
-		if Engine.TrialMode == 1
+		if Engine.TrialMode == true
 			Object[34].PropertyValue = 1
 			Object[35].PropertyValue = 5
-#platform: Standard
 			Object[36].PropertyValue = 6
 			Object[37].PropertyValue = 7
 			Object[1].Value2 = 4
-#endplatform
-
-#platform: Mobile
-			Object[36].PropertyValue = 10
-			Object[37].PropertyValue = 11
-			Object[38].PropertyValue = 9
-			Object[1].Value2 = 5
 		else
-			if Engine.OnlineActive == 1
-				Object[34].PropertyValue = 1
-				Object[35].PropertyValue = 2
-				Object[36].PropertyValue = 3
-				Object[37].PropertyValue = 4
-				Object[38].PropertyValue = 5
-				Object[39].PropertyValue = 10
-				Object[40].PropertyValue = 6
-				Object[41].PropertyValue = 9
-				Object[1].Value2 = 8
-			else
-				Object[34].PropertyValue = 1
-				Object[35].PropertyValue = 2
-				Object[36].PropertyValue = 5
-				Object[37].PropertyValue = 11
-				Object[38].PropertyValue = 10
-				Object[39].PropertyValue = 6
-				Object[40].PropertyValue = 9
-				Object[1].Value2 = 7
-			end if
-		end if
-		break
-	case 4
-	case 6
-		if Engine.TrialMode == 1
-			Object[34].PropertyValue = 1
-			Object[35].PropertyValue = 2
-			Object[36].PropertyValue = 3
-			Object[37].PropertyValue = 4
-			Object[38].PropertyValue = 5
-			Object[39].PropertyValue = 10
-			Object[40].PropertyValue = 7
-			Object[1].Value2 = 7
-#endplatform
-		else
-			if Engine.OnlineActive == 1
+			if Engine.OnlineActive == true
 				Object[34].PropertyValue = 1
 				Object[35].PropertyValue = 2
 				Object[36].PropertyValue = 3
@@ -974,6 +936,52 @@ sub ObjectStartup
 				Object[1].Value2 = 5
 			end if
 		end if
+#endplatform
+
+#platform: Mobile
+		if Engine.PlatformID == RETRO_ANDROID
+			if Engine.TrialMode == true
+				Object[34].PropertyValue = 1
+				Object[35].PropertyValue = 5
+				Object[36].PropertyValue = 10
+				Object[37].PropertyValue = 11
+				Object[38].PropertyValue = 9
+				Object[1].Value2 = 5
+			else
+				if Engine.OnlineActive == true
+					Object[34].PropertyValue = 1
+					Object[35].PropertyValue = 2
+					Object[36].PropertyValue = 3
+					Object[37].PropertyValue = 4
+					Object[38].PropertyValue = 5
+					Object[39].PropertyValue = 10
+					Object[40].PropertyValue = 6
+					Object[41].PropertyValue = 9
+					Object[1].Value2 = 8
+				else
+					Object[34].PropertyValue = 1
+					Object[35].PropertyValue = 2
+					Object[36].PropertyValue = 5
+					Object[37].PropertyValue = 11
+					Object[38].PropertyValue = 10
+					Object[39].PropertyValue = 6
+					Object[40].PropertyValue = 9
+					Object[1].Value2 = 7
+				end if
+			end if
+		else
+			if Engine.TrialMode == true
+				Object[34].PropertyValue = 1
+				Object[35].PropertyValue = 2
+				Object[36].PropertyValue = 3
+				Object[37].PropertyValue = 4
+				Object[38].PropertyValue = 5
+				Object[39].PropertyValue = 10
+				Object[40].PropertyValue = 7
+				Object[1].Value2 = 7
+			end if
+		end if
+#endplatform
 		break
 	end switch
 	ArrayPos0 = 34
@@ -1002,28 +1010,28 @@ sub ObjectStartup
 	loop
 #platform: Standard
 	switch Engine.PlatformID
-	case 0
-	case 1
+	case RETRO_WIN
+	case RETRO_ANDROID
 		switch Engine.Language
-		case 0
-		case 1
-		case 4
-		case 5
+		case ENGLISH
+		case FRENCH
+		case SPANISH
+		case JAPANESE
 			SpriteFrame(19, -7, 128, 16, 1, TempValue1)
 			break
-		case 2
-		case 3
+		case ITALIAN
+		case DEUTSCH
 			SpriteFrame(19, -7, 128, 16, 1, 770)
 			break
 		end switch
 		break
-	case 3
+	case RETRO_PS3
 		SpriteFrame(19, -7, 128, 16, 1, 513)
 		break
-	case 2
-	case 4
-	case 5
-	case 6
+	case RETRO_XBOX_360
+	case RETRO_iOS
+	case RETRO_ANDROID
+	case RETRO_WP7
 		SpriteFrame(19, -7, 128, 16, 1, TempValue1)
 		break
 	end switch
@@ -1038,7 +1046,7 @@ sub ObjectStartup
 #endplatform
 	TempValue1 += 17
 	TempValue0++
-	if Engine.OnlineActive == 0
+	if Engine.OnlineActive == false
 		SpriteFrame(19, -7, 128, 16, 130, 460)
 	else
 		SpriteFrame(19, -7, 128, 16, 1, TempValue1)
@@ -1069,28 +1077,28 @@ sub ObjectStartup
 	loop
 #platform: Standard
 	switch Engine.PlatformID
-	case 0
-	case 1
+	case RETRO_WIN
+	case RETRO_OSX
 		switch Engine.Language
-		case 0
-		case 1
-		case 4
-		case 5
+		case ENGLISH
+		case FRENCH
+		case SPANISH
+		case JAPANESE
 			SpriteFrame(19, -7, 128, 16, 130, TempValue1)
 			break
-		case 2
-		case 3
+		case ITALIAN
+		case DEUTSCH
 			SpriteFrame(19, -7, 128, 16, 130, 770)
 			break
 		end switch
 		break
-	case 3
+	case RETRO_PS3
 		SpriteFrame(19, -7, 128, 16, 130, 513)
 		break
-	case 2
-	case 4
-	case 5
-	case 6
+	case RETRO_XBOX_360
+	case RETRO_iOS
+	case RETRO_ANDROID
+	case RETRO_WP7
 		SpriteFrame(19, -7, 128, 16, 130, TempValue1)
 		break
 	end switch

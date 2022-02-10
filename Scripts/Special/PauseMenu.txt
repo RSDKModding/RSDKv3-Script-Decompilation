@@ -5,6 +5,13 @@
 // Aliases
 #alias 9: TYPE_PAUSEMENU
 
+// Languages
+#alias 0 : ENGLISH
+#alias 1 : FRENCH
+#alias 2 : ITALIAN
+#alias 3 : DEUTSCH
+#alias 4 : SPANISH
+#alias 5 : JAPANESE
 
 sub ObjectMain
 	switch Object.State
@@ -15,20 +22,20 @@ sub ObjectMain
 		Object.InkEffect = 2
 		Object.Alpha = 0
 		switch Engine.Language
-		case 0
-		case 5
+		case ENGLISH
+		case JAPANESE
 			Object.PropertyValue = 12
 			break
-		case 1
+		case FRENCH
 			Object.PropertyValue = 15
 			break
-		case 2
+		case ITALIAN
 			Object.PropertyValue = 13
 			break
-		case 3
+		case DEUTSCH
 			Object.PropertyValue = 13
 			break
-		case 4
+		case SPANISH
 			Object.PropertyValue = 13
 			break
 		end switch
@@ -41,6 +48,7 @@ sub ObjectMain
 				Object.Value6 = 0
 			end if
 		end if
+		
 #platform: Mobile
 		if Options.TouchControls == 1
 			Object.Value1 = -1
@@ -49,6 +57,7 @@ sub ObjectMain
 			Options.PhysicalControls = 1
 		end if
 #endplatform
+
 		Object.State++
 		break
 	case 1
@@ -87,9 +96,16 @@ sub ObjectMain
 		end if
 		break
 	case 3
+
 #platform: Mobile
-		if Options.PhysicalControls == 1
+		CheckEqual(Options.PhysicalControls, true)
 #endplatform
+
+#platform: Standard
+		CheckResult = true
+#endplatform
+
+		if CheckResult == true
 			if KeyPress.Up == 1
 				PlaySfx(23, 0)
 				Object.Value0 = 0
@@ -146,7 +162,10 @@ sub ObjectMain
 				Object.Alpha = 248
 				Object.Value0 = 0
 			end if
+		end if
+
 #platform: Mobile
+		if Options.PhysicalControls == true
 			CheckTouchRect(0, 0, Screen.XSize, Screen.YSize)
 			if CheckResult > -1
 				Options.PhysicalControls = 0
@@ -244,6 +263,7 @@ sub ObjectMain
 			end if
 		end if
 #endplatform
+
 		if Object.Value0 < 60
 			Object.Value0++
 		else
@@ -269,16 +289,16 @@ sub ObjectMain
 				Object.Alpha = 128
 				Object.State = 5
 				Stage.State = STAGE_RUNNING
-#platform: Standard
 			else
+
+#platform: Standard
 				Object.Value2 = Object.XPos
 				Object.Value2 += 48
 				StopMusic()
 				Object.State = 6
-			end if
 #endplatform
+
 #platform: Mobile
-			else
 				if Engine.Message < 3
 					switch Object.Value1
 					case 1
@@ -312,8 +332,9 @@ sub ObjectMain
 						Object.State = 6
 					end if
 				end if
-			end if
 #endplatform
+
+			end if
 		end if
 		break
 	case 5
@@ -332,12 +353,16 @@ sub ObjectMain
 		end if
 		break
 	case 6
+
 #platform: Standard
-		if Object.XPos > -32
+		CheckGreater(Object.XPos, -32)
 #endplatform
+
 #platform: Mobile
-		if Object.XPos > -64
+		CheckGreater(Object.XPos, -64)
 #endplatform
+
+		if CheckResult == true
 			Object.XPos -= 16
 			Object.Value2 += 16
 		else
@@ -634,20 +659,20 @@ end sub
 
 sub ObjectStartup
 	switch Engine.Language
-	case 0
-	case 5
+	case ENGLISH
+	case JAPANESE
 		LoadSpriteSheet("Special/ScoreScreen.gif")
 		break
-	case 1
+	case FRENCH
 		LoadSpriteSheet("Special/ScoreScreen_FR.gif")
 		break
-	case 2
+	case ITALIAN
 		LoadSpriteSheet("Special/ScoreScreen_IT.gif")
 		break
-	case 3
+	case DEUTSCH
 		LoadSpriteSheet("Special/ScoreScreen_DE.gif")
 		break
-	case 4
+	case SPANISH
 		LoadSpriteSheet("Special/ScoreScreen_ES.gif")
 		break
 	end switch
@@ -664,36 +689,36 @@ sub ObjectStartup
 	SpriteFrame(0, -19, 128, 32, 0, 160)
 	SpriteFrame(-6, 7, 128, 3, 0, 193)
 	switch Engine.Language
-	case 0
-	case 5
+	case ENGLISH
+	case JAPANESE
 		SpriteFrame(0, -5, 65, 11, 0, 197)
 		SpriteFrame(0, -5, 55, 11, 66, 197)
 		SpriteFrame(0, -5, 30, 11, 0, 209)
 		SpriteFrame(0, -5, 64, 11, 31, 209)
 		SpriteFrame(0, -5, 55, 11, 52, 244)
 		break
-	case 1
+	case FRENCH
 		SpriteFrame(0, -5, 73, 11, 0, 197)
 		SpriteFrame(0, -5, 95, 11, 0, 209)
 		SpriteFrame(0, -5, 53, 11, 148, 244)
 		SpriteFrame(0, -5, 23, 11, 96, 209)
 		SpriteFrame(0, -5, 95, 11, 52, 244)
 		break
-	case 2
+	case ITALIAN
 		SpriteFrame(0, -5, 65, 11, 0, 197)
 		SpriteFrame(0, -5, 78, 11, 0, 209)
 		SpriteFrame(0, -5, 28, 11, 66, 197)
 		SpriteFrame(0, -5, 23, 11, 79, 209)
 		SpriteFrame(0, -5, 78, 11, 52, 244)
 		break
-	case 3
+	case DEUTSCH
 		SpriteFrame(0, -5, 48, 11, 0, 197)
 		SpriteFrame(0, -5, 65, 11, 0, 209)
 		SpriteFrame(0, -5, 71, 11, 49, 197)
 		SpriteFrame(0, -5, 23, 11, 66, 209)
 		SpriteFrame(0, -5, 65, 11, 52, 244)
 		break
-	case 4
+	case SPANISH
 		SpriteFrame(0, -5, 73, 11, 0, 197)
 		SpriteFrame(0, -5, 67, 11, 0, 209)
 		SpriteFrame(0, -5, 36, 11, 74, 197)
