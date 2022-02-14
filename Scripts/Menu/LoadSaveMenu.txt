@@ -8,6 +8,13 @@
 #alias Object.Direction    : Object.ShowDeleteButton
 #alias Object[+4].Rotation : Object.SaveMode
 #alias Object[+4].Value1   : DeleteConfirm.Highlight
+
+//Object[33] is MenuHeading
+#alias Object[33].State				: Object.MHState
+#alias Object[33].PropertyValue		: Object.MHPropertyValue
+//Object[-1] is MenuWindow
+#alias Object[-1].State				: Object.MWState
+
 #alias 0 : OST_JP
 #alias 1 : GAMEMODE_SAVEGAME
 
@@ -428,21 +435,21 @@ sub ObjectMain
 #endplatform
 
 #platform: Standard
-		CheckResult = 1
+		CheckResult = true
 #endplatform
 
 		if CheckResult == 1
 			if Object.ShowDeleteButton == false
 				if KeyPress.Up == true
 					Object.SelectedOption--
-					PlaySfx(23, 0)
+					PlaySfx(23, 0) 	//Menu Button SFX
 					if Object.SelectedOption < BUTTON_SAVE_ONE
 						Object.SelectedOption = BUTTON_SAVE_FOUR
 					end if
 				end if
 				if KeyPress.Down == true
 					Object.SelectedOption++
-					PlaySfx(23, 0)
+					PlaySfx(23, 0) 	//Menu Button SFX
 					if Object.SelectedOption > BUTTON_SAVE_FOUR
 						Object.SelectedOption = BUTTON_SAVE_ONE
 					end if
@@ -450,14 +457,14 @@ sub ObjectMain
 			else
 				if KeyPress.Up == true
 					Object.SelectedOption--
-					PlaySfx(23, 0)
+					PlaySfx(23, 0) 	//Menu Button SFX
 					if Object.SelectedOption < BUTTON_SAVE_ONE
 						Object.SelectedOption = BUTTON_DELETE
 					end if
 				end if
 				if KeyPress.Down == true
 					Object.SelectedOption++
-					PlaySfx(23, 0)
+					PlaySfx(23, 0) 	//Menu Button SFX
 					if Object.SelectedOption > BUTTON_DELETE
 						Object.SelectedOption = BUTTON_SAVE_ONE
 					end if
@@ -465,7 +472,7 @@ sub ObjectMain
 			end if
 		end if
 #platform: Mobile
-		if Options.PhysicalControls == 1
+		if Options.PhysicalControls == true
 			// Enable touch controls if the screen is touched
 			CheckTouchRect(0, 0, Screen.XSize, Screen.YSize)
 			if CheckResult > -1
@@ -618,7 +625,7 @@ sub ObjectMain
 					ArrayPos0 = Object.SelectedOption
 					Object[+ArrayPos0].SaveStatus = SAVE_NORMAL_SELECTED
 					Object.State = STATE_SAVE_SELECTED
-					PlaySfx(27, 0)
+					PlaySfx(27, 0)	//Select SFX
 					if Object[+ArrayPos0].StageListPos > 0 // Is this save used?
 						StopMusic()
 					else
@@ -794,20 +801,20 @@ sub ObjectMain
 #endplatform
 
 #platform: Standard
-		CheckResult = 1
+		CheckResult = true
 #endplatform
 
 		if CheckResult == 1
 			if KeyPress.Left == true
 				Object[+ArrayPos0].PlayerListPos--
-				PlaySfx(23, 0)
+				PlaySfx(23, 0) 	//Menu Button SFX
 				if Object[+ArrayPos0].PlayerListPos < CHARACTER_SONIC
 					Object[+ArrayPos0].PlayerListPos = CHARACTER_TAILS
 				end if
 			end if
 			if KeyPress.Right == true
 				Object[+ArrayPos0].PlayerListPos++
-				PlaySfx(23, 0)
+				PlaySfx(23, 0) 	//Menu Button SFX
 				if Object[+ArrayPos0].PlayerListPos > CHARACTER_TAILS
 					Object[+ArrayPos0].PlayerListPos = CHARACTER_SONIC
 				end if
@@ -815,7 +822,7 @@ sub ObjectMain
 		end if
 
 #platform: Mobile
-		if Options.PhysicalControls == 1
+		if Options.PhysicalControls == true
 			// Enable touch controls if the screen is touched
 			CheckTouchRect(0, 0, Screen.XSize, Screen.YSize)
 			if CheckResult > -1
@@ -912,12 +919,12 @@ sub ObjectMain
 		end if
 		if CheckResult == true
 			if Options.TailsUnlocked == true
-				PlaySfx(27, 0)
+				PlaySfx(27, 0)	//Select SFX
 				StopMusic()
 				Object.State = STATE_CHARACTER_SELECTED
 			else
 				if Object[+ArrayPos0].PlayerListPos == CHARACTER_SONIC
-					PlaySfx(27, 0)
+					PlaySfx(27, 0)	//Select SFX
 					StopMusic()
 					Object.State = STATE_CHARACTER_SELECTED
 				else
@@ -1057,7 +1064,8 @@ sub ObjectMain
 		else
 			// Tell the other objects the menu is being exited
 			Object.Type = TypeName[BlankObject]
-			Object[-1].State = 3
+			Object.MWState = 3
+			//All of this is MenuButton Objects
 			Object[34].State = 1
 			Object[35].State = 1
 			Object[36].State = 1
@@ -1067,8 +1075,8 @@ sub ObjectMain
 			Object[40].State = 1
 			Object[41].State = 1
 			Object[42].State = 1
-			Object[33].State = 1
-			Object[33].PropertyValue = 5 // Set the heading to "MAIN MENU"
+			Object.MHState = 1
+			Object.MHPropertyValue = 5 // Set the heading to "MAIN MENU"
 		end if
 		break
 		
@@ -1170,27 +1178,27 @@ sub ObjectMain
 #endplatform
 
 #platform: Standard
-		CheckResult = 1
+		CheckResult = true
 #endplatform
 
 		if CheckResult == 1
 			if KeyPress.Up == true
 				DeleteConfirm.Highlight--
-				PlaySfx(23, 0)
+				PlaySfx(23, 0) 	//Menu Button SFX
 				if DeleteConfirm.Highlight < DELETE_YES
 					DeleteConfirm.Highlight = DELETE_NO
 				end if
 			end if
 			if KeyPress.Down == true
 				DeleteConfirm.Highlight++
-				PlaySfx(23, 0)
+				PlaySfx(23, 0) 	//Menu Button SFX
 				if DeleteConfirm.Highlight > DELETE_NO
 					DeleteConfirm.Highlight = DELETE_YES
 				end if
 			end if
 		end if
 #platform: Mobile
-		if Options.PhysicalControls == 1
+		if Options.PhysicalControls == true
 			// Enable touch controls if the screen is touched
 			CheckTouchRect(0, 0, Screen.XSize, Screen.YSize)
 			if CheckResult > -1
@@ -1300,7 +1308,7 @@ sub ObjectMain
 			if DeleteConfirm.Highlight == DELETE_YES
 				PlayStageSfx(0, 0)
 			else
-				PlaySfx(27, 0)
+				PlaySfx(27, 0)	//Select SFX
 			end if
 			Object.AnimationTimer = 0
 			Object.State = STATE_DELETECONFIRM_SELECTED

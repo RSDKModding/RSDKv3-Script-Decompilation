@@ -166,12 +166,12 @@ function PlayerObject_ProcessPlayer
 	if Options.AttractMode == 0
 		if Player.ControlMode == 0
 			if Object[9].Type == TypeName[BlankObject]
-				if KeyPress.Start == 1
+				if KeyPress.Start == true
 					KeyPress.Start = 0
 					if Options.DevMenuFlag == 1
 						Stage.State = STAGE_PAUSED
 						PauseMusic()
-						PlaySfx(27, 0)
+						PlaySfx(27, 0)	//Select SFX
 						StopSfx(24)
 						StopSfx(25)
 						Object[9].Type = TypeName[PauseMenu]
@@ -230,7 +230,7 @@ function PlayerObject_ProcessPlayer
 					if CheckResult > -1
 						Stage.State = STAGE_PAUSED
 						PauseMusic()
-						PlaySfx(27, 0)
+						PlaySfx(27, 0)	//Select SFX
 						StopSfx(24)
 						StopSfx(25)
 						Object[9].Type = TypeName[PauseMenu]
@@ -243,7 +243,7 @@ function PlayerObject_ProcessPlayer
 					if Engine.Message == 2
 						Stage.State = STAGE_PAUSED
 						PauseMusic()
-						PlaySfx(27, 0)
+						PlaySfx(27, 0)	//Select SFX
 						StopSfx(24)
 						StopSfx(25)
 						Object[9].Type = TypeName[PauseMenu]
@@ -258,11 +258,11 @@ function PlayerObject_ProcessPlayer
 		else
 			if Player.ControlMode == 0
 				if Object[9].Type == TypeName[BlankObject]
-					if KeyPress.Start == 1
+					if KeyPress.Start == true
 						KeyPress.Start = 0
 						Stage.State = STAGE_PAUSED
 						PauseMusic()
-						PlaySfx(27, 0)
+						PlaySfx(27, 0)	//Select SFX
 						StopSfx(24)
 						StopSfx(25)
 						Object[9].Type = TypeName[PauseMenu]
@@ -275,7 +275,7 @@ function PlayerObject_ProcessPlayer
 					if Engine.Message == 2
 						Stage.State = STAGE_PAUSED
 						PauseMusic()
-						PlaySfx(27, 0)
+						PlaySfx(27, 0)	//Select SFX
 						StopSfx(24)
 						StopSfx(25)
 						Object[9].Type = TypeName[PauseMenu]
@@ -393,7 +393,7 @@ end function
 
 
 function PlayerObject_Blank
-	CheckResult = 0
+	CheckResult = false
 end function
 
 
@@ -453,7 +453,7 @@ function PlayerObject_HandleMovement
 		TempValue0 >>= 8
 		Player.Speed += TempValue0
 	else
-		if Player.Left == 1
+		if Player.Left == true
 			TempValue0 = Player.TopSpeed
 			FlipSign(TempValue0)
 			if Player.Speed > TempValue0
@@ -478,7 +478,7 @@ function PlayerObject_HandleMovement
 				Player.Direction = FACING_LEFT
 			end if
 		end if
-		if Player.Right == 1
+		if Player.Right == true
 			if Player.Speed < Player.TopSpeed
 				if Player.Speed < 0
 					if Player.CollisionMode == 0
@@ -550,8 +550,8 @@ function PlayerObject_HandleMovement
 			TempValue0 *= 8192
 			TempValue0 >>= 8
 			Player.Speed += TempValue0
-			if Player.Right == 1
-				if Player.Left == 0
+			if Player.Right == true
+				if Player.Left == false
 					if Player.Angle > 192
 						if Player.Angle < 228
 							if Player.Speed < 163840
@@ -563,7 +563,7 @@ function PlayerObject_HandleMovement
 					end if
 				end if
 			else
-				if Player.Left == 1
+				if Player.Left == true
 					if Player.Angle > 28
 						if Player.Angle < 64
 							if Player.Speed > -163840
@@ -591,47 +591,47 @@ function PlayerObject_HandleAirSpeed
 	TempValue0 = Player.TopSpeed
 	FlipSign(TempValue0)
 	if Player.Speed > TempValue0
-		if Player.Left == 1
+		if Player.Left == true
 			Player.Speed -= Player.AirAcceleration
 			Player.Direction = FACING_LEFT
 		end if
 	else
-		if Player.Left == 1
+		if Player.Left == true
 			Player.Direction = FACING_LEFT
 		end if
 	end if
 	if Player.Speed < Player.TopSpeed
-		if Player.Right == 1
+		if Player.Right == true
 			Player.Speed += Player.AirAcceleration
 			Player.Direction = FACING_RIGHT
 		end if
 	else
-		if Player.Right == 1
+		if Player.Right == true
 			Player.Direction = FACING_RIGHT
 		end if
 	end if
 	if Options.OriginalControls == 1
 #platform: Standard
-		if Player.Left == 1
+		if Player.Left == true
 			if Player.Speed < -393216
 				Player.Speed = -393216
 			end if
 		end if
-		if Player.Right == 1
+		if Player.Right == true
 			if Player.Speed > 393216
 				Player.Speed = 393216
 			end if
 		end if
 #endplatform
 #platform: Mobile
-		if Player.Left == 1
+		if Player.Left == true
 			TempValue0 = Player.TopSpeed
 			FlipSign(TempValue0)
 			if Player.Speed < TempValue0
 				Player.Speed = TempValue0
 			end if
 		end if
-		if Player.Right == 1
+		if Player.Right == true
 			if Player.Speed > Player.TopSpeed
 				Player.Speed = Player.TopSpeed
 			end if
@@ -642,12 +642,12 @@ end function
 
 
 function PlayerObject_HandleRollDecel
-	if Player.Right == 1
+	if Player.Right == true
 		if Player.Speed < 0
 			Player.Speed += Player.RollingDeceleration
 		end if
 	end if
-	if Player.Left == 1
+	if Player.Left == true
 		if Player.Speed > 0
 			Player.Speed -= Player.RollingDeceleration
 		end if
@@ -756,7 +756,7 @@ end function
 
 
 function PlayerObject_StartJump
-	CheckResult = 0
+	CheckResult = false
 	if Player.CollisionMode == 0
 		TempValue6 = Object.XPos
 		TempValue7 = Object.YPos
@@ -1024,7 +1024,7 @@ function PlayerObject_HandleGround
 		if Player.JumpPress == 1
 			CallFunction(PlayerObject_StartJump)
 		else
-			if Player.Up == 1
+			if Player.Up == true
 				if Player.Speed == 0
 					if Player.Animation != ANI_FLAILINGLEFT
 						if Player.Animation != ANI_FLAILINGRIGHT
@@ -1035,7 +1035,7 @@ function PlayerObject_HandleGround
 					end if
 				end if
 			end if
-			if Player.Down == 1
+			if Player.Down == true
 				if Player.Speed == 0
 					if Player.Animation != ANI_FLAILINGLEFT
 						if Player.Animation != ANI_FLAILINGRIGHT
@@ -1045,8 +1045,8 @@ function PlayerObject_HandleGround
 						end if
 					end if
 				else
-					if Player.Left == 0
-						if Player.Right == 0
+					if Player.Left == false
+						if Player.Right == false
 							if Player.Speed > 0
 								if Player.Speed > 34816
 									Player.State = PlayerObject_HandleRolling
@@ -1203,7 +1203,7 @@ end function
 
 
 function PlayerObject_LookingUp
-	if Player.Up == 0
+	if Player.Up == false
 		Player.State = PlayerObject_HandleGround
 		Player.Timer = 0
 	else
@@ -1227,7 +1227,7 @@ end function
 
 
 function PlayerObject_Crouching
-	if Player.Down == 0
+	if Player.Down == false
 		Player.State = PlayerObject_HandleGround
 		Player.Timer = 0
 	else
@@ -1266,7 +1266,7 @@ function PlayerObject_HandleSpindashS2
 			Player.AbilityTimer--
 		end if
 	end if
-	if Player.Down == 0
+	if Player.Down == false
 		Player.Timer = 0
 		Player.State = PlayerObject_HandleRolling
 		Player.Animation = ANI_JUMPING
@@ -1311,7 +1311,7 @@ function PlayerObject_HandleSpindashCD
 			Player.AbilityTimer += 24576
 		end if
 	end if
-	if Player.Down == 0
+	if Player.Down == false
 		Screen.CameraStyle = 1
 		Player.Timer = 0
 		if Player.AbilityTimer < 195297
@@ -1366,7 +1366,7 @@ function PlayerObject_HandlePeeloutS2
 			Player.Animation = ANI_RUNNING
 		end if
 	end if
-	if Player.Up == 0
+	if Player.Up == false
 		Player.ScrollDelay = 15
 		Screen.CameraStyle = 4
 		Player.State = PlayerObject_HandleGround
@@ -1426,7 +1426,7 @@ function PlayerObject_HandlePeeloutCD
 			Player.Animation = ANI_RUNNING
 		end if
 	end if
-	if Player.Up == 0
+	if Player.Up == false
 		Screen.CameraStyle = 1
 		Player.State = PlayerObject_HandleGround
 		if Player.AbilityTimer < 390594
@@ -2136,14 +2136,14 @@ function PlayerObject_Handle3DRampAnims
 		if Player.JumpPress == 1
 			CallFunction(PlayerObject_StartJump)
 		else
-			if Player.Up == 1
+			if Player.Up == true
 				if Player.Speed == 0
 					Player.State = PlayerObject_LookingUp
 					Player.Animation = ANI_LOOKINGUP
 					Player.Timer = 0
 				end if
 			end if
-			if Player.Down == 1
+			if Player.Down == true
 				if Player.Speed == 0
 					Player.State = PlayerObject_Crouching
 					Player.Animation = ANI_LOOKINGDOWN
@@ -2179,16 +2179,16 @@ end function
 
 function PlayerObject_DebugMode
 	Player.Gravity = 1
-	if Player.Up == 1
+	if Player.Up == true
 		Player.YPos -= 131072
 	end if
-	if Player.Down == 1
+	if Player.Down == true
 		Player.YPos += 131072
 	end if
-	if Player.Left == 1
+	if Player.Left == true
 		Player.XPos -= 131072
 	end if
-	if Player.Right == 1
+	if Player.Right == true
 		Player.XPos += 131072
 	end if
 end function
@@ -2240,7 +2240,7 @@ end function
 sub ObjectMain
 #platform: Standard
 	if Stage.DebugMode == 1
-		if KeyPress.ButtonB == 1
+		if KeyPress.ButtonB == true
 			Object.Type = TypeName[DebugMode]
 			Player.YVelocity = 0
 			Player.State = PlayerObject_Blank

@@ -5,6 +5,9 @@
 // Aliases
 #alias 4: TYPE_MENUBUTTON
 
+//Object[-1] is MenuWindow
+#alias Object[-1].State				: Object.MWState
+
 // Languages
 #alias 0 : ENGLISH
 #alias 1 : FRENCH
@@ -73,20 +76,20 @@ sub ObjectMain
 		Object.YPos = Object.Value2
 		Object.YPos <<= 16
 		if Object.Value5 == Object[0].Value3
-			CheckResult = 0
-			if KeyPress.Start == 1
-				CheckResult = 1
+			CheckResult = false
+			if KeyPress.Start == true
+				CheckResult = true
 			end if
-			if KeyPress.ButtonA == 1
-				CheckResult = 1
+			if KeyPress.ButtonA == true
+				CheckResult = true
 			end if
 			if Object.PropertyValue == 4
 				if Engine.OnlineActive == 0
-					CheckResult = 0
+					CheckResult = false
 				end if
 			end if
 			if CheckResult == 1
-				PlaySfx(27, 0)
+				PlaySfx(27, 0)	//Select SFX
 				if Engine.TrialMode == 1
 					if Object.PropertyValue == 1
 						StopMusic()
@@ -282,7 +285,7 @@ sub ObjectMain
 			break
 		case 7
 			if Object.PropertyValue == 6
-				if Object[-1].State == 2
+				if Object.MWState == 2
 					Object.State = 2
 					Object[0].State = 2
 				end if
@@ -341,7 +344,7 @@ sub ObjectMain
 		Object.XPos <<= 16
 		Object.YPos = Object.Value2
 		Object.YPos <<= 16
-		if Options.PhysicalControls == 0
+		if Options.PhysicalControls == false
 			TempValue0 = Object.Value1
 			TempValue0 -= 16
 			TempValue1 = Object.Value1
@@ -364,7 +367,7 @@ sub ObjectMain
 				if CheckResult < 0
 					if Object[0].Value2 == Object.Value5
 						if Object[1].Value1 == 0
-							PlaySfx(27, 0)
+							PlaySfx(27, 0)	//Select SFX
 							Object[0].State = 3
 							switch Object.PropertyValue
 							case 1
@@ -433,26 +436,24 @@ sub ObjectMain
 				end if
 			else
 				if Object.Value5 == Object[0].Value3
-					CheckResult = 0
-					if KeyPress.Start == 1
-						CheckResult = 1
+					CheckResult = false
+					if KeyPress.Start == true
+						CheckResult = true
 					end if
-					if KeyPress.ButtonA == 1
-						CheckResult = 1
+					if KeyPress.ButtonA == true
+						CheckResult = true
 					end if
 					if Object.PropertyValue == 4
 						if Engine.OnlineActive == 0
-							CheckResult = 0
+							CheckResult = false
 						end if
 					end if
 					if CheckResult == 1
-						PlaySfx(27, 0)
+						PlaySfx(27, 0)	//Select SFX
 						if Engine.TrialMode == 1
-							if Engine.PlatformID != RETRO_ANDROID
 								if Object.PropertyValue == 1
 									StopMusic()
 								end if
-							end if
 						else
 							if Object.PropertyValue == 2
 								StopMusic()
@@ -519,7 +520,7 @@ sub ObjectMain
 					end if
 				end if
 				if Engine.PlatformID == RETRO_WP7
-					if KeyPress.ButtonB == 1
+					if KeyPress.ButtonB == true
 						EngineCallback(7)
 						Object.State = 2
 						Object[0].State = 2
@@ -548,7 +549,6 @@ sub ObjectMain
 							Object.Type = TypeName[BlankObject]
 							ReadSaveRAM()
 						else
-							if Engine.PlatformID == RETRO_ANDROID
 								Object[33].State = 1
 								Object[33].PropertyValue = 10
 								CallFunction(MenuButton_SetupMenuWindow)
@@ -562,18 +562,6 @@ sub ObjectMain
 								ResetObjectEntity(66, TypeName[BlankObject], 0, 0, 0)
 								Object.Type = TypeName[BlankObject]
 								ReadSaveRAM()
-							else
-								Object.State = 5
-								Object[0].State = 5
-								Object[0].Value0 = 0
-								Options.GameMode = 0
-								Player.Score = 0
-								Player.Lives = 3
-								Player.ScoreBonus = 50000
-								Transporter_Destroyed = 0
-								MetalSonic_Destroyed = 0
-								Good_Future = 0
-							end if
 						end if
 						break
 					case 2
@@ -708,7 +696,7 @@ sub ObjectMain
 				break
 			case 7
 				if Object.PropertyValue == 6
-					if Object[-1].State == 2
+					if Object.MWState == 2
 						Object.State = 2
 						Object[0].State = 2
 						Object[0].Value2 = 0
@@ -939,7 +927,6 @@ sub ObjectStartup
 #endplatform
 
 #platform: Mobile
-		if Engine.PlatformID == RETRO_ANDROID
 			if Engine.TrialMode == true
 				Object[34].PropertyValue = 1
 				Object[35].PropertyValue = 5
@@ -969,18 +956,6 @@ sub ObjectStartup
 					Object[1].Value2 = 7
 				end if
 			end if
-		else
-			if Engine.TrialMode == true
-				Object[34].PropertyValue = 1
-				Object[35].PropertyValue = 2
-				Object[36].PropertyValue = 3
-				Object[37].PropertyValue = 4
-				Object[38].PropertyValue = 5
-				Object[39].PropertyValue = 10
-				Object[40].PropertyValue = 7
-				Object[1].Value2 = 7
-			end if
-		end if
 #endplatform
 		break
 	end switch

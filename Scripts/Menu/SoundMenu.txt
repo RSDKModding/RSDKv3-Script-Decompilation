@@ -7,6 +7,11 @@
 #alias Object.Value1 : Object.SelectedOption
 #alias Object.Value2 : Object.EggmanAnimTimer
 #alias Object.Value3 : Object.NoteOscillation
+//Object[33] is MenuHeading
+#alias Object[33].State				: Object.MHState
+#alias Object[33].PropertyValue		: Object.MHPropertyValue
+//Object[-1] is MenuWindow
+#alias Object[-1].State				: Object.MWState
 
 // Soundtrack Options
 #alias -1 : OST_NONE // Touching nothing on mobile
@@ -68,14 +73,14 @@ sub ObjectMain
 				if Object.SelectedOption < OST_JP
 					Object.SelectedOption = OST_US
 				end if
-				PlaySfx(23, 0)
+				PlaySfx(23, 0) 	//Menu Button SFX
 			end if
 			if KeyPress.Right == true
 				Object.SelectedOption++
 				if Object.SelectedOption > OST_US
 					Object.SelectedOption = OST_JP
 				end if
-				PlaySfx(23, 0)
+				PlaySfx(23, 0) 	//Menu Button SFX
 			end if
 		end if
 #platform: Mobile
@@ -172,7 +177,7 @@ sub ObjectMain
 			SaveRAM[38] = Options.Soundtrack
 			Object.State = STATE_OST_SELECTED
 			StopMusic()
-			PlaySfx(27, 0)
+			PlaySfx(27, 0)	//Select SFX
 			WriteSaveRAM()
 		end if
 		
@@ -200,7 +205,8 @@ sub ObjectMain
 		else
 			// Tell the other objects the menu is being exited
 			Object.Type = TypeName[BlankObject]
-			Object[-1].State = 3
+			Object.MWState = 3
+			//All of this is MenuButton Objects
 			Object[34].State = 1
 			Object[35].State = 1
 			Object[36].State = 1
@@ -210,8 +216,9 @@ sub ObjectMain
 			Object[40].State = 1
 			Object[41].State = 1
 			Object[42].State = 1
-			Object[33].State = 1
-			Object[33].PropertyValue = 5 // Set the heading to "MAIN MENU"
+			//End
+			Object.MHState = 1
+			Object.MHPropertyValue = 5 // Set the heading to "MAIN MENU"
 		end if
 		break
 	end switch
