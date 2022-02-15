@@ -1,44 +1,58 @@
 //------------Sonic CD Trophies Menu Script-------------//
 //--------Scripted by Christian Whitehead 'The Taxman'--------//
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
-//---This Object is normally only used by Mobile Data files---//
+//---This Object is normally only used by WP7 Data files---//
 
 // Aliases
 #alias 1: TYPE_TROPHIESMENU
+#alias Object.Value0 : Object.Fade
+#alias Object.Value2 : Object.SelectionPos
+// States
+#alias 0 : TROPHIES_SETUP
+#alias 1 : TROPHIES_FADEIN
+#alias 2 : TROPHIES_CONTROLS
+#alias 5 : TROPHIES_EXIT
+// Ost
+#alias 0 : JP_OST
+// Callbacks & Engine States
+#alias 0 : CALLBACK_DISPLAYLOGOS
+#alias 7 : CALLBACK_EXIT_SELECTED
 
+#alias 5 : ENGINE_ENTER_HIRESMODE
+#alias 6 : ENGINE_EXIT_HIRESMODE
 
 sub ObjectMain
 #platform: Mobile
 	switch Object.State
-	case 0
+	case TROPHIES_SETUP
 		TempValue0 = 256
 		TempValue0 -= Screen.CenterX
 		Screen.XOffset = TempValue0
 		PlayMusic(1)
-		Object.Value0 = 384
+		Object.Fade = 384
 		Object.State++
 		SetScreenFade(0, 0, 0, 255)
 		break
-	case 1
-		if Object.Value0 > 0
-			Object.Value0 -= 8
+	case TROPHIES_FADEIN
+		if Object.Fade > 0
+			Object.Fade -= 8
 		else
 			Object.State++
 		end if
-		SetScreenFade(0, 0, 0, Object.Value0)
+		SetScreenFade(0, 0, 0, Object.Fade)
 		break
-	case 2
+	case TROPHIES_CONTROLS
 		if Options.PhysicalControls == true
 			if KeyDown.Down == true
-				Object.Value2 += 0x40000
-				if Object.Value2 > 0x1800000
-					Object.Value2 = 0x1800000
+				Object.SelectionPos += 262144
+				if Object.SelectionPos > 25165824
+					Object.SelectionPos = 25165824
 				end if
 			end if
 			if KeyDown.Up == true
-				Object.Value2 -= 0x40000
-				if Object.Value2 < 0
-					Object.Value2 = 0
+				Object.SelectionPos -= 262144
+				if Object.SelectionPos < 0
+					Object.SelectionPos = 0
 				end if
 			end if
 			CheckTouchRect(0, 0, Screen.XSize, Screen.YSize)
@@ -51,7 +65,7 @@ sub ObjectMain
 				ArrayPos0 = CheckResult
 				if Object.Value3 == 0
 					Object.Value3 = 1
-					Object[1].Value0 = Object.Value2
+					Object[1].Value0 = Object.SelectionPos
 					Object[1].Value0 >>= 16
 					Object.Value4 = TouchScreen[ArrayPos0].YPos
 				else
@@ -62,11 +76,11 @@ sub ObjectMain
 					Object[1].Value5 = Object[1].Value4
 					Object[1].Value4 = Object.Value5
 					Object.Value5 = TempValue0
-					TempValue1 = Object.Value2
+					TempValue1 = Object.SelectionPos
 					TempValue1 >>= 16
 					Object.Value5 -= TempValue1
-					Object.Value2 = TempValue0
-					Object.Value2 <<= 16
+					Object.SelectionPos = TempValue0
+					Object.SelectionPos <<= 16
 				end if
 			else
 				if Object.Value3 == 1
@@ -78,59 +92,59 @@ sub ObjectMain
 					Object.Value5 <<= 16
 				end if
 				if Object.Value5 != 0
-					Object.Value2 += Object.Value5
-					if Object.Value2 < 0
+					Object.SelectionPos += Object.Value5
+					if Object.SelectionPos < 0
 						Object.Value5 = 0
 					end if
-					if Object.Value2 > 0x1800000
+					if Object.SelectionPos > 25165824
 						Object.Value5 = 0
 					end if
 					if Object.Value5 > 0
-						Object.Value5 -= 0x2000
+						Object.Value5 -= 8192
 						if Object.Value5 < 0
 							Object.Value5 = 0
 						end if
 					else
-						Object.Value5 += 0x2000
+						Object.Value5 += 8192
 						if Object.Value5 > 0
 							Object.Value5 = 0
 						end if
 					end if
 				else
-					if Object.Value2 < 0
-						Object.Value2 *= 224
-						Object.Value2 >>= 8
+					if Object.SelectionPos < 0
+						Object.SelectionPos *= 224
+						Object.SelectionPos >>= 8
 					end if
-					if Object.Value2 > 0x1800000
-						Object.Value2 -= 0x1800000
-						Object.Value2 *= 224
-						Object.Value2 >>= 8
-						Object.Value2 += 0x1800000
+					if Object.SelectionPos > 25165824
+						Object.SelectionPos -= 25165824
+						Object.SelectionPos *= 224
+						Object.SelectionPos >>= 8
+						Object.SelectionPos += 25165824
 					end if
 				end if
 			end if
 			if KeyPress.Up == true
-				Options.PhysicalControls = 1
+				Options.PhysicalControls = true
 			end if
 			if KeyPress.Down == true
-				Options.PhysicalControls = 1
+				Options.PhysicalControls = true
 			end if
 		end if
 		if KeyPress.ButtonB == true
-			PlaySfx(26, 0)
+			PlaySfx(26, 0)	//Outta Here SFX?
 			StopMusic()
-			Object.State = 5
+			Object.State = TROPHIES_EXIT
 		end if
 		break
-	case 5
-		if Object.Value0 < 348
-			Object.Value0 += 8
+	case TROPHIES_EXIT
+		if Object.Fade < 348
+			Object.Fade += 8
 		else
-			Stage.ListPos = 1
-			Engine.State = 6
+			Stage.ListPos = 1	// Menu
+			Engine.State = ENGINE_EXIT_HIRESMODE
 			LoadStage()
 		end if
-		SetScreenFade(0, 0, 0, Object.Value0)
+		SetScreenFade(0, 0, 0, Object.Fade)
 		break
 	end switch
 #endplatform
@@ -157,7 +171,7 @@ sub ObjectDraw
 	TempValue0 = Screen.XSize
 	TempValue0 -= 16
 	DrawRect(TempValue0, 56, 4, 176, 128, 128, 128, 128)
-	TempValue1 = Object.Value2
+	TempValue1 = Object.SelectionPos
 	TempValue1 >>= 16
 	if TempValue1 < 0
 		TempValue1 = 0
@@ -176,16 +190,16 @@ end sub
 sub ObjectStartup
 #platform: Mobile
 	LoadSpriteSheet("Menu/Trophies.gif")
-	SpriteFrame(0, 0, 64, 64, 385, 385)
+	SpriteFrame(0, 0, 64, 64, 385, 385)		// #0 - White Space
 	LoadPalette("Trophies.act", 0, 0, 0, 256)
 	LoadPalette("HelpPal1.act", 0, 0, 0, 32)
 	LoadTextFont("Data/Game/HelpText.bin")
-	if Options.Soundtrack == 0
+	if Options.Soundtrack == JP_OST
 		SetMusicTrack("JP/DAGarden.ogg", 1, 1)
 	else
-		SetMusicTrack("US/DAGarden.ogg", 1, 0x1CA86)
+		SetMusicTrack("US/DAGarden.ogg", 1, 117382)
 	end if
-	Engine.State = 5
+	Engine.State = ENGINE_ENTER_HIRESMODE
 	Screen.CameraEnabled = 0
 	Object[0].Type = TypeName[TrophiesMenu]
 	Object[0].Priority = 1

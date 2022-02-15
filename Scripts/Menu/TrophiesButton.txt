@@ -1,17 +1,21 @@
 //------------Sonic CD Exit Button Script-------------//
 //--------Scripted by Christian Whitehead 'The Taxman'--------//
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
-//---This Object is normally only used by Mobile Data files---//
+//---This Object is normally only used by WP7 Data files---//
 
 // Aliases
 #alias 4: TYPE_EXITBUTTON
-
+#alias Object.Value1 : Object.InputCheck
+//Object[0] is TrophiesMenu
+#alias Object[0].State : Object.TMState
+//Engine & CallBacks
+#alias 2 : MESSAGE_LOSTFOCUS
 
 sub ObjectMain
 #platform: Mobile
-	if Object[0].State == 2
-		if Engine.Message == 2
-			Object.Value1 = 0
+	if Object.TMState == 2
+		if Engine.Message == MESSAGE_LOSTFOCUS
+			Object.InputCheck = 0
 		end if
 		TempValue0 = Object.XPos
 		TempValue0 >>= 16
@@ -22,18 +26,18 @@ sub ObjectMain
 		TempValue1 -= Screen.XOffset
 		CheckTouchRect(TempValue0, 0, TempValue1, 48)
 		if CheckResult > -1
-			Object.Value1 = 1
+			 Object.InputCheck = true
 		else
 			CheckTouchRect(0, 0, Screen.XSize, Screen.YSize)
 			if CheckResult < 0
-				if Object.Value1 == 1
-					Object.Value1 = 0
-					PlaySfx(26, 0)
+				if Object.InputCheck == true
+					Object.InputCheck = false
+					PlaySfx(26, 0)		//Outta Here SFX?
 					StopMusic()
-					Object[0].State = 5
+					Object.TMState = 5
 				end if
 			else
-				Object.Value1 = 0
+				 Object.InputCheck = false
 			end if
 		end if
 	end if
@@ -44,7 +48,7 @@ end sub
 sub ObjectDraw
 #platform: Mobile
 	Object.Scale = 128
-	if Object.Value1 == 1
+	if Object.InputCheck == true
 		DrawSpriteFX(1, FX_SCALE, Object.XPos, Object.YPos)
 	else
 		DrawSpriteFX(0, FX_SCALE, Object.XPos, Object.YPos)
@@ -56,13 +60,13 @@ end sub
 sub ObjectStartup
 #platform: Mobile
 	LoadSpriteSheet("Menu/Trophies.gif")
-	SpriteFrame(-63, -39, 126, 78, 129, 385)
-	SpriteFrame(-60, -37, 120, 74, 260, 387)
+	SpriteFrame(-63, -39, 126, 78, 129, 385)	//#0 - Back Button
+	SpriteFrame(-60, -37, 120, 74, 260, 387)	//#1 - Pressed Back Button
 	TempValue0 = Screen.CenterX
 	TempValue0 -= 160
 	TempValue0 <<= 16
 	ArrayPos0 = 32
-	while ArrayPos0 < 0x420
+	while ArrayPos0 < 1056
 		if Object[ArrayPos0].Type == TypeName[ExitButton]
 			Object[ArrayPos0].XPos += TempValue0
 		end if

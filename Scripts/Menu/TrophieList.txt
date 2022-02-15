@@ -1,21 +1,23 @@
 //------------Sonic CD Trophie List Script-------------//
 //--------Scripted by Christian Whitehead 'The Taxman'--------//
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
-//---This Object is normally only used by Mobile Data files---//
+//---This Object is normally only used by WP7 Data files------//
 
 // Aliases
 #alias 3: TYPE_TROPHIELIST
-
+#alias Object.Value1 : Object.AchievementUnlocked	//[[Actually i have no clue about this one]]
+#alias Object.Value2 : Object.TrophieSheet
+#alias Object.Value3 : Object.HelpTextSheet
 
 sub ObjectDraw
 #platform: Mobile
 	Object.YPos = Object.PropertyValue
-	Object.YPos *= 0x300000
+	Object.YPos *= 3145728
 	Object.YPos -= Object[0].Value2
-	Object.YPos += 0x480000
+	Object.YPos += 4718592
 	Object.Scale = 128
-	Object.SpriteSheet = Object.Value2
-	if Object.Value1 == 1
+	Object.SpriteSheet = Object.TrophieSheet
+	if Object.AchievementUnlocked == 1
 		DrawSpriteFX(Object.Frame, FX_SCALE, Object.XPos, Object.YPos)
 	else
 		DrawSpriteFX(12, FX_SCALE, Object.XPos, Object.YPos)
@@ -30,7 +32,7 @@ sub ObjectDraw
 	TempValue1 -= 13
 	TempValue2 = Object.PropertyValue
 	TempValue2 <<= 1
-	Object.SpriteSheet = Object.Value3
+	Object.SpriteSheet = Object.HelpTextSheet
 	DrawText(MENU_2, TempValue0, TempValue1, 128, 41, TempValue2, 1)
 	TempValue1 += 15
 	TempValue2++
@@ -46,31 +48,31 @@ sub ObjectStartup
 	LoadSpriteSheet("Menu/HelpText.gif")
 	TempValue1 = Object.SpriteSheet
 	ArrayPos0 = 32
-	while ArrayPos0 < 0x420
+	while ArrayPos0 < 1056
 		if Object[ArrayPos0].Type == TypeName[TrophieList]
 			Object[ArrayPos0].Value2 = TempValue0
 			Object[ArrayPos0].Value3 = TempValue1
 			Object[ArrayPos0].DrawOrder = 2
 			Object[ArrayPos0].Priority = 1
 			if Screen.XSize >= 384
-				Object[ArrayPos0].XPos -= 0x100000
+				Object[ArrayPos0].XPos -= 1048576
 			end if
 		end if
 		ArrayPos0++
 	loop
-	SpriteFrame(-64, -64, 128, 128, 0, 0)
-	SpriteFrame(-64, -64, 128, 128, 128, 0)
-	SpriteFrame(-64, -64, 128, 128, 256, 0)
-	SpriteFrame(-64, -64, 128, 128, 384, 0)
-	SpriteFrame(-64, -64, 128, 128, 0, 128)
-	SpriteFrame(-64, -64, 128, 128, 128, 128)
-	SpriteFrame(-64, -64, 128, 128, 256, 128)
-	SpriteFrame(-64, -64, 128, 128, 384, 128)
-	SpriteFrame(-64, -64, 128, 128, 0, 256)
-	SpriteFrame(-64, -64, 128, 128, 128, 256)
-	SpriteFrame(-64, -64, 128, 128, 256, 256)
-	SpriteFrame(-64, -64, 128, 128, 384, 256)
-	SpriteFrame(-64, -64, 128, 128, 0, 384)
+	SpriteFrame(-64, -64, 128, 128, 0, 0)		// #0  - 88 Miles Per Hour Icon
+	SpriteFrame(-64, -64, 128, 128, 128, 0)		// #1  - One Hug is Enough Icon
+	SpriteFrame(-64, -64, 128, 128, 256, 0)		// #2  - Paradise Found Icon
+	SpriteFrame(-64, -64, 128, 128, 384, 0)		// #3  - Take the High Road Icon
+	SpriteFrame(-64, -64, 128, 128, 0, 128)		// #4  - King of the Rings Icon
+	SpriteFrame(-64, -64, 128, 128, 128, 128)	// #5  - Statue Saviour Icon
+	SpriteFrame(-64, -64, 128, 128, 256, 128)	// #6  - Heavy Metal Icon
+	SpriteFrame(-64, -64, 128, 128, 384, 128)	// #7  - All Stages Clear! Icon
+	SpriteFrame(-64, -64, 128, 128, 0, 256)		// #8  - Treasure Hunter Icon
+	SpriteFrame(-64, -64, 128, 128, 128, 256)	// #9  - Dr. Eggman Got Served Icon
+	SpriteFrame(-64, -64, 128, 128, 256, 256)	// #10 - Just In Time! Icon
+	SpriteFrame(-64, -64, 128, 128, 384, 256)	// #11 - Saviour of the Planet Icon
+	SpriteFrame(-64, -64, 128, 128, 0, 384)		// #12 - Lock Icon
 	SetupMenu(MENU_2, 0, 3, 1)
 	AddMenuEntry(MENU_2, "88 Miles Per Hour", 0)
 	AddMenuEntry(MENU_2, "Travel through time.", 0)
