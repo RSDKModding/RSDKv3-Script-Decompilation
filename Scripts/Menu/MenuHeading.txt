@@ -3,7 +3,24 @@
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
 // Aliases
-#alias 2: TYPE_MENUHEADING
+#alias Object.PropertyValue : Object.Header
+#alias Object.Value0		: Object.Timer
+#alias Object.Value1		: Object.YOffset
+#alias Object.Value2		: Object.XOffset
+#alias Object.Value3		: Object.Angle
+#alias Object.Value4		: Object.GFX1
+#alias Object.Value5		: Object.GFX2
+
+// Object[1] is a blank object just to share values
+#alias Object[1].Value2		: Object.MaxButtonCount
+
+//MenuHeading_CheckTouchBack Specific Values
+#alias Object.Value1		: Object.CMButtonPressed	//Current Menu Button Pressed
+#alias Object[1].Value4		: Object.BackTouchPress
+
+// States
+#alias 1 : MENUHEADING_LEAVE_SCREEN
+#alias 2 : MENUHEADING_ENTER_SCREEN
 
 // Languages
 #alias 0 : ENGLISH
@@ -19,25 +36,25 @@
 // Function declarations
 #function MenuHeading_CheckTouchBack
 
-function MenuHeading_CheckTouchBack
+function MenuHeading_CheckTouchBack	//This is used by other scripts to check if the back touch button is pressed
 	if Engine.Message == MESSAGE_LOSTFOCUS
-		Object.Value1 = -1
+		Object.CMButtonPressed = -1
 	end if
 	TempValue0 = Screen.XSize
 	TempValue0 -= 76
 	CheckTouchRect(TempValue0, 192, Screen.XSize, Screen.YSize)
 	if CheckResult > -1
-		Object.Value1 = 5
-		Object[1].Value4 = 1
+		Object.CMButtonPressed = 5
+		Object.BackTouchPress = true
 	else
-		Object[1].Value4 = 0
+		Object.BackTouchPress = false
 		if TempValue3 < 0
-			if Object.Value1 == 5
-				KeyPress.ButtonB = 1
+			if Object.CMButtonPressed == 5
+				KeyPress.ButtonB = true
 			end if
 		else
-			if Object.Value1 == 5
-				Object.Value1 = -1
+			if Object.CMButtonPressed == 5
+				Object.CMButtonPressed = -1
 			end if
 		end if
 	end if
@@ -46,15 +63,16 @@ end function
 
 sub ObjectMain
 	switch Object.State
-	case 1
-		if Object.Value0 < 16
-			Object.Value0++
-			Object.Value2 -= 16
+	case MENUHEADING_LEAVE_SCREEN
+		if Object.Timer < 16
+			Object.Timer++
+			Object.XOffset -= 16
 		else
-			Object.Frame = Object.PropertyValue
-			Object.Value0 = 0
+			Object.Frame = Object.Header
+			Object.Timer = 0
 			Object.State++
 		end if
+
 		if Object.Alpha == 255
 			Object.Alpha = 240
 		else
@@ -63,55 +81,64 @@ sub ObjectMain
 			end if
 		end if
 		break
-	case 2
-		if Object.Value0 < 16
-			Object.Value0++
-			Object.Value2 += 16
+
+	case MENUHEADING_ENTER_SCREEN
+		if Object.Timer < 16
+			Object.Timer++
+			Object.XOffset += 16
 		else
-			Object.Value0 = 0
+			Object.Timer = 0
 			Object.State = 0
 		end if
-		if Object.PropertyValue == 5
-			if Object.Alpha == 240
-				Object.Alpha = 255
+
+		if Object.Header==5
+			if Object.Alpha==240
+				Object.Alpha=255
 			else
-				if Object.Alpha < 255
-					Object.Alpha += 16
-				end if
-			end if
-		end if
+				if Object.Alpha<255
+					Object.Alpha+=16
+				endif
+			endif
+		endif
 		break
+
 	end switch
 end sub
 
 
 sub ObjectDraw
-	Object.Value1--
-	Object.Value1 %= 240
+	//Draw BG Details
+	Object.YOffset--
+	Object.YOffset %= 240
 	Object.SpriteSheet = Object.Value4
-	DrawSpriteScreenXY(1, Screen.CenterX, Object.Value1)
-	DrawSpriteScreenXY(2, Screen.CenterX, Object.Value1)
+	DrawSpriteScreenXY(1, Screen.CenterX, Object.YOffset)
+	DrawSpriteScreenXY(2, Screen.CenterX, Object.YOffset)
 	DrawSpriteScreenXY(0, Screen.CenterX, 20)
 	TempValue0 = Screen.CenterX
 	TempValue0 += 12
 	DrawRect(0, 212, TempValue0, 13, 0, 0, 0, 255)
-	Object.SpriteSheet = Object.Value5
+
+	//Draw Menu Header
+	Object.SpriteSheet = Object.GFX2
 	TempValue0 = Screen.CenterX
 	TempValue0 -= 160
 	TempValue0 >>= 2
-	TempValue0 += Object.Value2
+	TempValue0 += Object.XOffset
 	DrawSpriteScreenXY(Object.Frame, TempValue0, 194)
-	Object.SpriteSheet = Object.Value4
-	Object.Value3 += 4
-	Object.Value3 &= 511
+
+	//Draw Detail Arrows (Standard) / Drag Arrows (Mobile)
+	Object.SpriteSheet = Object.GFX1
+	Object.Angle += 4
+	Object.Angle &= 511
 	TempValue0 = Screen.XSize
 	TempValue0 -= 40
-	if Object[1].Value2 > 4
-		Sin(TempValue1, Object.Value3)
+	//Check if the menu needs dragging to reach all the buttons
+	if Object.MaxButtonCount > 4
+		Sin(TempValue1, Object.Angle)
 		TempValue1 >>= 6
 		TempValue1 += 96
 		DrawSpriteScreenFX(3, FX_INK, TempValue0, TempValue1)
-		Sin(TempValue1, Object.Value3)
+		Sin(TempValue1, Object.Angle)
 		TempValue1 /= -64
 		TempValue1 += 144
 		DrawSpriteScreenFX(4, FX_INK, 40, TempValue1)
@@ -126,12 +153,12 @@ sub ObjectStartup
 		if Object[ArrayPos0].Type == TypeName[MenuHeading]
 			Object[ArrayPos0].Frame = 5
 			Object[ArrayPos0].Alpha = 255
-			Object[ArrayPos0].PropertyValue = 5
-			Object[ArrayPos0].InkEffect = 2
-			Object[ArrayPos0].Value2 = -256
-			Object[ArrayPos0].State = 2
+			Object[ArrayPos0].Header = 5
+			Object[ArrayPos0].InkEffect = 2 //INK_ALPHA
+			Object[ArrayPos0].XOffset = -256
+			Object[ArrayPos0].State = MENUHEADING_ENTER_SCREEN
 			LoadSpriteSheet("Menu/MenuGfx1_EN.gif")
-			Object[ArrayPos0].Value4 = Object[ArrayPos0].SpriteSheet
+			Object[ArrayPos0].GFX1 = Object[ArrayPos0].SpriteSheet
 			switch Engine.Language
 			case ENGLISH
 				LoadSpriteSheet("Menu/MenuGfx2_EN.gif")
@@ -152,100 +179,117 @@ sub ObjectStartup
 				LoadSpriteSheet("Menu/MenuGfx2_JP.gif")
 				break
 			end switch
-			Object[ArrayPos0].Value5 = Object[ArrayPos0].SpriteSheet
+			Object[ArrayPos0].GFX2 = Object[ArrayPos0].SpriteSheet
 		end if
 		ArrayPos0++
 	loop
+	//MenuGfx1
 #platform: Standard
-	SpriteFrame(12, 0, 192, 9, 1, 225)
+	SpriteFrame(12, 0, 192, 9, 1, 225)		// #0 Sonic The Hedgehog CD Bar
 #endplatform
 #platform: Mobile
-	SpriteFrame(12, 0, 216, 9, 1, 225)
+	SpriteFrame(12, 0, 216, 9, 1, 225)		// #0 Sonic The Hedgehog CD Bar
 #endplatform
-	SpriteFrame(8, 0, 8, 240, 503, 1)
-	SpriteFrame(8, 240, 8, 240, 503, 1)
+
+	SpriteFrame(8, 0, 8, 240, 503, 1)		// #1 Vertical Line 1
+	SpriteFrame(8, 240, 8, 240, 503, 1)		// #2 Vertical Line 
+	
 #platform: Standard
-	SpriteFrame(-11, -36, 22, 72, 418, 366)
-	SpriteFrame(-11, -36, 22, 72, 441, 366)
+	SpriteFrame(-11, -36, 22, 72, 418, 366)		// #3 Up Arrow
+	SpriteFrame(-11, -36, 22, 72, 441, 366)		// #4 Down Arrow
 #endplatform
 
 #platform: Mobile
 	switch Engine.Language
 	case ENGLISH
 	case JAPANESE
-		SpriteFrame(-11, -36, 22, 72, 418, 1)
-		SpriteFrame(-11, -36, 22, 72, 441, 1)
+		SpriteFrame(-11, -36, 22, 72, 418, 1)		// #3 Up Arrow
+		SpriteFrame(-11, -36, 22, 72, 441, 1)		// #4 Down Arrow
 		break
+
 	case FRENCH
-		SpriteFrame(-11, -36, 22, 72, 418, 74)
-		SpriteFrame(-11, -36, 22, 72, 441, 74)
+		SpriteFrame(-11, -36, 22, 72, 418, 74)		// #3 Up Arrow
+		SpriteFrame(-11, -36, 22, 72, 441, 74)		// #4 Down Arrow
 		break
+
 	case ITALIAN
-		SpriteFrame(-11, -36, 22, 72, 418, 147)
-		SpriteFrame(-11, -36, 22, 72, 441, 147)
+		SpriteFrame(-11, -36, 22, 72, 418, 147)		// #3 Up Arrow
+		SpriteFrame(-11, -36, 22, 72, 441, 147)		// #4 Down Arrow
 		break
+
 	case DEUTSCH
-		SpriteFrame(-11, -36, 22, 72, 418, 220)
-		SpriteFrame(-11, -36, 22, 72, 441, 220)
+		SpriteFrame(-11, -36, 22, 72, 418, 220)		// #3 Up Arrow
+		SpriteFrame(-11, -36, 22, 72, 441, 220)		// #4 Down Arrow
 		break
+
 	case SPANISH
-		SpriteFrame(-11, -36, 22, 72, 418, 293)
-		SpriteFrame(-11, -36, 22, 72, 441, 293)
+		SpriteFrame(-11, -36, 22, 72, 418, 293)		// #3 Up Arrow
+		SpriteFrame(-11, -36, 22, 72, 441, 293)		// #4 Down Arrow
 		break
+
 	end switch
 #endplatform
-
+	//MenuGfx2
 	switch Engine.Language
 	case ENGLISH
 	case JAPANESE
-		SpriteFrame(32, 0, 160, 30, 1, 615)
-		SpriteFrame(32, 0, 160, 30, 1, 646)
-		SpriteFrame(16, 0, 160, 30, 1, 677)
-		SpriteFrame(32, 0, 160, 30, 1, 708)
-		SpriteFrame(24, 0, 160, 30, 1, 739)
+		SpriteFrame(32, 0, 160, 30, 1, 615)			// #5 Main Menu
+		SpriteFrame(32, 0, 160, 30, 1, 646)			// #6 Save Select
+		SpriteFrame(16, 0, 160, 30, 1, 677)			// #7 Help & Options
+		SpriteFrame(32, 0, 160, 30, 1, 708)			// #8 Extras
+		SpriteFrame(24, 0, 160, 30, 1, 739)			// #9 Soundtrack
+
 #platform: Mobile
-		SpriteFrame(24, 0, 160, 30, 1, 770)
-#endplatform	
-		break
-	case FRENCH
-		SpriteFrame(12, 0, 160, 30, 1, 615)
-		SpriteFrame(20, 0, 160, 30, 1, 646)
-		SpriteFrame(14, 0, 160, 30, 1, 677)
-		SpriteFrame(32, 0, 160, 30, 1, 708)
-		SpriteFrame(10, 0, 160, 30, 1, 739)
-#platform: Mobile
-		SpriteFrame(24, 0, 160, 30, 1, 770)
+		SpriteFrame(24, 0, 160, 30, 1, 770)			// #10 Stage Select (Used in Trial versions)
 #endplatform
+		break
+
+	case FRENCH
+		SpriteFrame(12, 0, 160, 30, 1, 615)			// #5 Main Menu
+		SpriteFrame(20, 0, 160, 30, 1, 646)			// #6 Save Select
+		SpriteFrame(14, 0, 160, 30, 1, 677)			// #7 Help & Options
+		SpriteFrame(32, 0, 160, 30, 1, 708)			// #8 Extras
+		SpriteFrame(10, 0, 160, 30, 1, 739)			// #9 Soundtrack
+
+#platform: Mobile
+		SpriteFrame(24, 0, 160, 30, 1, 770)			// #10 Stage Select (Used in Trial versions)
+#endplatform
+
 		break
 	case ITALIAN
-		SpriteFrame(8, 0, 160, 30, 1, 615)
-		SpriteFrame(32, 0, 160, 30, 1, 646)
-		SpriteFrame(14, 0, 160, 30, 1, 677)
-		SpriteFrame(32, 0, 160, 30, 1, 708)
-		SpriteFrame(8, 0, 160, 30, 1, 739)
+		SpriteFrame(8, 0, 160, 30, 1, 615)			// #5 Main Menu
+		SpriteFrame(32, 0, 160, 30, 1, 646)			// #6 Save Select
+		SpriteFrame(14, 0, 160, 30, 1, 677)			// #7 Help & Options
+		SpriteFrame(32, 0, 160, 30, 1, 708)			// #8 Extras
+		SpriteFrame(8, 0, 160, 30, 1, 739)			// #9 Soundtrack
+
 #platform: Mobile
-		SpriteFrame(24, 0, 160, 30, 1, 770)
+		SpriteFrame(24, 0, 160, 30, 1, 770)			// #10 Stage Select (Used in Trial versions)
 #endplatform
+
 		break
 	case DEUTSCH
-		SpriteFrame(24, 0, 160, 30, 1, 615)
-		SpriteFrame(16, 0, 160, 30, 1, 646)
-		SpriteFrame(6, 0, 160, 30, 1, 677)
-		SpriteFrame(32, 0, 160, 30, 1, 708)
-		SpriteFrame(24, 0, 160, 30, 1, 739)
+		SpriteFrame(24, 0, 160, 30, 1, 615)			// #5 Main Menu
+		SpriteFrame(16, 0, 160, 30, 1, 646)			// #6 Save Select
+		SpriteFrame(6, 0, 160, 30, 1, 677)			// #7 Help & Options
+		SpriteFrame(32, 0, 160, 30, 1, 708)			// #8 Extras
+		SpriteFrame(24, 0, 160, 30, 1, 739)			// #9 Soundtrack
+
 #platform: Mobile
-		SpriteFrame(24, 0, 160, 30, 1, 770)
-#endplatform	
+		SpriteFrame(24, 0, 160, 30, 1, 770)			// #10 Stage Select (Used in Trial versions)
+#endplatform
+
 		break
 	case SPANISH
-		SpriteFrame(16, 0, 160, 30, 1, 615)
-		SpriteFrame(16, 0, 160, 30, 1, 646)
-		SpriteFrame(8, 0, 160, 30, 1, 677)
-		SpriteFrame(32, 0, 160, 30, 1, 708)
-		SpriteFrame(6, 0, 160, 30, 1, 739)
+		SpriteFrame(16, 0, 160, 30, 1, 615)			// #5 Main Menu
+		SpriteFrame(16, 0, 160, 30, 1, 646)			// #6 Save Select
+		SpriteFrame(8, 0, 160, 30, 1, 677)			// #7 Help & Options
+		SpriteFrame(32, 0, 160, 30, 1, 708)			// #8 Extras
+		SpriteFrame(6, 0, 160, 30, 1, 739)			// #9 Soundtrack
 #platform: Mobile
-		SpriteFrame(24, 0, 160, 30, 1, 770)
-#endplatform						
+		SpriteFrame(24, 0, 160, 30, 1, 770)			// #10 Stage Select (Used in Trial versions)
+#endplatform
+
 		break
 	end switch
 end sub

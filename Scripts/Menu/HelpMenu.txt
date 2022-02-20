@@ -3,7 +3,10 @@
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
 // Aliases
-#alias 1: TYPE_HELPMENU
+#alias Object.Value0 : Object.Timer		//Also used for fading
+#alias Object.Value2 : Object.YOffset
+#alias Object.Value3 : Object.HelpPage
+#alias Object.Value4 : Object.PageTimer
 
 // Languages
 #alias 0 : ENGLISH
@@ -13,11 +16,18 @@
 #alias 4 : SPANISH
 #alias 5 : JAPANESE
 
+// OST
+#alias 0 : JP_OST
+
+// Engine & Callbacks
+#alias 5 : ENGINE_ENTER_HIRESMODE
+#alias 6 : ENGINE_EXIT_HIRESMODE
+
 // Function declarations
 #function HelpMenu_Function0
 
 function HelpMenu_Function0
-	switch Object.Value3
+	switch Object.HelpPage
 	case 0
 		switch Engine.Language
 		case ENGLISH
@@ -226,122 +236,132 @@ sub ObjectMain
 		TempValue0 = 256
 		TempValue0 -= Screen.CenterX
 		Screen.XOffset = TempValue0
-		Object.Value3 = 0
+		Object.HelpPage = 0
 		CallFunction(HelpMenu_Function0)
 		PlayMusic(1)
-		Object.Value0 = 384
+		Object.Timer = 384
 		Object.State++
 		SetScreenFade(0, 0, 0, 255)
 		break
+
 	case 1
-		if Object.Value0 > 0
-			Object.Value0 -= 8
+		if Object.Timer > 0
+			Object.Timer -= 8
 		else
 			Object.State++
 		end if
-		SetScreenFade(0, 0, 0, Object.Value0)
+		SetScreenFade(0, 0, 0, Object.Timer)
 		break
+
 	case 2
 		if KeyPress.Down == true
-			if Object.Value3 < 8
+			if Object.HelpPage < 8
 				PlaySfx(27, 0)	//Select SFX
-				Object.Value0 = 256
+				Object.Timer = 256
 				Object.State = 3
 			end if
 		end if
+
 		if KeyPress.Up == true
-			if Object.Value3 > 0
+			if Object.HelpPage > 0
 				PlaySfx(27, 0)	//Select SFX
 				Object.State = 4
 			end if
 		end if
+		
 		if KeyPress.ButtonB == true
 			PlaySfx(26, 0)
 			Object.State = 5
 		end if
 		break
+
 	case 3
-		if Object.Value0 > 0
-			Cos(TempValue0, Object.Value0)
+		if Object.Timer > 0
+			Cos(TempValue0, Object.Timer)
 			TempValue0 >>= 1
 			TempValue0 += 256
-			TempValue1 = Object.Value2
+			TempValue1 = Object.YOffset
 			TempValue1 += TempValue0
 			Screen.YOffset = TempValue1
 			TempValue1 += 256
 			TempValue1 >>= 9
-			if TempValue1 > Object.Value3
-				Object.Value3++
-				if Object.Value3 == 2
+			if TempValue1 > Object.HelpPage
+				Object.HelpPage++
+				if Object.HelpPage == 2
 					SetActivePalette(1, 0, Screen.YSize)
 				else
 					SetActivePalette(0, 0, Screen.YSize)
 				end if
 				CallFunction(HelpMenu_Function0)
 			end if
-			Object.Value0 -= 3
-			if Object.Value0 < 0
-				Object.Value0 = 0
+
+			Object.Timer -= 3
+			if Object.Timer < 0
+				Object.Timer = 0
 			end if
 		else
-			Object.Value2 += 512
-			Screen.YOffset = Object.Value2
+			Object.YOffset += 512
+			Screen.YOffset = Object.YOffset
 			Object.State = 2
 		end if
 		break
+
 	case 4
-		if Object.Value0 < 256
-			Cos(TempValue0, Object.Value0)
+		if Object.Timer < 256
+			Cos(TempValue0, Object.Timer)
 			TempValue0 >>= 1
 			TempValue0 -= 256
-			TempValue1 = Object.Value2
+			TempValue1 = Object.YOffset
 			TempValue1 += TempValue0
 			Screen.YOffset = TempValue1
 			TempValue1 += 256
 			TempValue1 >>= 9
-			if TempValue1 < Object.Value3
-				Object.Value3--
-				if Object.Value3 == 2
+			if TempValue1 < Object.HelpPage
+				Object.HelpPage--
+				if Object.HelpPage == 2
 					SetActivePalette(1, 0, Screen.YSize)
 				else
 					SetActivePalette(0, 0, Screen.YSize)
 				end if
 				CallFunction(HelpMenu_Function0)
 			end if
-			Object.Value0 += 3
-			if Object.Value0 > 256
-				Object.Value0 = 256
+			
+			Object.Timer += 3
+			if Object.Timer > 256
+				Object.Timer = 256
 			end if
 		else
-			Object.Value2 -= 512
-			Screen.YOffset = Object.Value2
-			Object.Value0 = 0
+			Object.YOffset -= 512
+			Screen.YOffset = Object.YOffset
+			Object.Timer = 0
 			Object.State = 2
 		end if
 		break
+
 	case 5
-		if Object.Value0 < 348
-			Object.Value0 += 8
+		if Object.Timer < 348
+			Object.Timer += 8
 		else
-			Stage.ListPos = 1
-			Engine.State = 6
+			Stage.ListPos = 1		// Menu
+			Engine.State = ENGINE_EXIT_HIRESMODE
 			LoadStage()
 		end if
-		SetScreenFade(0, 0, 0, Object.Value0)
+		SetScreenFade(0, 0, 0, Object.Timer)
 		break
+
 	end switch
 end sub
 
 
 sub ObjectDraw
-	Object.Value4--
-	if Object.Value4 < -31
-		Object.Value4 += 32
+	Object.PageTimer--
+	if Object.PageTimer < -31
+		Object.PageTimer += 32
 	end if
-	TempValue1 = Object.Value4
+	TempValue1 = Object.PageTimer
 	TempValue1 >>= 1
 	while TempValue1 < Screen.YSize
-		TempValue0 = Object.Value4
+		TempValue0 = Object.PageTimer
 		TempValue0 >>= 1
 		while TempValue0 < Screen.XSize
 			DrawSpriteScreenXY(0, TempValue0, TempValue1)
@@ -372,12 +392,12 @@ sub ObjectStartup
 	LoadPalette("HelpPal1.act", 0, 0, 0, 256)
 	LoadPalette("HelpPal2.act", 1, 0, 0, 256)
 	LoadTextFont("Data/Game/HelpText.bin")
-	if Options.Soundtrack == 0
+	if Options.Soundtrack == JP_OST
 		SetMusicTrack("JP/DAGarden.ogg", 1, 1)
 	else
 		SetMusicTrack("US/DAGarden.ogg", 1, 117382)
 	end if
-	Engine.State = 5
+	Engine.State = ENGINE_ENTER_HIRESMODE
 	Screen.CameraEnabled = 0
 	Object[0].Type = TypeName[HelpMenu]
 	Object[0].Priority = 1

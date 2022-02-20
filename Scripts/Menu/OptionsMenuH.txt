@@ -5,18 +5,25 @@
 
 // Aliases
 #alias 9: TYPE_OPTIONSMENUH
-#alias Object.Value0 : Object.Timer
-#alias Object.Value1 : Object.CurrentSelection
-#alias Object.Value3 : Object.BGMDecreaseTimer
-#alias Object.Value4 : Object.BGMIncreaseTimer
-#alias Object.Value5 : Object.SFXDecreaseTimer
-#alias Object.Value6 : Object.SFXIncreaseTimer
-#alias Object[+ArrayPos0].Value2 : Object.FlickerText
+#alias Object.Value0 				: Object.Timer
+#alias Object.Value1 				: Object.CurrentSelection
+#alias Object.Value3 				: Object.BGMDecreaseTimer
+#alias Object.Value4 				: Object.BGMIncreaseTimer
+#alias Object.Value5 				: Object.SFXDecreaseTimer
+#alias Object.Value6 				: Object.SFXIncreaseTimer
+
+//Object[+ArrayPos0] can be the BlankObjects 63, 64, 65 and 66. Depending of the CurrentSelection value
+#alias Object[+ArrayPos0].Value2 	: Object.FlickerText
+
 //Object[33] is MenuHeading
 #alias Object[33].State				: Object.MHState
 #alias Object[33].PropertyValue		: Object.MHPropertyValue
+
 //Object[-1] is MenuWindow
 #alias Object[-1].State				: Object.MWState
+
+// Object[1] is a blank object just to share values
+#alias Object[1].Value4				: Object.BackTouchPress
 
 // States
 #alias 0  : OPTIONS_SETUP
@@ -35,6 +42,7 @@
 #alias 13 : OPTIONS_ENTER_ABOUTMENU
 #alias 14 : OPTIONS_ABOUTMENU_CONTROLS
 #alias 15 : OPTIONS_EXIT_ABOUTMENU
+
 // Languages
 #alias 0 : ENGLISH
 #alias 1 : FRENCH
@@ -534,6 +542,7 @@ sub ObjectMain
 					end if
 				end if
 			end if
+
 			TempValue0 = Screen.CenterX
 			TempValue0 += 84
 			TempValue1 = Screen.CenterX
@@ -572,6 +581,7 @@ sub ObjectMain
 					end if
 				end if
 			end if
+
 			CheckTouchRect(TempValue0, 99, TempValue1, 126)
 			if CheckResult > -1
 				Object[+4].Value1 = 6
@@ -606,6 +616,7 @@ sub ObjectMain
 					end if
 				end if
 			end if
+
 			TempValue0 = Screen.CenterX
 			TempValue0 += 14
 			TempValue1 = Screen.CenterX
@@ -626,6 +637,7 @@ sub ObjectMain
 					end if
 				end if
 			end if
+
 			TempValue0 = Screen.CenterX
 			TempValue0 += 68
 			TempValue1 = Screen.CenterX
@@ -646,6 +658,7 @@ sub ObjectMain
 					end if
 				end if
 			end if
+
 			TempValue0 = Screen.CenterX
 			TempValue0 += 14
 			TempValue1 = Screen.CenterX
@@ -670,6 +683,7 @@ sub ObjectMain
 					end if
 				end if
 			end if
+
 			TempValue0 = Screen.CenterX
 			TempValue0 += 68
 			TempValue1 = Screen.CenterX
@@ -693,14 +707,15 @@ sub ObjectMain
 					end if
 				end if
 			end if
+
 			TempValue0 = Screen.XSize
 			TempValue0 -= 96
 			CheckTouchRect(TempValue0, 192, Screen.XSize, Screen.YSize)
 			if CheckResult > -1
 				Object[+4].Value1 = 11
-				Object[1].Value4 = 1
+				Object.BackTouchPress = true
 			else
-				Object[1].Value4 = 0
+				Object.BackTouchPress = false
 				if TempValue3 < 0
 					if Object[+4].Value1 == 11
 						KeyPress.ButtonB = 1
@@ -711,10 +726,12 @@ sub ObjectMain
 					end if
 				end if
 			end if
+
 			if KeyPress.Up == true
 				Object[+4].Value1 = 2
 				Options.PhysicalControls = 1
 			end if
+			
 			if KeyPress.Down == true
 				Object[+4].Value1 = 0
 				Options.PhysicalControls = 1
@@ -826,7 +843,7 @@ sub ObjectMain
 			ResetObjectEntity(TempValue0, TypeName[AboutMenuF], 0, 0, 0)
 			SetupMenu(MENU_1, 0, 3, 1)
 			GetVersionNumber(MENU_1, 1)
-			Object[+10].InkEffect = 2
+			Object[+10].InkEffect = 2 //INK_ALPHA
 			Object.State++
 			Object.Alpha = 0
 			Object[+4].Value1 = 0
@@ -856,9 +873,9 @@ sub ObjectMain
 		CheckTouchRect(TempValue0, 192, Screen.XSize, Screen.YSize)
 		if CheckResult > -1
 			Object[+4].Value1 = 9
-			Object[1].Value4 = 1
+			Object.BackTouchPress = true
 		else
-			Object[1].Value4 = 0
+			Object.BackTouchPress = false
 			if TempValue3 < 0
 				if Object[+4].Value1 == 9
 					KeyPress.ButtonB = 1

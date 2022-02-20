@@ -5,14 +5,18 @@
 // Aliases
 #alias Object.Value0				: Object.Timer
 #alias Object.Value1				: Object.CurrentButton
+
 //Object[+4] and [+ArrayPos0] are blank objects just to add values
 #alias Object[+4].Value1			: Object.VMCurrentButton
 #alias Object[+ArrayPos0].Value2	: Object.FlickerState
+
 //Object[33] is MenuHeading
 #alias Object[33].State				: Object.MHState
 #alias Object[33].PropertyValue		: Object.MHPropertyValue
+
 //Object[-1] is MenuWindow
 #alias Object[-1].State				: Object.MWState
+#alias Object[1].Value4				: Object.BackTouchPress
 
 // States
 #alias 0  : EXTRASMENU_ENTER_MENU
@@ -116,7 +120,6 @@ end function
 sub ObjectMain
 	switch Object.State
 	case EXTRASMENU_ENTER_MENU
-
 #platform: Mobile
 		if Options.PhysicalControls == false
 			Object.CurrentButton = -1
@@ -134,8 +137,8 @@ sub ObjectMain
 			Object.State++
 		end if
 		break
-	case EXTRASMENU_CONTROLS
 
+	case EXTRASMENU_CONTROLS
 #platform: Mobile
 		CheckEqual(Options.PhysicalControls, true)
 #endplatform
@@ -242,6 +245,7 @@ sub ObjectMain
 				Object.CurrentButton = 3
 				Options.PhysicalControls = true
 			end if
+
 			if KeyPress.Down == true
 				Object.CurrentButton = 0
 				Options.PhysicalControls = true
@@ -255,6 +259,7 @@ sub ObjectMain
 			if KeyPress.Start == true
 				CheckResult = true
 			end if
+
 			if KeyPress.ButtonA == true
 				CheckResult = true
 			end if
@@ -265,6 +270,7 @@ sub ObjectMain
 			if KeyPress.Start == true
 				CheckResult = true
 			end if
+
 			if KeyPress.ButtonA == true
 				CheckResult = true
 			end if
@@ -282,6 +288,7 @@ sub ObjectMain
 						PlaySfx(27, 0)	//Select SFX
 					end if
 					break
+
 				case 1
 					if Options.VisualModeFlag == true
 						ArrayPos0 = Object.CurrentButton
@@ -290,6 +297,7 @@ sub ObjectMain
 						PlaySfx(27, 0)	//Select SFX
 					end if
 					break
+
 				case 2
 					if Options.SoundTestFlag == true
 						ArrayPos0 = Object.CurrentButton
@@ -299,6 +307,7 @@ sub ObjectMain
 						PlaySfx(27, 0)	//Select SFX
 					end if
 					break
+
 				case 3
 					if Options.StageSelectFlag == true
 						ArrayPos0 = Object.CurrentButton
@@ -308,6 +317,7 @@ sub ObjectMain
 						PlaySfx(27, 0)	//Select SFX
 					end if
 					break
+
 				end switch
 
 #platform: Mobile	//Vanish the selection border if no button is pressed
@@ -315,12 +325,15 @@ sub ObjectMain
 					if Options.DAGardenFlag == false
 						Object.CurrentButton = -1
 					end if
+
 					if Options.VisualModeFlag == false
 						Object.CurrentButton = -1
 					end if
+
 					if Options.SoundTestFlag == false
 						Object.CurrentButton = -1
 					end if
+
 					if Options.StageSelectFlag == false
 						Object.CurrentButton = -1
 					end if
@@ -430,6 +443,7 @@ sub ObjectMain
 			Object.State++
 		end if
 		break
+
 	case EXTRASMENU_VISUALMODE
 		ArrayPos0 = Object.CurrentButton
 
@@ -565,12 +579,12 @@ sub ObjectMain
 			CheckTouchRect(TempValue0, 192, Screen.XSize, Screen.YSize)		//Back Touch Press
 			if CheckResult > -1
 				Object.VMCurrentButton = 4
-				Object[1].Value4 = 1
+				Object.BackTouchPress = true
 			else
-				Object[1].Value4 = 0
+				Object.BackTouchPress = false
 				if TempValue3 < 0
 					if Object.VMCurrentButton == 4
-						KeyPress.ButtonB = 1
+						KeyPress.ButtonB = true
 					end if
 				else
 					if Object.VMCurrentButton == 4
@@ -583,14 +597,17 @@ sub ObjectMain
 				Object.VMCurrentButton = 1
 				Options.PhysicalControls = 1
 			end if
+
 			if KeyPress.Right == true
 				Object.VMCurrentButton = 0
 				Options.PhysicalControls = 1
 			end if
+
 			if KeyPress.Up == true
 				Object.VMCurrentButton = 3
 				Options.PhysicalControls = 1
 			end if
+
 			if KeyPress.Down == true
 				Object.VMCurrentButton = 0
 				Options.PhysicalControls = 1
@@ -605,6 +622,7 @@ sub ObjectMain
 			if KeyPress.Start == true
 				CheckResult = true
 			end if
+
 			if KeyPress.ButtonA == true
 				CheckResult = true
 			end if
@@ -615,6 +633,7 @@ sub ObjectMain
 			if KeyPress.Start == true
 				CheckResult = true
 			end if
+
 			if KeyPress.ButtonA == true
 				CheckResult = true
 			end if
@@ -625,11 +644,13 @@ sub ObjectMain
 			StopMusic()
 			Object.State++
 		end if
+
 		if KeyPress.ButtonB == true
 			Object.State = EXTRASMENU_VISUALMODE_FADEOUT
 			Object.Timer = 248
 			PlayStageSfx(1, 0)
 		end if
+
 		break
 	case EXTRASMENU_VISUALMODE_SELECTED
 		if Object.Timer < 30
@@ -638,12 +659,13 @@ sub ObjectMain
 			Object.Timer = 0
 			Object.State++
 		end if
+
 		break
+
 	case EXTRASMENU_VISUALMODE_VIDEOPLAY
 		if Object.Timer < 384
 			Object.Timer += 8
 		else
-
 #platform: Standard	
 			switch Object.VMCurrentButton
 			case 0
@@ -720,6 +742,7 @@ sub ObjectMain
 			Object.State++
 		end if
 		break
+
 	case EXTRASMENU_VISUALMODE_RETURN
 		TempValue0 = Object.CurrentButton
 		TempValue0 *= 40
@@ -875,6 +898,7 @@ sub ObjectDraw
 			DrawSpriteScreenFX(4, FX_INK, TempValue0, 96)
 			DrawSpriteScreenFX(18, FX_INK, TempValue0, 96)
 		end if
+
 		if Object.VMCurrentButton == 2
 			if TempValue1 == 0
 				DrawSpriteScreenFX(6, FX_INK, TempValue0, 153)
@@ -885,6 +909,7 @@ sub ObjectDraw
 			DrawSpriteScreenFX(6, FX_INK, TempValue0, 153)
 			DrawSpriteScreenFX(20, FX_INK, TempValue0, 153)
 		end if
+		
 		TempValue0 += 128
 		if Object.VMCurrentButton == 1
 			if TempValue1 == 0

@@ -2,7 +2,7 @@
 //--------Scripted by Christian Whitehead 'The Taxman'--------//
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
-//-------Aliases-------//
+// Aliases
 #alias Object.Value0 : Object.Fade
 #alias Object.Value1 : Object.ButtonYOffset
 #alias Object.Value2 : Object.DragCurrentSelection
@@ -11,15 +11,18 @@
 #alias Object.Value5 : Object.DragEnabled
 #alias Object.Value6 : Object.DragYOffset
 #alias Object.Value7 : Object.DragSmooth
+#alias Object.Direction : Object.YOffsetCorrection
+
+// Object[1] is a blank object only used to share values across the menu objects
 #alias Object[1].Value0 : Object.DragPos
 #alias Object[1].Value1 : Object.RecenterValue
 #alias Object[1].Value2 : Object.MaxButtonCount
 #alias Object[1].Value3 : Object.DragLimit
-#alias Object[1].Value4 : Object.YOffSet1
+#alias Object[1].Value4 : Object.YOffSet1	//in other scripts this is used to check inputs
 #alias Object[1].Value5 : Object.YOffSet2
 #alias Object[1].Value6 : Object.YOffSet3
 
-//-------States--------//
+// States
 #alias 0 : MENUCONTROL_SETUP
 #alias 1 : MENUCONTROL_BUTTONS_MOVEIN
 #alias 2 : MENUCONTROL_CONTROLS
@@ -30,20 +33,11 @@
 #alias 7 : MENUCONTROL_ENTER_TROPHIES
 #alias 8 : MENUCONTROL_ENTER_LEADERBOARS
 
-//Engine & CallBacks
+// OST
+#alias 0 : JP_OST
+
+// Engine & CallBacks
 #alias 2 : MESSAGE_LOSTFOCUS
-
-
-//Object[1] is a blank object only used to share values across the menu objects:
-
-//Object[1].Value0 is used by MenuControl and TrophiesMenu to know from what part of the list you are dragging.
-//Object[1].Value1 is used mainly here (MenuControl) for the smooth centering to the screen after exceeding with the drag.
-//Object[1].Value2 comes from MenuButton and sets the maximum amount of button to move around.
-//Object[1].Value3 comes from MenuButton and defines a value to jump back if exceending with the dragging based on the current button.
-//Object[1].Value4 gets values from most of the "Menu" Objects, normally used for checking input.
-//*Except in MenuControl and TrophiesMenu, where they are also used as an additional offset for dragging.
-//Object[1].Value5 and Object[1].Value6 get their values from TrophiesMenu and MenuControl, both to set dragging offsets.
-//Object[1].Value7 is unused.
 
 sub ObjectMain
 
@@ -70,46 +64,51 @@ sub ObjectMain
 	case MENUCONTROL_CONTROLS
 	
 		#platform: Mobile
-			CheckEqual(Options.PhysicalControls,1)
+			CheckEqual(Options.PhysicalControls,true)
 		#endplatform
 
 		#platform: Standard
 			CheckResult = true
 		#endplatform
 
-		if CheckResult == 1
+		if CheckResult == true
 			if KeyPress.Up == true
 				Object.CurrentSelection--
 				if Object.CurrentSelection < 1
 					Object.CurrentSelection = 1
 				else
-					PlaySfx(23, 0) 	//Menu Button SFX	//Menu Button SFX
+					PlaySfx(23, 0) 	//Menu Button SFX
 				end if
 			end if
+
 			if KeyPress.Down == true
 				Object.CurrentSelection++
 				if Object.CurrentSelection > Object.MaxButtonCount
 					Object.CurrentSelection = Object.MaxButtonCount
 				else
-					PlaySfx(23, 0) 	//Menu Button SFX	//Menu Button SFX
+					PlaySfx(23, 0) 	//Menu Button SFX
 				end if
 			end if
+
 			TempValue0 = Object.CurrentSelection
 			TempValue0 -= Object.ButtonScroll
 			if TempValue0 < 1
 				Object.ButtonScroll--
-				Object.Direction = 3
+				Object.YOffsetCorrection = 3
 			end if
+
 			if TempValue0 > 4
 				Object.ButtonScroll++
-				Object.Direction = FACING_RIGHT
+				Object.YOffsetCorrection = 0
 			end if
+			
+			//Button Movement across the screen 
 			TempValue0 = Object.ButtonYOffset
 			TempValue0 -= 32
 			TempValue1 = Object.ButtonScroll
 			TempValue1 *= -60
 			TempValue1 -= TempValue0
-			TempValue1 += Object.Direction
+			TempValue1 += Object.YOffsetCorrection
 			TempValue1 >>= 2
 			Object.ButtonYOffset += TempValue1
 		end if
@@ -118,20 +117,22 @@ sub ObjectMain
 		if Options.PhysicalControls == true
 			CheckTouchRect(0, 0, Screen.XSize, Screen.YSize)
 			if CheckResult > -1
-				Options.PhysicalControls = 0
+				Options.PhysicalControls = false
 				Object.CurrentSelection = 0
-				Object.Value2 = 0
+				Object.DragCurrentSelection = 0
 			end if
 		else
 			if Engine.Message == MESSAGE_LOSTFOCUS
 				Object.CurrentSelection = 0
-				Object.Value2 = 0
+				Object.DragCurrentSelection = 0
 			end if
-			if Object.Value2 > 0
-				Object.CurrentSelection = Object.Value2
+
+			if Object.DragCurrentSelection > 0
+				Object.CurrentSelection = Object.DragCurrentSelection
 			else
 				Object.CurrentSelection = 0
 			end if
+
 			if Object.MaxButtonCount > 4
 				CheckTouchRect(0, 0, Screen.XSize, Screen.YSize)
 				if CheckResult > -1
@@ -141,6 +142,7 @@ sub ObjectMain
 						Object.DragPos = Object.ButtonYOffset
 						Object.DragYOffset = TouchScreen[ArrayPos0].YPos
 					else
+						//Dragging of buttons based on input
 						TempValue0 = TouchScreen[ArrayPos0].YPos
 						TempValue0 -= Object.DragYOffset
 						TempValue0 += Object.DragPos
@@ -151,14 +153,16 @@ sub ObjectMain
 						Object.DragSmooth -= Object.ButtonYOffset
 						Object.ButtonYOffset = TempValue0
 					end if
+
 					TempValue0 = Object.DragSmooth
 					TempValue0 >>= 2
 					if TempValue0 != 0
 						Object.CurrentSelection = 0
-						Object.Value2 = 0
+						Object.DragCurrentSelection = 0
 					end if
 				else
 					if Object.DragEnabled == 1
+						//Sets the position to where the buttons will go post-drag
 						Object.DragEnabled = 0
 						Object.DragYOffset = Object.ButtonYOffset
 						Object.DragYOffset <<= 8
@@ -169,11 +173,13 @@ sub ObjectMain
 						Object.DragSmooth <<= 7
 						if Object.DragSmooth == 0
 							if Object.CurrentSelection == 0
-								Object.DragSmooth = 1
+								Object.DragSmooth = 1		//Forces movement
 							end if
 						end if
 					end if
+
 					if Object.DragSmooth != 0
+						//Centers to whatever button is closer to the center + offset up or down depending of to where did you drag
 						Object.DragYOffset += Object.DragSmooth
 						if Object.DragYOffset < Object.DragLimit
 							Object.DragYOffset = Object.DragLimit
@@ -183,6 +189,7 @@ sub ObjectMain
 							Object.DragYOffset = 23040
 							Object.DragSmooth = 0
 						end if
+
 						if Object.DragSmooth > 0
 							Object.DragSmooth -= 32
 							if Object.DragSmooth < 0
@@ -194,6 +201,7 @@ sub ObjectMain
 								Object.DragSmooth = 0
 							end if
 						end if
+						
 						Object.ButtonYOffset = Object.DragYOffset
 						Object.ButtonYOffset >>= 8
 						if Object.DragSmooth == 0
@@ -227,13 +235,15 @@ sub ObjectMain
 					end if
 				end if
 			end if
+			
 			if KeyPress.Up == true
 				Object.CurrentSelection = Object.MaxButtonCount
-				Options.PhysicalControls = 1
+				Options.PhysicalControls = true
 			end if
+
 			if KeyPress.Down == true
 				Object.CurrentSelection = 1
-				Options.PhysicalControls = 1
+				Options.PhysicalControls = true
 			end if
 		end if
 #endplatform
@@ -260,7 +270,7 @@ sub ObjectMain
 
 #platform: Mobile
 			if Engine.PlatformID != RETRO_WP7
-				if Options.Soundtrack == 0
+				if Options.Soundtrack == JP_OST
 					LoadVideo("Opening")
 				else
 					LoadVideo("OpeningUS")

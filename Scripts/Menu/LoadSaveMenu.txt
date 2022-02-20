@@ -3,17 +3,19 @@
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
 // Aliases
-#alias Object.Value0       : Object.FadeValue
-#alias Object.Value1       : Object.SelectedOption
-#alias Object.Direction    : Object.ShowDeleteButton
-#alias Object[+4].Rotation : Object.SaveMode
-#alias Object[+4].Value1   : DeleteConfirm.Highlight
+#alias Object.Value0				: Object.FadeValue
+#alias Object.Value1				: Object.SelectedOption
+#alias Object.Direction   			: Object.ShowDeleteButton
+#alias Object[+4].Rotation 			: Object.SaveMode
+#alias Object[+4].Value1  			: DeleteConfirm.Highlight
 
 //Object[33] is MenuHeading
 #alias Object[33].State				: Object.MHState
 #alias Object[33].PropertyValue		: Object.MHPropertyValue
 //Object[-1] is MenuWindow
 #alias Object[-1].State				: Object.MWState
+
+#alias Object[1].Value4				: Object.BackTouchPress
 
 #alias 0 : OST_JP
 #alias 1 : GAMEMODE_SAVEGAME
@@ -887,9 +889,9 @@ sub ObjectMain
 			CheckTouchRect(TempValue0, 192, Screen.XSize, Screen.YSize)
 			if CheckResult > -1
 				Object[+ArrayPos0].PlayerListPos = CHARACTER_BACK
-				Object[1].Value4 = 1
+				Object.BackTouchPress = true
 			else
-				Object[1].Value4 = 0
+				Object.BackTouchPress = false
 				if TempValue3 < 0
 					if Object[+ArrayPos0].PlayerListPos == CHARACTER_BACK
 						KeyPress.ButtonB = true
@@ -1259,9 +1261,9 @@ sub ObjectMain
 			CheckTouchRect(TempValue0, 192, Screen.XSize, Screen.YSize)
 			if CheckResult > -1
 				DeleteConfirm.Highlight = DELETE_BACK
-				Object[1].Value4 = 1
+				Object.BackTouchPress = true
 			else
-				Object[1].Value4 = 0
+				Object.BackTouchPress = false
 				if TempValue3 < 0
 					if DeleteConfirm.Highlight == DELETE_BACK
 						KeyPress.ButtonB = true
@@ -1593,36 +1595,37 @@ sub ObjectStartup
 		break
 	end switch
 	
-	SpriteFrame(4, 2, 32, 32, 389, 1)
-	SpriteFrame(4, 2, 32, 32, 422, 1)
-	SpriteFrame(4, 2, 32, 32, 455, 1)
-	SpriteFrame(4, 2, 32, 32, 446, 34)
-	SpriteFrame(3, 2, 40, 32, 259, 1)
-	SpriteFrame(3, 2, 64, 32, 259, 1)
-	SpriteFrame(3, 2, 40, 32, 324, 1)
-	SpriteFrame(3, 2, 64, 32, 324, 1)
-	SpriteFrame(45, 12, 13, 13, 488, 1)
-	SpriteFrame(0, 0, 250, 37, 259, 421)
-	SpriteFrame(64, 12, 128, 16, 1, 1)
-	SpriteFrame(64, 12, 144, 16, 259, 93)
-	SpriteFrame(64, 12, 144, 16, 259, 110)
-	SpriteFrame(64, 12, 144, 16, 259, 127)
-	SpriteFrame(64, 12, 144, 16, 259, 144)
-	SpriteFrame(64, 12, 144, 16, 259, 161)
-	SpriteFrame(64, 12, 144, 16, 259, 178)
-	SpriteFrame(64, 12, 144, 16, 259, 195)
-	SpriteFrame(64, 12, 144, 16, 259, 212)
-	SpriteFrame(64, 12, 144, 16, 259, 229)
-	SpriteFrame(64, 12, 128, 16, 130, 1)
-	SpriteFrame(64, 12, 144, 16, 259, 268)
-	SpriteFrame(64, 12, 144, 16, 259, 285)
-	SpriteFrame(64, 12, 144, 16, 259, 302)
-	SpriteFrame(64, 12, 144, 16, 259, 319)
-	SpriteFrame(64, 12, 144, 16, 259, 336)
-	SpriteFrame(64, 12, 144, 16, 259, 353)
-	SpriteFrame(64, 12, 144, 16, 259, 370)
-	SpriteFrame(64, 12, 144, 16, 259, 387)
-	SpriteFrame(64, 12, 144, 16, 259, 404)
+	SpriteFrame(4, 2, 32, 32, 389, 1)			// #0  - Save 1 Gear
+	SpriteFrame(4, 2, 32, 32, 422, 1)			// #1  - Save 2 Gear
+	SpriteFrame(4, 2, 32, 32, 455, 1)			// #2  - Save 3 Gear
+	SpriteFrame(4, 2, 32, 32, 446, 34)			// #3  - Save 4 Gear
+	SpriteFrame(3, 2, 40, 32, 259, 1)			// #4  - Mini Sonic Gear
+	SpriteFrame(3, 2, 64, 32, 259, 1)			// #5  - Mini Sonic + Hey
+	SpriteFrame(3, 2, 40, 32, 324, 1)			// #6  - Mini Tails Gear
+	SpriteFrame(3, 2, 64, 32, 324, 1)			// #7  - Mini Tails + Hey
+	SpriteFrame(45, 12, 13, 13, 488, 1)			// #8  - Triangle Detail
+	SpriteFrame(0, 0, 250, 37, 259, 421)		// #9  - Select Border
+	SpriteFrame(64, 12, 128, 16, 1, 1)			// #10 - New Game
+	SpriteFrame(64, 12, 144, 16, 259, 93)		// #11 - Palmtree Panic
+	SpriteFrame(64, 12, 144, 16, 259, 110)		// #12 - Collision Chaos
+	SpriteFrame(64, 12, 144, 16, 259, 127)		// #13 - Tidal Tempest
+	SpriteFrame(64, 12, 144, 16, 259, 144)		// #14 - Quartz Quadrant
+	SpriteFrame(64, 12, 144, 16, 259, 161)		// #15 - Wacky Workbench
+	SpriteFrame(64, 12, 144, 16, 259, 178)		// #16 - Stardust Speedway
+	SpriteFrame(64, 12, 144, 16, 259, 195)		// #17 - Metallic Madness
+	SpriteFrame(64, 12, 144, 16, 259, 212)		// #18 - Final Fever
+	SpriteFrame(64, 12, 144, 16, 259, 229)		// #19 - Special Stage
+	//Highlights
+	SpriteFrame(64, 12, 128, 16, 130, 1)		// #20 - New Game
+	SpriteFrame(64, 12, 144, 16, 259, 268)		// #21 - Palmtree Panic
+	SpriteFrame(64, 12, 144, 16, 259, 285)		// #22 - Collision Chaos
+	SpriteFrame(64, 12, 144, 16, 259, 302)		// #23 - Tidal Tempest
+	SpriteFrame(64, 12, 144, 16, 259, 319)		// #24 - Quartz Quadrant
+	SpriteFrame(64, 12, 144, 16, 259, 336)		// #25 - Wacky Workbench
+	SpriteFrame(64, 12, 144, 16, 259, 353)		// #26 - Stardust Speedway
+	SpriteFrame(64, 12, 144, 16, 259, 370)		// #27 - Metallic Madness
+	SpriteFrame(64, 12, 144, 16, 259, 387)		// #28 - Final Fever
+	SpriteFrame(64, 12, 144, 16, 259, 404)		// #29 - Special Stage
 	
 	ReadSaveRAM()
 	Options.Soundtrack = SaveRAM[38]
@@ -1630,33 +1633,35 @@ sub ObjectStartup
 		Options.TailsUnlocked = true
 	end if
 	
-	SpriteFrame(-112, 0, 224, 16, 1, 477)
-	SpriteFrame(-16, -20, 32, 40, 26, 357)
+	SpriteFrame(-112, 0, 224, 16, 1, 477)		// #30 - Player Select
+	SpriteFrame(-16, -20, 32, 40, 26, 357)		// #31 - Sonic
 	if Options.TailsUnlocked == true
-		SpriteFrame(-16, -12, 32, 32, 59, 365)
+		SpriteFrame(-16, -12, 32, 32, 59, 365)	// #32 - Tails
 	else
-		SpriteFrame(-16, -12, 32, 32, 72, 332)
+		SpriteFrame(-16, -12, 32, 32, 72, 332)	// #32 - Locked Tails
 	end if
-	SpriteFrame(-24, -24, 48, 48, 405, 88)
-	SpriteFrame(-14, 0, 27, 8, 454, 88)
+	SpriteFrame(-24, -24, 48, 48, 405, 88)		// #33 - Character Border
+	SpriteFrame(-14, 0, 27, 8, 454, 88)			// #34 - Sonic Name
 	if Options.TailsUnlocked == true
-		SpriteFrame(-12, 0, 24, 8, 482, 88)
+		SpriteFrame(-12, 0, 24, 8, 482, 88)		// #35 - Tails Name
 	else
-		SpriteFrame(-12, 0, 24, 8, 92, 365)
+		SpriteFrame(-12, 0, 24, 8, 92, 365)		// #35 - Tails Name Locked
 	end if
-	SpriteFrame(-14, 0, 27, 8, 454, 97)
+	SpriteFrame(-14, 0, 27, 8, 454, 97)			// #36 - Sonic Name Highlight
 	if Options.TailsUnlocked == true
-		SpriteFrame(-12, 0, 24, 8, 482, 97)
+		SpriteFrame(-12, 0, 24, 8, 482, 97)		// #37 - Tails Name Highlight
 	else
-		SpriteFrame(-12, 0, 24, 8, 92, 374)
+		SpriteFrame(-12, 0, 24, 8, 92, 374)		// #37 - Tails Name Locked
 	end if
-	SpriteFrame(224, 7, 8, 8, 404, 137)
-	SpriteFrame(232, 7, 8, 8, 413, 137)
-	SpriteFrame(220, 15, 8, 8, 422, 137)
-	SpriteFrame(228, 15, 8, 8, 431, 137)
-	SpriteFrame(236, 15, 8, 8, 440, 137)
-	SpriteFrame(224, 23, 8, 8, 449, 137)
-	SpriteFrame(232, 23, 8, 8, 458, 137)
+	SpriteFrame(224, 7, 8, 8, 404, 137)			// #38 - Green Time Stone
+	SpriteFrame(232, 7, 8, 8, 413, 137)			// #39 - Orange Time Stone
+	SpriteFrame(220, 15, 8, 8, 422, 137)		// #40 - Yellow Time Stone
+	SpriteFrame(228, 15, 8, 8, 431, 137)		// #41 - Blue Time Stone
+	SpriteFrame(236, 15, 8, 8, 440, 137)		// #42 - Cyan Time Stone
+	SpriteFrame(224, 23, 8, 8, 449, 137)		// #43 - Purple Time Stone
+	SpriteFrame(232, 23, 8, 8, 458, 137)		// #44 - Red Time Stone
+	
+	// (#45 - #51) - Time Stone Socket
 	SpriteFrame(224, 7, 8, 8, 467, 137)
 	SpriteFrame(232, 7, 8, 8, 467, 137)
 	SpriteFrame(220, 15, 8, 8, 467, 137)
@@ -1664,33 +1669,36 @@ sub ObjectStartup
 	SpriteFrame(236, 15, 8, 8, 467, 137)
 	SpriteFrame(224, 23, 8, 8, 467, 137)
 	SpriteFrame(232, 23, 8, 8, 467, 137)
-	SpriteFrame(0, 0, 64, 18, 404, 196)
-	SpriteFrame(0, 0, 64, 18, 404, 215)
-	SpriteFrame(0, 0, 64, 18, 404, 234)
-	SpriteFrame(0, 0, 64, 18, 404, 253)
-	SpriteFrame(0, 0, 250, 37, 259, 459)
-	SpriteFrame(-112, 0, 224, 16, 1, 443)
-	SpriteFrame(-112, 0, 224, 16, 1, 460)
-	SpriteFrame(208, 12, 8, 16, 478, 183)
-	SpriteFrame(208, 12, 8, 16, 487, 183)
-	SpriteFrame(208, 12, 8, 16, 496, 183)
-	SpriteFrame(208, 12, 8, 16, 469, 200)
-	SpriteFrame(208, 12, 8, 16, 478, 200)
-	SpriteFrame(208, 12, 8, 16, 487, 200)
-	SpriteFrame(208, 12, 8, 16, 496, 200)
-	SpriteFrame(208, 12, 8, 16, 469, 217)
-	SpriteFrame(208, 12, 8, 16, 478, 234)
-	SpriteFrame(208, 12, 8, 16, 487, 234)
-	SpriteFrame(208, 12, 8, 16, 496, 234)
-	SpriteFrame(208, 12, 8, 16, 469, 251)
-	SpriteFrame(208, 12, 8, 16, 478, 251)
-	SpriteFrame(208, 12, 8, 16, 487, 251)
-	SpriteFrame(208, 12, 8, 16, 496, 251)
-	SpriteFrame(208, 12, 8, 16, 469, 268)
-	SpriteFrame(-32, 0, 64, 21, 404, 319)
-	SpriteFrame(-32, 0, 64, 21, 404, 341)
-	SpriteFrame(-32, 0, 64, 21, 404, 363)
-	SpriteFrame(-32, 0, 64, 21, 404, 385)
+
+	SpriteFrame(0, 0, 64, 18, 404, 196)			// #52 - Delete
+	SpriteFrame(0, 0, 64, 18, 404, 215)			// #53 - Delete Highlight
+	SpriteFrame(0, 0, 64, 18, 404, 234)			// #54 - Cancel
+	SpriteFrame(0, 0, 64, 18, 404, 253)			// #55 - Cancel Highlight
+	SpriteFrame(0, 0, 250, 37, 259, 459)		// #56 - Orange Alpha
+	SpriteFrame(-112, 0, 224, 16, 1, 443)		// #57 - "Delete Save Game?"
+	SpriteFrame(-112, 0, 224, 16, 1, 460)		// #58 - Unused
+	SpriteFrame(208, 12, 8, 16, 478, 183)		// #59 - 1
+	SpriteFrame(208, 12, 8, 16, 487, 183)		// #60 - 2
+	SpriteFrame(208, 12, 8, 16, 496, 183)		// #61 - 3
+	SpriteFrame(208, 12, 8, 16, 469, 200)		// #62 - 4
+	SpriteFrame(208, 12, 8, 16, 478, 200)		// #63 - 5
+	SpriteFrame(208, 12, 8, 16, 487, 200)		// #64 - 6
+	SpriteFrame(208, 12, 8, 16, 496, 200)		// #65 - 7
+	SpriteFrame(208, 12, 8, 16, 469, 217)		// #66 - 8 (Unused)
+	// Highlights
+	SpriteFrame(208, 12, 8, 16, 478, 234)		// #67 - 1
+	SpriteFrame(208, 12, 8, 16, 487, 234)		// #68 - 2
+	SpriteFrame(208, 12, 8, 16, 496, 234)		// #69 - 3
+	SpriteFrame(208, 12, 8, 16, 469, 251)		// #70 - 4
+	SpriteFrame(208, 12, 8, 16, 478, 251)		// #71 - 5
+	SpriteFrame(208, 12, 8, 16, 487, 251)		// #72 - 6
+	SpriteFrame(208, 12, 8, 16, 496, 251)		// #73 - 7
+	SpriteFrame(208, 12, 8, 16, 469, 268)		// #74 - 8 (Unused)
+
+	SpriteFrame(-32, 0, 64, 21, 404, 319)		// #75 - Yes
+	SpriteFrame(-32, 0, 64, 21, 404, 341)		// #76 - Yes Highlight
+	SpriteFrame(-32, 0, 64, 21, 404, 363)		// #77 - No
+	SpriteFrame(-32, 0, 64, 21, 404, 385)		// #78 - No Highlight
 end sub
 
 sub RSDK
