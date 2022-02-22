@@ -3,41 +3,101 @@
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
 // Aliases
-#alias 3: TYPE_MENUCONTROL
+#alias Object.Scale 	: Object.OffSet
+#alias Object.Value0	: Object.Timer					// Also used for fading
+#alias Object.Value2	: Object.SelectedButton			// Only used for Mobile
+#alias Object.Value3	: Object.SavedRound				// This is used AFTER you play in time attack
+#alias Object.Value4 	: Object.SMYPos					// Also used for the XPos of the zone portrait
+#alias Object.Value5 	: Object.SMCurrentButton
+#alias Object.Value6	: Object.BeatedRecord
+#alias Object.Value7	: Object.SSUnlocked
+
+// Large Icon / Special Large Icon Aliases
+#alias Object[40].State			: Object.LIconState
+#alias Object[40].XPos			: Object.LIconXPos
+#alias Object[40].PropertyValue	: Object.LIconPortrait
+
+// Time Stuff
+#alias Object.Value1	: Object.Minutes
+#alias Object.Value2	: Object.Seconds
+#alias Object.Value3	: Object.Milliseconds
+#alias Object.Value4	: Object.ZoneLocked
+
+// States
+#alias 0	: MENUCONTROL_SETUP
+#alias 1	: MENUCONTROL_FADEIN
+#alias 2	: MENUCONTROL_CONTROLS
+#alias 3	: MENUCONTROL_BLANK
+#alias 4	: MENUCONTROL_RETURN_TO_MENU
+#alias 5	: MENUCONTROL_ENTER_SM
+#alias 6	: MENUCONTROL_CALL_RECORD_MENU
+#alias 7	: MENUCONTROL_SM_CONTROLS
+#alias 8	: MENUCONTROL_SM_SCROLL_DOWN
+#alias 9	: MENUCONTROL_SM_SCROLL_UP
+#alias 10	: MENUCONTROL_SM_CONFIRMED
+#alias 11	: MENUCONTROL_SM_LOAD_LEVEL
+#alias 12	: MENUCONTROL_SM_LEVEL_RETURN
+#alias 13	: MENUCONTROL_SM_COMFIRMED_LEAVE
+#alias 14	: MENUCONTROL_SM_EXIT
+#alias 15	: MENUCONTROL_SM_RECORD_BEATED
+#alias 16	: MENUCONTROL_SCROLL_DOWN
+#alias 17	: MENUCONTROL_SCROLLING_1
+#alias 18	: MENUCONTROL_SCROLL_UP
+#alias 19	: MENUCONTROL_SCROLLING_2
+// *SM = SubMenu
+
+// OST
+#alias 0	: JP_OST
+
+// Engine & Callbacks
+#alias 2	: CALLBACK_TATTACK_NOTIFY_ENTER
+#alias 3	: CALLBACK_TIMEATTACK_NOTIFY_EXIT
+
+#alias 2	: MESSAGE_LOSTFOCUS
 
 // Function declarations
-#function MenuControl_Function0
-#function MenuControl_Function1
-#function MenuControl_Function2
-#function MenuControl_Function3
-#function MenuControl_Function4
+#function MenuControl_IconTransitions
+#function MenuControl_DefaultRecord
+#function MenuControl_ZoneUnlockCheck
+#function MenuControl_TotalRegularRecord
+#function MenuControl_TotalSpecialRecord
 
-function MenuControl_Function0
+//SaveRAM[39] - How many zones are unlocked for Time Attack
+
+function MenuControl_IconTransitions
 	ArrayPos0 = 32
+
+	//Top Half
 	TempValue2 = Screen.CenterX
 	TempValue2 <<= 16
 	TempValue0 = -210
 	TempValue1 = -46
 	while ArrayPos0 < 36
+		// Horizontal Movement
 		Object[ArrayPos0].XPos = TempValue0
-		Object[ArrayPos0].XPos *= Object.Scale
+		Object[ArrayPos0].XPos *= Object.OffSet
 		Object[ArrayPos0].XPos >>= 1
 		Object[ArrayPos0].XPos += TempValue2
+		// Vertical Movement
 		Object[ArrayPos0].YPos = TempValue1
-		Object[ArrayPos0].YPos *= Object.Scale
+		Object[ArrayPos0].YPos *= Object.OffSet
 		Object[ArrayPos0].YPos += 6553600
 		TempValue0 += 140
 		ArrayPos0++
 	loop
+
+	//Bottom Half
 	TempValue0 = -210
 	TempValue1 = 46
 	while ArrayPos0 < 40
+		// Horizontal Movement
 		Object[ArrayPos0].XPos = TempValue0
-		Object[ArrayPos0].XPos *= Object.Scale
+		Object[ArrayPos0].XPos *= Object.OffSet
 		Object[ArrayPos0].XPos >>= 1
 		Object[ArrayPos0].XPos += TempValue2
+		// Vertical Movement
 		Object[ArrayPos0].YPos = TempValue1
-		Object[ArrayPos0].YPos *= Object.Scale
+		Object[ArrayPos0].YPos *= Object.OffSet
 		Object[ArrayPos0].YPos += 6553600
 		TempValue0 += 140
 		ArrayPos0++
@@ -45,15 +105,17 @@ function MenuControl_Function0
 end function
 
 
-function MenuControl_Function1
-	ArrayPos0 = 48
+function MenuControl_DefaultRecord
+	ArrayPos0 = 48		//Act 1 TimeAttack.Result
 	TempValue0 = 0
 	TempValue1 = 0
+	// Checks in all Time Attack levels if there is a record saved
 	while TempValue0 < 21
 		TempValue1 += SaveRAM[ArrayPos0]
 		ArrayPos0 += 6
 		TempValue0++
 	loop
+	// if there are no records, set the default times (5 Minutes per round)
 	if TempValue1 == 0
 		ArrayPos0 = 48
 		TempValue0 = 0
@@ -76,11 +138,12 @@ function MenuControl_Function1
 end function
 
 
-function MenuControl_Function2
+function MenuControl_ZoneUnlockCheck
 	TempValue0 = -1
-	ArrayPos0 = 3
+	ArrayPos0 = 3						// Save 0 Stage.ListPos
 	while ArrayPos0 < 40
 		TempValue1 = SaveRAM[ArrayPos0]
+		// In this order, check if your save is post PPZ 3, post MMZ 2 or if it's on a special stage
 		if TempValue1 > 10
 			if TempValue1 > 67
 				if TempValue1 < 80
@@ -96,32 +159,38 @@ function MenuControl_Function2
 			TempValue1 = 0
 		end if
 		if TempValue1 > TempValue0
-			TempValue0 = TempValue1
+			TempValue0 = TempValue1		// Sets the amount of unlocked zones
 		end if
-		ArrayPos0 += 8
+		ArrayPos0 += 8					// Jump to next save
 	loop
+
 	if TempValue0 > SaveRAM[39]
-		SaveRAM[39] = TempValue0
+		SaveRAM[39] = TempValue0		// Set the new value if there are new unlocked zones
 	else
-		TempValue0 = SaveRAM[39]
+		TempValue0 = SaveRAM[39]		// Otherwise just use the saved value
 	end if
 	ArrayPos0 = 32
+
+	// Unlocks the playable zones
 	while TempValue0 > 0
-		Object[ArrayPos0].Value4 = 0
-		ArrayPos0++
+		Object[ArrayPos0].ZoneLocked = false
+		ArrayPos0++						//Skips the locking of this zone
 		TempValue0--
 	loop
+
+	//Locks the rest of zones
 	while ArrayPos0 < 39
-		Object[ArrayPos0].Value4 = 1
+		Object[ArrayPos0].ZoneLocked = true
 		ArrayPos0++
 	loop
 end function
 
 
-function MenuControl_Function3
+function MenuControl_TotalRegularRecord
 	ArrayPos0 = 32
 	ArrayPos1 = 48
 	TempValue1 = 0
+	// Gets the time of all zones
 	while ArrayPos0 < 39
 		TempValue0 = SaveRAM[ArrayPos1]
 		ArrayPos1 += 6
@@ -130,62 +199,79 @@ function MenuControl_Function3
 		TempValue0 += SaveRAM[ArrayPos1]
 		ArrayPos1 += 6
 		TempValue1 += TempValue0
-		Object[ArrayPos0].Value1 = TempValue0
-		Object[ArrayPos0].Value1 /= 6000
-		Object[ArrayPos0].Value2 = TempValue0
-		Object[ArrayPos0].Value2 /= 100
-		Object[ArrayPos0].Value2 %= 60
-		Object[ArrayPos0].Value3 = TempValue0
-		Object[ArrayPos0].Value3 %= 100
+		Object[ArrayPos0].Minutes = TempValue0
+		Object[ArrayPos0].Minutes /= 6000
+
+		Object[ArrayPos0].Seconds = TempValue0
+		Object[ArrayPos0].Seconds /= 100
+		Object[ArrayPos0].Seconds %= 60
+		
+		Object[ArrayPos0].MilliSeconds = TempValue0
+		Object[ArrayPos0].MilliSeconds %= 100
 		ArrayPos0++
 	loop
-	Object[ArrayPos0].Value1 = TempValue1
-	Object[ArrayPos0].Value1 /= 6000
-	if Object[ArrayPos0].Value1 < 25
+
+	// Calculates the total time
+	Object[ArrayPos0].Minutes = TempValue1
+	Object[ArrayPos0].Minutes /= 6000
+
+	Object[ArrayPos0].Seconds = TempValue1
+	Object[ArrayPos0].Seconds /= 100
+	Object[ArrayPos0].Seconds %= 60
+
+	Object[ArrayPos0].MilliSeconds = TempValue1
+	Object[ArrayPos0].MilliSeconds %= 100
+
+	if Object[ArrayPos0].Minutes < 25
 		SetAchievement(10, 100)
 	end if
-	Object[ArrayPos0].Value2 = TempValue1
-	Object[ArrayPos0].Value2 /= 100
-	Object[ArrayPos0].Value2 %= 60
-	Object[ArrayPos0].Value3 = TempValue1
-	Object[ArrayPos0].Value3 %= 100
-	if TempValue1 < 182105
-		Object.Value7 = 1
+
+	if Object[ArrayPos0].Minutes < 30
+		Object.SSUnlocked = true
 	end if
 end function
 
 
-function MenuControl_Function4
+function MenuControl_TotalSpecialRecord
 	ArrayPos0 = 32
 	ArrayPos1 = 49
 	TempValue1 = 0
+	// Gets the time of all zones
 	while ArrayPos0 < 39
 		TempValue0 = SaveRAM[ArrayPos1]
 		ArrayPos1 += 18
 		TempValue1 += TempValue0
-		Object[ArrayPos0].Value1 = TempValue0
-		Object[ArrayPos0].Value1 /= 6000
-		Object[ArrayPos0].Value2 = TempValue0
-		Object[ArrayPos0].Value2 /= 100
-		Object[ArrayPos0].Value2 %= 60
-		Object[ArrayPos0].Value3 = TempValue0
-		Object[ArrayPos0].Value3 %= 100
+		Object[ArrayPos0].Minutes = TempValue0
+		Object[ArrayPos0].Minutes /= 6000
+
+		Object[ArrayPos0].Seconds = TempValue0
+		Object[ArrayPos0].Seconds /= 100
+		Object[ArrayPos0].Seconds %= 60
+
+		Object[ArrayPos0].MilliSeconds = TempValue0
+		Object[ArrayPos0].MilliSeconds %= 100
 		ArrayPos0++
 	loop
-	Object[ArrayPos0].Value1 = TempValue1
-	Object[ArrayPos0].Value1 /= 6000
-	Object[ArrayPos0].Value2 = TempValue1
-	Object[ArrayPos0].Value2 /= 100
-	Object[ArrayPos0].Value2 %= 60
-	Object[ArrayPos0].Value3 = TempValue1
-	Object[ArrayPos0].Value3 %= 100
-	Object.Value7 = 1
+
+	// Calculates the total time
+	Object[ArrayPos0].Minutes = TempValue1
+	Object[ArrayPos0].Minutes /= 6000
+
+	Object[ArrayPos0].Seconds = TempValue1
+	Object[ArrayPos0].Seconds /= 100
+	Object[ArrayPos0].Seconds %= 60
+
+	Object[ArrayPos0].MilliSeconds = TempValue1
+	Object[ArrayPos0].MilliSeconds %= 100
+
+	Object.SSUnlocked = true
 end function
 
 
 sub ObjectMain
 	switch Object.State
-	case 0
+	case MENUCONTROL_SETUP
+		//Makes sure nothing gets carried away from the saves
 		Stage.DebugMode = 0
 		Stage.PlayerListPos = 0
 		LampPost.Check = 0
@@ -194,35 +280,43 @@ sub ObjectMain
 		Good_Future_List = 0
 		SpecialStage.TimeStones = 0
 		ReadSaveRAM()
-		Object.State = 1
-		Object.Value0 = 384
-		Object.Scale = 262144
+
+		Object.State = MENUCONTROL_FADEIN
+		Object.Timer = 384
+		Object.OffSet = 262144
 		SetScreenFade(0, 0, 0, 255)
+
 #platform: Mobile
-		Object.Value3 = -1
-		Object.Value2 = -1
-		Object.Value5 = -1
+		Object.SavedRound = -1
+		Object.SelectedButton = -1
+		Object.SMCurrentButton = -1
 #endplatform
-		CallFunction(MenuControl_Function2)
-		if TimeAttack.Round > -1
-			Object.State = 12
-			Object[40].PropertyValue = TimeAttack.Round
-			Object.Value3 = TimeAttack.Round
-			Object[40].XPos = Screen.CenterX
-			Object[40].XPos -= 72
-			Object[40].XPos <<= 16
-			Object.Value4 = TimeAttack.Zone
-			Object.Value4 *= 192
-			Object.Value4 += 192
+
+		CallFunction(MenuControl_ZoneUnlockCheck)
+		if TimeAttack.Round > -1	// Check if you come from playing time attack
+			Object.State = MENUCONTROL_SM_LEVEL_RETURN
+			Object.LIconPortrait = TimeAttack.Round
+			Object.SavedRound = TimeAttack.Round
+			Object.LIconXPos = Screen.CenterX
+			Object.LIconXPos -= 72
+			Object.LIconXPos <<= 16
+
+			Object.SMYPos = TimeAttack.Zone
+			Object.SMYPos *= 192
+			Object.SMYPos += 192
+			
 			if TimeAttack.Result > 0
 				ArrayPos0 = TimeAttack.Round
 				ArrayPos0 *= 18
+
 				TempValue0 = TimeAttack.Zone
 				TempValue0 *= 6
+
 				ArrayPos0 += TempValue0
 				ArrayPos0 += 48
 				ArrayPos0 += TimeAttack.MenuSection
 				if TimeAttack.Result < SaveRAM[ArrayPos0]
+					// 1st Record Beated
 					ArrayPos1 = ArrayPos0
 					ArrayPos1 += 4
 					ArrayPos0 += 2
@@ -231,33 +325,35 @@ sub ObjectMain
 					ArrayPos0 -= 2
 					SaveRAM[ArrayPos1] = SaveRAM[ArrayPos0]
 					SaveRAM[ArrayPos0] = TimeAttack.Result
-					Object.Value6 = 1
+					Object.BeatedRecord = 1
 				else
 					ArrayPos0 += 2
 					if TimeAttack.Result < SaveRAM[ArrayPos0]
+						// 2st Record Beated
 						ArrayPos1 = ArrayPos0
 						ArrayPos1 += 2
 						SaveRAM[ArrayPos1] = SaveRAM[ArrayPos0]
 						SaveRAM[ArrayPos0] = TimeAttack.Result
-						Object.Value6 = 2
+						Object.BeatedRecord = 2
 					else
 						ArrayPos0 += 2
 						if TimeAttack.Result < SaveRAM[ArrayPos0]
+							// 3st Record Beated
 							SaveRAM[ArrayPos0] = TimeAttack.Result
-							Object.Value6 = 3
+							Object.BeatedRecord = 3
 						end if
 					end if
 				end if
 			end if
-			Object.Scale = 327680
+			Object.OffSet = 327680
 		else
 			TimeAttack.MenuSection = 0
 		end if
-		CallFunction(MenuControl_Function1)
+		CallFunction(MenuControl_DefaultRecord)
 		if TimeAttack.MenuSection == 0
-			CallFunction(MenuControl_Function3)
+			CallFunction(MenuControl_TotalRegularRecord)
 		else
-			CallFunction(MenuControl_Function4)
+			CallFunction(MenuControl_TotalSpecialRecord)
 			Object[40].Type = TypeName[SLargeIcon]
 			Object[41].Type = TypeName[SRecords]
 			ArrayPos0 = 32
@@ -267,104 +363,97 @@ sub ObjectMain
 			loop
 		end if
 		WriteSaveRAM()
-		CallFunction(MenuControl_Function0)
-		EngineCallback(2)
+		CallFunction(MenuControl_IconTransitions)
+		EngineCallback(CALLBACK_TATTACK_NOTIFY_ENTER)
 		PlayMusic(0)
 		break
-	case 1
-		if Object.Value0 > 0
-			Object.Value0 -= 8
-			Object.Scale -= 4096
+
+	case MENUCONTROL_FADEIN
+		if Object.Timer > 0
+			Object.Timer -= 8
+			Object.OffSet -= 4096
 		else
-			Object.State = 2
+			Object.State = MENUCONTROL_CONTROLS
 		end if
-		SetScreenFade(0, 0, 0, Object.Value0)
-		CallFunction(MenuControl_Function0)
+		SetScreenFade(0, 0, 0, Object.Timer)
+		CallFunction(MenuControl_IconTransitions)
 		break
-	case 2
+
+	case MENUCONTROL_CONTROLS
 #platform: Mobile
 		CheckEqual(Options.PhysicalControls, true)
 #endplatform
+
 #platform: Standard
 		CheckResult = true
 #endplatform
+
 		if CheckResult == true
 			ArrayPos0 = 32
-			ArrayPos0 += Object.Value3
+			ArrayPos0 += Object.SavedRound
 			CheckResult = false
 			if Object[ArrayPos0].State != 1
 				if KeyPress.Left == true
-					Object.Value3--
-					if Object.Value3 < 0
-						Object.Value3 = 7
+					Object.SavedRound--
+					if Object.SavedRound < 0
+						Object.SavedRound = 7
 					end if
 					PlaySfx(23, 0) 	//Menu Button SFX
 				end if
+				
 				if KeyPress.Right == true
-					Object.Value3++
-					if Object.Value3 > 7
-						Object.Value3 = 0
+					Object.SavedRound++
+					if Object.SavedRound > 7
+						Object.SavedRound = 0
 					end if
 					PlaySfx(23, 0) 	//Menu Button SFX
 				end if
+
 				if KeyPress.Up == true
-					Object.Value3 -= 4
-					if Object.Value3 < 0
-						Object.Value3 += 8
-						if Object.Value7 == 1
-							Object.State = 18
+					Object.SavedRound -= 4
+					if Object.SavedRound < 0
+						Object.SavedRound += 8
+						if Object.SSUnlocked == true
+							Object.State = MENUCONTROL_SCROLL_UP
 						end if
 					end if
 					PlaySfx(23, 0) 	//Menu Button SFX
 				end if
+
 				if KeyPress.Down == true
-					Object.Value3 += 4
-					if Object.Value3 > 7
-						Object.Value3 -= 8
-						if Object.Value7 == 1
-							Object.State = 16
+					Object.SavedRound += 4
+					if Object.SavedRound > 7
+						Object.SavedRound -= 8
+						if Object.SSUnlocked == true
+							Object.State = MENUCONTROL_SCROLL_DOWN
 						end if
 					end if
 					PlaySfx(23, 0) 	//Menu Button SFX
 				end if
+
 				if KeyPress.Start == true
 					CheckResult = true
 				end if
+
 				if KeyPress.ButtonA == true
 					CheckResult = true
 				end if
 			end if
 			if CheckResult == 1
 				ArrayPos0 = 32
-				ArrayPos0 += Object.Value3
-				if Object[ArrayPos0].Value4 == 0
+				ArrayPos0 += Object.SavedRound
+				if Object[ArrayPos0].ZoneLocked == 0
 					Object[ArrayPos0].State = 1
-					switch Object.Value3
-					case 0
-						PlaySfx(27, 0)	//Select SFX
-						break
-					case 1
-						PlaySfx(27, 0)	//Select SFX
-						break
-					case 2
-						PlaySfx(27, 0)	//Select SFX
-						break
-					case 3
-						PlaySfx(27, 0)	//Select SFX
-						break
-					case 4
-						PlaySfx(27, 0)	//Select SFX
-						break
-					case 5
-						PlaySfx(27, 0)	//Select SFX
-						break
-					case 6
-						PlaySfx(27, 0)	//Select SFX
+					switch Object.SavedRound
+					case -1
 						break
 					case 7
 						PlaySfx(27, 0)	//Select SFX
 						Object.State++
 						StopMusic()
+						break
+					default
+						PlaySfx(27, 0)	//Select SFX
 						break
 					end switch
 				end if
@@ -374,89 +463,100 @@ sub ObjectMain
 		if Options.PhysicalControls == true
 			CheckTouchRect(0, 0, Screen.XSize, Screen.YSize)
 			if CheckResult > -1
-				Options.PhysicalControls = 0
-				Object.Value3 = -1
+				Options.PhysicalControls = false
+				Object.SavedRound = -1
 			end if
 		else
-			if Engine.Message == 2
-				Object.Value2 = -1
+			if Engine.Message == MESSAGE_LOSTFOCUS
+				Object.SelectedButton = -1
 			end if
-			if Object.Value7 == 1
+
+			if Object.SSUnlocked == true
 				TempValue0 = Screen.XSize
 				TempValue0 -= 72
 				CheckTouchRect(TempValue0, 192, Screen.XSize, Screen.YSize)
 				if CheckResult > -1
-					Object.Value2 = 8
+					Object.SelectedButton = 8
 				else
 					CheckTouchRect(0, 0, Screen.XSize, Screen.YSize)
 					if CheckResult < 0
-						if Object.Value2 == 8
+						if Object.SelectedButton == 8
 							PlaySfx(23, 0) 	//Menu Button SFX
-							Object.State = 16
-							Object.Value2 = -1
+							Object.State = MENUCONTROL_SCROLL_DOWN
+							Object.SelectedButton = -1
 						end if
 					else
-						if Object.Value2 == 8
-							Object.Value2 = -1
+						if Object.SelectedButton == 8
+							Object.SelectedButton = -1
 						end if
 					end if
 				end if
 			end if
-			if Object.Value2 > -1
-				Object.Value3 = Object.Value2
+
+			if Object.SelectedButton > -1
+				Object.SavedRound = Object.SelectedButton
 			else
-				Object.Value3 = -1
+				Object.SavedRound = -1
 			end if
+
 			if KeyPress.Left == true
-				Object.Value3 = 7
-				Object.Value2 = -1
-				Options.PhysicalControls = 1
+				Object.SavedRound = 7
+				Object.SelectedButton = -1
+				Options.PhysicalControls = true
 			end if
+
 			if KeyPress.Right == true
-				Object.Value3 = 0
-				Object.Value2 = -1
-				Options.PhysicalControls = 1
+				Object.SavedRound = 0
+				Object.SelectedButton = -1
+				Options.PhysicalControls = true
 			end if
+
 			if KeyPress.Up == true
-				Object.Value3 = 7
-				Object.Value2 = -1
-				Options.PhysicalControls = 1
+				Object.SavedRound = 7
+				Object.SelectedButton = -1
+				Options.PhysicalControls = true
 			end if
+
 			if KeyPress.Down == true
-				Object.Value3 = 0
-				Object.Value2 = -1
-				Options.PhysicalControls = 1
+				Object.SavedRound = 0
+				Object.SelectedButton = -1
+				Options.PhysicalControls = true
 			end if
 		end if
 #endplatform
+
 		if KeyPress.ButtonB == true
-			Object.Value3 = 7
+			Object.SavedRound = 7
 			ArrayPos0 = 32
-			ArrayPos0 += Object.Value3
+			ArrayPos0 += Object.SavedRound
+			//Telling to RoundIcon that we want to leave
 			Object[ArrayPos0].State = 1
 			Object.State++
 			StopMusic()
 			PlaySfx(27, 0)	//Select SFX
 		end if
 		break
-	case 3
+
+	case MENUCONTROL_BLANK
 		break
-	case 4
-		if Object.Value0 < 384
-			Object.Value0 += 8
-			Object.Scale += 4096
+
+	case MENUCONTROL_RETURN_TO_MENU
+		if Object.Timer < 384
+			Object.Timer += 8
+			Object.OffSet += 4096
 		else
-			Stage.ListPos = 1
+			Stage.ListPos = 1		// Menu
 			LoadStage()
 		end if
-		SetScreenFade(0, 0, 0, Object.Value0)
-		CallFunction(MenuControl_Function0)
-		EngineCallback(3)
+		SetScreenFade(0, 0, 0, Object.Timer)
+		CallFunction(MenuControl_IconTransitions)
+		EngineCallback(CALLBACK_TIMEATTACK_NOTIFY_EXIT)
 		break
-	case 5
-		if Object.Value0 < 256
-			Object.Value0 += 8
-			Object.Scale += 8192
+
+	case MENUCONTROL_ENTER_SM
+		if Object.Timer < 256
+			Object.Timer += 8
+			Object.OffSet += 8192
 		else
 			if TimeAttack.MenuSection == 0
 				Object[40].Type = TypeName[LargeIcon]
@@ -465,72 +565,81 @@ sub ObjectMain
 				Object[40].Type = TypeName[SLargeIcon]
 				Object[41].Type = TypeName[SRecords]
 			end if
-			Object[40].PropertyValue = Object.Value3
-			Object[40].State = 1
+			Object.LIconPortrait = Object.SavedRound
+			Object.LIconState = 1
 			Object[41].DrawOrder = 2
 			Object[42].DrawOrder = 2
 			Object[43].DrawOrder = 2
-			Object.Value0 = 0
-			Object.Value4 = 0
+			Object.Timer = 0
+			Object.SMYPos = 0
 			Object.State++
 		end if
-		CallFunction(MenuControl_Function0)
+		CallFunction(MenuControl_IconTransitions)
 		break
-	case 6
-		if Object.Value4 < 192
-			Object.Value4 += 8
+	case MENUCONTROL_CALL_RECORD_MENU
+		if Object.SMYPos < 192
+			Object.SMYPos += 8
 		else
 			Object.State++
 		end if
+
 #platform: Standard
-		Object.Value5 = 0
+		Object.SMCurrentButton = 0
 #endplatform
+
 #platform: Mobile
 		if Options.PhysicalControls == true
-			Object.Value5 = 0
+			Object.SMCurrentButton = 0
 		else
-			Object.Value5 = -1
+			Object.SMCurrentButton = -1
 		end if
 #endplatform
 		break
-	case 7
+
+	case MENUCONTROL_SM_CONTROLS
 #platform: Mobile
 		CheckEqual(Options.PhysicalControls, true)
 #endplatform
+
 #platform: Standard
 		CheckResult = true
 #endplatform
+
 		if CheckResult == true
 			if TimeAttack.MenuSection == 0
 				if KeyPress.Up == true
-					Object.State = 9
+					Object.State = MENUCONTROL_SM_SCROLL_UP
 				end if
+
 				if KeyPress.Down == true
-					Object.State = 8
+					Object.State = MENUCONTROL_SM_SCROLL_DOWN
 				end if
+
 				if KeyPress.Left == true
-					Object.Value5--
-					if Object.Value5 < 0
-						Object.Value5 = 2
+					Object.SMCurrentButton--
+					if Object.SMCurrentButton < 0
+						Object.SMCurrentButton = 2
 					end if
 				end if
+
 				if KeyPress.Right == true
-					Object.Value5++
-					if Object.Value5 > 2
-						Object.Value5 = 0
+					Object.SMCurrentButton++
+					if Object.SMCurrentButton > 2
+						Object.SMCurrentButton = 0
 					end if
 				end if
 			else
 				if KeyPress.Left == true
-					Object.Value5 -= 2
-					if Object.Value5 < 0
-						Object.Value5 = 2
+					Object.SMCurrentButton -= 2
+					if Object.SMCurrentButton < 0
+						Object.SMCurrentButton = 2
 					end if
 				end if
+
 				if KeyPress.Right == true
-					Object.Value5 += 2
-					if Object.Value5 > 2
-						Object.Value5 = 0
+					Object.SMCurrentButton += 2
+					if Object.SMCurrentButton > 2
+						Object.SMCurrentButton = 0
 					end if
 				end if
 			end if
@@ -538,44 +647,50 @@ sub ObjectMain
 			if KeyPress.Start == true
 				CheckResult = true
 			end if
+
 			if KeyPress.ButtonA == true
 				CheckResult = true
 			end if
+
 			if KeyPress.ButtonB == true
 				PlayStageSfx(0, 0)
-				Object[40].State = 2
-				Object.State = 13
+				Object.LIconState = 2
+				Object.State = MENUCONTROL_SM_COMFIRMED_LEAVE
 				Object[41].DrawOrder = 8
 				Object[42].DrawOrder = 8
 				Object[43].DrawOrder = 8
-				ArrayPos0 = Object.Value4
+				ArrayPos0 = Object.SMYPos
 				ArrayPos0 /= 192
 				ArrayPos0 += 40
 				Object[ArrayPos0].DrawOrder = 2
 			end if
-			if CheckResult == 1
-				switch Object.Value5
+
+			if CheckResult == true
+				switch Object.SMCurrentButton
 				case 0
 					PlayStageSfx(0, 0)
-					Object[40].State = 2
-					Object.State = 13
+					Object.LIconState = 2
+					Object.State = MENUCONTROL_SM_COMFIRMED_LEAVE
 					Object[41].DrawOrder = 8
 					Object[42].DrawOrder = 8
 					Object[43].DrawOrder = 8
-					ArrayPos0 = Object.Value4
+					ArrayPos0 = Object.SMYPos
 					ArrayPos0 /= 192
 					ArrayPos0 += 40
 					Object[ArrayPos0].DrawOrder = 2
 					break
+
 				case 1
 					PlaySfx(23, 0) 	//Menu Button SFX
-					Object.State = 8
+					Object.State = MENUCONTROL_SM_SCROLL_UP
 					break
+
 				case 2
 					PlaySfx(27, 0)	//Select SFX
-					Object.State = 10
+					Object.State = MENUCONTROL_SM_CONFIRMED
 					StopMusic()
 					break
+
 				end switch
 			end if
 		end if
@@ -583,155 +698,165 @@ sub ObjectMain
 		if Options.PhysicalControls == true
 			CheckTouchRect(0, 0, Screen.XSize, Screen.YSize)
 			if CheckResult > -1
-				Options.PhysicalControls = 0
-				Object.Value5 = -1
+				Options.PhysicalControls = false
+				Object.SMCurrentButton = -1
 			end if
 		else
-			if Engine.Message == 2
-				Object.Value5 = -1
+			if Engine.Message == MESSAGE_LOSTFOCUS
+				Object.SMCurrentButton = -1
 			end if
+
 			TempValue0 = Screen.CenterX
 			TempValue0 -= 140
 			TempValue1 = TempValue0
 			TempValue1 += 66
 			CheckTouchRect(TempValue0, 0, TempValue1, 40)
 			if CheckResult > -1
-				Object.Value5 = 0
+				Object.SMCurrentButton = 0
 			else
 				CheckTouchRect(0, 0, Screen.XSize, Screen.YSize)
 				if CheckResult < 0
-					if Object.Value5 == 0
+					if Object.SMCurrentButton == 0
 						PlayStageSfx(0, 0)
-						Object[40].State = 2
-						Object.State = 13
+						Object.LIconState = 2
+						Object.State = MENUCONTROL_SM_COMFIRMED_LEAVE
 						Object[41].DrawOrder = 8
 						Object[42].DrawOrder = 8
 						Object[43].DrawOrder = 8
-						ArrayPos0 = Object.Value4
+						ArrayPos0 = Object.SMYPos
 						ArrayPos0 /= 192
 						ArrayPos0 += 40
 						Object[ArrayPos0].DrawOrder = 2
 					end if
 				else
-					if Object.Value5 == 0
-						Object.Value5 = -1
+					if Object.SMCurrentButton == 0
+						Object.SMCurrentButton = -1
 					end if
 				end if
 			end if
 			if KeyPress.ButtonB == true
 				PlayStageSfx(0, 0)
-				Object[40].State = 2
-				Object.State = 13
+				Object.LIconState = 2
+				Object.State = MENUCONTROL_SM_COMFIRMED_LEAVE
 				Object[41].DrawOrder = 8
 				Object[42].DrawOrder = 8
 				Object[43].DrawOrder = 8
-				ArrayPos0 = Object.Value4
+				ArrayPos0 = Object.SMYPos
 				ArrayPos0 /= 192
 				ArrayPos0 += 40
 				Object[ArrayPos0].DrawOrder = 2
 			end if
+
 			TempValue0 += 159
 			TempValue1 += 159
 			if TimeAttack.MenuSection == 0
 				CheckTouchRect(TempValue0, 0, TempValue1, 40)
 				if CheckResult > -1
-					Object.Value5 = 1
+					Object.SMCurrentButton = 1
 				else
 					CheckTouchRect(0, 0, Screen.XSize, Screen.YSize)
 					if CheckResult < 0
-						if Object.Value5 == 1
+						if Object.SMCurrentButton == 1
 							PlaySfx(23, 0) 	//Menu Button SFX
-							Object.State = 8
+							Object.State = MENUCONTROL_SM_SCROLL_DOWN
 						end if
 					else
-						if Object.Value5 == 1
-							Object.Value5 = -1
+						if Object.SMCurrentButton == 1
+							Object.SMCurrentButton = -1
 						end if
 					end if
 				end if
 			end if
+
 			TempValue0 += 68
 			TempValue1 += 68
 			CheckTouchRect(TempValue0, 0, TempValue1, 40)
 			if CheckResult > -1
-				Object.Value5 = 2
+				Object.SMCurrentButton = 2
 			else
 				CheckTouchRect(0, 0, Screen.XSize, Screen.YSize)
 				if CheckResult < 0
-					if Object.Value5 == 2
+					if Object.SMCurrentButton == 2
 						PlaySfx(27, 0)	//Select SFX
-						Object.State = 10
+						Object.State = MENUCONTROL_SM_CONFIRMED
 						StopMusic()
 					end if
 				else
-					if Object.Value5 == 2
-						Object.Value5 = -1
+					if Object.SMCurrentButton == 2
+						Object.SMCurrentButton = -1
 					end if
 				end if
 			end if
+
 			if KeyPress.Left == true
-				Object.Value5 = 2
-				Options.PhysicalControls = 1
+				Object.SMCurrentButton = 2
+				Options.PhysicalControls = true
 			end if
+
 			if KeyPress.Right == true
-				Object.Value5 = 0
-				Options.PhysicalControls = 1
+				Object.SMCurrentButton = 0
+				Options.PhysicalControls = true
 			end if
 		end if
 #endplatform
 		break
-	case 8
-		if Object.Value0 < 192
-			Object.Value0 += 8
-			Object.Value4 += 8
-			if Object.Value4 > 767
-				Object.Value4 -= 576
+
+	case MENUCONTROL_SM_SCROLL_UP
+		if Object.Timer < 192
+			Object.Timer += 8
+			Object.SMYPos += 8
+			if Object.SMYPos > 767
+				Object.SMYPos -= 576
 			end if
 		else
-			Object.Value0 = 0
-			Object.State = 7
+			Object.Timer = 0
+			Object.State = MENUCONTROL_SM_CONTROLS
 #platform: Mobile
 			if Options.PhysicalControls == false
-				Object.Value5 = -1
+				Object.SMCurrentButton = -1
 			end if
 #endplatform
 		end if
+
 		break
-	case 9
-		if Object.Value0 < 192
-			Object.Value0 += 8
-			Object.Value4 -= 8
-			if Object.Value4 < 192
-				Object.Value4 += 576
+		
+	case MENUCONTROL_SM_SCROLL_DOWN
+		if Object.Timer < 192
+			Object.Timer += 8
+			Object.SMYPos -= 8
+			if Object.SMYPos < 192
+				Object.SMYPos += 576
 			end if
 		else
-			Object.Value0 = 0
-			Object.State = 7
+			Object.Timer = 0
+			Object.State = MENUCONTROL_SM_CONTROLS
 #platform: Mobile
 			if Options.PhysicalControls == false
-				Object.Value5 = -1
+				Object.SMCurrentButton = -1
 			end if
 #endplatform
 		end if
 		break
-	case 10
-		if Object.Value0 < 30
-			Object.Value0++
+
+	case MENUCONTROL_SM_CONFIRMED
+		if Object.Timer < 30
+			Object.Timer++
 		else
-			Object.Value0 = 0
+			Object.Timer = 0
 			Object.State++
 		end if
 		break
-	case 11
-		if Object.Value0 < 320
-			Object.Value0 += 8
+
+	case MENUCONTROL_SM_LOAD_LEVEL
+		if Object.Timer < 320
+			Object.Timer += 8
 		else
 			if TimeAttack.MenuSection == 0
 				Stage.ActiveList = REGULAR_STAGE
-				Stage.ListPos = Object[40].PropertyValue
-				TimeAttack.Round = Object[40].PropertyValue
+				Stage.ListPos = Object.LIconPortrait
+				TimeAttack.Round = Object.LIconPortrait
 				Stage.ListPos *= 10
-				TempValue0 = Object.Value4
+				TempValue0 = Object.SMYPos
 				TempValue0 -= 192
 				TempValue0 /= 192
 				TimeAttack.Zone = TempValue0
@@ -742,8 +867,8 @@ sub ObjectMain
 				end if
 			else
 				Stage.ActiveList = SPECIAL_STAGE
-				Stage.ListPos = Object[40].PropertyValue
-				TimeAttack.Round = Object[40].PropertyValue
+				Stage.ListPos = Object.LIconPortrait
+				TimeAttack.Round = Object.LIconPortrait
 				TimeAttack.Zone = 0
 			end if
 			Player.Lives = 1
@@ -751,65 +876,71 @@ sub ObjectMain
 			Options.GameMode = 2
 			LoadStage()
 		end if
-		SetScreenFade(0, 0, 0, Object.Value0)
+		SetScreenFade(0, 0, 0, Object.Timer)
 		break
-	case 12
-		if Object.Value0 > 0
-			Object.Value0 -= 8
+
+	case MENUCONTROL_SM_LEVEL_RETURN
+		if Object.Timer > 0
+			Object.Timer -= 8
 		else
 			TimeAttack.Round = -1
-			if Object.Value6 > 0
+			if Object.BeatedRecord > 0
 				PlaySfx(21, 0)
-				Object.State = 15
+				Object.State = MENUCONTROL_SM_RECORD_BEATED
 				Object[0].DrawOrder = 4
 			else
-				Object.State = 7
+				Object.State = MENUCONTROL_SM_CONTROLS
 			end if
 		end if
-		SetScreenFade(0, 0, 0, Object.Value0)
+		SetScreenFade(0, 0, 0, Object.Timer)
 		break
-	case 13
-		if Object.Value0 < 30
-			Object.Value0++
+
+	case MENUCONTROL_SM_COMFIRMED_LEAVE
+		if Object.Timer < 30
+			Object.Timer++
 		else
-			Object.Scale = 327680
-			Object.Value0 = 0
+			Object.OffSet = 327680
+			Object.Timer = 0
 			Object.State++
 		end if
-		if Object.Value4 > 0
-			Object.Value4 -= 8
+
+		if Object.SMYPos > 0
+			Object.SMYPos -= 8
 		end if
 		break
-	case 14
-		if Object.Value0 < 256
-			Object.Value0 += 8
-			Object.Scale -= 8192
+
+	case MENUCONTROL_SM_EXIT
+		if Object.Timer < 256
+			Object.Timer += 8
+			Object.OffSet -= 8192
 		else
-			Object.Value0 = 0
-			Object.State = 2
+			Object.Timer = 0
+			Object.State = MENUCONTROL_CONTROLS
 		end if
-		CallFunction(MenuControl_Function0)
+		CallFunction(MenuControl_IconTransitions)
 		break
-	case 15
-		if Object.Value0 < 120
-			Object.Value0++
+		
+	case MENUCONTROL_SM_RECORD_BEATED
+		if Object.Timer < 120
+			Object.Timer++
 		else
-			Object.Value0 = 0
-			Object.State = 7
-			Object.Value6 = 0
+			Object.Timer = 0
+			Object.State = MENUCONTROL_SM_CONTROLS
+			Object.BeatedRecord = 0
 			Object[0].DrawOrder = 1
 		end if
 		break
-	case 16
-		if Object.Value0 < 20
-			Object.Value0++
+
+	case MENUCONTROL_SCROLL_DOWN
+		if Object.Timer < 20
+			Object.Timer++
 			ArrayPos0 = 32
 			while ArrayPos0 < 40
 				Object[ArrayPos0].YPos -= 786432
 				ArrayPos0++
 			loop
 		else
-			Object.Value0 = 0
+			Object.Timer = 0
 			ArrayPos0 = 32
 			if TimeAttack.MenuSection == 0
 				while ArrayPos0 < 40
@@ -818,7 +949,7 @@ sub ObjectMain
 					ArrayPos0++
 				loop
 				TimeAttack.MenuSection = 1
-				CallFunction(MenuControl_Function4)
+				CallFunction(MenuControl_TotalSpecialRecord)
 			else
 				while ArrayPos0 < 40
 					Object[ArrayPos0].YPos += 31457280
@@ -826,34 +957,36 @@ sub ObjectMain
 					ArrayPos0++
 				loop
 				TimeAttack.MenuSection = 0
-				CallFunction(MenuControl_Function3)
+				CallFunction(MenuControl_TotalRegularRecord)
 			end if
 			Object.State++
 		end if
 		break
-	case 17
-		if Object.Value0 < 20
-			Object.Value0++
+
+	case MENUCONTROL_SCROLLING_1		// Follow-up to MENUCONTROL_SCROLL_DOWN
+		if Object.Timer < 20
+			Object.Timer++
 			ArrayPos0 = 32
 			while ArrayPos0 < 40
 				Object[ArrayPos0].YPos -= 786432
 				ArrayPos0++
 			loop
 		else
-			Object.Value0 = 0
-			Object.State = 2
+			Object.Timer = 0
+			Object.State = MENUCONTROL_CONTROLS
 		end if
 		break
-	case 18
-		if Object.Value0 < 20
-			Object.Value0++
+
+	case MENUCONTROL_SCROLL_UP
+		if Object.Timer < 20
+			Object.Timer++
 			ArrayPos0 = 32
 			while ArrayPos0 < 40
 				Object[ArrayPos0].YPos += 786432
 				ArrayPos0++
 			loop
 		else
-			Object.Value0 = 0
+			Object.Timer = 0
 			ArrayPos0 = 32
 			if TimeAttack.MenuSection == 0
 				while ArrayPos0 < 40
@@ -862,7 +995,7 @@ sub ObjectMain
 					ArrayPos0++
 				loop
 				TimeAttack.MenuSection = 1
-				CallFunction(MenuControl_Function4)
+				CallFunction(MenuControl_TotalSpecialRecord)
 			else
 				while ArrayPos0 < 40
 					Object[ArrayPos0].YPos -= 31457280
@@ -870,56 +1003,60 @@ sub ObjectMain
 					ArrayPos0++
 				loop
 				TimeAttack.MenuSection = 0
-				CallFunction(MenuControl_Function3)
+				CallFunction(MenuControl_TotalRegularRecord)
 			end if
 			Object.State++
 		end if
 		break
-	case 19
-		if Object.Value0 < 20
-			Object.Value0++
+
+	case MENUCONTROL_SCROLLING_2		// Follow-up to MENUCONTROL_SCROLL_UP
+		if Object.Timer < 20
+			Object.Timer++
 			ArrayPos0 = 32
 			while ArrayPos0 < 40
 				Object[ArrayPos0].YPos += 786432
 				ArrayPos0++
 			loop
 		else
-			Object.Value0 = 0
-			Object.State = 2
+			Object.Timer = 0
+			Object.State = MENUCONTROL_CONTROLS
 		end if
 		break
+
 	end switch
 end sub
 
 
 sub ObjectDraw
 	switch Object.State
-	case 13
+	case MENUCONTROL_SM_COMFIRMED_LEAVE
 		TempValue0 = Screen.CenterX
 		TempValue0 += 16
 		DrawRect(TempValue0, 31, Screen.CenterX, 9, 0, 0, 0, 255)
 		DrawRect(TempValue0, 40, Screen.CenterX, 135, 224, 0, 0, 255)
 		DrawRect(TempValue0, 175, Screen.CenterX, 38, 0, 0, 96, 255)
 		break
-	case 15
-		TempValue0 = Object.Value0
+		
+	case MENUCONTROL_SM_RECORD_BEATED
+		TempValue0 = Object.Timer
 		TempValue0 >>= 2
 		TempValue0 &= 1
 		if TempValue0 == 0
 			TempValue0 = Screen.CenterX
 			TempValue0 += 16
-			TempValue1 = Object.Value6
+			TempValue1 = Object.BeatedRecord
 			TempValue1 *= 24
 			TempValue1 += 105
 			DrawRect(TempValue0, TempValue1, 34, 24, 8, 0, 104, 255)
 		end if
 		break
+
 	end switch
 end sub
 
 
 sub ObjectStartup
-	if Options.Soundtrack == 0
+	if Options.Soundtrack == JP_OST
 		SetMusicTrack("JP/TimeAttack.ogg", 0, 100512)
 	else
 		SetMusicTrack("US/DAGarden.ogg", 0, 117382)
@@ -927,7 +1064,7 @@ sub ObjectStartup
 	Object[0].Type = TypeName[MenuControl]
 	Object[0].DrawOrder = 1
 #platform: Mobile
-	Options.PhysicalControls = 0
+	Options.PhysicalControls = false
 #endplatform
 end sub
 

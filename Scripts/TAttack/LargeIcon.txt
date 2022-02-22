@@ -4,11 +4,26 @@
 
 // Aliases
 #alias 4: TYPE_LARGEICON
+#alias Object[0].Value0	: Object.MCTimer
+#alias Object[0].Value5 : Object.MCSMCurrentButton
+#alias Object[0].State	: Object.MCState
 
+// States
+#alias 0	: LARGEICON_BLANK
+#alias 1	: LARGEICON_ENTER_SCREEN
+#alias 2	: LARGEICON_LEAVE_SCREEN
+
+// Menu Control States
+#alias 7	: MENUCONTROL_SM_CONTROLS
+#alias 10	: MENUCONTROL_SM_CONFIRMED
+#alias 11	: MENUCONTROL_SM_LOAD_LEVEL
+#alias 13	: MENUCONTROL_SM_COMFIRMED_LEAVE
 
 sub ObjectMain
 	switch Object.State
-	case 1
+	case LARGEICON_BLANK
+		break
+	case LARGEICON_ENTER_SCREEN
 		TempValue0 = Screen.CenterX
 		TempValue0 -= 72
 		TempValue0 <<= 16
@@ -18,19 +33,21 @@ sub ObjectMain
 				Object.XPos = TempValue0
 			end if
 		else
-			Object.State = 0
+			Object.State = LARGEICON_BLANK
 		end if
 		break
-	case 2
+
+	case LARGEICON_LEAVE_SCREEN
 		if Object.XPos > -4718592
 			Object.XPos -= 1048576
 			if Object.XPos < -4718592
 				Object.XPos = -4718592
 			end if
 		else
-			Object.State = 0
+			Object.State = LARGEICON_BLANK
 		end if
 		break
+
 	end switch
 end sub
 
@@ -48,38 +65,44 @@ sub ObjectDraw
 	TempValue1 = TempValue0
 	TempValue1 += 68
 #platform: Mobile
-	switch Object[0].State
+	switch Object.MCState
 	default
 		DrawSprite(16)
 		DrawSpriteScreenXY(18, TempValue0, 11)
 		DrawSpriteScreenXY(20, TempValue1, 11)
 		break
-	case 7
-		switch Object[0].Value5
+
+	case MENUCONTROL_SM_CONTROLS
+		switch Object.MCSMCurrentButton
 		default
 			DrawSprite(16)
 			DrawSpriteScreenXY(18, TempValue0, 11)
 			DrawSpriteScreenXY(20, TempValue1, 11)
 			break
+
 		case 0
 			DrawSprite(17)
 			DrawSpriteScreenXY(18, TempValue0, 11)
 			DrawSpriteScreenXY(20, TempValue1, 11)
 			break
+
 		case 1
 			DrawSprite(16)
 			DrawSpriteScreenXY(19, TempValue0, 11)
 			DrawSpriteScreenXY(20, TempValue1, 11)
 			break
+
 		case 2
 			DrawSprite(16)
 			DrawSpriteScreenXY(18, TempValue0, 11)
 			DrawSpriteScreenXY(21, TempValue1, 11)
 			break
+
 		end switch
 		break
-	case 10
-		TempValue2 = Object[0].Value0
+
+	case MENUCONTROL_SM_CONFIRMED
+		TempValue2 = Object.MCTimer
 		TempValue2 &= 3
 		TempValue2 >>= 1
 		if TempValue2 == 0
@@ -90,13 +113,15 @@ sub ObjectDraw
 		DrawSprite(16)
 		DrawSpriteScreenXY(18, TempValue0, 11)
 		break
-	case 11
+
+	case MENUCONTROL_SM_LOAD_LEVEL
 		DrawSprite(16)
 		DrawSpriteScreenXY(18, TempValue0, 11)
 		DrawSpriteScreenXY(21, TempValue1, 11)
 		break
-	case 13
-		TempValue2 = Object[0].Value0
+
+	case MENUCONTROL_SM_COMFIRMED_LEAVE
+		TempValue2 = Object.MCTimer
 		TempValue2 &= 3
 		TempValue2 >>= 1
 		if TempValue2 == 0
@@ -107,6 +132,7 @@ sub ObjectDraw
 		DrawSpriteScreenXY(18, TempValue0, 11)
 		DrawSpriteScreenXY(20, TempValue1, 11)
 		break
+
 	end switch
 #endplatform
 end sub
@@ -114,28 +140,28 @@ end sub
 
 sub ObjectStartup
 	LoadSpriteSheet("TAttack/TimeAttack.gif")
-	SpriteFrame(-64, -72, 128, 144, 0, 0)
-	SpriteFrame(-64, -72, 128, 144, 256, 0)
-	SpriteFrame(-64, -72, 128, 144, 384, 0)
-	SpriteFrame(-64, -72, 128, 144, 0, 144)
-	SpriteFrame(-64, -72, 128, 144, 128, 144)
-	SpriteFrame(-64, -72, 128, 144, 256, 144)
-	SpriteFrame(-64, -72, 128, 144, 384, 144)
-	SpriteFrame(-64, -72, 128, 144, 0, 288)
-	SpriteFrame(-64, -72, 128, 144, 128, 288)
-	SpriteFrame(-64, -72, 128, 144, 256, 288)
-	SpriteFrame(-64, -72, 128, 144, 384, 288)
-	SpriteFrame(-64, -72, 128, 144, 0, 432)
-	SpriteFrame(-64, -72, 128, 144, 128, 432)
-	SpriteFrame(-64, -72, 128, 144, 256, 432)
-	SpriteFrame(-64, -72, 128, 144, 384, 432)
-	SpriteFrame(-67, -75, 134, 150, 306, 873)
-	SpriteFrame(-67, -95, 64, 20, 280, 680)
-	SpriteFrame(-67, -95, 64, 20, 135, 617)
-	SpriteFrame(0, 0, 64, 20, 280, 659)
-	SpriteFrame(0, 0, 64, 20, 200, 617)
-	SpriteFrame(0, 0, 64, 20, 345, 659)
-	SpriteFrame(0, 0, 64, 20, 265, 617)
+	SpriteFrame(-64, -72, 128, 144, 0, 0)		// #0  - Palmtree Panic Icon
+	SpriteFrame(-64, -72, 128, 144, 256, 0)		// #1  - Collision Chaos Icon
+	SpriteFrame(-64, -72, 128, 144, 384, 0)		// #2  - Tidal Tempest Icon
+	SpriteFrame(-64, -72, 128, 144, 0, 144)		// #3  - Quartz Quadrant Icon
+	SpriteFrame(-64, -72, 128, 144, 128, 144)	// #4  - Wacky Workbench Icon
+	SpriteFrame(-64, -72, 128, 144, 256, 144)	// #5  - Stardust Speedway Icon
+	SpriteFrame(-64, -72, 128, 144, 384, 144)	// #6  - Metallic Madnes Icon
+	SpriteFrame(-64, -72, 128, 144, 0, 288)		// #7  - Special Stage 1 Icon	(Unused)
+	SpriteFrame(-64, -72, 128, 144, 128, 288)	// #8  - Special Stage 2 Icon	(Unused)
+	SpriteFrame(-64, -72, 128, 144, 256, 288)	// #9  - Special Stage 3 Icon	(Unused)
+	SpriteFrame(-64, -72, 128, 144, 384, 288)	// #10 - Special Stage 4 Icon	(Unused)
+	SpriteFrame(-64, -72, 128, 144, 0, 432)		// #11 - Special Stage 5 Icon	(Unused)
+	SpriteFrame(-64, -72, 128, 144, 128, 432)	// #12 - Special Stage 6 Icon	(Unused)
+	SpriteFrame(-64, -72, 128, 144, 256, 432)	// #13 - Special Stage 7 Icon	(Unused)
+	SpriteFrame(-64, -72, 128, 144, 384, 432)	// #14 - Sonic The Hedgehog CD	(Unused)
+	SpriteFrame(-67, -75, 134, 150, 306, 873)	// #15 - Icon Border
+	SpriteFrame(-67, -95, 64, 20, 280, 680)		// #16 - Exit
+	SpriteFrame(-67, -95, 64, 20, 135, 617)		// #17 - Exit Highlight
+	SpriteFrame(0, 0, 64, 20, 280, 659)			// #18 - Next
+	SpriteFrame(0, 0, 64, 20, 200, 617)			// #19 - Next Highlight
+	SpriteFrame(0, 0, 64, 20, 345, 659)			// #20 - Go
+	SpriteFrame(0, 0, 64, 20, 265, 617)			// #21 - Go Highlight
 end sub
 
 sub RSDK

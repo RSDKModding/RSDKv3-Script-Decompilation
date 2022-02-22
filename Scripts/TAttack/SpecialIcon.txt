@@ -3,13 +3,32 @@
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
 // Aliases
-#alias 6: TYPE_SPECIALICON
+#alias Object.Value0	: Object.Timer
+#alias Object.Value1	: Object.Minutes
+#alias Object.Value2	: Object.Seconds
+#alias Object.Value3	: Object.Milliseconds
+#alias Object.Value4	: Object.LockedZone
+
+#alias Object[0].Value2	: Object.MCSelectedButton			// Only used for Mobile
+#alias Object[0].Value3	: Object.MCSavedRound				// This is used AFTER you play in time attack
+#alias Object[0].State	: Object.MCState					// This is used AFTER you play in time attack
+
+// States
+#alias 0	: ROUNDICON_BLANK
+#alias 1	: ROUNDICON_SELECTED_ZONE
+
+// MenuControl States
+#alias 2	: MENUCONTROL_CONTROLS
+#alias 3	: MENUCONTROL_BLANK
+#alias 4	: MENUCONTROL_RETURN_TO_MENU
+#alias 5	: MENUCONTROL_ENTER_SM
+
 
 
 sub ObjectMain
 #platform: Mobile
 	if Options.PhysicalControls == false
-		if Object[0].State == 2
+		if Object.MCState == MENUCONTROL_CONTROLS
 			TempValue0 = Object.iXPos
 			TempValue0 -= 34
 			TempValue1 = Object.iXPos
@@ -20,21 +39,21 @@ sub ObjectMain
 			TempValue3 += 45
 			CheckTouchRect(TempValue0, TempValue2, TempValue1, TempValue3)
 			if CheckResult > -1
-				Object[0].Value2 = Object.PropertyValue
+				Object.MCSelectedButton = Object.PropertyValue
 			else
 				CheckTouchRect(0, 0, Screen.XSize, Screen.YSize)
 				if CheckResult < 0
-					if Object[0].Value2 == Object.PropertyValue
+					if Object.MCSelectedButton == Object.PropertyValue
 						PlaySfx(27, 0)	//Select SFX
-						Object[0].State = 3
-						Object.State = 1
-						if Object.PropertyValue == 7
+						Object.MCState = MENUCONTROL_BLANK
+						Object.State = ROUNDICON_BLANK
+						if Object.PropertyValue == 7	// If touched the exit button
 							StopMusic()
 						end if
 					end if
 				else
-					if Object[0].Value2 == Object.PropertyValue
-						Object[0].Value2 = -1
+					if Object.MCSelectedButton == Object.PropertyValue
+						Object.MCSelectedButton = -1
 					end if
 				end if
 			end if
@@ -46,6 +65,7 @@ end sub
 
 sub ObjectDraw
 	DrawSprite(10)
+	// Icon Movement
 	Object.Rotation++
 	Object.Rotation &= 511
 	Cos(TempValue0, Object.Rotation)
@@ -53,36 +73,36 @@ sub ObjectDraw
 	Sin(TempValue1, Object.Rotation)
 	TempValue1 >>= 4
 	switch Object.PropertyValue
-	case 0
+	case 0	// SS1
 		TempValue0 += 64
 		TempValue1 += 364
 		break
-	case 1
+	case 1	// SS2
 		TempValue0 += 192
 		TempValue1 += 364
 		break
-	case 2
+	case 2	// SS3
 		TempValue0 += 320
 		TempValue1 += 364
 		break
-	case 3
+	case 3	// SS4
 		TempValue0 += 448
 		TempValue1 += 364
 		break
-	case 4
+	case 4	// SS5
 		TempValue0 += 64
 		TempValue1 += 508
 		break
-	case 5
+	case 5	// SS6
 		TempValue0 += 192
 		TempValue1 += 508
 		break
-	case 6
+	case 6	// SS7
 		TempValue0 += 320
 		TempValue1 += 508
 		break
 	end switch
-	if Object.PropertyValue < 7
+	if Object.PropertyValue < 7	// Draw for all special stages
 		VertexBuffer[0].x = Object.XPos
 		VertexBuffer[0].x >>= 16
 		VertexBuffer[0].x -= 32
@@ -126,12 +146,13 @@ sub ObjectDraw
 		TempValue1 = Object.YPos
 		TempValue1 >>= 16
 		TempValue1 += 34
-		DrawNumbers(0, TempValue0, TempValue1, Object.Value1, 2, 6, 1)
+		// Zone specific time
+		DrawNumbers(0, TempValue0, TempValue1, Object.Minutes, 2, 6, 1)
 		TempValue0 += 16
-		DrawNumbers(0, TempValue0, TempValue1, Object.Value2, 2, 6, 1)
+		DrawNumbers(0, TempValue0, TempValue1, Object.Seconds, 2, 6, 1)
 		TempValue0 += 19
-		DrawNumbers(0, TempValue0, TempValue1, Object.Value3, 2, 6, 1)
-	else
+		DrawNumbers(0, TempValue0, TempValue1, Object.Milliseconds, 2, 6, 1)
+	else	// Draw the Exit
 		DrawSprite(20)
 		TempValue0 = Object.XPos
 		TempValue0 >>= 16
@@ -139,37 +160,40 @@ sub ObjectDraw
 		TempValue1 = Object.YPos
 		TempValue1 >>= 16
 		TempValue1 += 34
-		DrawNumbers(0, TempValue0, TempValue1, Object.Value1, 3, 6, 1)
+		// Total Time
+		DrawNumbers(0, TempValue0, TempValue1, Object.Minutes, 3, 6, 1)
 		TempValue0 += 16
-		DrawNumbers(0, TempValue0, TempValue1, Object.Value2, 2, 6, 1)
+		DrawNumbers(0, TempValue0, TempValue1, Object.Seconds, 2, 6, 1)
 		TempValue0 += 19
-		DrawNumbers(0, TempValue0, TempValue1, Object.Value3, 2, 6, 1)
+		DrawNumbers(0, TempValue0, TempValue1, Object.Milliseconds, 2, 6, 1)
 		DrawSprite(22)
 	end if
+
 	DrawSprite(Object.Frame)
-	if Object.State == 1
-		TempValue0 = Object.Value0
+	if Object.State == ROUNDICON_SELECTED_ZONE
+		TempValue0 = Object.Timer
 		TempValue0 &= 3
 		TempValue0 >>= 1
 		if TempValue0 == 0
-			if Object[0].Value3 == Object.PropertyValue
+			if Object.MCSavedRound == Object.PropertyValue
 				DrawSprite(21)
 			end if
 		end if
-		Object.Value0++
-		if Object.Value0 == 30
-			Object.Value0 = 0
-			Object.State = 0
+
+		Object.Timer++
+		if Object.Timer == 30
+			Object.Timer = 0
+			Object.State = ROUNDICON_BLANK
 			if Object.PropertyValue == 7
-				Object[0].State = 4
+				Object.MCState = MENUCONTROL_RETURN_TO_MENU
 			else
-				Object[0].State = 5
-				Object[0].Value2 = -1
+				Object.MCState = MENUCONTROL_ENTER_SM
+				Object.MCSelectedButton = -1
 			end if
 		end if
 	else
-		if Object[0].State == 2
-			if Object[0].Value3 == Object.PropertyValue
+		if Object.MCState == MENUCONTROL_CONTROLS
+			if Object.MCSavedRound == Object.PropertyValue
 				DrawSprite(21)
 			end if
 		end if
@@ -179,29 +203,29 @@ end sub
 
 sub ObjectStartup
 	LoadSpriteSheet("TAttack/TimeAttack.gif")
-	SpriteFrame(0, 0, 6, 8, 330, 577)
-	SpriteFrame(0, 0, 6, 8, 337, 577)
-	SpriteFrame(0, 0, 6, 8, 344, 577)
-	SpriteFrame(0, 0, 6, 8, 351, 577)
-	SpriteFrame(0, 0, 6, 8, 330, 586)
-	SpriteFrame(0, 0, 6, 8, 337, 586)
-	SpriteFrame(0, 0, 6, 8, 344, 586)
-	SpriteFrame(0, 0, 6, 8, 351, 586)
-	SpriteFrame(0, 0, 6, 8, 330, 595)
-	SpriteFrame(0, 0, 6, 8, 337, 595)
-	SpriteFrame(-34, -45, 68, 90, 1, 609)
-	SpriteFrame(-32, 15, 64, 16, 66, 764)
-	SpriteFrame(-32, 15, 64, 16, 131, 764)
-	SpriteFrame(-32, 15, 64, 16, 196, 764)
-	SpriteFrame(-32, 15, 64, 16, 261, 764)
-	SpriteFrame(-32, 15, 64, 16, 66, 780)
-	SpriteFrame(-32, 15, 64, 16, 131, 780)
-	SpriteFrame(-32, 15, 64, 16, 196, 780)
-	SpriteFrame(-32, 15, 64, 16, 265, 593)
-	SpriteFrame(-32, 31, 64, 13, 70, 638)
-	SpriteFrame(-32, 31, 64, 13, 70, 652)
-	SpriteFrame(-35, -46, 70, 92, 441, 860)
-	SpriteFrame(-29, -22, 56, 21, 223, 679)
+	SpriteFrame(0, 0, 6, 8, 330, 577)		// #0  - 0
+	SpriteFrame(0, 0, 6, 8, 337, 577)		// #1  - 1
+	SpriteFrame(0, 0, 6, 8, 344, 577)		// #2  - 2
+	SpriteFrame(0, 0, 6, 8, 351, 577)		// #3  - 3
+	SpriteFrame(0, 0, 6, 8, 330, 586)		// #4  - 4
+	SpriteFrame(0, 0, 6, 8, 337, 586)		// #5  - 5
+	SpriteFrame(0, 0, 6, 8, 344, 586)		// #6  - 6
+	SpriteFrame(0, 0, 6, 8, 351, 586)		// #7  - 7
+	SpriteFrame(0, 0, 6, 8, 330, 595)		// #8  - 8
+	SpriteFrame(0, 0, 6, 8, 337, 595)		// #9  - 9
+	SpriteFrame(-34, -45, 68, 90, 1, 609)	// #10 - Border
+	SpriteFrame(-32, 15, 64, 16, 66, 764)	// #11 - Special Zone 1
+	SpriteFrame(-32, 15, 64, 16, 131, 764)	// #12 - Special Zone 2
+	SpriteFrame(-32, 15, 64, 16, 196, 764)	// #13 - Special Zone 3
+	SpriteFrame(-32, 15, 64, 16, 261, 764)	// #14 - Special Zone 4
+	SpriteFrame(-32, 15, 64, 16, 66, 780)	// #15 - Special Zone 5
+	SpriteFrame(-32, 15, 64, 16, 131, 780)	// #16 - Special Zone 6
+	SpriteFrame(-32, 15, 64, 16, 196, 780)	// #17 - Special Zone 7
+	SpriteFrame(-32, 15, 64, 16, 265, 593)	// #18 - Total Time
+	SpriteFrame(-32, 31, 64, 13, 70, 638)	// #19 - ' "
+	SpriteFrame(-32, 31, 64, 13, 70, 652)	// #20 -  ' "
+	SpriteFrame(-35, -46, 70, 92, 441, 860)	// #21 - Selected Border
+	SpriteFrame(-29, -22, 56, 21, 223, 679)	// #22 - Exit
 	ArrayPos0 = 32
 	while ArrayPos0 < 1056
 		if Object[ArrayPos0].Type == TypeName[SpecialIcon]
