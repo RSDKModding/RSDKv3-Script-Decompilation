@@ -3,49 +3,64 @@
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
 // Aliases
-#alias 10: TYPE_METALSONIC
+#alias Object.Value0	: Object.Timer
+#alias Object.Value1	: Object.YOffSet
+#alias Object.Value2	: Object.Wobble
+#alias Object.Value3	: Object.XOffSet
+#alias Object.Value4	: Object.Speed
 
+#alias 0	: METALSONIC_SETUP
+#alias 1	: METALSONIC_GOTO_CENTER
+#alias 2	: METALSONIC_SET_DIRECTION
+#alias 3	: METALSONIC_START_CHARGE
+#alias 4	: METALSONIC_LEAVE
 
 sub ObjectMain
 	switch Object.State
-	case 0
-		Object.Value3 = Screen.CenterX
-		Object.Value3 <<= 16
-		if Object.XPos < Object.Value3
+	case METALSONIC_SETUP
+		Object.XOffSet = Screen.CenterX
+		Object.XOffSet <<= 16
+		if Object.XPos < Object.XOffSet
 			Object.Direction = FACING_RIGHT
 		else
 			Object.Direction = FACING_LEFT
 		end if
 		Object.State++
 		break
-	case 1
-		TempValue0 = Object.Value3
+		
+	case METALSONIC_GOTO_CENTER
+		TempValue0 = Object.XOffSet
 		TempValue0 -= Object.XPos
 		TempValue0 >>= 5
+
 		TempValue1 = 7864320
 		TempValue1 -= Object.YPos
 		TempValue1 >>= 5
+
 		Object.XPos += TempValue0
 		Object.YPos += TempValue1
-		Object.Value0++
-		if Object.Value0 == 120
-			Object.Value0 = 0
-			Object.Value1 = Object.YPos
+
+		Object.Timer++
+		if Object.Timer == 120
+			Object.Timer = 0
+			Object.YOffSet = Object.YPos
 			Object.State++
 		end if
 		Object.AnimationTimer++
 		Object.AnimationTimer &= 7
 		break
-	case 2
-		Object.Value2 += 8
-		Object.Value2 &= 511
-		Sin(Object.YPos, Object.Value2)
+
+	case METALSONIC_SET_DIRECTION
+		Object.Wobble += 8
+		Object.Wobble &= 511
+		Sin(Object.YPos, Object.Wobble)
 		Object.YPos <<= 9
-		Object.YPos += Object.Value1
-		Object.Value0++
-		if Object.Value0 == 100
-			Object.Value0 = 0
-			Object.Value1 = Object.YPos
+		Object.YPos += Object.YOffSet
+
+		Object.Timer++
+		if Object.Timer == 100
+			Object.Timer = 0
+			Object.YOffSet = Object.YPos
 			Object.Direction++
 			Object.Direction &= FACING_LEFT
 			Object.State++
@@ -53,57 +68,67 @@ sub ObjectMain
 		Object.AnimationTimer++
 		Object.AnimationTimer &= 7
 		break
-	case 3
-		Object.Value2 += 64
-		Object.Value2 &= 511
-		Sin(Object.YPos, Object.Value2)
+
+	case METALSONIC_START_CHARGE
+		Object.Wobble += 64
+		Object.Wobble &= 511
+		Sin(Object.YPos, Object.Wobble)
 		Object.YPos <<= 7
-		Object.YPos += Object.Value1
+		Object.YPos += Object.YOffSet
+
 		if Object.Direction == FACING_LEFT
 			Object.XPos += 32768
 		else
 			Object.XPos -= 32768
 		end if
-		Object.Value0++
-		if Object.Value0 == 90
-			Object.Value0 = 0
-			Object.Value4 = 65536
+
+		Object.Timer++
+		if Object.Timer == 90
+			Object.Timer = 0
+			Object.Speed = 65536
 			Object.State++
 		end if
+
 		Object.AnimationTimer++
 		Object.AnimationTimer &= 7
 		break
-	case 4
+
+	case METALSONIC_LEAVE
 		if Object.Direction == FACING_RIGHT
-			Object.XPos += Object.Value4
+			Object.XPos += Object.Speed
 		else
-			Object.XPos -= Object.Value4
+			Object.XPos -= Object.Speed
 		end if
-		Object.Value4 += 12288
+		Object.Speed += 12288
+
 		Object.AnimationTimer += 2
 		Object.AnimationTimer %= 5
 		break
+
 	end switch
-	if Object.OutOfBounds == 1
+	if Object.OutOfBounds == true
 		Object.Type = TypeName[BlankObject]
 	end if
 end sub
 
 
 sub ObjectDraw
+	// Jet Flame
 	TempValue0 = Object.AnimationTimer
 	TempValue0 >>= 1
 	TempValue0++
 	DrawSpriteFX(TempValue0, FX_FLIP, Object.XPos, Object.YPos)
+	// Metal
 	DrawSpriteFX(0, FX_FLIP, Object.XPos, Object.YPos)
 end sub
 
 
 sub ObjectStartup
 	LoadSpriteSheet("DAGarden/Objects.gif")
-	SpriteFrame(-16, -24, 32, 48, 429, 804)
-	SpriteFrame(-24, -12, 24, 24, 462, 804)
-	SpriteFrame(-24, -12, 24, 24, 487, 804)
+	SpriteFrame(-16, -24, 32, 48, 429, 804)		// #0 - Metal Sonic
+	SpriteFrame(-24, -12, 24, 24, 462, 804)		// #1 - Jet Flame Frame 0
+	SpriteFrame(-24, -12, 24, 24, 487, 804)		// #2 - Jet Flame Frame 1
+	// Blank Frmaes
 	SpriteFrame(-24, -12, 0, 0, 462, 804)
 	SpriteFrame(-24, -12, 0, 0, 487, 804)
 end sub

@@ -3,13 +3,20 @@
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
 // Aliases
-#alias 13: TYPE_SLOWBIRD
+#alias Object.Value1		: Object.YOffSet
+#alias Object.Value2		: Object.Wobble
+#alias Object.Value3		: Object.Timer
+#alias Object.PropertyValue	: Object.WobbleIncrease
+
+// States
+#alias 0 : SLOWBIRD_SETUP
+#alias 1 : SLOWBIRD_MOVEMENT
 
 
 sub ObjectMain
-	Object.Value3++
-	Object.Value3 %= 192
-	if Object.Value3 > 133
+	Object.Timer++
+	Object.Timer %= 192
+	if Object.Timer > 133
 		if Object.Direction == FACING_RIGHT
 			Object.XPos += 65536
 		else
@@ -22,20 +29,24 @@ sub ObjectMain
 			Object.XPos -= 16384
 		end if
 	end if
+
 	switch Object.State
-	case 0
-		Object.Value1 = Object.YPos
+	case SLOWBIRD_SETUP
+		Object.YOffSet = Object.YPos
 		Object.State++
 		break
-	case 1
-		Object.Value2 += Object.PropertyValue
-		Object.Value2 &= 511
-		Sin(Object.YPos, Object.Value2)
+
+	case SLOWBIRD_MOVEMENT
+		Object.Wobble += Object.WobbleIncrease
+		Object.Wobble &= 511
+		Sin(Object.YPos, Object.Wobble)
 		Object.YPos <<= 10
-		Object.YPos += Object.Value1
+		Object.YPos += Object.YOffSet
 		break
+
 	end switch
-	if Object.OutOfBounds == 1
+
+	if Object.OutOfBounds == true
 		Object.Type = TypeName[BlankObject]
 	end if
 end sub
@@ -45,7 +56,7 @@ sub ObjectDraw
 	TempValue0 = Object.AnimationSpeed
 	TempValue0 >>= 4
 	DrawSpriteFX(TempValue0, FX_FLIP, Object.XPos, Object.YPos)
-	if Object.Value3 > 133
+	if Object.Timer > 133
 		Object.AnimationSpeed += 4
 	else
 		Object.AnimationSpeed++
@@ -56,8 +67,8 @@ end sub
 
 sub ObjectStartup
 	LoadSpriteSheet("DAGarden/Objects.gif")
-	SpriteFrame(-8, -9, 16, 16, 466, 577)
-	SpriteFrame(-8, -8, 16, 16, 483, 577)
+	SpriteFrame(-8, -9, 16, 16, 466, 577)	// Blue Bird Frame 0
+	SpriteFrame(-8, -8, 16, 16, 483, 577)	// Blue Bird Frame 1
 end sub
 
 sub RSDK
