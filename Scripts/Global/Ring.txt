@@ -3,15 +3,13 @@
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
 // Aliases
-#alias 8: TYPE_RING
-
-#alias Player.Value0:Player.Rings
+#alias Player.Value0	:	Player.Rings
 
 sub ObjectPlayerInteraction
 	if Player.State != PlayerObject_Knockback
 		if Player.CollisionPlane == Object.PropertyValue
 			PlayerObjectCollision(C_TOUCH, -8, -8, 8, 8)
-			if CheckResult == 1
+			if CheckResult == true
 				Object.Type = TypeName[RingSparkle]
 				Player.Rings++
 				if Player.Rings > 999
@@ -26,22 +24,27 @@ sub ObjectPlayerInteraction
 							PlaySfx(21, 0)
 						end if
 					end if
+
 					Ring.ExtraLife += 100
+
+					// You can only achieve 3 extra lives via rings
 					if Ring.ExtraLife > 300
 						Ring.ExtraLife = 1000
 					end if
+
+					// King of the Rings achievement criteria
 					if Player.Rings >= 200
 						if Stage.PlayerListPos == 0
-							if Stage.DebugMode == 0
+							if Stage.DebugMode == false
 								SetAchievement(4, 100)
 							end if
 						end if
 					end if
 				end if
-				if Ring.Pan == 0
+				if Ring.Pan == 0	// Left panning
 					SetSfxAttributes(1, -1, -100)
 					Ring.Pan = 1
-				else
+				else				// Right Panning
 					SetSfxAttributes(2, -1, 100)
 					Ring.Pan = 0
 				end if
@@ -69,14 +72,14 @@ sub ObjectStartup
 		end if
 		ArrayPos0++
 	loop
-	SpriteFrame(-8, -8, 16, 16, 1, 1)
-	SpriteFrame(-8, -8, 16, 16, 1, 18)
-	SpriteFrame(-8, -8, 16, 16, 1, 35)
-	SpriteFrame(-8, -8, 16, 16, 1, 52)
-	SpriteFrame(-8, -8, 16, 16, 1, 69)
-	SpriteFrame(-8, -8, 16, 16, 1, 86)
-	SpriteFrame(-8, -8, 16, 16, 1, 103)
-	SpriteFrame(-8, -8, 16, 16, 1, 120)
+	SpriteFrame(-8, -8, 16, 16, 1, 1)		// #0 - Ring Frame 0
+	SpriteFrame(-8, -8, 16, 16, 1, 18)		// #1 - Ring Frame 1
+	SpriteFrame(-8, -8, 16, 16, 1, 35)		// #2 - Ring Frame 2
+	SpriteFrame(-8, -8, 16, 16, 1, 52)		// #3 - Ring Frame 3
+	SpriteFrame(-8, -8, 16, 16, 1, 69)		// #4 - Ring Frame 4
+	SpriteFrame(-8, -8, 16, 16, 1, 86)		// #5 - Ring Frame 5
+	SpriteFrame(-8, -8, 16, 16, 1, 103)		// #6 - Ring Frame 6
+	SpriteFrame(-8, -8, 16, 16, 1, 120)		// #7 - Ring Frame 7
 end sub
 
 sub RSDK

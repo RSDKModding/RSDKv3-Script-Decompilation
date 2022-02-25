@@ -3,7 +3,22 @@
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
 // Aliases
-#alias 7: TYPE_PAUSEMENU
+#alias Object.PropertyValue	:	Object.TimerThreshold
+#alias Object.Value0		:	Object.Timer
+#alias Object.Value1		:	Object.SelectedButton
+#alias Object.Value2		:	Object.SpritesXPos
+#alias Object.Value3		:	Object.BlackBarXPos
+#alias Object.Value4		:	Object.BlackBarYPos
+#alias Object.Value6		:	Object.BlockRestart
+
+// States
+#alias 0	:	PAUSEMENU_START_PAUSE
+#alias 1	:	PAUSEMENU_SLIDE_IN
+#alias 2	:	PAUSEMENU_SPRITES_FADE_IN
+#alias 3	:	PAUSEMENU_CONTROLS
+#alias 4	:	PAUSEMENU_CONFIRMED
+#alias 5	:	PAUSEMENU_RESUME_GAME
+#alias 6	:	PAUSEMENU_EXIT_LEVEL	// Not the best name but is essentially what will happen here
 
 // Languages
 #alias 0 : ENGLISH
@@ -13,93 +28,108 @@
 #alias 4 : SPANISH
 #alias 5 : JAPANESE
 
+// Engine & Callbacks
+#alias 2	:	MESSAGE_LOSTFOCUS
+#alias 3	:	MESSAGE_MESSAGE_3
+#alias 4	:	MESSAGE_MESSAGE_4
+
+#alias 6	:	CALLBACK_RESTART_SELECTED
+#alias 7	:	CALLBACK_EXIT_SELECTED
+#alias 8	:	CALLBACK_BUY_FULL_GAME_SELECTED
 
 sub ObjectMain
 	switch Object.State
-	case 0
+	case PAUSEMENU_START_PAUSE
 		PauseMusic()
 		Object.XPos = Screen.XSize
-		Object.Value3 = 0
-		Object.Value0 = 0
+		Object.BlackBarXPos = 0
+		Object.Timer = 0
 		Object.InkEffect = 2 //INK_ALPHA
 		Object.Alpha = 0
 		switch Engine.Language
 		case ENGLISH
 		case JAPANESE
-			Object.PropertyValue = 12
+			Object.TimerThreshold = 12
 			break
+
 		case FRENCH
-			Object.PropertyValue = 15
+			Object.TimerThreshold = 15
 			break
+
 		case ITALIAN
-			Object.PropertyValue = 13
-			break
 		case DEUTSCH
-			Object.PropertyValue = 13
-			break
 		case SPANISH
-			Object.PropertyValue = 13
+			Object.TimerThreshold = 13
 			break
+
 		end switch
+
 		if Player.Lives < 2
-			Object.Value6 = 1
+			Object.BlockRestart = true
 		else
 			if Stage.ActiveList == SPECIAL_STAGE
-				Object.Value6 = 1
+				Object.BlockRestart = true
 			else
-				Object.Value6 = 0
+				Object.BlockRestart = false
 			end if
 		end if
 #platform: Use_Haptics			
 		HapticEffect(-1, 0, 0, 0)
 #endplatform
+
 #platform: Mobile
-		if Options.TouchControls == 1
-			Object.Value1 = -1
-			Options.PhysicalControls = 0
+		if Options.TouchControls == true
+			Object.SelectedButton = -1
+			Options.PhysicalControls = false
 		else
-			Options.PhysicalControls = 1
+			Options.PhysicalControls = true
 		end if
 #endplatform
 		Object.State++
 		break
-	case 1
-		Object.Value3 = Object.Value0
-		Object.Value3 *= Screen.XSize
-		Object.Value3 /= 12
-		Object.Value4 = Object.Value0
-		Object.Value4 *= 240
-		Object.Value4 /= 12
-		TempValue0 = Object.Value0
+
+	case PAUSEMENU_SLIDE_IN
+		Object.BlackBarXPos = Object.Timer
+		Object.BlackBarXPos *= Screen.XSize
+		Object.BlackBarXPos /= 12
+
+		Object.BlackBarYPos = Object.Timer
+		Object.BlackBarYPos *= 240
+		Object.BlackBarYPos /= 12
+		
+		TempValue0 = Object.Timer
 		TempValue0 <<= 7
 		TempValue0 /= 12
 		Object.XPos = Screen.XSize
 		Object.XPos -= TempValue0
-		if Object.Value0 < Object.PropertyValue
-			Object.Value0++
+
+		if Object.Timer < Object.TimerThreshold
+			Object.Timer++
 		else
 			PauseMusic()
-			Object.Value2 = Object.XPos
-			Object.Value2 += 48
-			Object.Value0 = 0
+			Object.SpritesXPos = Object.XPos
+			Object.SpritesXPos += 48
+			Object.Timer = 0
 			Object.State++
 		end if
 		break
-	case 2
-		if Object.Value0 < 256
-			Object.Value0 += 16
-			if Object.Value0 < 255
-				Object.Alpha = Object.Value0
+
+	case PAUSEMENU_SPRITES_FADE_IN
+		if Object.Timer < 256
+			Object.Timer += 16
+			if Object.Timer < 255
+				Object.Alpha = Object.Timer
 			else
 				Object.Alpha = 255
 			end if
 		else
-			Object.Value0 = 0
+			Object.Timer = 0
 			Object.Alpha = 255
 			Object.State++
 		end if
 		break
-	case 3
+
+	case PAUSEMENU_CONTROLS
 #platform: Mobile
 		CheckEqual(Options.PhysicalControls,true)
 #endplatform
@@ -109,181 +139,192 @@ sub ObjectMain
 		if CheckResult == true
 			if KeyPress.Up == true
 				PlaySfx(23, 0) 	//Menu Button SFX
-				Object.Value0 = 0
+				Object.Timer = 0
 				Object.AnimationTimer = 0
 				Object.Frame = 0
-				Object.Value2 = Screen.XSize
-				Object.Value1--
-				if Options.DevMenuFlag == 1
-					if Object.Value1 < 0	 
-						Object.Value1 = 3
+				Object.SpritesXPos = Screen.XSize
+				Object.SelectedButton--
+				if Options.DevMenuFlag == true
+					if Object.SelectedButton < 0	 
+						Object.SelectedButton = 3
 					end if
 				else
-					if Object.Value1 < 0
-						Object.Value1 = 2
+					if Object.SelectedButton < 0
+						Object.SelectedButton = 2
 					end if
 				end if
-				if Object.Value6 == 1
-					if Object.Value1 == 1
-						Object.Value1--
+				if Object.BlockRestart == true
+					if Object.SelectedButton == 1
+						Object.SelectedButton--
 					end if
 				end if
 			end if
+
 			if KeyPress.Down == true
 				PlaySfx(23, 0) 	//Menu Button SFX
-				Object.Value0 = 0
+				Object.Timer = 0
 				Object.AnimationTimer = 0
 				Object.Frame = 0
-				Object.Value2 = Screen.XSize
-				Object.Value1++
-				if Options.DevMenuFlag == 1
-					if Object.Value1 > 3
-						Object.Value1 = 0
+				Object.SpritesXPos = Screen.XSize
+				Object.SelectedButton++
+				if Options.DevMenuFlag == true
+					if Object.SelectedButton > 3
+						Object.SelectedButton = 0
 					end if
 				else
-					if Object.Value1 > 2
-						Object.Value1 = 0
+					if Object.SelectedButton > 2
+						Object.SelectedButton = 0
 					end if
 				end if
-				if Object.Value6 == 1
-					if Object.Value1 == 1
-						Object.Value1++
+				if Object.BlockRestart == true
+					if Object.SelectedButton == 1
+						Object.SelectedButton++
 					end if
 				end if
 			end if
+
 			if KeyPress.Start == true
 				PlaySfx(27, 0)	//Select SFX
-				Object.State = 4
+				Object.State = PAUSEMENU_CONFIRMED
 				Object.Alpha = 248
-				Object.Value0 = 0
+				Object.Timer = 0
 			end if
+
 			if KeyPress.ButtonA == true
 				PlaySfx(27, 0)	//Select SFX
-				Object.State = 4
+				Object.State = PAUSEMENU_CONFIRMED
 				Object.Alpha = 248
-				Object.Value0 = 0
+				Object.Timer = 0
 			end if
 		end if
+
 #platform: Mobile
 		if Options.PhysicalControls == true
 			CheckTouchRect(0, 0, Screen.XSize, Screen.YSize)
 			if CheckResult > -1
-				Options.PhysicalControls = 0
-				Object.Value1 = -1
+				Options.PhysicalControls = false
+				Object.SelectedButton = -1
 			end if
 		else
-			if Engine.Message == 2
-				Object.Value1 = -1
+			if Engine.Message == MESSAGE_LOSTFOCUS
+				Object.SelectedButton = -1
 			end if
 			CheckTouchRect(0, 0, Screen.XSize, Screen.YSize)
 			TempValue3 = CheckResult
 			CheckTouchRect(TempValue0, 32, Screen.XSize, 64)
 			if CheckResult > -1
-				Object.Value1 = 0
+				Object.SelectedButton = 0
 			else
 				if TempValue3 < 0
-					if Object.Value1 == 0
+					if Object.SelectedButton == 0
 						PlaySfx(27, 0)	//Select SFX
-						Object.State = 4
+						Object.State = PAUSEMENU_CONFIRMED
 						Object.Alpha = 248
-						Object.Value0 = 0
+						Object.Timer = 0
 					end if
 				else
-					if Object.Value1 == 0
-						Object.Value1 = -1
+					if Object.SelectedButton == 0
+						Object.SelectedButton = -1
 					end if
 				end if
 			end if
-			if Object.Value6 == 0
+
+			if Object.BlockRestart == false
 				CheckTouchRect(TempValue0, 80, Screen.XSize, 112)
 				if CheckResult > -1
-					Object.Value1 = 1
+					Object.SelectedButton = 1
 				else
 					if TempValue3 < 0
-						if Object.Value1 == 1
+						if Object.SelectedButton == 1
 							PlaySfx(27, 0)	//Select SFX
-							Object.State = 4
+							Object.State = PAUSEMENU_CONFIRMED
 							Object.Alpha = 248
-							Object.Value0 = 0
+							Object.Timer = 0
 						end if
 					else
-						if Object.Value1 == 1
-							Object.Value1 = -1
+						if Object.SelectedButton == 1
+							Object.SelectedButton = -1
 						end if
 					end if
 				end if
 			end if
+
 			CheckTouchRect(TempValue0, 128, Screen.XSize, 160)
 			if CheckResult > -1
-				Object.Value1 = 2
+				Object.SelectedButton = 2
 			else
 				if TempValue3 < 0
-					if Object.Value1 == 2
+					if Object.SelectedButton == 2
 						PlaySfx(27, 0)	//Select SFX
-						Object.State = 4
+						Object.State = PAUSEMENU_CONFIRMED
 						Object.Alpha = 248
-						Object.Value0 = 0
+						Object.Timer = 0
 					end if
 				else
-					if Object.Value1 == 2
-						Object.Value1 = -1
+					if Object.SelectedButton == 2
+						Object.SelectedButton = -1
 					end if
 				end if
 			end if
-			if Options.DevMenuFlag == 1
+
+			if Options.DevMenuFlag == true
 				CheckTouchRect(TempValue0, 176, Screen.XSize, 208)
 				if CheckResult > -1
-					Object.Value1 = 3
+					Object.SelectedButton = 3
 				else
 					if TempValue3 < 0
-						if Object.Value1 == 3
+						if Object.SelectedButton == 3
 							PlaySfx(27, 0)	//Select SFX
-							Object.State = 4
+							Object.State = PAUSEMENU_CONFIRMED
 							Object.Alpha = 248
-							Object.Value0 = 0
+							Object.Timer = 0
 						end if
 					else
-						if Object.Value1 == 3
-							Object.Value1 = -1
+						if Object.SelectedButton == 3
+							Object.SelectedButton = -1
 						end if
 					end if
 				end if
 			end if
-			if Engine.TrialMode == 1
+
+			if Engine.TrialMode == true
 				CheckTouchRect(TempValue0, 176, Screen.XSize, 208)
 				if CheckResult > -1
-					Object.Value1 = 3
+					Object.SelectedButton = 3
 				else
 					if TempValue3 < 0
-						if Object.Value1 == 3
+						if Object.SelectedButton == 3
 							PlaySfx(27, 0)	//Select SFX
-							Object.State = 4
+							Object.State = PAUSEMENU_CONFIRMED
 							Object.Alpha = 248
-							Object.Value0 = 0
+							Object.Timer = 0
 						end if
 					else
-						if Object.Value1 == 3
-							Object.Value1 = -1
+						if Object.SelectedButton == 3
+							Object.SelectedButton = -1
 						end if
 					end if
 				end if
 			end if
+
 			if KeyPress.Up == true
-				if Options.DevMenuFlag == 1
-					Object.Value1 = 3
+				if Options.DevMenuFlag == true
+					Object.SelectedButton = 3
 				else
-					Object.Value1 = 2
+					Object.SelectedButton = 2
 				end if
-				Options.PhysicalControls = 1
+				Options.PhysicalControls = true
 			end if
+
 			if KeyPress.Down == true
-				Object.Value1 = 0
-				Options.PhysicalControls = 1
+				Object.SelectedButton = 0
+				Options.PhysicalControls = true
 			end if
 		end if
 #endplatform
-		if Object.Value0 < 60
-			Object.Value0++
+
+		if Object.Timer < 60
+			Object.Timer++
 		else
 			Object.Frame = Object.AnimationTimer
 			Object.Frame >>= 4
@@ -292,85 +333,88 @@ sub ObjectMain
 			Object.AnimationTimer &= 31
 		end if
 		break
-	case 4
-		Object.Value0++
-		Object.Value0 &= 3
-		Object.Value2 += 4
+
+	case PAUSEMENU_CONFIRMED
+		Object.Timer++
+		Object.Timer &= 3
+
+		Object.SpritesXPos += 4
 		if Object.Alpha > 0
 			Object.Alpha -= 8
 		else
-			if Object.Value1 == 0
-				Object.Value2 = Object.XPos
-				Object.Value2 += 48
-				Object.Value4 = 202
-				Object.Value0 = 0
+			if Object.SelectedButton == 0
+				Object.SpritesXPos = Object.XPos
+				Object.SpritesXPos += 48
+				Object.BlackBarYPos = 202
+				Object.Timer = 0
 				Object.Alpha = 128
-				Object.State = 5
+				Object.State = PAUSEMENU_RESUME_GAME
 				Stage.State = STAGE_RUNNING
 			else
 #platform: Standard
-				Object.Value2 = Object.XPos
-				Object.Value2 += 48
+				Object.SpritesXPos = Object.XPos
+				Object.SpritesXPos += 48
 				StopMusic()
-				Object.State = 6
+				Object.State = PAUSEMENU_EXIT_LEVEL
 #endplatform
 #platform: Mobile
-				if Engine.Message < 3
-					switch Object.Value1
+				if Engine.Message < MESSAGE_MESSAGE_3
+					switch Object.SelectedButton
 					case 1
-						EngineCallback(6)
+						EngineCallback(CALLBACK_RESTART_SELECTED)
 						break
 					case 2
-						EngineCallback(7)
+						EngineCallback(CALLBACK_EXIT_SELECTED)
 						break
 					case 3
-						if Engine.TrialMode == 0
-							Object.Value2 = Object.XPos
-							Object.Value2 += 48
+						if Engine.TrialMode == false
+							Object.SpritesXPos = Object.XPos
+							Object.SpritesXPos += 48
 							StopMusic()
-							Object.State = 6
+							Object.State = PAUSEMENU_EXIT_LEVEL	// Dev Menu
 						else
-							EngineCallback(8)
-							Object.Value0 = 0
+							EngineCallback(CALLBACK_BUY_FULL_GAME_SELECTED)	// Demo End
+							Object.Timer = 0
 							Object.AnimationTimer = 0
 							Object.Frame = 0
-							Object.Value2 = Screen.XSize
+							Object.SpritesXPos = Screen.XSize
 							if Options.PhysicalControls == false
-								Object.Value1 = -1
+								Object.SelectedButton = -1
 							end if
-							Object.State = 3
+							Object.State = PAUSEMENU_CONTROLS
 							Object.Alpha = 255
 						end if
 						break
 					end switch
 				else
-					if Engine.Message == 4
-						Object.Value0 = 0
+					if Engine.Message == MESSAGE_MESSAGE_4
+						Object.Timer = 0
 						Object.AnimationTimer = 0
 						Object.Frame = 0
-						Object.Value2 = Screen.XSize
+						Object.SpritesXPos = Screen.XSize
 						if Options.PhysicalControls == false
-							Object.Value1 = -1
+							Object.SelectedButton = -1
 						end if
-						Object.State = 3
+						Object.State = PAUSEMENU_CONTROLS
 						Object.Alpha = 255
 					else
-						Object.Value2 = Object.XPos
-						Object.Value2 += 48
+						Object.SpritesXPos = Object.XPos
+						Object.SpritesXPos += 48
 						StopMusic()
-						Object.State = 6
+						Object.State = PAUSEMENU_EXIT_LEVEL
 					end if
 				end if
 #endplatform
 			end if
 		end if
 		break
-	case 5
+
+	case PAUSEMENU_RESUME_GAME
 		if Object.Alpha > 0
 			Object.Alpha -= 8
 			Object.XPos += 16
-			Object.Value2 += 16
-			Object.Value4 += 16
+			Object.SpritesXPos += 16
+			Object.BlackBarYPos += 16
 		else
 			ResumeMusic()
 			ResetObjectEntity(Object.EntityNo, TypeName[BlankObject], 0, 0, 0)
@@ -385,19 +429,21 @@ sub ObjectMain
 			end if
 		end if
 		break
-	case 6
+
+	case PAUSEMENU_EXIT_LEVEL
 #platform: Standard
 		CheckGreater(Object.XPos, -32)
 #endplatform
 #platform: Mobile
 		CheckGreater(Object.XPos, -64)
 #endplatform
-		if CheckResult == 1
+
+		if CheckResult == true
 			Object.XPos -= 16
-			Object.Value2 += 16
+			Object.SpritesXPos += 16
 		else
-			switch Object.Value1
-			case 1
+			switch Object.SelectedButton
+			case 1		// Restart
 				LampPost.Check = 0
 				if Options.GameMode == 2
 					Player.Lives = 1
@@ -407,7 +453,7 @@ sub ObjectMain
 				end if
 				LoadStage()
 				break
-			case 2
+			case 2		// Exit
 				Good_Future_Count = 0
 				Good_Future_List = 0
 				Good_Future = 0
@@ -416,20 +462,21 @@ sub ObjectMain
 				Stage.ActiveList = PRESENTATION_STAGE
 				LampPost.Check = 0
 				if Options.GameMode == 2
-					Stage.ListPos = 2
+					Stage.ListPos = 2	// Time Attack
 					TimeAttack.Result = 0
 				else
-					Stage.ListPos = 0
+					Stage.ListPos = 0	// Title Screen
 				end if
 				LoadStage()
 				break
-			case 3
+			case 3		// Dev Menu
 				TimeAttack.Round = -1
 				Engine.State = RESET_GAME
 				break
 			end switch
 		end if
 		break
+
 	end switch
 end sub
 
@@ -438,18 +485,21 @@ sub ObjectDraw
 #platform: Standard
 	SetActivePalette(0, 0, Screen.YSize)
 #endplatform
+
 	switch Object.State
-	case 0
-	case 1
-	case 2
+	case PAUSEMENU_START_PAUSE
+	case PAUSEMENU_SLIDE_IN
+	case PAUSEMENU_SPRITES_FADE_IN
+		// Pause White BG
 		if Object.Value5 < 240
-			if Object.Value4 > Object.Value5
-				TempValue0 = Object.Value4
+			if Object.BlackBarYPos > Object.Value5
+				TempValue0 = Object.BlackBarYPos
 				TempValue0 -= Object.Value5
 				DrawRect(0, Object.Value5, 384, TempValue0, 255, 255, 255, 128)
-				Object.Value5 = Object.Value4
+				Object.Value5 = Object.BlackBarYPos
 			end if
 		end if
+		// Menu Draw
 		DrawSpriteScreenXY(3, Object.XPos, 0)
 		DrawSpriteScreenXY(3, Object.XPos, 32)
 		DrawSpriteScreenXY(3, Object.XPos, 64)
@@ -458,27 +508,37 @@ sub ObjectDraw
 		DrawSpriteScreenXY(3, Object.XPos, 160)
 		DrawSpriteScreenXY(3, Object.XPos, 192)
 		DrawSpriteScreenXY(3, Object.XPos, 224)
+
+		// Pause Black Bar
 		TempValue0 = Object.XPos
 		TempValue0 += 128
 		DrawRect(TempValue0, 0, 128, Screen.YSize, 0, 0, 0, 255)
-		DrawRect(0, 202, Object.Value3, 13, 0, 0, 0, 255)
+		DrawRect(0, 202, Object.BlackBarXPos, 13, 0, 0, 0, 255)
 		DrawSpriteScreenFX(4, FX_INK, 0, 202)
+
+		// Text Sprite Slide
 		TempValue0 = Object.XPos
 		TempValue0 += 48
-		if Object.Value2 > TempValue0
+		if Object.SpritesXPos > TempValue0
 			TempValue1 = TempValue0
-			TempValue1 -= Object.Value2
+			TempValue1 -= Object.SpritesXPos
 			TempValue1 >>= 3
-			Object.Value2 += TempValue1
+			Object.SpritesXPos += TempValue1
 		end if
+		
+		// Continue
 		TempValue1 = 48
 		DrawSpriteScreenFX(6, FX_INK, TempValue0, TempValue1)
-		if Object.Value1 == 0
-			DrawSpriteScreenFX(5, FX_INK, Object.Value2, TempValue1)
+
+		// Continue Highlight
+		if Object.SelectedButton == 0
+			DrawSpriteScreenFX(5, FX_INK, Object.SpritesXPos, TempValue1)
 			DrawSpriteScreenFX(Object.Frame, FX_INK, TempValue0, TempValue1)
 		end if
+
+		// Restart
 		TempValue1 += 48
-		if Object.Value6 == 0
+		if Object.BlockRestart == 0
 			DrawSpriteScreenFX(7, FX_INK, TempValue0, TempValue1)
 		else
 #platform: Standard	   
@@ -491,37 +551,48 @@ sub ObjectDraw
 			Object.Alpha = TempValue2
 #endplatform	  
 		end if
-		if Object.Value1 == 1
-			DrawSpriteScreenFX(5, FX_INK, Object.Value2, TempValue1)
+
+		// Restart Highlight
+		if Object.SelectedButton == 1
+			DrawSpriteScreenFX(5, FX_INK, Object.SpritesXPos, TempValue1)
 			DrawSpriteScreenFX(Object.Frame, FX_INK, TempValue0, TempValue1)
 		end if
+		
+		// Exit
 		TempValue1 += 48
 		DrawSpriteScreenFX(8, FX_INK, TempValue0, TempValue1)
-		if Object.Value1 == 2
-			DrawSpriteScreenFX(5, FX_INK, Object.Value2, TempValue1)
+
+		// Exit Highlight
+		if Object.SelectedButton == 2
+			DrawSpriteScreenFX(5, FX_INK, Object.SpritesXPos, TempValue1)
 			DrawSpriteScreenFX(Object.Frame, FX_INK, TempValue0, TempValue1)
 		end if
+
+		// Dev Menu
 		TempValue1 += 48
-		if Options.DevMenuFlag == 1
+		if Options.DevMenuFlag == false
 			DrawSpriteScreenFX(9, FX_INK, TempValue0, TempValue1)
-			if Object.Value1 == 3
-				DrawSpriteScreenFX(5, FX_INK, Object.Value2, TempValue1)
+			if Object.SelectedButton == 3
+				DrawSpriteScreenFX(5, FX_INK, Object.SpritesXPos, TempValue1)
 				DrawSpriteScreenFX(Object.Frame, FX_INK, TempValue0, TempValue1)
 			end if
 		end if
-#platform: Mobile
-		if Options.DevMenuFlag == 0
-			if Engine.TrialMode == 1
+		
+#platform: Mobile	// Demo Restart
+		if Options.DevMenuFlag == false
+			if Engine.TrialMode == true
 				DrawSpriteScreenFX(10, FX_INK, TempValue0, TempValue1)
-				if Object.Value1 == 3
-					DrawSpriteScreenFX(5, FX_INK, Object.Value2, TempValue1)
+				if Object.SelectedButton == 3
+					DrawSpriteScreenFX(5, FX_INK, Object.SpritesXPos, TempValue1)
 					DrawSpriteScreenFX(Object.Frame, FX_INK, TempValue0, TempValue1)
 				end if
 			end if
 		end if
 #endplatform
 		break
-	case 3
+
+	case PAUSEMENU_CONTROLS
+		// Draw Menu
 		DrawSpriteScreenXY(3, Object.XPos, 0)
 		DrawSpriteScreenXY(3, Object.XPos, 32)
 		DrawSpriteScreenXY(3, Object.XPos, 64)
@@ -530,27 +601,37 @@ sub ObjectDraw
 		DrawSpriteScreenXY(3, Object.XPos, 160)
 		DrawSpriteScreenXY(3, Object.XPos, 192)
 		DrawSpriteScreenXY(3, Object.XPos, 224)
+
+		// Pause Black Bar
 		TempValue0 = Object.XPos
 		TempValue0 += 128
 		DrawRect(TempValue0, 0, 128, Screen.YSize, 0, 0, 0, 255)
-		DrawRect(0, 202, Object.Value3, 13, 0, 0, 0, 255)
+		DrawRect(0, 202, Object.BlackBarXPos, 13, 0, 0, 0, 255)
 		DrawSpriteScreenFX(4, FX_INK, 0, 202)
+
+		// Text Sprite Slide
 		TempValue0 = Object.XPos
 		TempValue0 += 48
-		if Object.Value2 > TempValue0
+		if Object.SpritesXPos > TempValue0
 			TempValue1 = TempValue0
-			TempValue1 -= Object.Value2
+			TempValue1 -= Object.SpritesXPos
 			TempValue1 >>= 3
-			Object.Value2 += TempValue1
+			Object.SpritesXPos += TempValue1
 		end if
+
+		// Continue
 		TempValue1 = 48
 		DrawSpriteScreenFX(6, FX_INK, TempValue0, TempValue1)
-		if Object.Value1 == 0
-			DrawSpriteScreenFX(5, FX_INK, Object.Value2, TempValue1)
+		
+		// Continue Highlight
+		if Object.SelectedButton == 0
+			DrawSpriteScreenFX(5, FX_INK, Object.SpritesXPos, TempValue1)
 			DrawSpriteScreenFX(Object.Frame, FX_INK, TempValue0, TempValue1)
 		end if
+
+		// Restart
 		TempValue1 += 48
-		if Object.Value6 == 0
+		if Object.BlockRestart == 0
 			DrawSpriteScreenFX(7, FX_INK, TempValue0, TempValue1)
 		else
 #platform: Standard	   
@@ -563,37 +644,48 @@ sub ObjectDraw
 			Object.Alpha = TempValue2
 #endplatform 
 		end if
-		if Object.Value1 == 1
-			DrawSpriteScreenFX(5, FX_INK, Object.Value2, TempValue1)
+
+		// Restart Highlight
+		if Object.SelectedButton == 1
+			DrawSpriteScreenFX(5, FX_INK, Object.SpritesXPos, TempValue1)
 			DrawSpriteScreenFX(Object.Frame, FX_INK, TempValue0, TempValue1)
 		end if
+
+		// Exit
 		TempValue1 += 48
 		DrawSpriteScreenFX(8, FX_INK, TempValue0, TempValue1)
-		if Object.Value1 == 2
-			DrawSpriteScreenFX(5, FX_INK, Object.Value2, TempValue1)
+
+		// Exit Highlight
+		if Object.SelectedButton == 2
+			DrawSpriteScreenFX(5, FX_INK, Object.SpritesXPos, TempValue1)
 			DrawSpriteScreenFX(Object.Frame, FX_INK, TempValue0, TempValue1)
 		end if
+
+		// Dev Menu
 		TempValue1 += 48
-		if Options.DevMenuFlag == 1
+		if Options.DevMenuFlag == true
 			DrawSpriteScreenFX(9, FX_INK, TempValue0, TempValue1)
-			if Object.Value1 == 3
-				DrawSpriteScreenFX(5, FX_INK, Object.Value2, TempValue1)
+			if Object.SelectedButton == 3
+				DrawSpriteScreenFX(5, FX_INK, Object.SpritesXPos, TempValue1)
 				DrawSpriteScreenFX(Object.Frame, FX_INK, TempValue0, TempValue1)
 			end if
 		end if
-#platform: Mobile
-		if Options.DevMenuFlag == 0
-			if Engine.TrialMode == 1
+
+#platform: Mobile	// Demo Restart
+		if Options.DevMenuFlag == false
+			if Engine.TrialMode == true
 				DrawSpriteScreenFX(10, FX_INK, TempValue0, TempValue1)
-				if Object.Value1 == 3
-					DrawSpriteScreenFX(5, FX_INK, Object.Value2, TempValue1)
+				if Object.SelectedButton == 3
+					DrawSpriteScreenFX(5, FX_INK, Object.SpritesXPos, TempValue1)
 					DrawSpriteScreenFX(Object.Frame, FX_INK, TempValue0, TempValue1)
 				end if
 			end if
 		end if
 #endplatform
 		break
-	case 4
+
+	case PAUSEMENU_CONFIRMED
+		// Draw Menu
 		DrawSpriteScreenXY(3, Object.XPos, 0)
 		DrawSpriteScreenXY(3, Object.XPos, 32)
 		DrawSpriteScreenXY(3, Object.XPos, 64)
@@ -602,32 +694,39 @@ sub ObjectDraw
 		DrawSpriteScreenXY(3, Object.XPos, 160)
 		DrawSpriteScreenXY(3, Object.XPos, 192)
 		DrawSpriteScreenXY(3, Object.XPos, 224)
+
+		// Pause Black Bar
 		TempValue0 = Object.XPos
 		TempValue0 += 128
 		DrawRect(TempValue0, 0, 128, Screen.YSize, 0, 0, 0, 255)
-		DrawRect(0, 202, Object.Value3, 13, 0, 0, 0, 255)
+		DrawRect(0, 202, Object.BlackBarXPos, 13, 0, 0, 0, 255)
 		DrawSpriteScreenXY(4, 0, 202)
+
 		TempValue0 = Object.XPos
 		TempValue0 += 48
+
+		//	Continue Flashing
 		TempValue1 = 48
-		if Object.Value1 == 0
-			if Object.Value0 < 2
+		if Object.SelectedButton == 0
+			if Object.Timer < 2
 				DrawSpriteScreenXY(6, TempValue0, TempValue1)
 			end if
-			DrawSpriteScreenXY(5, Object.Value2, TempValue1)
+			DrawSpriteScreenXY(5, Object.SpritesXPos, TempValue1)
 			DrawSpriteScreenXY(Object.Frame, TempValue0, TempValue1)
 		else
 			DrawSpriteScreenFX(6, FX_INK, TempValue0, TempValue1)
 		end if
+
+		//	Restart Flashing
 		TempValue1 += 48
-		if Object.Value1 == 1
-			if Object.Value0 < 2
+		if Object.SelectedButton == 1
+			if Object.Timer < 2
 				DrawSpriteScreenXY(7, TempValue0, TempValue1)
 			end if
-			DrawSpriteScreenXY(5, Object.Value2, TempValue1)
+			DrawSpriteScreenXY(5, Object.SpritesXPos, TempValue1)
 			DrawSpriteScreenXY(Object.Frame, TempValue0, TempValue1)
 		else
-			if Object.Value6 == 0
+			if Object.BlockRestart == 0
 				DrawSpriteScreenFX(7, FX_INK, TempValue0, TempValue1)
 			else
 #platform: Standard
@@ -641,36 +740,41 @@ sub ObjectDraw
 #endplatform	   
 			end if
 		end if
+
+		//	Exit Flashing
 		TempValue1 += 48
-		if Object.Value1 == 2
-			if Object.Value0 < 2
+		if Object.SelectedButton == 2
+			if Object.Timer < 2
 				DrawSpriteScreenXY(8, TempValue0, TempValue1)
 			end if
-			DrawSpriteScreenXY(5, Object.Value2, TempValue1)
+			DrawSpriteScreenXY(5, Object.SpritesXPos, TempValue1)
 			DrawSpriteScreenXY(Object.Frame, TempValue0, TempValue1)
 		else
 			DrawSpriteScreenFX(8, FX_INK, TempValue0, TempValue1)
 		end if
+
+		//	Dev Menu Flashing
 		TempValue1 += 48
-		if Options.DevMenuFlag == 1
-			if Object.Value1 == 3
-				if Object.Value0 < 2
+		if Options.DevMenuFlag == true
+			if Object.SelectedButton == 3
+				if Object.Timer < 2
 					DrawSpriteScreenXY(9, TempValue0, TempValue1)
 				end if
-				DrawSpriteScreenXY(5, Object.Value2, TempValue1)
+				DrawSpriteScreenXY(5, Object.SpritesXPos, TempValue1)
 				DrawSpriteScreenXY(Object.Frame, TempValue0, TempValue1)
 			else
 				DrawSpriteScreenFX(9, FX_INK, TempValue0, TempValue1)
 			end if
 		end if
-#platform: Mobile
-		if Options.DevMenuFlag == 0
-			if Engine.TrialMode == 1
-				if Object.Value1 == 3
-					if Object.Value0 < 2
+
+#platform: Mobile	// Restart Demo Flashing
+		if Options.DevMenuFlag == false
+			if Engine.TrialMode == true
+				if Object.SelectedButton == 3
+					if Object.Timer < 2
 						DrawSpriteScreenXY(10, TempValue0, TempValue1)
 					end if
-					DrawSpriteScreenXY(5, Object.Value2, TempValue1)
+					DrawSpriteScreenXY(5, Object.SpritesXPos, TempValue1)
 					DrawSpriteScreenXY(Object.Frame, TempValue0, TempValue1)
 				else
 					DrawSpriteScreenFX(10, FX_INK, TempValue0, TempValue1)
@@ -679,10 +783,13 @@ sub ObjectDraw
 		end if
 #endplatform
 		break
-	case 5
+
+	case PAUSEMENU_RESUME_GAME
+		// White BG
 		if Object.Alpha < 128
 			DrawRect(0, 0, Screen.XSize, 240, 255, 255, 255, Object.Alpha)
 		end if
+		// Draw Menu
 		DrawSpriteScreenXY(3, Object.XPos, 0)
 		DrawSpriteScreenXY(3, Object.XPos, 32)
 		DrawSpriteScreenXY(3, Object.XPos, 64)
@@ -691,44 +798,54 @@ sub ObjectDraw
 		DrawSpriteScreenXY(3, Object.XPos, 160)
 		DrawSpriteScreenXY(3, Object.XPos, 192)
 		DrawSpriteScreenXY(3, Object.XPos, 224)
+
+		// Pause Black Bar
 		TempValue0 = Object.XPos
 		TempValue0 += 128
 		DrawRect(TempValue0, 0, 128, Screen.YSize, 0, 0, 0, 255)
-		DrawRect(0, Object.Value4, Screen.XSize, 13, 0, 0, 0, 255)
-		DrawSpriteScreenXY(4, 0, Object.Value4)
-		switch Object.Value1
-		case 0
-			DrawSpriteScreenXY(6, Object.Value2, 48)
-			DrawSpriteScreenXY(Object.Frame, Object.Value2, 48)
+		DrawRect(0, Object.BlackBarYPos, Screen.XSize, 13, 0, 0, 0, 255)
+		DrawSpriteScreenXY(4, 0, Object.BlackBarYPos)
+
+		switch Object.SelectedButton
+		case 0	// Continue
+			DrawSpriteScreenXY(6, Object.SpritesXPos, 48)
+			DrawSpriteScreenXY(Object.Frame, Object.SpritesXPos, 48)
 			break
-		case 1
-			DrawSpriteScreenXY(6, Object.Value2, 96)
-			DrawSpriteScreenXY(Object.Frame, Object.Value2, 96)
+
+		case 1	// Restart
+			DrawSpriteScreenXY(6, Object.SpritesXPos, 96)
+			DrawSpriteScreenXY(Object.Frame, Object.SpritesXPos, 96)
 			break
-		case 2
-			DrawSpriteScreenXY(8, Object.Value2, 144)
-			DrawSpriteScreenXY(Object.Frame, Object.Value2, 144)
+
+		case 2	// Exit
+			DrawSpriteScreenXY(8, Object.SpritesXPos, 144)
+			DrawSpriteScreenXY(Object.Frame, Object.SpritesXPos, 144)
 			break
-		case 3
-			if Options.DevMenuFlag == 1
-				DrawSpriteScreenXY(9, Object.Value2, 192)
-				DrawSpriteScreenXY(Object.Frame, Object.Value2, 192)
+
+		case 3	// Dev Menu
+			if Options.DevMenuFlag == true
+				DrawSpriteScreenXY(9, Object.SpritesXPos, 192)
+				DrawSpriteScreenXY(Object.Frame, Object.SpritesXPos, 192)
 			end if
-#platform: Mobile
-			if Options.DevMenuFlag == 0
-				if Engine.TrialMode == 1
-					DrawSpriteScreenXY(10, Object.Value2, 192)
-					DrawSpriteScreenXY(Object.Frame, Object.Value2, 192)
+
+#platform: Mobile	// Demo Restart
+			if Options.DevMenuFlag == false
+				if Engine.TrialMode == true
+					DrawSpriteScreenXY(10, Object.SpritesXPos, 192)
+					DrawSpriteScreenXY(Object.Frame, Object.SpritesXPos, 192)
 				end if
 			end if
 #endplatform
 			break
 		end switch
 		break
-	case 6
+		
+	case PAUSEMENU_EXIT_LEVEL
+		// Screen Cover
 		TempValue0 = Screen.XSize
 		TempValue0 -= 96
 		DrawRect(TempValue0, 0, 96, 240, 0, 0, 0, 255)
+		// Draw Menu
 		DrawSpriteScreenXY(3, Object.XPos, 0)
 		DrawSpriteScreenXY(3, Object.XPos, 32)
 		DrawSpriteScreenXY(3, Object.XPos, 64)
@@ -737,38 +854,45 @@ sub ObjectDraw
 		DrawSpriteScreenXY(3, Object.XPos, 160)
 		DrawSpriteScreenXY(3, Object.XPos, 192)
 		DrawSpriteScreenXY(3, Object.XPos, 224)
+		// Screen Cover 2
 		TempValue0 = Object.XPos
 		TempValue0 += 128
 		DrawRect(TempValue0, 0, 128, Screen.YSize, 0, 0, 0, 255)
-		switch Object.Value1
-		case 0
-			DrawSpriteScreenXY(6, Object.Value2, 48)
-			DrawSpriteScreenXY(Object.Frame, Object.Value2, 48)
+
+		switch Object.SelectedButton
+		case 0	// Continue
+			DrawSpriteScreenXY(6, Object.SpritesXPos, 48)
+			DrawSpriteScreenXY(Object.Frame, Object.SpritesXPos, 48)
 			break
-		case 1
-			DrawSpriteScreenXY(6, Object.Value2, 96)
-			DrawSpriteScreenXY(Object.Frame, Object.Value2, 96)
+
+		case 1	// Restart
+			DrawSpriteScreenXY(6, Object.SpritesXPos, 96)
+			DrawSpriteScreenXY(Object.Frame, Object.SpritesXPos, 96)
 			break
-		case 2
-			DrawSpriteScreenXY(8, Object.Value2, 144)
-			DrawSpriteScreenXY(Object.Frame, Object.Value2, 144)
+
+		case 2	// Exit
+			DrawSpriteScreenXY(8, Object.SpritesXPos, 144)
+			DrawSpriteScreenXY(Object.Frame, Object.SpritesXPos, 144)
 			break
-		case 3
-			if Options.DevMenuFlag == 1
-				DrawSpriteScreenXY(9, Object.Value2, 192)
-				DrawSpriteScreenXY(Object.Frame, Object.Value2, 192)
+
+		case 3	// Dev Menu
+			if Options.DevMenuFlag == true
+				DrawSpriteScreenXY(9, Object.SpritesXPos, 192)
+				DrawSpriteScreenXY(Object.Frame, Object.SpritesXPos, 192)
 			end if
 #platform: Mobile
-			if Options.DevMenuFlag == 0
-				if Engine.TrialMode == 1
-					DrawSpriteScreenXY(10, Object.Value2, 192)
-					DrawSpriteScreenXY(Object.Frame, Object.Value2, 192)
+			if Options.DevMenuFlag == false
+				if Engine.TrialMode == true
+					DrawSpriteScreenXY(10, Object.SpritesXPos, 192)
+					DrawSpriteScreenXY(Object.Frame, Object.SpritesXPos, 192)
 				end if
 			end if				   
 #endplatform
 			break
+
 		end switch
 		break
+
 	end switch
 end sub
 
@@ -793,79 +917,84 @@ sub ObjectStartup
 		break
 	end switch
 	if Stage.PlayerListPos == 0
-		SpriteFrame(-28, -14, 16, 24, 1, 103)
-		SpriteFrame(-28, -14, 16, 24, 18, 103)
-		SpriteFrame(-28, -14, 16, 24, 35, 103)
+		SpriteFrame(-28, -14, 16, 24, 1, 103)	// #0  - Sonic
+		SpriteFrame(-28, -14, 16, 24, 18, 103)	// #1  - Sonic Waiting Frame 0
+		SpriteFrame(-28, -14, 16, 24, 35, 103)	// #2  - Sonic Waiting Frame 1
 	else
-		SpriteFrame(-28, -14, 16, 24, 52, 103)
-		SpriteFrame(-28, -14, 16, 24, 69, 103)
-		SpriteFrame(-28, -14, 16, 24, 86, 103)
+		SpriteFrame(-28, -14, 16, 24, 52, 103)	// #0  - Tails
+		SpriteFrame(-28, -14, 16, 24, 69, 103)	// #1  - Tails Waiting Frame 0
+		SpriteFrame(-28, -14, 16, 24, 86, 103)	// #2  - Tails Waiting Frame 1
 	end if
-	SpriteFrame(0, 0, 128, 32, 0, 0)
-	SpriteFrame(0, -19, 128, 32, 0, 32)
-	SpriteFrame(-6, 7, 128, 3, 0, 65)
+	SpriteFrame(0, 0, 128, 32, 0, 0)			// #3  - Menu BG Section
+	SpriteFrame(0, -19, 128, 32, 0, 32)			// #4  - Pause
+	SpriteFrame(-6, 7, 128, 3, 0, 65)			// #5  - White Bar
 	switch Engine.Language
 	case ENGLISH
 	case JAPANESE
-		SpriteFrame(0, -5, 65, 11, 0, 69)
-		SpriteFrame(0, -5, 55, 11, 0, 81)
-		SpriteFrame(0, -5, 30, 11, 66, 69)
-		SpriteFrame(0, -5, 64, 11, 56, 81)
+		SpriteFrame(0, -5, 65, 11, 0, 69)		// #6  - Continue
+		SpriteFrame(0, -5, 55, 11, 0, 81)		// #7  - Restart
+		SpriteFrame(0, -5, 30, 11, 66, 69)		// #8  - Exit
+		SpriteFrame(0, -5, 64, 11, 56, 81)		// #9  - Dev Menu
 #platform: Standard
-		SpriteFrame(0, -5, 55, 11, 0, 92)
+		SpriteFrame(0, -5, 55, 11, 0, 92)		// #10 - Blocked Restart
 #endplatform
 #platform: Mobile
-		SpriteFrame(0, -5, 72, 11, 0, 92)
+		SpriteFrame(0, -5, 72, 11, 0, 92)		// #10 - Blocked Restart
 #endplatform
 		break
+
 	case FRENCH
-		SpriteFrame(0, -5, 73, 11, 0, 69)
-		SpriteFrame(0, -5, 95, 11, 0, 81)
-		SpriteFrame(0, -5, 53, 11, 74, 69)
-		SpriteFrame(0, -5, 23, 11, 96, 81)
+		SpriteFrame(0, -5, 73, 11, 0, 69)		// #6  - Continue
+		SpriteFrame(0, -5, 95, 11, 0, 81)		// #7  - Restart
+		SpriteFrame(0, -5, 53, 11, 74, 69)		// #8  - Exit
+		SpriteFrame(0, -5, 23, 11, 96, 81)		// #9  - Dev Menu
 #platform: Standard
-		SpriteFrame(0, -5, 95, 11, 0, 92)
+		SpriteFrame(0, -5, 95, 11, 0, 92)		// #10 - Blocked Restart
 #endplatform
 #platform: Mobile
-		SpriteFrame(0, -5, 72, 11, 0, 92)
+		SpriteFrame(0, -5, 72, 11, 0, 92)		// #10 - Blocked Restart
 #endplatform
 		break
+		
 	case ITALIAN
-		SpriteFrame(0, -5, 65, 11, 0, 69)
-		SpriteFrame(0, -5, 78, 11, 0, 81)
-		SpriteFrame(0, -5, 28, 11, 66, 69)
-		SpriteFrame(0, -5, 23, 11, 79, 81)
+		SpriteFrame(0, -5, 65, 11, 0, 69)		// #6  - Continue
+		SpriteFrame(0, -5, 78, 11, 0, 81)		// #7  - Restart
+		SpriteFrame(0, -5, 28, 11, 66, 69)		// #8  - Exit
+		SpriteFrame(0, -5, 23, 11, 79, 81)		// #9  - Dev Menu
 #platform: Standard
-		SpriteFrame(0, -5, 78, 11, 0, 92)
+		SpriteFrame(0, -5, 78, 11, 0, 92)		// #10 - Blocked Restart
 #endplatform
 #platform: Mobile
-		SpriteFrame(0, -5, 72, 11, 0, 92)
+		SpriteFrame(0, -5, 72, 11, 0, 92)		// #10 - Blocked Restart
 #endplatform
 		break
+
 	case DEUTSCH
-		SpriteFrame(0, -5, 48, 11, 0, 69)
-		SpriteFrame(0, -5, 65, 11, 0, 81)
-		SpriteFrame(0, -5, 71, 11, 49, 69)
-		SpriteFrame(0, -5, 23, 11, 66, 81)
+		SpriteFrame(0, -5, 48, 11, 0, 69)		// #6  - Continue
+		SpriteFrame(0, -5, 65, 11, 0, 81)		// #7  - Restart
+		SpriteFrame(0, -5, 71, 11, 49, 69)		// #8  - Exit
+		SpriteFrame(0, -5, 23, 11, 66, 81)		// #9  - Dev Menu
 #platform: Standard
-		SpriteFrame(0, -5, 65, 11, 0, 92)
+		SpriteFrame(0, -5, 65, 11, 0, 92)		// #10 - Blocked Restart
 #endplatform
 #platform: Mobile
-		SpriteFrame(0, -5, 72, 11, 0, 92)
+		SpriteFrame(0, -5, 72, 11, 0, 92)		// #10 - Blocked Restart
 #endplatform
 		break
+		
 	case SPANISH
-		SpriteFrame(0, -5, 73, 11, 0, 69)
-		SpriteFrame(0, -5, 67, 11, 0, 81)
-		SpriteFrame(0, -5, 36, 11, 74, 69)
-		SpriteFrame(0, -5, 23, 11, 68, 81)
+		SpriteFrame(0, -5, 73, 11, 0, 69)		// #6  - Continue
+		SpriteFrame(0, -5, 67, 11, 0, 81)		// #7  - Restart
+		SpriteFrame(0, -5, 36, 11, 74, 69)		// #8  - Exit
+		SpriteFrame(0, -5, 23, 11, 68, 81)		// #9  - Dev Menu
 #platform: Standard
-		SpriteFrame(0, -5, 72, 11, 0, 92)
+		SpriteFrame(0, -5, 72, 11, 0, 92)		// #10 - Blocked Restart
 #endplatform
 #platform: Mobile
-		SpriteFrame(0, -5, 55, 11, 0, 92)
+		SpriteFrame(0, -5, 55, 11, 0, 92)		// #10 - Blocked Restart
 #endplatform
 		break
+
 	end switch
 end sub
 
