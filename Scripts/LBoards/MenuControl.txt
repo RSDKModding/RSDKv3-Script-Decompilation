@@ -3,67 +3,92 @@
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
 // Aliases
-#alias 2: TYPE_MENUCONTROL
+#alias Object.Value0	:	Object.Timer	// Also used for fading
+#alias Object[32].State	:	Object.LEState
 
+// States
+#alias 0	:	MENUCONTROL_SETUP
+#alias 1	:	MENUCONTROL_FADEIN
+#alias 2	:	MENUCONTROL_CONTROLS
+#alias 3	:	MENUCONTROL_BLANK
+#alias 4	:	MENUCONTROL_EXIT
+
+// LEntry States
+#alias 1	: LENTRY_MOVE_RIGHT
+#alias 4	: LENTRY_MOVE_LEFT
+#alias 7	: LENTRY_MOVE_DOWN
+#alias 10	: LENTRY_MOVE_UP
+
+// Engine & Callbacks
+#alias 3	: CALLBACK_TIMEATTACK_NOTIFY_EXIT
 
 sub ObjectMain
 #platform: Mobile
 	switch Object.State
-	case 0
-		Object.State = 1
-		Object.Value0 = 384
+	case MENUCONTROL_SETUP
+		Object.State = MENUCONTROL_FADEIN
+		Object.Timer = 384
 		SetScreenFade(0, 0, 0, 255)
 		PlayMusic(0)
 		break
-	case 1
-		if Object.Value0 > 0
-			Object.Value0 -= 8
-			Object.Scale -= 0x1000
+
+	case MENUCONTROL_FADEIN
+		if Object.Timer > 0
+			Object.Timer -= 8
+			Object.Scale -= 4096
 		else
-			Object.State = 2
+			Object.State = MENUCONTROL_CONTROLS
 		end if
 		SetScreenFade(0, 0, 0, Object.Value0)
 		break
-	case 2
+
+	case MENUCONTROL_CONTROLS
 		if KeyPress.Left == true
-			Object.State = 3
-			Object[32].State = 4
+			Object.State = MENUCONTROL_BLANK
+			Object.LEState = LENTRY_MOVE_LEFT
 			PlaySfx(23, 0) 	//Menu Button SFX
 		end if
+
 		if KeyPress.Right == true
-			Object.State = 3
-			Object[32].State = 1
+			Object.State = MENUCONTROL_BLANK
+			Object.LEState = LENTRY_MOVE_RIGHT
 			PlaySfx(23, 0) 	//Menu Button SFX
 		end if
+
 		if KeyPress.Up == true
-			Object.State = 3
-			Object[32].State = 10
+			Object.State = MENUCONTROL_BLANK
+			Object.LEState = LENTRY_MOVE_UP
 			PlaySfx(23, 0) 	//Menu Button SFX
 		end if
+
 		if KeyPress.Down == true
-			Object.State = 3
-			Object[32].State = 7
+			Object.State = MENUCONTROL_BLANK
+			Object.LEState = LENTRY_MOVE_DOWN
 			PlaySfx(23, 0) 	//Menu Button SFX
 		end if
+
 		if KeyPress.ButtonB == true
-			Object.State = 4
+			Object.State = MENUCONTROL_EXIT
 			StopMusic()
 			PlaySfx(27, 0)	//Select SFX
 		end if
 		break
-	case 3
+
+	case MENUCONTROL_BLANK
 		break
-	case 4
-		if Object.Value0 < 384
-			Object.Value0 += 8
-			Object.Scale += 0x1000
+
+	case MENUCONTROL_EXIT
+		if Object.Timer < 384
+			Object.Timer += 8
+			Object.Scale += 4096
 		else
-			Stage.ListPos = 1
+			Stage.ListPos = 1	// Menu
 			LoadStage()
 		end if
-		SetScreenFade(0, 0, 0, Object.Value0)
-		EngineCallback(3)
+		SetScreenFade(0, 0, 0, Object.Timer)
+		EngineCallback(CALLBACK_TIMEATTACK_NOTIFY_EXIT)
 		break
+
 	end switch
 #endplatform
 end sub

@@ -3,23 +3,48 @@
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
 // Aliases
-#alias 3: TYPE_LENTRY
+#alias Object.Value0	:	Object.HTimer
+#alias Object.Value3	:	Object.Index
+#alias Object.Value4	:	Object.VTimer
+#alias Object.Value5	:	Object.SavedXPos
+#alias Object[0].State	:	Object.MCState
 
+// States
+#alias 0	: LENTRY_BLANK
+#alias 1	: LENTRY_MOVE_RIGHT
+#alias 2	: LENTRY_SCROLL_ENTRIES_R
+#alias 3	: LENTRY_STOP_SCROLL_R
+#alias 4	: LENTRY_MOVE_LEFT
+#alias 5	: LENTRY_SCROLL_ENTRIES_L
+#alias 6	: LENTRY_STOP_SCROLL_L
+#alias 7	: LENTRY_MOVE_DOWN
+#alias 8	: LENTRY_SCROLL_ENTRIES_D
+#alias 9	: LENTRY_STOP_SCROLL_D
+#alias 10	: LENTRY_MOVE_UP
+#alias 11	: LENTRY_SCROLL_ENTRIES_U
+#alias 12	: LENTRY_STOP_SCROLL_U
+
+// Menu Control States
+#alias 2	:	MENUCONTROL_CONTROLS
 
 sub ObjectMain
 #platform: Mobile
 	switch Object.State
-	case 1
-		Object.Value5 = Object.XPos
+	case LENTRY_BLANK
+		break
+
+	case LENTRY_MOVE_RIGHT
+		Object.SavedXPos = Object.XPos
 		Object.Priority = 1
 		Object.State++
 		break
-	case 2
+
+	case LENTRY_SCROLL_ENTRIES_R
 		Object.XPos -= 0x300000
-		if Object.Value0 < 25
-			Object.Value0++
+		if Object.HTimer < 25
+			Object.HTimer++
 			if Object.PropertyValue < 4
-				if Object.Value0 == 5
+				if Object.HTimer == 5
 					Object[+1].State = 1
 					if Object.PropertyValue == 2
 						Leaderboard.ID++
@@ -29,33 +54,36 @@ sub ObjectMain
 				end if
 			end if
 		else
-			Object.Value0 = 0
+			Object.HTimer = 0
 			Object.iXPos = Screen.XSize
 			Object.XPos += 0x100000
 			Object.State++
 		end if
 		break
-	case 3
+
+	case LENTRY_STOP_SCROLL_R
 		Object.XPos -= 0x300000
-		if Object.XPos < Object.Value5
-			Object.XPos = Object.Value5
+		if Object.XPos < Object.SavedXPos
+			Object.XPos = Object.SavedXPos
 			Object.State = 0
 			if Object.PropertyValue == 4
-				Object[0].State = 2
+				Object.MCState = MENUCONTROL_CONTROLS
 			end if
 		end if
 		break
-	case 4
-		Object.Value5 = Object.XPos
+
+	case LENTRY_MOVE_LEFT
+		Object.SavedXPos = Object.XPos
 		Object.Priority = 1
 		Object.State++
 		break
-	case 5
+
+	case LENTRY_SCROLL_ENTRIES_L
 		Object.XPos += 0x300000
-		if Object.Value0 < 25
-			Object.Value0++
+		if Object.HTimer < 25
+			Object.HTimer++
 			if Object.PropertyValue < 4
-				if Object.Value0 == 5
+				if Object.HTimer == 5
 					Object[+1].State = 4
 					if Object.PropertyValue == 2
 						Leaderboard.ID--
@@ -67,35 +95,39 @@ sub ObjectMain
 				end if
 			end if
 		else
-			Object.Value0 = 0
+			Object.HTimer = 0
 			Object.iXPos = -232
 			Object.XPos -= 0x100000
 			Object.State++
 		end if
 		break
-	case 6
+
+	case LENTRY_STOP_SCROLL_L
 		Object.XPos += 0x300000
-		if Object.XPos > Object.Value5
-			Object.XPos = Object.Value5
-			Object.State = 0
+		if Object.XPos > Object.SavedXPos
+			Object.XPos = Object.SavedXPos
+			Object.State = LENTRY_BLANK
 			if Object.PropertyValue == 4
-				Object[0].State = 2
+				Object.MCState = MENUCONTROL_CONTROLS
 			end if
 		end if
 		break
-	case 7
-		if Object.Value4 < 95
-			Object.Value4 += 5
+
+	case LENTRY_MOVE_DOWN
+		if Object.VTimer < 95
+			Object.VTimer += 5
 		end if
 		Object.Alpha = 255
 		Object.State++
 		break
-	case 8
+
+	case LENTRY_SCROLL_ENTRIES_D
 		Object.InkEffect = 2 //INK_ALPHA
 		Object.Alpha = 224
 		Object.State++
 		break
-	case 9
+
+	case LENTRY_STOP_SCROLL_D
 		if Object.Alpha > 0
 			Object.Alpha -= 32
 			if Object.PropertyValue < 4
@@ -104,25 +136,28 @@ sub ObjectMain
 				end if
 			end if
 		else
-			Object.State = 0
+			Object.State = LENTRY_BLANK
 			if Object.PropertyValue == 4
-				Object[0].State = 2
+				Object.MCState = MENUCONTROL_CONTROLS
 			end if
 		end if
 		break
-	case 10
-		if Object.Value4 > 0
-			Object.Value4 -= 5
+
+	case LENTRY_MOVE_UP
+		if Object.VTimer > 0
+			Object.VTimer -= 5
 		end if
 		Object.Alpha = 255
 		Object.State++
 		break
-	case 11
+
+	case LENTRY_SCROLL_ENTRIES_U
 		Object.InkEffect = 2 //INK_ALPHA
 		Object.Alpha = 224
 		Object.State++
 		break
-	case 12
+
+	case LENTRY_STOP_SCROLL_U
 		if Object.Alpha > 0
 			Object.Alpha -= 32
 			if Object.PropertyValue < 4
@@ -131,12 +166,13 @@ sub ObjectMain
 				end if
 			end if
 		else
-			Object.State = 0
+			Object.State = LENTRY_BLANK
 			if Object.PropertyValue == 4
-				Object[0].State = 2
+				Object.MCState = MENUCONTROL_CONTROLS
 			end if
 		end if
 		break
+
 	end switch
 #endplatform
 end sub
@@ -145,15 +181,15 @@ end sub
 sub ObjectDraw
 #platform: Mobile
 	DrawSprite(142)
-	Object.Value3 = Object.PropertyValue
-	Object.Value3 += Object.Value4
+	Object.Index = Object.PropertyValue
+	Object.Index += Object.VTimer
 	ArrayPos0 = 0
-	GetTextInfo(TempValue1, MENU_1, 1, Object.Value3, 0)
+	GetTextInfo(TempValue1, MENU_1, 1, Object.Index, 0)
 	TempValue2 = Object.XPos
 	TempValue2 += 0x80000
 	TempValue3 = 0
 	while TempValue3 < 4
-		GetTextInfo(TempValue0, MENU_1, 0, Object.Value3, ArrayPos0)
+		GetTextInfo(TempValue0, MENU_1, 0, Object.Index, ArrayPos0)
 		switch TempValue0
 		default
 			Object.Frame = 0
@@ -168,15 +204,19 @@ sub ObjectDraw
 				DrawSpriteXY(Object.Frame, TempValue2, Object.YPos)
 			end if
 			break
+
 		case 34
 			DrawSpriteXY(100, TempValue2, Object.YPos)
 			break
+
 		case 39
 			DrawSpriteXY(99, TempValue2, Object.YPos)
 			break
+
 		case 46
 			DrawSpriteXY(98, TempValue2, Object.YPos)
 			break
+
 		end switch
 		ArrayPos0++
 		TempValue3++
@@ -184,7 +224,7 @@ sub ObjectDraw
 	loop
 	TempValue1 -= 4
 	while TempValue1 > 0
-		GetTextInfo(TempValue0, MENU_1, 0, Object.Value3, ArrayPos0)
+		GetTextInfo(TempValue0, MENU_1, 0, Object.Index, ArrayPos0)
 		switch TempValue0
 		default
 			Object.Frame = 0
@@ -210,18 +250,23 @@ sub ObjectDraw
 				DrawSpriteXY(Object.Frame, TempValue2, Object.YPos)
 			end if
 			break
+
 		case 34
 			DrawSpriteXY(29, TempValue2, Object.YPos)
 			break
+
 		case 39
 			DrawSpriteXY(28, TempValue2, Object.YPos)
 			break
+
 		case 45
 			DrawSpriteXY(69, TempValue2, Object.YPos)
 			break
+
 		case 46
 			DrawSpriteXY(27, TempValue2, Object.YPos)
 			break
+
 		end switch
 		ArrayPos0++
 		TempValue1--
@@ -240,7 +285,8 @@ sub ObjectStartup
 	LoadTextFile(MENU_1, "Data/Game/LeaderboardText.txt", 0)
 	Leaderboard.ID = 0
 	LoadOnlineMenu(1)
-	SpriteFrame(0, 0, 8, 10, 118, 298)
+	SpriteFrame(0, 0, 8, 10, 118, 298)		// #0 - Blank Space
+	// (#1 - #70) - Alphabet
 	TempValue1 = 254
 	while TempValue1 < 308
 		TempValue0 = 127
@@ -250,7 +296,8 @@ sub ObjectStartup
 		loop
 		TempValue1 += 11
 	loop
-	SpriteFrame(0, 0, 8, 10, 118, 298)
+	SpriteFrame(0, 0, 8, 10, 118, 298)		// #72 - Blank Space
+	// (#73 - #141) Alphabet Highlight
 	TempValue1 = 254
 	while TempValue1 < 308
 		TempValue0 = 1
@@ -260,8 +307,8 @@ sub ObjectStartup
 		loop
 		TempValue1 += 11
 	loop
-	SpriteFrame(0, -10, 232, 21, 1, 309)
-	SpriteFrame(0, -10, 232, 21, 1, 232)
+	SpriteFrame(0, -10, 232, 21, 1, 309)	// #142 - Button
+	SpriteFrame(0, -10, 232, 21, 1, 232)	// #143 - Button Flash
 #endplatform
 end sub
 
