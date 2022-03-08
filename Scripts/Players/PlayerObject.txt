@@ -22,20 +22,79 @@
 #alias Player.Value14:Player.Unused2 //Completely unused
 #alias Player.Value15:Player.FlightGravity
 
+// Flailing states, v4 names explains this much better
+#alias Player[0].Flailing	:	Player.FloorSensorL
+#alias Player[1].Flailing	:	Player.FloorSensorC
+#alias Player[2].Flailing	:	Player.FloorSensorR
+
+// Warp Star aliases
+#alias Object[3].Value0		:	WarpStar.Timer
+#alias Object[3].DrawOrder	:	WarpStar.DrawOrder
+
+// Object Score Alias
 #alias Object[26].Value0	:	ObjectScore.Timer
+
+// Pause Menu Aliases
 #alias Object[9].DrawOrder	:	PauseMenu.DrawOrder
 #alias Object[9].Priority	:	PauseMenu.Priority
+
+// Debug Mode Alias
 #alias Object[25].Value7	:	DebugMode.APress
 
+// Death Event Aliases
+#alias Object.Value1	:	DeathEvent.Text1XPos	// Game or Time
+#alias Object.Value2	:	DeathEvent.Text2XPos	// Over
+#alias Object.Value3	:	DeathEvent.Timer		// Also used for fading
+#alias Object.DrawOrder	:	DeathEvent.DrawOrder
+#alias Object.State		:	DeathEvent.State
+
+// Death Event States
+#alias 0				:	DEATHEVENT_GAMEOVER
+#alias 1				:	DEATHEVENT_TIMEOVER
+#alias 2				:	DEATHEVENT_RESTART
+#alias 3				:	DEATHEVENT_TIMEATTACK
+
+// Priorities
 #alias 1	:	PRIORITY_ACTIVE
 #alias 2	:	PRIORITY_ACTIVE_PAUSED
 
+// Gravity
 #alias 0	:	GRAVITY_GROUND
 #alias 1	:	GRAVITY_AIR
 
+// Ink
 #alias 2	:	INK_ALPHA
-
+// Callbacks & Messages
 #alias 2	:	MESSAGE_LOSTFOCUS
+
+// Cameras
+#alias 0	:	FOLLOW_PLAYER
+#alias 1	:	CAMERA_LOCK_CD_VIEW
+#alias 2	:	CAMERA_OFFSET_RIGHT
+#alias 3	:	CAMERA_OFFSET_LEFT
+#alias 4	:	CAMERA_LOCK
+
+// Cameras
+#alias 1	:	DAMAGE_SHIELDED
+#alias 2	:	DAMAGE_HURT
+#alias 3	:	DAMAGE_DEATH
+
+// Collision Modes
+#alias 0	:	CMODE_FLOOR
+#alias 1	:	CMODE_LWALL
+#alias 2	:	CMODE_ROOF
+#alias 3	:	CMODE_RWALL
+
+// Control Modes
+#alias -1	:	CONTROL_DISABLED
+#alias 0	:	CONTROL_ENABLED
+// GameModes
+#alias 0	:	GAMEMODE_MAINGAME
+#alias 2	:	GAMEMODE_TIMEATTACK
+// Warp Destination
+#alias 0	:	NONE
+#alias 1	:	PAST
+#alias 2	:	FUTURE
 
 // Function declarations
 #function PlayerObject_BadnikBreak
@@ -46,43 +105,49 @@
 #function PlayerObject_RollAnimSpeed
 #function PlayerObject_WalkAnimSpeed
 #function PlayerObject_RunAnimSpeed
-#function PlayerObject_HandleMovement
-#function PlayerObject_HandleAirSpeed
+#function PlayerObject_HandleGround
 #function PlayerObject_HandleRollDecel
+#function PlayerObject_HandleRolling
+#function PlayerObject_HandleAir
+#function PlayerObject_HandleAirSpeed
 #function PlayerObject_HandleAirMovement
+#function PlayerObject_AirControlLock
 #function PlayerObject_ResetOnFloor
+#function PlayerObject_DebugMode
+
+// Player basic movements
+#function PlayerObject_HandleMovement
 #function PlayerObject_StartJump
-#function PlayerObject_StartSpindashS2	// You're Here!
+#function PlayerObject_StartSpindashS2
 #function PlayerObject_StartSpindashCD
 #function PlayerObject_StartPeeloutS2
 #function PlayerObject_StartPeeloutCD
 #function PlayerObject_StartTailsFlight
-#function PlayerObject_HandleGround
-#function PlayerObject_HandleAir
-#function PlayerObject_HandleRolling
-#function PlayerObject_AirControlLock
 #function PlayerObject_LookingUp
 #function PlayerObject_Crouching
 #function PlayerObject_HandleSpindashS2	
 #function PlayerObject_HandleSpindashCD
-#function PlayerObject_HandlePeeloutS2	// Part 2
+#function PlayerObject_HandlePeeloutS2
 #function PlayerObject_HandlePeeloutCD
 #function PlayerObject_HandleTailsFlight
+
+// Damage and death
 #function PlayerObject_Hurt
 #function PlayerObject_Knockback
 #function PlayerObject_OuttaHere
 #function PlayerObject_Death
 #function PlayerObject_Drown
+
+// Level Gimmicks
 #function PlayerObject_HangingBar
 #function PlayerObject_CorkscrewRun
 #function PlayerObject_CorkscrewRoll
-#function PlayerObject_Tunnel			
+#function PlayerObject_Tunnel
 #function PlayerObject_StartTTCtrlLock
 #function PlayerObject_SpinningTop
 #function PlayerObject_Hugged
 #function PlayerObject_Handle3DRampAnims
-#function PlayerObject_DebugMode
-#function PlayerObject_SizeChange		// Part 3
+#function PlayerObject_SizeChange
 
 // Used by badniks, if the conditions are met, they get destroyed, otherwise you get hurt
 function PlayerObject_BadnikBreak
@@ -190,8 +255,8 @@ end function
 
 function PlayerObject_ProcessPlayer
 #platform: Standard
-	if Options.AttractMode == 0
-		if Player.ControlMode == 0
+	if Options.AttractMode == false
+		if Player.ControlMode == CONTROL_ENABLED
 			if Object[9].Type == TypeName[BlankObject]
 				if KeyPress.Start == true
 					KeyPress.Start = false
@@ -219,7 +284,7 @@ function PlayerObject_ProcessPlayer
 
 		if Options.TouchControls == true
 
-			if Player.ControlMode == 0
+			if Player.ControlMode == CONTROL_ENABLED
 
 				CheckTouchRect(0, 96, Screen.CenterX, Screen.YSize)
 				if CheckResult > -1
@@ -299,7 +364,7 @@ function PlayerObject_ProcessPlayer
 
 			end if
 		else
-			if Player.ControlMode == 0
+			if Player.ControlMode == CONTROL_ENABLED
 				if Object[9].Type == TypeName[BlankObject]
 					if KeyPress.Start == true
 
@@ -448,7 +513,7 @@ function PlayerObject_ProcessPlayer
 	if Player.ScrollDelay > 0
 		Player.ScrollDelay--
 		if Player.ScrollDelay == 0
-			Screen.CameraStyle = 0
+			Screen.CameraStyle = FOLLOW_PLAYER
 		end if
 	end if
 
@@ -518,6 +583,606 @@ function PlayerObject_RunAnimSpeed
 	Player.AnimationSpeed /= 393216
 end function
 
+function PlayerObject_HandleGround
+	if Player.Animation != ANI_SKIDDING	// This handles that the skid only plays sfx once
+		TempValue7 = true
+	else
+		TempValue7 = false
+	end if
+
+	CallFunction(PlayerObject_HandleMovement)
+
+	if Player.Gravity == true
+		Player.State = PlayerObject_HandleAir
+		CallFunction(PlayerObject_HandleAirMovement)
+	else
+		CallFunction(PlayerObject_ResetOnFloor)
+		if Player.Speed == 0
+			// Consumes the warp if you stop too late during warping run
+			if Warp.Destination > 0
+				if Warp.Timer > 99
+#platform: Standard
+					CheckLower(Warp.Timer,220)
+#endplatform
+#platform: Mobile
+					CheckLower(Warp.Timer,204)
+#endplatform
+					if CheckResult == true
+						Warp.Destination = NONE
+					end if
+
+				end if
+
+				Warp.Timer = 0
+			end if
+			
+			if Player.CollisionMode == CMODE_FLOOR
+				if Player.Timer < 240
+					Player.Animation = ANI_STOPPED
+					Player.Timer++
+				else	// Waiting animation
+					Player.Animation = ANI_WAITING
+					if Stage.PlayerListPos == 0	// PlayerName[SONIC]
+						Player.Timer++
+
+						if Player.Timer == 10620	// I'm Outta Here!
+							Player.Timer = 0
+							PlaySfx(26, 0)
+							Player.State = PlayerObject_OuttaHere
+							Player.Animation = ANI_BORED
+						end if
+
+					end if
+
+				end if
+
+				if Player.FloorSensorC == false
+					if Player.FloorSensorR == false
+						Player.Timer = 0
+						if Player.Direction == FACING_LEFT
+							Player.Animation = ANI_FLAILINGLEFT
+						else
+							Player.Animation = ANI_FLAILINGRIGHT
+						end if
+					end if
+
+					if Player.FloorSensorL == false
+						Player.Timer = 0
+						if Player.Direction == FACING_RIGHT
+							Player.Animation = ANI_FLAILINGLEFT
+						else
+							Player.Animation = ANI_FLAILINGRIGHT
+						end if
+					end if
+
+				end if
+
+			end if
+		else
+			Player.Timer = 0
+			if Player.Speed > 0
+				if Player.Speed < 390594	// 0x5F5C2
+					Player.Animation = ANI_WALKING
+					CallFunction(PlayerObject_WalkAnimSpeed)
+					// Consumes the warp if you stop too late during warping run, plus deletes the warp star
+					if Warp.Destination > NONE
+						if Warp.Timer > 99
+#platform: Standard
+							CheckLower(Warp.Timer,220)
+#endplatform
+#platform: Mobile
+							CheckLower(Warp.Timer,204)
+#endplatform
+							if CheckResult == true
+								Warp.Destination = NONE
+							end if
+						end if
+						Warp.Timer = 0
+						Object[3].Type = TypeName[BlankObject]
+					end if
+				else
+					// Spawns the Warp Stars
+					if Warp.Destination > NONE
+						if Warp.Timer == 0
+							Warp.Timer = 1
+							ResetObjectEntity(3, TypeName[WarpStar], 0, Player.XPos, Player.YPos)
+							WarpStar.Timer = 7
+							WarpStar.DrawOrder = 4
+						end if
+					end if
+
+					if Player.Speed > 655359	// 0x9FFFF
+						Player.Animation = ANI_PEELOUT
+					else
+						Player.Animation = ANI_RUNNING
+					end if
+					CallFunction(PlayerObject_RunAnimSpeed)
+				end if
+			else
+				if Player.Speed > -390594	// -0x5F5C2
+					Player.Animation = ANI_WALKING
+					CallFunction(PlayerObject_WalkAnimSpeed)
+					// Consumes the warp if you stop too late during warping run, plus deletes the warp star
+					if Warp.Destination > NONE
+						if Warp.Timer > 99
+#platform: Standard
+							CheckLower(Warp.Timer,220)
+#endplatform
+#platform: Mobile
+							CheckLower(Warp.Timer,204)
+#endplatform
+							if CheckResult == true
+								Warp.Destination = NONE
+							end if
+						end if
+						Warp.Timer = 0
+						Object[3].Type = TypeName[BlankObject]
+					end if
+				else
+					// Spawns the Warp Stars
+					if Warp.Destination > NONE
+						if Warp.Timer == 0
+							Warp.Timer = 1
+							ResetObjectEntity(3, TypeName[WarpStar], 0, Player.XPos, Player.YPos)
+							WarpStar.Timer = 7
+							WarpStar.DrawOrder = 4
+						end if
+					end if
+
+					if Player.Speed < -655359	// -0x9FFFF
+						Player.Animation = ANI_PEELOUT
+					else
+						Player.Animation = ANI_RUNNING
+					end if
+					CallFunction(PlayerObject_RunAnimSpeed)
+				end if
+
+			end if
+
+		end if
+
+		// Skidding
+		if Player.Skidding > 0
+			if TempValue7 == true
+				PlaySfx(3, 0)
+			end if
+			Player.Animation = ANI_SKIDDING
+			Player.AnimationSpeed = 0
+			Player.Skidding--
+			if Ring.AniCount == 0
+				CreateTempObject(TypeName[DustPuff], 0, Player.XPos, Player.YPos)
+				Object[TempObjectPos].iYPos += Player.CollisionBottom
+				Object[TempObjectPos].DrawOrder = Player.DrawOrder
+			end if
+
+			if Player.Speed > 0
+				Player.Direction = FACING_RIGHT
+			else
+				Player.Direction = FACING_LEFT
+			end if
+		end if
+
+		// Push, there's a small delay so 2 is our "true"
+		if Player.CollisionMode == CMODE_FLOOR
+			if Player.Pushing == 2
+				Player.Animation = ANI_PUSHING
+				Player.AnimationSpeed = 0
+			end if
+		end if
+
+		// Jump
+		if Player.JumpPress == true
+			CallFunction(PlayerObject_StartJump)
+		else
+			// Look Up
+			if Player.Up == true
+				if Player.Speed == 0
+					if Player.Animation != ANI_FLAILINGLEFT
+						if Player.Animation != ANI_FLAILINGRIGHT
+							Player.State = PlayerObject_LookingUp
+							Player.Animation = ANI_LOOKINGUP
+							Player.Timer = 0
+						end if
+					end if
+				end if
+			end if
+
+			// Crouch
+			if Player.Down == true
+				if Player.Speed == 0
+					if Player.Animation != ANI_FLAILINGLEFT
+						if Player.Animation != ANI_FLAILINGRIGHT
+							Player.State = PlayerObject_Crouching
+							Player.Animation = ANI_LOOKINGDOWN
+							Player.Timer = 0
+						end if
+					end if
+				else
+					// Roll
+					if Player.Left == false
+						if Player.Right == false
+							if Player.Speed > 0
+								if Player.Speed > 34816		// 0x8800
+									Player.State = PlayerObject_HandleRolling
+									Player.Animation = ANI_JUMPING
+									Player.iYPos -= Player.CameraOffset
+									Player.AbilityTimer = 1024
+								end if
+							else
+								if Player.Speed < -34816	// -0x8800
+									Player.State = PlayerObject_HandleRolling
+									Player.Animation = ANI_JUMPING
+									Player.iYPos -= Player.CameraOffset
+									Player.AbilityTimer = 1024
+								end if
+							end if
+						end if
+					end if
+				end if
+			end if
+		end if
+	end if
+end function
+
+function PlayerObject_HandleRolling
+	CallFunction(PlayerObject_HandleRollDecel)
+	if Player.Gravity == true
+		Player.State = PlayerObject_HandleAir
+		Player.Timer = 0
+		CallFunction(PlayerObject_HandleAirMovement)
+	else
+		CallFunction(PlayerObject_RollAnimSpeed)
+		Player.AnimationSpeed = Player.CustomAnimSpeed
+
+		TempValue0 = Player.Speed
+		if TempValue0 < 0
+			FlipSign(TempValue0)
+		end if
+			// Warp-Consuming
+		if TempValue0 < 390594		// 0x5F5C2
+			if Warp.Destination > NONE
+				if Warp.Timer > 99
+#platform: Standard
+					CheckLower(Warp.Timer,220)
+#endplatform
+#platform: Mobile
+					CheckLower(Warp.Timer,204)
+#endplatform
+					if CheckResult == true
+						Warp.Destination = NONE
+					end if
+				end if
+				Warp.Timer = 0
+			end if
+		else
+			// Spawn Warp Stars
+			if Warp.Destination > NONE
+				if Warp.Timer == 0
+					Warp.Timer = 1
+					ResetObjectEntity(3, TypeName[WarpStar], 0, Player.XPos, Player.YPos)
+					WarpStar.Timer = 7
+					WarpStar.DrawOrder = 4
+				end if
+			end if
+		end if
+		CallFunction(PlayerObject_ResetOnFloor)
+		if Player.JumpPress == true
+			CallFunction(PlayerObject_StartJump)
+		end if
+	end if
+end function
+
+// Handles desaceleration while rolling
+function PlayerObject_HandleRollDecel
+
+	if Player.Right == true
+		if Player.Speed < 0
+			Player.Speed += Player.RollingDeceleration
+		end if
+	end if
+
+	if Player.Left == true
+		if Player.Speed > 0
+			Player.Speed -= Player.RollingDeceleration
+		end if
+	end if
+
+	if Player.Speed > 0
+		Player.Speed -= Player.AirDeceleration
+		if Player.Speed < 0
+			Player.Speed = 0
+		end if
+		
+		if Player.Speed == 0
+			if Player.Angle > 224
+				Player.State = PlayerObject_HandleGround
+			end if
+			if Player.Angle < 32
+				Player.State = PlayerObject_HandleGround
+			end if
+		end if
+
+		Sin256(TempValue0, Player.Angle)
+		if TempValue0 > 0
+			Sin256(TempValue0, Player.Angle)
+			TempValue0 *= 20480		// 0x5000
+		else
+			Sin256(TempValue0, Player.Angle)
+			TempValue0 *= 7680		// 0x1E00
+		end if
+		
+		TempValue0 >>= 8
+		Player.Speed += TempValue0
+	else
+		Player.Speed += Player.AirDeceleration
+		if Player.Speed > 0
+			Player.Speed = 0
+		end if
+
+		if Player.Speed == 0
+			if Player.Angle > 224
+				Player.State = PlayerObject_HandleGround
+			end if
+			if Player.Angle < 32
+				Player.State = PlayerObject_HandleGround
+			end if
+		end if
+
+		Sin256(TempValue0, Player.Angle)
+		if TempValue0 < 0
+			Sin256(TempValue0, Player.Angle)
+			TempValue0 *= 20480		// 0x5000
+		else
+			Sin256(TempValue0, Player.Angle)
+			TempValue0 *= 7680		// 0x1E00
+		end if
+
+		TempValue0 >>= 8
+		Player.Speed += TempValue0
+	end if
+	if Player.Speed > 1572864	// 0x180000
+		Player.Speed = 1572864	// 0x180000
+	end if
+	if Player.Speed < -1572864	// -0x180000
+		Player.Speed = -1572864	// -0x180000
+	end if
+end function
+
+function PlayerObject_HandleAir
+	CallFunction(PlayerObject_HandleAirSpeed)
+	if Player.Gravity == GRAVITY_AIR	// Check that you're truly in the air
+
+		CallFunction(PlayerObject_HandleAirMovement)
+		// More warp stuff
+		if Warp.Destination > NONE
+			TempValue0 = Player.YVelocity
+			if TempValue0 < 0
+				FlipSign(TempValue0)
+			end if
+			if TempValue0 < 393216		// 0x60000
+				TempValue0 = Player.XVelocity
+				if TempValue0 < 0
+					FlipSign(TempValue0)
+				end if
+				if TempValue0 < 393216		// 0x60000
+					TempValue0 = Player.XVelocity
+					TempValue0 -= Warp.SpeedCompare
+					if TempValue0 < 0
+						FlipSign(TempValue0)
+					end if
+					if TempValue0 > 262144
+						if Warp.Timer > 99
+#platform: Standard
+							CheckLower(Warp.Timer,220)
+#endplatform
+#platform: Mobile
+							CheckLower(Warp.Timer,204)
+#endplatform
+							if CheckResult == true
+								Warp.Destination = NONE
+							end if
+						end if
+						Warp.Timer = 0
+					end if
+				end if
+			end if
+			Warp.SpeedCompare = Player.XVelocity
+		end if
+
+		// changes the flailing with the walking, not sure when this is used
+		if Player.YVelocity > 131072	// 0x20000
+			if Player.Animation == ANI_FLAILINGLEFT
+				Player.Animation = ANI_WALKING
+			end if
+			if Player.Animation == ANI_FLAILINGRIGHT
+				Player.Animation = ANI_WALKING
+			end if
+		end if
+
+		// Post-Hitting a spring
+		if Player.Animation == ANI_BOUNCING
+			if Player.YVelocity >= 0
+				if Player.AnimationCheck == ANI_STOPPED
+					Player.AnimationCheck = ANI_WALKING
+				end if
+				Player.Animation = Player.AnimationCheck
+			end if
+		end if
+
+		// Post Getting hurt
+		if Player.Animation == ANI_HURT
+			if Player.YVelocity >= 0
+				if Player.AnimationCheck == ANI_STOPPED
+					Player.AnimationCheck = ANI_WALKING
+				end if
+				Player.Animation = Player.AnimationCheck
+			end if
+		end if
+		// Calls the player flight function
+		if Player.Animation == ANI_JUMPING
+			CallFunction(Player.FlightFunction)
+		end if
+	else	// go back to the ground silly
+		Player.State = PlayerObject_HandleGround
+		CallFunction(PlayerObject_ResetOnFloor)
+		Player.Skidding = 0
+	end if
+end function
+
+// Handle movement in the air
+function PlayerObject_HandleAirSpeed
+	if Player.YVelocity > -262144	// -0x40000
+		if Player.YVelocity < 0
+			TempValue0 = Player.Speed
+			TempValue0 >>= 5
+			Player.Speed -= TempValue0
+		end if
+	end if
+	TempValue0 = Player.TopSpeed
+	FlipSign(TempValue0)
+
+	if Player.Speed > TempValue0
+		if Player.Left == true
+			Player.Speed -= Player.AirAcceleration
+			Player.Direction = FACING_LEFT
+		end if
+	else
+		if Player.Left == true
+			Player.Direction = FACING_LEFT
+		end if
+	end if
+
+	if Player.Speed < Player.TopSpeed
+		if Player.Right == true
+			Player.Speed += Player.AirAcceleration
+			Player.Direction = FACING_RIGHT
+		end if
+	else
+		if Player.Right == true
+			Player.Direction = FACING_RIGHT
+		end if
+	end if
+
+	if Options.OriginalControls == true
+#platform: Standard
+		if Player.Left == true
+			if Player.Speed < -393216	// -0x60000
+				Player.Speed = -393216	// -0x60000
+			end if
+		end if
+
+		if Player.Right == true
+			if Player.Speed > 393216	// 0x60000
+				Player.Speed = 393216	// 0x60000
+			end if
+		end if
+
+#endplatform
+#platform: Mobile
+
+		if Player.Left == true
+			TempValue0 = Player.TopSpeed
+			FlipSign(TempValue0)
+			if Player.Speed < TempValue0
+				Player.Speed = TempValue0
+			end if
+		end if
+
+		if Player.Right == true
+			if Player.Speed > Player.TopSpeed
+				Player.Speed = Player.TopSpeed
+			end if
+		end if
+#endplatform
+	end if
+end function
+
+// Movement when you fall from a cliff
+function PlayerObject_HandleAirMovement
+	Player.TrackScroll = true
+
+	Player.YVelocity += Player.GravityStrength
+	if Player.YVelocity < Player.JumpCap
+		if Player.JumpHold == 0
+			if Player.Timer > 0
+				Player.YVelocity = Player.JumpCap
+				TempValue0 = Player.Speed
+				TempValue0 >>= 5
+				Player.Speed -= TempValue0
+			end if
+		end if
+	end if
+	Player.XVelocity = Player.Speed
+
+	if Player.Rotation < 256
+		if Player.Rotation > 0
+			Player.Rotation -= 4
+		else
+			Player.Rotation = 0
+		end if
+	else
+		if Player.Rotation < 512
+			Player.Rotation += 4
+		else
+			Player.Rotation = 0
+		end if
+	end if
+
+	Player.CollisionMode = CMODE_FLOOR
+	if Player.Animation == ANI_JUMPING
+		Player.AnimationSpeed = Player.CustomAnimSpeed
+	end if
+end function
+
+// Cancels input movement
+function PlayerObject_AirControlLock
+	Player.Left = false
+	Player.Right = false
+	CallFunction(PlayerObject_HandleAirSpeed)
+
+	if Player.Gravity == GRAVITY_AIR
+		CallFunction(PlayerObject_HandleAirMovement)
+	else
+		Player.State = PlayerObject_HandleGround
+		CallFunction(PlayerObject_ResetOnFloor)
+		Player.Skidding = false
+	end if
+end function
+
+
+// Gets X and Y Velocity based on angles
+function PlayerObject_ResetOnFloor
+	Player.TrackScroll = false
+
+	Cos256(TempValue0, Player.Angle)
+	TempValue0 *= Player.Speed
+	TempValue0 >>= 8
+	Player.XVelocity = TempValue0
+
+	Sin256(TempValue0, Player.Angle)
+	TempValue0 *= Player.Speed
+	TempValue0 >>= 8
+	Player.YVelocity = TempValue0
+
+end function
+
+// Debug movement
+function PlayerObject_DebugMode
+	Player.Gravity = 1
+	if Player.Up == true
+		Player.YPos -= 131072
+	end if
+	if Player.Down == true
+		Player.YPos += 131072
+	end if
+	if Player.Left == true
+		Player.XPos -= 131072
+	end if
+	if Player.Right == true
+		Player.XPos += 131072
+	end if
+end function
+
 // This makes you move
 function PlayerObject_HandleMovement
 	if Player.ControlLock > 0
@@ -532,7 +1197,7 @@ function PlayerObject_HandleMovement
 			FlipSign(TempValue0)
 			if Player.Speed > TempValue0
 				if Player.Speed > 0
-					if Player.CollisionMode == 0
+					if Player.CollisionMode == CMODE_FLOOR
 						// Skid
 						if Player.Speed > 262144	// 0x40000
 							Player.Skidding = 16
@@ -557,7 +1222,7 @@ function PlayerObject_HandleMovement
 		if Player.Right == true
 			if Player.Speed < Player.TopSpeed
 				if Player.Speed < 0
-					if Player.CollisionMode == 0
+					if Player.CollisionMode == CMODE_FLOOR
 						// Skid
 						if Player.Speed < -262144	// -0x40000
 							Player.Skidding = 16
@@ -666,207 +1331,10 @@ function PlayerObject_HandleMovement
 	end if
 end function
 
-// Handle movement in the air
-function PlayerObject_HandleAirSpeed
-	if Player.YVelocity > -262144	// -0x40000
-		if Player.YVelocity < 0
-			TempValue0 = Player.Speed
-			TempValue0 >>= 5
-			Player.Speed -= TempValue0
-		end if
-	end if
-	TempValue0 = Player.TopSpeed
-	FlipSign(TempValue0)
-
-	if Player.Speed > TempValue0
-		if Player.Left == true
-			Player.Speed -= Player.AirAcceleration
-			Player.Direction = FACING_LEFT
-		end if
-	else
-		if Player.Left == true
-			Player.Direction = FACING_LEFT
-		end if
-	end if
-
-	if Player.Speed < Player.TopSpeed
-		if Player.Right == true
-			Player.Speed += Player.AirAcceleration
-			Player.Direction = FACING_RIGHT
-		end if
-	else
-		if Player.Right == true
-			Player.Direction = FACING_RIGHT
-		end if
-	end if
-
-	if Options.OriginalControls == true
-#platform: Standard
-		if Player.Left == true
-			if Player.Speed < -393216	// -0x60000
-				Player.Speed = -393216	// -0x60000
-			end if
-		end if
-
-		if Player.Right == true
-			if Player.Speed > 393216	// 0x60000
-				Player.Speed = 393216	// 0x60000
-			end if
-		end if
-
-#endplatform
-#platform: Mobile
-
-		if Player.Left == true
-			TempValue0 = Player.TopSpeed
-			FlipSign(TempValue0)
-			if Player.Speed < TempValue0
-				Player.Speed = TempValue0
-			end if
-		end if
-
-		if Player.Right == true
-			if Player.Speed > Player.TopSpeed
-				Player.Speed = Player.TopSpeed
-			end if
-		end if
-#endplatform
-	end if
-end function
-
-// Handles desaceleration while rolling
-function PlayerObject_HandleRollDecel
-
-	if Player.Right == true
-		if Player.Speed < 0
-			Player.Speed += Player.RollingDeceleration
-		end if
-	end if
-
-	if Player.Left == true
-		if Player.Speed > 0
-			Player.Speed -= Player.RollingDeceleration
-		end if
-	end if
-
-	if Player.Speed > 0
-		Player.Speed -= Player.AirDeceleration
-		if Player.Speed < 0
-			Player.Speed = 0
-		end if
-		
-		if Player.Speed == 0
-			if Player.Angle > 224
-				Player.State = PlayerObject_HandleGround
-			end if
-			if Player.Angle < 32
-				Player.State = PlayerObject_HandleGround
-			end if
-		end if
-
-		Sin256(TempValue0, Player.Angle)
-		if TempValue0 > 0
-			Sin256(TempValue0, Player.Angle)
-			TempValue0 *= 20480		// 0x5000
-		else
-			Sin256(TempValue0, Player.Angle)
-			TempValue0 *= 7680		// 0x1E00
-		end if
-		
-		TempValue0 >>= 8
-		Player.Speed += TempValue0
-	else
-		Player.Speed += Player.AirDeceleration
-		if Player.Speed > 0
-			Player.Speed = 0
-		end if
-
-		if Player.Speed == 0
-			if Player.Angle > 224
-				Player.State = PlayerObject_HandleGround
-			end if
-			if Player.Angle < 32
-				Player.State = PlayerObject_HandleGround
-			end if
-		end if
-
-		Sin256(TempValue0, Player.Angle)
-		if TempValue0 < 0
-			Sin256(TempValue0, Player.Angle)
-			TempValue0 *= 20480		// 0x5000
-		else
-			Sin256(TempValue0, Player.Angle)
-			TempValue0 *= 7680		// 0x1E00
-		end if
-
-		TempValue0 >>= 8
-		Player.Speed += TempValue0
-	end if
-	if Player.Speed > 1572864	// 0x180000
-		Player.Speed = 1572864	// 0x180000
-	end if
-	if Player.Speed < -1572864	// -0x180000
-		Player.Speed = -1572864	// -0x180000
-	end if
-end function
-
-// Movement when you fall from a cliff
-function PlayerObject_HandleAirMovement
-	Player.TrackScroll = true
-
-	Player.YVelocity += Player.GravityStrength
-	if Player.YVelocity < Player.JumpCap
-		if Player.JumpHold == 0
-			if Player.Timer > 0
-				Player.YVelocity = Player.JumpCap
-				TempValue0 = Player.Speed
-				TempValue0 >>= 5
-				Player.Speed -= TempValue0
-			end if
-		end if
-	end if
-	Player.XVelocity = Player.Speed
-
-	if Player.Rotation < 256
-		if Player.Rotation > 0
-			Player.Rotation -= 4
-		else
-			Player.Rotation = 0
-		end if
-	else
-		if Player.Rotation < 512
-			Player.Rotation += 4
-		else
-			Player.Rotation = 0
-		end if
-	end if
-
-	Player.CollisionMode = 0
-	if Player.Animation == ANI_JUMPING
-		Player.AnimationSpeed = Player.CustomAnimSpeed
-	end if
-end function
-
-// Gets X and Y Velocity based on angles
-function PlayerObject_ResetOnFloor
-	Player.TrackScroll = false
-
-	Cos256(TempValue0, Player.Angle)
-	TempValue0 *= Player.Speed
-	TempValue0 >>= 8
-	Player.XVelocity = TempValue0
-
-	Sin256(TempValue0, Player.Angle)
-	TempValue0 *= Player.Speed
-	TempValue0 >>= 8
-	Player.YVelocity = TempValue0
-
-end function
-
 // A classic move
 function PlayerObject_StartJump
 	CheckResult = false
-	if Player.CollisionMode == 0
+	if Player.CollisionMode == CMODE_FLOOR
 		TempValue6 = Object.XPos
 		TempValue7 = Object.YPos
 
@@ -903,7 +1371,7 @@ function PlayerObject_StartJump
 		Player.TrackScroll = true
 		Player.Animation = ANI_JUMPING
 		Player.Angle = 0
-		Player.CollisionMode = 0
+		Player.CollisionMode = CMODE_FLOOR
 		Player.Timer = 1
 		CallFunction(PlayerObject_RollAnimSpeed)
 		Player.State = PlayerObject_HandleAir
@@ -911,7 +1379,7 @@ function PlayerObject_StartJump
 	end if
 end function
 
-// A true Classic
+// A true Classic, but the actual spindash is set here, this only starts it
 function PlayerObject_StartSpindashS2
 	Player.State = PlayerObject_HandleSpindashS2
 	Player.Animation = ANI_SPINDASH
@@ -924,16 +1392,17 @@ function PlayerObject_StartSpindashS2
 	Object[TempObjectPos].Frame = 4
 	Object[TempObjectPos].DrawOrder = 4
 	Object[TempObjectPos].Direction = Player.Direction
+
 #platform: Use_Haptics
 	HapticEffect(112, 0, 0, 0)
 #endplatform
 end function
 
-
+// Not so classic, but the actual spindash is set here, this only starts it
 function PlayerObject_StartSpindashCD
 	Player.State = PlayerObject_HandleSpindashCD
 	Player.Animation = ANI_JUMPING
-	Player.YPos += 327680
+	Player.YPos += 327680	// 0x50000
 	Player.AbilityTimer = 0
 	PlaySfx(6, 0)
 #platform: Use_Haptics
@@ -941,7 +1410,7 @@ function PlayerObject_StartSpindashCD
 #endplatform
 end function
 
-
+// um yesh, Sonic 2 Peel Out, this just starts it
 function PlayerObject_StartPeeloutS2
 	Player.State = PlayerObject_HandlePeeloutS2
 	Player.AbilityTimer = 0
@@ -951,7 +1420,7 @@ function PlayerObject_StartPeeloutS2
 #endplatform
 end function
 
-
+// A true classic, this just starts it tho
 function PlayerObject_StartPeeloutCD
 	Player.State = PlayerObject_HandlePeeloutCD
 	Player.AbilityTimer = 0
@@ -961,16 +1430,17 @@ function PlayerObject_StartPeeloutCD
 #endplatform
 end function
 
-
+// Starts flying state
 function PlayerObject_StartTailsFlight
 	if Player.AbilityTimer > 0
 		Player.AbilityTimer--
 	else
-		if Player.JumpPress == 1
+		if Player.JumpPress == true
 			Player.Timer = 0
 			Player.State = PlayerObject_HandleTailsFlight
-			Player.FlightGravity = 2048
-			if Player.GravityStrength == 14336
+			Player.FlightGravity = 2048	// 0x800
+			// check that you're not in water
+			if Player.GravityStrength == 14336	// 0x3800
 				PlaySfx(24, 1)
 				Player.Animation = ANI_FLYING
 			else
@@ -980,349 +1450,7 @@ function PlayerObject_StartTailsFlight
 	end if
 end function
 
-
-function PlayerObject_HandleGround
-	if Player.Animation != ANI_SKIDDING
-		TempValue7 = 1
-	else
-		TempValue7 = 0
-	end if
-	CallFunction(PlayerObject_HandleMovement)
-	if Player.Gravity == 1
-		Player.State = PlayerObject_HandleAir
-		CallFunction(PlayerObject_HandleAirMovement)
-	else
-		CallFunction(PlayerObject_ResetOnFloor)
-		if Player.Speed == 0
-			if Warp.Destination > 0
-				if Warp.Timer > 99
-#platform: Standard
-					CheckLower(Warp.Timer,220)
-#endplatform
-#platform: Mobile
-					CheckLower(Warp.Timer,204)
-#endplatform
-					if CheckResult == true
-						Warp.Destination = 0
-					end if
-				end if
-				Warp.Timer = 0
-			end if
-			if Player.CollisionMode == 0
-				if Player.Timer < 240
-					Player.Animation = ANI_STOPPED
-					Player.Timer++
-				else
-					Player.Animation = ANI_WAITING
-					if Stage.PlayerListPos == 0
-						Player.Timer++
-						if Player.Timer == 10620
-							Player.Timer = 0
-							PlaySfx(26, 0)
-							Player.State = PlayerObject_OuttaHere
-							Player.Animation = ANI_BORED
-						end if
-					end if
-				end if
-				if Player[1].Flailing == 0
-					if Player[2].Flailing == 0
-						Player.Timer = 0
-						if Player.Direction == FACING_LEFT
-							Player.Animation = ANI_FLAILINGLEFT
-						else
-							Player.Animation = ANI_FLAILINGRIGHT
-						end if
-					end if
-					if Player[0].Flailing == 0
-						Player.Timer = 0
-						if Player.Direction == FACING_RIGHT
-							Player.Animation = ANI_FLAILINGLEFT
-						else
-							Player.Animation = ANI_FLAILINGRIGHT
-						end if
-					end if
-				end if
-			end if
-		else
-			Player.Timer = 0
-			if Player.Speed > 0
-				if Player.Speed < 390594
-					Player.Animation = ANI_WALKING
-					CallFunction(PlayerObject_WalkAnimSpeed)
-					if Warp.Destination > 0
-						if Warp.Timer > 99
-#platform: Standard
-							CheckLower(Warp.Timer,220)
-#endplatform
-#platform: Mobile
-							CheckLower(Warp.Timer,204)
-#endplatform
-							if CheckResult == true
-								Warp.Destination = 0
-							end if
-						end if
-						Warp.Timer = 0
-					end if
-				else
-					if Warp.Destination > 0
-						if Warp.Timer == 0
-							Warp.Timer = 1
-							ResetObjectEntity(3, TypeName[WarpStar], 0, Player.XPos, Player.YPos)
-							Object[3].Value0 = 7
-							Object[3].DrawOrder = 4
-						end if
-					end if
-					if Player.Speed > 655359
-						Player.Animation = ANI_PEELOUT
-					else
-						Player.Animation = ANI_RUNNING
-					end if
-					CallFunction(PlayerObject_RunAnimSpeed)
-				end if
-			else
-				if Player.Speed > -390594
-					Player.Animation = ANI_WALKING
-					CallFunction(PlayerObject_WalkAnimSpeed)
-					if Warp.Destination > 0
-						if Warp.Timer > 99
-#platform: Standard
-							CheckLower(Warp.Timer,220)
-#endplatform
-#platform: Mobile
-							CheckLower(Warp.Timer,204)
-#endplatform
-							if CheckResult == true
-								Warp.Destination = 0
-							end if
-						end if
-						Warp.Timer = 0
-						Object[3].Type = TypeName[BlankObject]
-					end if
-				else
-					if Warp.Destination > 0
-						if Warp.Timer == 0
-							Warp.Timer = 1
-							ResetObjectEntity(3, TypeName[WarpStar], 0, Player.XPos, Player.YPos)
-							Object[3].Value0 = 7
-							Object[3].DrawOrder = 4
-						end if
-					end if
-					if Player.Speed < -655359
-						Player.Animation = ANI_PEELOUT
-					else
-						Player.Animation = ANI_RUNNING
-					end if
-					CallFunction(PlayerObject_RunAnimSpeed)
-				end if
-			end if
-		end if
-		if Player.Skidding > 0
-			if TempValue7 == 1
-				PlaySfx(3, 0)
-			end if
-			Player.Animation = ANI_SKIDDING
-			Player.AnimationSpeed = 0
-			Player.Skidding--
-			if Ring.AniCount == 0
-				CreateTempObject(TypeName[DustPuff], 0, Player.XPos, Player.YPos)
-				Object[TempObjectPos].iYPos += Player.CollisionBottom
-				Object[TempObjectPos].DrawOrder = Player.DrawOrder
-			end if
-			if Player.Speed > 0
-				Player.Direction = FACING_RIGHT
-			else
-				Player.Direction = FACING_LEFT
-			end if
-		end if
-		if Player.CollisionMode == 0
-			if Player.Pushing == 2
-				Player.Animation = ANI_PUSHING
-				Player.AnimationSpeed = 0
-			end if
-		end if
-		if Player.JumpPress == 1
-			CallFunction(PlayerObject_StartJump)
-		else
-			if Player.Up == true
-				if Player.Speed == 0
-					if Player.Animation != ANI_FLAILINGLEFT
-						if Player.Animation != ANI_FLAILINGRIGHT
-							Player.State = PlayerObject_LookingUp
-							Player.Animation = ANI_LOOKINGUP
-							Player.Timer = 0
-						end if
-					end if
-				end if
-			end if
-			if Player.Down == true
-				if Player.Speed == 0
-					if Player.Animation != ANI_FLAILINGLEFT
-						if Player.Animation != ANI_FLAILINGRIGHT
-							Player.State = PlayerObject_Crouching
-							Player.Animation = ANI_LOOKINGDOWN
-							Player.Timer = 0
-						end if
-					end if
-				else
-					if Player.Left == false
-						if Player.Right == false
-							if Player.Speed > 0
-								if Player.Speed > 34816
-									Player.State = PlayerObject_HandleRolling
-									Player.Animation = ANI_JUMPING
-									Player.iYPos -= Player.CameraOffset
-									Player.AbilityTimer = 1024
-								end if
-							else
-								if Player.Speed < -34816
-									Player.State = PlayerObject_HandleRolling
-									Player.Animation = ANI_JUMPING
-									Player.iYPos -= Player.CameraOffset
-									Player.AbilityTimer = 1024
-								end if
-							end if
-						end if
-					end if
-				end if
-			end if
-		end if
-	end if
-end function
-
-
-function PlayerObject_HandleAir
-	CallFunction(PlayerObject_HandleAirSpeed)
-	if Player.Gravity == 1
-		CallFunction(PlayerObject_HandleAirMovement)
-		if Warp.Destination > 0
-			TempValue0 = Player.YVelocity
-			if TempValue0 < 0
-				FlipSign(TempValue0)
-			end if
-			if TempValue0 < 393216
-				TempValue0 = Player.XVelocity
-				if TempValue0 < 0
-					FlipSign(TempValue0)
-				end if
-				if TempValue0 < 393216
-					TempValue0 = Player.XVelocity
-					TempValue0 -= Warp.SpeedCompare
-					if TempValue0 < 0
-						FlipSign(TempValue0)
-					end if
-					if TempValue0 > 262144
-						if Warp.Timer > 99
-#platform: Standard
-							CheckLower(Warp.Timer,220)
-#endplatform
-#platform: Mobile
-							CheckLower(Warp.Timer,204)
-#endplatform
-							if CheckResult == true
-								Warp.Destination = 0
-							end if
-						end if
-						Warp.Timer = 0
-					end if
-				end if
-			end if
-			Warp.SpeedCompare = Player.XVelocity
-		end if
-		if Player.YVelocity > 131072
-			if Player.Animation == ANI_FLAILINGLEFT
-				Player.Animation = ANI_WALKING
-			end if
-			if Player.Animation == ANI_FLAILINGRIGHT
-				Player.Animation = ANI_WALKING
-			end if
-		end if
-		if Player.Animation == ANI_BOUNCING
-			if Player.YVelocity >= 0
-				if Player.AnimationCheck == ANI_STOPPED
-					Player.AnimationCheck = ANI_WALKING
-				end if
-				Player.Animation = Player.AnimationCheck
-			end if
-		end if
-		if Player.Animation == ANI_HURT
-			if Player.YVelocity >= 0
-				if Player.AnimationCheck == ANI_STOPPED
-					Player.AnimationCheck = ANI_WALKING
-				end if
-				Player.Animation = Player.AnimationCheck
-			end if
-		end if
-		if Player.Animation == ANI_JUMPING
-			CallFunction(Player.FlightFunction)
-		end if
-	else
-		Player.State = PlayerObject_HandleGround
-		CallFunction(PlayerObject_ResetOnFloor)
-		Player.Skidding = 0
-	end if
-end function
-
-
-function PlayerObject_HandleRolling
-	CallFunction(PlayerObject_HandleRollDecel)
-	if Player.Gravity == 1
-		Player.State = PlayerObject_HandleAir
-		Player.Timer = 0
-		CallFunction(PlayerObject_HandleAirMovement)
-	else
-		CallFunction(PlayerObject_RollAnimSpeed)
-		Player.AnimationSpeed = Player.CustomAnimSpeed
-		TempValue0 = Player.Speed
-		if TempValue0 < 0
-			FlipSign(TempValue0)
-		end if
-		if TempValue0 < 390594
-			if Warp.Destination > 0
-				if Warp.Timer > 99
-#platform: Standard
-					CheckLower(Warp.Timer,220)
-#endplatform
-#platform: Mobile
-					CheckLower(Warp.Timer,204)
-#endplatform
-					if CheckResult == true
-						Warp.Destination = 0
-					end if
-				end if
-				Warp.Timer = 0
-			end if
-		else
-			if Warp.Destination > 0
-				if Warp.Timer == 0
-					Warp.Timer = 1
-					ResetObjectEntity(3, TypeName[WarpStar], 0, Player.XPos, Player.YPos)
-					Object[3].Value0 = 7
-					Object[3].DrawOrder = 4
-				end if
-			end if
-		end if
-		CallFunction(PlayerObject_ResetOnFloor)
-		if Player.JumpPress == 1
-			CallFunction(PlayerObject_StartJump)
-		end if
-	end if
-end function
-
-
-function PlayerObject_AirControlLock
-	Player.Left = 0
-	Player.Right = 0
-	CallFunction(PlayerObject_HandleAirSpeed)
-	if Player.Gravity == 1
-		CallFunction(PlayerObject_HandleAirMovement)
-	else
-		Player.State = PlayerObject_HandleGround
-		CallFunction(PlayerObject_ResetOnFloor)
-		Player.Skidding = 0
-	end if
-end function
-
-
+// Hey look up
 function PlayerObject_LookingUp
 	if Player.Up == false
 		Player.State = PlayerObject_HandleGround
@@ -1335,18 +1463,18 @@ function PlayerObject_LookingUp
 				Player.LookPos -= 2
 			end if
 		end if
-		if Player.Gravity == 1
+		if Player.Gravity == GRAVITY_AIR
 			Player.State = PlayerObject_HandleAir
 			Player.Timer = 0
 		else
-			if Player.JumpPress == 1
+			if Player.JumpPress == true
 				CallFunction(Player.PeeloutFunction)
 			end if
 		end if
 	end if
 end function
 
-
+// Hey look down
 function PlayerObject_Crouching
 	if Player.Down == false
 		Player.State = PlayerObject_HandleGround
@@ -1359,24 +1487,27 @@ function PlayerObject_Crouching
 				Player.LookPos += 2
 			end if
 		end if
-		if Player.Gravity == 1
+		if Player.Gravity == GRAVITY_AIR
 			Player.State = PlayerObject_HandleAir
 			Player.Timer = 0
 		else
-			if Player.JumpPress == 1
+			if Player.JumpPress == true
 				CallFunction(Player.SpindashFunction)
 			end if
 		end if
 	end if
 end function
 
-
+// S2 Spin Dash code
 function PlayerObject_HandleSpindashS2
-	if Player.Gravity == 1
+	// Keep the camera lock, cancel the spin dash
+	if Player.Gravity == true
 		Player.State = PlayerObject_HandleAir
 		Player.Speed = 0
 	end if
-	if Player.JumpPress == 1
+
+	// Mashing
+	if Player.JumpPress == true
 		if Player.AbilityTimer < 512
 			Player.AbilityTimer += 64
 		end if
@@ -1387,16 +1518,20 @@ function PlayerObject_HandleSpindashS2
 			Player.AbilityTimer--
 		end if
 	end if
+
+	// Spin Dash release
 	if Player.Down == false
 		Player.Timer = 0
 		Player.State = PlayerObject_HandleRolling
 		Player.Animation = ANI_JUMPING
 		Player.iYPos -= Player.CameraOffset
 		Player.ScrollDelay = 15
-		Screen.CameraStyle = 4
+		Screen.CameraStyle = CAMERA_LOCK
+
 		TempValue0 = Player.AbilityTimer
 		TempValue0 <<= 9
-		TempValue0 += 524288
+		TempValue0 += 524288		// 0x80000
+
 		if Player.Direction == FACING_RIGHT
 			Player.Speed = TempValue0
 		else
@@ -1414,28 +1549,33 @@ end function
 
 function PlayerObject_HandleSpindashCD
 	if Player.Direction == FACING_RIGHT
-		Screen.CameraStyle = 2
+		Screen.CameraStyle = CAMERA_OFFSET_RIGHT
 	else
-		Screen.CameraStyle = 3
+		Screen.CameraStyle = CAMERA_OFFSET_LEFT
 	end if
-	if Player.Gravity == 1
+	// Keep the camera lock, cancel the spin dash
+	if Player.Gravity == true
 		Player.State = PlayerObject_HandleAir
 		Player.Speed = 0
-		Screen.CameraStyle = 1
+		Screen.CameraStyle = CAMERA_LOCK_CD_VIEW
 	end if
-	if Player.GravityStrength == 4096
-		if Player.AbilityTimer < 524288
-			Player.AbilityTimer += 24576
+
+	// Charge
+	if Player.GravityStrength == 4096		// 0x1000
+		if Player.AbilityTimer < 524288		// 0x80000
+			Player.AbilityTimer += 24576	// 0x6000
 		end if
 	else
-		if Player.AbilityTimer < 786432
-			Player.AbilityTimer += 24576
+		if Player.AbilityTimer < 786432		// 0xC0000
+			Player.AbilityTimer += 24576	// 0x6000
 		end if
 	end if
+
+	// Release
 	if Player.Down == false
-		Screen.CameraStyle = 1
+		Screen.CameraStyle = CAMERA_LOCK_CD_VIEW
 		Player.Timer = 0
-		if Player.AbilityTimer < 195297
+		if Player.AbilityTimer < 195297		// 0x2FAE1
 			Player.Speed = 0
 			Player.State = PlayerObject_HandleGround
 		else
@@ -1456,20 +1596,23 @@ end function
 
 
 function PlayerObject_HandlePeeloutS2
-	if Player.Gravity == 1
+	// Cancels the Peel Out, keeps the camera
+	if Player.Gravity == true
 		Player.State = PlayerObject_HandleAir
 		Player.Speed = 0
 	end if
-	if Player.GravityStrength == 4096
-		if Player.AbilityTimer < 393216
-			Player.AbilityTimer += 24576
+	// Charge
+	if Player.GravityStrength == 4096		// 0x1000
+		if Player.AbilityTimer < 393216		// 0x60000
+			Player.AbilityTimer += 24576	// 0x6000
 		end if
 	else
-		if Player.AbilityTimer < 786432
-			Player.AbilityTimer += 24576
+		if Player.AbilityTimer < 786432		// 0xC0000
+			Player.AbilityTimer += 24576	// 0x6000
 		end if
 	end if
-	if Player.AbilityTimer < 390594
+	// Speed building, from walking to running then peelout
+	if Player.AbilityTimer < 390594			// 0x5F5C2
 		Player.Animation = ANI_WALKING
 		TempValue0 = Player.AbilityTimer
 		TempValue0 >>= 16
@@ -1481,17 +1624,19 @@ function PlayerObject_HandlePeeloutS2
 		TempValue0 >>= 16
 		TempValue0 *= 80
 		TempValue0 /= 6
-		if Player.AbilityTimer > 655359
+		if Player.AbilityTimer > 655359		// 0x9FFFF
 			Player.Animation = ANI_PEELOUT
 		else
 			Player.Animation = ANI_RUNNING
 		end if
 	end if
+	// Release
 	if Player.Up == false
 		Player.ScrollDelay = 15
-		Screen.CameraStyle = 4
+		Screen.CameraStyle = CAMERA_LOCK
 		Player.State = PlayerObject_HandleGround
-		if Player.AbilityTimer < 390594
+		// Cancels the peel out if you didn't charged it enough
+		if Player.AbilityTimer < 390594			// 0x5F5C2
 			Player.Speed = 0
 		else
 			Player.Speed = Player.AbilityTimer
@@ -1510,26 +1655,31 @@ end function
 
 
 function PlayerObject_HandlePeeloutCD
+	// Moves the camera
 	if Player.Direction == FACING_RIGHT
-		Screen.CameraStyle = 2
+		Screen.CameraStyle = CAMERA_OFFSET_RIGHT
 	else
-		Screen.CameraStyle = 3
+		Screen.CameraStyle = CAMERA_OFFSET_LEFT
 	end if
-	if Player.Gravity == 1
+	// Cancels the Peel Out, keeps the camera
+	if Player.Gravity == true
 		Player.State = PlayerObject_HandleAir
 		Player.Speed = 0
-		Screen.CameraStyle = 1
+		Screen.CameraStyle = CAMERA_LOCK_CD_VIEW
 	end if
-	if Player.GravityStrength == 4096
-		if Player.AbilityTimer < 393216
-			Player.AbilityTimer += 24576
+	// Charge
+	if Player.GravityStrength == 4096		// 0x1000
+		if Player.AbilityTimer < 393216		// 0x60000
+			Player.AbilityTimer += 24576	// 0x6000
 		end if
 	else
-		if Player.AbilityTimer < 786432
-			Player.AbilityTimer += 24576
+		if Player.AbilityTimer < 786432		// 0xC0000
+			Player.AbilityTimer += 24576	// 0x6000
 		end if
 	end if
-	if Player.AbilityTimer < 390594
+	
+	// Speed building, from walking to running then peelout
+	if Player.AbilityTimer < 390594			// 0x5F5C2
 		Player.Animation = ANI_WALKING
 		TempValue0 = Player.AbilityTimer
 		TempValue0 >>= 16
@@ -1541,16 +1691,18 @@ function PlayerObject_HandlePeeloutCD
 		TempValue0 >>= 16
 		TempValue0 *= 80
 		TempValue0 /= 6
-		if Player.AbilityTimer > 655359
+		if Player.AbilityTimer > 655359		// 0x9FFFF
 			Player.Animation = ANI_PEELOUT
 		else
 			Player.Animation = ANI_RUNNING
 		end if
 	end if
+	// Release
 	if Player.Up == false
-		Screen.CameraStyle = 1
+		Screen.CameraStyle = CAMERA_LOCK_CD_VIEW
 		Player.State = PlayerObject_HandleGround
-		if Player.AbilityTimer < 390594
+		// Cancels the peel out if you didn't charged it enough
+		if Player.AbilityTimer < 390594			// 0x5F5C2
 			Player.Speed = 0
 		else
 			Player.Speed = Player.AbilityTimer
@@ -1567,22 +1719,25 @@ function PlayerObject_HandlePeeloutCD
 	Player.AnimationSpeed = TempValue0
 end function
 
-
+// Tails flight
 function PlayerObject_HandleTailsFlight
 	CallFunction(PlayerObject_HandleAirSpeed)
-	if Player.Gravity == 1
+	if Player.Gravity == GRAVITY_AIR
 		Player.XVelocity = Player.Speed
-		if Warp.Destination > 0
+		// Check if you have enough speed while flying to keep the warp
+		if Warp.Destination > NONE
 			TempValue0 = Player.XVelocity
 			if TempValue0 < 0
 				FlipSign(TempValue0)
 			end if
+
 			TempValue1 = Player.YVelocity
 			if TempValue1 < 0
 				FlipSign(TempValue1)
 			end if
+
 			TempValue0 += TempValue1
-			if TempValue0 < 262144
+			if TempValue0 < 262144		// 0x40000
 				if Warp.Timer > 99
 #platform: Standard
 					CheckLower(Warp.Timer,220)
@@ -1591,33 +1746,33 @@ function PlayerObject_HandleTailsFlight
 					CheckLower(Warp.Timer,204)
 #endplatform
 					if CheckResult == true
-						Warp.Destination = 0
+						Warp.Destination = NONE
 					end if
 				end if
 				Warp.Timer = 0
 			end if
 		end if
-		if Player.YVelocity < -65536
-			Player.FlightGravity = 2048
+		if Player.YVelocity < -65536	// -0x10000
+			Player.FlightGravity = 2048	// 0x800
 		else
 			if Player.YVelocity < 1
 				if Player.AbilityTimer < 60
 					Player.AbilityTimer++
 				else
-					Player.FlightGravity = 2048
+					Player.FlightGravity = 2048	// 0x800
 				end if
 			end if
 		end if
 		Player.YVelocity += Player.FlightGravity
 		if Player.Timer < 480
-			if Player.GravityStrength == 14336
+			if Player.GravityStrength == 14336	// 0x3800
 				Player.Animation = ANI_FLYING
 			else
 				Player.Animation = ANI_SWIMMING
 			end if
 			Player.Timer++
 			if Player.Timer == 480
-				if Player.GravityStrength == 14336
+				if Player.GravityStrength == 14336	// 0x3800
 					Player.Animation = ANI_FLYINGTIRED
 					StopSfx(24)
 					PlaySfx(25, 1)
@@ -1626,12 +1781,12 @@ function PlayerObject_HandleTailsFlight
 				end if
 			else
 				if Player.JumpPress == 1
-					Player.FlightGravity = -8192
+					Player.FlightGravity = -8192	// -0x2000
 					Player.AbilityTimer = 0
 				end if
 			end if
 		else
-			if Player.GravityStrength == 14336
+			if Player.GravityStrength == 14336	// 0x3800
 				Player.Animation = ANI_FLYINGTIRED
 			else
 				Player.Animation = ANI_SWIMMINGTIRED
@@ -1641,7 +1796,8 @@ function PlayerObject_HandleTailsFlight
 		Player.State = PlayerObject_HandleGround
 		CallFunction(PlayerObject_ResetOnFloor)
 	end if
-	if Player.RoofBarrier == 1
+	// If the level has a roof barrier, you're not getting too far
+	if Player.RoofBarrier == true
 		TempValue0 = Player.YPos
 		TempValue0 >>= 16
 		if TempValue0 < Player.CollisionBottom
@@ -1651,40 +1807,43 @@ function PlayerObject_HandleTailsFlight
 	end if
 end function
 
-
+// Player Damage
 function PlayerObject_Hurt
 	ArrayPos0 = Player.EntityNo
 	ArrayPos0 += 2
+	// if you had a shield, remove it
 	if Object[ArrayPos0].PropertyValue > 0
-		TempValue0 = 1
+		TempValue0 = DAMAGE_SHIELDED
 		ResetObjectEntity(ArrayPos0, TypeName[BlankObject], 0, 0, 0)
 		PlaySfx(5, 0)
 	else
-		if Object[0].Value0 == 0
+		if Player.Rings == 0
 			PlaySfx(5, 0)
-			TempValue0 = 3
+			TempValue0 = DAMAGE_DEATH
 		else
 			PlaySfx(4, 0)
-			TempValue0 = 2
+			TempValue0 = DAMAGE_HURT
 		end if
 	end if
+
 	switch TempValue0
-	case 1
+	case DAMAGE_SHIELDED
 #platform: Use_Haptics
 		HapticEffect(16, 0, 0, 0)
 #endplatform
 		Player.State = PlayerObject_Knockback
 		Player.Animation = ANI_HURT
-		Player.YVelocity = -262144
-		Player.Gravity = 1
-		Player.TrackScroll = 1
+		Player.YVelocity = -262144			// -0x40000
+		Player.Gravity = GRAVITY_AIR
+		Player.TrackScroll = true
 		Player.Invincible = 8000
-		if Player.GravityStrength == 4096
+		if Player.GravityStrength == 4096	// 0x1000
 			Player.Speed >>= 1
 			Player.YVelocity >>= 1
 		end if
 		break
-	case 2
+
+	case DAMAGE_HURT
 #platform: Use_Haptics
 		HapticEffect(16, 0, 0, 0)
 #endplatform
@@ -1695,15 +1854,16 @@ function PlayerObject_Hurt
 		end if
 		Player.State = PlayerObject_Knockback
 		Player.Animation = ANI_HURT
-		Player.YVelocity = -262144
-		Player.Gravity = 1
-		Player.TrackScroll = 1
+		Player.YVelocity = -262144			// -0x40000
+		Player.Gravity = GRAVITY_AIR
+		Player.TrackScroll = true
 		Player.Invincible = 8000
-		if Player.GravityStrength == 4096
+		if Player.GravityStrength == 4096	// 0x1000
 			Player.Speed >>= 1
 			Player.YVelocity >>= 1
 		end if
-		TempValue0 = Object[0].Value0
+		// Lose ring code
+		TempValue0 = Player.Rings
 		if TempValue0 > 16
 			TempValue1 = TempValue0
 			TempValue1 -= 16
@@ -1711,20 +1871,25 @@ function PlayerObject_Hurt
 		else
 			TempValue1 = 0
 		end if
+
 		if TempValue1 > 16
 			TempValue1 = 16
 		end if
+		
 		TempValue3 = TempValue1
 		TempValue3 >>= 1
 		TempValue3 <<= 5
+
 		TempValue2 = 384
 		TempValue2 -= TempValue3
+
 		TempValue3 >>= 4
 		if TempValue3 == TempValue1
 			TempValue2 += 16
 		else
 			TempValue2 -= 16
 		end if
+
 		TempValue3 = 0
 		while TempValue3 < TempValue1
 			CreateTempObject(TypeName[LoseRing], Player.CollisionPlane, Player.XPos, Player.YPos)
@@ -1740,8 +1905,10 @@ function PlayerObject_Hurt
 		TempValue3 = TempValue0
 		TempValue3 >>= 1
 		TempValue3 <<= 5
+
 		TempValue2 = 384
 		TempValue2 -= TempValue3
+
 		TempValue3 >>= 4
 		if TempValue3 == TempValue0
 			TempValue2 += 16
@@ -1749,6 +1916,7 @@ function PlayerObject_Hurt
 			TempValue2 -= 16
 		end if
 		TempValue3 = 0
+
 		while TempValue3 < TempValue0
 			CreateTempObject(TypeName[LoseRing], Player.CollisionPlane, Player.XPos, Player.YPos)
 			Cos(Object[TempObjectPos].Value0, TempValue2)
@@ -1760,27 +1928,29 @@ function PlayerObject_Hurt
 			TempValue3++
 			TempValue2 += 32
 		loop
-		Object[0].Value0 = 0
+		Player.Rings = 0
 		Ring.ExtraLife = 100
 		break
-	case 3
+
+	case DAMAGE_DEATH
 #platform: Use_Haptics
 		HapticEffect(28, 0, 0, 0)
 #endplatform
 		Object.DrawOrder = 5
 		Player.Speed = 0
-		Player.YVelocity = -458752
+		Player.YVelocity = -458752		// -0x70000
 		Player.XVelocity = 0
 		Player.State = PlayerObject_Death
 		Player.Animation = ANI_DYING
-		Player.TileCollisions = 0
-		Player.ObjectInteraction = 0
-		if Player.EntityNo == 0
-			Screen.CameraEnabled = 0
+		Player.TileCollisions = false
+		Player.ObjectInteraction = false
+		if Player.EntityNo == 0	// Check if it's was player 1 who died......what?
+			Screen.CameraEnabled = false
 		end if
 		break
 	end switch
-	if Warp.Destination > 0
+	// lose your warp-run if you receive damage
+	if Warp.Destination > NONE
 		if Warp.Timer > 99
 #platform: Standard
 			CheckLower(Warp.Timer,220)
@@ -1789,7 +1959,7 @@ function PlayerObject_Hurt
 			CheckLower(Warp.Timer,204)
 #endplatform
 			if CheckResult == true
-				Warp.Destination = 0
+				Warp.Destination = NONE
 			end if
 		end if
 		Warp.Timer = 0
@@ -1798,12 +1968,12 @@ end function
 
 
 function PlayerObject_Knockback
-	if Player.Gravity == 1
-		Player.TrackScroll = 1
-		if Player.GravityStrength == 14336
-			Player.YVelocity += 12288
+	if Player.Gravity == GRAVITY_AIR
+		Player.TrackScroll = true
+		if Player.GravityStrength == 14336	// 0x3800
+			Player.YVelocity += 12288		// 0x3000
 		else
-			Player.YVelocity += 3840
+			Player.YVelocity += 3840		// 0xF00
 		end if
 		Player.XVelocity = Player.Speed
 	else
@@ -1818,101 +1988,116 @@ end function
 
 
 function PlayerObject_OuttaHere
+	// preparing to jump
 	if Player.Timer < 140
 		Player.Timer++
 	else
+		// The Jump.
 		Player.Timer = 0
 		Player.DrawOrder = 5
 		if Player.Direction == FACING_RIGHT
-			Player.Speed = 65536
-			Player.XVelocity = 65536
+			Player.Speed = 65536		// 0x10000
+			Player.XVelocity = 65536	// 0x10000
 		else
-			Player.Speed = -65536
-			Player.XVelocity = -65536
+			Player.Speed = -65536		// -0x10000
+			Player.XVelocity = -65536	// -0x10000
 		end if
-		Player.YVelocity = -360448
+		Player.YVelocity = -360448		// -0x58000
 		Player.State = PlayerObject_Death
-		Player.TileCollisions = 0
-		Player.ObjectInteraction = 0
-		Screen.CameraEnabled = 0
+		Player.TileCollisions = false
+		Player.ObjectInteraction = false
+		Screen.CameraEnabled = false
 	end if
 end function
 
-
+// YOU DIED.
 function PlayerObject_Death
-	Player.ControlMode = -1
-	Player.YVelocity += 14336
+	Player.ControlMode = CONTROL_DISABLED
+	Player.YVelocity += 14336		// 0x3800
+	// Don't override the bored animation
 	if Player.Animation != ANI_BORED
 		Player.Animation = ANI_DYING
 	end if
-	if Player.YVelocity > 1048576
+
+	if Player.YVelocity > 1048576	// 0x100000
+
 		if Player.Lives > 0
-			if Player.Animation == ANI_BORED
+
+			if Player.Animation == ANI_BORED	// Outta Here makes an automatic game over, no lifes will save you
 				Player.Lives = 0
 			else
 				Player.Lives--
 			end if
+
 		end if
-		Stage.TimeEnabled = 0
+
+		Stage.TimeEnabled = false
 		Object.Type = TypeName[DeathEvent]
-		Object.DrawOrder = 6
-		Object.Value1 = Screen.CenterX
-		Object.Value1 -= 264
-		Object.Value2 = Screen.CenterX
-		Object.Value2 += 200
-		if Options.GameMode == 2
-			Object.Value3 = 0
-			Object.State = 3
+		DeathEvent.DrawOrder = 6
+		DeathEvent.Text1XPos = Screen.CenterX
+		DeathEvent.Text1XPos -= 264
+		DeathEvent.Text2XPos = Screen.CenterX
+		DeathEvent.Text2XPos += 200
+
+		if Options.GameMode == GAMEMODE_TIMEATTACK
+			DeathEvent.Timer = 0
+			DeathEvent.State = DEATHEVENT_TIMEATTACK
 		else
 			if Player.Lives == 0
-				Object.Value3 = -2880
-				Object.State = 0
+				DeathEvent.Timer = -2880
+				DeathEvent.State = 0
 				PlayMusic(5)
 				Stage.PauseEnabled = 0
 			else
-				Object.Value3 = 0
-				Object.State = 2
+				DeathEvent.Timer = 0
+				DeathEvent.State = DEATHEVENT_RESTART
 				if Stage.Minutes == 9
+				
 					if Stage.Seconds == 59
-						Object.Value3 = -2880
-						Object.State = 1
+						DeathEvent.Timer = -2880
+						DeathEvent.State = DEATHEVENT_TIMEOVER
 						PlayMusic(5)
-						Stage.PauseEnabled = 0
+						Stage.PauseEnabled = false
 					end if
+					
 				end if
+
 			end if
+
 		end if
 	end if
 end function
 
-
+// Same as death, just slower and without the bored or time over stuff
 function PlayerObject_Drown
-	Player.ControlMode = -1
+	Player.ControlMode = CONTROL_DISABLED
 	Player.YVelocity += Player.GravityStrength
 	Player.Animation = ANI_DROWNING
-	if Player.YVelocity > 524288
+	if Player.YVelocity > 524288	// 0x80000
 		if Player.Lives > 0
 			Player.Lives--
 		end if
-		Stage.TimeEnabled = 0
+
+		Stage.TimeEnabled = false
 		Object.Type = TypeName[DeathEvent]
-		Object.DrawOrder = 6
-		Object.Value1 = Screen.CenterX
-		Object.Value1 -= 264
-		Object.Value2 = Screen.CenterX
-		Object.Value2 += 200
-		if Options.GameMode == 2
-			Object.Value3 = 0
-			Object.State = 3
+		DeathEvent.DrawOrder = 6
+		DeathEvent.Text1XPos = Screen.CenterX
+		DeathEvent.Text1XPos -= 264
+		DeathEvent.Text2XPos = Screen.CenterX
+		DeathEvent.Text2XPos += 200
+
+		if Options.GameMode == GAMEMODE_TIMEATTACK
+			DeathEvent.Timer = 0
+			DeathEvent.State = DEATHEVENT_TIMEATTACK
 		else
 			if Player.Lives == 0
-				Object.Value3 = -2880
-				Object.State = 0
+				DeathEvent.Timer = -2880
+				DeathEvent.State = DEATHEVENT_GAMEOVER
 				PlayMusic(5)
-				Stage.PauseEnabled = 0
+				Stage.PauseEnabled = false
 			else
-				Object.Value3 = 0
-				Object.State = 2
+				DeathEvent.Timer = 0
+				DeathEvent.State = DEATHEVENT_RESTART
 			end if
 		end if
 	end if
@@ -1922,12 +2107,12 @@ end function
 function PlayerObject_HangingBar
 	if Player.Left == true
 		Player.Direction = FACING_LEFT
-		Player.Speed = -131072
+		Player.Speed = -131072	// -20000
 		Player.AnimationSpeed = 30
 	else
 		if Player.Right == true
 			Player.Direction = FACING_RIGHT
-			Player.Speed = 131072
+			Player.Speed = 131072	// 20000
 			Player.AnimationSpeed = 30
 		else
 			Player.Speed = 0
@@ -1937,27 +2122,30 @@ function PlayerObject_HangingBar
 
 	TempValue1 = Player.XPos
 	TempValue1 >>= 16
+
 	TempValue2 = Player.YPos
 	TempValue2 >>= 16
 	TempValue2 += Player.CollisionTop
+	// Check that you are in the hanging bar
 	Get16x16TileInfo(TempValue0, TempValue1, TempValue2, 8)
-	if TempValue0 != 3
+	if TempValue0 != 3	// seems like you're not
 		Player.State = PlayerObject_HandleAir
 		Player.Speed = 0
 		Player.AnimationSpeed = 0
 		Player.YVelocity = 0
 	end if
 
+	// Manual Drop
 	if Player.JumpPress == true
 		Player.State = PlayerObject_HandleAir
 		Player.YVelocity = 0
 		Player.Speed = 0
 		Player.AnimationSpeed = 0
-		Player.YPos += 262144
+		Player.YPos += 262144		// 0x40000
 	end if
-
 	Player.XVelocity = Player.Speed
-	if Warp.Destination > 0
+	// Cancel warp
+	if Warp.Destination > NONE
 		if Warp.Timer > 99
 #platform: Standard
 			CheckLower(Warp.Timer,220)
@@ -1966,7 +2154,7 @@ function PlayerObject_HangingBar
 			CheckLower(Warp.Timer,204)
 #endplatform
 			if CheckResult == true
-				Warp.Destination = 0
+				Warp.Destination = NONE
 			end if
 		end if
 
@@ -2037,9 +2225,9 @@ function PlayerObject_CorkscrewRoll
 	end if
 end function
 
-
+// Tube Switch function
 function PlayerObject_Tunnel
-	if Player.Gravity == 1
+	if Player.Gravity == GRAVITY_AIR	// end the function if you are in the air
 		Player.State = PlayerObject_HandleAir
 		Player.Timer = 0
 		CallFunction(PlayerObject_HandleAirMovement)
@@ -2048,8 +2236,8 @@ function PlayerObject_Tunnel
 			if Player.Speed < Player.MinRollSpeed
 				Player.Speed = Player.MinRollSpeed
 			end if
-			if Player.Speed > 1048576
-				Player.Speed = 1048576
+			if Player.Speed > 1048576	// 0x100000
+				Player.Speed = 1048576	// 0x100000
 			end if
 		else
 			TempValue0 = Player.MinRollSpeed
@@ -2058,16 +2246,19 @@ function PlayerObject_Tunnel
 				Player.Speed = TempValue0
 				CallFunction(PlayerObject_ResetOnFloor)
 			end if
-			if Player.Speed < -1048576
-				Player.Speed = -1048576
+			if Player.Speed < -1048576	// -0x100000
+				Player.Speed = -1048576	// -0x100000
 			end if
 		end if
+
 		TempValue0 = Player.Speed
 		if TempValue0 < 0
 			FlipSign(TempValue0)
 		end if
-		if TempValue0 < 390594
-			if Warp.Destination > 0
+
+		if TempValue0 < 390594			// 0x5F5C2
+			// Warp Star delete checks
+			if Warp.Destination > NONE
 				if Warp.Timer > 99
 #platform: Standard
 					CheckLower(Warp.Timer,220)
@@ -2076,21 +2267,23 @@ function PlayerObject_Tunnel
 					CheckLower(Warp.Timer,204)
 #endplatform
 					if CheckResult == true
-						Warp.Destination = 0
+						Warp.Destination = NONE
 					end if
 				end if
 				Warp.Timer = 0
 			end if
 		else
-			if Warp.Destination > 0
+			// Warp Star spawnning
+			if Warp.Destination > NONE
 				if Warp.Timer == 0
 					Warp.Timer = 1
 					CreateTempObject(TypeName[WarpStar], 0, Player.XPos, Player.YPos)
-					Object[TempObjectPos].Value0 = 7
-					Object[TempObjectPos].DrawOrder = 4
+					WarpStar.Timer = 7
+					WarpStar.DrawOrder = 4
 				end if
 			end if
 		end if
+
 		CallFunction(PlayerObject_HandleRollDecel)
 		CallFunction(PlayerObject_RollAnimSpeed)
 		Player.AnimationSpeed = Player.CustomAnimSpeed
@@ -2098,11 +2291,11 @@ function PlayerObject_Tunnel
 	end if
 end function
 
-
+// This is also for Tube Switch, but only for the ones used in Wacky Workbench and Stardust Speedway
 function PlayerObject_StartTTCtrlLock
-	Player.Right = 0
-	Player.Left = 0
-	if Player.Gravity == 1
+	Player.Right = false
+	Player.Left = false
+	if Player.Gravity == GRAVITY_AIR
 		Player.State = PlayerObject_HandleAir
 		Player.Timer = 0
 		CallFunction(PlayerObject_HandleAirMovement)
@@ -2114,12 +2307,14 @@ function PlayerObject_StartTTCtrlLock
 			FlipSign(TempValue0)
 			Player.Speed = TempValue0
 		end if
+
 		TempValue0 = Player.Speed
 		if TempValue0 < 0
 			FlipSign(TempValue0)
 		end if
-		if TempValue0 < 390594
-			if Warp.Destination > 0
+
+		if TempValue0 < 390594		// 0x5F5C2
+			if Warp.Destination > NONE
 				if Warp.Timer > 99
 #platform: Standard
 					CheckLower(Warp.Timer,220)
@@ -2128,18 +2323,18 @@ function PlayerObject_StartTTCtrlLock
 					CheckLower(Warp.Timer,204)
 #endplatform
 					if CheckResult == true
-						Warp.Destination = 0
+						Warp.Destination = NONE
 					end if
 				end if
 				Warp.Timer = 0
 			end if
 		else
-			if Warp.Destination > 0
+			if Warp.Destination > NONE
 				if Warp.Timer == 0
 					Warp.Timer = 1
 					CreateTempObject(TypeName[WarpStar], 0, Player.XPos, Player.YPos)
-					Object[TempObjectPos].Value0 = 7
-					Object[TempObjectPos].DrawOrder = 4
+					WarpStar.Timer = 7
+					WarpStar.DrawOrder = 4
 				end if
 			end if
 		end if
@@ -2150,10 +2345,10 @@ function PlayerObject_StartTTCtrlLock
 	end if
 end function
 
-
+// Palmtree Panic and Wacky Workbench spinning tops
 function PlayerObject_SpinningTop
 	Player.Timer += Player.MinRollSpeed
-	if Player.Gravity == 1
+	if Player.Gravity == GRAVITY_AIR	// Drop from them if you get out of range
 		Player.State = PlayerObject_HandleAir
 		Player.Animation = ANI_WALKING
 		Player.Timer = 0
@@ -2163,22 +2358,25 @@ function PlayerObject_SpinningTop
 	end if
 end function
 
-
+// Amy Rose's favorite function
 function PlayerObject_Hugged
-	if Player.Gravity == GRAVITY_AIR
+	if Player.Gravity == GRAVITY_AIR	// No hugs if you're in the air
 		Player.State = PlayerObject_HandleAir
 		Player.Animation = ANI_WALKING
 		Player.Timer = 0
 		CallFunction(PlayerObject_HandleAirMovement)
 	else
 		CallFunction(PlayerObject_ResetOnFloor)
+		// Yes, the only thing the function does is make you wait
 		if Player.Timer < 240
 			Player.Animation = ANI_STOPPED
 			Player.Timer++
 		else
 			Player.Animation = ANI_WAITING
 		end if
-		if Warp.Destination > 0
+
+		// Warp cancel check
+		if Warp.Destination > NONE
 			if Warp.Timer > 99
 #platform: Standard
 				CheckLower(Warp.Timer,220)
@@ -2187,24 +2385,26 @@ function PlayerObject_Hugged
 				CheckLower(Warp.Timer,204)
 #endplatform
 				if CheckResult == true
-					Warp.Destination = 0
+					Warp.Destination = NONE
 				end if
 			end if
 			Warp.Timer = 0
 		end if
+		// Get free from Amy
 		if Player.JumpPress == true
 			CallFunction(PlayerObject_StartJump)
 		end if
 	end if
 end function
 
-
+// Palmtree Panic Ramp
 function PlayerObject_Handle3DRampAnims
 	CallFunction(PlayerObject_HandleMovement)
-	if Player.Gravity == 1
+	if Player.Gravity == GRAVITY_AIR
 		Player.State = PlayerObject_HandleAir
 		Player.Timer = 0
 		CallFunction(PlayerObject_HandleAirMovement)
+		// Set the equivalent animation for looking to the left
 		if Player.Direction == FACING_LEFT
 			if Player.Animation == ANI_RAMP_RUNNING3
 				Player.Animation = ANI_RAMP_RUNNING5
@@ -2216,7 +2416,8 @@ function PlayerObject_Handle3DRampAnims
 	else
 		CallFunction(PlayerObject_ResetOnFloor)
 		if Player.Speed == 0
-			if Warp.Destination > 0
+			// Warp Star erase check
+			if Warp.Destination > NONE
 				if Warp.Timer > 99
 #platform: Standard
 					CheckLower(Warp.Timer,220)
@@ -2225,11 +2426,12 @@ function PlayerObject_Handle3DRampAnims
 					CheckLower(Warp.Timer,204)
 #endplatform
 					if CheckResult == true
-						Warp.Destination = 0
+						Warp.Destination = NONE
 					end if
 				end if
 				Warp.Timer = 0
 			end if
+			// Waiting timer while in the ramp
 			if Player.Timer < 240
 				Player.Animation = ANI_STOPPED
 				Player.Timer++
@@ -2237,6 +2439,7 @@ function PlayerObject_Handle3DRampAnims
 				Player.Animation = ANI_WAITING
 			end if
 		else
+			// Set animation based on angle
 			if Player.Angle == 0
 				Player.Animation = ANI_RAMP_RUNNING1
 			end if
@@ -2277,12 +2480,12 @@ function PlayerObject_Handle3DRampAnims
 					Player.Animation = ANI_LOOKINGDOWN
 					Player.Timer = 0
 				else
-					if Player.Speed > 6554
+					if Player.Speed > 6554	// 0x199A
 						Player.ControlLock = 0
 						Player.State = PlayerObject_HandleRolling
 						Player.Animation = ANI_JUMPING
 					end if
-					if Player.Speed < -6554
+					if Player.Speed < -6554	// 0x199A
 						Player.ControlLock = 0
 						Player.State = PlayerObject_HandleRolling
 						Player.Animation = ANI_JUMPING
@@ -2297,35 +2500,17 @@ function PlayerObject_Handle3DRampAnims
 			FlipSign(Player.AnimationSpeed)
 		end if
 		Player.AnimationSpeed *= 60
-		Player.AnimationSpeed /= 393216
+		Player.AnimationSpeed /= 393216	// 0x60000
 		Player.AnimationSpeed += 20
 	else
 		Player.AnimationSpeed = 0
 	end if
 end function
 
-
-function PlayerObject_DebugMode
-	Player.Gravity = 1
-	if Player.Up == true
-		Player.YPos -= 131072
-	end if
-	if Player.Down == true
-		Player.YPos += 131072
-	end if
-	if Player.Left == true
-		Player.XPos -= 131072
-	end if
-	if Player.Right == true
-		Player.XPos += 131072
-	end if
-end function
-
-
 function PlayerObject_SizeChange
-	if Player.Gravity == 1
-		Player.TrackScroll = 1
-		Player.YVelocity += 12288
+	if Player.Gravity == GRAVITY_AIR	// Knockback after touching the laser
+		Player.TrackScroll = true
+		Player.YVelocity += 12288		// 0x3000
 		Player.XVelocity = Player.Speed
 	else
 		Player.State = PlayerObject_HandleGround
@@ -2334,8 +2519,8 @@ function PlayerObject_SizeChange
 		Player.Speed = 0
 		Player.XVelocity = 0
 		CallFunction(PlayerObject_ResetOnFloor)
-		if Mini_PlayerFlag == 0
-			Mini_PlayerFlag = 1
+		if Mini_PlayerFlag == false
+			Mini_PlayerFlag = true
 			Player.CameraOffset = -1
 			switch Stage.PlayerListPos
 			case 0
@@ -2343,11 +2528,11 @@ function PlayerObject_SizeChange
 				break
 			case 1
 				LoadAnimation("MiniTails.Ani")
-				Object[1].Type = TypeName[BlankObject]
+				Object[1].Type = TypeName[BlankObject]	// Deletes TailsObject
 				break
 			end switch
 		else
-			Mini_PlayerFlag = 0
+			Mini_PlayerFlag = false
 			switch Stage.PlayerListPos
 			case 0
 				LoadAnimation("Sonic.Ani")
@@ -2356,7 +2541,7 @@ function PlayerObject_SizeChange
 			case 1
 				LoadAnimation("Tails.Ani")
 				Player.CameraOffset = -1
-				Object[1].Type = TypeName[TailsObject]
+				Object[1].Type = TypeName[TailsObject]	// Restores TailsObject
 				break
 			end switch
 		end if
@@ -2368,7 +2553,7 @@ end function
 sub ObjectMain
 #platform: Standard
 	if Stage.DebugMode == true
-		if KeyPress.ButtonB == true
+		if KeyPress.ButtonB == true	// Turn Debug Mode
 			Object.Type = TypeName[DebugMode]
 			Player.YVelocity = 0
 			Player.State = PlayerObject_Blank
@@ -2382,6 +2567,7 @@ sub ObjectMain
 			Screen.CameraEnabled = true
 			Screen.CameraStyle = Options.OriginalControls
 		else
+			// Handle Player
 			CallFunction(PlayerObject_ProcessPlayer)
 			CallFunction(Player.State)
 			ProcessAnimation()
@@ -2393,8 +2579,8 @@ sub ObjectMain
 					Player.iYPos += Player.CameraOffset
 				end if
 			end if
-			if Player.YVelocity > 1048576
-				Player.YVelocity = 1048576
+			if Player.YVelocity > 1048576		// 0x100000
+				Player.YVelocity = 1048576		// 0x100000
 			end if
 			PlayerTileCollision()
 			if CheckResult == true
@@ -2408,9 +2594,11 @@ sub ObjectMain
 			end if
 		end if
 	else
+			// Handle Player
 		CallFunction(PlayerObject_ProcessPlayer)
 		CallFunction(Player.State)
 		ProcessAnimation()
+
 		if Player.Animation == ANI_JUMPING
 			Screen.AdjustCameraY = Player.CameraOffset
 		else
@@ -2419,9 +2607,11 @@ sub ObjectMain
 				Player.iYPos += Player.CameraOffset
 			end if
 		end if
-		if Player.YVelocity > 1048576
-			Player.YVelocity = 1048576
+
+		if Player.YVelocity > 1048576		// 0x100000
+			Player.YVelocity = 1048576		// 0x100000
 		end if
+
 		PlayerTileCollision()
 		if CheckResult == true
 			if Player.Animation == ANI_JUMPING
@@ -2432,10 +2622,11 @@ sub ObjectMain
 				end if
 			end if
 		end if
+
 	end if
 #endplatform
 
-#platform: Mobile
+#platform: Mobile	// No debug for android users
 	CallFunction(PlayerObject_ProcessPlayer)
 	CallFunction(Player.State)
 	ProcessAnimation()
@@ -2447,8 +2638,8 @@ sub ObjectMain
 			Player.iYPos += Player.CameraOffset
 		end if
 	end if
-	if Player.YVelocity > 1048576
-		Player.YVelocity = 1048576
+	if Player.YVelocity > 1048576		// 0x100000
+		Player.YVelocity = 1048576		// 0x100000
 	end if
 	PlayerTileCollision()
 	if CheckResult == true
@@ -2500,7 +2691,7 @@ sub ObjectStartup
 				Player.RollingDeceleration = 8192	// 0x2000
 				Player.CameraOffset = -5
 				Player.FlightFunction = PlayerObject_Blank
-				if Options.OriginalControls == 0
+				if Options.OriginalControls == false
 					Player.PeeloutFunction = PlayerObject_StartPeeloutS2
 					Player.SpindashFunction = PlayerObject_StartSpindashS2
 				else
@@ -2529,7 +2720,7 @@ sub ObjectStartup
 				Player.CameraOffset = -1
 				Player.FlightFunction = PlayerObject_StartTailsFlight
 				Player.PeeloutFunction = PlayerObject_StartJump
-				if Options.OriginalControls == 0
+				if Options.OriginalControls == false
 					Player.SpindashFunction = PlayerObject_StartSpindashS2
 				else
 					Player.SpindashFunction = PlayerObject_StartSpindashCD

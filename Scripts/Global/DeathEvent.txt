@@ -8,18 +8,18 @@
 #alias Object.Value3	:	Object.Timer		// Also used for fading
 
 // States
-#alias 0				:	DEATHEVENT_MAINGAME
-#alias 1				:	DEATHEVENT_TIMEATTACK
-#alias 2				:	DEATHEVENT_TIMEOVER
-#alias 3				:	DEATHEVENT_TRIALGAME
+#alias 0				:	DEATHEVENT_GAMEOVER
+#alias 1				:	DEATHEVENT_TIMEOVER
+#alias 2				:	DEATHEVENT_RESTART
+#alias 3				:	DEATHEVENT_TIMEATTACK
 
 // GameMode
 #alias 1				:	GAMEMODE_MAINGAME
 
 sub ObjectMain
 	switch Object.State
-	case DEATHEVENT_MAINGAME
-	case DEATHEVENT_TIMEATTACK
+	case DEATHEVENT_GAMEOVER
+	case DEATHEVENT_TIMEOVER
 		TempValue0 = Screen.CenterX
 		TempValue0 -= 72
 		if Object.Text1XPos < TempValue0
@@ -40,7 +40,7 @@ sub ObjectMain
 		if Object.Timer < 288
 			Object.Timer += 4
 		else
-			if Object.State == DEATHEVENT_MAINGAME
+			if Object.State == DEATHEVENT_GAMEOVER
 				Stage.ActiveList = PRESENTATION_STAGE
 				Stage.ListPos = 0	// Title Screen
 				LampPost.Check = 0
@@ -57,7 +57,7 @@ sub ObjectMain
 				end if
 			end if
 
-			if Object.State == DEATHEVENT_TIMEATTACK
+			if Object.State == DEATHEVENT_TIMEOVER
 				Rec_Milliseconds = 0
 				Rec_Seconds = 0
 				Rec_Minutes = 0
@@ -83,7 +83,7 @@ sub ObjectMain
 
 		break
 
-	case DEATHEVENT_TIMEOVER
+	case DEATHEVENT_RESTART
 		if Object.Timer < 288
 			Music.Volume -= 2
 			Object.Timer += 4
@@ -93,7 +93,7 @@ sub ObjectMain
 		SetScreenFade(0, 0, 0, Object.Timer)
 		break
 
-	case DEATHEVENT_TRIALGAME
+	case DEATHEVENT_TIMEATTACK
 		if Object.Timer < 288
 			Music.Volume -= 2
 			Object.Timer += 4
@@ -113,11 +113,11 @@ end sub
 
 sub ObjectDraw
 	switch Object.State
-	case 0
+	case DEATHEVENT_GAMEOVER
 		DrawSpriteScreenXY(0, Object.Text1XPos, 96)
 		DrawSpriteScreenXY(2, Object.Text2XPos, 96)
 		break
-	case 1
+	case DEATHEVENT_TIMEOVER
 		DrawSpriteScreenXY(1, Object.Text1XPos, 96)
 		DrawSpriteScreenXY(2, Object.Text2XPos, 96)
 		break
