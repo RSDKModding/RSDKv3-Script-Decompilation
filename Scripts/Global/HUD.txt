@@ -226,7 +226,44 @@ sub ObjectStartup
 	SpriteFrame(0, 0, 8, 8, 10, 98)		// #21 - Debug Y
 end sub
 
-sub RSDK
-	LoadSpriteSheet("Global/Display.gif")
-	SetEditorIcon(Icon0, SingleIcon, -16, -16, 32, 32, 1, 143)
+
+sub RSDKEdit
+	if Editor.ReturnVariable == true
+		switch Editor.VariableID
+		case EDIT_VAR_PROPVAL // property value
+			CheckResult = Object.PropertyValue
+			break
+		case 0 // timePeriod
+			CheckResult = Object.PropertyValue
+			break
+		end switch
+	else
+		switch Editor.VariableID
+		case EDIT_VAR_PROPVAL // property value
+			Object.PropertyValue = Editor.VariableValue
+			break
+		case 0 // timePeriod
+			Object.PropertyValue = Editor.VariableValue
+			break
+		end switch
+	end if
 end sub
+
+
+sub RSDKDraw
+	DrawSprite(0)
+end sub
+
+
+sub RSDKLoad
+	LoadSpriteSheet("Global/Display.gif")
+	SpriteFrame(0, 0, 39, 43, 1, 1)
+
+	AddEditorVariable("timePeriod")
+	SetActiveVariable("timePeriod")
+	AddEnumVariable("Present", 0)
+	AddEnumVariable("Past", 1)
+	AddEnumVariable("Good Future", 2)
+	AddEnumVariable("Bad Future", 3)
+end sub
+

@@ -34,8 +34,8 @@ sub ObjectPlayerInteraction
 				Object.Frame = 1
 				PlaySfx(12, 0)
 #platform: Use_Haptics
-				HapticEffect(20, 0, 0, 0)	
-#endplatform				
+				HapticEffect(20, 0, 0, 0)
+#endplatform
 			end if
 
 		end if
@@ -89,14 +89,18 @@ sub ObjectStartup
 	SpriteFrame(-8, -40, 16, 16, 51, 183)		// #6 - Post Head Flip 1
 	SpriteFrame(-3, -40, 8, 16, 68, 183)		// #7 - Post Head Flip 2
 	SpriteFrame(-8, -40, 16, 16, 52, 200)		// #8 - Post Head Flip 3
+
 	ArrayPos0 = 32
 	while ArrayPos0 < 1056
 		if Object[ArrayPos0].Type == TypeName[FuturePost]
 			if Object[ArrayPos0].PropertyValue == 1
+				// High priority variant - set it that way
 				Object[ArrayPos0].DrawOrder = 1
 				Object[ArrayPos0].CollisionPlane = 1
 			end if
+
 			if Options.GameMode == GAMEMODE_TIMEATTACK
+				// No time posts in time attack
 				Object[ArrayPos0].Type = TypeName[BlankObject]
 			end if
 		end if
@@ -104,7 +108,44 @@ sub ObjectStartup
 	loop
 end sub
 
-sub RSDK
-	LoadSpriteSheet("Global/Display.gif")
-	SetEditorIcon(Icon0, SingleIcon, -16, -16, 32, 32, 1, 143)
+
+sub RSDKEdit
+	if Editor.ReturnVariable == true
+		switch Editor.VariableID
+		case EDIT_VAR_PROPVAL // property value
+			CheckResult = Object.PropertyValue
+			break
+		case 0 // visualPriority
+			CheckResult = Object.PropertyValue
+			break
+		end switch
+	else
+		switch Editor.VariableID
+		case EDIT_VAR_PROPVAL // property value
+			Object.PropertyValue = Editor.VariableValue
+			break
+		case 0 // visualPriority
+			Object.PropertyValue = Editor.VariableValue
+			break
+		end switch
+	end if
 end sub
+
+
+sub RSDKDraw
+	DrawSprite(0)
+	DrawSprite(1)
+end sub
+
+
+sub RSDKLoad
+	LoadSpriteSheet("Global/Items.gif")
+	SpriteFrame(-8, -24, 16, 48, 35, 204)
+	SpriteFrame(-16, -40, 32, 16, 52, 239)
+
+	AddEditorVariable("visualPriority")
+	SetActiveVariable("visualPriority")
+	AddEnumVariable("Low", 0)
+	AddEnumVariable("High", 1)
+end sub
+

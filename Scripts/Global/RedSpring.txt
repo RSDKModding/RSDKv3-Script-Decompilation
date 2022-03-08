@@ -338,7 +338,47 @@ sub ObjectStartup
 	SpriteFrame(-32, -32, 48, 48, 166, 34)		// #23 - Red Spring Launch diagonal left 2
 end sub
 
-sub RSDK
+
+sub RSDKEdit
+	if Editor.ReturnVariable == true
+		switch Editor.VariableID
+		case EDIT_VAR_PROPVAL // property value
+			CheckResult = Object.PropertyValue
+			break
+		case 0 // direction
+			CheckResult = Object.PropertyValue
+			break
+		end switch
+	else
+		switch Editor.VariableID
+		case EDIT_VAR_PROPVAL // property value
+			Object.PropertyValue = Editor.VariableValue
+			break
+		case 0 // direction
+			Object.PropertyValue = Editor.VariableValue
+			break
+		end switch
+	end if
+end sub
+
+
+sub RSDKDraw
+	DrawSprite(0)
+end sub
+
+
+sub RSDKLoad
 	LoadSpriteSheet("Global/Display.gif")
-	SetEditorIcon(Icon0, SingleIcon, -16, -16, 32, 32, 1, 143)
+	SpriteFrame(-16, -16, 32, 32, 1, 143)
+
+	AddEditorVariable("direction")
+	SetActiveVariable("direction")
+	AddEnumVariable("Upwards", 0)
+	AddEnumVariable("Right", 1)
+	AddEnumVariable("Left", 2)
+	AddEnumVariable("Down", 3)
+	AddEnumVariable("Diagonal Up-Right", 4)
+	AddEnumVariable("Diagonal Up-Left", 5)
+	AddEnumVariable("Diagonal Down-Right", 6) // TODO: Something going weird about these last two apparently?
+	AddEnumVariable("Diagonal Down-Left", 7)
 end sub

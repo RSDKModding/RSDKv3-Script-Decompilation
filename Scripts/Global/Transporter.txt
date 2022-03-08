@@ -220,7 +220,47 @@ sub ObjectStartup
 
 end sub
 
-sub RSDK
-	LoadSpriteSheet("Global/Display.gif")
-	SetEditorIcon(Icon0, SingleIcon, -16, -16, 32, 32, 1, 143)
+
+sub RSDKEdit
+	if Editor.ReturnVariable == true
+		switch Editor.VariableID
+		case EDIT_VAR_PROPVAL // property value
+			CheckResult = Object.PropertyValue
+			break
+		case 0 // type
+			CheckResult = Object.PropertyValue
+			break
+		end switch
+	else
+		switch Editor.VariableID
+		case EDIT_VAR_PROPVAL // property value
+			Object.PropertyValue = Editor.VariableValue
+			break
+		case 0 // type
+			Object.PropertyValue = Editor.VariableValue
+			break
+		end switch
+	end if
 end sub
+
+
+sub RSDKDraw
+	DrawSprite(Object.PropertyValue)
+end sub
+
+
+sub RSDKLoad
+	LoadSpriteSheet("Global/Items3.gif")
+	SpriteFrame(-40, -32, 80, 24, 175, 61)
+	SpriteFrame(-40, -32, 80, 25, 175, 18)
+	SpriteFrame(-40, 16, 80, 16, 175, 44)
+	SpriteFrame(-40, 16, 80, 16, 175, 1)
+
+	AddEditorVariable("type")
+	SetActiveVariable("type")
+	AddEnumVariable("Active", 0)
+	AddEnumVariable("Old", 1)
+	AddEnumVariable("Destroyed", 2)
+	AddEnumVariable("Destroyed - Old", 3)
+end sub
+

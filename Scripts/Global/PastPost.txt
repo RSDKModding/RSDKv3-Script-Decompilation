@@ -97,6 +97,7 @@ sub ObjectStartup
 				Object[ArrayPos0].DrawOrder = 1
 				Object[ArrayPos0].CollisionPlane = 1
 			end if
+
 			if Options.GameMode == GAMEMODE_TIMEATTACK
 				Object[ArrayPos0].Type = TypeName[BlankObject]
 			end if
@@ -105,7 +106,43 @@ sub ObjectStartup
 	loop
 end sub
 
-sub RSDK
-	LoadSpriteSheet("Global/Display.gif")
-	SetEditorIcon(Icon0, SingleIcon, -16, -16, 32, 32, 1, 143)
+sub RSDKEdit
+	if Editor.ReturnVariable == true
+		switch Editor.VariableID
+		case EDIT_VAR_PROPVAL // property value
+			CheckResult = Object.PropertyValue
+			break
+		case 0 // visualPriority
+			CheckResult = Object.PropertyValue
+			break
+		end switch
+	else
+		switch Editor.VariableID
+		case EDIT_VAR_PROPVAL // property value
+			Object.PropertyValue = Editor.VariableValue
+			break
+		case 0 // visualPriority
+			Object.PropertyValue = Editor.VariableValue
+			break
+		end switch
+	end if
 end sub
+
+
+sub RSDKDraw
+	DrawSprite(0)
+	DrawSprite(1)
+end sub
+
+
+sub RSDKLoad
+	LoadSpriteSheet("Global/Items.gif")
+	SpriteFrame(-8, -24, 16, 48, 35, 204)
+	SpriteFrame(-16, -40, 32, 16, 118, 239)
+
+	AddEditorVariable("visualPriority")
+	SetActiveVariable("visualPriority")
+	AddEnumVariable("Low", 0)
+	AddEnumVariable("High", 1)
+end sub
+

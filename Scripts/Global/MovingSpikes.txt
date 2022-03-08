@@ -199,7 +199,47 @@ sub ObjectStartup
 	SpriteFrame(-16, -16, 32, 32, 50, 100)	// #3 - Spikes facing down
 end sub
 
-sub RSDK
-	LoadSpriteSheet("Global/Display.gif")
-	SetEditorIcon(Icon0, SingleIcon, -16, -16, 32, 32, 1, 143)
+
+sub RSDKEdit
+	if Editor.ReturnVariable == true
+		switch Editor.VariableID
+		case EDIT_VAR_PROPVAL // property value
+			CheckResult = Object.PropertyValue
+			break
+		case 0 // direction
+			CheckResult = Object.PropertyValue
+			break
+		end switch
+	else
+		switch Editor.VariableID
+		case EDIT_VAR_PROPVAL // property value
+			Object.PropertyValue = Editor.VariableValue
+			break
+		case 0 // direction
+			Object.PropertyValue = Editor.VariableValue
+			break
+		end switch
+	end if
 end sub
+
+
+sub RSDKDraw
+	DrawSprite(0)
+end sub
+
+
+sub RSDKLoad
+	LoadSpriteSheet("Global/Items3.gif")
+	SpriteFrame(-16, -16, 32, 32, 50, 1)
+	SpriteFrame(-16, -16, 32, 32, 50, 34)
+	SpriteFrame(-16, -16, 32, 32, 50, 67)
+	SpriteFrame(-16, -16, 32, 32, 50, 100)
+
+	AddEditorVariable("direction")
+	SetActiveVariable("direction")
+	AddEnumVariable("Upwards", 0)
+	AddEnumVariable("Right", 1)
+	AddEnumVariable("Left", 2)
+	AddEnumVariable("Down", 3)
+end sub
+

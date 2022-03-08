@@ -4,6 +4,8 @@
 
 sub ObjectDraw
 	if Object.Frame > 3
+		// Move to the correct player slot and follow that player
+		// Do note, though, that CD only ever has 1 player active so this is pretty much the same as simply moving to P1's slot
 		Stage.ActivePlayer = Object.PropertyValue
 
 		Object.Direction = Player.Direction
@@ -81,7 +83,17 @@ sub ObjectStartup
 	SpriteFrame(-32, -23, 32, 23, 50, 232)	// #10 - Dust Puff Frame 10
 end sub
 
-sub RSDK
-	LoadSpriteSheet("Global/Display.gif")
-	SetEditorIcon(Icon0, SingleIcon, -16, -16, 32, 32, 1, 143)
+
+sub RSDKDraw
+	DrawSprite(0)
 end sub
+
+
+sub RSDKLoad
+	LoadSpriteSheet("Global/Items3.gif")
+	SpriteFrame(-32, -23, 32, 23, 50, 232)
+
+	// Although used by the object (kinda) the property value shouldn't be set by the editor
+	SetVariableAlias(ALIAS_VAR_PROPVAL, "unused")
+end sub
+
