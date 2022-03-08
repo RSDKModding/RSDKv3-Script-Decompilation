@@ -3,38 +3,50 @@
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
 // Aliases
-#alias 5: TYPE_DEATHEVENT
+#alias Object.Value1	:	Object.Text1XPos	// Game or Time
+#alias Object.Value2	:	Object.Text2XPos	// Over
+#alias Object.Value3	:	Object.Timer		// Also used for fading
 
+// States
+#alias 0				:	DEATHEVENT_MAINGAME
+#alias 1				:	DEATHEVENT_TIMEATTACK
+#alias 2				:	DEATHEVENT_TIMEOVER
+#alias 3				:	DEATHEVENT_TRIALGAME
+
+// GameMode
+#alias 1				:	GAMEMODE_MAINGAME
 
 sub ObjectMain
 	switch Object.State
-	case 0
-	case 1
+	case DEATHEVENT_MAINGAME
+	case DEATHEVENT_TIMEATTACK
 		TempValue0 = Screen.CenterX
 		TempValue0 -= 72
-		if Object.Value1 < TempValue0
-			Object.Value1 += 16
-			if Object.Value1 > TempValue0
-				Object.Value1 = TempValue0
+		if Object.Text1XPos < TempValue0
+			Object.Text1XPos += 16
+			if Object.Text1XPos > TempValue0
+				Object.Text1XPos = TempValue0
 			end if
 		end if
+
 		TempValue0 += 80
-		if Object.Value2 > TempValue0
-			Object.Value2 -= 16
-			if Object.Value2 < TempValue0
-				Object.Value2 = TempValue0
+		if Object.Text2XPos > TempValue0
+			Object.Text2XPos -= 16
+			if Object.Text2XPos < TempValue0
+				Object.Text2XPos = TempValue0
 			end if
 		end if
-		if Object.Value3 < 288
-			Object.Value3 += 4
+
+		if Object.Timer < 288
+			Object.Timer += 4
 		else
-			if Object.State == 0
+			if Object.State == DEATHEVENT_MAINGAME
 				Stage.ActiveList = PRESENTATION_STAGE
-				Stage.ListPos = 0
+				Stage.ListPos = 0	// Title Screen
 				LampPost.Check = 0
 				Transporter_Destroyed = 0
 				MetalSonic_Destroyed = 0
-				if Options.GameMode == 1
+				if Options.GameMode == GAMEMODE_MAINGAME
 					ArrayPos1 = Options.SaveSlot
 					ArrayPos1 <<= 3
 					ArrayPos1++
@@ -44,49 +56,55 @@ sub ObjectMain
 					WriteSaveRAM()
 				end if
 			end if
-			if Object.State == 1
+
+			if Object.State == DEATHEVENT_TIMEATTACK
 				Rec_Milliseconds = 0
 				Rec_Seconds = 0
 				Rec_Minutes = 0
 			end if
+
 			LoadStage()
 		end if
-		if Object.Value3 > 0
+
+		if Object.Timer > 0
 			Music.Volume -= 2
-			SetScreenFade(0, 0, 0, Object.Value3)
+			SetScreenFade(0, 0, 0, Object.Timer)
 		else
 			if KeyPress.ButtonA == true
-				Object.Value3 = 0
+				Object.Timer = 0
 			end if
 			if KeyPress.ButtonB == true
-				Object.Value3 = 0
+				Object.Timer = 0
 			end if
 			if KeyPress.ButtonC == true
-				Object.Value3 = 0
+				Object.Timer = 0
 			end if
 		end if
+
 		break
-	case 2
-		if Object.Value3 < 288
+
+	case DEATHEVENT_TIMEOVER
+		if Object.Timer < 288
 			Music.Volume -= 2
-			Object.Value3 += 4
+			Object.Timer += 4
 		else
 			LoadStage()
 		end if
-		SetScreenFade(0, 0, 0, Object.Value3)
+		SetScreenFade(0, 0, 0, Object.Timer)
 		break
-	case 3
-		if Object.Value3 < 288
+
+	case DEATHEVENT_TRIALGAME
+		if Object.Timer < 288
 			Music.Volume -= 2
-			Object.Value3 += 4
+			Object.Timer += 4
 		else
 			TimeAttack.Result = 0
 			LampPost.Check = 0
 			Stage.ActiveList = PRESENTATION_STAGE
-			Stage.ListPos = 2
+			Stage.ListPos = 2	// Menu
 			LoadStage()
 		end if
-		SetScreenFade(0, 0, 0, Object.Value3)
+		SetScreenFade(0, 0, 0, Object.Timer)
 		break
 
 	end switch
@@ -96,26 +114,27 @@ end sub
 sub ObjectDraw
 	switch Object.State
 	case 0
-		DrawSpriteScreenXY(0, Object.Value1, 96)
-		DrawSpriteScreenXY(2, Object.Value2, 96)
+		DrawSpriteScreenXY(0, Object.Text1XPos, 96)
+		DrawSpriteScreenXY(2, Object.Text2XPos, 96)
 		break
 	case 1
-		DrawSpriteScreenXY(1, Object.Value1, 96)
-		DrawSpriteScreenXY(2, Object.Value2, 96)
+		DrawSpriteScreenXY(1, Object.Text1XPos, 96)
+		DrawSpriteScreenXY(2, Object.Text2XPos, 96)
 		break
 	end switch
 end sub
 
 
 sub ObjectStartup
-	if Stage.PlayerListPos == 0
+	if Stage.PlayerListPos == 0		// PlayerName[SONIC]
 		LoadSpriteSheet("Global/Display.gif")
 	else
 		LoadSpriteSheet("Global/Display_t.gif")
 	end if
-	SpriteFrame(0, 0, 64, 16, 0, 189)
-	SpriteFrame(0, 0, 56, 16, 65, 189)
-	SpriteFrame(0, 0, 64, 16, 122, 189)
+	
+	SpriteFrame(0, 0, 64, 16, 0, 189)		// #0 - Game
+	SpriteFrame(0, 0, 56, 16, 65, 189)		// #1 - Time
+	SpriteFrame(0, 0, 64, 16, 122, 189)		// #2 - Over
 end sub
 
 sub RSDK

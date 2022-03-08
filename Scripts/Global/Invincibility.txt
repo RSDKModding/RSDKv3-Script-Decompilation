@@ -3,48 +3,61 @@
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
 // Aliases
-#alias 26: TYPE_INVINCIBILITY
+#alias Object.Value0	:	Object.Timer
 
+// States
+#alias 0				:	INVINCIBILITY_STATE
+#alias 1				:	INVINCIBILITY_AFTERIMAGE
+
+// Ink
+#alias 2				:	INK_ALPHA
 
 sub ObjectDraw
 	switch Object.State
-	case 0
-		Object.Value0++
-		if Object.Value0 > 3
-			Object.Value0 = 0
+	case INVINCIBILITY_STATE
+		Object.Timer++
+		if Object.Timer > 3
+			Object.Timer = 0
+			
 			CreateTempObject(TypeName[Invincibility], 0, Player.XPos, Player.YPos)
-			Object[TempObjectPos].State = 1
-			Object[TempObjectPos].InkEffect = 2 //INK_ALPHA
+			Object[TempObjectPos].State = INVINCIBILITY_AFTERIMAGE
+			Object[TempObjectPos].InkEffect = INK_ALPHA
 			Object[TempObjectPos].Alpha = 256
 			Object[TempObjectPos].DrawOrder = 4
+
 			Object.Frame = Ring.Frame
 			Object.Frame &= 3
+
 			if Warp.Timer == 0
 				DrawSpriteXY(Object.Frame, Player.XPos, Player.YPos)
 			end if
 		end if
 		break
-	case 1
+
+	case INVINCIBILITY_AFTERIMAGE
 		Object.Frame = Ring.Frame
 		Object.Frame &= 3
+
 		if Warp.Timer == 0
 			DrawSpriteFX(Object.Frame, FX_INK, Object.XPos, Object.YPos)
 		end if
+
 		Object.Alpha -= 8
 		if Object.Alpha == 128
 			Object.Type = TypeName[BlankObject]
 		end if
 		break
+
 	end switch
 end sub
 
 
 sub ObjectStartup
 	LoadSpriteSheet("Global/Items3.gif")
-	SpriteFrame(-24, -24, 48, 48, 1, 1)
-	SpriteFrame(-24, -24, 48, 48, 1, 50)
-	SpriteFrame(-24, -24, 48, 48, 1, 99)
-	SpriteFrame(-24, -24, 48, 48, 1, 148)
+	SpriteFrame(-24, -24, 48, 48, 1, 1)		// #0 - Invincibility Frame 0
+	SpriteFrame(-24, -24, 48, 48, 1, 50)	// #1 - Invincibility Frame 1
+	SpriteFrame(-24, -24, 48, 48, 1, 99)	// #2 - Invincibility Frame 2
+	SpriteFrame(-24, -24, 48, 48, 1, 148)	// #3 - Invincibility Frame 3
 end sub
 
 sub RSDK

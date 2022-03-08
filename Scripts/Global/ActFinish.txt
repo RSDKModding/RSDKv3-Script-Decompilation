@@ -4,53 +4,85 @@
 
 // Aliases
 #alias 4: TYPE_ACTFINISH
+#alias Object.Value0	:	Object.Timer		// Also used for fading
+#alias Object.Value1	:	Object.MainTextXOffSet
+#alias Object.Value2	:	Object.ScoreXOffSet
+#alias Object.Value3	:	Object.RingsXOffSet
+#alias Object.Value4	:	Object.TimeXOffSet
+#alias Object.Value5	:	Object.TimeBonus
+#alias Object.Value6	:	Object.RingBonus
 
+#alias Player.Value0	:	Player.Rings
+
+// States
+#alias 0	:	ACTFINISH_SETBONUS
+#alias 1	:	ACTFINISH_SCROLLTEXT
+#alias 2	:	ACTFINISH_TALLYDELAY
+#alias 3	:	ACTFINISH_SCORETALLY
+#alias 4	:	ACTFINISH_LOAD_DELAY
+#alias 5	:	ACTFINISH_LOAD_NEXT_LEVEL
+
+// Engine & Callbacks
+#alias 11	:	CALLBACK_TRIAL_ENDED
+
+// Game Modes
+#alias 1	:	GAMEMODE_MAINGAME
+#alias 2	:	GAMEMODE_TIMEATTACK
+#alias 3	:	GAMEMODE_TRIALGAME
 
 sub ObjectMain
 	switch Object.State
-	case 0
+	case ACTFINISH_SETBONUS
 		Object.XPos = -799
-		Object.Value1 = 1168
-		Object.Value2 = 1255
-		Object.Value3 = 1319
-		Object.Value4 = 1402
-		Object.State = 1
+		Object.MainTextXOffSet = 1168
+		Object.ScoreXOffSet = 1255
+		Object.RingsXOffSet = 1319
+		Object.TimeXOffSet = 1402
+		Object.State = ACTFINISH_SCROLLTEXT
+
 		switch Stage.Minutes
 		case 0
 			if Stage.Seconds < 30
-				Object.Value5 = 50000
+				Object.TimeBonus = 50000
 			else
 				if Stage.Seconds < 45
-					Object.Value5 = 10000
+					Object.TimeBonus = 10000
 				else
-					Object.Value5 = 5000
+					Object.TimeBonus = 5000
 				end if
 			end if
 			break
+
 		case 1
 			if Stage.Seconds < 30
-				Object.Value5 = 4000
+				Object.TimeBonus = 4000
 			else
-				Object.Value5 = 3000
+				Object.TimeBonus = 3000
 			end if
 			break
+			
 		case 2
-			Object.Value5 = 2000
+			Object.TimeBonus = 2000
 			break
+
 		case 3
-			Object.Value5 = 1000
+			Object.TimeBonus = 1000
 			break
+
 		case 4
-			Object.Value5 = 500
+			Object.TimeBonus = 500
 			break
+
 		case 5
-			Object.Value5 = 100
+			Object.TimeBonus = 100
 			break
+
 		end switch
-		Object.Value6 = Object[0].Value0
-		Object.Value6 *= 100
+		Object.RingBonus = Player.Rings
+		Object.RingBonus *= 100
 		break
-	case 1
+
+	case ACTFINISH_SCROLLTEXT
 		TempValue0 = Screen.CenterX
 		TempValue0 -= 68
 		if Object.XPos < TempValue0
@@ -61,49 +93,55 @@ sub ObjectMain
 		else
 			Object.XPos = TempValue0
 		end if
+
 		TempValue0 -= 32
-		if Object.Value1 > TempValue0
-			Object.Value1 -= 16
-			if Object.Value1 < TempValue0
-				Object.Value1 = TempValue0
+		if Object.MainTextXOffSet > TempValue0
+			Object.MainTextXOffSet -= 16
+			if Object.MainTextXOffSet < TempValue0
+				Object.MainTextXOffSet = TempValue0
 			end if
 		else
-			Object.Value1 = TempValue0
+			Object.MainTextXOffSet = TempValue0
 		end if
+
 		TempValue0 += 9
-		if Object.Value2 > TempValue0
-			Object.Value2 -= 16
-			if Object.Value2 < TempValue0
-				Object.Value2 = TempValue0
+		if Object.ScoreXOffSet > TempValue0
+			Object.ScoreXOffSet -= 16
+			if Object.ScoreXOffSet < TempValue0
+				Object.ScoreXOffSet = TempValue0
 			end if
 		else
-			Object.Value2 = TempValue0
+			Object.ScoreXOffSet = TempValue0
 		end if
-		if Object.Value3 > TempValue0
-			Object.Value3 -= 16
-			if Object.Value3 < TempValue0
-				Object.Value3 = TempValue0
+
+		if Object.RingsXOffSet > TempValue0
+			Object.RingsXOffSet -= 16
+			if Object.RingsXOffSet < TempValue0
+				Object.RingsXOffSet = TempValue0
 			end if
 		else
-			Object.Value3 = TempValue0
+			Object.RingsXOffSet = TempValue0
 		end if
-		if Object.Value4 > TempValue0
-			Object.Value4 -= 16
-			if Object.Value4 < TempValue0
-				Object.Value4 = TempValue0
+
+		if Object.TimeXOffSet > TempValue0
+			Object.TimeXOffSet -= 16
+			if Object.TimeXOffSet < TempValue0
+				Object.TimeXOffSet = TempValue0
 			end if
 		else
-			Object.Value4 = TempValue0
-			Object.State = 2
-			Object.Value0 = 0
+			Object.TimeXOffSet = TempValue0
+			Object.State = ACTFINISH_TALLYDELAY
+			Object.Timer = 0
 		end if
 		break
-	case 2
-		Object.Value0++
+
+	case ACTFINISH_TALLYDELAY
+		Object.Timer++
 		if Options.Soundtrack == 0
-			if Object.Value0 > 299
-				Object.Value0 = 0
-				Object.State = 3
+			if Object.Timer > 299
+				Object.Timer = 0
+				Object.State = ACTFINISH_SCORETALLY
+				// Paradise Found Unlock Criteria
 				if Stage.PlayerListPos == 0
 					if Object[24].PropertyValue == 2
 						if Stage.DebugMode == 0
@@ -113,9 +151,10 @@ sub ObjectMain
 				end if
 			end if
 		else
-			if Object.Value0 > 429
-				Object.Value0 = 0
-				Object.State = 3
+			if Object.Timer > 429
+				Object.Timer = 0
+				Object.State = ACTFINISH_SCORETALLY
+				// Paradise Found Unlock Criteria
 				if Stage.PlayerListPos == 0
 					if Object[24].PropertyValue == 2
 						if Stage.DebugMode == 0
@@ -126,65 +165,75 @@ sub ObjectMain
 			end if
 		end if
 		break
-	case 3
-		if Object.Value6 > 0
-			Object.Value6 -= 100
+
+	case ACTFINISH_SCORETALLY
+		if Object.RingBonus > 0
+			Object.RingBonus -= 100
 			Player.Score += 100
 		end if
-		if Object.Value5 > 0
-			Object.Value5 -= 100
+
+		if Object.TimeBonus > 0
+			Object.TimeBonus -= 100
 			Player.Score += 100
 		end if
-		CheckGreater(Object.Value6, 0)
+
+		CheckGreater(Object.RingBonus, 0)
 		TempValue0 = CheckResult
-		CheckGreater(Object.Value5, 0)
+		CheckGreater(Object.TimeBonus, 0)
 		TempValue0 |= CheckResult
-		if TempValue0 == 1
-			Object.Value0++
-			if Object.Value0 == 2
+		//Check if the tally ended
+		if TempValue0 == true
+			Object.Timer++
+			if Object.Timer == 2
 				PlaySfx(16, 0)
-				Object.Value0 = 0
+				Object.Timer = 0
 			end if
 		else
-			Object.State = 4
-			Object.Value0 = 0
+			Object.State = ACTFINISH_LOAD_DELAY
+			Object.Timer = 0
 			PlaySfx(17, 0)
 		end if
 		break
-	case 4
-		Object.Value0++
-		if Object.Value0 == 160
-			Object.Value0 = 0
-			Object.State = 5
+
+	case ACTFINISH_LOAD_DELAY
+		Object.Timer++
+		if Object.Timer == 160
+			Object.Timer = 0
+			Object.State = ACTFINISH_LOAD_NEXT_LEVEL
 			if Object[0].Type == TypeName[BlankObject]
 				PlaySfx(19, 0)
 			end if
 		end if
 		break
 	case 5
-		if Object[0].Type == TypeName[BlankObject]
-			Object.Value0 += 8
-			SetScreenFade(208, 255, 224, Object.Value0)
-			if Engine.TrialMode == 1
-				if Object.Value0 == 1016
-					EngineCallback(11)
+		if Object[0].Type == TypeName[BlankObject]	// Check if the player entered the Special Ring
+			Object.Timer += 8
+			SetScreenFade(208, 255, 224, Object.Timer)
+			if Engine.TrialMode == true
+				if Object.Timer == 1016
+					EngineCallback(CALLBACK_TRIAL_ENDED)
 				end if
 			end if
-			if Object.Value0 == 1024
+			if Object.Timer == 1024
 #platform: Standard
-				if Stage.PlayerListPos == 0
+				if Stage.PlayerListPos == 0				// Set Leaderboard score (Steam)
 					TempValue0 = Stage.ListPos
 					TempValue0 %= 10
 					TempValue0 >>= 2
+
 					TempValue1 = Stage.ListPos
 					TempValue1 /= 10
 					TempValue1 *= 3
+
 					TempValue0 += TempValue1
 					TempValue0++
+
 					TempValue1 = Stage.Seconds
 					TempValue1 *= 100
+
 					TempValue2 = Stage.Minutes
 					TempValue2 *= 6000
+
 					TempValue1 += TempValue2
 					TempValue1 += Stage.MilliSeconds
 					SetLeaderboard(TempValue0, TempValue1)
@@ -192,17 +241,20 @@ sub ObjectMain
 #endplatform
 				Fade_Colour = 208
 				Fade_Colour <<= 16
+
 				TempValue0 = 255
 				TempValue0 <<= 8
 				Fade_Colour += TempValue0
 				Fade_Colour += 224
+
 				Player.Direction = FACING_RIGHT
-				Object.Value0 = 0
+				Object.Timer = 0
 				LampPost.Check = 0
 				Good_Future_Count += Good_Future
 				Good_Future = 0
 				Transporter_Destroyed = 0
 				MetalSonic_Destroyed = 0
+
 				if Stage.ActNo == 2
 					if Good_Future_Count < 2
 						Stage.ListPos++
@@ -213,19 +265,20 @@ sub ObjectMain
 				end if
 				switch Object[24].PropertyValue
 				case 0
-					Stage.ListPos += 4
+					Stage.ListPos += 4		// Present to Present
 					break
 				case 1
-					Stage.ListPos += 3
+					Stage.ListPos += 3		// Past to Present
 					break
 				case 2
-					Stage.ListPos += 2
+					Stage.ListPos += 2		// Good Future to Present
 					break
 				case 3
-					Stage.ListPos++
+					Stage.ListPos++			// Bad Future to Present
 					break
 				end switch
-				if Options.GameMode == 1
+
+				if Options.GameMode == GAMEMODE_MAINGAME
 					ArrayPos1 = Options.SaveSlot
 					ArrayPos1 <<= 3
 					SaveRAM[ArrayPos1] = Stage.PlayerListPos
@@ -235,7 +288,7 @@ sub ObjectMain
 					SaveRAM[ArrayPos1] = Player.Score
 					ArrayPos1++
 					SaveRAM[ArrayPos1] = Stage.ListPos
-					SaveRAM[ArrayPos1] += 81
+					SaveRAM[ArrayPos1] += 81	// This makes the save know you're in a special stage
 					ArrayPos1++
 					SaveRAM[ArrayPos1] = SpecialStage.TimeStones
 					ArrayPos1++
@@ -248,32 +301,33 @@ sub ObjectMain
 					SaveRAM[ArrayPos1] += Good_Future_List
 					WriteSaveRAM()
 				end if
+
 				SpecialStage.NextZone = Stage.ListPos
 				Stage.ListPos = SpecialStage.ListPos
 				Stage.ActiveList = SPECIAL_STAGE
 				TempValue0 = Engine.TrialMode
-				if Stage.ListPos >= Stage.ListSize
-					TempValue0 = 1
+				if Stage.ListPos >= Stage.ListSize	// tldr; check if you are playing the trial
+					TempValue0 = true
 				end if
-				if TempValue0 == 0
+				if TempValue0 == false
 					LoadStage()
 				else
 					Stage.ActiveList = PRESENTATION_STAGE
-					Stage.ListPos = 1
+					Stage.ListPos = 1	// Menu
 					LoadStage()
 				end if
 			end if
 		else
-			Object.Value0 += 4
-			SetScreenFade(0, 0, 0, Object.Value0)
-			if Engine.TrialMode == 1
-				if Object.Value0 == 380
-					EngineCallback(11)
+			Object.Timer += 4
+			SetScreenFade(0, 0, 0, Object.Timer)
+			if Engine.TrialMode == true
+				if Object.Timer == 380
+					EngineCallback(CALLBACK_TRIAL_ENDED)
 				end if
 			end if
-			if Object.Value0 == 384
+			if Object.Timer == 384
 #platform: Standard
-				if Stage.PlayerListPos == 0
+				if Stage.PlayerListPos == 0		// PlayerName[SONIC]
 					TempValue0 = Stage.ListPos
 					TempValue0 %= 10
 					TempValue0 >>= 2
@@ -292,37 +346,40 @@ sub ObjectMain
 				end if
 #endplatform
 				Fade_Colour = 0
-				Object.Value0 = 0
+				Object.Timer = 0
 				LampPost.Check = 0
 				Player.Direction = FACING_RIGHT
 				Good_Future_Count += Good_Future
 				Good_Future = 0
 				Transporter_Destroyed = 0
 				MetalSonic_Destroyed = 0
+
 				if Stage.ActNo == 2
 					if Good_Future_Count < 2
-						Stage.ListPos++
+						Stage.ListPos++		// Set next stage to good future 3
 					end if
 				end if
+
 				if Stage.ActNo == 3
 					Good_Future_Count = 0
 				end if
+
 				switch Object[24].PropertyValue
 				case 0
-					Stage.ListPos += 4
+					Stage.ListPos += 4		// Present to Present
 					break
 				case 1
-					Stage.ListPos += 3
+					Stage.ListPos += 3		// Past to Present
 					break
 				case 2
-					Stage.ListPos += 2
+					Stage.ListPos += 2		// Good Future to Present
 					break
 				case 3
-					Stage.ListPos++
+					Stage.ListPos++			// Bad Future to Present
 					break
-
 				end switch
-				if Options.GameMode == 1
+
+				if Options.GameMode == GAMEMODE_MAINGAME
 					ArrayPos1 = Options.SaveSlot
 					ArrayPos1 <<= 3
 					SaveRAM[ArrayPos1] = Stage.PlayerListPos
@@ -345,8 +402,10 @@ sub ObjectMain
 					SaveRAM[ArrayPos1] += Good_Future_List
 					WriteSaveRAM()
 				end if
+
 #platform: Mobile
-				if Options.GameMode == 3
+				if Options.GameMode == GAMEMODE_TRIALGAME
+					// Set Trial Recoerds
 					TimeAttack.Result = Stage.Seconds
 					TimeAttack.Result *= 100
 					TempValue0 = Stage.Minutes
@@ -355,24 +414,25 @@ sub ObjectMain
 					TimeAttack.Result += Stage.MilliSeconds
 					switch TimeAttack.Round
 					case 0
-						if TimeAttack.Result < SaveRAM[48]
+						if TimeAttack.Result < SaveRAM[48]		// PPZ Record
 							SaveRAM[48] = TimeAttack.Result
 						end if
 						break
 					case 1
-						if TimeAttack.Result < SaveRAM[49]
+						if TimeAttack.Result < SaveRAM[49]		// QQZ Record
 							SaveRAM[49] = TimeAttack.Result
 						end if
 						break
 					end switch
 					WriteSaveRAM()
 					Stage.ActiveList = PRESENTATION_STAGE
-					Stage.ListPos = 11
+					Stage.ListPos = 11	// Purchase Screen
 				end if
 #endplatform
-				if Options.GameMode == 2
-#platform: Mobile	  
-					if Stage.PlayerListPos == 0
+
+				if Options.GameMode == GAMEMODE_TIMEATTACK
+#platform: Mobile	// Set Leaderboards (WP7)
+					if Stage.PlayerListPos == 0				// PlayerName[SONIC]
 						TempValue0 = Stage.ListPos
 						TempValue0 %= 10
 						TempValue0 >>= 2
@@ -397,27 +457,29 @@ sub ObjectMain
 					TimeAttack.Result += TempValue0
 					TimeAttack.Result += Stage.MilliSeconds
 					Stage.ActiveList = PRESENTATION_STAGE
-					Stage.ListPos = 2
+					Stage.ListPos = 2	// Time Attack
 					LoadStage()
 				else
 #platform: Standard
 					TempValue0 = Engine.TrialMode
-#endplatform		 
+#endplatform
+
 #platform: Mobile
-					if Options.GameMode < 3
+					if Options.GameMode < GAMEMODE_TRIALGAME
 						TempValue0 = Engine.TrialMode
 					else
-						TempValue0 = 0
+						TempValue0 = false
 					end if
-#endplatform		  
-					if Stage.ListPos >= Stage.ListSize
-						TempValue0 = 1
+#endplatform
+
+					if Stage.ListPos >= Stage.ListSize	// tldr; check if you are playing the trial
+						TempValue0 = true
 					end if
-					if TempValue0 == 0
+					if TempValue0 == false
 						LoadStage()
 					else
 						Stage.ActiveList = PRESENTATION_STAGE
-						Stage.ListPos = 1
+						Stage.ListPos = 1	// Menu
 						LoadStage()
 					end if
 				end if
@@ -429,37 +491,47 @@ end sub
 
 
 sub ObjectDraw
-	if Good_Future == 0
+	if Good_Future == false
+		// Character Got Through
 		DrawSpriteScreenXY(0, Object.XPos, 65)
-		DrawSpriteScreenXY(4, Object.Value1, 89)
-		TempValue0 = Object.Value1
+		DrawSpriteScreenXY(4, Object.MainTextXOffSet, 89)
+
+		TempValue0 = Object.MainTextXOffSet
 		TempValue0 += 128
 		DrawSpriteScreenXY(5, TempValue0, 89)
 	else
+		// Character made a good future
 		DrawSpriteScreenXY(20, Object.XPos, 65)
-		DrawSpriteScreenXY(21, Object.Value1, 89)
-		TempValue0 = Object.Value1
+		DrawSpriteScreenXY(21, Object.MainTextXOffSet, 89)
+
+		TempValue0 = Object.MainTextXOffSet
 		TempValue0 += 140
 		DrawSpriteScreenXY(5, TempValue0, 89)
 	end if
 	TempValue0 += 64
 	DrawSpriteScreenXY(Stage.ActNo, TempValue0, 89)
-	DrawSpriteScreenXY(6, Object.Value2, 121)
-	TempValue0 = Object.Value2
+
+	// Score
+	DrawSpriteScreenXY(6, Object.ScoreXOffSet, 121)
+	TempValue0 = Object.ScoreXOffSet
 	TempValue0 += 163
 	DrawNumbers(10, TempValue0, 121, Player.Score, 6, 8, 0)
-	DrawSpriteScreenXY(7, Object.Value3, 145)
-	TempValue0 = Object.Value3
+
+	// Ring Bonus
+	DrawSpriteScreenXY(7, Object.RingsXOffSet, 145)
+	TempValue0 = Object.RingsXOffSet
 	TempValue0 += 40
 	DrawSpriteScreenXY(9, TempValue0, 145)
 	TempValue0 += 123
-	DrawNumbers(10, TempValue0, 145, Object.Value6, 5, 8, 0)
-	DrawSpriteScreenXY(8, Object.Value4, 169)
-	TempValue0 = Object.Value4
+	DrawNumbers(10, TempValue0, 145, Object.RingBonus, 5, 8, 0)
+
+	// Time Bonus
+	DrawSpriteScreenXY(8, Object.TimeXOffSet, 169)
+	TempValue0 = Object.TimeXOffSet
 	TempValue0 += 40
 	DrawSpriteScreenXY(9, TempValue0, 169)
 	TempValue0 += 123
-	DrawNumbers(10, TempValue0, 169, Object.Value5, 5, 8, 0)
+	DrawNumbers(10, TempValue0, 169, Object.TimeBonus, 5, 8, 0)
 end sub
 
 
@@ -469,28 +541,29 @@ sub ObjectStartup
 	else
 		LoadSpriteSheet("Global/Display_t.gif")
 	end if
-	SpriteFrame(0, 0, 136, 16, 0, 206)
-	SpriteFrame(0, 0, 8, 16, 194, 223)
-	SpriteFrame(0, 0, 16, 16, 203, 223)
-	SpriteFrame(0, 0, 16, 16, 220, 223)
-	SpriteFrame(0, 0, 113, 16, 137, 206)
-	SpriteFrame(0, 0, 56, 16, 137, 223)
-	SpriteFrame(0, 0, 39, 11, 1, 1)
-	SpriteFrame(0, 0, 31, 11, 1, 33)
-	SpriteFrame(0, 0, 31, 11, 1, 17)
-	SpriteFrame(0, 0, 41, 11, 1, 107)
-	SpriteFrame(0, 0, 8, 11, 1, 50)
-	SpriteFrame(0, 0, 8, 11, 10, 50)
-	SpriteFrame(0, 0, 8, 11, 19, 50)
-	SpriteFrame(0, 0, 8, 11, 28, 50)
-	SpriteFrame(0, 0, 8, 11, 1, 62)
-	SpriteFrame(0, 0, 8, 11, 10, 62)
-	SpriteFrame(0, 0, 8, 11, 19, 62)
-	SpriteFrame(0, 0, 8, 11, 28, 62)
-	SpriteFrame(0, 0, 8, 11, 1, 74)
-	SpriteFrame(0, 0, 8, 11, 10, 74)
-	SpriteFrame(-60, 0, 256, 16, 0, 240)
-	SpriteFrame(-12, 0, 136, 16, 0, 223)
+	
+	SpriteFrame(0, 0, 136, 16, 0, 206)		// #0  - Character Got
+	SpriteFrame(0, 0, 8, 16, 194, 223)		// #1  - Act 1
+	SpriteFrame(0, 0, 16, 16, 203, 223)		// #2  - Act 2
+	SpriteFrame(0, 0, 16, 16, 220, 223)		// #3  - Act 3
+	SpriteFrame(0, 0, 113, 16, 137, 206)	// #4  - Through
+	SpriteFrame(0, 0, 56, 16, 137, 223)		// #5  - Zone
+	SpriteFrame(0, 0, 39, 11, 1, 1)			// #6  - Score
+	SpriteFrame(0, 0, 31, 11, 1, 33)		// #7  - Rings
+	SpriteFrame(0, 0, 31, 11, 1, 17)		// #8  - Time
+	SpriteFrame(0, 0, 41, 11, 1, 107)		// #9  - Bonus
+	SpriteFrame(0, 0, 8, 11, 1, 50)			// #10 - 0
+	SpriteFrame(0, 0, 8, 11, 10, 50)		// #11 - 1
+	SpriteFrame(0, 0, 8, 11, 19, 50)		// #12 - 2
+	SpriteFrame(0, 0, 8, 11, 28, 50)		// #13 - 3
+	SpriteFrame(0, 0, 8, 11, 1, 62)			// #14 - 4
+	SpriteFrame(0, 0, 8, 11, 10, 62)		// #15 - 5
+	SpriteFrame(0, 0, 8, 11, 19, 62)		// #16 - 6
+	SpriteFrame(0, 0, 8, 11, 28, 62)		// #17 - 7
+	SpriteFrame(0, 0, 8, 11, 1, 74)			// #18 - 8
+	SpriteFrame(0, 0, 8, 11, 10, 74)		// #19 - 9
+	SpriteFrame(-60, 0, 256, 16, 0, 240)	// #20 - Sonic Made a Good
+	SpriteFrame(-12, 0, 136, 16, 0, 223)	// #21 - Future In
 end sub
 
 sub RSDK

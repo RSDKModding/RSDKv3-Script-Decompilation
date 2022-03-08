@@ -3,41 +3,83 @@
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
 // Aliases
-#alias 11: TYPE_MONITOR
+#alias Object.Value1	:	Object.GravityStrength
+#alias Object.Value2	:	Object.CollisionPlane
+
+// Broken Monitor Aliases
+#alias Object.Value0	:	BrokenMonitor.YVelocity
+#alias Object.Value1	:	BrokenMonitor.Timer
+#alias Object.Priority	:	BrokenMonitor.Priority
+#alias Object.Alpha		:	BrokenMonitor.Alpha
+
+// Player Aliases
+#alias 1				:	GRAVITY_AIR
+
+// States
+#alias 0				:	MONITOR_IDLE
+#alias 1				:	MONITOR_FALLING
+
+// Priorities
+#alias 1				:	PRIORITY_ACTIVE
+
+// Hit Values
+#alias 4				:	HIT_ROOF
+
+// GameModes
+#alias 2				:	GAMEMODE_TIMEATTACK
+
+// Property Values
+#alias 1				:	RING_MONITOR
+#alias 2				:	SHIELD_MONITOR
+#alias 3				:	INVINCIBILITY_MONITOR
+#alias 4				:	POWER_SNEAKERS_MONITOR
+#alias 5				:	SONIC_MONITOR
+#alias 6				:	TIME_MONITOR
+#alias 7				:	TAILS_MONITOR
+#alias 8				:	S_MONITOR
+#alias 9				:	STATIC_1
+#alias 10				:	STATIC_2
+
 
 sub ObjectMain
-	if Object.State == 1
-		Object.Value1 += 14336
-		Object.YPos += Object.Value1
-		if Object.Value1 >= 0
+	if Object.State == MONITOR_FALLING
+
+		Object.GravityStrength += 14336
+		Object.YPos += Object.GravityStrength
+		if Object.GravityStrength >= 0
 			ObjectTileCollision(0, 0, 16, 0)
-			if CheckResult == 1
-				Object.Value1 = 0
-				Object.State = 0
+			if CheckResult == true
+				Object.GravityStrength = 0
+				Object.State = MONITOR_IDLE
 			end if
+			
 		end if
+
 	end if
 end sub
 
 
 sub ObjectPlayerInteraction
-	if Player.CollisionPlane == Object.Value2
+	if Player.CollisionPlane == Object.CollisionPlane
+
 #platform: Mobile
-		TempValue0 = 0
-		if Player.Gravity == 1
+		CheckResult = true
+		if Player.Gravity == GRAVITY_AIR
 			if Player.YVelocity < 0
-				TempValue0 = 1
+				CheckResult = false
 			end if
 		end if
-		if TempValue0 == 0		
 #endplatform
+
 #platform: Standard	  
-		if Player.YVelocity >= 0
-#endplatform				
+		CheckGreater(Player.YVelocity,-1)
+#endplatform
+
+		if CheckResult == true
 			if Player.Animation == ANI_JUMPING
 				PlayerObjectCollision(C_TOUCH, -16, -14, 16, 16)
-				if CheckResult == 1
-					Object.State = 0
+				if CheckResult == true
+					Object.State = MONITOR_IDLE
 					CreateTempObject(TypeName[SmokePuff], 0, Object.XPos, Object.YPos)
 					Object[TempObjectPos].DrawOrder = 4
 					FlipSign(Player.YVelocity)
@@ -45,10 +87,10 @@ sub ObjectPlayerInteraction
 						Player.YVelocity = -131072
 					end if
 					Object.Type = TypeName[BrokenMonitor]
-					Object.Priority = 1
-					Object.Alpha = 255
-					Object.Value0 = Object.YPos
-					Object.Value1 = -196608
+					BrokenMonitor.Priority = PRIORITY_ACTIVE
+					BrokenMonitor.Alpha = 255
+					BrokenMonitor.YVelocity = Object.YPos
+					BrokenMonitor.Timer = -196608
 					PlaySfx(8, 0)
 #platform: Use_Haptics
 					HapticEffect(16, 0, 0, 0)
@@ -59,9 +101,9 @@ sub ObjectPlayerInteraction
 			end if
 		else
 			PlayerObjectCollision(C_BOX, -15, -16, 15, 16)
-			if CheckResult == 4
-				Object.State = 1
-				Object.Value1 = -131072
+			if CheckResult == HIT_ROOF
+				Object.State = MONITOR_FALLING
+				Object.GravityStrength = -131072
 				Player.YVelocity = 131072
 			end if
 		end if
@@ -74,22 +116,27 @@ sub ObjectDraw
 	if Object.Frame > 17
 		Object.Frame = 0
 	end if
+
 	switch Object.Frame
 	case 0
 	case 1
 		DrawSprite(0)
 		break
+
 	case 6
 	case 7
 		DrawSprite(9)
 		break
+
 	case 12
 	case 13
 		DrawSprite(10)
 		break
+
 	default
 		DrawSprite(Object.PropertyValue)
 		break
+
 	end switch
 end sub
 
@@ -97,44 +144,46 @@ end sub
 
 sub ObjectStartup
 	LoadSpriteSheet("Global/Items.gif")
-	SpriteFrame(-16, -16, 32, 32, 51, 67)
-	SpriteFrame(-16, -16, 32, 32, 18, 1)
-	SpriteFrame(-16, -16, 32, 32, 18, 34)
-	SpriteFrame(-16, -16, 32, 32, 18, 67)
-	SpriteFrame(-16, -16, 32, 32, 18, 100)
-	SpriteFrame(-16, -16, 32, 32, 18, 133)
-	SpriteFrame(-16, -16, 32, 32, 18, 166)
-	SpriteFrame(-16, -16, 32, 32, 51, 100)
-	SpriteFrame(-16, -16, 32, 32, 51, 133)
-	SpriteFrame(-16, -16, 32, 32, 51, 1)
-	SpriteFrame(-16, -16, 32, 32, 51, 34)
+	SpriteFrame(-16, -16, 32, 32, 51, 67)	// #0  - Monitor
+	SpriteFrame(-16, -16, 32, 32, 18, 1)	// #1  - Ring Monitor
+	SpriteFrame(-16, -16, 32, 32, 18, 34)	// #2  - Blue Shield Monitor
+	SpriteFrame(-16, -16, 32, 32, 18, 67)	// #3  - Invincibility Monitor
+	SpriteFrame(-16, -16, 32, 32, 18, 100)	// #4  - Power Sneakers Monitor
+	SpriteFrame(-16, -16, 32, 32, 18, 133)	// #5  - Sonic Monitor
+	SpriteFrame(-16, -16, 32, 32, 18, 166)	// #6  - Time Monitor
+	SpriteFrame(-16, -16, 32, 32, 51, 100)	// #7  - Tails Monitor
+	SpriteFrame(-16, -16, 32, 32, 51, 133)	// #8  - S Monitor
+	SpriteFrame(-16, -16, 32, 32, 51, 1)	// #9  - Monitor Static 1
+	SpriteFrame(-16, -16, 32, 32, 51, 34)	// #10 - Monitor Static 2
 	ArrayPos0 = 32
 	while ArrayPos0 < 1056
 		if Object[ArrayPos0].Type == TypeName[Monitor]
-			if Object[ArrayPos0].PropertyValue > 9
+			if Object[ArrayPos0].PropertyValue > STATIC_1
 				Object[ArrayPos0].PropertyValue -= 10
 				Object[ArrayPos0].DrawOrder = 1
-				Object[ArrayPos0].Value2 = 1
+				Object[ArrayPos0].CollisionPlane = 1
 			end if
 		end if
 		ArrayPos0++
 	loop
-	if Stage.PlayerListPos == 1
+
+	if Stage.PlayerListPos == 1		// PlayerName[TAILS]
 		ArrayPos0 = 32
 		while ArrayPos0 < 1056
 			if Object[ArrayPos0].Type == TypeName[Monitor]
-				if Object[ArrayPos0].PropertyValue == 5
-					Object[ArrayPos0].PropertyValue = 7
+				if Object[ArrayPos0].PropertyValue == SONIC_MONITOR
+					Object[ArrayPos0].PropertyValue = TAILS_MONITOR
 				end if
 			end if
 			ArrayPos0++
 		loop
 	end if
-	if Options.GameMode == 2
+
+	if Options.GameMode == GAMEMODE_TIMEATTACK
 		ArrayPos0 = 32
 		while ArrayPos0 < 1056
 			if Object[ArrayPos0].Type == TypeName[Monitor]
-				if Object[ArrayPos0].PropertyValue == 5
+				if Object[ArrayPos0].PropertyValue == SONIC_MONITOR
 					Object[ArrayPos0].Type = TypeName[BlankObject]
 				end if
 			end if

@@ -4,120 +4,156 @@
 
 // Aliases
 #alias 67: TYPE_MOVINGSPIKES
+#alias Object.Value0	:	Object.Timer
+#alias Object.Value1	:	Object.OffSet
+// Player Aliases
 #alias Player.Value4:Player.Invincible
+#alias 1	:	GRAVITY_AIR
 
+// States
+#alias 0	:	MOVINGSPIKES_IDLE
+#alias 1	:	MOVINGSPIKES_RETRIEVE
+#alias 2	:	MOVINGSPIKES_HIDE
+#alias 3	:	MOVINGSPIKES_REVEAL
+
+// Property Values
+#alias 0	:	SPIKES_FACING_UP
+#alias 1	:	SPIKES_FACING_RIGHT
+#alias 2	:	SPIKES_FACING_LEFT
+#alias 3	:	SPIKES_FACING_DOWN
 
 sub ObjectMain
 	switch Object.State
-	case 0
-		if Object.Value0 < 60
-			Object.Value0++
+	case MOVINGSPIKES_IDLE
+		if Object.Timer < 60
+			Object.Timer++
 		else
-			Object.State = 1
-			Object.Value0 = 0
+			Object.State = MOVINGSPIKES_RETRIEVE
+			Object.Timer = 0
 			PlayStageSfx(4, 0)
 		end if
 		break
-	case 1
-		if Object.Value1 < 2097152
-			Object.Value1 += 524288
+
+	case MOVINGSPIKES_RETRIEVE
+		if Object.OffSet < 2097152		// 0x200000
+			Object.OffSet += 524288		// 0x80000
 		else
-			Object.State = 2
+			Object.State = MOVINGSPIKES_HIDE
 		end if
 		break
-	case 2
-		if Object.Value0 < 60
-			Object.Value0++
+
+	case MOVINGSPIKES_HIDE
+		if Object.Timer < 60
+			Object.Timer++
 		else
-			Object.State = 3
-			Object.Value0 = 0
+			Object.State = MOVINGSPIKES_REVEAL
+			Object.Timer = 0
 			PlayStageSfx(4, 0)
 		end if
 		break
-	case 3
-		if Object.Value1 > 0
-			Object.Value1 -= 524288
+
+	case MOVINGSPIKES_REVEAL
+		if Object.OffSet > 0
+			Object.OffSet -= 524288		// 0x80000
 		else
-			Object.State = 0
+			Object.State = MOVINGSPIKES_IDLE
 		end if
 		break
+
 	end switch
 end sub
 
 
 sub ObjectPlayerInteraction
-	TempValue0 = Object.Value1
+	TempValue0 = Object.OffSet
 	TempValue0 >>= 16
 	TempValue0 -= 16
 	TempValue1 = TempValue0
 	TempValue1 += 32
+	
 	switch Object.PropertyValue
-	case 0
+	case SPIKES_FACING_UP
 		if Player.State != PlayerObject_Knockback
 			PlayerObjectCollision(C_BOX, -16, TempValue0, 16, TempValue1)
 		end if
-		if Object.State != 2
+		
+		if Object.State != MOVINGSPIKES_HIDE
 			if Player.YVelocity > -1
 				if Player.Invincible == 0
 					PlayerObjectCollision(C_TOUCH, -15, -18, 15, -12)
-					if CheckResult == 1
+					if CheckResult == true
 						Player.State = PlayerObject_Hurt
-						Player.Gravity = 1
-						Player.YPos -= 65536
+						Player.Gravity = GRAVITY_AIR
+						Player.YPos -= 65536		// 0x10000
 						if Player.XPos > Object.XPos
-							Player.Speed = 131072
+							Player.Speed = 131072	// 0x20000
 						else
-							Player.Speed = -131072
+							Player.Speed = -131072	// -0x20000
 						end if
+
 					end if
+
 				end if
+
 			end if
+
 		end if
 		break
-	case 1
+
+	case SPIKES_FACING_RIGHT
 		FlipSign(TempValue0)
 		FlipSign(TempValue1)
 		PlayerObjectCollision(C_BOX, TempValue1, -16, TempValue0, 16)
-		if Object.State != 2
+		if Object.State != MOVINGSPIKES_HIDE
 			if Player.Invincible == 0
 				PlayerObjectCollision(C_TOUCH, 8, -15, 18, 15)
-				if CheckResult == 1
+				if CheckResult == true
 					Player.State = PlayerObject_Hurt
-					Player.Speed = 131072
+					Player.Speed = 131072	// 0x20000
 				end if
 			end if
 		end if
 		break
-	case 2
+
+	case SPIKES_FACING_LEFT
 		PlayerObjectCollision(C_BOX, TempValue0, -16, TempValue1, 16)
-		if Object.State != 2
+		if Object.State != MOVINGSPIKES_HIDE
 			if Player.Invincible == 0
 				PlayerObjectCollision(C_TOUCH, -18, -15, -8, 15)
-				if CheckResult == 1
+				if CheckResult == true
 					Player.State = PlayerObject_Hurt
-					Player.Speed = -131072
+					Player.Speed = -131072	// -0x20000
 				end if
 			end if
 		end if
 		break
-	case 3
+
+	case SPIKES_FACING_DOWN
 		FlipSign(TempValue0)
 		FlipSign(TempValue1)
 		PlayerObjectCollision(C_BOX, -16, TempValue1, 16, TempValue0)
-		if Object.State != 2
+		if Object.State != MOVINGSPIKES_HIDE
+
 			if Player.YVelocity < 1
+
 				if Player.Invincible == 0
+
 					PlayerObjectCollision(C_TOUCH, -14, 12, 14, 18)
-					if CheckResult == 1
+					if CheckResult == true
+
 						Player.State = PlayerObject_Hurt
 						if Player.XPos > Object.XPos
-							Player.Speed = 131072
+							Player.Speed = 131072	// 0x20000
 						else
-							Player.Speed = -131072
+							Player.Speed = -131072	// -0x20000
 						end if
+
 					end if
+
 				end if
+
 			end if
+
 		end if
 		break
 	end switch
@@ -126,36 +162,41 @@ end sub
 
 sub ObjectDraw
 	switch Object.PropertyValue
-	case 0
+	case SPIKES_FACING_UP
 		TempValue0 = Object.YPos
-		TempValue0 += Object.Value1
+		TempValue0 += Object.OffSet
 		DrawSpriteXY(Object.PropertyValue, Object.XPos, TempValue0)
 		break
-	case 1
+
+	case SPIKES_FACING_RIGHT
 		TempValue0 = Object.XPos
-		TempValue0 -= Object.Value1
+		TempValue0 -= Object.OffSet
 		DrawSpriteXY(Object.PropertyValue, TempValue0, Object.YPos)
 		break
-	case 2
+
+	case SPIKES_FACING_LEFT
 		TempValue0 = Object.XPos
-		TempValue0 += Object.Value1
+		TempValue0 += Object.OffSet
 		DrawSpriteXY(Object.PropertyValue, TempValue0, Object.YPos)
 		break
-	case 3
+
+	case SPIKES_FACING_DOWN
 		TempValue0 = Object.YPos
-		TempValue0 -= Object.Value1
+		TempValue0 -= Object.OffSet
 		DrawSpriteXY(Object.PropertyValue, Object.XPos, TempValue0)
 		break
+
 	end switch
 end sub
 
 
 sub ObjectStartup
 	LoadSpriteSheet("Global/Items3.gif")
-	SpriteFrame(-16, -16, 32, 32, 50, 1)
-	SpriteFrame(-16, -16, 32, 32, 50, 34)
-	SpriteFrame(-16, -16, 32, 32, 50, 67)
-	SpriteFrame(-16, -16, 32, 32, 50, 100)
+
+	SpriteFrame(-16, -16, 32, 32, 50, 1)	// #0 - Spikes facing up
+	SpriteFrame(-16, -16, 32, 32, 50, 34)	// #1 - Spikes facing right
+	SpriteFrame(-16, -16, 32, 32, 50, 67)	// #2 - Spikes facing left
+	SpriteFrame(-16, -16, 32, 32, 50, 100)	// #3 - Spikes facing down
 end sub
 
 sub RSDK

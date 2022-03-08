@@ -4,49 +4,62 @@
 
 // Aliases
 #alias 60: TYPE_FADEMUSIC
+#alias Object.Value0	:	Object.Timer
 
+// Property Values
+#alias 0				:	FADEMUSIC_FADE_TO_BOSS
+#alias 1				:	FADEMUSIC_FADE_TO_LEVEL
+#alias 2				:	FADEMUSIC_SSZEGGMAN
+#alias 3				:	FADEMUSIC_SSZAMY
+
+// Priority
+#alias 1				:	PRIORITY_ACTIVE
 
 sub ObjectMain
 	switch Object.PropertyValue
-	case 0
-		if Object.Value0 < 100
-			Object.Value0++
+	case FADEMUSIC_FADE_TO_BOSS
+		if Object.Timer < 100
+			Object.Timer++
 			Music.Volume--
 		else
 			PlayMusic(4)
 			Object.Type = TypeName[BlankObject]
 		end if
 		break
-	case 1
-		if Object.Value0 < 100
-			Object.Value0++
+
+	case FADEMUSIC_FADE_TO_LEVEL
+		if Object.Timer < 100
+			Object.Timer++
 			Music.Volume--
 		else
 			PlayMusic(0)
 			Object.Type = TypeName[BlankObject]
 		end if
 		break
-	case 2
-		if Object.Value0 < 50
-			Object.Value0++
+
+	case FADEMUSIC_SSZEGGMAN
+		if Object.Timer < 50
+			Object.Timer++
 			Music.Volume -= 2
 		else
 			PlayMusic(0)
 			Object.Type = TypeName[BlankObject]
 		end if
 		break
-	case 3
-		if Object.Value0 < 100
-			Object.Value0++
+
+	case FADEMUSIC_SSZAMY
+		if Object.Timer < 100
+			Object.Timer++
 			Music.Volume--
 		else
 			PlayMusic(1)
 			Object.Type = TypeName[BlankObject]
 			Object[30].Type = TypeName[ActFinish]
 			Object[30].DrawOrder = 6
-			Object[30].Priority = 1
+			Object[30].Priority = PRIORITY_ACTIVE
 		end if
 		break
+
 	end switch
 end sub
 

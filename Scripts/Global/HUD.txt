@@ -3,43 +3,53 @@
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
 // Aliases
-#alias 3: TYPE_HUD
+#alias Object.Value4		:	Object.FlashTimer
+#alias Object.PropertyValue	:	Object.TimePeriod
 
-#alias Player.Value0:Player.Rings
+// Player Aliases
+#alias Player.Value0		:	Player.Rings
+
+// Warp Destination
+#alias 1					:	PAST
+#alias 2					:	FUTURE
 
 sub ObjectDraw
 	if Player.Rings == 0
-		Object.Value4++
-		if Object.Value4 == 16
-			Object.Value4 = 0
+		Object.FlashTimer++
+		if Object.FlashTimer == 16
+			Object.FlashTimer = 0
 		end if
 	else
 		if Stage.Minutes == 9
-			Object.Value4++
-			if Object.Value4 == 16
-				Object.Value4 = 0
+			Object.FlashTimer++
+			if Object.FlashTimer == 16
+				Object.FlashTimer = 0
 			end if
 		end if
 	end if
+
 #platform: Standard
 	DrawSpriteScreenXY(10, 17, 13)
 	if Stage.Minutes == 9
-		if Object.Value4 > 7
+		if Object.FlashTimer > 7
 			DrawSpriteScreenXY(11, 17, 29)
 		end if
 	end if
+
 	if Player.Rings == 0
-		if Object.Value4 > 7
+		if Object.FlashTimer > 7
 			DrawSpriteScreenXY(12, 17, 45)
 		end if
 	end if
+
 	DrawSpriteScreenXY(13, 67, 29)
 	DrawNumbers(0, 104, 13, Player.Score, 6, 8, 0)
 	DrawNumbers(0, 104, 29, Stage.MilliSeconds, 2, 8, 1)
 	DrawNumbers(0, 80, 29, Stage.Seconds, 2, 8, 1)
 	DrawNumbers(0, 56, 29, Stage.Minutes, 1, 8, 1)
 	DrawNumbers(0, 80, 45, Player.Rings, 3, 8, 0)
-	if Stage.DebugMode == 1
+
+	if Stage.DebugMode == true
 		TempValue0 = Player.XPos
 		TempValue0 >>= 16
 		TempValue1 = Screen.XSize
@@ -55,10 +65,12 @@ sub ObjectDraw
 		DrawSpriteScreenXY(14, TempValue1, 15)
 		DrawSpriteScreenXY(21, TempValue1, 31)
 	end if
-	TempValue0 = Object.PropertyValue
+
+	TempValue0 = Object.TimePeriod
 	TempValue0 += 17
 	DrawSpriteScreenXY(TempValue0, 16, 212)
 	DrawSpriteScreenXY(14, 32, 220)
+
 	if Player.Lives < 10
 		DrawNumbers(0, 40, 217, Player.Lives, 1, 8, 1)
 		TempValue1 = 52
@@ -66,8 +78,9 @@ sub ObjectDraw
 		DrawNumbers(0, 48, 217, Player.Lives, 2, 8, 1)
 		TempValue1 = 60
 	end if
+
 	switch Warp.Destination
-	case 1
+	case PAST
 		if Warp.Timer < 100
 			DrawSpriteScreenXY(15, TempValue1, 214)
 		else
@@ -78,7 +91,8 @@ sub ObjectDraw
 			end if
 		end if
 		break
-	case 2
+
+	case FUTURE
 		if Warp.Timer < 100
 			DrawSpriteScreenXY(16, TempValue1, 214)
 		else
@@ -96,22 +110,25 @@ sub ObjectDraw
 #platform: Mobile
 	DrawSpriteScreenXY(10, 17, 9)
 	if Stage.Minutes == 9
-		if Object.Value4 > 7
+		if Object.FlashTimer > 7
 			DrawSpriteScreenXY(11, 17, 25)
 		end if
 	end if
-	if Player.Value0 == 0
-		if Object.Value4 > 7
+
+	if Player.Rings == 0
+		if Object.FlashTimer > 7
 			DrawSpriteScreenXY(12, 17, 41)
 		end if
 	end if
+
 	DrawSpriteScreenXY(13, 67, 25)
 	DrawNumbers(0, 104, 9, Player.Score, 6, 8, 0)
 	DrawNumbers(0, 104, 25, Stage.MilliSeconds, 2, 8, 1)
 	DrawNumbers(0, 80, 25, Stage.Seconds, 2, 8, 1)
 	DrawNumbers(0, 56, 25, Stage.Minutes, 1, 8, 1)
 	DrawNumbers(0, 80, 41, Player.Value0, 3, 8, 0)
-	if Stage.DebugMode == 1
+
+	if Stage.DebugMode == true
 		TempValue0 = Player.XPos
 		TempValue0 >>= 16
 		TempValue1 = Screen.XSize
@@ -127,9 +144,10 @@ sub ObjectDraw
 		DrawSpriteScreenXY(14, TempValue1, 27)
 		DrawSpriteScreenXY(21, TempValue1, 43)
 	end if
+
 	TempValue1 = Screen.XSize
 	TempValue1 -= 48
-	TempValue0 = Object.PropertyValue
+	TempValue0 = Object.TimePeriod
 	TempValue0 += 17
 	DrawSpriteScreenXY(TempValue0, TempValue1, 8)
 	TempValue1 += 16
@@ -143,8 +161,9 @@ sub ObjectDraw
 		DrawNumbers(0, TempValue1, 13, Player.Lives, 2, 8, 1)
 		TempValue1 -= 8
 	end if
+
 	switch Warp.Destination
-	case 1
+	case PAST
 		TempValue1 -= 79
 		if Warp.Timer < 100
 			DrawSpriteScreenXY(15, TempValue1, 8)
@@ -156,7 +175,8 @@ sub ObjectDraw
 			end if
 		end if
 		break
-	case 2
+
+	case FUTURE
 		TempValue1 -= 79
 		if Warp.Timer < 100
 			DrawSpriteScreenXY(16, TempValue1, 8)
@@ -168,17 +188,19 @@ sub ObjectDraw
 			end if
 		end if
 		break
+
 	end switch
 #endplatform
 end sub
 
 
 sub ObjectStartup
-	if Stage.PlayerListPos == 0
+	if Stage.PlayerListPos == 0		// PlayerName[SONIC]
 		LoadSpriteSheet("Global/Display.gif")
 	else
 		LoadSpriteSheet("Global/Display_t.gif")
 	end if
+	// Numbers #0 - #9
 	SpriteFrame(0, 0, 8, 11, 1, 50)
 	SpriteFrame(0, 0, 8, 11, 10, 50)
 	SpriteFrame(0, 0, 8, 11, 19, 50)
@@ -189,18 +211,19 @@ sub ObjectStartup
 	SpriteFrame(0, 0, 8, 11, 28, 62)
 	SpriteFrame(0, 0, 8, 11, 1, 74)
 	SpriteFrame(0, 0, 8, 11, 10, 74)
-	SpriteFrame(0, 0, 39, 43, 1, 1)
-	SpriteFrame(0, 0, 31, 11, 1, 119)
-	SpriteFrame(0, 0, 39, 11, 1, 131)
-	SpriteFrame(0, 0, 29, 4, 1, 45)
-	SpriteFrame(0, 0, 8, 8, 1, 98)
-	SpriteFrame(0, 0, 32, 16, 90, 67)
-	SpriteFrame(0, 0, 32, 16, 123, 67)
-	SpriteFrame(0, 0, 16, 16, 187, 189)
-	SpriteFrame(0, 0, 16, 16, 204, 189)
-	SpriteFrame(0, 0, 16, 16, 237, 223)
-	SpriteFrame(0, 0, 16, 16, 237, 223)
-	SpriteFrame(0, 0, 8, 8, 10, 98)
+
+	SpriteFrame(0, 0, 39, 43, 1, 1)		// #10 - Score Time Rings
+	SpriteFrame(0, 0, 31, 11, 1, 119)	// #11 - Time Flashing
+	SpriteFrame(0, 0, 39, 11, 1, 131)	// #12 - Rings Flashing
+	SpriteFrame(0, 0, 29, 4, 1, 45)		// #13 - ´		´´
+	SpriteFrame(0, 0, 8, 8, 1, 98)		// #14 - Debug X / Life Counter X
+	SpriteFrame(0, 0, 32, 16, 90, 67)	// #15 - Past
+	SpriteFrame(0, 0, 32, 16, 123, 67)	// #16 - Future
+	SpriteFrame(0, 0, 16, 16, 187, 189) // #17 - Life Icon
+	SpriteFrame(0, 0, 16, 16, 204, 189) // #18 - Life Icon Past
+	SpriteFrame(0, 0, 16, 16, 237, 223) // #19 - Life Icon Good Future
+	SpriteFrame(0, 0, 16, 16, 237, 223) // #20 - Life Icon Bad Future
+	SpriteFrame(0, 0, 8, 8, 10, 98)		// #21 - Debug Y
 end sub
 
 sub RSDK

@@ -4,40 +4,65 @@
 
 // Aliases
 #alias 28: TYPE_TIMEWARP
+#alias Object.Value7	:	Object.CurrentPeriod
+#alias Object.Value1	:	Object.Timer
+
+// HUD aliases
+#alias Object[24].PropertyValue	:	HUD.TimePeriod
+
+// Player Aliases
 #alias Player.Value0:Player.Rings
 #alias Player.Value4:Player.Invincible
 #alias Player.Value6:Player.MinRollSpeed
 
+// States
+#alias 0	:	TIMEWARP_SETUP
+#alias 1	:	TIMEWARP_FADE_IN
+#alias 2	:	TIMEWARP_BACKGROUND
+#alias 3	:	TIMEWARP_BLANK
+#alias 4	:	TIMEWARP_LEAVING
+#alias 5	:	TIMEWARP_TRAVEL
+
+// Time Periods
+#alias 0	:	PRESENT
+#alias 1	:	PAST
+#alias 2	:	GOOD_FUTURE
+#alias 3	:	BAD_FUTURE
+
 
 sub ObjectDraw
 	switch Object.State
-	case 0
-		if Object.Value1 < 320
-			if Object.Value1 == 0
+	case TIMEWARP_SETUP
+		if Object.Timer < 320
+			if Object.Timer == 0
 				Warp.XPos = Player.XPos
 				Warp.YPos = Player.YPos
+
 				Warp.XVelocity = Player.XVelocity
 				Warp.YVelocity = Player.YVelocity
 				Warp.Speed = Player.Speed
-				Warp.CollisionMode = Player.CollisionMode
 				Warp.MinRollSpeed = Player.MinRollSpeed
+
+				Warp.CollisionMode = Player.CollisionMode
 				Warp.Gravity = Player.Gravity
-				if Player.State == PlayerObject_Blank
-					Warp.State = 13
+				
+				// New
+				CheckEqual(Player.State, PlayerObject_Blank)
+				TempValue0 = CheckResult
+				CheckEqual(Player.State, PlayerObject_SpinningTop)
+				TempValue0 |= CheckResult
+				CheckEqual(Player.State, PlayerObject_DebugMode)
+				TempValue0 |= CheckResult
+				if CheckResult == true
+					Warp.State = PlayerObject_StartJump
 				else
-					if Player.State == PlayerObject_SpinningTop
-						Warp.State = 13
-					else
-						if Player.State == PlayerObject_DebugMode
-							Warp.State = 13
-						else
-							Warp.State = Player.State
-						end if
-					end if
+					Warp.State = Player.State
 				end if
+
 				Warp.Animation = Player.Animation
 				Warp.Angle = Player.Angle
 				Warp.PlayerFrame = Player.Frame
+
 				Player.Invincible = 1000
 				Player.ControlMode = -1
 #platform: Mobile
@@ -45,32 +70,40 @@ sub ObjectDraw
 #endplatform
 			end if
 			Music.Volume -= 8
-			SetScreenFade(208, 255, 224, Object.Value1)
-			Object.Value1 += 10
+			SetScreenFade(208, 255, 224, Object.Timer)
+			Object.Timer += 10
 		else
-			if Stage.PlayerListPos == 0
-				if Stage.DebugMode == 0
+			// 88 Miles per Hour unlock criteria
+			if Stage.PlayerListPos == 0	//PlayerName[SONIC]
+				if Stage.DebugMode == false
 					SetAchievement(0, 100)
 				end if
 			end if
+
 #platform: Use_Haptics
 			HapticEffect(91, 0, 0, 0)
 #endplatform
 			StopSfx(24)
 			StopSfx(25)
 			Stage.State = STAGE_RUNNING
-			Stage.TimeEnabled = 0
+			Stage.TimeEnabled = false
+
+			// Saves everything
 			CallFunction(StageSetup_SaveStageState)
 			Rec_Milliseconds = Stage.MilliSeconds
 			Rec_Seconds = Stage.Seconds
 			Rec_Minutes = Stage.Minutes
 			Warp.Rings = Player.Rings
-			TempValue2 = Object[24].PropertyValue
+			TempValue2 = HUD.TimePeriod
+
+			// Sets every object as a blank object in the current period
+			//(likely to avoid the player's death during the cutscene)
 			TempValue0 = 0
 			while TempValue0 < 1184
 				ResetObjectEntity(TempValue0, TypeName[BlankObject], 0, 0, 0)
 				TempValue0++
 			loop
+			// Blanks the level layers
 			Screen.XOffset = 0
 			Screen.YOffset = 0
 			Stage[0].ActiveLayer = 9
@@ -78,17 +111,21 @@ sub ObjectDraw
 			Stage[2].ActiveLayer = 9
 			Stage[3].ActiveLayer = 9
 			ArrayPos0 = 0
+
+			// Sets the fade in
 			Object[ArrayPos0].Type = TypeName[TimeWarp]
-			Object[ArrayPos0].State = 1
-			Object[ArrayPos0].Value1 = 320
-			Object[ArrayPos0].Value7 = TempValue2
+			Object[ArrayPos0].State = TIMEWARP_FADE_IN
+			Object[ArrayPos0].Timer = 320
+			Object[ArrayPos0].CurrentPeriod = TempValue2
 			ArrayPos0++
+
+			// Creates the background
 			TempValue0 = -32
 			while TempValue0 < 256
 				TempValue1 = 0
 				while TempValue1 < Screen.XSize
 					Object[ArrayPos0].Type = TypeName[TimeWarp]
-					Object[ArrayPos0].State = 2
+					Object[ArrayPos0].State = TIMEWARP_BACKGROUND
 					Rand(Object[ArrayPos0].Frame, 27)
 					Object[ArrayPos0].Frame >>= 2
 					Object[ArrayPos0].Frame <<= 2
@@ -103,6 +140,7 @@ sub ObjectDraw
 				loop
 				TempValue0 += 32
 			loop
+			// And of course, the star of the show appears
 			Object[ArrayPos0].Type = TypeName[WarpSonic]
 			Object[ArrayPos0].iXPos = Screen.CenterX
 			Object[ArrayPos0].iYPos = 480
@@ -110,15 +148,17 @@ sub ObjectDraw
 			PlaySfx(14, 0)
 		end if
 		break
-	case 1
-		if Object.Value1 > 0
-			SetScreenFade(208, 255, 224, Object.Value1)
-			Object.Value1 -= 10
+
+	case TIMEWARP_FADE_IN
+		if Object.Timer > 0
+			SetScreenFade(208, 255, 224, Object.Timer)
+			Object.Timer -= 10
 		else
-			Object.State = 3
+			Object.State = TIMEWARP_BLANK
 		end if
 		break
-	case 2
+
+	case TIMEWARP_BACKGROUND
 		TempValue0 = Object.Frame
 		TempValue0 >>= 1
 		DrawSpriteFX(TempValue0, FX_FLIP, Object.XPos, Object.YPos)
@@ -126,47 +166,55 @@ sub ObjectDraw
 		if Object.Frame == 28
 			Object.Frame = 0
 		end if
-		Object.YPos += 262144
-		if Object.YPos >= 16777216
-			Object.YPos -= 18874368
+
+		Object.YPos += 262144		// 0x40000
+		if Object.YPos >= 16777216	// 0x1000000
+			Object.YPos -= 18874368	// 0x1200000
 		end if
 		break
-	case 3
+
+	case TIMEWARP_BLANK
 		break
-	case 4
-		Object.Value1++
-		if Object.Value1 == 40
-			Object.Value1 = 0
-			Object.State = 5
+
+	case TIMEWARP_LEAVING
+		Object.Timer++
+		if Object.Timer == 40
+			Object.Timer = 0
+			Object.State = TIMEWARP_TRAVEL
 		end if
 		break
-	case 5
-		if Object.Value1 < 1800
-			SetScreenFade(208, 255, 224, Object.Value1)
-			Object.Value1 += 10
+
+	case TIMEWARP_TRAVEL
+		if Object.Timer < 1800
+			SetScreenFade(208, 255, 224, Object.Timer)
+			Object.Timer += 10
 		else
 			SetScreenFade(208, 255, 224, 255)
-			switch Object.Value7
-			case 0
-				if Warp.Destination == 1
+			switch Object.CurrentPeriod
+			case PRESENT
+				if Warp.Destination == true
 					Stage.ListPos++
 				else
-					if Transporter_Destroyed == 1
+					if Transporter_Destroyed == true
 						Stage.ListPos += 2
 					else
 						Stage.ListPos += 3
 					end if
 				end if
 				break
-			case 1
+
+			case PAST
 				Stage.ListPos--
 				break
-			case 2
+
+			case GOOD_FUTURE
 				Stage.ListPos -= 2
 				break
-			case 3
+
+			case BAD_FUTURE
 				Stage.ListPos -= 3
 				break
+
 			end switch
 			Fade_Colour = 208
 			Fade_Colour <<= 16
@@ -183,20 +231,20 @@ end sub
 
 sub ObjectStartup
 	LoadSpriteSheet("Global/Items3.gif")
-	SpriteFrame(-16, -16, 32, 32, 83, 0)
-	SpriteFrame(-16, -16, 32, 32, 83, 32)
-	SpriteFrame(-16, -16, 32, 32, 83, 64)
-	SpriteFrame(-16, -16, 32, 32, 83, 96)
-	SpriteFrame(-16, -16, 32, 32, 83, 128)
-	SpriteFrame(-16, -16, 32, 32, 83, 160)
-	SpriteFrame(-16, -16, 32, 32, 83, 192)
-	SpriteFrame(-16, -16, 32, 32, 83, 224)
-	SpriteFrame(-16, -16, 32, 32, 115, 0)
-	SpriteFrame(-16, -16, 32, 32, 115, 32)
-	SpriteFrame(-16, -16, 32, 32, 115, 64)
-	SpriteFrame(-16, -16, 32, 32, 115, 96)
-	SpriteFrame(-16, -16, 32, 32, 115, 128)
-	SpriteFrame(-16, -16, 32, 32, 115, 160)
+	SpriteFrame(-16, -16, 32, 32, 83, 0)	// #0  - Time Travel BG Chunk 0
+	SpriteFrame(-16, -16, 32, 32, 83, 32)	// #1  - Time Travel BG Chunk 1
+	SpriteFrame(-16, -16, 32, 32, 83, 64)	// #2  - Time Travel BG Chunk 2
+	SpriteFrame(-16, -16, 32, 32, 83, 96)	// #3  - Time Travel BG Chunk 3
+	SpriteFrame(-16, -16, 32, 32, 83, 128)	// #4  - Time Travel BG Chunk 4
+	SpriteFrame(-16, -16, 32, 32, 83, 160)	// #5  - Time Travel BG Chunk 5
+	SpriteFrame(-16, -16, 32, 32, 83, 192)	// #6  - Time Travel BG Chunk 6
+	SpriteFrame(-16, -16, 32, 32, 83, 224)	// #7  - Time Travel BG Chunk 7
+	SpriteFrame(-16, -16, 32, 32, 115, 0)	// #8  - Time Travel BG Chunk 8
+	SpriteFrame(-16, -16, 32, 32, 115, 32)	// #9  - Time Travel BG Chunk 9
+	SpriteFrame(-16, -16, 32, 32, 115, 64)	// #10 - Time Travel BG Chunk 10
+	SpriteFrame(-16, -16, 32, 32, 115, 96)	// #11 - Time Travel BG Chunk 11
+	SpriteFrame(-16, -16, 32, 32, 115, 128)	// #12 - Time Travel BG Chunk 12
+	SpriteFrame(-16, -16, 32, 32, 115, 160)	// #13 - Time Travel BG Chunk 13
 end sub
 
 sub RSDK

@@ -3,14 +3,21 @@
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
 // Aliases
-#alias 68: TYPE_TIMEWARPFIX
+#alias Object.Value0	:	Object.DissapearTimer
+// States
+#alias 0	:	TIMEWARPFIX_ERASE_TOUCH		// Touch this, no more warp for you
+#alias 1	:	TIMEWARPFIX_ERASE_AREA		// Get past this, no more warp for you
+#alias 2	:	TIMEWARPFIX_SAVE_POINT		// tldr, sets your position to the next object after time-travelling
+#alias 3	:	TIMEWARPFIX_SAVE_POINT_AIRT	// tldr, sets your position to the next object after time-travelling, but in the air
 
+// Gravity
+#alias 1	:	GRAVITY_AIR
 
 sub ObjectMain
 	switch Object.PropertyValue
-	case 0
+	case TIMEWARPFIX_ERASE_TOUCH
 		PlayerObjectCollision(C_TOUCH, -16, -16, 16, 16)
-		if CheckResult == 1
+		if CheckResult == true
 			if Warp.Destination > 0
 				if Warp.Timer > 99
 					if Warp.Timer < 220
@@ -21,47 +28,47 @@ sub ObjectMain
 			end if
 		end if
 		break
-	case 1
+
+	case TIMEWARPFIX_ERASE_AREA
 		if Player.XPos < Object.XPos
 			Warp.Destination = 0
 			Warp.Timer = 0
 		end if
 		break
-	case 2
+
+	case TIMEWARPFIX_SAVE_POINT
 		PlayerObjectCollision(C_TOUCH, -48, -48, 48, 48)
-		if CheckResult == 1
+		if CheckResult == true
 			Object.Type = TypeName[BlankObject]
 			Player.XPos = Object[+1].XPos
 			Player.YPos = Object[+1].YPos
 		end if
-		Object.Value0++
-		if Object.Value0 == 2
+		Object.DissapearTimer++
+		if Object.DissapearTimer == 2
 			Object.Type = TypeName[BlankObject]
 		end if
 		break
-	case 3
+
+	case TIMEWARPFIX_SAVE_POINT_AIR
 		PlayerObjectCollision(C_TOUCH, -96, -96, 96, 96)
-		if CheckResult == 1
+		if CheckResult == true
 			Object.Type = TypeName[BlankObject]
 			Player.XPos = Object[+1].XPos
 			Player.YPos = Object[+1].YPos
-			Player.Gravity = 1
+			Player.Gravity = GRAVITY_AIR
 		end if
-		Object.Value0++
-		if Object.Value0 == 2
+		Object.DissapearTimer++
+		if Object.DissapearTimer == 2
 			Object.Type = TypeName[BlankObject]
 		end if
 		break
+		
 	end switch
 end sub
 
 
 sub ObjectPlayerInteraction
 	PlayerObjectCollision(C_TOUCH, -14, -15, 14, 16)
-end sub
-
-
-sub ObjectStartup
 end sub
 
 sub RSDK

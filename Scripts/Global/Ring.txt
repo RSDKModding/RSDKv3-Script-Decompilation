@@ -4,10 +4,18 @@
 
 // Aliases
 #alias Player.Value0	:	Player.Rings
+#alias Object.PropertyValue	: Object.CollisionPlane
+// Pan
+#alias 0	:	PAN_RIGHT
+#alias 1	:	PAN_LEFT
 
+// GameModes
+#alias 2	:	GAMEMODE_TIMEATTACK
 sub ObjectPlayerInteraction
 	if Player.State != PlayerObject_Knockback
-		if Player.CollisionPlane == Object.PropertyValue
+
+		if Player.CollisionPlane == Object.CollisionPlane
+
 			PlayerObjectCollision(C_TOUCH, -8, -8, 8, 8)
 			if CheckResult == true
 				Object.Type = TypeName[RingSparkle]
@@ -15,10 +23,11 @@ sub ObjectPlayerInteraction
 				if Player.Rings > 999
 					Player.Rings = 999
 				end if
+				
 				if Player.Rings >= Ring.ExtraLife
-					if Options.GameMode != 2
+					if Options.GameMode != GAMEMODE_TIMEATTACK
 						Player.Lives++
-						if Stage.PlayerListPos == 0
+						if Stage.PlayerListPos == 0		// PlayerName[SONIC]
 							PlaySfx(20, 0)
 						else
 							PlaySfx(21, 0)
@@ -41,15 +50,18 @@ sub ObjectPlayerInteraction
 						end if
 					end if
 				end if
-				if Ring.Pan == 0	// Left panning
+
+				if Ring.Pan == PAN_RIGHT
 					SetSfxAttributes(1, -1, -100)
-					Ring.Pan = 1
-				else				// Right Panning
+					Ring.Pan = PAN_LEFT
+				else
 					SetSfxAttributes(2, -1, 100)
-					Ring.Pan = 0
+					Ring.Pan = PAN_RIGHT
 				end if
 			end if
+
 		end if
+
 	end if
 end sub
 
@@ -64,7 +76,7 @@ sub ObjectStartup
 	ArrayPos0 = 32
 	while ArrayPos0 < 1056
 		if Object[ArrayPos0].Type == TypeName[Ring]
-			if Object[ArrayPos0].PropertyValue == 0
+			if Object[ArrayPos0].CollisionPlane == 0
 				Object[ArrayPos0].DrawOrder = 4
 			else
 				Object[ArrayPos0].DrawOrder = 2

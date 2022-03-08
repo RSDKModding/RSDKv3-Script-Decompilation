@@ -3,54 +3,102 @@
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
 // Aliases
-#alias 29: TYPE_WARPSONIC
+#alias Object.Value0	:	Object.AnimationTimer
+#alias Object.Value1	:	Object.Timer
+#alias Object.Value2	:	Object.WarpStarTimer
 
+// Afterimage 1 Aliases
+#alias Object[1].Value0	:	AfterImage1.Delay
+#alias Object[1].Value1	:	AfterImage1.Delay2
+#alias Object[1].Value2	:	AfterImage1.Delay3
+#alias Object[1].Value3	:	AfterImage1.YPos
+
+// Afterimage 2 Aliases
+#alias Object[1].Value4	:	AfterImage2.Delay
+#alias Object[1].Value5	:	AfterImage2.Delay2
+#alias Object[1].Value6	:	AfterImage2.Delay3
+#alias Object[1].Value7	:	AfterImage2.YPos
+
+// Afterimage 3 Aliases
+#alias Object[2].Value0	:	AfterImage3.Delay
+#alias Object[2].Value1	:	AfterImage3.Delay2
+#alias Object[2].Value2	:	AfterImage3.Delay3
+#alias Object[2].Value3	:	AfterImage3.YPos
+
+// Time Warp Aliases
+#alias Object[0].State	:	TimeWarp.State
+
+// Warp Star Aliases
+#alias Object.Value1	:	WarpStar.RandFadeTimer
+#alias Object.State		:	WarpStar.State
+
+// States
+#alias 0				:	WARPSONIC_REACH_CENTER
+#alias 1				:	WARPSONIC_IDLE
+#alias 2				:	WARPSONIC_LEAVE
+
+// WarpStar States
+#alias 2				:	WARPSTAR_CUTSCENE
+
+// TimeWarp States
+#alias 4				:	TIMEWARP_LEAVING
+
+// Ink
+#alias 2				:	INK_ALPHA
 
 sub ObjectMain
-	Object[2].Value3 = Object[2].Value2
-	Object[2].Value2 = Object[2].Value1
-	Object[2].Value1 = Object[2].Value0
-	Object[2].Value0 = Object[1].Value7
-	Object[1].Value7 = Object[1].Value6
-	Object[1].Value6 = Object[1].Value5
-	Object[1].Value5 = Object[1].Value4
-	Object[1].Value4 = Object[1].Value3
-	Object[1].Value3 = Object[1].Value2
-	Object[1].Value2 = Object[1].Value1
-	Object[1].Value1 = Object[1].Value0
-	Object[1].Value0 = Object.YPos
+	// tldr; gets the ypos for the afterimages
+	AfterImage3.YPos   = AfterImage3.Delay3
+	AfterImage3.Delay3 = AfterImage3.Delay2
+	AfterImage3.Delay2 = AfterImage3.Delay
+	AfterImage3.Delay  = AfterImage2.YPos
+
+	AfterImage2.YPos   = AfterImage2.Delay3
+	AfterImage2.Delay3 = AfterImage2.Delay2
+	AfterImage2.Delay2 = AfterImage2.Delay
+	AfterImage2.Delay  = AfterImage1.YPos
+
+	AfterImage1.YPos = AfterImage1.Delay3
+	AfterImage1.Delay3 = AfterImage1.Delay2
+	AfterImage1.Delay2 = AfterImage1.Delay
+	AfterImage1.Delay = Object.YPos
+
 	switch Object.State
-	case 0
-		Object.YPos -= 524288
-		if Object.YPos < 7864320
-			Object.YPos = 7864320
-			Object.State = 1
-			Object.Value1 = 0
+	case WARPSONIC_REACH_CENTER
+		Object.YPos -= 524288		// 0x80000
+		if Object.YPos < 7864320	// 0x780000
+			Object.YPos = 7864320	// 0x780000
+			Object.State = WARPSONIC_IDLE
+			Object.Timer = 0
 		end if
 		break
-	case 1
-		Object.Value1++
+
+	case WARPSONIC_IDLE
+		Object.Timer++
 #platform: Use_Haptics
-		if Object.Value1 == 60
+		if Object.Timer == 60
 			HapticEffect(91, 0, 0, 0)
 		end if
 #endplatform
-		if Object.Value1 == 120
-			Object.Value1 = 0
-			Object.State = 2
-			Object[0].State = 4
+		if Object.Timer == 120
+			Object.Timer = 0
+			Object.State = WARPSONIC_LEAVE
+			TimeWarp.State = TIMEWARP_LEAVING
 		end if
 		break
-	case 2
-		Object.YPos -= 524288
-		if Object.OutOfBounds == 1
+
+	case WARPSONIC_LEAVE
+		Object.YPos -= 524288		// 0x80000
+		if Object.OutOfBounds == true
 			Object.Type = TypeName[BlankObject]
 		end if
 		break
+
 	end switch
-	Object.Value2++
-	if Object.Value2 == 4
-		Object.Value2 = 0
+
+	Object.WarpStarTimer++
+	if Object.WarpStarTimer == 4
+		Object.WarpStarTimer = 0
 		Rand(TempValue0, 32)
 		TempValue0 -= 16
 		TempValue0 <<= 16
@@ -60,32 +108,36 @@ sub ObjectMain
 		TempValue1 <<= 16
 		TempValue1 += Object.YPos
 		CreateTempObject(TypeName[WarpStar], 0, TempValue0, TempValue1)
-		Object[TempObjectPos].State = 2
-		Rand(Object[TempObjectPos].Value1, 32)
-		Object[TempObjectPos].Value1 += 16
+		WarpStar[TempObjectPos].State = WARPSTAR_CUTSCENE
+		Rand(WarpStar[TempObjectPos].RandFadeTimer, 32)
+		WarpStar[TempObjectPos].RandFadeTimer += 16
 	end if
 end sub
 
 
 sub ObjectDraw
+	// Afterimages Frames
 	TempValue0 = Object.Frame
 	TempValue0++
 	if TempValue0 > 4
 		TempValue0 = 0
 	end if
-	if Object.YPos < 17039360
-		Object.InkEffect = 2 //INK_ALPHA
+
+	// Afterimages
+	if Object.YPos < 17039360	// 0x1040000
+		Object.InkEffect = INK_ALPHA
 		Object.Alpha = 160
-		DrawSpriteFX(TempValue0, FX_INK, Object.XPos, Object[1].Value3)
+		DrawSpriteFX(TempValue0, FX_INK, Object.XPos, AfterImage1.YPos)
 		Object.Alpha = 128
-		DrawSpriteFX(TempValue0, FX_INK, Object.XPos, Object[1].Value7)
+		DrawSpriteFX(TempValue0, FX_INK, Object.XPos, AfterImage2.YPos)
 		Object.Alpha = 96
-		DrawSpriteFX(TempValue0, FX_INK, Object.XPos, Object[2].Value3)
+		DrawSpriteFX(TempValue0, FX_INK, Object.XPos, AfterImage3.YPos)
 	end if
+
 	DrawSprite(Object.Frame)
-	Object.Value0++
-	if Object.Value0 > 2
-		Object.Value0 = 0
+	Object.AnimationTimer++
+	if Object.AnimationTimer > 2
+		Object.AnimationTimer = 0
 		Object.Frame++
 		if Object.Frame > 4
 			Object.Frame = 0
@@ -95,20 +147,20 @@ end sub
 
 
 sub ObjectStartup
-	if Stage.PlayerListPos == 0
+	if Stage.PlayerListPos == 0	// PlayerName[SONIC]
 		LoadSpriteSheet("Global/Items3.gif")
-		SpriteFrame(-14, -22, 29, 44, 116, 211)
-		SpriteFrame(-11, -22, 20, 44, 146, 211)
-		SpriteFrame(-11, -22, 25, 44, 167, 211)
-		SpriteFrame(-13, -22, 25, 44, 193, 211)
-		SpriteFrame(-8, -22, 20, 44, 219, 211)
+		SpriteFrame(-14, -22, 29, 44, 116, 211)	// #0 - Bouncing Frame 0
+		SpriteFrame(-11, -22, 20, 44, 146, 211)	// #1 - Bouncing Frame 1
+		SpriteFrame(-11, -22, 25, 44, 167, 211)	// #2 - Bouncing Frame 2
+		SpriteFrame(-13, -22, 25, 44, 193, 211)	// #3 - Bouncing Frame 3
+		SpriteFrame(-8, -22, 20, 44, 219, 211)	// #4 - Bouncing Frame 4
 	else
 		LoadSpriteSheet("Players/Tails2.gif")
-		SpriteFrame(-17, -22, 24, 48, 1, 1)
-		SpriteFrame(-11, -22, 24, 48, 26, 1)
-		SpriteFrame(-13, -22, 24, 48, 51, 1)
-		SpriteFrame(-7, -22, 24, 48, 76, 1)
-		SpriteFrame(-10, -22, 21, 48, 101, 1)
+		SpriteFrame(-17, -22, 24, 48, 1, 1)		// #0 - Bouncing Frame 0
+		SpriteFrame(-11, -22, 24, 48, 26, 1)	// #1 - Bouncing Frame 1
+		SpriteFrame(-13, -22, 24, 48, 51, 1)	// #2 - Bouncing Frame 2
+		SpriteFrame(-7, -22, 24, 48, 76, 1)		// #3 - Bouncing Frame 3
+		SpriteFrame(-10, -22, 21, 48, 101, 1)	// #4 - Bouncing Frame 4
 	end if
 end sub
 

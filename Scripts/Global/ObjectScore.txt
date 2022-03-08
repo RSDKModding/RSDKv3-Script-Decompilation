@@ -3,30 +3,39 @@
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
 // Aliases
-#alias 32: TYPE_OBJECTSCORE
+#alias Object.Value0	:	Object.Timer
+#alias Object.Value1	:	Object.Gravity	// i don't think this is actually used
 
+// States
+#alias 0	:	OBJECTSCORE_SPAWN
+#alias 1	:	OBJECTSCORE_DESPAWN
+
+// Priority
+#alias 1	:	PRIORITY_ACTIVE
 
 sub ObjectDraw
-	if Object.State == 0
+	if Object.State == OBJECTSCORE_SPAWN
 		DrawSprite(Object.PropertyValue)
-		Object.YPos -= 131072
-		Object.Value0++
-		if Object.Value0 == 24
+		Object.YPos -= 131072	// 0x20000
+
+		Object.Timer++
+		if Object.Timer == 24
 			Object.Type = TypeName[BlankObject]
 			if Object[26].Type == TypeName[ObjectScore]
-				if Object[26].Value0 < 3
-					Object[26].Value0++
+				if Object[26].Timer < 3
+					Object[26].Timer++
 				end if
 			else
 				Object[26].Type = TypeName[ObjectScore]
-				Object[26].Value0 = 1
+				Object[26].Timer = 1
 			end if
-			Object[26].State = 1
-			Object[26].Value1 = Player.Gravity
-			Object[26].Priority = 1
+
+			Object[26].State = OBJECTSCORE_DESPAWN
+			Object[26].Gravity = Player.Gravity
+			Object[26].Priority = PRIORITY_ACTIVE
 		end if
 	else
-		if Object.Value1 != Player.Gravity
+		if Object.Gravity != Player.Gravity
 			ResetObjectEntity(26, TypeName[BlankObject], 0, 0, 0)
 		end if
 	end if
@@ -35,10 +44,10 @@ end sub
 
 sub ObjectStartup
 	LoadSpriteSheet("Global/Items3.gif")
-	SpriteFrame(-6, -4, 12, 8, 0, 246)
-	SpriteFrame(-7, -4, 13, 8, 20, 246)
-	SpriteFrame(-7, -4, 13, 8, 33, 246)
-	SpriteFrame(-8, -4, 16, 8, 0, 246)
+	SpriteFrame(-6, -4, 12, 8, 0, 246)		// #0 - 100
+	SpriteFrame(-7, -4, 13, 8, 20, 246)		// #1 - 200
+	SpriteFrame(-7, -4, 13, 8, 33, 246)		// #2 - 500
+	SpriteFrame(-8, -4, 16, 8, 0, 246)		// #3 - 10000
 end sub
 
 sub RSDK

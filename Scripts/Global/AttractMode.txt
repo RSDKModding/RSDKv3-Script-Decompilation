@@ -3,47 +3,58 @@
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
 // Aliases
-#alias 18: TYPE_ATTRACTMODE
+#alias Object.Value1	:	Object.DemoTime
+#alias Object.Value2	:	Object.DemoDuration
+#alias Object.Value3	:	Object.DemoInput
 
+// States
+#alias 0				:	ATTRACTMODE_SETUP
+#alias 1				:	ATTRACTMODE_HANDLE_INPUT
+
+// Engine & CallBacks
+#alias 2 				:	MESSAGE_LOSTFOCUS
 
 sub ObjectMain
 	switch Object.State
-	case 0
+	case ATTRACTMODE_SETUP
 		if Player.ControlMode == 0
 			Object.State++
-			Object.Value3 = Object.Value2
-			Object.Value3 -= 60
+			Object.DemoInput = Object.DemoDuration
+			Object.DemoInput -= 60
 		end if
 		break
-	case 1
-		GetTextInfo(TempValue0, MENU_1, 0, 0, Object.Value1)
+
+	case ATTRACTMODE_HANDLE_INPUT
+		GetTextInfo(TempValue0, MENU_1, 0, 0, Object.DemoTime)
 		GetBit(Player.Up, TempValue0, 0)
 		GetBit(Player.Down, TempValue0, 1)
 		GetBit(Player.Left, TempValue0, 2)
 		GetBit(Player.Right, TempValue0, 3)
 		GetBit(Player.JumpPress, TempValue0, 4)
 		GetBit(Player.JumpHold, TempValue0, 5)
-		if Object.Value1 < Object.Value2
-			Object.Value1++
+		if Object.DemoTime < Object.DemoDuration
+			Object.DemoTime++
 		else
 			StopMusic()
-			Options.AttractMode = 0
+			Options.AttractMode = false
 			Stage.ActiveList = PRESENTATION_STAGE
-			Stage.ListPos = 0
+			Stage.ListPos = 0		// Title Screen
 			Transporter_Destroyed = 0
 			MetalSonic_Destroyed = 0
 			Good_Future = 0
 			LoadStage()
 			LampPost.Check = 0
+
 #platform: Use_Haptics
 			Engine.HapticsEnabled = SaveRAM[40]
-#endplatform			
+#endplatform
 		end if
-		if Object.Value1 >= Object.Value3
+
+		if Object.DemoTime >= Object.DemoInput
 			Music.Volume -= 2
 			Screen.CameraEnabled = 0
-			TempValue0 = Object.Value1
-			TempValue0 -= Object.Value3
+			TempValue0 = Object.DemoTime
+			TempValue0 -= Object.DemoInput
 			TempValue0 <<= 3
 			if TempValue0 > 255
 				TempValue0 = 255
@@ -51,26 +62,28 @@ sub ObjectMain
 			SetScreenFade(0, 0, 0, TempValue0)
 		else
 			if KeyPress.ButtonA == true
-				Object.Value1 = Object.Value3
+				Object.DemoTime = Object.DemoInput
 			end if
 			if KeyPress.ButtonB == true
-				Object.Value1 = Object.Value3
+				Object.DemoTime = Object.DemoInput
 			end if
 			if KeyPress.ButtonC == true
-				Object.Value1 = Object.Value3
+				Object.DemoTime = Object.DemoInput
 			end if
 			if KeyPress.AnyStart == true
-				Object.Value1 = Object.Value3
+				Object.DemoTime = Object.DemoInput
 			end if
+
 #platform: Mobile
 			CheckTouchRect(0, 0, Screen.XSize, 240)
 			if CheckResult > -1
-				Object.Value1 = Object.Value3
+				Object.DemoTime = Object.DemoInput
 			end if
-			if Engine.Message == 2
-				Object.Value1 = Object.Value3
+			if Engine.Message == MESSAGE_LOSTFOCUS
+				Object.DemoTime = Object.DemoInput
 			end if
 #endplatform
+
 		end if
 		break
 	end switch
@@ -89,20 +102,23 @@ end sub
 
 sub ObjectStartup
 	if Stage.ActiveList == REGULAR_STAGE
-		if Stage.PlayerListPos == 0
+		if Stage.PlayerListPos == 0		// PlayerName[SONIC]
 			LoadSpriteSheet("Global/Display.gif")
 		else
 			LoadSpriteSheet("Global/Display_t.gif")
 		end if
-		SpriteFrame(-17, -5, 34, 11, 1, 176)
+		
+		SpriteFrame(-17, -5, 34, 11, 1, 176)		// #0 Demo (Unused)
 	else
 		LoadSpriteSheet("Special/Objects.gif")
-		SpriteFrame(-17, -5, 34, 11, 83, 168)
+
+		SpriteFrame(-17, -5, 34, 11, 83, 168)		// #0 Demo (Unused)
 	end if
+
 	ArrayPos0 = 32
 	while ArrayPos0 < 1056
 		if Object[ArrayPos0].Type == TypeName[AttractMode]
-			if Options.AttractMode == 1
+			if Options.AttractMode == true
 				Object[ArrayPos0].Priority = 1
 				Object[ArrayPos0].DrawOrder = 6
 				switch Object[ArrayPos0].PropertyValue
