@@ -3,45 +3,55 @@
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
 // Aliases
-#alias Object.Value0	:	Object.YVelocity
-#alias Object.Value1	:	Object.Timer
+#alias Object.Value0			:	Object.YVelocity
+#alias Object.Value1			:	Object.Timer
+
+// Power Up Aliases
+#alias Object[2].Priority		:	PowerUp.Priority
+#alias Object[2].DrawOrder		:	PowerUp.DrawOrder
+#alias Object[2].XPos			:	PowerUp.XPos
+#alias Object[2].YPos			:	PowerUp.YPos
+#alias Object[2].PropertyValue	:	PowerUp.PropertyValue
+#alias Object[2].InkEffect		:	PowerUp.InkEffect
+#alias Object[2].Alpha			:	PowerUp.Alpha
 
 // Player Aliases
-#alias Player.Value0	:	Player.Rings
-#alias Player.Value3	:	Player.SpeedShoes
-#alias Player.Value4	:	Player.Invincible
-#alias Player.Value5	:	Player.BlinkTimer
+#alias Player.Value0			:	Player.Rings
+#alias Player.Value3			:	Player.SpeedShoes
+#alias Player.Value4			:	Player.Invincible
+#alias Player.Value5			:	Player.BlinkTimer
 
 // OST
-#alias 0				:	JP_OST
+#alias 0						:	JP_OST
 
 // Priorities
-#alias 0				:	PRIORITY_ACTIVE_BOUNDS
+#alias 0						:	PRIORITY_ACTIVE_BOUNDS
+#alias 1						:	PRIORITY_ACTIVE
 
 // Ink Effects
-#alias 2				:	INK_ALPHA
+#alias 2						:	INK_ALPHA
 
 // Panning
-#alias 0				:	PAN_RIGHT
-#alias 1				:	PAN_LEFT
+#alias 0						:	PAN_RIGHT
+#alias 1						:	PAN_LEFT
 
 // States
-#alias 0				:	BROKENMONITOR_SPAWN_POWERUP
-#alias 1				:	BROKENMONITOR_FADE_POWERUP
-#alias 2				:	BROKENMONITOR_BLANK
+#alias 0						:	BROKENMONITOR_SPAWN_POWERUP
+#alias 1						:	BROKENMONITOR_FADE_POWERUP
+#alias 2						:	BROKENMONITOR_BLANK
 
 // Property Values
-#alias 1				:	RING_MONITOR
-#alias 2				:	SHIELD_MONITOR
-#alias 3				:	INVINCIBILITY_MONITOR
-#alias 4				:	POWER_SNEAKERS_MONITOR
-#alias 5				:	SONIC_MONITOR
-#alias 6				:	TIME_MONITOR
-#alias 7				:	TAILS_MONITOR
-#alias 8				:	S_MONITOR
+#alias 1						:	RING_MONITOR
+#alias 2						:	SHIELD_MONITOR
+#alias 3						:	INVINCIBILITY_MONITOR
+#alias 4						:	POWER_SNEAKERS_MONITOR
+#alias 5						:	SONIC_MONITOR
+#alias 6						:	TIME_MONITOR
+#alias 7						:	TAILS_MONITOR
+#alias 8						:	S_MONITOR
 
 // GameModes
-#alias 2				:	GAMEMODE_TIMEATTACK
+#alias 2						:	GAMEMODE_TIMEATTACK
 
 sub ObjectMain
 	switch Object.State
@@ -99,24 +109,24 @@ sub ObjectMain
 
 			case SHIELD_MONITOR
 				PlaySfx(10, 0)
-				Object[2].PropertyValue = 1
+				PowerUp.PropertyValue = 1
 				if Object[2].Type != TypeName[Invincibility]
 					Object[2].Type = TypeName[BlueShield]
-					Object[2].Priority = PRIORITY_ACTIVE_BOUNDS
-					Object[2].DrawOrder = 4
-					Object[2].InkEffect = INK_ALPHA
-					Object[2].Alpha = 160
-					Object[2].XPos = Player.XPos
-					Object[2].YPos = Player.YPos
+					PowerUp.Priority = PRIORITY_ACTIVE
+					PowerUp.DrawOrder = 4
+					PowerUp.InkEffect = INK_ALPHA
+					PowerUp.Alpha = 160
+					PowerUp.XPos = Player.XPos
+					PowerUp.YPos = Player.YPos
 				end if
 				break
 
 			case INVINCIBILITY_MONITOR
 				Object[2].Type = TypeName[Invincibility]
-				Object[2].Priority = PRIORITY_ACTIVE_BOUNDS
-				Object[2].DrawOrder = 4
-				Object[2].XPos = Player.XPos
-				Object[2].YPos = Player.YPos
+				PowerUp.Priority = PRIORITY_ACTIVE
+				PowerUp.DrawOrder = 4
+				PowerUp.XPos = Player.XPos
+				PowerUp.YPos = Player.YPos
 				if Options.Soundtrack == JP_OST
 					Player.Invincible = 1260
 				else
@@ -150,10 +160,10 @@ sub ObjectMain
 
 			case S_MONITOR
 				Object[2].Type = TypeName[Invincibility]
-				Object[2].Priority = PRIORITY_ACTIVE_BOUNDS
-				Object[2].DrawOrder = 4
-				Object[2].XPos = Player.XPos
-				Object[2].YPos = Player.YPos
+				PowerUp.Priority = PRIORITY_ACTIVE
+				PowerUp.DrawOrder = 4
+				PowerUp.XPos = Player.XPos
+				PowerUp.YPos = Player.YPos
 				Player.Invincible = 1320
 				Player.BlinkTimer = 0
 				Player.Visible = true
@@ -180,6 +190,7 @@ sub ObjectMain
 			end if
 		end if
 		break
+
 	case BROKENMONITOR_BLANK
 		break
 	end switch

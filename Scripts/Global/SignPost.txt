@@ -3,14 +3,23 @@
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
 // Aliases
-#alias 18: TYPE_SIGNPOST
-#alias Object.Value0	:	Object.Timer
-#alias Object.Value1	:	Object.AnimationTimer
+#alias Object.Value0		:	Object.Timer
+#alias Object.Value1		:	Object.AnimationTimer
+
+// ActFinish Aliases
+#alias Object[30].DrawOrder	:	ActFinish.DrawOrder
+#alias Object[30].Priority	:	ActFinish.Priority
+
+// States
 #alias 0	:	SIGNPOST_IDLE
 #alias 1	:	SIGNPOST_FLIP
 #alias 2	:	SIGNPOST_MOVE_PLAYER
 #alias 3	:	SIGNPOST_STOP_PLAYER
 #alias 4	:	SIGNPOST_BLANK
+
+// Priorities
+#alias 1	:	PRIORITY_ACTIVE
+#alias 3	:	PRIORITY_ACTIVE_XBOUNDS
 
 sub ObjectMain
 	switch Object.State
@@ -76,8 +85,8 @@ sub ObjectMain
 							end if
 						end if
 						Object[30].Type = TypeName[ActFinish]
-						Object[30].DrawOrder = 6
-						Object[30].Priority = 1
+						ActFinish.DrawOrder = 6
+						ActFinish.Priority = PRIORITY_ACTIVE
 					else	// Otherwise the signpost will do it itself.
 						Player.ControlMode = -1
 						Player.Up = 0
@@ -131,8 +140,8 @@ sub ObjectMain
 				end if
 			end if
 			Object[30].Type = TypeName[ActFinish]
-			Object[30].DrawOrder = 6
-			Object[30].Priority = 1
+			ActFinish.DrawOrder = 6
+			ActFinish.Priority = PRIORITY_ACTIVE
 		end if
 
 		if Player.ControlMode == -1
@@ -153,8 +162,8 @@ sub ObjectMain
 			end if
 			Object.State = SIGNPOST_STOP_PLAYER
 			Object[30].Type = TypeName[ActFinish]
-			Object[30].DrawOrder = 6
-			Object[30].Priority = 1
+			ActFinish.DrawOrder = 6
+			ActFinish.Priority = PRIORITY_ACTIVE
 		end if
 		break
 
@@ -203,7 +212,7 @@ sub ObjectStartup
 	ArrayPos0 = 32
 	while ArrayPos0 < 1056
 		if Object[ArrayPos0].Type == TypeName[SignPost]
-			Object[ArrayPos0].Priority = 3
+			Object[ArrayPos0].Priority = PRIORITY_ACTIVE_XBOUNDS
 			if Object[ArrayPos0].PropertyValue < 2
 				TempValue0 = TileLayer[0].XSize
 				TempValue0 -= 2
