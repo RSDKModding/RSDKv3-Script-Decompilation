@@ -3,76 +3,110 @@
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
 // Aliases
-#alias 52: TYPE_BOSSARMJOINT
+#alias Object.Value0	:	Object.ShoulderEntity
+#alias Object.Value2	:	Object.XOffSet
+#alias Object.Value4	:	Object.Charging
+#alias Object.Value5	:	Object.YOffSet
+
+// States
+#alias 0	:	BOSSARMJOINT_SETUP
+#alias 1	:	BOSSARMJOINT_REPOSITION_F
+#alias 2	:	BOSSARMJOINT_HANDLE_F_JOINT
+#alias 3	:	BOSSARMJOINT_REPOSITION_B
+#alias 4	:	BOSSARMJOINT_HANDLE_B_JOINT
+#alias 5	:	BOSSARMJOINT_DESTROYED
+
+// Shoulder Aliases
+#alias Object.Xpos		:	Shoulder.XPos
+#alias Object.YPos		:	Shoulder.YPos
+
+// Priotity
+#alias 0	:	PRIORITY_ACTIVE_BOUNDS
 
 // Function declarations
-#function BossArmJoint_Function68
+#function BossArmJoint_HandleMovement
 
-function BossArmJoint_Function68
-	TempValue0 = Object.Value2
+function BossArmJoint_HandleMovement
+	TempValue0 = Object.XOffSet
 	TempValue0 += 64
+
 	Sin256(TempValue6, TempValue0)
 	TempValue6 <<= 12
+
 	Cos256(TempValue7, TempValue0)
 	TempValue7 <<= 12
-	ArrayPos0 = Object.Value0
-	Object.XPos = Object[ArrayPos0].XPos
+
+	ArrayPos0 = Object.ShoulderEntity
+
+	Object.XPos = Shoulder[ArrayPos0].XPos
 	Object.XPos += TempValue7
-	Object.YPos = Object[ArrayPos0].YPos
+
+	Object.YPos = Shoulder[ArrayPos0].YPos
 	Object.YPos += TempValue6
-	if Object.DrawOrder == 2
-		Object.XPos -= 655360
+	if Object.DrawOrder == 2	// Right Arm Joint
+		Object.XPos -= 655360	// 0xA0000
 	end if
 end function
 
 
 sub ObjectMain
 	switch Object.State
-	case 0
-		if Object.DrawOrder == 3
-			Object.Value2 = 128
+	case BOSSARMJOINT_SETUP
+		if Object.DrawOrder == 3	// Left Arm Joint
+			Object.XOffSet = 128		// Delays the left arm joint
 		end if
-		Object.State = 3
-		Object.Value2 -= 2
-		if Object.Value2 <= 0
-			Object.State = 2
-			Object.Value2 = 0
-			SetBit(Object.Value4, 0, 1)
+		Object.State = BOSSARMJOINT_REPOSITION_B
+
+		Object.XOffSet -= 2
+		if Object.XOffSet <= 0
+			Object.State = BOSSARMJOINT_HANDLE_F_JOINT
+			Object.XOffSet = 0
+			SetBit(Object.Charging, 0, 1)
 		end if
-		CallFunction(BossArmJoint_Function68)
+		
+		CallFunction(BossArmJoint_HandleMovement)
 		break
-	case 1
-		Object.Value2 -= 2
-		if Object.Value2 <= 0
-			Object.State = 2
-			Object.Value2 = 0
-			SetBit(Object.Value4, 0, 1)
+		
+	case BOSSARMJOINT_REPOSITION_F
+		Object.XOffSet -= 2
+		if Object.XOffSet <= 0
+			Object.State = BOSSARMJOINT_HANDLE_F_JOINT
+			Object.XOffSet = 0
+			SetBit(Object.Charging, 0, 1)
 		end if
-		CallFunction(BossArmJoint_Function68)
+
+		CallFunction(BossArmJoint_HandleMovement)
 		break
-	case 2
-		CallFunction(BossArmJoint_Function68)
+
+	case BOSSARMJOINT_HANDLE_F_JOINT
+		CallFunction(BossArmJoint_HandleMovement)
 		break
-	case 3
-		Object.Value2 += 2
-		if Object.Value2 >= 48
-			Object.State = 4
-			Object.Value2 = 48
-			SetBit(Object.Value4, 0, 1)
+
+	case BOSSARMJOINT_REPOSITION_B
+		Object.XOffSet += 2
+		if Object.XOffSet >= 48
+			Object.State = BOSSARMJOINT_HANDLE_B_JOINT
+			Object.XOffSet = 48
+			SetBit(Object.Charging, 0, 1)
 		end if
-		CallFunction(BossArmJoint_Function68)
+		
+		CallFunction(BossArmJoint_HandleMovement)
 		break
-	case 4
-		CallFunction(BossArmJoint_Function68)
+
+	case BOSSARMJOINT_HANDLE_B_JOINT
+		CallFunction(BossArmJoint_HandleMovement)
 		break
-	case 5
-		Object.Value2 += 1536
-		Object.Value5 += 7936
-		Object.XPos += Object.Value2
-		Object.YPos += Object.Value5
-		if Object.OutOfBounds == 1
+
+	case BOSSARMJOINT_DESTROYED
+		Object.XOffSet += 1536	// 0x600
+		Object.XPos += Object.XOffSet
+
+		Object.YOffSet += 7936	// 0x1F00
+		Object.YPos += Object.YOffSet
+		
+		if Object.OutOfBounds == true
 			Object.Type = TypeName[BlankObject]
-			Object.Priority = 0
+			Object.Priority = PRIORITY_ACTIVE_BOUNDS
 		end if
 		break
 	end switch
@@ -86,7 +120,7 @@ end sub
 
 sub ObjectStartup
 	LoadSpriteSheet("R1/Objects3.gif")
-	SpriteFrame(-8, -8, 16, 16, 124, 34)
+	SpriteFrame(-8, -8, 16, 16, 124, 34)	// #0 - Arm Joint
 end sub
 
 sub RSDK

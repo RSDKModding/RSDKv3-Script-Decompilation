@@ -3,35 +3,101 @@
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
 // Aliases
-#alias 50: TYPE_BOSSFOOT
-#alias Player.Value4:Player.Invincible
+#alias Object.Value0	:	Object.LegsEntity
+#alias Object.Value1	:	Object.BodyEntity
+#alias Object.Value2	:	Object.XOffSet
+#alias Object.Value4	:	Object.LegSide
+#alias Object.Value5	:	Object.YOffSet
+#alias Object.Value6	:	Object.XVelocity
+#alias Object.Value7	:	Object.YVelocity
+
+// Leg Joint Aliases
+#alias Object.XPos		:	LegJoint.XPos
+#alias Object.YPos		:	LegJoint.YPos
+#alias Object.Value0	:	LegJoint.BodyEntity
+#alias Object.Value4	:	LegJoint.LegJointSide
+
+#alias Object.Value5	:	LegJointR.YOffSet
+#alias Object.Value1	:	LegJointR.LegREntity
+
+// Legs Aliases
+#alias Object.XPos		:	Legs.XPos
+#alias Object.YPos		:	Legs.YPos
+#alias Object.Value0	:	Legs.LegJointEntity
+#alias Object.Value4	:	Legs.LegSide
+
+#alias Object.Value1	:	LegR.FootREntity
+
+// Body Aliases
+#alias Object.XPos		:	Body.XPos
+#alias Object.YPos		:	Body.YPos
+#alias Object.Value0	:	Body.FaceEntity
+#alias Object.Value1	:	Body.LegJointREntity
+
+// Face Aliases
+#alias Object.XPos		:	Face.XPos
+#alias Object.YPos		:	Face.YPos
+#alias Object.Animation	:	Face.Animation
+#alias Object.Direction	:	Face.AnimationTimer
+
+// Foot Aliases
+#alias Object.XPos		:	FootR.XPos
+#alias Object.YPos		:	FootR.YPos
+
+// Player Aliases
+#alias Player.Value4	:	Player.Invincible
 
 
-function BossFoot_Function64
-	ArrayPos0 = Object.Value0
-	Object.XPos = Object[ArrayPos0].XPos
-	Object.XPos -= 720896
-	Object.XPos += Object.Value6
-	Object.YPos = Object[ArrayPos0].YPos
-	Object.YPos += 917504
-	Object.YPos += Object.Value7
+// States
+#alias 0				:	BOSSFOOT_SETUP
+#alias 1				:	BOSSFOOT_STEP
+#alias 2				:	BOSSFOOT_HANDLE_STEP
+#alias 3				:	BOSSFOOT_STEP_OPPOSITE
+#alias 4				:	BOSSFOOT_HANDLE_STEP_OPPOSITE
+#alias 5				:	BOSSFOOT_LANDING
+#alias 6				:	BOSSFOOT_DESTROYED
+
+// Eggman Animations
+#alias 1				:	ANI_LAUGH
+
+// Priority
+#alias 0				:	PRIORITY_ACTIVE_BOUNDS
+
+#function BossFoot_HandleMovement
+#function BossFoot_StepEarthQuake
+#function BossFoot_SaveFootPosition
+#function BossFoot_Unused
+
+function BossFoot_HandleMovement
+	ArrayPos0 = Object.LegsEntity
+	Object.XPos = Legs[ArrayPos0].XPos
+	Object.XPos -= 720896	// 0xB0000
+	Object.XPos += Object.XVelocity
+
+	Object.YPos = Legs[ArrayPos0].YPos
+	Object.YPos += 917504	// 0xE0000
+	Object.YPos += Object.YVelocity
 end function
 
 
-function BossFoot_Function65
-	SetBit(Object.Value4, 4, 1)
-	ArrayPos0 = Object.Value0
-	SetBit(Object[ArrayPos0].Value4, 4, 1)
-	ArrayPos1 = Object[ArrayPos0].Value0
-	SetBit(Object[ArrayPos1].Value4, 4, 1)
+function BossFoot_StepEarthQuake
+	SetBit(Object.LegSide, 4, 1)
+
+	ArrayPos0 = Object.LegsEntity
+	SetBit(Legs[ArrayPos0].LegSide, 4, 1)
+
+	ArrayPos1 = Legs[ArrayPos0].LegJointEntity
+	SetBit(LegJoint[ArrayPos1].LegJointSide, 4, 1)
+
 	Screen.ShakeY = 4
-	ArrayPos0 = Object.Value1
+	ArrayPos0 = Object.BodyEntity
 	ArrayPos0++
-	if Object[ArrayPos0].Value5 > 2
+	if LegJointR[ArrayPos0].YOffSet > 2
 		ArrayPos0--
-		Object[ArrayPos0].YPos -= 98304
+		Body[ArrayPos0].YPos -= 98304	// 0x18000
+
 		ArrayPos0--
-		Object[ArrayPos0].YPos -= 98304
+		Face[ArrayPos0].YPos -= 98304	// 0x18000
 	end if
 	PlayStageSfx(0, 0)
 #platform: Use_Haptics
@@ -40,51 +106,59 @@ function BossFoot_Function65
 end function
 
 
-function BossFoot_Function66
-	GetBit(TempValue0, Object.Value4, 4)
-	if TempValue0 == 0
-		CallFunction(BossFoot_Function64)
+function BossFoot_SaveFootPosition
+	GetBit(TempValue0, Object.LegSide, 4)
+	if TempValue0 == false
+		CallFunction(BossFoot_HandleMovement)
 	else
-		GetBit(TempValue0, Object.Value4, 5)
-		if TempValue0 == 1
-			TempValue6 = Object.Value2
-			TempValue7 = Object.Value5
-			if Object.State != 3
+		GetBit(TempValue0, Object.LegSide, 5)
+		if TempValue0 == true
+			TempValue6 = Object.XOffSet
+			TempValue7 = Object.YOffSet
+			if Object.State != BOSSFOOT_STEP_OPPOSITE
 				FlipSign(TempValue6)
 				FlipSign(TempValue7)
 			end if
-			ArrayPos0 = Object.Value0
-			Object[ArrayPos0].XPos -= TempValue6
-			Object[ArrayPos0].YPos += TempValue7
-			ArrayPos1 = Object[ArrayPos0].Value0
-			Object[ArrayPos1].XPos -= TempValue6
-			Object[ArrayPos1].YPos += TempValue7
-			ArrayPos0 = Object[ArrayPos1].Value0
-			Object[ArrayPos0].XPos -= TempValue6
-			Object[ArrayPos0].YPos += TempValue7
-			ArrayPos1 = Object[ArrayPos0].Value0
-			Object[ArrayPos1].XPos -= TempValue6
-			Object[ArrayPos1].YPos += TempValue7
+
+			ArrayPos0 = Object.LegsEntity
+			Legs[ArrayPos0].XPos -= TempValue6
+			Legs[ArrayPos0].YPos += TempValue7
+
+			ArrayPos1 = Legs[ArrayPos0].LegJointEntity
+			LegJoint[ArrayPos1].XPos -= TempValue6
+			LegJoint[ArrayPos1].YPos += TempValue7
+
+			ArrayPos0 = LegJoint[ArrayPos1].BodyEntity
+			Body[ArrayPos0].XPos -= TempValue6
+			Body[ArrayPos0].YPos += TempValue7
+
+			ArrayPos1 = Body[ArrayPos0].FaceEntity
+			Face[ArrayPos1].XPos -= TempValue6
+			Face[ArrayPos1].YPos += TempValue7
 		end if
 	end if
 end function
 
 
-function BossFoot_Function67
+function BossFoot_Unused
 	TempValue0 = Object.YPos
 	ObjectTileCollision(0, 0, 20, 0)
-	if CheckResult == 1
-		GetBit(TempValue0, Object.Value4, 5)
-		if TempValue0 == 1
+	if CheckResult == true
+		GetBit(TempValue0, Object.LegSide, 5)
+		if TempValue0 == true
 			TempValue0 -= Object.YPos
-			ArrayPos0 = Object.Value0
-			Object[ArrayPos0].YPos -= TempValue0
-			ArrayPos1 = Object[ArrayPos0].Value0
-			Object[ArrayPos1].YPos -= TempValue0
-			ArrayPos0 = Object[ArrayPos1].Value0
-			Object[ArrayPos1].YPos -= TempValue0
-			ArrayPos1 = Object[ArrayPos0].Value0
-			Object[ArrayPos1].YPos -= TempValue0
+
+			ArrayPos0 = Object.LegsEntity
+			Legs[ArrayPos0].YPos -= TempValue0
+
+			ArrayPos1 = Legs[ArrayPos0].LegJointEntity
+			LegJoint[ArrayPos1].YPos -= TempValue0
+
+			ArrayPos0 = LegJoint[ArrayPos1].BodyEntity
+			Body[ArrayPos1].YPos -= TempValue0
+
+			ArrayPos1 = Body[ArrayPos0].FaceEntity
+			Face[ArrayPos1].YPos -= TempValue0
 		end if
 	end if
 end function
@@ -92,115 +166,145 @@ end function
 
 sub ObjectMain
 	switch Object.State
-	case 0
-		Object.Value2 = 16384
-		Object.Value5 = 32768
-		Object.Value6 = -524288
-		Object.Value7 = 1048576
-		SetBit(Object.Value4, 0, 1)
-		CallFunction(BossFoot_Function64)
-		Object.State = 2
+	case BOSSFOOT_SETUP
+		Object.XOffSet = 16384		// 0x4000
+		Object.YOffSet = 32768		// 0x8000
+
+		Object.XVelocity = -524288	// -0x80000
+		Object.YVelocity = 1048576	// 0x100000
+
+		SetBit(Object.LegSide, 0, 1)
+		CallFunction(BossFoot_HandleMovement)
+		Object.State = BOSSFOOT_HANDLE_STEP
 		break
-	case 1
-		Object.Value6 -= Object.Value2
-		Object.Value7 += Object.Value5
-		TempValue1 = 1
-		GetBit(TempValue0, Object.Value4, 4)
+
+	case BOSSFOOT_STEP
+		Object.XVelocity -= Object.XOffSet
+		Object.YVelocity += Object.YOffSet
+
+		TempValue1 = true
+		GetBit(TempValue0, Object.LegSide, 4)
 		CheckResult = TempValue0
-		GetBit(TempValue0, Object.Value4, 7)
+		GetBit(TempValue0, Object.LegSide, 7)
 		CheckResult &= TempValue0
-		if CheckResult == 1
-			if Object.Value7 >= 786432
-				SetBit(Object.Value4, 0, 1)
-				Object.State = 2
-				TempValue1 = 0
+
+		if CheckResult == true
+
+			if Object.YVelocity >= 786432	// 0xC0000
+				SetBit(Object.LegSide, 0, 1)
+				Object.State = BOSSFOOT_HANDLE_STEP
+				TempValue1 = false
 			end if
+
 		else
-			if Object.Value7 >= 1048576
-				SetBit(Object.Value4, 0, 1)
-				Object.State = 2
-				TempValue1 = 0
+
+			if Object.YVelocity >= 1048576	// 0x100000
+				SetBit(Object.LegSide, 0, 1)
+				Object.State = BOSSFOOT_HANDLE_STEP
+				TempValue1 = false
 			end if
+
 		end if
-		if TempValue1 == 1
-			CallFunction(BossFoot_Function66)
+
+		if TempValue1 == true
+			CallFunction(BossFoot_SaveFootPosition)
+
 			ObjectTileCollision(0, 0, 20, 0)
-			if CheckResult == 1
-				CallFunction(BossFoot_Function65)
+			if CheckResult == true
+				CallFunction(BossFoot_StepEarthQuake)
 			end if
+
 		end if
 		break
-	case 2
-		GetBit(TempValue0, Object.Value4, 4)
-		if TempValue0 == 0
-			CallFunction(BossFoot_Function64)
+
+	case BOSSFOOT_HANDLE_STEP
+		GetBit(TempValue0, Object.LegSide, 4)
+		if TempValue0 == false
+			CallFunction(BossFoot_HandleMovement)
+
 			ObjectTileCollision(0, 0, 20, 0)
-			if CheckResult == 1
-				CallFunction(BossFoot_Function65)
+			if CheckResult == true
+				CallFunction(BossFoot_StepEarthQuake)
 			end if
 		end if
 		break
-	case 3
-		Object.Value6 += Object.Value2
-		Object.Value7 -= Object.Value5
-		if Object.Value7 <= 0
-			Object.Value6 = 0
-			Object.Value7 = 0
-			SetBit(Object.Value4, 0, 1)
-			Object.State = 4
+
+	case BOSSFOOT_STEP_OPPOSITE
+		Object.XVelocity += Object.XOffSet
+		Object.YVelocity -= Object.YOffSet
+
+		if Object.YVelocity <= 0
+			Object.XVelocity = 0
+			Object.YVelocity = 0
+			SetBit(Object.LegSide, 0, 1)
+			Object.State = BOSSFOOT_HANDLE_STEP_OPPOSITE
 		end if
-		CallFunction(BossFoot_Function66)
+		CallFunction(BossFoot_SaveFootPosition)
 		break
-	case 4
-		CallFunction(BossFoot_Function64)
+
+	case BOSSFOOT_HANDLE_STEP_OPPOSITE
+		CallFunction(BossFoot_HandleMovement)
 		break
-	case 5
-		ArrayPos0 = Object.Value1
-		ArrayPos1 = Object[ArrayPos0].Value1
-		ArrayPos0 = Object[ArrayPos1].Value1
-		ArrayPos1 = Object[ArrayPos0].Value1
-		Object.XPos = Object[ArrayPos1].XPos
-		Object.XPos -= 655360
-		Object.YPos = Object[ArrayPos1].YPos
+
+	case BOSSFOOT_LANDING
+		ArrayPos0 = Object.BodyEntity
+		ArrayPos1 = Body[ArrayPos0].LegJointREntity
+
+		ArrayPos0 = LegJointR[ArrayPos1].LegREntity
+		ArrayPos1 = LegR[ArrayPos0].FootREntity
+
+		Object.XPos = FootR[ArrayPos1].XPos
+		Object.XPos -= 655360	// 0xA0000
+		Object.YPos = FootR[ArrayPos1].YPos
 		break
-	case 6
-		GetBit(TempValue0, Object.Value4, 4)
-		if TempValue0 == 0
-			Object.Value2 -= 1632
+
+	case BOSSFOOT_DESTROYED
+		GetBit(TempValue0, Object.LegSide, 4)
+		if TempValue0 == false
+			Object.XOffSet -= 1632	// 0x660
 		else
-			Object.Value2 += 1632
+			Object.XOffSet += 1632	// 0x660
 		end if
-		Object.Value5 += 5728
-		Object.XPos += Object.Value2
-		Object.YPos += Object.Value5
-		if Object.OutOfBounds == 1
+		Object.XPos += Object.XOffSet
+
+		Object.YOffSet += 5728		// 0x1660
+		Object.YPos += Object.YOffSet
+		if Object.OutOfBounds == true
 			Object.Type = TypeName[BlankObject]
-			Object.Priority = 0
+			Object.Priority = PRIORITY_ACTIVE_BOUNDS
 		end if
 		break
+
 	end switch
 end sub
 
 
 sub ObjectPlayerInteraction
-	if Object.State < 6
+	if Object.State < BOSSFOOT_DESTROYED
+
 		if Player.Invincible == 0
+
 			PlayerObjectCollision(C_TOUCH, -28, -20, 26, 20)
-			if CheckResult == 1
-				ArrayPos0 = Object.Value0
-				ArrayPos1 = Object[ArrayPos0].Value0
-				ArrayPos0 = Object[ArrayPos1].Value0
-				ArrayPos1 = Object[ArrayPos0].Value0
-				Object[ArrayPos1].Animation = 1
-				Object[ArrayPos1].Direction = 180
+			if CheckResult == true
+
+				ArrayPos0 = Object.LegsEntity
+				ArrayPos1 = Legs[ArrayPos0].LegJointEntity
+				ArrayPos0 = LegJoint[ArrayPos1].BodyEntity
+				ArrayPos1 = Body[ArrayPos0].FaceEntity
+
+				Face[ArrayPos1].Animation = ANI_LAUGH
+				Face[ArrayPos1].AnimationTimer = 180
 				Player.State = PlayerObject_Hurt
 				if Player.XPos > Object.XPos
-					Player.Speed = 131072
+					Player.Speed = 131072	// 0x20000
 				else
-					Player.Speed = -131072
+					Player.Speed = -131072	// -0x20000
 				end if
+
 			end if
+
 		end if
+
 	end if
 end sub
 
@@ -212,7 +316,7 @@ end sub
 
 sub ObjectStartup
 	LoadSpriteSheet("R1/Objects3.gif")
-	SpriteFrame(-32, -20, 58, 40, 1, 66)
+	SpriteFrame(-32, -20, 58, 40, 1, 66)	// #0 - EGG-HVC-001 Foot
 end sub
 
 sub RSDK

@@ -3,150 +3,225 @@
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
 // Aliases
-#alias 49: TYPE_BOSSLEG
-#alias Player.Value4:Player.Invincible
+#alias Object.Value0			:	Object.LegJointEntity
+#alias Object.Value1			:	Object.FootEntity
+#alias Object.Value2			:	Object.XOffSet
+#alias Object.Value4			:	Object.LegSide
+#alias Object.Value5			:	Object.YOffSet
+#alias Object.Value6			:	Object.XVelocity
+#alias Object.Value7			:	Object.YVelocity
+
+// Foot Aliases
+#alias Object.Value4			:	Foot.LegSide
+
+// Leg Joint Aliases
+#alias Object.XPos				:	LegJoint.XPos
+#alias Object.YPos				:	LegJoint.YPos
+#alias Object.Value0			:	LegJoint.BodyEntity
+
+#alias Object.Value1			:	LegJointR.LegREntity
+
+// Leg Aliases
+#alias Object.XPos				:	LegR.XPos
+#alias Object.YPos				:	LegR.YPos
+
+// Body Aliases
+#alias Object.Value0			:	Body.FaceEntity
+#alias Object.Value1			:	Body.LegJointREntity
+#alias Object.XPos				:	Body.XPos
+#alias Object.YPos				:	Body.YPos
+
+// Face Aliases
+#alias Object.XPos				:	Face.XPos
+#alias Object.YPos				:	Face.YPos
+#alias Object.Animation			:	Face.Animation
+#alias Object.AnimationTimer	:	Face.AnimationTimer
+
+// Player Aliases
+#alias Player.Value4			:	Player.Invincible
+// States
+#alias 0						:	BOSSLEG_SETUP
+#alias 1						:	BOSSLEG_LANDING
+#alias 2						:	BOSSLEG_L_MIMIC_R
+#alias 3						:	BOSSLEG_MOVE
+#alias 4						:	BOSSLEG_MOVE_OPPOSITE
+#alias 5						:	BOSSLEG_MOVE_C			// Charged version
+#alias 6						:	BOSSLEG_MOVE_OPPOSITE_C	// Charged version
+#alias 7						:	BOSSLEG_DESTROYED
+
+// Eggman Animations
+#alias 1	:	ANI_LAUGH
+
+// Priority
+#alias 0				:	PRIORITY_ACTIVE_BOUNDS
 
 // Function declarations
-#function BossLeg_Function62
-#function BossLeg_Function63
+#function BossLeg_SaveLegPosition
+#function BossLeg_HandleMovement
 
-function BossLeg_Function62
-	GetBit(TempValue0, Object.Value4, 5)
-	if TempValue0 == 1
-		ArrayPos0 = Object.Value0
-		Object[ArrayPos0].XPos += TempValue1
-		Object[ArrayPos0].YPos += TempValue2
-		ArrayPos1 = Object[ArrayPos0].Value0
-		Object[ArrayPos1].XPos += TempValue1
-		Object[ArrayPos1].YPos += TempValue2
-		ArrayPos0 = Object[ArrayPos1].Value0
-		Object[ArrayPos0].XPos += TempValue1
-		Object[ArrayPos0].YPos += TempValue2
+function BossLeg_SaveLegPosition
+	GetBit(TempValue0, Object.LegSide, 5)
+	if TempValue0 == true
+		ArrayPos0 = Object.LegJointEntity
+		LegJoint[ArrayPos0].XPos += TempValue1
+		LegJoint[ArrayPos0].YPos += TempValue2
+
+		ArrayPos1 = LegJoint[ArrayPos0].BodyEntity
+		Body[ArrayPos1].XPos += TempValue1
+		Body[ArrayPos1].YPos += TempValue2
+
+		ArrayPos0 = Body[ArrayPos1].FaceEntity
+		Face[ArrayPos0].XPos += TempValue1
+		Face[ArrayPos0].YPos += TempValue2
 	end if
 end function
 
 
-function BossLeg_Function63
-	ArrayPos0 = Object.Value0
-	Object.XPos = Object[ArrayPos0].XPos
-	Object.XPos += 262144
-	Object.XPos += Object.Value6
-	Object.YPos = Object[ArrayPos0].YPos
-	Object.YPos += 1048576
-	Object.YPos += Object.Value7
+function BossLeg_HandleMovement
+	ArrayPos0 = Object.LegJointEntity
+	Object.XPos = LegJoint[ArrayPos0].XPos
+	Object.XPos += 262144	// 0x40000
+	Object.XPos += Object.XVelocity
+	
+	Object.YPos = LegJoint[ArrayPos0].YPos
+	Object.YPos += 1048576	// 0x100000
+	Object.YPos += Object.YVelocity
 end function
 
 
 sub ObjectMain
 	switch Object.State
-	case 0
-		Object.Value2 = 32768
-		Object.Value5 = 16384
-		Object.State = 1
+	case BOSSLEG_SETUP
+		Object.XOffSet = 32768	// 0x8000
+		Object.YOffSet = 16384	// 0x4000
+
+		Object.State = BOSSLEG_LANDING
 		break
-	case 1
-		ArrayPos0 = Object.Value0
-		Object.XPos = Object[ArrayPos0].XPos
-		Object.XPos += 262144
-		Object.YPos = Object[ArrayPos0].YPos
-		Object.YPos += 1048576
+		
+	case BOSSLEG_LANDING
+		ArrayPos0 = Object.LegJointEntity
+
+		Object.XPos = LegJoint[ArrayPos0].XPos
+		Object.XPos += 262144	// 0x40000
+
+		Object.YPos = LegJoint[ArrayPos0].YPos
+		Object.YPos += 1048576	// 0x100000
 		break
-	case 2
-		ArrayPos0 = Object.Value0
-		ArrayPos1 = Object[ArrayPos0].Value0
-		ArrayPos0 = Object[ArrayPos1].Value1
-		ArrayPos1 = Object[ArrayPos0].Value1
-		Object.XPos = Object[ArrayPos1].XPos
-		Object.XPos -= 655360
-		Object.YPos = Object[ArrayPos1].YPos
+
+	case BOSSLEG_L_MIMIC_R
+		// No matter the leg, it will end up picking the right leg here
+		ArrayPos0 = Object.LegJointEntity
+		ArrayPos1 = LegJoint[ArrayPos0].BodyEntity
+		ArrayPos0 = Body[ArrayPos1].LegJointREntity
+		ArrayPos1 = LegJointR[ArrayPos0].LegREntity
+
+		Object.XPos = LegR[ArrayPos1].XPos
+		Object.XPos -= 655360	// 0xA0000
+		Object.YPos = LegR[ArrayPos1].YPos
 		break
-	case 3
-		ArrayPos0 = Object.Value1
-		if Object.Value6 < 524288
-			TempValue1 = Object.Value2
-			Object.Value6 += TempValue1
-			GetBit(TempValue0, Object.Value4, 4)
-			if TempValue0 == 1
+
+	case BOSSLEG_MOVE	// whatever leg this is, it will move
+		ArrayPos0 = Object.FootEntity
+		if Object.XVelocity < 524288	// 0x80000
+			TempValue1 = Object.XOffSet
+			Object.XVelocity += TempValue1
+
+			GetBit(TempValue0, Object.LegSide, 4)
+			if TempValue0 == true
 				FlipSign(TempValue1)
-				TempValue2 = 0
-				CallFunction(BossLeg_Function62)
+				TempValue2 = false
+				CallFunction(BossLeg_SaveLegPosition)
 			else
-				CallFunction(BossLeg_Function63)
+				CallFunction(BossLeg_HandleMovement)
 			end if
+
 		else
-			CallFunction(BossLeg_Function63)
+			CallFunction(BossLeg_HandleMovement)
+		end if
+		
+		break
+
+	case BOSSLEG_MOVE_OPPOSITE	// whatever leg this is, it will wait for the opposite to move
+		ArrayPos0 = Object.FootEntity
+		if Object.XVelocity > -524288	// -0x80000
+			TempValue1 = Object.XOffSet
+			Object.XVelocity -= TempValue1
+
+			GetBit(TempValue0, Object.LegSide, 4)
+			if TempValue0 == true
+				TempValue2 = false
+				CallFunction(BossLeg_SaveLegPosition)
+			else
+				CallFunction(BossLeg_HandleMovement)
+			end if
+			
+		else
+			CallFunction(BossLeg_HandleMovement)
+		end if
+
+		break
+
+	case BOSSLEG_MOVE_C		// whatever leg this is, it will move
+		if Object.XVelocity > -524288	// -0x80000
+			TempValue1 = Object.XOffSet
+			Object.XVelocity -= TempValue1
+		else
+			TempValue1 = false
+		end if
+
+		if Object.YVelocity > -262144	// -0x40000
+			TempValue2 = Object.YOffSet
+			Object.YVelocity -= TempValue2
+		else
+			TempValue2 = false
+		end if
+
+		GetBit(TempValue0, Object.LegSide, 4)
+		if TempValue0 == true
+			CallFunction(BossLeg_SaveLegPosition)
+		else
+			CallFunction(BossLeg_HandleMovement)
 		end if
 		break
-	case 4
-		ArrayPos0 = Object.Value1
-		if Object.Value6 > -524288
-			TempValue1 = Object.Value2
-			Object.Value6 -= TempValue1
-			GetBit(TempValue0, Object.Value4, 4)
-			if TempValue0 == 1
-				TempValue2 = 0
-				CallFunction(BossLeg_Function62)
-			else
-				CallFunction(BossLeg_Function63)
-			end if
-		else
-			CallFunction(BossLeg_Function63)
-		end if
-		break
-	case 5
-		if Object.Value6 > -524288
-			TempValue1 = Object.Value2
-			Object.Value6 -= TempValue1
+
+	case BOSSLEG_MOVE_OPPOSITE_C	// whatever leg this is, it will wait for the opposite to move
+		if Object.XVelocity > -524288	// -0x80000
+			TempValue1 = Object.XOffSet
+			Object.XVelocity -= TempValue1
 		else
 			TempValue1 = 0
 		end if
-		if Object.Value7 > -262144
-			TempValue2 = Object.Value5
-			Object.Value7 -= TempValue2
+		if Object.YVelocity < 262144	// -0x40000
+			TempValue2 = Object.YOffSet
+			Object.YVelocity += TempValue2
 		else
 			TempValue2 = 0
 		end if
-		GetBit(TempValue0, Object.Value4, 4)
-		if TempValue0 == 1
-			CallFunction(BossLeg_Function62)
-		else
-			CallFunction(BossLeg_Function63)
-		end if
-		break
-	case 6
-		if Object.Value6 > -524288
-			TempValue1 = Object.Value2
-			Object.Value6 -= TempValue1
-		else
-			TempValue1 = 0
-		end if
-		if Object.Value7 < 262144
-			TempValue2 = Object.Value5
-			Object.Value7 += TempValue2
-		else
-			TempValue2 = 0
-		end if
-		GetBit(TempValue0, Object.Value4, 4)
-		if TempValue0 == 1
+
+		GetBit(TempValue0, Object.LegSide, 4)
+		if TempValue0 == true
 			FlipSign(TempValue2)
-			CallFunction(BossLeg_Function62)
+			CallFunction(BossLeg_SaveLegPosition)
 		else
-			CallFunction(BossLeg_Function63)
+			CallFunction(BossLeg_HandleMovement)
 		end if
 		break
-	case 7
-		GetBit(TempValue0, Object.Value4, 4)
-		if TempValue0 == 0
-			Object.Value2 -= 1536
+
+	case BOSSLEG_DESTROYED
+		GetBit(TempValue0, Object.LegSide, 4)
+		if TempValue0 == false
+			Object.XOffSet -= 1536	// 0x600
 		else
-			Object.Value2 += 1536
+			Object.XOffSet += 1536	// 0x600
 		end if
-		Object.Value5 += 6752
-		Object.XPos += Object.Value2
-		Object.YPos += Object.Value5
-		if Object.OutOfBounds == 1
+		Object.XPos += Object.XOffSet
+
+		Object.YOffSet += 6752		// 0x1A60
+		Object.YPos += Object.YOffSet
+
+		if Object.OutOfBounds == true
 			Object.Type = TypeName[BlankObject]
-			Object.Priority = 0
+			Object.Priority = PRIORITY_ACTIVE_BOUNDS
 		end if
 		break
 	end switch
@@ -154,23 +229,30 @@ end sub
 
 
 sub ObjectPlayerInteraction
-	if Object.State < 6
+	if Object.State < BOSSLEG_DESTROYED
+
 		if Player.Invincible == 0
+
 			PlayerObjectCollision(C_TOUCH, -12, -20, 12, -20)
-			if CheckResult == 1
+			if CheckResult == true
+
 				Player.State = PlayerObject_Hurt
-				ArrayPos0 = Object.Value0
-				ArrayPos1 = Object[ArrayPos0].Value0
-				ArrayPos0 = Object[ArrayPos1].Value0
-				Object[ArrayPos0].Animation = 1
-				Object[ArrayPos0].Direction = 180
+				ArrayPos0 = Object.LegJointEntity
+				ArrayPos1 = LegJoint[ArrayPos0].BodyEntity
+				ArrayPos0 = Body[ArrayPos1].FaceEntity
+
+				Face[ArrayPos0].Animation = ANI_LAUGH
+				Face[ArrayPos0].AnimationTimer = 180
 				if Player.XPos > Object.XPos
-					Player.Speed = 131072
+					Player.Speed = 131072	// 0x20000
 				else
-					Player.Speed = -131072
+					Player.Speed = -131072	// -0x20000
 				end if
+
 			end if
+
 		end if
+
 	end if
 end sub
 
@@ -182,7 +264,7 @@ end sub
 
 sub ObjectStartup
 	LoadSpriteSheet("R1/Objects3.gif")
-	SpriteFrame(-12, -20, 24, 40, 74, 1)
+	SpriteFrame(-12, -20, 24, 40, 74, 1)	// #0 - EGG-HVC-001 Leg
 end sub
 
 sub RSDK
