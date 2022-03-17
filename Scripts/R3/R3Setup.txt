@@ -4,23 +4,31 @@
 
 // Aliases
 #alias 45: TYPE_R3SETUP
+#alias Object.Value2			:	Object.BumperOscillation
+#alias Object.Value3			:	Object.TurnDirection
+
+// Hud Aliases
+#alias Object[24].PropertyValue	:	HUD.TimePeriod
+
+// Time Periods
+#alias 1	:	PAST
 
 
 sub ObjectMain
-	if Object.Value3 == 0
-		if Object.Value2 < 3145728
-			Object.Value2 += 65536
+	if Object.TurnDirection == false
+		if Object.BumperOscillation < 3145728		// 0x380000
+			Object.BumperOscillation += 65536		// 0x10000
 		else
-			Object.Value3 = 1
+			Object.TurnDirection = true
 		end if
 	else
-		if Object.Value2 > -3145728
-			Object.Value2 -= 65536
+		if Object.BumperOscillation > -3145728		// -0x380000
+			Object.BumperOscillation -= 65536		// 0x10000
 		else
-			Object.Value3 = 0
+			Object.TurnDirection = false
 		end if
 	end if
-	if Object[24].PropertyValue != 1
+	if HUD.TimePeriod != PAST
 		RotatingDrum_Timer++
 		RotatingDrum_Timer %= 20
 	end if

@@ -3,107 +3,165 @@
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
 // Aliases
-#alias 36: TYPE_BUMPER
+#alias Object.Value0		:	Object.AnimationTimer
+#alias Object.Value1		:	Object.BonusScore
+#alias Object.Value2		:	Object.Oscillation
+#alias Object.Value3		:	Object.TurnDirection
+#alias Object.Value4		:	Object.OriginPos.X
+#alias Object.Value5		:	Object.OriginPos.Y
 
+// R3Setup Aliases
+#alias Object[29].Value2	:	R3Setup.BumperOscillation
+
+// States
+#alias 0	:	BUMPER_IDLE
+#alias 1	:	BUMPER_ACTIVE
+
+// Gravity
+#alias 0	:	GRAVITY_GROUND
+#alias 1	:	GRAVITY_AIR
+
+// Priority
+#alias 0	:	PRIORITY_ACTIVE_BOUNDS
+#alias 1	:	PRIORITY_ACTIVE
+
+// Property Values
+// _G properties use R3Setup oscillation
+
+#alias 0	:	BUMPER_STILL
+#alias 1	:	BUMPER_RIGHT_TO_LEFT_G
+#alias 2	:	BUMPER_LEFT_TO_RIGHT_G
+#alias 3	:	BUMPER_TOP_TO_BOTTOM
+#alias 4	:	BUMPER_BOTTOM_TO_TOP
+#alias 5	:	BUMPER_TOP_TO_BOTTOM_G
+#alias 6	:	BUMPER_BOTTOM_TO_TOP_G
 
 sub ObjectMain
 	switch Object.PropertyValue
-	case 1
-		Object.XPos = Object.Value4
-		Object.XPos += Object[29].Value2
+	case BUMPER_RIGHT_TO_LEFT
+		Object.XPos = Object.OriginPos.X
+		Object.XPos += R3Setup.BumperOscillation
 		break
-	case 2
-		Object.XPos = Object.Value4
-		Object.XPos -= Object[29].Value2
+		
+	case BUMPER_LEFT_TO_RIGHT
+		Object.XPos = Object.OriginPos.X
+		Object.XPos -= R3Setup.BumperOscillation
 		break
-	case 3
-		if Object.Value3 == 0
-			if Object.Value2 < 3670016
-				Object.Value2 += 65536
+
+	case BUMPER_TOP_TO_BOTTOM
+		if Object.TurnDirection == false
+
+			if Object.Oscillation < 3670016		// 0x380000
+				Object.Oscillation += 65536		// 0x10000
 			else
-				Object.Value3 = 1
+				Object.TurnDirection = true
 			end if
+
 		else
-			if Object.Value2 > -3670016
-				Object.Value2 -= 65536
+
+			if Object.Oscillation > -3670016	// -0x380000
+				Object.Oscillation -= 65536		// 0x10000
 			else
-				Object.Value3 = 0
+				Object.TurnDirection = false
 			end if
+
 		end if
-		Object.YPos = Object.Value5
-		Object.YPos += Object.Value2
+		Object.YPos = Object.OriginPos.Y
+		Object.YPos += Object.Oscillation
 		break
-	case 4
-		if Object.Value3 == 0
-			if Object.Value2 < 3670016
-				Object.Value2 += 65536
+
+	case BUMPER_BOTTOM_TO_TOP
+		if Object.TurnDirection == false
+
+			if Object.Oscillation < 3670016		// 0x380000
+				Object.Oscillation += 65536		// 0x10000
 			else
-				Object.Value3 = 1
+				Object.TurnDirection = true
 			end if
+
 		else
-			if Object.Value2 > -3670016
-				Object.Value2 -= 65536
+
+			if Object.Oscillation > -3670016	// -0x380000
+				Object.Oscillation -= 65536		// 0x10000
 			else
-				Object.Value3 = 0
+				Object.TurnDirection = false
 			end if
+
 		end if
-		Object.YPos = Object.Value5
-		Object.YPos -= Object.Value2
+		Object.YPos = Object.OriginPos.Y
+		Object.YPos -= Object.Oscillation
 		break
-	case 5
-		Object.YPos = Object.Value5
-		Object.YPos += Object[29].Value2
+
+	case BUMPER_TOP_TO_BOTTOM_G
+		Object.YPos = Object.OriginPos.Y
+		Object.YPos += R3Setup.BumperOscillation
 		break
-	case 6
-		Object.YPos = Object.Value5
-		Object.YPos -= Object[29].Value2
+
+	case BUMPER_BOTTOM_TO_TOP_G
+		Object.YPos = Object.OriginPos.Y
+		Object.YPos -= R3Setup.BumperOscillation
 		break
+
 	end switch
+
 	if Object.State > 0
-		Object.Frame = Object.Value0
+		Object.Frame = Object.AnimationTimer
 		Object.Frame /= 5
 		Object.Frame++
-		Object.Value0++
-		if Object.Value0 > 22
-			Object.Value0 = 0
-			Object.State = 0
+		
+		Object.AnimationTimer++
+		if Object.AnimationTimer > 22
+			Object.AnimationTimer = 0
+			Object.State = BUMPER_IDLE
 			Object.Frame = 0
 		end if
+
 	end if
-	if Object.OutOfBounds == 1
-		Object.Value1 = 0
-		Object.Priority = 0
+
+	if Object.OutOfBounds == true
+		Object.BonusScore = 0
+		Object.Priority = PRIORITY_ACTIVE_BOUNDS
 	end if
 end sub
 
 
 sub ObjectPlayerInteraction
-	if Player.Animation != 12
+	if Player.Animation != ANI_HURT
+
 		PlayerObjectCollision(C_TOUCH, -14, -14, 14, 14)
-		if CheckResult == 1
-			if Object.State == 0
+		if CheckResult == true
+
+			if Object.State == BUMPER_IDLE
 				PlayStageSfx(0, 0)
 #platform: Use_Haptics
 				HapticEffect(9, 0, 0, 0)
 #endplatform
-				if Object.Value1 < 5
+				if Object.BonusScore < 5
 					CreateTempObject(TypeName[ObjectScore], 0, Object.XPos, Object.YPos)
 					Player.Score += 100
-					Object.Value1++
+					Object.BonusScore++
 				end if
+
 			end if
-			if Object.Value0 > 5
+
+			if Object.AnimationTimer > 5
 				PlayStageSfx(0, 0)
 			end if
-			Object.State = 1
-			Object.Priority = 1
+
+			Object.State = BUMPER_ACTIVE
+
+			Object.Priority = PRIORITY_ACTIVE
+
 			TempValue0 = Player.XPos
 			TempValue0 -= Object.XPos
+
 			TempValue1 = Player.YPos
 			TempValue1 -= Object.YPos
+
 			ATan2(TempValue2, TempValue0, TempValue1)
 			Cos256(TempValue0, TempValue2)
 			Sin256(TempValue1, TempValue2)
+
 			if Player.State == PlayerObject_HandleTailsFlight
 				TempValue0 <<= 10
 				TempValue1 <<= 10
@@ -112,11 +170,15 @@ sub ObjectPlayerInteraction
 				TempValue1 *= 1792
 				Player.Timer = 0
 			end if
+
 			Player.XVelocity = TempValue0
 			Player.YVelocity = TempValue1
+
 			Player.Speed = Player.XVelocity
-			Player.Gravity = 1
+
+			Player.Gravity = GRAVITY_AIR
 		end if
+
 	end if
 end sub
 
@@ -128,20 +190,22 @@ end sub
 
 sub ObjectStartup
 	LoadSpriteSheet("R3/Objects.gif")
+
+	SpriteFrame(-16, -16, 32, 32, 67, 167)		// #0 - Bumper
+	SpriteFrame(-12, -12, 24, 24, 206, 170)		// #1 - Bumper Hit Frame 0
+	SpriteFrame(-20, -20, 40, 40, 215, 203)		// #2 - Bumper Hit Frame 1
+	SpriteFrame(-12, -12, 24, 24, 206, 170)		// #3 - Bumper Hit Frame 2
+	SpriteFrame(-20, -20, 40, 40, 215, 203)		// #4 - Bumper Hit Frame 3
+	SpriteFrame(-20, -20, 40, 40, 215, 203)		// #5 - Bumper Hit Frame 4
+
 	ArrayPos0 = 32
 	while ArrayPos0 < 1056
 		if Object[ArrayPos0].Type == TypeName[Bumper]
-			Object[ArrayPos0].Value4 = Object[ArrayPos0].XPos
-			Object[ArrayPos0].Value5 = Object[ArrayPos0].YPos
+			Object[ArrayPos0].OriginPos.X = Object[ArrayPos0].XPos
+			Object[ArrayPos0].OriginPos.Y = Object[ArrayPos0].YPos
 		end if
 		ArrayPos0++
 	loop
-	SpriteFrame(-16, -16, 32, 32, 67, 167)
-	SpriteFrame(-12, -12, 24, 24, 206, 170)
-	SpriteFrame(-20, -20, 40, 40, 215, 203)
-	SpriteFrame(-12, -12, 24, 24, 206, 170)
-	SpriteFrame(-20, -20, 40, 40, 215, 203)
-	SpriteFrame(-20, -20, 40, 40, 215, 203)
 end sub
 
 sub RSDK

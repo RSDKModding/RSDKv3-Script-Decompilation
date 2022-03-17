@@ -1,69 +1,110 @@
-//------------Sonic CD Glass Bumper Script-------------//
+//------------Sonic CD Glass Bumper Particles Script-------------//
 //--------Scripted by Christian Whitehead 'The Taxman'--------//
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
 // Aliases
-#alias 52: TYPE_GLASSBUMPER
+#alias Object.Value0	:	Object.Timer
+
+// HUD Alias
+#alias Object[24].PropertyValue	:	HUD.TimePeriod
+
+// States
+#alias 0	:	GLASSBUMPER_IDLE
+#alias 1	:	GLASSBUMPER_DESTROYED
+
+// Gravity
+#alias 1	:	GRAVITY_AIR
+
+// Priority
+#alias 1	:	PRIORITY_ACTIVE
+
+// Time Periods
+#alias 0						:	PRESENT
+#alias 1						:	PAST
+#alias 2						:	GOOD_FUTURE
+#alias 3						:	BAD_FUTURE
 
 
 sub ObjectMain
-	if Object.State == 1
-		Object.Value0++
-		if Object.Value0 > 15
+	if Object.State == GLASSBUMPER_DESTROYED
+	
+		Object.Timer++
+		if Object.Timer > 15
 			Object.Type = TypeName[BlankObject]
 		end if
+
 	end if
 end sub
 
 
 sub ObjectPlayerInteraction
 	if Player.Animation != ANI_HURT
-		if Object.State == 0
+
+		if Object.State == GLASSBUMPER_IDLE
+
 			PlayerObjectCollision(C_TOUCH, -14, -14, 14, 14)
-			if CheckResult == 1
+			if CheckResult == true
+
 				PlayStageSfx(8, 0)
 #platform: Use_Haptics
 				HapticEffect(10, 0, 0, 0)
 #endplatform
 				CreateTempObject(TypeName[ObjectScore], 0, Object.XPos, Object.YPos)
 				Player.Score += 100
-				Object.State = 1
-				Object.Priority = 1
+
+				Object.State = GLASSBUMPER_DESTROYED
+
+				Object.Priority = PRIORITY_ACTIVE
+
 				TempValue0 = Player.XPos
 				TempValue0 -= Object.XPos
+
 				TempValue1 = Player.YPos
 				TempValue1 -= Object.YPos
+
 				ATan2(TempValue2, TempValue0, TempValue1)
 				Cos256(TempValue0, TempValue2)
 				Sin256(TempValue1, TempValue2)
+
 				TempValue0 *= 1792
 				TempValue1 *= 1792
+
 				Player.XVelocity = TempValue0
 				Player.YVelocity = TempValue1
 				Player.Speed = Player.XVelocity
-				Player.Gravity = 1
+
+				Player.Gravity = GRAVITY_AIR
+
 				Player.Timer = 0
+
 				TempValue0 = Object.iXPos
 				TempValue1 = Object.iYPos
+
 				TempValue0 -= 8
 				TempValue1 -= 8
 				Set16x16TileInfo(0, TempValue0, TempValue1, 0)
+
 				TempValue0 += 16
 				Set16x16TileInfo(0, TempValue0, TempValue1, 0)
+				
 				TempValue0 -= 16
 				TempValue1 += 16
 				Set16x16TileInfo(0, TempValue0, TempValue1, 0)
+
 				TempValue0 += 16
 				Set16x16TileInfo(0, TempValue0, TempValue1, 0)
+
 			end if
+
 		end if
+
 	end if
 end sub
 
 
 sub ObjectDraw
-	if Object.State == 1
-		TempValue0 = Object.Value0
+	if Object.State == GLASSBUMPER_DESTROYED
+		TempValue0 = Object.Timer
 		TempValue0 >>= 3
 		DrawSprite(TempValue0)
 	end if
@@ -72,20 +113,20 @@ end sub
 
 sub ObjectStartup
 	LoadSpriteSheet("R3/Objects3.gif")
-	switch Object[24].PropertyValue
-	case 0
+	switch HUD.TimePeriod
+	case PRESENT
 		SpriteFrame(-16, -16, 32, 32, 66, 1)
 		SpriteFrame(-16, -16, 32, 32, 99, 1)
 		break
-	case 1
+	case PAST
 		SpriteFrame(-16, -16, 32, 32, 66, 34)
 		SpriteFrame(-16, -16, 32, 32, 99, 34)
 		break
-	case 2
+	case GOOD_FUTURE
 		SpriteFrame(-16, -16, 32, 32, 66, 67)
 		SpriteFrame(-16, -16, 32, 32, 99, 67)
 		break
-	case 3
+	case BAD_FUTURE
 		SpriteFrame(-16, -16, 32, 32, 66, 100)
 		SpriteFrame(-16, -16, 32, 32, 99, 100)
 		break

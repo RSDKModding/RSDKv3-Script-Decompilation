@@ -3,134 +3,168 @@
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
 // Aliases
-#alias 55: TYPE_CRUMBLELEDGE5
+#alias OBject.Value0	:	Object.HitboxLeft
+#alias OBject.Value1	:	Object.HitboxRight
+#alias OBject.Value2	:	Object.Timer
+#alias OBject.Value3	:	Object.Length
+#alias OBject.Value4	:	Object.YVelocity
+
+// States
+#alias 0				:	CLEDGE5_IDLE
+#alias 1				:	CLEDGE5_DELAY_FROM_RIGHT
+#alias 2				:	CLEDGE5_DELAY_FROM_LEFT
+#alias 3				:	CLEDGE5_COLLAPSE_RIGHT
+#alias 4				:	CLEDGE5_COLLAPSE_LEFT
+#alias 5				:	CLEDGE5_RESTORE	// Unused
+
+#alias 6				:	CLEDGE5_DEBRIS
+
+// Priority
+#alias 0				:	PRIORITY_ACTIVE_BOUNDS
+#alias 1				:	PRIORITY_ACTIVE
 
 
 sub ObjectMain
 	switch Object.State
-	case 1
-		if Object.Value2 > 0
-			Object.Value2--
+	case CLEDGE5_DELAY_FROM_RIGHT
+		if Object.Timer > 0
+			Object.Timer--
 		else
 			PlayStageSfx(0, 0)
-			Object.State = 4
+			Object.State = CLEDGE5_COLLAPSE_RIGHT
 		end if
 		break
-	case 2
-		if Object.Value2 > 0
-			Object.Value2--
+
+	case CLEDGE5_DELAY_FROM_LEFT
+		if Object.Timer > 0
+			Object.Timer--
 		else
 			PlayStageSfx(0, 0)
-			Object.State = 3
+			Object.State = CLEDGE5_COLLAPSE_LEFT
 		end if
 		break
-	case 3
-		Object.Value2++
-		if Object.Value2 == 12
-			Object.Value2 = 0
-			if Object.Value0 < Object.Value1
-				Object.Value0 += 16
-				TempValue0 = Object.Value0
-				TempValue0 -= 8
+
+	case CLEDGE5_COLLAPSE_RIGHT
+		Object.Timer++
+		if Object.Timer == 12
+			Object.Timer = 0
+			if Object.HitboxRight > Object.HitboxLeft
+			
+				Object.HitboxRight -= 16
+				TempValue0 = Object.HitboxRight
+				TempValue0 += 8
 				TempValue0 <<= 16
 				TempValue0 += Object.XPos
 				CreateTempObject(TypeName[CrumbleLedge5], 0, TempValue0, Object.YPos)
-				Object[TempObjectPos].State = 6
-				if Object.Value3 == 1
+				Object[TempObjectPos].State = CLEDGE5_DEBRIS
+				if Object.Length == 1
 					Object[TempObjectPos].Frame = 4
 				else
-					if Object.Value3 == Object.PropertyValue
+					if Object.Length == Object.PropertyValue
 						Object[TempObjectPos].Frame = 2
 					else
 						Object[TempObjectPos].Frame = 3
 					end if
 				end if
-				Object.Value3--
+				Object.Length--
 			else
 				ResetObjectEntity(Object.EntityNo, TypeName[BlankObject], 0, 0, 0)
 			end if
 		end if
 		break
-	case 4
-		Object.Value2++
-		if Object.Value2 == 12
-			Object.Value2 = 0
-			if Object.Value1 > Object.Value0
-				Object.Value1 -= 16
-				TempValue0 = Object.Value1
-				TempValue0 += 8
+
+	case CLEDGE5_COLLAPSE_LEFT
+		Object.Timer++
+		if Object.Timer == 12
+
+			Object.Timer = 0
+			if Object.HitboxLeft < Object.HitboxRight
+
+				Object.HitboxLeft += 16
+				TempValue0 = Object.HitboxLeft
+				TempValue0 -= 8
 				TempValue0 <<= 16
 				TempValue0 += Object.XPos
+
 				CreateTempObject(TypeName[CrumbleLedge5], 0, TempValue0, Object.YPos)
-				Object[TempObjectPos].State = 6
-				if Object.Value3 == 1
+				Object[TempObjectPos].State = CLEDGE5_DEBRIS
+
+				if Object.Length == 1
 					Object[TempObjectPos].Frame = 2
 				else
-					if Object.Value3 == Object.PropertyValue
+					if Object.Length == Object.PropertyValue
 						Object[TempObjectPos].Frame = 4
 					else
 						Object[TempObjectPos].Frame = 3
 					end if
 				end if
-				Object.Value3--
+				Object.Length--
 			else
 				ResetObjectEntity(Object.EntityNo, TypeName[BlankObject], 0, 0, 0)
 			end if
 		end if
 		break
-	case 5
-		if Object.OutOfBounds == 1
-			Object.State = 0
-			Object.Value3 = Object.PropertyValue
-			Object.Value0 = Object.PropertyValue
-			Object.Value0 <<= 3
-			Object.Value1 = Object.Value0
-			FlipSign(Object.Value0)
-			Object.Priority = 0
-			Object.Value2 = 0
+
+	case CLEDGE5_RESTORE
+		if Object.OutOfBounds == true
+			Object.State = CLEDGE5_IDLE
+			Object.Length = Object.PropertyValue
+
+			Object.HitboxLeft = Object.PropertyValue
+			Object.HitboxLeft <<= 3
+
+			Object.HitboxRight = Object.HitboxLeft
+			FlipSign(Object.HitboxLeft)
+
+			Object.Priority = PRIORITY_ACTIVE_BOUNDS
+			Object.Timer = 0
 		end if
 		break
-	case 6
-		Object.Value4 += 16384
-		if Object.Value4 > 0
-			Object.YPos += Object.Value4
+
+	case CLEDGE5_DEBRIS
+		Object.YVelocity += 16384	// 0x4000
+		if Object.YVelocity > 0
+			Object.YPos += Object.YVelocity
 		end if
-		if Object.OutOfBounds == 1
+
+		if Object.OutOfBounds == true
 			Object.Type = TypeName[BlankObject]
 		end if
 		break
+
 	end switch
 end sub
 
 
 sub ObjectPlayerInteraction
-	if Object.State == 0
-		PlayerObjectCollision(C_PLATFORM, Object.Value0, -24, Object.Value1, 16)
-		if CheckResult == 1
-			Object.Value2 = 1
-			Object.Priority = 1
+	if Object.State == CLEDGE5_IDLE
+		PlayerObjectCollision(C_PLATFORM, Object.HitboxLeft, -24, Object.HitboxRight, 16)
+		if CheckResult == true
+			Object.Timer = 1
+			Object.Priority = PRIORITY_ACTIVE
 			if Player.XPos > Object.XPos
-				Object.State = 1
+				Object.State = CLEDGE5_DELAY_FROM_RIGHT
 			else
-				Object.State = 2
+				Object.State = CLEDGE5_DELAY_FROM_LEFT
 			end if
 		end if
 	else
-		PlayerObjectCollision(C_PLATFORM, Object.Value0, -24, Object.Value1, 16)
+		PlayerObjectCollision(C_PLATFORM, Object.HitboxLeft, -24, Object.HitboxRight, 16)
 	end if
 end sub
 
 
+
 sub ObjectDraw
 	switch Object.State
-	case 0
-	case 1
-	case 2
-	case 4
+	case CLEDGE5_IDLE
+	case CLEDGE5_DELAY_FROM_RIGHT
+	case CLEDGE5_DELAY_FROM_LEFT
+	case CLEDGE5_COLLAPSE_RIGHT
 		TempValue0 = 0
 		TempValue1 = Object.Value0
 		TempValue1 <<= 16
-		TempValue1 += 524288
+		TempValue1 += 524288	// 0x80000
 		TempValue1 += Object.XPos
 		TempValue2 = Object.PropertyValue
 		TempValue2--
@@ -147,14 +181,14 @@ sub ObjectDraw
 				end if
 			end if
 			TempValue0++
-			TempValue1 += 1048576
+			TempValue1 += 1048576	// 0x100000
 		loop
 		break
-	case 3
+	case CLEDGE5_COLLAPSE_LEFT
 		TempValue0 = 0
 		TempValue1 = Object.Value1
 		TempValue1 <<= 16
-		TempValue1 -= 524288
+		TempValue1 -= 524288	// 0x80000
 		TempValue1 += Object.XPos
 		TempValue2 = Object.PropertyValue
 		TempValue2--
@@ -171,10 +205,10 @@ sub ObjectDraw
 				end if
 			end if
 			TempValue0++
-			TempValue1 -= 1048576
+			TempValue1 -= 1048576	// 0x100000
 		loop
 		break
-	case 6
+	case CLEDGE5_DEBRIS
 		DrawSprite(0)
 		DrawSprite(1)
 		DrawSprite(Object.Frame)
@@ -196,11 +230,11 @@ sub ObjectStartup
 		end if
 		ArrayPos0++
 	loop
-	SpriteFrame(-8, -40, 16, 48, 163, 1)
-	SpriteFrame(-8, 8, 16, 16, 190, 66)
-	SpriteFrame(-8, 24, 16, 16, 82, 49)
-	SpriteFrame(-8, 24, 16, 16, 98, 49)
-	SpriteFrame(-8, 24, 16, 16, 130, 49)
+	SpriteFrame(-8, -40, 16, 48, 163, 1)	// #0 - Ledge top
+	SpriteFrame(-8, 8, 16, 16, 190, 66)		// #1 - Ledge middle
+	SpriteFrame(-8, 24, 16, 16, 82, 49)		// #2 - Ledge bottom left
+	SpriteFrame(-8, 24, 16, 16, 98, 49)		// #3 - Ledge bottom middle
+	SpriteFrame(-8, 24, 16, 16, 130, 49)	// #4 - Ledge bottom right
 end sub
 
 sub RSDK

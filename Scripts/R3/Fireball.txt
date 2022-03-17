@@ -3,17 +3,19 @@
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
 // Aliases
-#alias 45: TYPE_FIREBALL
+#alias Object.Value0	:	Object.Fade
+#alias Object.Value1	:	Object.XVelocity
 
 
 sub ObjectMain
-	Object.XPos += Object.Value1
-	if Object.Value1 > 0
-		Object.Value1 += 4096
+	Object.XPos += Object.XVelocity
+	if Object.XVelocity > 0
+		Object.XVelocity += 4096
 	else
-		Object.Value1 -= 4096
+		Object.XVelocity -= 4096
 	end if
-	if Object.OutOfBounds == 1
+
+	if Object.OutOfBounds == true
 		Object.Type = TypeName[BlankObject]
 	else
 		TempValue0 = Screen.YOffset
@@ -23,21 +25,23 @@ sub ObjectMain
 			Object.Type = TypeName[BlankObject]
 		end if
 	end if
-	if Object.Value0 > 0
-		Object.Value0--
-		if Object.Value0 < 32
-			Object.Alpha = Object.Value0
+
+	if Object.Fade > 0
+		Object.Fade--
+		if Object.Fade < 32
+			Object.Alpha = Object.Fade
 			Object.Alpha <<= 3
 		end if
 	else
 		Object.Type = TypeName[BlankObject]
 	end if
+
 end sub
 
 
 sub ObjectPlayerInteraction
 	PlayerObjectCollision(C_TOUCH, -8, -6, 8, 6)
-	if CheckResult == 1
+	if CheckResult == true
 		CallFunction(PlayerObject_Hit)
 	end if
 end sub
@@ -50,8 +54,8 @@ end sub
 
 sub ObjectStartup
 	LoadSpriteSheet("R3/Objects.gif")
-	SpriteFrame(-8, -8, 16, 16, 230, 1)
-	SpriteFrame(-8, -8, 16, 16, 230, 18)
+	SpriteFrame(-8, -8, 16, 16, 230, 1)		// #0 - Fireball facing left
+	SpriteFrame(-8, -8, 16, 16, 230, 18)	// #1 - Fireball facing right
 end sub
 
 sub RSDK

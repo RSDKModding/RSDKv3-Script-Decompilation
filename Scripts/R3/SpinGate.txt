@@ -3,50 +3,70 @@
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
 // Aliases
-#alias 55: TYPE_SPINGATE
+#alias Object.Value0	:	Object.Timer
+#alias Object.Value1	:	Object.Turning
+#alias Object.Value2	:	Object.CurrentLight
+#alias Object[+1].Type	:	GateLight1.Type
+#alias Object[+2].Type	:	GateLight2.Type
+#alias Object[+3].Type	:	GateLight3.Type
 
+#alias 0	:	SPINGATE_IDLE
+#alias 1	:	SPINGATE_TURNING
 
 sub ObjectMain
-	if Object.State == 1
-		if Object.Value0 < 96
-			Object.Value0++
+	if Object.State == SPINGATE_TURNING
+		if Object.Timer < 96
+			Object.Timer++
 		else
-			Object.Value0 = 0
-			Object.State = 0
+			Object.Timer = 0
+			Object.State = SPINGATE_IDLE
 		end if
 	end if
 end sub
 
 
 sub ObjectPlayerInteraction
-	if Object.State == 0
+	if Object.State == SPINGATE_IDLE
+
 		PlayerObjectCollision(C_TOUCH, -8, -8, 8, 8)
-		if CheckResult == 1
-			if Object.Value1 == 0
-				Object.State = 1
-				Object.Value2++
-				Object.Value2 &= 3
-				Object.Value1 = 1
-				switch Object.Value2
+		if CheckResult == true
+
+			if Object.Turning == false
+
+				Object.State = SPINGATE_TURNING
+
+				Object.CurrentLight++
+				Object.CurrentLight &= 3
+
+				Object.Turning = true
+
+				switch Object.CurrentLight
 				case 0
-					Object[+1].Type = TypeName[BlankObject]
-					Object[+2].Type = TypeName[BlankObject]
-					Object[+3].Type = TypeName[BlankObject]
+					GateLight1.Type = TypeName[BlankObject]
+					GateLight2.Type = TypeName[BlankObject]
+					GateLight3.Type = TypeName[BlankObject]
 					break
+
 				case 1
 					Object[+1].Type = TypeName[GateLight]
 					break
+
 				case 2
 					Object[+2].Type = TypeName[GateLight]
 					break
+
 				case 3
 					Object[+3].Type = TypeName[GateLight]
 					break
+
 				end switch
+
 			end if
+
 		else
-			Object.Value1 = 0
+			Object.Turning = false
 		end if
+
 	end if
 end sub
 
@@ -55,26 +75,30 @@ sub ObjectDraw
 	TempValue0 = Object.Value0
 	TempValue0 >>= 2
 	TempValue0 &= 3
+
 	switch TempValue0
 	case 0
 	case 1
 	case 2
 		DrawSprite(TempValue0)
 		break
+
 	case 3
 		Object.Direction = 2
 		DrawSpriteFX(3, FX_FLIP, Object.XPos, Object.YPos)
 		break
+
 	end switch
 end sub
 
 
 sub ObjectStartup
 	LoadSpriteSheet("R3/Objects2.gif")
-	SpriteFrame(-16, -8, 32, 16, 18, 50)
-	SpriteFrame(-16, -16, 32, 32, 51, 0)
-	SpriteFrame(-16, -16, 32, 32, 84, 0)
-	SpriteFrame(-16, -16, 32, 32, 51, 0)
+
+	SpriteFrame(-16, -8, 32, 16, 18, 50)	// #0 - Spin Gate
+	SpriteFrame(-16, -16, 32, 32, 51, 0)	// #1 - Spin Gate Rotate Frame 0
+	SpriteFrame(-16, -16, 32, 32, 84, 0)	// #2 - Spin Gate Rotate Frame 1
+	SpriteFrame(-16, -16, 32, 32, 51, 0)	// #3 - Spin Gate Rotate Frame 2
 end sub
 
 sub RSDK

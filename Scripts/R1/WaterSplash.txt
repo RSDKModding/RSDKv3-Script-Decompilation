@@ -3,54 +3,65 @@
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
 // Aliases
-#alias 65: TYPE_WATERSPLASH
+#alias Object.Value0	:	Object.Timer
 
+// States
+#alias 0	:	WATERSPLASH_IDLE
+#alias 1	:	WATERSPLASH_DELAY
+#alias 2	:	WATERSPLASH_DRAW
 
 sub ObjectPlayerInteraction
-	if Object.State == 0
+	if Object.State == WATERSPLASH_IDLE
+
 		PlayerObjectCollision(C_TOUCH, -16, 0, 16, 32)
-		if CheckResult == 1
-			Object.Value0 = 4
-			Object.State = 1
+		if CheckResult == true
+			Object.Timer = 4
+			Object.State = WATERSPLASH_DELAY
 			Object.DrawOrder = 4
 			Object.Frame = 0
 		end if
+
 	end if
 end sub
 
 
 sub ObjectDraw
 	switch Object.State
-	case 1
-		if Object.Value0 > 0
-			Object.Value0--
+	case WATERSPLASH_DELAY
+		if Object.Timer > 0
+			Object.Timer--
 		else
-			Object.State = 2
+			Object.State = WATERSPLASH_DRAW
 			PlayStageSfx(3, 0)
 		end if
 		break
-	case 2
+
+	case WATERSPLASH_DRAW
 		DrawSprite(Object.Frame)
-		Object.Value0++
-		if Object.Value0 > 4
-			Object.Value0 = 0
+		Object.Timer++
+		if Object.Timer > 4
+			Object.Timer = 0
+
 			Object.Frame++
 			if Object.Frame > 4
 				Object.State = 0
 			end if
+
 		end if
 		break
+
 	end switch
 end sub
 
 
 sub ObjectStartup
 	LoadSpriteSheet("R1/Objects3.gif")
-	SpriteFrame(-16, -16, 32, 16, 166, 51)
-	SpriteFrame(-16, -64, 32, 64, 148, 101)
-	SpriteFrame(-16, -48, 32, 48, 115, 101)
-	SpriteFrame(-16, -32, 32, 32, 107, 68)
-	SpriteFrame(-16, -32, 32, 32, 140, 68)
+	
+	SpriteFrame(-16, -16, 32, 16, 166, 51)		// #0 - WaterSplash Frame 0
+	SpriteFrame(-16, -64, 32, 64, 148, 101)		// #1 - WaterSplash Frame 1
+	SpriteFrame(-16, -48, 32, 48, 115, 101)		// #2 - WaterSplash Frame 2
+	SpriteFrame(-16, -32, 32, 32, 107, 68)		// #3 - WaterSplash Frame 3
+	SpriteFrame(-16, -32, 32, 32, 140, 68)		// #4 - WaterSplash Frame 4
 end sub
 
 sub RSDK

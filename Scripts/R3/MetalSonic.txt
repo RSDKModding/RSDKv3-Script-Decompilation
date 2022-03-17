@@ -4,49 +4,84 @@
 
 // Aliases
 #alias 61: TYPE_METALSONIC
+#alias Object.Value0		:	Object.Timer
+#alias Object.Value1		:	Object.YVelocity
+#alias Object.Value3		:	Object.XVelocity
+#alias Object.Value4		:	Object.AnimationTimer
+
+// Amy Aliases
+#alias Object[-1].XPos		:	Amy.XPos
+#alias Object[-1].YPos		:	Amy.YPos
+#alias Object[-1].Direction	:	Amy.Direction
+#alias Object[-1].Frame		:	Amy.Frame
+#alias Object[-1].State		:	Amy.State
+
+// States
+#alias 0	:	METALSONIC_WAIT
+#alias 1	:	METALSONIC_APPROACH
+#alias 2	:	METALSONIC_CATCH_AMY
+#alias 3	:	METALSONIC_INCREASE_HEIGHT
+#alias 4	:	METALSONIC_STARE
+#alias 5	:	METALSONIC_FLEE
+
+// Amy States
+#alias 4	:	AMY_KIDNAP
 
 
 sub ObjectMain
 	switch Object.State
-	case 1
-		Object.XPos -= 196608
+	case METALSONIC_WAIT	// Used by Amy
+		break
+
+	case METALSONIC_APPROACH
+		Object.XPos -= 196608	// 0x30000
 		Object.Frame++
 		Object.Frame &= 1
+
 		TempValue0 = 0
+
 		ArrayPos0 = Object.EntityNo
 		ArrayPos0++
 		while TempValue0 < 3
 			if Object[ArrayPos0].Type > TypeName[BlankObject]
 				TempValue1 = Object[ArrayPos0].XPos
-				TempValue1 += 2359296
+				TempValue1 += 2359296	// 0x240000
+
 				if Object.XPos < TempValue1
+					// Destroy Spikes
 					Object[ArrayPos0].Type = TypeName[BlankObject]
 					TempValue2 = Object[ArrayPos0].PropertyValue
 					TempValue2 <<= 2
+
+					// Create Debris
 					CreateTempObject(TypeName[SpikeDebris], TempValue2, Object[ArrayPos0].XPos, Object[ArrayPos0].YPos)
 					Object[TempObjectPos].iXPos -= 9
 					Object[TempObjectPos].iYPos -= 9
-					Object[TempObjectPos].Value0 = -65536
-					Object[TempObjectPos].Value1 = -196608
+					Object[TempObjectPos].XVelocity = -65536
+					Object[TempObjectPos].YVelocity = -196608
 					TempValue2++
+
 					CreateTempObject(TypeName[SpikeDebris], TempValue2, Object[ArrayPos0].XPos, Object[ArrayPos0].YPos)
 					Object[TempObjectPos].iXPos += 8
 					Object[TempObjectPos].iYPos -= 9
-					Object[TempObjectPos].Value0 = 65536
-					Object[TempObjectPos].Value1 = -196608
+					Object[TempObjectPos].XVelocity = 65536
+					Object[TempObjectPos].YVelocity = -196608
 					TempValue2++
+
 					CreateTempObject(TypeName[SpikeDebris], TempValue2, Object[ArrayPos0].XPos, Object[ArrayPos0].YPos)
 					Object[TempObjectPos].iXPos -= 9
 					Object[TempObjectPos].iYPos += 8
-					Object[TempObjectPos].Value0 = -65536
-					Object[TempObjectPos].Value1 = -98304
+					Object[TempObjectPos].XVelocity = -65536
+					Object[TempObjectPos].YVelocity = -98304
 					TempValue2++
+
 					CreateTempObject(TypeName[SpikeDebris], TempValue2, Object[ArrayPos0].XPos, Object[ArrayPos0].YPos)
 					Object[TempObjectPos].iXPos += 8
 					Object[TempObjectPos].iYPos += 8
-					Object[TempObjectPos].Value0 = 65536
-					Object[TempObjectPos].Value1 = -98304
+					Object[TempObjectPos].XVelocity = 65536
+					Object[TempObjectPos].YVelocity = -98304
 					TempValue2++
+
 					PlayStageSfx(8, 0)
 #platform: Use_Haptics
 					HapticEffect(96, 0, 0, 0)
@@ -56,72 +91,89 @@ sub ObjectMain
 			ArrayPos0++
 			TempValue0++
 		loop
-		TempValue0 = Object[-1].XPos
-		TempValue0 += 2097152
+		TempValue0 = Amy.XPos
+		TempValue0 += 2097152	// 0x200000
 		if Object.XPos < TempValue0
-			Object.State = 2
+			Object.State = METALSONIC_CATCH_AMY
 			Object.Frame = 2
-			Object.Value1 = Object.YPos
-			Object[-1].Frame = 8
-			Object[-1].State = 4
+			Object.YVelocity = Object.YPos
+			Amy.Frame = 8
+			Amy.State = AMY_KIDNAP
 			PlayStageSfx(9, 0)
 		end if
 		break
-	case 2
-		if Object.Value0 > 8
+
+	case METALSONIC_CATCH_AMY
+		if Object.Timer > 8
+
 			if Player.XPos < Object.XPos
 				Object.Direction = FACING_LEFT
 			else
 				Object.Direction = FACING_RIGHT
 			end if
+
 		end if
-		Sin(Object.YPos, Object.Value0)
+
+		Sin(Object.YPos, Object.Timer)
 		Object.YPos <<= 9
-		Object.YPos += Object.Value1
-		Object.Value0 += 8
-		if Object.Value0 > 607
-			Object.State = 3
-			Object.Value0 = 0
+		Object.YPos += Object.YVelocity
+
+		Object.Timer += 8
+		if Object.Timer > 607
+			Object.State = METALSONIC_INCREASE_HEIGHT
+			Object.Timer = 0
 		end if
 		break
-	case 3
+
+	case METALSONIC_INCREASE_HEIGHT
+
 		if Player.XPos < Object.XPos
 			Object.Direction = FACING_LEFT
 		else
 			Object.Direction = FACING_RIGHT
 		end if
-		if Object.Value0 < 40
-			Object.Value0++
-			Object.Value1 -= 131072
-			Object.YPos -= 131072
+
+		if Object.Timer < 40
+			Object.Timer++
+			Object.YVelocity -= 131072	// 0x20000
+			Object.YPos -= 131072		// 0x20000
 		else
-			Object.State = 4
-			Object.Value0 = 256
+			Object.State = METALSONIC_STARE
+			Object.Timer = 256
 		end if
 		break
-	case 4
+
+	case METALSONIC_STARE
+
 		if Player.XPos < Object.XPos
 			Object.Direction = FACING_LEFT
 		else
 			Object.Direction = FACING_RIGHT
 		end if
-		Sin(Object.YPos, Object.Value0)
+
+		Sin(Object.YPos, Object.Timer)
 		Object.YPos <<= 9
-		Object.YPos += Object.Value1
-		Object.Value0 += 8
-		if Object.Value0 > 976
-			Object.State = 5
+		Object.YPos += Object.YVelocity
+
+		Object.Timer += 8
+		if Object.Timer > 976
+			Object.State = METALSONIC_FLEE
 			Object.Direction = FACING_RIGHT
 		end if
 		break
-	case 5
-		if Object.Value3 < 393216
-			Object.Value3 += 8192
+
+	case METALSONIC_FLEE
+
+		if Object.XVelocity < 393216	// 0x60000
+			Object.XVelocity += 8192	// 0x2000
 		end if
-		Object.XPos += Object.Value3
-		if Object.OutOfBounds == 1
+		Object.XPos += Object.XVelocity
+
+		if Object.OutOfBounds == true
+			// Erase Metal
 			TempValue0 = Object.EntityNo
 			ResetObjectEntity(TempValue0, TypeName[BlankObject], 0, 0, 0)
+			// Erase Amy
 			TempValue0--
 			ResetObjectEntity(TempValue0, TypeName[BlankObject], 0, 0, 0)
 		end if
@@ -134,15 +186,17 @@ sub ObjectDraw
 	if Object.State < 2
 		DrawSprite(Object.Frame)
 	else
-		Object[-1].XPos = Object.XPos
-		Object[-1].YPos = Object.YPos
-		Object[-1].Direction = Object.Direction
-		TempValue0 = Object.Value4
+		Amy.XPos = Object.XPos
+		Amy.YPos = Object.YPos
+		Amy.Direction = Object.Direction
+
+		TempValue0 = Object.AnimationTimer
 		TempValue0 >>= 1
 		TempValue0 += 3
 		DrawSpriteFX(TempValue0, FX_FLIP, Object.XPos, Object.YPos)
-		Object.Value4++
-		Object.Value4 &= 7
+
+		Object.AnimationTimer++
+		Object.AnimationTimer &= 7
 		DrawSpriteFX(Object.Frame, FX_FLIP, Object.XPos, Object.YPos)
 	end if
 end sub
@@ -150,13 +204,19 @@ end sub
 
 sub ObjectStartup
 	LoadSpriteSheet("R3/Objects.gif")
-	SpriteFrame(-24, -16, 48, 32, 67, 68)
-	SpriteFrame(-24, -16, 48, 32, 116, 68)
-	SpriteFrame(-16, -24, 32, 48, 1, 108)
-	SpriteFrame(-24, -12, 24, 24, 214, 43)
-	SpriteFrame(0, 0, 2, 2, 165, 68)
-	SpriteFrame(-28, -16, 32, 32, 165, 68)
-	SpriteFrame(0, 0, 2, 2, 165, 68)
+
+	// Overdrive Attack
+	SpriteFrame(-24, -16, 48, 32, 67, 68)	// #0 - Overdrive Attack Frame 0
+	SpriteFrame(-24, -16, 48, 32, 116, 68)	// #1 - Overdrive Attack Frame 1
+
+	// Metal Idle
+	SpriteFrame(-16, -24, 32, 48, 1, 108)	// #2 - Metal Sonic
+
+	// Booster
+	SpriteFrame(-24, -12, 24, 24, 214, 43)	// #3 - Booster Frame 0
+	SpriteFrame(0, 0, 2, 2, 165, 68)		// #4 - Booster Frame 1 / Cheat Sprite
+	SpriteFrame(-28, -16, 32, 32, 165, 68)	// #5 - Booster Frame 2
+	SpriteFrame(0, 0, 2, 2, 165, 68)		// #6 - Booster Frame 3 / Cheat Sprite
 end sub
 
 sub RSDK

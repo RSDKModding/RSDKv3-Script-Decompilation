@@ -136,14 +136,14 @@
 #alias Player.Value4		:	Player.Invincible
 
 // States
-#alias 0					:	PPZEGGMAN_SETUP
-#alias 1					:	PPZEGGMAN_WAIT_PLAYER
-#alias 2					:	PPZEGGMAN_BODY_CONTROLLER
-#alias 3					:	PPZEGGMAN_DEFEATED
-#alias 4					:	PPZEGGMAN_BLANK
-#alias 5					:	PPZEGGMAN_RESTORE_BOUNDS
-#alias 6					:	PPZEGGMAN_SET_BOUNDARIES
-#alias 7					:	PPZEGGMAN_SPAWN_HVC
+#alias 0					:	R1_EGGMAN_SETUP
+#alias 1					:	R1_EGGMAN_WAIT_PLAYER
+#alias 2					:	R1_EGGMAN_BODY_CONTROLLER
+#alias 3					:	R1_EGGMAN_DEFEATED
+#alias 4					:	R1_EGGMAN_BLANK
+#alias 5					:	R1_EGGMAN_RESTORE_BOUNDS
+#alias 6					:	R1_EGGMAN_SET_BOUNDARIES
+#alias 7					:	R1_EGGMAN_SPAWN_HVC
 
 // EGG-HVC-001 Body States
 #alias 0					:	BOSSBODY_SETUP
@@ -181,10 +181,10 @@
 #alias 3					:	ANI_DESTROYED
 
 // Function declarations
-#function PPZEggman_Oscillation
+#function R1_EGGMAN_Oscillation
 
 // Fake Table for Oscillation of the boss height
-function PPZEggman_Oscillation
+function R1_EGGMAN_Oscillation
 	switch Object.Oscillation
 	case 0
 		TempValue0 = 1
@@ -250,7 +250,7 @@ end function
 
 sub ObjectMain
 	switch Object.State
-	case PPZEGGMAN_SETUP
+	case R1_EGGMAN_SETUP
 		Object.Animation = ANI_NONE
 		Object.Priority = PRIORITY_ACTIVE
 
@@ -271,10 +271,10 @@ sub ObjectMain
 		Object.SavedXBoundary2 = Stage.XBoundary2
 		Object.SavedYBoundary2 = Stage.YBoundary2
 		Stage.NewXBoundary2 = Object.NewXBoundary2Value
-		Object.State = PPZEGGMAN_WAIT_PLAYER
+		Object.State = R1_EGGMAN_WAIT_PLAYER
 		break
 
-	case PPZEGGMAN_WAIT_PLAYER
+	case R1_EGGMAN_WAIT_PLAYER
 		TempValue0 = Object.NewXBoundary1Value
 		if Screen.CenterX > 160
 			TempValue0 += 180
@@ -297,13 +297,13 @@ sub ObjectMain
 					Stage.YBoundary2 = 256
 				end if
 
-				Object.State = PPZEGGMAN_SET_BOUNDARIES
+				Object.State = R1_EGGMAN_SET_BOUNDARIES
 			end if
 
 		end if
 		break
 
-	case PPZEGGMAN_BODY_CONTROLLER
+	case R1_EGGMAN_BODY_CONTROLLER
 		if Object.Timer > 0
 			Object.Timer--
 		end if
@@ -344,12 +344,12 @@ sub ObjectMain
 
 			SetBit(Body[ArrayPos0].BitHolder, 1, MOVE_FORWARD)
 			Object.Oscillation += 2
-			CallFunction(PPZEggman_Oscillation)
+			CallFunction(R1_EGGMAN_Oscillation)
 			if TempValue0 < 0
 				Object.Oscillation = 6
 			end if
 
-			CallFunction(PPZEggman_Oscillation)
+			CallFunction(R1_EGGMAN_Oscillation)
 			if TempValue0 == 6	// Go back
 				// Object +15 is a blank object used to hold values
 				Object[+15].Value0 = Object.YPos
@@ -376,13 +376,13 @@ sub ObjectMain
 			
 			Body[ArrayPos0].State = TempValue0
 			Object.Oscillation++
-			CallFunction(PPZEggman_Oscillation)
+			CallFunction(R1_EGGMAN_Oscillation)
 			Object.Oscillation--
 			Body[ArrayPos0].ChargeStart = TempValue0
 		end if
 		break
 
-	case PPZEGGMAN_DEFEATED
+	case R1_EGGMAN_DEFEATED
 		if Object.Timer < 160
 			Object.Timer++
 			TempValue0 = Object.Timer
@@ -413,10 +413,10 @@ sub ObjectMain
 		end if
 		break
 
-	case PPZEGGMAN_BLANK
+	case R1_EGGMAN_BLANK
 		break
 
-	case PPZEGGMAN_RESTORE_BOUNDS
+	case R1_EGGMAN_RESTORE_BOUNDS
 		if Object.Timer < 120
 			Music.Volume--
 			Stage.YBoundary2 += 4
@@ -430,7 +430,7 @@ sub ObjectMain
 		end if
 		break
 
-	case PPZEGGMAN_SET_BOUNDARIES
+	case R1_EGGMAN_SET_BOUNDARIES
 		if Stage.YBoundary2 > BossBody.iYPos
 			Stage.YBoundary2 -= 2
 			Stage.YBoundary1 += 2
@@ -443,11 +443,11 @@ sub ObjectMain
 			end if
 			Stage.NewYBoundary1 = TempValue0
 			Object.Timer = 0
-			Object.State = PPZEGGMAN_SPAWN_HVC
+			Object.State = R1_EGGMAN_SPAWN_HVC
 		end if
 		break
 
-	case PPZEGGMAN_SPAWN_HVC
+	case R1_EGGMAN_SPAWN_HVC
 		if Object.Timer < 120
 			if Object.Timer < 100
 				Music.Volume--
@@ -459,7 +459,7 @@ sub ObjectMain
 			Object.Timer++
 		else
 			Object.Timer = 0
-			Object.State = PPZEGGMAN_BODY_CONTROLLER
+			Object.State = R1_EGGMAN_BODY_CONTROLLER
 			Object.Animation = ANI_LAUGH
 			ArrayPos0 = Object.EntityNo
 			ArrayPos0++
@@ -636,7 +636,7 @@ sub ObjectPlayerInteraction
 		Player.XPos -= TempValue0
 	end if
 
-	if Object.State > PPZEGGMAN_WAIT_PLAYER
+	if Object.State > R1_EGGMAN_WAIT_PLAYER
 		if Player.Animation != ANI_HURT
 			if Object.Hit < 3
 				PlayerObjectCollision(C_TOUCH, -28, -28, 28, 28)
@@ -706,7 +706,7 @@ sub ObjectPlayerInteraction
 
 								case 2
 									Object.Hit++
-									Object.State = PPZEGGMAN_DEFEATED
+									Object.State = R1_EGGMAN_DEFEATED
 									Object.Animation = ANI_HURT
 									ArrayPos0 = Object.BodyEntity
 									Body[ArrayPos0].State = BOSSBODY_DESTROYED

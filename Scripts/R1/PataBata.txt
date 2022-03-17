@@ -3,85 +3,109 @@
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
 // Aliases
-#alias 37: TYPE_PATABATA
+#alias Object.Value0	:	Object.Oscillation
+#alias Object.Value1	:	Object.OriginPos.Y
+
+// States
+#alias 0				:	PATABATA_FLY_DOWN
+#alias 1				:	PATABATA_FLY_UP
+
+// Property Values
+#alias 0				:	NEW
+#alias 1				:	OLD
 
 
 sub ObjectMain
-	if Object.PropertyValue == 0
+	if Object.PropertyValue == NEW
 		Object.Frame++
 		if Object.Frame > 39
 			Object.Frame = 0
 		end if
+
 		switch Object.State
-		case 0
-			Sin(Object.YPos, Object.Value0)
+		case PATABATA_FLY_DOWN
+			Sin(Object.YPos, Object.Oscillation)
 			Object.YPos <<= 12
-			Object.YPos += Object.Value1
-			Object.XPos -= 32768
-			Object.Value0 -= 4
-			if Object.Value0 == 0
-				Object.State = 1
+			Object.YPos += Object.OriginPos.Y
+
+			Object.XPos -= 32768	// 0x8000
+
+			Object.Oscillation -= 4
+			if Object.Oscillation == 0
+				Object.State = PATABATA_FLY_UP
 				Object.Direction = FACING_LEFT
 			end if
 			break
-		case 1
-			Sin(Object.YPos, Object.Value0)
+
+		case PATABATA_FLY_UP
+			Sin(Object.YPos, Object.Oscillation)
 			FlipSign(Object.YPos)
 			Object.YPos <<= 12
-			Object.YPos += Object.Value1
-			Object.XPos += 32768
-			Object.Value0 += 4
-			if Object.Value0 == 2048
-				Object.State = 0
+			Object.YPos += Object.OriginPos.Y
+
+			Object.XPos += 32768	// 0x8000
+
+			Object.Oscillation += 4
+			if Object.Oscillation == 2048
+				Object.State = PATABATA_FLY_DOWN
 				Object.Direction = FACING_RIGHT
 			end if
 			break
+
 		end switch
 	else
 		Object.Frame++
 		if Object.Frame > 39
 			Object.Frame = 20
 		end if
+
 		switch Object.State
-		case 0
-			Sin(Object.YPos, Object.Value0)
+		case PATABATA_FLY_DOWN
+			Sin(Object.YPos, Object.Oscillation)
 			Object.YPos <<= 11
-			Object.YPos += Object.Value1
-			Object.XPos -= 16384
-			Object.Value0 -= 2
-			if Object.Value0 == 0
-				Object.State = 1
+			Object.YPos += Object.OriginPos.Y
+			
+			Object.XPos -= 16384	// 0x4000
+
+			Object.Oscillation -= 2
+			if Object.Oscillation == 0
+				Object.State = PATABATA_FLY_UP
 				Object.Direction = FACING_LEFT
 			end if
 			break
-		case 1
-			Sin(Object.YPos, Object.Value0)
+
+		case PATABATA_FLY_UP
+			Sin(Object.YPos, Object.Oscillation)
 			FlipSign(Object.YPos)
 			Object.YPos <<= 11
-			Object.YPos += Object.Value1
-			Object.XPos += 16384
-			Object.Value0 += 2
-			if Object.Value0 == 2048
-				Object.State = 0
+			Object.YPos += Object.OriginPos.Y
+
+			Object.XPos += 16384	// 0x4000
+
+			Object.Oscillation += 2
+			if Object.Oscillation == 2048
+				Object.State = PATABATA_FLY_DOWN
 				Object.Direction = FACING_RIGHT
 			end if
 			break
+
 		end switch
 	end if
-	CallFunction(StageSetup_CheckGoodFuture)
+
+	CallFunction(StageSetup_CheckGoodFuture)	// Check if a good future has been made
 end sub
 
 
 sub ObjectPlayerInteraction
 	PlayerObjectCollision(C_TOUCH, -14, -14, 14, 14)
-	if CheckResult == 1
+	if CheckResult == true
 		CallFunction(PlayerObject_BadnikBreak)
 	end if
 end sub
 
 
 sub ObjectDraw
-	if Object.PropertyValue == 0
+	if Object.PropertyValue == NEW
 		TempValue0 = Object.Frame
 		TempValue0 >>= 3
 		DrawSpriteFX(TempValue0, FX_FLIP, Object.XPos, Object.YPos)
@@ -95,26 +119,30 @@ end sub
 
 sub ObjectStartup
 	LoadSpriteSheet("R1/Objects.gif")
+	
+	// New PataBata
+	SpriteFrame(-16, -16, 32, 32, 1, 51)	// #0 - PataBata Fly Frame 0
+	SpriteFrame(-16, -8, 32, 16, 1, 84)		// #1 - PataBata Fly Frame 1
+	SpriteFrame(-16, -16, 32, 32, 117, 1)	// #2 - PataBata Fly Frame 2
+	SpriteFrame(-16, -8, 32, 16, 1, 84)		// #3 - PataBata Fly Frame 3
+	SpriteFrame(-16, -16, 32, 32, 1, 51)	// #4 - PataBata Fly Frame 4
+	// Old PataBata
+	SpriteFrame(-16, -16, 32, 32, 150, 1)	// #5 - PataBata Fly Frame 0
+	SpriteFrame(-16, -8, 32, 16, 1, 84)		// #6 - PataBata Fly Frame 1
+	SpriteFrame(-16, -16, 32, 32, 183, 1)	// #7 - PataBata Fly Frame 2
+	SpriteFrame(-16, -8, 32, 16, 1, 84)		// #8 - PataBata Fly Frame 3
+	SpriteFrame(-16, -16, 32, 32, 150, 1)	// #9 - PataBata Fly Frame 4
+	
 	ArrayPos0 = 32
 	while ArrayPos0 < 1056
 		if Object[ArrayPos0].Type == TypeName[PataBata]
-			Object[ArrayPos0].Value1 = Object[ArrayPos0].YPos
-			Object[ArrayPos0].Value0 = 1024
+			Object[ArrayPos0].OriginPos.Y = Object[ArrayPos0].YPos
+			Object[ArrayPos0].Oscillation = 1024
 			Object[ArrayPos0].Frame = Object[ArrayPos0].PropertyValue
 			Object[ArrayPos0].Frame *= 20
 		end if
 		ArrayPos0++
 	loop
-	SpriteFrame(-16, -16, 32, 32, 1, 51)
-	SpriteFrame(-16, -8, 32, 16, 1, 84)
-	SpriteFrame(-16, -16, 32, 32, 117, 1)
-	SpriteFrame(-16, -8, 32, 16, 1, 84)
-	SpriteFrame(-16, -16, 32, 32, 1, 51)
-	SpriteFrame(-16, -16, 32, 32, 150, 1)
-	SpriteFrame(-16, -8, 32, 16, 1, 84)
-	SpriteFrame(-16, -16, 32, 32, 183, 1)
-	SpriteFrame(-16, -8, 32, 16, 1, 84)
-	SpriteFrame(-16, -16, 32, 32, 150, 1)
 end sub
 
 sub RSDK

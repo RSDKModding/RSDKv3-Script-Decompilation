@@ -1,72 +1,101 @@
-//------------Sonic CD EPlatform Script-------------//
+//------------Sonic CD Eggman Platform Script-------------//
 //--------Scripted by Christian Whitehead 'The Taxman'--------//
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
 // Aliases
-#alias 48: TYPE_EPLATFORM
+#alias Object.Value0	:	Object.HitboxLeft
+#alias Object.Value1	:	Object.HitboxRight
+#alias Object.Value2	:	Object.Length
+#alias Object.Value3	:	Object.MusicFade
+
+// States
+#alias 0	:	EPLATFORM_IDLE
+#alias 1	:	EPLATFORM_EXTEND_LARGE
+#alias 2	:	EPLATFORM_EXTEND_SHORT
+#alias 3	:	EPLATFORM_BLANK
+
+// Property Values
+#alias 6	:	EPLATFORM_SHORT
+#alias 8	:	EPLATFORM_LARGE
+
+// Priority
+#alias 0	:	PRIORITY_ACTIVE_BOUNDS
+#alias 1	:	PRIORITY_ACTIVE
 
 
 sub ObjectMain
 	switch Object.State
-	case 0
-		if Object.PropertyValue == 8
+	case EPLATFORM_IDLE
+		if Object.PropertyValue == EPLATFORM_LARGE	// check if it's the platform used by Eggman
+			
 			PlayerObjectCollision(C_TOUCH, -64, -64, 64, -48)
-			if CheckResult == 1
-				Object.State = 1
+			if CheckResult == true
+				Object.State = EPLATFORM_EXTEND_LARGE
 				Stage.NewYBoundary2 = Object.iYPos
 				Stage.NewYBoundary2 += 24
 			end if
+
 		else
-			TempValue0 = Object.Value1
+
+			TempValue0 = Object.HitboxRight
 			TempValue0 += 32
 			TempValue0 <<= 16
 			TempValue0 += Object.XPos
 			if Player.XPos > TempValue0
-				Object.State = 2
-				Object.Priority = 1
+				Object.State = EPLATFORM_EXTEND_SHORT
+				Object.Priority = PRIORITY_ACTIVE
 			end if
+
 		end if
 		break
-	case 1
-		if Object.Value2 < Object.PropertyValue
-			Object.Value2++
-			Object.Value0 -= 16
+
+	case EPLATFORM_EXTEND_LARGE
+		if Object.Length < Object.PropertyValue
+			Object.Length++
+			Object.HitboxLeft -= 16
 		else
-			Object.State = 3
+			Object.State = EPLATFORM_BLANK
 		end if
 		break
-	case 2
-		if Object.Value2 < Object.PropertyValue
-			Object.Value2++
-			Object.Value0 -= 16
+
+	case EPLATFORM_EXTEND_SHORT
+		if Object.Length < Object.PropertyValue
+			Object.Length++
+			Object.HitboxLeft -= 16
 		end if
-		if Object.Value3 < 100
-			Object.Value3++
+		// Start the boss music
+		if Object.MusicFade < 100
+			Object.MusicFade++
 			Music.Volume--
 		else
 			PlayMusic(4)
-			Object.State = 3
-			Object.Priority = 0
+			Object.State = EPLATFORM_BLANK
+			Object.Priority = PRIORITY_ACTIVE_BOUNDS
 		end if
+		break
+
+	case EPLATFORM_BLANK
 		break
 	end switch
 end sub
 
 
 sub ObjectPlayerInteraction
-	PlayerObjectCollision(C_PLATFORM, Object.Value0, -16, Object.Value1, 16)
+	PlayerObjectCollision(C_PLATFORM, Object.HitboxLeft, -16, Object.HitBoxRight, 16)
 end sub
 
 
 sub ObjectDraw
 	TempValue0 = 0
-	TempValue1 = Object.Value1
+	TempValue1 = Object.HitBoxRight
 	TempValue1 <<= 16
 	TempValue1 -= 524288
 	TempValue1 += Object.XPos
-	while TempValue0 < Object.Value2
+	while TempValue0 < Object.Length
 		DrawSpriteXY(0, TempValue1, Object.YPos)
+
 		TempValue0++
+
 		TempValue1 -= 1048576
 	loop
 end sub
@@ -74,16 +103,18 @@ end sub
 
 sub ObjectStartup
 	LoadSpriteSheet("R3/Objects2.gif")
+
+	SpriteFrame(-8, -16, 16, 32, 117, 0)	// #0 - Eggman Platform
+
 	ArrayPos0 = 32
 	while ArrayPos0 < 1056
 		if Object[ArrayPos0].Type == TypeName[EPlatform]
-			Object[ArrayPos0].Value1 = Object[ArrayPos0].PropertyValue
-			Object[ArrayPos0].Value1 <<= 3
-			Object[ArrayPos0].Value0 = Object[ArrayPos0].Value1
+			Object[ArrayPos0].HitBoxRight = Object[ArrayPos0].PropertyValue
+			Object[ArrayPos0].HitBoxRight <<= 3
+			Object[ArrayPos0].HitboxLeft = Object[ArrayPos0].HitBoxRight
 		end if
 		ArrayPos0++
 	loop
-	SpriteFrame(-8, -16, 16, 32, 117, 0)
 end sub
 
 sub RSDK

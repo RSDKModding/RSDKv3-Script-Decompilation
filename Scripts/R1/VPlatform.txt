@@ -3,46 +3,61 @@
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
 // Aliases
-#alias 45: TYPE_VERTPLATFORM
+#alias Object.Value1	:	Object.CollisionOffset.Y
+#alias Object.Value2	:	Object.YVelocity
+#alias Object.Value3	:	Object.Oscillation
+
+// Property Values
+#alias 0				:	VPLATFORM_START_TOP
+#alias 1				:	VPLATFORM_START_BOTTOM
+
+// Collision
+#alias 1				:	FLOOR
 
 
 sub ObjectMain
-	Object.Value3 = Oscillation
-	Object.Value3 <<= 1
-	if Object.PropertyValue == 1
-		Object.Value3 += 256
+	Object.Oscillation = Oscillation
+	Object.Oscillation <<= 1
+
+	if Object.PropertyValue == VPLATFORM_START_BOTTOM
+		Object.Oscillation += 256
 	end if
-	Sin(Object.Value2, Object.Value3)
-	Object.Value2 *= 6144
-	Object.Value2 += Object.YPos
-	Object.Value2 &= -65536
-	Object.Value2 -= Object.Value1
+
+	Sin(Object.YVelocity, Object.Oscillation)
+	Object.YVelocity *= 6144	// 0x1800
+	Object.YVelocity += Object.YPos
+	Object.YVelocity &= -65536	// -0x10000
+	Object.YVelocity -= Object.CollisionOffset.Y
 end sub
 
 
 sub ObjectPlayerInteraction
 	TempValue0 = Object.YPos
-	Object.YPos = Object.Value1
+	Object.YPos = Object.CollisionOffset.Y
+
 	PlayerObjectCollision(C_PLATFORM, -32, -9, 32, 12)
-	if CheckResult == 1
-		Player.YPos += Object.Value2
+	if CheckResult == FLOOR
+		Player.YPos += Object.YVelocity
 	end if
+
 	Object.YPos = TempValue0
 end sub
 
 
 sub ObjectDraw
-	Sin(Object.Value1, Object.Value3)
-	Object.Value1 *= 6144
-	Object.Value1 += Object.YPos
-	Object.Value1 &= -65536
-	DrawSpriteXY(0, Object.XPos, Object.Value1)
+	Sin(Object.CollisionOffset.Y, Object.Oscillation)
+	Object.CollisionOffset.Y *= 6144	// 0x1800
+	Object.CollisionOffset.Y += Object.YPos
+	Object.CollisionOffset.Y &= -65536	// -0x10000
+
+	DrawSpriteXY(0, Object.XPos, Object.CollisionOffset.Y)
 end sub
 
 
 sub ObjectStartup
 	LoadSpriteSheet("R1/Objects.gif")
-	SpriteFrame(-32, -16, 64, 32, 101, 109)
+
+	SpriteFrame(-32, -16, 64, 32, 101, 109)	// #0 - Vertical Platform
 end sub
 
 sub RSDK

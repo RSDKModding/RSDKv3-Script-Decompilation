@@ -3,12 +3,16 @@
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
 // Aliases
-#alias 67: TYPE_STARBUSH
+#alias Object.Value0	:	Object.OriginPos.X	// Set by Ramp3D
+
+// Property Values
+#alias 0				:	STARBUSH_FOREGROUND	// technically a lie since the draworder is bugged
+#alias 2				:	STARBUSH_BACKGROUND
 
 
 sub ObjectDraw
 	if Object.PropertyValue == 0
-		DrawSpriteXY(0, Object.Value0, Object.YPos)
+		DrawSpriteXY(0, Object.OriginPos.X, Object.YPos)
 	else
 		DrawSprite(Object.PropertyValue)
 	end if
@@ -16,22 +20,24 @@ end sub
 
 
 sub ObjectStartup
+	LoadSpriteSheet("R1/Objects2.gif")
+
+	SpriteFrame(-24, -20, 48, 40, 115, 131)		// #0 - Big StarBush
+	SpriteFrame(-12, -12, 24, 24, 1, 229)		// #1 - Small StarBush
+	SpriteFrame(-24, -20, 48, 40, 115, 131)		// #2 - Big StarBush (Background)
+
 	ArrayPos0 = 32
 	while ArrayPos0 < 1056
 		if Object[ArrayPos0].Type == TypeName[StarBush]
-			if Object[ArrayPos0].PropertyValue == 0
-				Object[ArrayPos0].DrawOrder = 4
+			if Object[ArrayPos0].PropertyValue == STARBUSH_FOREGROUND
+				Object[ArrayPos0].DrawOrder = 4	// this should be 5
 			end if
-			if Object[ArrayPos0].PropertyValue == 2
+			if Object[ArrayPos0].PropertyValue == STARBUSH_BACKGROUND
 				Object[ArrayPos0].DrawOrder = 4
 			end if
 		end if
 		ArrayPos0++
 	loop
-	LoadSpriteSheet("R1/Objects2.gif")
-	SpriteFrame(-24, -20, 48, 40, 115, 131)
-	SpriteFrame(-12, -12, 24, 24, 1, 229)
-	SpriteFrame(-24, -20, 48, 40, 115, 131)
 end sub
 
 sub RSDK

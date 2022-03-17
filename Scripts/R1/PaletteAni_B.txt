@@ -3,23 +3,27 @@
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
 // Aliases
-#alias 64: TYPE_PALETTEANIMATION
+#alias Object.Value0	:	Object.Timer
+#alias Object.Value1	:	Object.CurrentPalette
+
+// Priority
+#alias 1				:	PRIORITY_ACTIVE
 
 
 sub ObjectMain
-	Object.Value0++
-	if Object.Value0 == 8
-		Object.Value0 = 0
-		Object.Value1++
-		Object.Value1 %= 3
-		SetActivePalette(Object.Value1, 0, 240)
+	Object.Timer++
+	if Object.Timer == 8
+		Object.Timer = 0
+		Object.CurrentPalette++
+		Object.CurrentPalette %= 3
+		SetActivePalette(Object.CurrentPalette, 0, 240)
 	end if
 end sub
 
 
 sub ObjectStartup
 	Object[19].Type = TypeName[PaletteAnimation]
-	Object[19].Priority = 1
+	Object[19].Priority = PRIORITY_ACTIVE
 	TempValue0 = 1
 	while TempValue0 < 3
 		RotatePalette(177, 179, 1)

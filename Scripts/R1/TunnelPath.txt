@@ -3,23 +3,36 @@
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
 // Aliases
-#alias 65: TYPE_TUNNELPATH
-#alias Player.Value4:Player.Invincible
-#alias Player.Value5:Player.BlinkTimer
+#alias Object.Value0	:	Object.Timer
+#alias Player.Value4	:	Player.Invincible
+#alias Player.Value5	:	Player.BlinkTimer
+
+// States
+#alias 0				:	TUNNELPATH_IDLE
+#alias 1				:	TUNNELPATH_ACTIVE
+
+// Priority
+#alias 0				:	PRIORITY_ACTIVE_BOUNDS
+#alias 1				:	PRIORITY_ACTIVE
 
 
 sub ObjectMain
-	if Object.State == 1
+	if Object.State == TUNNELPATH_ACTIVE
+
 		if Player.State == PlayerObject_Death
-			Object.State = 0
+			Object.State = TUNNELPATH_IDLE
 		end if
-		TempValue0 = Object.Value0
-		Object.Value0++
+
+		TempValue0 = Object.Timer
+		Object.Timer++
+
 		Player.Speed = Player.XPos
-		Player.Visible = 0
+
+		Player.Visible = false
+		// this is a very awful fake-table
 		switch TempValue0
 		case 0
-			Player.ObjectInteraction = 0
+			Player.ObjectInteraction = false
 			Player.XPos = 334541056
 			Player.YPos = 15754496
 			break
@@ -644,21 +657,21 @@ sub ObjectMain
 			Player.YPos = 48560384
 			break
 		case 155
-			Player.Visible = 1
-			Player.TileCollisions = 1
-			Object.State = 0
-			Object.Priority = 0
-			Player.XVelocity = -786432
-			Player.Speed = -786432
+			Player.Visible = true
+			Player.TileCollisions = true
+			Object.State = TUNNELPATH_IDLE
+			Object.Priority = PRIORITY_ACTIVE_BOUNDS
+			Player.XVelocity = -786432	// -0xC0000
+			Player.Speed = -786432	// -0xC0000
 			Player.State = PlayerObject_HandleGround
-			Player.ObjectInteraction = 1
+			Player.ObjectInteraction = true
 			if Object[+1].Type == TypeName[BlankObject]
 				Object[+1].Type = TypeName[TunnelPath]
 				PlayStageSfx(0, 0)
 			end if
 			break
 		end switch
-		if Object.State > 0
+		if Object.State > TUNNELPATH_IDLE
 			Player.Speed -= Player.XPos
 			FlipSign(Player.Speed)
 		end if
@@ -670,17 +683,17 @@ sub ObjectPlayerInteraction
 	if Object.PropertyValue == 0
 		if Player.State != PlayerObject_Blank
 			PlayerObjectCollision(C_TOUCH, -16, -16, 16, 16)
-			if CheckResult == 1
+			if CheckResult == true
 				Player.State = PlayerObject_Blank
 				if Player.BlinkTimer > 0
 					Player.Invincible = 0
 					Player.BlinkTimer = 0
 				end if
-				Player.TileCollisions = 0
-				Player.Visible = 0
-				Object.State = 1
-				Object.Value0 = 0
-				Object.Priority = 1
+				Player.TileCollisions = false
+				Player.Visible = false
+				Object.State = TUNNELPATH_ACTIVE
+				Object.Timer = 0
+				Object.Priority = PRIORITY_ACTIVE
 				PlaySfx(7, 0)
 			end if
 		end if
@@ -696,12 +709,12 @@ end sub
 
 
 sub ObjectStartup
-	if Stage.PlayerListPos == 0
+	if Stage.PlayerListPos == 0	// PlayerName[SONIC]
 		LoadSpriteSheet("R1/Objects.gif")
-		SpriteFrame(-16, -16, 32, 32, 34, 175)
+		SpriteFrame(-16, -16, 32, 32, 34, 175)	// #0 - Wall Hole
 	else
 		LoadSpriteSheet("R1/Objects3.gif")
-		SpriteFrame(-14, -16, 29, 32, 115, 167)
+		SpriteFrame(-14, -16, 29, 32, 115, 167)	// #0 - Wall Hole
 	end if
 end sub
 

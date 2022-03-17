@@ -2,25 +2,38 @@
 //--------Scripted by Christian Whitehead 'The Taxman'--------//
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
+// This is a chunk swapper for loops
+
 // Aliases
-#alias 43: TYPE_TILETRIGGERH
+#alias Object.Value0	:	OBject.HitboxLeft
+#alias Object.Value1	:	OBject.HitboxRight
+#alias Object.Value2	:	OBject.ChunkX
+#alias Object.Value3	:	OBject.ChunkY
+#alias Object.Value4	:	OBject.NextChunkX
+#alias Object.Value5	:	OBject.NextChunkY
+#alias Object.Value6	:	OBject.OriginalChunk
+#alias Object.Value7	:	OBject.NextChunk
 
 
 sub ObjectPlayerInteraction
-	PlayerObjectCollision(C_TOUCH, Object.Value0, -12, Object.Value1, 12)
-	if CheckResult == 1
+	PlayerObjectCollision(C_TOUCH, Object.HitboxLeft, -12, Object.HitboxRight, 12)
+	if CheckResult == true
+	
 		if Object[+1].PropertyValue == 0
-			TempValue0 = Object.Value6
+			TempValue0 = Object.OriginalChunk
 		else
-			TempValue0 = Object.Value7
+			TempValue0 = Object.NextChunk
 		end if
-		SetTileLayerEntry(TempValue0, 0, Object.Value2, Object.Value3)
+		SetTileLayerEntry(TempValue0, 0, Object.ChunkX, Object.ChunkY)
 		TempValue0++
-		SetTileLayerEntry(TempValue0, 0, Object.Value4, Object.Value3)
+
+		SetTileLayerEntry(TempValue0, 0, Object.NextChunkX, Object.ChunkY)
 		TempValue0++
-		SetTileLayerEntry(TempValue0, 0, Object.Value2, Object.Value5)
+
+		SetTileLayerEntry(TempValue0, 0, Object.ChunkX, Object.NextChunkY)
 		TempValue0++
-		SetTileLayerEntry(TempValue0, 0, Object.Value4, Object.Value5)
+
+		SetTileLayerEntry(TempValue0, 0, Object.NextChunkX, Object.NextChunkY)
 		TempValue0++
 	end if
 end sub
@@ -31,24 +44,30 @@ sub ObjectStartup
 	while ArrayPos0 < 1056
 		if Object[ArrayPos0].Type == TypeName[TileTriggerH]
 			ArrayPos1 = ArrayPos0
-			ArrayPos1++
-			Object[ArrayPos0].Value0 = Object[ArrayPos0].PropertyValue
-			Object[ArrayPos0].Value0 <<= 3
-			Object[ArrayPos0].Value1 = Object[ArrayPos0].Value0
-			FlipSign(Object[ArrayPos0].Value0)
-			Object[ArrayPos0].Value0 -= 8
-			Object[ArrayPos0].Value1 += 8
-			Object[ArrayPos0].Value2 = Object[ArrayPos1].iXPos
-			Object[ArrayPos0].Value2 >>= 7
-			Object[ArrayPos0].Value4 = Object[ArrayPos0].Value2
-			Object[ArrayPos0].Value4++
-			Object[ArrayPos0].Value3 = Object[ArrayPos1].iYPos
-			Object[ArrayPos0].Value3 >>= 7
-			Object[ArrayPos0].Value5 = Object[ArrayPos0].Value3
-			Object[ArrayPos0].Value5++
-			GetTileLayerEntry(Object[ArrayPos0].Value6, 0, Object[ArrayPos0].Value2, Object[ArrayPos0].Value3)
-			Object[ArrayPos0].Value7 = Object[ArrayPos0].Value6
-			Object[ArrayPos0].Value7 += 4
+			ArrayPos1++	// This should always be a blank object
+			Object[ArrayPos0].HitboxLeft = Object[ArrayPos0].PropertyValue
+			Object[ArrayPos0].HitboxLeft <<= 3
+			Object[ArrayPos0].HitboxRight = Object[ArrayPos0].HitboxLeft
+			FlipSign(Object[ArrayPos0].HitboxLeft)
+			Object[ArrayPos0].HitboxLeft -= 8
+			Object[ArrayPos0].HitboxRight += 8
+
+			Object[ArrayPos0].ChunkX = Object[ArrayPos1].iXPos
+			Object[ArrayPos0].ChunkX >>= 7
+
+			Object[ArrayPos0].NextChunkX = Object[ArrayPos0].ChunkX
+			Object[ArrayPos0].NextChunkX++
+
+			Object[ArrayPos0].ChunkY = Object[ArrayPos1].iYPos
+			Object[ArrayPos0].ChunkY >>= 7
+
+			Object[ArrayPos0].NextChunkY = Object[ArrayPos0].ChunkY
+			Object[ArrayPos0].NextChunkY++
+
+			GetTileLayerEntry(Object[ArrayPos0].OriginalChunk, 0, Object[ArrayPos0].ChunkX, Object[ArrayPos0].ChunkY)
+
+			Object[ArrayPos0].NextChunk = Object[ArrayPos0].OriginalChunk
+			Object[ArrayPos0].NextChunk += 4
 		end if
 		ArrayPos0++
 	loop

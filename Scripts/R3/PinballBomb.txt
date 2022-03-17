@@ -4,31 +4,44 @@
 
 // Aliases
 #alias 54: TYPE_PINBALLBOMB
+#alias Object.Value0	:	Object.AnimationTimer
+#alias Object.Value1	:	Object.XVelocity
+#alias Object.Value2	:	Object.YVelocity
+#alias Object.Value3	:	Object.Bounces
 
+// CSides
+#alias 0	:	CSIDE_FLOOR
+#alias 1	:	CSIDE_LWALL
+#alias 2	:	CSIDE_RWALL
 
 sub ObjectMain
-	Object.Value2 += 8192
-	if Object.Value2 > 262144
+	Object.YVelocity += 8192		// 0x2000
+	// if the bomb goes fast enough, get to the background, don't ask why
+	if Object.YVelocity > 262144	// 0x40000
 		Object.DrawOrder = 3
 	end if
-	Object.XPos += Object.Value1
-	Object.YPos += Object.Value2
-	Object.Value0++
-	Object.Value0 &= 3
-	if Object.Value1 > 0
-		ObjectTileCollision(1, 8, 0, 0)
+	Object.XPos += Object.XVelocity
+	Object.YPos += Object.YVelocity
+
+	Object.AnimationTimer++
+	Object.AnimationTimer &= 3
+
+	if Object.XVelocity > 0
+		ObjectTileCollision(CSIDE_LWALL, 8, 0, 0)
 	else
-		ObjectTileCollision(3, -8, 0, 0)
+		ObjectTileCollision(CSIDE_RWALL, -8, 0, 0)
 	end if
-	if CheckResult == 1
-		FlipSign(Object.Value1)
+	if CheckResult == true
+		FlipSign(Object.XVelocity)
 	end if
-	ObjectTileCollision(0, 0, 8, 0)
-	if CheckResult == 1
-		FlipSign(Object.Value2)
-		Object.Value2 >>= 1
-		if Object.Value3 < 1
-			Object.Value3++
+
+	ObjectTileCollision(CSIDE_FLOOR, 0, 8, 0)
+	if CheckResult == true
+		FlipSign(Object.YVelocity)
+		Object.YVelocity >>= 1
+
+		if Object.Bounces < 1
+			Object.Bounces++
 		else
 			PlaySfx(22, 0)
 			ResetObjectEntity(Object.EntityNo, TypeName[Explosion], 0, Object.XPos, Object.YPos)
@@ -39,7 +52,7 @@ end sub
 
 sub ObjectPlayerInteraction
 	PlayerObjectCollision(C_TOUCH, -8, -8, 8, 8)
-	if CheckResult == 1
+	if CheckResult == true
 		PlaySfx(22, 0)
 #platform: Use_Haptics
 		HapticEffect(96, 0, 0, 0)
@@ -65,7 +78,7 @@ end sub
 
 
 sub ObjectDraw
-	if Object.Value0 == 0
+	if Object.AnimationTimer == 0
 		DrawSprite(0)
 	else
 		DrawSprite(1)
@@ -75,8 +88,8 @@ end sub
 
 sub ObjectStartup
 	LoadSpriteSheet("R3/Objects2.gif")
-	SpriteFrame(-12, -12, 24, 24, 232, 0)
-	SpriteFrame(-8, -8, 16, 16, 130, 67)
+	SpriteFrame(-12, -12, 24, 24, 232, 0)	// #0 - Pinball Bomb Frame 0
+	SpriteFrame(-8, -8, 16, 16, 130, 67)	// #1 - Pinball Bomb Frame 1
 end sub
 
 sub RSDK

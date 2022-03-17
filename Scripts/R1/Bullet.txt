@@ -1,31 +1,35 @@
-//------------Sonic CD Bullet Script-------------//
+//------------Sonic CD Kamemusi Bullet Script-------------//
 //--------Scripted by Christian Whitehead 'The Taxman'--------//
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
 // Aliases
-#alias 39: TYPE_BULLET
+#alias Object.Value0	:	Object.AnimationTimer
+#alias Object.Value1	:	Object.XVelocity
+#alias Object.Value2	:	Object.YVelocity
 
 
 sub ObjectMain
-	Object.Value2 += 8192
-	Object.XPos += Object.Value1
-	Object.YPos += Object.Value2
-	if Object.OutOfBounds == 1
+	Object.YVelocity += 8192	// 0x2000
+	Object.XPos += Object.XVelocity
+	Object.YPos += Object.YVelocity
+
+	if Object.OutOfBounds == true
 		Object.Type = TypeName[BlankObject]
-	else
+	else	// if the go above the visible screen, delete them
 		TempValue0 = Screen.YOffset
 		TempValue0 -= 8
 		TempValue0 <<= 16
 		if Object.YPos < TempValue0
 			Object.Type = TypeName[BlankObject]
 		end if
+
 	end if
 end sub
 
 
 sub ObjectPlayerInteraction
 	PlayerObjectCollision(C_TOUCH, -4, -4, 4, 4)
-	if CheckResult == 1
+	if CheckResult == true
 		CallFunction(PlayerObject_Hit)
 	end if
 end sub
@@ -33,9 +37,11 @@ end sub
 
 sub ObjectDraw
 	DrawSprite(Object.Frame)
-	Object.Value0++
-	if Object.Value0 > 2
-		Object.Value0 = 0
+
+	Object.AnimationTimer++
+	if Object.AnimationTimer > 2
+		Object.AnimationTimer = 0
+
 		Object.Frame++
 		Object.Frame &= 3
 	end if
@@ -44,10 +50,11 @@ end sub
 
 sub ObjectStartup
 	LoadSpriteSheet("R1/Objects.gif")
-	SpriteFrame(-4, -4, 8, 8, 166, 34)
-	SpriteFrame(-4, -4, 8, 8, 175, 34)
-	SpriteFrame(-6, -6, 12, 12, 101, 93)
-	SpriteFrame(-6, -6, 12, 12, 114, 93)
+
+	SpriteFrame(-4, -4, 8, 8, 166, 34)		// #0 - Small Bullet Frame 0
+	SpriteFrame(-4, -4, 8, 8, 175, 34)		// #1 - Small Bullet Frame 1
+	SpriteFrame(-6, -6, 12, 12, 101, 93)	// #2 - Big Bullet Frame 0
+	SpriteFrame(-6, -6, 12, 12, 114, 93)	// #3 - Big Bullet Frame 1
 end sub
 
 sub RSDK

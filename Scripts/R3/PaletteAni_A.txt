@@ -3,28 +3,33 @@
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
 // Aliases
-#alias 65: TYPE_PALETTEANIMATION
+#alias Object.Value0	:	Object.Timer
+#alias Object.Value1	:	Object.CurrentPalette
 
+// Priority
+#alias 1				:	PRIORITY_ACTIVE
 
 sub ObjectMain
-	Object.Value0++
-	if Object.Value0 == 3
-		Object.Value0 = 0
-		Object.Value1++
-		Object.Value1 %= 6
-		SetActivePalette(Object.Value1, 0, 240)
+	Object.Timer++
+	if Object.Timer == 3
+		Object.Timer = 0
+		Object.CurrentPalette++
+		Object.CurrentPalette %= 6
+		SetActivePalette(Object.CurrentPalette, 0, 240)
 	end if
 end sub
 
 
 sub ObjectStartup
 	Object[19].Type = TypeName[PaletteAnimation]
-	Object[19].Priority = 1
+	Object[19].Priority = PRIORITY_ACTIVE
+	
 	CopyPalette(0, 1)
 	CopyPalette(0, 2)
 	CopyPalette(0, 3)
 	CopyPalette(0, 4)
 	CopyPalette(0, 5)
+
 	TempValue0 = 0
 	TempValue1 = 0
 	TempValue2 = 32

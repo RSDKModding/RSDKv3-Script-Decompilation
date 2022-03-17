@@ -27,6 +27,9 @@
 #alias 0	:	GRAVITY_GROUND
 #alias 1	:	GRAVITY_AIR
 
+// CSides
+#alias 0	:	CSIDE_FLOOR
+
 // Ink
 #alias 2	:	INK_ALPHA
 
@@ -39,7 +42,6 @@
 
 
 sub ObjectMain
-	Object[0].value0	=	Object.Gravity
 	Object.Priority = PRIORITY_ACTIVE
 	if Player.XPos < Object.XPos
 		Object.Direction = FACING_LEFT
@@ -476,11 +478,11 @@ sub ObjectMain
 	end if
 
 	if Object.Gravity == GRAVITY_GROUND
-		ObjectTileGrip(0, 0, 19, 0)
+		ObjectTileGrip(CSIDE_FLOOR, 0, 19, 0)
 	else
 		Object.YVelocity += 16384
 		Object.YPos += Object.YVelocity
-		ObjectTileCollision(0, 0, 19, 0)
+		ObjectTileCollision(CSIDE_FLOOR, 0, 19, 0)
 		if CheckResult == true
 			Object.YVelocity = 0
 			Object.Gravity = GRAVITY_GROUND

@@ -1,39 +1,57 @@
-//------------Sonic CD KamaKamaBlade Script-------------//
+//------------Sonic CD Kama Kama Blade Script-------------//
 //--------Scripted by Christian Whitehead 'The Taxman'--------//
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
 // Aliases
-#alias 51: TYPE_KAMAKAMABLADE
+#alias Object.Value0	:	Object.XVelocity
+#alias Object.Value1	:	Object.YVelocity
+#alias Object.Value2	:	Object.KamaKamaEntityNo
+
+// States
+#alias 0				:	BLADE_LAUNCH
+#alias 1				:	BLADE_BLANK
+#alias 2				:	BLADE_DEFLECTED
 
 
 sub ObjectMain
-	Object.XPos += Object.Value0
-	Object.YPos += Object.Value1
+	Object.XPos += Object.XVelocity
+	Object.YPos += Object.YVelocity
+
 	Object.Frame++
 	Object.Frame %= 24
+
 	switch Object.State
-	case 0
-		ArrayPos0 = Object.Value2
+	case BLADE_LAUNCH
+		ArrayPos0 = Object.KamaKamaEntityNo
+		// if the Kama Kama that launched this is destroyed, destroy the blade
 		if Object[ArrayPos0].Type != TypeName[KamaKama]
 			Object.Type = TypeName[BlankObject]
 		end if
+
 		if Object.PropertyValue > 0
+
 			Object.PropertyValue--
+
 		else
-			Object.State = 1
+
+			Object.State = BLADE_BLANK
 			PlayStageSfx(5, 0)
 			if Object.Direction == FACING_RIGHT
-				Object.Value0 = -196608
+				Object.XVelocity = -196608	// -0x30000
 			else
-				Object.Value0 = 196608
+				Object.XVelocity = 196608	// 0x30000
 			end if
+
 		end if
 		break
-	case 2
-		Object.Value1 += 12288
+
+	case BLADE_DEFLECTED
+		Object.YVelocity += 12288	// 0x3000
 		break
+
 	end switch
-	if Object.OutOfBounds == 1
+
+	if Object.OutOfBounds == true
 		Object.Type = TypeName[BlankObject]
 	else
 		TempValue0 = Screen.YOffset
@@ -42,34 +60,47 @@ sub ObjectMain
 		if Object.YPos < TempValue0
 			Object.Type = TypeName[BlankObject]
 		end if
+		
 	end if
 end sub
 
 
 sub ObjectPlayerInteraction
-	if Object.State == 1
+	if Object.State == BLADE_BLANK
+
 		PlayerObjectCollision(C_TOUCH, -8, -6, 8, 6)
-		if CheckResult == 1
+		if CheckResult == true
+			// Check if the blades will bounce on the player
 			CheckEqual(Player.Animation, ANI_JUMPING)
 			TempValue0 = CheckResult
+
 			CheckEqual(Player.Animation, ANI_SPINDASH)
 			TempValue0 |= CheckResult
-			if TempValue0 == 1
-				Object.State = 2
-				Object.Value1 = -524288
+
+			if TempValue0 == true
+				Object.State = BLADE_DEFLECTED
+
+				Object.YVelocity = -524288			// 0x80000
+
 				if Object.Direction == FACING_RIGHT
-					if Player.XVelocity > 32768
+
+					if Player.XVelocity > 32768		// 0x8000
 						FlipSign(Object.Value0)
 					end if
+
 				else
-					if Player.XVelocity < -32768
+
+					if Player.XVelocity < -32768	// -0x8000
 						FlipSign(Object.Value0)
 					end if
+
 				end if
 			else
 				CallFunction(PlayerObject_Hit)
 			end if
+
 		end if
+
 	end if
 end sub
 
@@ -83,12 +114,12 @@ end sub
 
 sub ObjectStartup
 	LoadSpriteSheet("R3/Objects.gif")
-	SpriteFrame(-8, -8, 16, 16, 198, 68)
-	SpriteFrame(-8, -8, 16, 16, 215, 68)
-	SpriteFrame(-8, -8, 16, 16, 232, 68)
-	SpriteFrame(-8, -8, 16, 16, 198, 85)
-	SpriteFrame(-8, -8, 16, 16, 215, 85)
-	SpriteFrame(-8, -8, 16, 16, 232, 85)
+	SpriteFrame(-8, -8, 16, 16, 198, 68)	// #0 - Blade Frame 0
+	SpriteFrame(-8, -8, 16, 16, 215, 68)	// #1 - Blade Frame 1
+	SpriteFrame(-8, -8, 16, 16, 232, 68)	// #2 - Blade Frame 2
+	SpriteFrame(-8, -8, 16, 16, 198, 85)	// #3 - Blade Frame 3
+	SpriteFrame(-8, -8, 16, 16, 215, 85)	// #4 - Blade Frame 4
+	SpriteFrame(-8, -8, 16, 16, 232, 85)	// #5 - Blade Frame 5
 end sub
 
 sub RSDK

@@ -3,29 +3,56 @@
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
 // Aliases
-#alias 50: TYPE_KAMAKAMA
+#alias Object.Value0	:	Object.Timer
+#alias Object.Value1	:	Object.AnimationTimer
+#alias Object.Value2	:	Object.XVelocity
+#alias Object.Value3	:	Object.OriginPos.X
+#alias Object.Value4	:	Object.OriginPos.Y
+
+// Blade Aliases
+#alias Object.Value2	:	Object.KamaKamaEntityNo
+
+// States
+#alias 0	:	KAMAKAMA_GUARD
+#alias 1	:	KAMAKAMA_LAUNCH_BLADE
+#alias 2	:	KAMAKAMA_PREPARE_CHARGE
+#alias 3	:	KAMAKAMA_CHARGE
+#alias 4	:	KAMAKAMA_SWITCH_DIRECTION
+
+// CSides
+#alias 0	:	CSIDE_FLOOR
+
+// Property Values
+#alias 0	:	NEW
+#alias 1	:	OLD
+
+// Priority
+#alias 0	:	PRIORITY_ACTIVE_BOUNDS
+#alias 1	:	PRIORITY_ACTIVE
 
 
 sub ObjectMain
-	Object.Value1++
-	Object.Value1 &= 15
+	Object.AnimationTimer++
+	Object.AnimationTimer &= 15
 	switch Object.State
-	case 0
-		ObjectTileGrip(0, 0, 19, 0)
+	case KAMAKAMA_GUARD
+		ObjectTileGrip(CSIDE_FLOOR, 0, 19, 0)
 		if Object.XPos > Player.XPos
 			Object.Direction = FACING_RIGHT
 		else
 			Object.Direction = FACING_LEFT
 		end if
+
 		PlayerObjectCollision(C_TOUCH, -96, -48, 96, 48)
-		if CheckResult == 1
-			Object.State = 1
-			Object.Priority = 1
-			if Object.PropertyValue == 0
+		if CheckResult == true
+			Object.State = KAMAKAMA_LAUNCH_BLADE
+			Object.Priority = PRIORITY_ACTIVE
+			if Object.PropertyValue == NEW	// Only new badniks still have blades to throw
 				CreateTempObject(TypeName[KamaKamaBlade], 24, Object.XPos, Object.YPos)
 				Object[TempObjectPos].Direction = Object.Direction
 				Object[TempObjectPos].iYPos -= 6
-				Object[TempObjectPos].Value2 = Object.EntityNo
+				Object[TempObjectPos].KamaKamaEntityNo = Object.EntityNo
+
 				if Object.Direction == FACING_RIGHT
 					Object[TempObjectPos].iXPos -= 8
 				else
@@ -34,82 +61,97 @@ sub ObjectMain
 				CreateTempObject(TypeName[KamaKamaBlade], 56, Object.XPos, Object.YPos)
 				Object[TempObjectPos].Direction = Object.Direction
 				Object[TempObjectPos].iYPos -= 4
-				Object[TempObjectPos].Value2 = Object.EntityNo
+				Object[TempObjectPos].KamaKamaEntityNo = Object.EntityNo
+
 				if Object.Direction == FACING_RIGHT
 					Object[TempObjectPos].iXPos -= 16
 				else
 					Object[TempObjectPos].iXPos += 16
 				end if
+
 			end if
+
 		end if
 		break
-	case 1
-		if Object.Value0 < 110
-			Object.Value0++
+
+	case KAMAKAMA_LAUNCH_BLADE
+		if Object.Timer < 110
+			Object.Timer++
 		else
-			Object.State = 2
-			Object.Value0 = 0
+			Object.State = KAMAKAMA_PREPARE_CHARGE
+			Object.Timer = 0
 		end if
 		break
-	case 2
-		if Object.Value0 < 48
-			Object.Value0++
+
+	case KAMAKAMA_PREPARE_CHARGE
+		if Object.Timer < 48
+			Object.Timer++
 		else
-			Object.State = 3
-			Object.Value0 = 0
+			Object.State = KAMAKAMA_CHARGE
+			Object.Timer = 0
 			Object.Frame = 0
 			if Object.Direction == FACING_RIGHT
-				Object.Value2 = -65536
+				Object.XVelocity = -65536
 			else
-				Object.Value2 = 65536
+				Object.XVelocity = 65536
 			end if
-			if Object.PropertyValue > 0
-				Object.Value2 >>= 1
+			if Object.PropertyValue > NEW
+				Object.XVelocity >>= 1
 			end if
 		end if
 		break
-	case 3
+
+	case KAMAKAMA_CHARGE
 		Object.Frame++
 		Object.Frame &= 31
-		Object.XPos += Object.Value2
-		ObjectTileGrip(0, 0, 19, 0)
-		if CheckResult == 0
-			Object.State = 4
-			Object.Value0 = 60
+		Object.XPos += Object.XVelocity
+		ObjectTileGrip(CSIDE_FLOOR, 0, 19, 0)	// Check if it's reaching a ledge
+		if CheckResult == false
+			Object.State = KAMAKAMA_SWITCH_DIRECTION
+			Object.Timer = 60
 		end if
 		break
-	case 4
+
+	case KAMAKAMA_SWITCH_DIRECTION
 		Object.Frame++
 		Object.Frame &= 31
-		if Object.Value0 > 0
-			Object.Value0--
+		if Object.Timer > 0
+			Object.Timer--
 		else
-			Object.State = 3
-			FlipSign(Object.Value2)
+			Object.State = KAMAKAMA_CHARGE
+			FlipSign(Object.XVelocity)
 			if Object.Direction == FACING_RIGHT
 				Object.Direction = FACING_LEFT
 			else
 				Object.Direction = FACING_RIGHT
 			end if
+
 		end if
 		break
+
 	end switch
-	if Object.OutOfBounds == 1
-		Object.Priority = 0
-		Object.State = 0
-		Object.Value0 = 0
-		Object.Value1 = 0
+
+	// Reset object when out of bounds
+	if Object.OutOfBounds == true
+		Object.Priority = PRIORITY_ACTIVE_BOUNDS
+
+		Object.State = KAMAKAMA_GUARD
+
+		Object.Timer = 0
+		Object.AnimationTimer = 0
 		Object.Frame = 0
-		Object.XPos = Object.Value3
-		Object.YPos = Object.Value4
+
+		Object.XPos = Object.OriginPos.X
+		Object.YPos = Object.OriginPos.Y
 	end if
+
 	CallFunction(StageSetup_CheckGoodFuture)
 end sub
 
 
 sub ObjectPlayerInteraction
 	PlayerObjectCollision(C_TOUCH, -16, -16, 16, 20)
-	if CheckResult == 1
+	if CheckResult == true
 		CallFunction(PlayerObject_BadnikBreak)
 	end if
 end sub
@@ -117,97 +159,107 @@ end sub
 
 sub ObjectDraw
 	switch Object.State
-	case 0
-		TempValue0 = Object.Value1
+	case KAMAKAMA_GUARD
+		TempValue0 = Object.AnimationTimer
 		TempValue0 >>= 3
 		DrawSpriteFX(TempValue0, FX_FLIP, Object.XPos, Object.YPos)
-		if Object.PropertyValue == 0
+
+		if Object.PropertyValue == NEW
 			TempValue1 = TempValue0
 			TempValue1 += 4
 			DrawSpriteFX(TempValue1, FX_FLIP, Object.XPos, Object.YPos)
+
 			TempValue1 += 12
 			DrawSpriteFX(TempValue1, FX_FLIP, Object.XPos, Object.YPos)
+
 			TempValue1 -= 10
 			DrawSpriteFX(TempValue1, FX_FLIP, Object.XPos, Object.YPos)
 		else
 			TempValue1 = TempValue0
 			TempValue1 += 10
 			DrawSpriteFX(TempValue1, FX_FLIP, Object.XPos, Object.YPos)
+
 			TempValue1 += 2
 			DrawSpriteFX(TempValue1, FX_FLIP, Object.XPos, Object.YPos)
 		end if
 		break
-	case 1
-		TempValue0 = Object.Value1
+
+	case KAMAKAMA_LAUNCH_BLADE
+		TempValue0 = Object.AnimationTimer
 		TempValue0 >>= 3
 		DrawSpriteFX(TempValue0, FX_FLIP, Object.XPos, Object.YPos)
-		if Object.PropertyValue == 0
+
+		if Object.PropertyValue == NEW
 			TempValue1 = TempValue0
 			TempValue1 += 4
 			DrawSpriteFX(TempValue1, FX_FLIP, Object.XPos, Object.YPos)
+
 			TempValue1 += 2
 			DrawSpriteFX(TempValue1, FX_FLIP, Object.XPos, Object.YPos)
 		else
 			TempValue1 = TempValue0
 			TempValue1 += 10
 			DrawSpriteFX(TempValue1, FX_FLIP, Object.XPos, Object.YPos)
+
 			TempValue1 += 2
 			DrawSpriteFX(TempValue1, FX_FLIP, Object.XPos, Object.YPos)
 		end if
 		break
-	case 2
-		TempValue0 = Object.Value1
+
+	case KAMAKAMA_PREPARE_CHARGE
+		TempValue0 = Object.AnimationTimer
 		TempValue0 >>= 3
 		DrawSpriteFX(TempValue0, FX_FLIP, Object.XPos, Object.YPos)
-		if Object.PropertyValue == 0
+
+		if Object.PropertyValue == NEW
 			TempValue1 = TempValue0
 			TempValue1 += 4
 			DrawSpriteFX(TempValue1, FX_FLIP, Object.XPos, Object.YPos)
+
 			TempValue1 += 4
 			DrawSpriteFX(TempValue1, FX_FLIP, Object.XPos, Object.YPos)
 		else
 			TempValue1 = TempValue0
 			TempValue1 += 10
 			DrawSpriteFX(TempValue1, FX_FLIP, Object.XPos, Object.YPos)
+
 			TempValue1 += 4
 			DrawSpriteFX(TempValue1, FX_FLIP, Object.XPos, Object.YPos)
 		end if
 		break
-	case 3
-	case 4
+
+	case KAMAKAMA_CHARGE
+	case KAMAKAMA_SWITCH_DIRECTION
 		TempValue0 = Object.Frame
 		TempValue0 >>= 3
 		DrawSpriteFX(TempValue0, FX_FLIP, Object.XPos, Object.YPos)
-		TempValue0 = Object.Value1
+
+		TempValue0 = Object.AnimationTimer
 		TempValue0 >>= 3
-		if Object.PropertyValue == 0
+
+		if Object.PropertyValue == NEW
 			TempValue1 = TempValue0
 			TempValue1 += 4
 			DrawSpriteFX(TempValue1, FX_FLIP, Object.XPos, Object.YPos)
+
 			TempValue1 += 2
 			DrawSpriteFX(TempValue1, FX_FLIP, Object.XPos, Object.YPos)
 		else
 			TempValue1 = TempValue0
 			TempValue1 += 10
 			DrawSpriteFX(TempValue1, FX_FLIP, Object.XPos, Object.YPos)
+
 			TempValue1 += 2
 			DrawSpriteFX(TempValue1, FX_FLIP, Object.XPos, Object.YPos)
 		end if
 		break
+
 	end switch
 end sub
 
 
 sub ObjectStartup
 	LoadSpriteSheet("R3/Objects.gif")
-	ArrayPos0 = 32
-	while ArrayPos0 < 1056
-		if Object[ArrayPos0].Type == TypeName[KamaKama]
-			Object[ArrayPos0].Value3 = Object[ArrayPos0].XPos
-			Object[ArrayPos0].Value4 = Object[ArrayPos0].YPos
-		end if
-		ArrayPos0++
-	loop
 	SpriteFrame(0, 4, 16, 16, 198, 119)
 	SpriteFrame(0, 4, 16, 16, 215, 119)
 	SpriteFrame(0, 4, 16, 16, 232, 119)
@@ -226,6 +278,15 @@ sub ObjectStartup
 	SpriteFrame(-16, -19, 16, 16, 240, 102)
 	SpriteFrame(-22, -14, 24, 20, 173, 101)
 	SpriteFrame(-22, -14, 24, 20, 173, 122)
+
+	ArrayPos0 = 32
+	while ArrayPos0 < 1056
+		if Object[ArrayPos0].Type == TypeName[KamaKama]
+			Object[ArrayPos0].OriginPos.X = Object[ArrayPos0].XPos
+			Object[ArrayPos0].OriginPos.Y = Object[ArrayPos0].YPos
+		end if
+		ArrayPos0++
+	loop
 end sub
 
 sub RSDK

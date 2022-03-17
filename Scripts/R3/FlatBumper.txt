@@ -3,102 +3,141 @@
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
 // Aliases
-#alias 41: TYPE_FLATBUMPER
+#alias Object.Value0			:	Object.Timer
+
+// HUD Alias
+#alias Object[24].PropertyValue	:	HUD.TimePeriod
+
+// States
+#alias 0						:	FLATBUMPER_MOVE_R_OR_U
+#alias 1						:	FLATBUMPER_MOVE_L_OR_D
+
+// Time Periods
+#alias 0						:	PRESENT
+#alias 1						:	PAST
+#alias 2						:	GOOD_FUTURE
+#alias 3						:	BAD_FUTURE
+
+// Gravity
+#alias 1						:	GRAVITY_AIR
+
+// Collision
+#alias 1						:	FLOOR
+#alias 4						:	ROOF
+
+// Property Values
+#alias 0						:	FLATBUMPER_MOVE_H
+#alias 1						:	FLATBUMPER_MOVE_V
 
 
 sub ObjectMain
 	switch Object.State
-	case 0
-		if Object.Value0 < 96
-			Object.Value0++
-			if Object.PropertyValue == 0
-				Object.XPos += 65536
+	case FLATBUMPER_MOVE_R_OR_U
+		if Object.Timer < 96
+
+			Object.Timer++
+			if Object.PropertyValue == FLATBUMPER_MOVE_H
+				Object.XPos += 65536	// 0x10000
 			else
-				Object.YPos += 65536
+				Object.YPos += 65536	// 0x10000
 			end if
+
 		else
-			Object.State = 1
+			Object.State = FLATBUMPER_MOVE_L_OR_D
 		end if
+
 		break
-	case 1
-		if Object.Value0 > -96
-			Object.Value0--
-			if Object.PropertyValue == 0
-				Object.XPos -= 65536
+
+	case FLATBUMPER_MOVE_L_OR_D
+		if Object.Timer > -96
+
+			Object.Timer--
+			if Object.PropertyValue == FLATBUMPER_MOVE_H
+				Object.XPos -= 65536	// 0x10000
 			else
-				Object.YPos -= 65536
+				Object.YPos -= 65536	// 0x10000
 			end if
+
 		else
-			Object.State = 0
+			Object.State = FLATBUMPER_MOVE_R_OR_U
 		end if
+
 		break
+
 	end switch
 end sub
 
 
 sub ObjectPlayerInteraction
-	TempValue0 = 0
-	PlayerObjectCollision(C_TOUCH, -34, -16, -28, 16)
+	TempValue0 = false
+	PlayerObjectCollision(C_TOUCH, -34, -16, -28, 16)	// Left
 	TempValue1 = CheckResult
-	PlayerObjectCollision(C_TOUCH, 28, -16, 34, 16)
+	PlayerObjectCollision(C_TOUCH, 28, -16, 34, 16)		// Right
 	TempValue2 = CheckResult
-	PlayerObjectCollision(C_BOX, -32, -14, 32, 14)
+	PlayerObjectCollision(C_BOX, -32, -14, 32, 14)		// Check if you touched the bumper
 	switch CheckResult
-	case 1
+	case FLOOR
 		if Player.State == PlayerObject_HandleTailsFlight
-			Player.YVelocity = -262144
+			Player.YVelocity = -262144	// -0x40000
 		else
-			Player.YVelocity = -458752
+			Player.YVelocity = -458752	// -0x70000
 			Player.Timer = 0
 		end if
-		Player.Gravity = 1
-		TempValue0 = 1
+		Player.Gravity = GRAVITY_AIR
+		TempValue0 = true
 		break
-	case 4
+
+	case ROOF
 		if Player.State == PlayerObject_HandleTailsFlight
-			Player.YVelocity = 262144
+			Player.YVelocity = 262144	// 0x40000
 		else
-			Player.YVelocity = 458752
+			Player.YVelocity = 458752	// 0x70000
 			Player.Timer = 0
 		end if
 		Player.Timer = 0
-		Player.Gravity = 1
-		TempValue0 = 1
+		Player.Gravity = GRAVITY_AIR
+		TempValue0 = true
 		break
+
 	end switch
-	if TempValue1 == 1
-		Player.Speed = -458752
-		Player.XVelocity = -458752
-		TempValue0 = 1
+
+	if TempValue1 == true		// Check if you collided with the left side of the bumper
+		Player.Speed = -458752		// -0x70000
+		Player.XVelocity = -458752	// -0x70000
+		TempValue0 = true
 	end if
-	if TempValue2 == 1
-		Player.Speed = 458752
-		Player.XVelocity = 458752
-		TempValue0 = 1
+	
+	if TempValue2 == true		// Check if you collided with the right side of the bumper
+		Player.Speed = 458752		// 0x70000
+		Player.XVelocity = 458752	// 0x70000
+		TempValue0 = true
 	end if
-	PlayerObjectCollision(C_TOUCH, -16, -14, 16, 0)
-	if CheckResult == 1
+
+	PlayerObjectCollision(C_TOUCH, -16, -14, 16, 0)	// Check if you collided with the center from the top
+	if CheckResult == true
 		if Player.State == PlayerObject_HandleTailsFlight
-			Player.YVelocity = -262144
+			Player.YVelocity = -262144	// -0x40000
 		else
-			Player.YVelocity = -458752
+			Player.YVelocity = -458752	// -0x70000
 			Player.Timer = 0
 		end if
-		Player.Gravity = 1
-		TempValue0 = 1
+		Player.Gravity = GRAVITY_AIR
+		TempValue0 = true
 	end if
-	PlayerObjectCollision(C_TOUCH, -16, 0, 16, 14)
-	if CheckResult == 1
+
+	PlayerObjectCollision(C_TOUCH, -16, 0, 16, 14)	// Check if you collided with the center from the bottom
+	if CheckResult == true
 		if Player.State == PlayerObject_HandleTailsFlight
-			Player.YVelocity = 262144
+			Player.YVelocity = 262144	// 0x40000
 		else
-			Player.YVelocity = 458752
+			Player.YVelocity = 458752	// 0x70000
 			Player.Timer = 0
 		end if
-		Player.Gravity = 1
-		TempValue0 = 1
+		Player.Gravity = GRAVITY_AIR
+		TempValue0 = true
 	end if
-	if TempValue0 == 1
+
+	if TempValue0 == true
 		PlayStageSfx(1, 0)
 #platform: Use_Haptics
 		HapticEffect(10, 0, 0, 0)
@@ -113,18 +152,23 @@ end sub
 
 
 sub ObjectStartup
-	switch Object[24].PropertyValue
-	case 0
-	case 1
+	switch HUD.TimePeriod
+	case PRESENT
+	case PAST
 		LoadSpriteSheet("R3/Objects.gif")
+
 		SpriteFrame(-32, -16, 64, 32, 1, 75)
 		break
-	case 2
+
+	case GOOD_FUTURE
 		LoadSpriteSheet("R3/Objects3.gif")
+
 		SpriteFrame(-32, -16, 64, 32, 132, 67)
 		break
-	case 3
+
+	case BAD_FUTURE
 		LoadSpriteSheet("R3/Objects3.gif")
+
 		SpriteFrame(-32, -16, 64, 32, 132, 100)
 		break
 	end switch
