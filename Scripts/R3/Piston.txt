@@ -3,107 +3,151 @@
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
 // Aliases
-#alias 44: TYPE_PISTON
+#alias Object.Value0			:	Object.Timer
+#alias Object.Value1			:	Object.YOffSet
+
+// HUD Aliases
+#alias Object[24].PropertyValue	:	HUD.TimePeriod
+
+// Fireball Aliases
+#alias Object.Value0			:	Object.Fade
+#alias Object.Value1			:	Object.XVelocity
+
+// States
+#alias 0						:	PISTON_DETECT_PLAYER
+#alias 1						:	PISTON_PREPARE_FIRE
+#alias 2						:	PISTON_EMERGE
+#alias 3						:	PISTON_FIRE
+#alias 4						:	PISTON_HIDE
+
+// Gravity
+#alias 0						:	GRAVITY_GROUND
+#alias 1						:	GRAVITY_AIR
+
+// Ink
+#alias 2						:	INK_ALPHA
+
+// Time Periods
+#alias 0						:	PRESENT
+#alias 1						:	PAST
+#alias 2						:	GOOD_FUTURE
+#alias 3						:	BAD_FUTURE
 
 
 sub ObjectMain
 	switch Object.State
-	case 0
+	case PISTON_DETECT_PLAYER
 		PlayerObjectCollision(C_TOUCH, -112, -256, 112, 256)
-		if CheckResult == 1
-			if Object.Value0 < 80
-				Object.Value0++
+		if CheckResult == true
+			if Object.Timer < 80
+				Object.Timer++
 				Object.Frame = 1
 			else
-				Object.Value0 = 6
-				Object.State = 1
+				Object.Timer = 6
+				Object.State = PISTON_PREPARE_FIRE
 			end if
 		end if
 		break
-	case 1
-		if Object.Value0 < 33
-			Object.Value0++
-			Object.Frame = Object.Value0
+
+	case PISTON_PREPARE_FIRE
+		if Object.Timer < 33
+			Object.Timer++
+			Object.Frame = Object.Timer
 			Object.Frame /= 3
 		else
 			Object.Frame = 1
-			Object.Value0 = 0
-			Object.State = 2
+			Object.Timer = 0
+			Object.State = PISTON_EMERGE
 		end if
 		break
-	case 2
-		if Object.Value1 < 2097152
-			Object.Value1 += 524288
+
+	case PISTON_EMERGE
+		if Object.YOffSet < 2097152
+			Object.YOffSet += 524288
 		else
-			Object.State = 3
+			Object.State = PISTON_FIRE
 		end if
 		break
-	case 3
-		if Object.Value0 < 8
-			if Object.Value0 == 0
-				switch Object[24].PropertyValue
-				case 0
-				case 3
+
+	case PISTON_FIRE
+		if Object.Timer < 8
+
+			if Object.Timer == 0
+
+				switch HUD.TimePeriod
+				case PRESENT
+				case BAD_FUTURE
 					CreateTempObject(TypeName[Fireball], 0, Object.XPos, Object.YPos)
 					Object[TempObjectPos].XPos -= 1572864
 					Object[TempObjectPos].YPos -= 1310720
-					Object[TempObjectPos].Value0 = 64
-					Object[TempObjectPos].Value1 = -65536
-					Object[TempObjectPos].InkEffect = 2 //INK_ALPHA
+					Object[TempObjectPos].Fade = 64
+					Object[TempObjectPos].XVelocity = -65536
+					Object[TempObjectPos].InkEffect = INK_ALPHA
 					Object[TempObjectPos].Alpha = 255
 					Object[TempObjectPos].Frame = 0
+
 					CreateTempObject(TypeName[Fireball], 0, Object.XPos, Object.YPos)
 					Object[TempObjectPos].XPos += 1572864
 					Object[TempObjectPos].YPos -= 1310720
-					Object[TempObjectPos].Value0 = 64
-					Object[TempObjectPos].Value1 = 65536
-					Object[TempObjectPos].InkEffect = 2 //INK_ALPHA
+					Object[TempObjectPos].Fade = 64
+					Object[TempObjectPos].XVelocity = 65536
+					Object[TempObjectPos].InkEffect = INK_ALPHA
 					Object[TempObjectPos].Alpha = 255
 					Object[TempObjectPos].Frame = 1
 					break
 				end switch
-				end if
-				Object.Value0++
-			else
-				Object.Value0 = 0
-				Object.State = 4
+
 			end if
-			break
-		case 4
-			if Object.Value1 > 0
-				Object.Value1 -= 262144
-			else
-				Object.State = 0
-			end if
-			break
+			Object.Timer++
+		else
+			Object.Timer = 0
+			Object.State = PISTON_HIDE
+		end if
+		break
+
+	case PISTON_HIDE
+		if Object.YOffSet > 0
+			Object.YOffSet -= 262144
+		else
+			Object.State = PISTON_DETECT_PLAYER
+		end if
+		break
 		end switch
 end sub
 
 
 
 sub ObjectPlayerInteraction
-	TempValue0 = -786432
-	TempValue0 -= Object.Value1
+	TempValue0 = -786432	// -0xC0000
+	TempValue0 -= Object.YOffSet
 	TempValue0 >>= 16
 	PlayerObjectCollision(C_BOX, -16, -12, 16, 16)
 	PlayerObjectCollision(C_PLATFORM, -16, TempValue0, 16, 16)
-	if CheckResult == 1
-		if Object.Value1 == 2097152
-			if Object.State == 2
-				Player.YVelocity = -458752
+	// if the player is on top when the piston emerges, launch it to the sky
+	if CheckResult == true
+
+		if Object.YOffSet == 2097152		// 0x200000
+
+			if Object.State == PISTON_EMERGE
+				Player.YVelocity = -458752	// -0x70000
+
 				Player.Timer = 0
-				Player.Gravity = 1
+
+				Player.Gravity = GRAVITY_AIR
 				Player.Animation = ANI_BOUNCING
+
 				Player.State = PlayerObject_HandleAir
 			end if
+
 		end if
+
 	end if
 end sub
 
 
 sub ObjectDraw
 	TempValue0 = Object.YPos
-	TempValue0 -= Object.Value1
+	TempValue0 -= Object.YOffSet
 	DrawSpriteXY(Object.Frame, Object.XPos, TempValue0)
 	DrawSprite(0)
 end sub
@@ -118,34 +162,36 @@ sub ObjectStartup
 		end if
 		ArrayPos0++
 	loop
-	SpriteFrame(-16, -4, 32, 8, 214, 34)
-	SpriteFrame(-16, -12, 32, 40, 1, 34)
-	switch Object[24].PropertyValue
-	case 0
-	case 3
-		SpriteFrame(-16, -12, 32, 40, 34, 34)
-		SpriteFrame(-16, -12, 32, 40, 1, 34)
-		SpriteFrame(-16, -12, 32, 40, 34, 34)
-		SpriteFrame(-16, -12, 32, 40, 1, 34)
-		SpriteFrame(-16, -12, 32, 40, 34, 34)
-		SpriteFrame(-16, -12, 32, 40, 1, 34)
-		SpriteFrame(-16, -12, 32, 40, 34, 34)
-		SpriteFrame(-16, -12, 32, 40, 1, 34)
-		SpriteFrame(-16, -12, 32, 40, 34, 34)
-		SpriteFrame(-16, -12, 32, 40, 1, 34)
+	SpriteFrame(-16, -4, 32, 8, 214, 34)		// #0 - Piston Head
+	SpriteFrame(-16, -12, 32, 40, 1, 34)		// #1 - Piston 
+	
+	switch HUD.TimePeriod
+	case PRESENT
+	case BAD_FUTURE
+		SpriteFrame(-16, -12, 32, 40, 34, 34)	// #2  - Piston Emerge Frame 0
+		SpriteFrame(-16, -12, 32, 40, 1, 34)	// #3  - Piston Emerge Frame 1
+		SpriteFrame(-16, -12, 32, 40, 34, 34)	// #4  - Piston Emerge Frame 2
+		SpriteFrame(-16, -12, 32, 40, 1, 34)	// #5  - Piston Emerge Frame 3
+		SpriteFrame(-16, -12, 32, 40, 34, 34)	// #6  - Piston Emerge Frame 4
+		SpriteFrame(-16, -12, 32, 40, 1, 34)	// #7  - Piston Emerge Frame 5
+		SpriteFrame(-16, -12, 32, 40, 34, 34)	// #8  - Piston Emerge Frame 6
+		SpriteFrame(-16, -12, 32, 40, 1, 34)	// #9  - Piston Emerge Frame 7
+		SpriteFrame(-16, -12, 32, 40, 34, 34)	// #10 - Piston Emerge Frame 8
+		SpriteFrame(-16, -12, 32, 40, 1, 34)	// #11 - Piston Emerge Frame 9
 		break
-	case 1
-	case 2
-		SpriteFrame(-16, -12, 32, 40, 1, 34)
-		SpriteFrame(-16, -12, 32, 40, 1, 34)
-		SpriteFrame(-16, -12, 32, 40, 1, 34)
-		SpriteFrame(-16, -12, 32, 40, 1, 34)
-		SpriteFrame(-16, -12, 32, 40, 1, 34)
-		SpriteFrame(-16, -12, 32, 40, 1, 34)
-		SpriteFrame(-16, -12, 32, 40, 1, 34)
-		SpriteFrame(-16, -12, 32, 40, 1, 34)
-		SpriteFrame(-16, -12, 32, 40, 1, 34)
-		SpriteFrame(-16, -12, 32, 40, 1, 34)
+
+	case PAST
+	case GOOD_FUTURE
+		SpriteFrame(-16, -12, 32, 40, 1, 34)	// #2  - Piston Emerge Frame 0
+		SpriteFrame(-16, -12, 32, 40, 1, 34)	// #3  - Piston Emerge Frame 1
+		SpriteFrame(-16, -12, 32, 40, 1, 34)	// #4  - Piston Emerge Frame 2
+		SpriteFrame(-16, -12, 32, 40, 1, 34)	// #5  - Piston Emerge Frame 3
+		SpriteFrame(-16, -12, 32, 40, 1, 34)	// #6  - Piston Emerge Frame 4
+		SpriteFrame(-16, -12, 32, 40, 1, 34)	// #7  - Piston Emerge Frame 5
+		SpriteFrame(-16, -12, 32, 40, 1, 34)	// #8  - Piston Emerge Frame 6
+		SpriteFrame(-16, -12, 32, 40, 1, 34)	// #9  - Piston Emerge Frame 7
+		SpriteFrame(-16, -12, 32, 40, 1, 34)	// #10 - Piston Emerge Frame 8
+		SpriteFrame(-16, -12, 32, 40, 1, 34)	// #11 - Piston Emerge Frame 9
 		break
 	end switch
 end sub

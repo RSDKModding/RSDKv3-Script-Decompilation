@@ -3,16 +3,20 @@
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
 // Aliases
-#alias 62: TYPE_MOVINGBLOCK
+#alias Object.Value0	:	Object.Oscillation
+#alias Object.Value1	:	Object.OriginPos.X
+// Spring Aliases
+#alias Object[+1].XPos	:	Spring.XPos
 
 
 sub ObjectMain
-	Object.Value0 += 2
-	Object.Value0 &= 511
-	Sin(Object.XPos, Object.Value0)
+	Object.Oscillation += 2
+	Object.Oscillation &= 511
+	Sin(Object.XPos, Object.Oscillation)
+
 	Object.XPos <<= 13
-	Object.XPos += Object.Value1
-	Object[+1].XPos = Object.XPos
+	Object.XPos += Object.OriginPos.X
+	Spring.XPos = Object.XPos
 end sub
 
 
@@ -28,11 +32,13 @@ end sub
 
 sub ObjectStartup
 	LoadSpriteSheet("R3/Objects.gif")
-	SpriteFrame(-16, -16, 32, 32, 1, 1)
+
+	SpriteFrame(-16, -16, 32, 32, 1, 1)	// #0 - Moving Block
+
 	ArrayPos0 = 32
 	while ArrayPos0 < 1056
 		if Object[ArrayPos0].Type == TypeName[MovingBlock]
-			Object[ArrayPos0].Value1 = Object[ArrayPos0].XPos
+			Object[ArrayPos0].OriginPos.X = Object[ArrayPos0].XPos
 		end if
 		ArrayPos0++
 	loop

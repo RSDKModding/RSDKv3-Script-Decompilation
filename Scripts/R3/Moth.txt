@@ -3,98 +3,141 @@
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
 // Aliases
-#alias 54: TYPE_MOTH
+#alias Object.Value0	:	Object.Timer
+#alias Object.Value1	:	Object.XVelocity
+#alias Object.Value2	:	Object.YVelocity
+#alias Object.Value3	:	Object.AnimationTimer
+#alias Object.Value4	:	Object.OriginPos.X
+#alias Object.Value5	:	Object.OriginPos.Y
+
+// States
+#alias 0	:	MOTH_IDLE
+#alias 1	:	MOTH_RESPAWN
+#alias 2	:	MOTH_REVEAL
+#alias 3	:	MOTH_FLY
+
+// Property Values
+#alias 0	:	NEW
+#alias 1	:	OLD
+
+// Priority
+#alias 0	:	PRIORITY_ACTIVE_BOUNDS
+#alias 1	:	PRIORITY_ACTIVE
 
 
 sub ObjectMain
 	switch Object.State
-	case 0
+	case MOTH_IDLE
 		PlayerObjectCollision(C_TOUCH, -96, -256, 96, 256)
-		if CheckResult == 1
+		if CheckResult == true
 			Object.DrawOrder = 5
-			Object.State = 2
-			Object.Value3 = 0
+			
+			Object.State = MOTH_REVEAL
+
+			Object.AnimationTimer = 0
 			Object.Frame = 0
-			Object.Priority = 1
-			Object.Value4 = Object.XPos
-			Object.Value5 = Object.YPos
+			
+			Object.Priority = PRIORITY_ACTIVE
+
+			Object.OriginPos.X = Object.XPos
+			Object.OriginPos.Y = Object.YPos
 		end if
 		break
-	case 1
-		if Object.OutOfBounds == 1
-			Object.State = 0
-			Object.Priority = 0
+
+	case MOTH_RESPAWN
+		if Object.OutOfBounds == true
+			Object.State = MOTH_IDLE
+			Object.Priority = PRIORITY_ACTIVE_BOUNDS
 		end if
 		break
-	case 2
-		if Object.Value0 < 110
-			Object.Value0++
-			if Object.Value0 == 30
+
+	case MOTH_REVEAL
+		if Object.Timer < 110
+			Object.Timer++
+
+			if Object.Timer == 30
 				Object.Frame++
 			end if
-			if Object.Value0 == 60
+
+			if Object.Timer == 60
 				Object.Frame++
 			end if
+
 		else
 			if Object.XPos > Player.XPos
-				Object.Value1 = -32768
+				Object.XVelocity = -32768	// -0x8000
 				Object.Direction = FACING_RIGHT
 			else
-				Object.Value1 = 32768
+				Object.XVelocity = 32768	// 0x8000
 				Object.Direction = FACING_LEFT
 			end if
-			Object.State = 3
-			Object.Value0 = 0
-			if Object.PropertyValue > 0
-				Object.Value1 >>= 1
+
+			Object.State = MOTH_FLY
+
+			Object.Timer = 0
+
+			if Object.PropertyValue > NEW
+				Object.XVelocity >>= 1
 			end if
-			Object.Value2 = 32768
+
+			Object.YVelocity = 32768	// 0x8000
 		end if
-		if Object.OutOfBounds == 1
-			Object.State = 1
-			Object.Value0 = 0
-			Object.XPos = Object.Value4
-			Object.YPos = Object.Value5
+
+		if Object.OutOfBounds == true
+			Object.State = MOTH_RESPAWN
+
+			Object.Timer = 0
+
+			Object.XPos = Object.OriginPos.X
+			Object.YPos = Object.OriginPos.Y
 		end if
 		break
-	case 3
-		Object.XPos += Object.Value1
-		Object.YPos += Object.Value2
-		if Object.Value0 < 65
-			Object.Value0++
+
+	case MOTH_FLY
+		Object.XPos += Object.XVelocity
+		Object.YPos += Object.YVelocity
+
+		if Object.Timer < 65
+			Object.Timer++
 		else
-			Object.Value0 = 0
-			FlipSign(Object.Value2)
-			if Object.PropertyValue == 0
+			Object.Timer = 0
+			FlipSign(Object.YVelocity)
+			if Object.PropertyValue == NEW	// Only new moths drop sparkles
 				CreateTempObject(TypeName[MothSparkle], 0, Object.XPos, Object.YPos)
 				Object[TempObjectPos].DrawOrder = 5
 			end if
 		end if
-		Object.Value3++
-		Object.Value3 %= 20
-		Object.Frame = Object.Value3
+
+		Object.AnimationTimer++
+		Object.AnimationTimer %= 20
+
+		Object.Frame = Object.AnimationTimer
 		Object.Frame /= 5
-		if Object.PropertyValue == 0
+
+		if Object.PropertyValue == NEW
 			Object.Frame += 3
 		else
 			Object.Frame += 7
 		end if
-		if Object.OutOfBounds == 1
-			Object.State = 1
-			Object.Value0 = 0
-			Object.XPos = Object.Value4
-			Object.YPos = Object.Value5
+
+		if Object.OutOfBounds == true
+			Object.State = MOTH_RESPAWN
+			Object.Timer = 0
+			Object.XPos = Object.OriginPos.X
+			Object.YPos = Object.OriginPos.Y
 		end if
 		break
+
 	end switch
-	CallFunction(StageSetup_CheckGoodFuture)
+
+	CallFunction(StageSetup_CheckGoodFuture)	// Check if it should be a flower
 end sub
 
 
 sub ObjectPlayerInteraction
-	if Object.State > 2
+	if Object.State > MOTH_REVEAL
 		PlayerObjectCollision(C_TOUCH, -16, -8, 16, 8)
-		if CheckResult == 1
+		if CheckResult == true
 			CallFunction(PlayerObject_BadnikBreak)
 		end if
 	end if
@@ -102,7 +145,7 @@ end sub
 
 
 sub ObjectDraw
-	if Object.State > 1
+	if Object.State > MOTH_RESPAWN
 		DrawSpriteFX(Object.Frame, FX_FLIP, Object.XPos, Object.YPos)
 	end if
 end sub
@@ -110,17 +153,20 @@ end sub
 
 sub ObjectStartup
 	LoadSpriteSheet("R3/Objects.gif")
-	SpriteFrame(-12, -16, 24, 16, 1, 216)
-	SpriteFrame(-12, -16, 24, 24, 26, 216)
-	SpriteFrame(-12, -20, 24, 32, 231, 170)
-	SpriteFrame(-12, -12, 32, 24, 34, 191)
-	SpriteFrame(-12, -8, 32, 16, 165, 183)
-	SpriteFrame(-12, -8, 32, 16, 166, 233)
-	SpriteFrame(-12, -8, 32, 16, 165, 183)
-	SpriteFrame(-12, -12, 32, 24, 1, 157)
-	SpriteFrame(-12, -8, 32, 16, 1, 182)
-	SpriteFrame(-12, -8, 32, 16, 1, 199)
-	SpriteFrame(-12, -8, 32, 16, 1, 182)
+
+	SpriteFrame(-12, -16, 24, 16, 1, 216)	// #0  - Moth Reveal Frame 0
+	SpriteFrame(-12, -16, 24, 24, 26, 216)	// #1  - Moth Reveal Frame 1
+	SpriteFrame(-12, -20, 24, 32, 231, 170)	// #2  - Moth Reveal Frame 2
+	// New Moth
+	SpriteFrame(-12, -12, 32, 24, 34, 191)	// #3  - Moth Fly Frame 0
+	SpriteFrame(-12, -8, 32, 16, 165, 183)	// #4  - Moth Fly Frame 1
+	SpriteFrame(-12, -8, 32, 16, 166, 233)	// #5  - Moth Fly Frame 2
+	SpriteFrame(-12, -8, 32, 16, 165, 183)	// #6  - Moth Fly Frame 3
+	// Old Moth
+	SpriteFrame(-12, -12, 32, 24, 1, 157)	// #7  - Moth Fly Frame 0
+	SpriteFrame(-12, -8, 32, 16, 1, 182)	// #8  - Moth Fly Frame 1
+	SpriteFrame(-12, -8, 32, 16, 1, 199)	// #9  - Moth Fly Frame 2
+	SpriteFrame(-12, -8, 32, 16, 1, 182)	// #10 - Moth Fly Frame 3
 end sub
 
 sub RSDK

@@ -3,8 +3,7 @@
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
 // Aliases
-#alias 38: TYPE_ONEWAYPLATFORM
-
+#alias Object.Value0	:	Object.YVelocity
 
 sub ObjectPlayerInteraction
 	PlayerObjectCollision(C_PLATFORM, -32, -8, 32, 8)
@@ -13,23 +12,26 @@ end sub
 
 sub ObjectDraw
 	if Player.YPos < Object.YPos
-		if Object.Value0 < 4194304
-			Object.Value0 += 1048576
+		if Object.YVelocity < 4194304
+			Object.YVelocity += 1048576
 		end if
 	else
-		if Object.Value0 > 0
-			Object.Value0 -= 1048576
+		if Object.YVelocity > 0
+			Object.YVelocity -= 1048576
 		end if
 	end if
+	
 	TempValue0 = Object.XPos
-	TempValue0 += Object.Value0
+	TempValue0 += Object.YVelocity
+
 	DrawSpriteXY(0, TempValue0, Object.YPos)
 end sub
 
 
 sub ObjectStartup
 	LoadSpriteSheet("R3/Objects.gif")
-	SpriteFrame(-96, -8, 64, 16, 165, 1)
+
+	SpriteFrame(-96, -8, 64, 16, 165, 1)	// #0 - One Way Platform
 end sub
 
 sub RSDK

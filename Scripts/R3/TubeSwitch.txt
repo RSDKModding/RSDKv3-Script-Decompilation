@@ -19,7 +19,19 @@
 #alias 3	:	CMODE_RWALL
 
 // Property Values
-#alias 1	:	TUBESWITCH_ENTER_H
+#alias 0	:	TUBESWITCH_H_L
+#alias 1	:	TUBESWITCH_H_R
+#alias 2	:	TUBESWITCH_V_T
+#alias 3	:	TUBESWITCH_V_B
+#alias 4	:	TUBESWITCH_ROLL_ALIGN
+#alias 5	:	TUBESWITCH_V_GROUNDED
+#alias 6	:	TUBESWITCH_V_FORCE_DW
+#alias 7	:	TUBESWITCH_V_FORCE_L_DW
+#alias 8	:	TUBESWITCH_FORCE_ROLL
+#alias 9	:	TUBESWITCH_V_GROUNDED_DW
+#alias 10	:	TUBESWITCH_GROUNDED_CANCEL
+#alias 11	:	TUBESWITCH_EDGE_BOUNCE
+#alias 12	:	TUBESWITCH_ROLL_MASK
 
 // Player Aliases
 #alias Player.Value2:Player.CustomAnimSpeed
@@ -30,9 +42,8 @@ sub ObjectPlayerInteraction
 	PlayerObjectCollision(C_TOUCH, -16, -16, 16, 16)
 	if CheckResult == true
 		switch Object.PropertyValue
-		case 0
+		case TUBESWITCH_H_L
 			if Player.Speed > 0
-
 				Player.Direction = FACING_RIGHT
 				Player.State = PlayerObject_Tunnel
 				Player.Animation = ANI_JUMPING
@@ -48,91 +59,91 @@ sub ObjectPlayerInteraction
 				end if
 			else
 				if Player.Gravity == GRAVITY_GROUND
-
 					if Player.Speed > -131072	// -0x20000
 						Player.Speed = -131072	// -0x20000
 					end if
-
 				end if
+
 				Player.State = PlayerObject_HandleRolling
 				Player.Animation = ANI_JUMPING
 			end if
 			break
 
-		case TUBESWITCH_ENTER_H
+		case TUBESWITCH_H_R
 			if Player.Speed < 0
-
-				Player.Direction = FACING_RIGHT
 				Player.State = PlayerObject_Tunnel
 				Player.Animation = ANI_JUMPING
 				Player.MinRollSpeed = 655360	// 0xA0000
 
-				if Player.Speed < 655360		// 0xA0000
-					Player.Speed = 655360		// 0xA0000
+				if Player.Speed > -655360		// -0xA0000
+					Player.Speed = -655360		// -0xA0000
 				end if
 			else
 				if Player.Gravity == GRAVITY_GROUND
-
-					if Player.Speed > -131072	// -0x20000
-						Player.Speed = -131072	// -0x20000
+					if Player.Speed < 131072	// -0x20000
+						Player.Speed = 131072	// -0x20000
 					end if
-
 				end if
+
 				Player.State = PlayerObject_HandleRolling
 				Player.Animation = ANI_JUMPING
 			end if
 			break
 
-		case 2
-			if Object.Value0 == 0
-				if Player.Gravity == 1
-					Player.Gravity = 0
+		case TUBESWITCH_V_T
+			if Object.OnObject == false
+
+				if Player.Gravity == GRAVITY_AIR
+					Player.Gravity = GRAVITY_GROUND
 					Player.State = PlayerObject_Tunnel
 					Player.Animation = ANI_JUMPING
-					Player.CollisionMode = 3
+					Player.CollisionMode = CMODE_RWALL
 					Player.Angle = 64
 					Player.Speed = 1048576
 					Player.MinRollSpeed = 1048576
 				else
 					if Player.Speed > 0
-						Player.Gravity = 0
+						Player.Gravity = GRAVITY_GROUND
 						Player.State = PlayerObject_Tunnel
 						Player.Animation = ANI_JUMPING
-						Player.CollisionMode = 3
+						Player.CollisionMode = CMODE_RWALL
 						Player.Angle = 64
 						Player.Speed = 1048576
 						Player.MinRollSpeed = 1048576
 					else
-						Player.Gravity = 1
+						Player.Gravity = GRAVITY_AIR
 						Player.YVelocity = Player.Speed
 						Player.Speed = 0
 						Player.XVelocity = 0
 					end if
+
 				end if
+				
 			end if
 			break
-		case 3
-			if Object.Value0 == 0
-				if Player.Gravity == 1
-					Player.Gravity = 0
+
+		case TUBESWITCH_V_B
+			if Object.OnObject == false
+				if Player.Gravity == GRAVITY_AIR
+					Player.Gravity = GRAVITY_GROUND
 					Player.State = PlayerObject_Tunnel
 					Player.Animation = ANI_JUMPING
-					Player.CollisionMode = 3
+					Player.CollisionMode = CMODE_RWALL
 					Player.Angle = 64
-					Player.Speed = -655360
-					Player.MinRollSpeed = 655360
+					Player.Speed = -655360			// -0xA0000
+					Player.MinRollSpeed = 655360	// 0xA0000
 				end if
-				if Player.CollisionMode == 3
+				if Player.CollisionMode == CMODE_RWALL
 					if Player.Speed < 0
-						Player.Gravity = 0
+						Player.Gravity = GRAVITY_GROUND
 						Player.State = PlayerObject_Tunnel
 						Player.Animation = ANI_JUMPING
-						Player.CollisionMode = 3
+						Player.CollisionMode = CMODE_RWALL
 						Player.Angle = 64
-						Player.Speed = -655360
-						Player.MinRollSpeed = 655360
+						Player.Speed = -655360		// -0xA0000
+						Player.MinRollSpeed = 655360// 0xA0000
 					else
-						Player.Gravity = 1
+						Player.Gravity = GRAVITY_AIR
 						Player.YVelocity = Player.Speed
 						Player.Speed = 0
 						Player.XVelocity = 0
@@ -140,8 +151,9 @@ sub ObjectPlayerInteraction
 				end if
 			end if
 			break
-		case 4
-			if Player.Gravity == 0
+
+		case TUBESWITCH_ROLL_ALIGN
+			if Player.Gravity == GRAVITY_GROUND
 				Player.State = PlayerObject_HandleRolling
 			else
 				Player.XPos = Object.XPos
@@ -151,16 +163,23 @@ sub ObjectPlayerInteraction
 				Player.CustomAnimSpeed = 240
 			end if
 			break
-		case 5
-			if Object.Value0 == 0
+
+		case TUBESWITCH_V_GROUNDED
+			if Object.OnObject == false
 				if Player.YVelocity > 0
-					Player.Gravity = 0
+
+
 					Player.State = PlayerObject_Tunnel
+					
 					Player.Animation = ANI_JUMPING
-					Player.CollisionMode = 3
+
+					Player.Gravity = GRAVITY_GROUND
+					Player.CollisionMode = CMODE_RWALL
+
 					Player.Angle = 64
-					Player.Speed = 1048576
-					Player.MinRollSpeed = 1048576
+					Player.Speed = 1048576			// 0x100000
+					Player.MinRollSpeed = 1048576	// 0x100000
+					
 				end if
 			else
 				if Player.State == PlayerObject_HandleAir
@@ -168,41 +187,46 @@ sub ObjectPlayerInteraction
 				end if
 			end if
 			break
-		case 6
-			if Object.Value0 == 0
-				if Player.Gravity == 1
-					Player.Gravity = 0
+
+		case TUBESWITCH_V_FORCE_DW
+			if Object.OnObject == false
+
+				if Player.Gravity == GRAVITY_AIR
+					Player.Gravity = GRAVITY_GROUND
 					Player.State = PlayerObject_Tunnel
 					Player.Animation = ANI_JUMPING
-					Player.CollisionMode = 3
+					Player.CollisionMode = CMODE_RWALL
 					Player.Angle = 64
-					Player.Speed = 1048576
-					Player.MinRollSpeed = 1048576
+					Player.Speed = 1048576			// 0x100000
+					Player.MinRollSpeed = 1048576	// 0x100000
 				else
-					Player.Gravity = 1
+					Player.Gravity = GRAVITY_AIR
 					Player.YVelocity = Player.Speed
 					FlipSign(Player.YVelocity)
 					Player.Speed = 0
 					Player.XVelocity = 0
 				end if
+
 			end if
 			break
-		case 7
-			if Object.Value0 == 0
+
+		case TUBESWITCH_V_FORCE_L_DW
+			if Object.OnObject == false
 				if Player.YVelocity > 0
-					Player.Gravity = 0
+					Player.Gravity = GRAVITY_GROUND
 					Player.State = PlayerObject_Tunnel
 					Player.Animation = ANI_JUMPING
-					Player.CollisionMode = 1
+					Player.CollisionMode = CMODE_LWALL
 					Player.Angle = 192
-					Player.Speed = -1048576
-					Player.MinRollSpeed = 1048576
+					Player.Speed = -1048576			// -0x100000
+					Player.MinRollSpeed = 1048576	// 0x100000
 				end if
 			else
 				Player.Animation = ANI_JUMPING
 			end if
 			break
-		case 8
+
+		case TUBESWITCH_FORCE_ROLL
 			if Player.State != PlayerObject_HandleTailsFlight
 				if Player.Gravity == 0
 					Player.State = PlayerObject_HandleRolling
@@ -210,64 +234,69 @@ sub ObjectPlayerInteraction
 				Player.Animation = ANI_JUMPING
 			end if
 			break
-		case 9
-			if Object.Value0 == 0
+
+		case TUBESWITCH_V_GROUNDED_DW
+			if Object.OnObject == 0
 				if Player.YVelocity > 0
 					Player.Gravity = 0
 					Player.State = PlayerObject_Tunnel
 					Player.Animation = ANI_JUMPING
 					Player.CollisionMode = 3
 					Player.Angle = 64
-					Player.Speed = 524288
-					Player.MinRollSpeed = 524288
+					Player.Speed = 524288		// 0x80000
+					Player.MinRollSpeed = 524288// 0x80000
 				end if
 			else
 				Player.Animation = ANI_JUMPING
 			end if
 			break
-		case 10
-			if Object.Value0 == 0
-				if Player.Gravity == 0
-					Player.Gravity = 1
+
+		case TUBESWITCH_GROUNDED_CANCEL
+			if Object.OnObject == false
+				if Player.Gravity == GRAVITY_GROUND
+					Player.Gravity = GRAVITY_AIR
 					Player.YVelocity = Player.Speed
 					Player.Speed = 0
 					Player.XVelocity = 0
 				end if
 			end if
 			break
-		case 11
+
+		case TUBESWITCH_EDGE_BOUNCE
 			if Player.YVelocity > 0
 				if Player.XPos > Object.XPos
 					TempValue0 = Player.XPos
 					TempValue0 -= Object.XPos
-					if TempValue0 < 393216
-						Player.Gravity = 1
-						Player.YVelocity = -196608
+					if TempValue0 < 393216			// 0x60000
+						Player.Gravity = GRAVITY_AIR
+						Player.YVelocity = -196608	// -0x30000
 					end if
 				else
 					TempValue0 = Object.XPos
 					TempValue0 -= Player.XPos
-					if TempValue0 < 393216
-						Player.Gravity = 1
-						Player.YVelocity = -196608
+					if TempValue0 < 393216			// 0x60000
+						Player.Gravity = GRAVITY_AIR
+						Player.YVelocity = -196608	// -0x30000
 					end if
 				end if
 			end if
 			break
-		case 12
+
+		case TUBESWITCH_ROLL_MASK
 			if Player.State != PlayerObject_HandleTailsFlight
-				if Player.XVelocity > 262144
-					if Player.Gravity == 0
+				if Player.XVelocity > 262144	// 0x40000
+					if Player.Gravity == GRAVITY_GROUND
 						Player.State = PlayerObject_HandleRolling
 					end if
 					Player.Animation = ANI_JUMPING
 				end if
 			end if
 			break
+
 		end switch
-		Object.Value0 = 1
+		Object.OnObject = true
 	else
-		Object.Value0 = 0
+		Object.OnObject = false
 	end if
 end sub
 

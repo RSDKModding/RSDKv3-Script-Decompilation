@@ -3,16 +3,32 @@
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
 // Aliases
-#alias 42: TYPE_SCORECHUTE
+#alias Object.Value0	:	Object.Timer
+#alias Object.Value1	:	Object.ScoreBonus
+
+// Player Aliases
 #alias Player.Value4:Player.Invincible
 #alias Player.Value5:Player.BlinkTimer
 
+// States
+#alias 0	:	SCORECHUTE_IDLE
+#alias 1	:	SCORECHUTE_CATCH_PLAYER
+#alias 2	:	SCORECHUTE_INSERT_1
+#alias 3	:	SCORECHUTE_INSERT_2
+#alias 4	:	SCORECHUTE_GIVE_POINTS
+#alias 5	:	SCORECHUTE_PULL_PLAYER
+#alias 6	:	SCORECHUTE_EJECT_PLAYER
+#alias 7	:	SCORECHUTE_COOLDOWN
+
+// Priority
+#alias 0	:	PRIORITY_ACTIVE_BOUNDS
+#alias 1	:	PRIORITY_ACTIVE
 
 sub ObjectMain
 	switch Object.State
-	case 1
-		if Object.Value0 < 8
-			Object.Value0++
+	case SCORECHUTE_CATCH_PLAYER
+		if Object.Timer < 8
+			Object.Timer++
 			Player.XPos = Object.XPos
 			Player.YPos = Object.YPos
 			Player.YPos -= 524288
@@ -20,11 +36,11 @@ sub ObjectMain
 			Player.XVelocity = 0
 			Player.Speed = 0
 		else
-			Object.State = 2
-			Object.Value0 = 0
+			Object.State = SCORECHUTE_INSERT_1
+			Object.Timer = 0
 			Player.YVelocity = 0
 			Player.XVelocity = 0
-			Player.Visible = 0
+			Player.Visible = false
 			if Player.BlinkTimer > 0
 				Player.Invincible = 0
 				Player.BlinkTimer = 0
@@ -32,154 +48,190 @@ sub ObjectMain
 			Player.State = PlayerObject_Blank
 		end if
 		break
-	case 2
-		if Object.Value0 < 8
-			Object.Value0++
+
+	case SCORECHUTE_INSERT_1
+		if Object.Timer < 8
+			Object.Timer++
 			Player.XPos = Object.XPos
 			Player.YPos = Object.YPos
 			Player.YPos -= 524288
 		else
-			Object.State = 3
-			Object.Value0 = 0
+			Object.State = SCORECHUTE_INSERT_2
+			Object.Timer = 0
 		end if
 		break
-	case 3
-		if Object.Value0 < 4
-			Object.Value0++
+
+	case SCORECHUTE_INSERT_2
+		if Object.Timer < 4
+			Object.Timer++
 		else
 			Object.State = 4
-			Object.Value0 = 0
+			Object.Timer = 0
 		end if
+		// in case of time over 
 		if Player.State == PlayerObject_Death
-			Object.State = 7
-			Object.Value0 = 0
-			Player.Visible = 1
+			Object.State = SCORECHUTE_COOLDOWN
+			Object.Timer = 0
+			Player.Visible = true
 		end if
 		break
-	case 4
-		if Object.Value1 < 4
-			if Object.Value0 == 32
+
+	case SCORECHUTE_GIVE_POINTS
+		if Object.ScoreBonus < 4
+			if Object.Timer == 32
 				CreateTempObject(TypeName[ObjectScore], 0, Object.XPos, Object.YPos)
 				Player.Score += 100
 			end if
 		end if
-		if Object.Value1 < 3
-			if Object.Value0 == 64
+		if Object.ScoreBonus < 3
+			if Object.Timer == 64
 				CreateTempObject(TypeName[ObjectScore], 0, Object.XPos, Object.YPos)
 				Player.Score += 100
 			end if
 		end if
-		if Object.Value0 < 80
-			Object.Value0++
+		if Object.Timer < 80
+			Object.Timer++
 		else
-			Object.State = 5
-			Object.Value0 = 0
+			Object.State = SCORECHUTE_PULL_PLAYER
+			Object.Timer = 0
 		end if
+		// in case of time over
 		if Player.State == PlayerObject_Death
-			Object.State = 7
-			Object.Value0 = 0
-			Player.Visible = 1
+			Object.State = SCORECHUTE_COOLDOWN
+			Object.Timer = 0
+			Player.Visible = true
 		end if
 		break
-	case 5
-		if Object.Value0 < 4
-			Object.Value0++
+
+	case SCORECHUTE_PULL_PLAYER
+		if Object.Timer < 4
+			Object.Timer++
 		else
 			Object.State = 6
-			Object.Value0 = 0
+			Object.Timer = 0
 		end if
-		if Player.State == PlayerObject_Death
-			Object.State = 7
-			Object.Value0 = 0
-			Player.Visible = 1
+		if Player.State == PlayerObject_Death	// in case of time over 
+			Object.State = SCORECHUTE_COOLDOWN
+			Object.Timer = 0
+			Player.Visible = true
 		end if
 		break
-	case 6
-		if Object.Value0 < 8
-			Object.Value0++
+
+	case SCORECHUTE_EJECT_PLAYER
+		if Object.Timer < 8
+			Object.Timer++
 		else
-			Object.State = 7
-			Object.Value0 = 0
-			Player.Visible = 1
+			Object.State = SCORECHUTE_COOLDOWN
+			Object.Timer = 0
+
 			Player.State = PlayerObject_HandleAir
+
+			Player.Visible = true
 			Player.Animation = ANI_JUMPING
-			Player.ObjectInteraction = 1
-			Player.YVelocity = -475136
+
+			Player.ObjectInteraction = true
+
+			Player.YVelocity = -475136	// -0x74000
 			Player.Timer = 0
 			PlayStageSfx(3, 0)
 		end if
 		break
-	case 7
-		if Object.Value0 < 120
-			Object.Value0++
+
+	case SCORECHUTE_COOLDOWN
+		if Object.Timer < 120
+			Object.Timer++
 		else
 			Object.State = 0
-			Object.Value0 = 0
-			Object.Value1++
+			Object.Timer = 0
+			Object.ScoreBonus++
 		end if
 		break
+
 	end switch
-	if Object.OutOfBounds == 1
-		Object.Value1 = 0
-		Object.Priority = 0
+
+	if Object.OutOfBounds == true
+		Object.ScoreBonus = 0
+		Object.Priority = PRIORITY_ACTIVE_BOUNDS
 	end if
 end sub
 
 
 sub ObjectPlayerInteraction
-	if Object.State == 0
+	if Object.State == SCORECHUTE_IDLE
+
 		if Player.YVelocity >= 0
+
 			PlayerObjectCollision(C_TOUCH, -16, -8, 16, 16)
-			if CheckResult == 1
-				Object.State = 1
-				Object.Priority = 1
+			if CheckResult == true
+				Object.State = SCORECHUTE_CATCH_PLAYER
+				Object.Priority = PRIORITY_ACTIVE
+
 				Player.Animation = ANI_JUMPING
-				Player.ObjectInteraction = 0
+				Player.ObjectInteraction = false
+
 				PlayStageSfx(2, 0)
 #platform: Use_Haptics
 				HapticEffect(55, 0, 0, 0)
 #endplatform
 			end if
+
 		end if
+
 	end if
 end sub
 
 
 sub ObjectDraw
 	switch Object.State
-	case 1
+	case SCORECHUTE_CATCH_PLAYER
 		DrawSprite(0)
 		break
-	case 2
+
+	case SCORECHUTE_INSERT_1
 		DrawSprite(0)
 		DrawSprite(1)
 		break
-	case 3
+
+	case SCORECHUTE_INSERT_2
 		DrawSprite(0)
 		DrawSprite(2)
 		break
-	case 4
-		TempValue0 = Object.Value0
+
+	case SCORECHUTE_GIVE_POINTS
+		TempValue0 = Object.Timer
 		TempValue0 &= 7
 		TempValue0 >>= 2
 		if TempValue0 > 0
 			DrawSprite(0)
 		end if
 		break
-	case 5
+
+	case SCORECHUTE_PULL_PLAYER
 		DrawSprite(0)
 		DrawSprite(2)
 		break
-	case 6
+
+	case SCORECHUTE_EJECT_PLAYER
 		DrawSprite(0)
 		DrawSprite(1)
 		break
+
 	end switch
 end sub
 
 
 sub ObjectStartup
 	LoadSpriteSheet("R3/Objects.gif")
+	SpriteFrame(-24, -8, 48, 16, 117, 233)			// #0 - Score Chute Active
+
+	if Stage.PlayerListPos == 0		// PlayerName[SONIC]
+		SpriteFrame(-16, -24, 32, 16, 2, 240)		// #1 - Jump Insert Frame 0
+		SpriteFrame(-8, -16, 16, 8, 35, 241)		// #2 - Jump Insert Frame 1
+	else
+		SpriteFrame(-12, -20, 24, 12, 228, 244)		// #1 - Jump Insert Frame 0
+		SpriteFrame(-8, -16, 16, 8, 211, 247)		// #2 - Jump Insert Frame 1
+	end if
+
 	ArrayPos0 = 32
 	while ArrayPos0 < 1056
 		if Object[ArrayPos0].Type == TypeName[ScoreChute]
@@ -187,14 +239,6 @@ sub ObjectStartup
 		end if
 		ArrayPos0++
 	loop
-	SpriteFrame(-24, -8, 48, 16, 117, 233)
-	if Stage.PlayerListPos == 0
-		SpriteFrame(-16, -24, 32, 16, 2, 240)
-		SpriteFrame(-8, -16, 16, 8, 35, 241)
-	else
-		SpriteFrame(-12, -20, 24, 12, 228, 244)
-		SpriteFrame(-8, -16, 16, 8, 211, 247)
-	end if
 end sub
 
 sub RSDK

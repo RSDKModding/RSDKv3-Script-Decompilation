@@ -4,14 +4,27 @@
 
 // Aliases
 #alias 46: TYPE_ROTATINGSPIKES
+#alias Object.Value0	:	Object.Oscillation
+#alias Object.Value1	:	Object.Increment
+#alias Object.Value2	:	Object.SpawnedSpikes
 
+// HUD Aliases
+#alias Object[24].PropertyValue	:	HUD.TimePeriod
+
+#alias 0	:	ROTATINGSPIKES_MAXSPIKES_R
+#alias 1	:	ROTATINGSPIKES_MAXSPIKES_L
+#alias 2	:	ROTATINGSPIKES_TWO_SPIKES_R
+#alias 3	:	ROTATINGSPIKES_TWO_SPIKES_L
+
+// Time Periods
+#alias 1	:	PAST
 
 sub ObjectMain
-	Object.Value0 += Object.Value1
-	if Object.Value0 < 0
-		Object.Value0 += 512
+	Object.Oscillation += Object.Increment
+	if Object.Oscillation < 0
+		Object.Oscillation += 512
 	end if
-	Object.Value0 &= 511
+	Object.Oscillation &= 511
 end sub
 
 
@@ -20,19 +33,24 @@ sub ObjectPlayerInteraction
 	TempValue1 = 16
 	TempValue2 = Object.XPos
 	TempValue3 = Object.YPos
-	while TempValue0 < Object.Value2
-		Cos(Object.XPos, Object.Value0)
+
+	while TempValue0 < Object.SpawnedSpikes
+	
+		Cos(Object.XPos, Object.Oscillation)
 		Object.XPos *= TempValue1
 		Object.XPos <<= 7
 		Object.XPos += TempValue2
-		Sin(Object.YPos, Object.Value0)
+
+		Sin(Object.YPos, Object.Oscillation)
 		Object.YPos *= TempValue1
 		Object.YPos <<= 7
 		Object.YPos += TempValue3
+
 		PlayerObjectCollision(C_TOUCH, -8, -8, 8, 8)
-		if CheckResult == 1
+		if CheckResult == true
 			CallFunction(PlayerObject_Hit)
 		end if
+
 		TempValue0++
 		TempValue1 += 16
 	loop
@@ -45,16 +63,20 @@ sub ObjectDraw
 	DrawSprite(0)
 	TempValue0 = 0
 	TempValue1 = 16
-	while TempValue0 < Object.Value2
-		Cos(TempValue2, Object.Value0)
+	while TempValue0 < Object.SpawnedSpikes
+
+		Cos(TempValue2, Object.Oscillation)
 		TempValue2 *= TempValue1
 		TempValue2 <<= 7
 		TempValue2 += Object.XPos
-		Sin(TempValue3, Object.Value0)
+		
+		Sin(TempValue3, Object.Oscillation)
 		TempValue3 *= TempValue1
 		TempValue3 <<= 7
 		TempValue3 += Object.YPos
+
 		DrawSpriteXY(1, TempValue2, TempValue3)
+		
 		TempValue0++
 		TempValue1 += 16
 	loop
@@ -63,40 +85,46 @@ end sub
 
 sub ObjectStartup
 	LoadSpriteSheet("R3/Objects.gif")
+
+	SpriteFrame(-8, -8, 16, 16, 181, 143)	// #0 - Spike Joint
+	SpriteFrame(-8, -8, 16, 16, 181, 160)	// #1 - Spike
+
 	ArrayPos0 = 32
 	while ArrayPos0 < 1056
 		if Object[ArrayPos0].Type == TypeName[RotatingSpikes]
 			switch Object[ArrayPos0].PropertyValue
 			case 0
-				Object[ArrayPos0].Value1 = 2
-				if Object[24].PropertyValue > 1
-					Object[ArrayPos0].Value2 = 4
+				Object[ArrayPos0].Increment = 2
+				if HUD.TimePeriod > PAST	// In the future is has 4 spikes
+					Object[ArrayPos0].SpawnedSpikes = 4
 				else
-					Object[ArrayPos0].Value2 = 3
+					Object[ArrayPos0].SpawnedSpikes = 3
 				end if
 				break
+
 			case 1
-				Object[ArrayPos0].Value1 = -2
-				if Object[24].PropertyValue > 1
-					Object[ArrayPos0].Value2 = 4
+				Object[ArrayPos0].Increment = -2
+				if HUD.TimePeriod > PAST	// In the future is has 4 spikes
+					Object[ArrayPos0].SpawnedSpikes = 4
 				else
-					Object[ArrayPos0].Value2 = 3
+					Object[ArrayPos0].SpawnedSpikes = 3
 				end if
 				break
+
 			case 2
-				Object[ArrayPos0].Value1 = 2
-				Object[ArrayPos0].Value2 = 2
+				Object[ArrayPos0].Increment = 2
+				Object[ArrayPos0].SpawnedSpikes = 2
 				break
+
 			case 3
-				Object[ArrayPos0].Value1 = -2
-				Object[ArrayPos0].Value2 = 2
+				Object[ArrayPos0].Increment = -2
+				Object[ArrayPos0].SpawnedSpikes = 2
 				break
+
 			end switch
 		end if
 		ArrayPos0++
 	loop
-	SpriteFrame(-8, -8, 16, 16, 181, 143)
-	SpriteFrame(-8, -8, 16, 16, 181, 160)
 end sub
 
 sub RSDK
