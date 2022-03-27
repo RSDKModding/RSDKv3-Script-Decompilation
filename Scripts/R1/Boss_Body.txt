@@ -14,7 +14,10 @@
 #alias Object.Value7	:	Object.ChargeXPos
 
 // General Aliases
-#alias Object.Value4	:	Boss.Charging
+#alias Object.State		:	BossPart.State
+#alias Object.Value4	:	BossPart.Charging
+#alias Object.Value2	:	BossPart.XOffSet
+#alias Object.Value5	:	BossPart.YOffSet
 
 // Face Aliases
 #alias Object[-1].YPos	:	Face.YPos
@@ -25,58 +28,28 @@
 #alias Object.Value2	:	Shoulder.ArmJointREntity
 
 // Leg Joint Aliases
-#alias Object.State		:	LegJointR.State
 #alias Object.Value1	:	LegJointR.LegREntity
-#alias Object.Value5	:	LegJointR.YOffSet
-
-#alias Object.State		:	LegJointL.State
 #alias Object.Value1	:	LegJointL.LegLEntity
-#alias Object.Value5	:	LegJointL.YOffSet
 
 #alias Object.Value1	:	LegJoint.LegEntity
 #alias Object.Value4	:	LegJoint.LegSide
 
 // Leg Aliases
-#alias Object.State		:	LegR.State
 #alias Object.Value1	:	LegR.FootREntity
-#alias Object.Value2	:	LegR.XOffSet
-#alias Object.Value5	:	LegR.YOffSet
-
-#alias Object.State		:	LegL.State
 #alias Object.Value1	:	LegL.FootLEntity
-#alias Object.Value2	:	LegL.XOffSet
-#alias Object.Value5	:	LegL.YOffSet
 
-#alias Object.State		:	Leg.State
 #alias Object.Value1	:	Leg.FootEntity
 #alias Object.Value4	:	Leg.LegSide
 
 // Foot Aliases
-#alias Object.State		:	FootR.State
-#alias Object.Value2	:	FootR.XOffSet
-#alias Object.Value5	:	FootR.YOffSet
-
-#alias Object.State		:	FootL.State
-#alias Object.Value2	:	FootL.XOffSet
-#alias Object.Value5	:	FootL.YOffSet
-
 #alias Object.Value4	:	Foot.LegSide
 
 // Arm Joint Aliases
-#alias Object.State		:	ArmJointR.State
 #alias Object.Value1	:	ArmJointR.ArmREntity
-#alias Object.Value5	:	ArmJointR.YOffSet
-
-#alias Object.State		:	ArmJointL.State
 #alias Object.Value1	:	ArmJointL.ArmLEntity
-#alias Object.Value5	:	ArmJointL.YOffSet
 
 // Arm Aliases
-#alias Object.State		:	ArmR.State
-#alias Object.Frame		:	ArmR.Frame
-
-#alias Object.State		:	ArmL.State
-#alias Object.Frame		:	ArmL.Frame
+#alias Object.Frame		:	Arm.Frame
 
 // States
 #alias 0				:	BOSSBODY_SETUP
@@ -153,44 +126,51 @@
 #function BossBody_HandleCharge
 #function BossBody_SetArmsToCharge
 
+
 function BossBody_RestoreNormalSpeed
 	ArrayPos0 = Object.LegJointREntity
-	LegJointR[ArrayPos0].YOffSet = 2
+	// Leg Joint R
+	BossPart[ArrayPos0].YOffSet = 2
 
 	ArrayPos1 = LegJointR[ArrayPos0].LegREntity
-	LegR[ArrayPos1].XOffSet = 32768		// 0x8000
-	LegR[ArrayPos1].YOffSet = 16384		// 0x4000
+	// Leg R
+	BossPart[ArrayPos1].XOffSet = 32768		// 0x8000
+	BossPart[ArrayPos1].YOffSet = 16384		// 0x4000
 
 	ArrayPos0 = LegR[ArrayPos1].FootREntity
-	FootR[ArrayPos0].XOffSet = 16384		// 0x4000
-	FootR[ArrayPos0].YOffSet = 32768		// 0x8000
+	// Foot R
+	BossPart[ArrayPos0].XOffSet = 16384		// 0x4000
+	BossPart[ArrayPos0].YOffSet = 32768		// 0x8000
 
 	ArrayPos0 = Object.LegJointLEntity
-	LegJointL[ArrayPos0].YOffSet = 2
+	// Leg Joint L
+	BossPart[ArrayPos0].YOffSet = 2
 
 	ArrayPos1 = LegJointL[ArrayPos0].LegLEntity
-	LegL[ArrayPos1].XOffSet = 32768		// 0x8000
-	LegL[ArrayPos1].YOffSet = 16384		// 0x4000
+	// Leg L
+	BossPart[ArrayPos1].XOffSet = 32768		// 0x8000
+	BossPart[ArrayPos1].YOffSet = 16384		// 0x4000
 
 	ArrayPos0 = LegL[ArrayPos1].FootLEntity
-	FootL[ArrayPos0].XOffSet = 16384		// 0x4000
-	FootL[ArrayPos0].YOffSet = 32768		// 0x8000
+	// Foot L
+	BossPart[ArrayPos0].XOffSet = 16384		// 0x4000
+	BossPart[ArrayPos0].YOffSet = 32768		// 0x8000
 
 	ArrayPos0 = Object.FaceEntity
 	ArrayPos1 = Face[ArrayPos0].ShoulderEntity
 	ArrayPos0 = Shoulder[ArrayPos1].ArmJointLEntity
-	SetBit(Boss[ArrayPos0].Charging, 7, 0) // Left Arm Joing
+	SetBit(BossPart[ArrayPos0].Charging, 7, 0) // Left Arm Joing
 
 	ArrayPos1 = ArmJointL[ArrayPos0].ArmLEntity
-	SetBit(Boss[ArrayPos1].Charging, 7, 0) // Left Arm
+	SetBit(BossPart[ArrayPos1].Charging, 7, 0) // Left Arm
 
 	ArrayPos0 = Object.FaceEntity
 	ArrayPos1 = Face[ArrayPos0].ShoulderEntity
 	ArrayPos0 = Shoulder[ArrayPos1].ArmJointREntity
-	SetBit(Boss[ArrayPos0].Charging, 7, 0)	// Right Arm Joint
+	SetBit(BossPart[ArrayPos0].Charging, 7, 0)	// Right Arm Joint
 
 	ArrayPos1 = ArmJointR[ArrayPos0].ArmREntity
-	SetBit(Boss[ArrayPos1].Charging, 7, 0)	// Right Arm
+	SetBit(BossPart[ArrayPos1].Charging, 7, 0)	// Right Arm
 end function
 
 
@@ -243,23 +223,23 @@ function BossBody_MoveRArmToFront
 	ArrayPos0 = Object.FaceEntity
 	ArrayPos1 = Face[ArrayPos0].ShoulderEntity
 	ArrayPos0 = Shoulder[ArrayPos1].ArmJointREntity
-	if ArmJointR[ArrayPos0].State < BOSSARMJOINT_DESTROYED
-		ArmJointR[ArrayPos0].State = BOSSARMJOINT_REPOSITION_B
+	if BossPart[ArrayPos0].State < BOSSARMJOINT_DESTROYED
+		BossPart[ArrayPos0].State = BOSSARMJOINT_REPOSITION_B
 		
 		ArrayPos1 = ArmJointR[ArrayPos0].ArmREntity
-		ArmR[ArrayPos1].State = BOSSARM_MOVE_TO_FRONT
-		ArmR[ArrayPos1].Frame = 0
+		BossPart[ArrayPos1].State = BOSSARM_MOVE_TO_FRONT
+		Arm[ArrayPos1].Frame = 0
 	end if
 
 	ArrayPos0 = Object.FaceEntity
 	ArrayPos1 = Face[ArrayPos0].ShoulderEntity
 	ArrayPos0 = Shoulder[ArrayPos1].ArmJointLEntity
-	if ArmJointL[ArrayPos0].State < BOSSARMJOINT_DESTROYED
-		ArmJointL[ArrayPos0].State = BOSSARMJOINT_REPOSITION_F
+	if BossPart[ArrayPos0].State < BOSSARMJOINT_DESTROYED
+		BossPart[ArrayPos0].State = BOSSARMJOINT_REPOSITION_F
 
 		ArrayPos1 = ArmJointL[ArrayPos0].ArmLEntity
-		ArmL[ArrayPos1].State = BOSSARM_MOVE_TO_BACK
-		ArmL[ArrayPos1].Frame = 0
+		BossPart[ArrayPos1].State = BOSSARM_MOVE_TO_BACK
+		Arm[ArrayPos1].Frame = 0
 	end if
 end function
 
@@ -268,65 +248,71 @@ function BossBody_MoveLArmToFront
 	ArrayPos0 = Object.FaceEntity
 	ArrayPos1 = Face[ArrayPos0].ShoulderEntity
 	ArrayPos0 = Shoulder[ArrayPos1].ArmJointREntity
-	if ArmJointR[ArrayPos0].State < BOSSARMJOINT_DESTROYED
-		ArmJointR[ArrayPos0].State = BOSSARMJOINT_REPOSITION_F
+	if BossPart[ArrayPos0].State < BOSSARMJOINT_DESTROYED
+		BossPart[ArrayPos0].State = BOSSARMJOINT_REPOSITION_F
 
 		ArrayPos1 = ArmJointR[ArrayPos0].ArmREntity
-		ArmR[ArrayPos1].State = BOSSARM_MOVE_TO_BACK
-		ArmR[ArrayPos1].Frame = 0
+		BossPart[ArrayPos1].State = BOSSARM_MOVE_TO_BACK
+		Arm[ArrayPos1].Frame = 0
 	end if
 
 	ArrayPos0 = Object.FaceEntity
 	ArrayPos1 = Face[ArrayPos0].ShoulderEntity
 	ArrayPos0 = Shoulder[ArrayPos1].ArmJointLEntity
-	if ArmJointL[ArrayPos0].State < BOSSARMJOINT_DESTROYED
-		ArmJointL[ArrayPos0].State = BOSSARMJOINT_REPOSITION_B
+	if BossPart[ArrayPos0].State < BOSSARMJOINT_DESTROYED
+		BossPart[ArrayPos0].State = BOSSARMJOINT_REPOSITION_B
 
 		ArrayPos1 = ArmJointL[ArrayPos0].ArmLEntity
-		ArmL[ArrayPos1].State = BOSSARM_MOVE_TO_FRONT
-		ArmL[ArrayPos1].Frame = 0
+		BossPart[ArrayPos1].State = BOSSARM_MOVE_TO_FRONT
+		Arm[ArrayPos1].Frame = 0
 	end if
 end function
 
 
 function BossBody_HandleCharge
 	ArrayPos0 = Object.LegJointREntity
-	LegJointR[ArrayPos0].YOffSet = 8
+	// Leg Joint R
+	BossPart[ArrayPos0].YOffSet = 8
 
 	ArrayPos1 = LegJointR[ArrayPos0].LegREntity
-	LegR[ArrayPos1].XOffSet = 65536	// 0x10000
-	LegR[ArrayPos1].YOffSet = 32768	// 0x8000
+	// Leg R
+	BossPart[ArrayPos1].XOffSet = 65536	// 0x10000
+	BossPart[ArrayPos1].YOffSet = 32768	// 0x8000
 
 	ArrayPos0 = LegR[ArrayPos1].FootREntity
-	FootR[ArrayPos0].XOffSet = 49152	// 0xC000
-	FootR[ArrayPos0].YOffSet = 98304	// 0x18000
+	// Foot R
+	BossPart[ArrayPos0].XOffSet = 49152	// 0xC000
+	BossPart[ArrayPos0].YOffSet = 98304	// 0x18000
 
 	ArrayPos0 = Object.LegJointLEntity
-	LegJointL[ArrayPos0].YOffSet = 8
+	// Leg Joint L
+	BossPart[ArrayPos0].YOffSet = 8
 
 	ArrayPos1 = LegJointL[ArrayPos0].LegLEntity
-	LegL[ArrayPos1].XOffSet = 65536	// 0x10000
-	LegL[ArrayPos1].YOffSet = 32768	// 0x8000
+	// Leg L
+	BossPart[ArrayPos1].XOffSet = 65536	// 0x10000
+	BossPart[ArrayPos1].YOffSet = 32768	// 0x8000
 
 	ArrayPos0 = LegL[ArrayPos1].FootLEntity
-	FootL[ArrayPos0].XOffSet = 49152	// 0xC000
-	FootL[ArrayPos0].YOffSet = 98304	// 0x18000
+	// Foot L
+	BossPart[ArrayPos0].XOffSet = 49152	// 0xC000
+	BossPart[ArrayPos0].YOffSet = 98304	// 0x18000
 
 	ArrayPos0 = Object.FaceEntity
 	ArrayPos1 = Face[ArrayPos0].ShoulderEntity
 	ArrayPos0 = Shoulder[ArrayPos1].ArmJointLEntity
-	SetBit(Boss[ArrayPos0].Charging, 7, 1) // Left Arm Joint
+	SetBit(BossPart[ArrayPos0].Charging, 7, 1) // Left Arm Joint
 
 	ArrayPos1 = ArmJointL[ArrayPos0].ArmLEntity
-	SetBit(Boss[ArrayPos1].Charging, 7, 1) // Left Arm
+	SetBit(BossPart[ArrayPos1].Charging, 7, 1) // Left Arm
 
 	ArrayPos0 = Object.FaceEntity
 	ArrayPos1 = Face[ArrayPos0].ShoulderEntity
 	ArrayPos0 = Shoulder[ArrayPos1].ArmJointREntity
-	SetBit(Boss[ArrayPos0].Charging, 7, 1) // Right Arm Joint
+	SetBit(BossPart[ArrayPos0].Charging, 7, 1) // Right Arm Joint
 
 	ArrayPos1 = ArmJointR[ArrayPos0].ArmREntity
-	SetBit(Boss[ArrayPos1].Charging, 7, 1) // Right Arm
+	SetBit(BossPart[ArrayPos1].Charging, 7, 1) // Right Arm
 end function
 
 
@@ -334,23 +320,23 @@ function BossBody_SetArmsToCharge	// Function58
 	ArrayPos0 = Object.FaceEntity
 	ArrayPos1 = Face[ArrayPos0].ShoulderEntity
 	ArrayPos0 = Shoulder[ArrayPos1].ArmJointREntity
-	if ArmJointR[ArrayPos0].State < BOSSARMJOINT_DESTROYED
-		ArmJointR[ArrayPos0].State = BOSSARMJOINT_REPOSITION_F
+	if BossPart[ArrayPos0].State < BOSSARMJOINT_DESTROYED
+		BossPart[ArrayPos0].State = BOSSARMJOINT_REPOSITION_F
 
 		ArrayPos1 = ArmJointR[ArrayPos0].ArmREntity
-		ArmR[ArrayPos1].State = BOSSARM_START_CHARGE
-		ArmR[ArrayPos1].Frame = 1
+		BossPart[ArrayPos1].State = BOSSARM_START_CHARGE
+		Arm[ArrayPos1].Frame = 1
 	end if
 
 	ArrayPos0 = Object.FaceEntity
 	ArrayPos1 = Face[ArrayPos0].ShoulderEntity
 	ArrayPos0 = Shoulder[ArrayPos1].ArmJointLEntity
-	if ArmJointL[ArrayPos0].State < BOSSARMJOINT_DESTROYED
-		ArmJointL[ArrayPos0].State = BOSSARMJOINT_REPOSITION_F
+	if BossPart[ArrayPos0].State < BOSSARMJOINT_DESTROYED
+		BossPart[ArrayPos0].State = BOSSARMJOINT_REPOSITION_F
 
 		ArrayPos1 = ArmJointL[ArrayPos0].ArmLEntity
-		ArmL[ArrayPos1].State = BOSSARM_START_CHARGE
-		ArmL[ArrayPos1].Frame = 1
+		BossPart[ArrayPos1].State = BOSSARM_START_CHARGE
+		Arm[ArrayPos1].Frame = 1
 	end if
 end function
 
@@ -371,13 +357,13 @@ sub ObjectMain
 		
 	case BOSSBODY_DESCEND
 		ArrayPos0 = Object.LegJointLEntity
-		LegJointL[ArrayPos0].State = BOSSLEGJOINT_MIMIC_RIGHT
+		BossPart[ArrayPos0].State = BOSSLEGJOINT_MIMIC_RIGHT
 
 		ArrayPos1 = LegJointL[ArrayPos0].LegLEntity
-		LegL[ArrayPos1].State = BOSSLEG_L_MIMIC_R
+		BossPart[ArrayPos1].State = BOSSLEG_L_MIMIC_R
 
 		ArrayPos0 = LegL[ArrayPos1].FootLEntity
-		FootL[ArrayPos0].State = BOSSFOOT_LANDING
+		BossPart[ArrayPos0].State = BOSSFOOT_LANDING
 
 		ArrayPos0 = Object.LegJointREntity
 		CallFunction(BossBody_SetLegPosSaveTrue)
@@ -401,17 +387,17 @@ sub ObjectMain
 		if TempValue0 == true
 
 			SetBit(LegJoint[ArrayPos0].LegSide, 0, 0)
-			if LegJointR[ArrayPos0].State != BOSSLEGJOINT_DESCEND
+			if BossPart[ArrayPos0].State != BOSSLEGJOINT_DESCEND
 
-				if LegJointR[ArrayPos0].State != BOSSLEGJOINT_LANDING
-					LegJointR[ArrayPos0].State = BOSSLEGJOINT_STEP_START
+				if BossPart[ArrayPos0].State != BOSSLEGJOINT_LANDING
+					BossPart[ArrayPos0].State = BOSSLEGJOINT_STEP_START
 					CallFunction(BossBody_SetLegPosSaveFalse)
 
 					ArrayPos0 = Object.LegJointREntity
 					CallFunction(BossBody_SwitchLeg_Revert)
 					
 					ArrayPos0 = Object.LegJointLEntity
-					LegJointL[ArrayPos0].State = BOSSLEGJOINT_WAIT_LEG
+					BossPart[ArrayPos0].State = BOSSLEGJOINT_WAIT_LEG
 					CallFunction(BossBody_SetLegPosSaveFalse)
 
 					ArrayPos0 = Object.LegJointLEntity
@@ -419,17 +405,17 @@ sub ObjectMain
 
 					ArrayPos0 = Object.LegJointLEntity
 					ArrayPos1 = LegJointL[ArrayPos0].LegLEntity
-					LegL[ArrayPos1].State = BOSSLEG_LANDING
+					BossPart[ArrayPos1].State = BOSSLEG_LANDING
 
 					ArrayPos0 = LegL[ArrayPos1].FootLEntity
-					FootL[ArrayPos0].State = BOSSFOOT_HANDLE_STEP
+					BossPart[ArrayPos0].State = BOSSFOOT_HANDLE_STEP
 					SetBit(Object.BitHolder, 0, KEY_EVENT_TRUE)
 				else
-					LegJointR[ArrayPos0].State = BOSSLEGJOINT_STAND
+					BossPart[ArrayPos0].State = BOSSLEGJOINT_STAND
 				end if
 
 			else
-				LegJointR[ArrayPos0].State = BOSSLEGJOINT_LANDING
+				BossPart[ArrayPos0].State = BOSSLEGJOINT_LANDING
 			end if
 
 		end if
@@ -489,7 +475,7 @@ sub ObjectMain
 				if TempValue0 == LEFT_LEG_ACTIVE
 					SetBit(Object.BitHolder, 6, 1)
 					ArrayPos0 = Object.LegJointREntity
-					LegJointR[ArrayPos0].State = BOSSLEGJOINT_STEP_START
+					BossPart[ArrayPos0].State = BOSSLEGJOINT_STEP_START
 					CallFunction(BossBody_SetLegPosSaveFalse)
 
 					ArrayPos0 = Object.LegJointREntity
@@ -497,10 +483,10 @@ sub ObjectMain
 
 					ArrayPos0 = Object.LegJointREntity
 					ArrayPos1 = LegJointR[ArrayPos0].LegREntity
-					LegR[ArrayPos1].State = BOSSLEG_MOVE_OPPOSITE
+					BossPart[ArrayPos1].State = BOSSLEG_MOVE_OPPOSITE
 					
 					ArrayPos0 = Object.LegJointLEntity
-					LegJointL[ArrayPos0].State = BOSSLEGJOINT_WAIT_LEG
+					BossPart[ArrayPos0].State = BOSSLEGJOINT_WAIT_LEG
 					CallFunction(BossBody_SetLegPosSaveTrue)
 
 					ArrayPos0 = Object.LegJointLEntity
@@ -508,12 +494,12 @@ sub ObjectMain
 
 					ArrayPos0 = Object.LegJointLEntity
 					ArrayPos1 = LegJointL[ArrayPos0].LegLEntity
-					LegL[ArrayPos1].State = BOSSLEG_MOVE
+					BossPart[ArrayPos1].State = BOSSLEG_MOVE
 					CallFunction(BossBody_MoveRArmToFront)
 				else
 					SetBit(Object.BitHolder, 6, 0)
 					ArrayPos0 = Object.LegJointREntity
-					LegJointR[ArrayPos0].State = BOSSLEGJOINT_WAIT_LEG
+					BossPart[ArrayPos0].State = BOSSLEGJOINT_WAIT_LEG
 					CallFunction(BossBody_SetLegPosSaveTrue)
 
 					ArrayPos0 = Object.LegJointREntity
@@ -521,10 +507,10 @@ sub ObjectMain
 
 					ArrayPos0 = Object.LegJointREntity
 					ArrayPos1 = LegJointR[ArrayPos0].LegREntity
-					LegR[ArrayPos1].State = BOSSLEG_MOVE
+					BossPart[ArrayPos1].State = BOSSLEG_MOVE
 
 					ArrayPos0 = Object.LegJointLEntity
-					LegJointL[ArrayPos0].State = BOSSLEGJOINT_STEP_START
+					BossPart[ArrayPos0].State = BOSSLEGJOINT_STEP_START
 					CallFunction(BossBody_SetLegPosSaveFalse)
 
 					ArrayPos0 = Object.LegJointLEntity
@@ -532,7 +518,7 @@ sub ObjectMain
 
 					ArrayPos0 = Object.LegJointLEntity
 					ArrayPos1 = LegJointL[ArrayPos0].LegLEntity
-					LegL[ArrayPos1].State = BOSSLEG_MOVE_OPPOSITE
+					BossPart[ArrayPos1].State = BOSSLEG_MOVE_OPPOSITE
 					CallFunction(BossBody_MoveLArmToFront)
 				end if
 			end if
@@ -579,7 +565,7 @@ sub ObjectMain
 					if TempValue0 == LEFT_LEG_ACTIVE
 						SetBit(Object.BitHolder, 6, RIGHT_LEG_ACTIVE)
 						ArrayPos0 = Object.LegJointREntity
-						LegJointR[ArrayPos0].State = BOSSLEGJOINT_WAIT_LEG_BW
+						BossPart[ArrayPos0].State = BOSSLEGJOINT_WAIT_LEG_BW
 						CallFunction(BossBody_SetLegPosSaveTrue)
 
 						ArrayPos0 = Object.LegJointREntity
@@ -587,22 +573,22 @@ sub ObjectMain
 
 						ArrayPos0 = Object.LegJointREntity
 						ArrayPos1 = LegJointR[ArrayPos0].LegREntity
-						LegR[ArrayPos1].State = BOSSLEG_MOVE_OPPOSITE
+						BossPart[ArrayPos1].State = BOSSLEG_MOVE_OPPOSITE
 
 						ArrayPos0 = Object.LegJointLEntity
-						LegJointL[ArrayPos0].State = BOSSLEGJOINT_STEP_START_BW
+						BossPart[ArrayPos0].State = BOSSLEGJOINT_STEP_START_BW
 						CallFunction(BossBody_SetLegPosSaveFalse)
 
 						ArrayPos0 = Object.LegJointLEntity
 						CallFunction(BossBody_SwitchLeg_Revert)
 						ArrayPos0 = Object.LegJointLEntity
 						ArrayPos1 = LegJointL[ArrayPos0].LegLEntity
-						LegL[ArrayPos1].State = BOSSLEG_MOVE
+						BossPart[ArrayPos1].State = BOSSLEG_MOVE
 						CallFunction(BossBody_MoveRArmToFront)
 					else
 						SetBit(Object.BitHolder, 6, LEFT_LEG_ACTIVE)
 						ArrayPos0 = Object.LegJointREntity
-						LegJointR[ArrayPos0].State = BOSSLEGJOINT_STEP_START_BW
+						BossPart[ArrayPos0].State = BOSSLEGJOINT_STEP_START_BW
 						CallFunction(BossBody_SetLegPosSaveFalse)
 
 						ArrayPos0 = Object.LegJointREntity
@@ -610,10 +596,10 @@ sub ObjectMain
 
 						ArrayPos0 = Object.LegJointREntity
 						ArrayPos1 = LegJointR[ArrayPos0].LegREntity
-						LegR[ArrayPos1].State = BOSSLEG_MOVE
+						BossPart[ArrayPos1].State = BOSSLEG_MOVE
 
 						ArrayPos0 = Object.LegJointLEntity
-						LegJointL[ArrayPos0].State = BOSSLEGJOINT_WAIT_LEG_BW
+						BossPart[ArrayPos0].State = BOSSLEGJOINT_WAIT_LEG_BW
 						CallFunction(BossBody_SetLegPosSaveTrue)
 
 						ArrayPos0 = Object.LegJointLEntity
@@ -621,7 +607,7 @@ sub ObjectMain
 						
 						ArrayPos0 = Object.LegJointLEntity
 						ArrayPos1 = LegJointL[ArrayPos0].LegLEntity
-						LegL[ArrayPos1].State = BOSSLEG_MOVE_OPPOSITE
+						BossPart[ArrayPos1].State = BOSSLEG_MOVE_OPPOSITE
 						CallFunction(BossBody_MoveLArmToFront)
 					end if
 
@@ -643,19 +629,19 @@ sub ObjectMain
 		if TempValue0 == RIGHT_LEG_ACTIVE
 			ArrayPos0 = Object.LegJointREntity
 			ArrayPos1 = LegJointR[ArrayPos0].LegREntity
-			LegR[ArrayPos1].State = BOSSLEG_MOVE_C
+			BossPart[ArrayPos1].State = BOSSLEG_MOVE_C
 
 			ArrayPos0 = Object.LegJointLEntity
 			ArrayPos1 = LegJointL[ArrayPos0].LegLEntity
-			LegL[ArrayPos1].State = BOSSLEG_MOVE_OPPOSITE_C
+			BossPart[ArrayPos1].State = BOSSLEG_MOVE_OPPOSITE_C
 		else
 			ArrayPos0 = Object.LegJointLEntity
 			ArrayPos1 = LegJointL[ArrayPos0].LegLEntity
-			Leg[ArrayPos1].State = BOSSLEG_MOVE_C
+			BossPart[ArrayPos1].State = BOSSLEG_MOVE_C
 
 			ArrayPos0 = Object.LegJointREntity
 			ArrayPos1 = LegJointR[ArrayPos0].LegREntity
-			LegR[ArrayPos1].State = BOSSLEG_MOVE_OPPOSITE_C
+			BossPart[ArrayPos1].State = BOSSLEG_MOVE_OPPOSITE_C
 		end if
 
 		ArrayPos0 = Object.LegJointREntity
@@ -693,13 +679,13 @@ sub ObjectMain
 
 					ArrayPos0 = Object.LegJointREntity
 					ArrayPos1 = LegJointR[ArrayPos0].LegREntity
-					LegR[ArrayPos1].State = BOSSLEG_MOVE_C
+					BossPart[ArrayPos1].State = BOSSLEG_MOVE_C
 					ArrayPos0 = LegR[ArrayPos1].FootREntity
-					FootR[ArrayPos0].State = BOSSFOOT_STEP
+					BossPart[ArrayPos0].State = BOSSFOOT_STEP
 
 					ArrayPos0 = Object.LegJointLEntity
 					SetBit(LegJoint[ArrayPos0].LegSide, 1, 0)
-					LegJointL[ArrayPos0].State = BOSSLEGJOINT_STEP_START
+					BossPart[ArrayPos0].State = BOSSLEGJOINT_STEP_START
 					CallFunction(BossBody_SetLegPosSaveFalse)
 
 					ArrayPos0 = Object.LegJointLEntity
@@ -707,7 +693,7 @@ sub ObjectMain
 
 					ArrayPos0 = Object.LegJointLEntity
 					ArrayPos1 = LegJointL[ArrayPos0].LegLEntity
-					LegL[ArrayPos1].State = BOSSLEG_MOVE_OPPOSITE_C
+					BossPart[ArrayPos1].State = BOSSLEG_MOVE_OPPOSITE_C
 					CallFunction(BossBody_SetArmsToCharge)
 				else
 					SetBit(Object.BitHolder, 6, LEFT_LEG_ACTIVE)
@@ -720,15 +706,15 @@ sub ObjectMain
 
 					ArrayPos0 = Object.LegJointLEntity
 					ArrayPos1 = LegJointL[ArrayPos0].LegLEntity
-					LegL[ArrayPos1].State = BOSSLEG_MOVE_C
+					BossPart[ArrayPos1].State = BOSSLEG_MOVE_C
 					
 					ArrayPos0 = LegL[ArrayPos1].FootLEntity
-					FootL[ArrayPos0].State = BOSSFOOT_STEP
+					BossPart[ArrayPos0].State = BOSSFOOT_STEP
 
 					ArrayPos0 = Object.LegJointREntity
 					SetBit(LegJoint[ArrayPos0].LegSide, 1, 0)
 
-					LegJointR[ArrayPos0].State = BOSSLEGJOINT_STEP_START
+					BossPart[ArrayPos0].State = BOSSLEGJOINT_STEP_START
 					CallFunction(BossBody_SetLegPosSaveFalse)
 
 					ArrayPos0 = Object.LegJointREntity
@@ -736,7 +722,7 @@ sub ObjectMain
 
 					ArrayPos0 = Object.LegJointREntity
 					ArrayPos1 = LegJointR[ArrayPos0].LegREntity
-					LegR[ArrayPos1].State = BOSSLEG_MOVE_OPPOSITE_C
+					BossPart[ArrayPos1].State = BOSSLEG_MOVE_OPPOSITE_C
 					CallFunction(BossBody_SetArmsToCharge)
 				end if
 

@@ -12,9 +12,9 @@
 #alias Object.value6		:	Object.NewXBoundary2Value
 #alias Object.value7		:	Object.SavedXBoundary2
 #alias Object.Rotation		:	Object.Timer
-#alias Object.Direction		:	Object.DamageTimer
+#alias Object.Direction		:	Object.AnimationTimer
 #alias Object.Scale			:	Object.SavedYBoundary2
-#alias Object.InkEffect		:	Object.AnimationTimer
+#alias Object.InkEffect		:	Object.FrameTimer
 
 // EGG-HVC-001 Body Aliases
 #alias Object[+1].iXPos		:	BossBody.iXPos
@@ -42,8 +42,8 @@
 #alias 1					:	RIGHT_LEG_ACTIVE
 
 // General Aliases
-#alias Object.Priority		:	Boss.Priority
-#alias Object.DrawOrder		:	Boss.DrawOrder
+#alias Object.Priority		:	BossPart.Priority
+#alias Object.DrawOrder		:	BossPart.DrawOrder
 
 // HVC-001 Boss Right Leg Joint Aliases
 #alias Object[+2].YPos		:	BossLegJointR.YPos
@@ -77,7 +77,6 @@
 
 // HVC-001 Boss Shoulder Aliases
 #alias Object[+8].YPos		:	BossShoulder.YPos
-#alias Object.DrawOrder		:	Shoulder.DrawOrder
 #alias Object.Value0		:	Shoulder.FaceEntity
 #alias Object.Value1		:	Shoulder.ArmJointLEntity
 #alias Object.Value2		:	Shoulder.ArmJointREntity
@@ -152,11 +151,11 @@
 // Priority
 #alias 1					:	PRIORITY_ACTIVE
 
-#alias -1					:	ANI_NONE
-#alias 0					:	ANI_IDLE
-#alias 1					:	ANI_LAUGH
-#alias 2					:	ANI_HURT
-#alias 3					:	ANI_DESTROYED
+#alias -1					:	EGGANI_NONE
+#alias 0					:	EGGANI_IDLE
+#alias 1					:	EGGANI_LAUGH
+#alias 2					:	EGGANI_HURT
+#alias 3					:	EGGANI_DESTROYED
 
 // Function declarations
 #function R1_EGGMAN_Oscillation
@@ -229,7 +228,7 @@ end function
 sub ObjectMain
 	switch Object.State
 	case R1_EGGMAN_SETUP
-		Object.Animation = ANI_NONE
+		Object.Animation = EGGANI_NONE
 		Object.Priority = PRIORITY_ACTIVE
 
 		Object.BodyEntity = Object.EntityNo
@@ -286,10 +285,10 @@ sub ObjectMain
 			Object.Timer--
 		end if
 		if BossBody.State > 2
-			if Object.DamageTimer > 0
-				Object.DamageTimer--
+			if Object.AnimationTimer > 0
+				Object.AnimationTimer--
 			else
-				Object.Animation = ANI_IDLE
+				Object.Animation = EGGANI_IDLE
 			end if
 		end if
 
@@ -383,7 +382,7 @@ sub ObjectMain
 				TempValue0++
 				Player.Score += 1000
 				ResetObjectEntity(TempValue0, TypeName[EggmanJetpack], 0, Object.XPos, Object.YPos)
-				Object.Animation = ANI_DESTROYED
+				Object.Animation = EGGANI_DESTROYED
 #platform: Use_Haptics
 				HapticEffect(76, 0, 0, 0)
 #endplatform
@@ -438,11 +437,11 @@ sub ObjectMain
 		else
 			Object.Timer = 0
 			Object.State = R1_EGGMAN_BODY_CONTROLLER
-			Object.Animation = ANI_LAUGH
+			Object.Animation = EGGANI_LAUGH
 			ArrayPos0 = Object.EntityNo
 			ArrayPos0++
 			ResetObjectEntity(ArrayPos0, TypeName[BossBody], 0, Object.XPos, Object.YPos)
-			Boss[ArrayPos0].Priority = PRIORITY_ACTIVE
+			BossPart[ArrayPos0].Priority = PRIORITY_ACTIVE
 
 			Body[ArrayPos0].FaceEntity = Object.EntityNo
 
@@ -454,7 +453,7 @@ sub ObjectMain
 			ArrayPos0++
 
 			ResetObjectEntity(ArrayPos0, TypeName[BossLegJoint], 0, Object.XPos, Object.YPos)
-			Boss[ArrayPos0].Priority = PRIORITY_ACTIVE
+			BossPart[ArrayPos0].Priority = PRIORITY_ACTIVE
 
 			LegJointR[ArrayPos0].BodyEntity = Object.EntityNo
 			LegJointR[ArrayPos0].BodyEntity += 1
@@ -464,7 +463,7 @@ sub ObjectMain
 			ArrayPos0++
 
 			ResetObjectEntity(ArrayPos0, TypeName[BossLeg], 0, Object.XPos, Object.YPos)
-			Boss[ArrayPos0].Priority = PRIORITY_ACTIVE
+			BossPart[ArrayPos0].Priority = PRIORITY_ACTIVE
 
 			LegR[ArrayPos0].LegJointREntity = Object.EntityNo
 			LegR[ArrayPos0].LegJointREntity += 2
@@ -474,7 +473,7 @@ sub ObjectMain
 			ArrayPos0++
 
 			ResetObjectEntity(ArrayPos0, TypeName[BossFoot], 0, Object.XPos, Object.YPos)
-			Boss[ArrayPos0].Priority = PRIORITY_ACTIVE
+			BossPart[ArrayPos0].Priority = PRIORITY_ACTIVE
 
 			FootR[ArrayPos0].LegREntity = Object.EntityNo
 			FootR[ArrayPos0].LegREntity += 3
@@ -484,8 +483,8 @@ sub ObjectMain
 			ArrayPos0++
 
 			ResetObjectEntity(ArrayPos0, TypeName[BossLegJoint], 0, Object.XPos, Object.YPos)
-			Boss[ArrayPos0].Priority = PRIORITY_ACTIVE
-			Boss[ArrayPos0].DrawOrder = 2
+			BossPart[ArrayPos0].Priority = PRIORITY_ACTIVE
+			BossPart[ArrayPos0].DrawOrder = 2
 
 			LegJointL[ArrayPos0].BodyEntity = Object.EntityNo
 			LegJointL[ArrayPos0].BodyEntity += 1
@@ -495,8 +494,8 @@ sub ObjectMain
 			ArrayPos0++
 
 			ResetObjectEntity(ArrayPos0, TypeName[BossLeg], 0, Object.XPos, Object.YPos)
-			Boss[ArrayPos0].Priority = PRIORITY_ACTIVE
-			Boss[ArrayPos0].DrawOrder = 2
+			BossPart[ArrayPos0].Priority = PRIORITY_ACTIVE
+			BossPart[ArrayPos0].DrawOrder = 2
 
 			LegL[ArrayPos0].LegJointLEntity = Object.EntityNo
 			LegL[ArrayPos0].LegJointLEntity += 5
@@ -506,8 +505,8 @@ sub ObjectMain
 			ArrayPos0++
 
 			ResetObjectEntity(ArrayPos0, TypeName[BossFoot], 0, Object.XPos, Object.YPos)
-			Boss[ArrayPos0].Priority = PRIORITY_ACTIVE
-			Boss[ArrayPos0].DrawOrder = 2
+			BossPart[ArrayPos0].Priority = PRIORITY_ACTIVE
+			BossPart[ArrayPos0].DrawOrder = 2
 
 			FootL[ArrayPos0].LegLEntity = Object.EntityNo
 			FootL[ArrayPos0].LegLEntity += 6
@@ -517,8 +516,8 @@ sub ObjectMain
 			ArrayPos0++
 
 			ResetObjectEntity(ArrayPos0, TypeName[BossShoulder], 0, Object.XPos, Object.YPos)
-			Boss[ArrayPos0].Priority = PRIORITY_ACTIVE
-			Shoulder[ArrayPos0].DrawOrder = 4
+			BossPart[ArrayPos0].Priority = PRIORITY_ACTIVE
+			BossPart[ArrayPos0].DrawOrder = 4
 
 			Shoulder[ArrayPos0].FaceEntity = Object.EntityNo
 
@@ -530,7 +529,7 @@ sub ObjectMain
 			ArrayPos0++
 
 			ResetObjectEntity(ArrayPos0, TypeName[BossArmJoint], 0, Object.XPos, Object.YPos)
-			Boss[ArrayPos0].Priority = PRIORITY_ACTIVE
+			BossPart[ArrayPos0].Priority = PRIORITY_ACTIVE
 
 			ArmJointL[ArrayPos0].ShoulderEntity = Object.EntityNo
 			ArmJointL[ArrayPos0].ShoulderEntity += 8
@@ -540,7 +539,7 @@ sub ObjectMain
 			ArrayPos0++
 
 			ResetObjectEntity(ArrayPos0, TypeName[BossArm], 0, Object.XPos, Object.YPos)
-			Boss[ArrayPos0].Priority = PRIORITY_ACTIVE
+			BossPart[ArrayPos0].Priority = PRIORITY_ACTIVE
 
 			ArmL[ArrayPos0].ArmJointLEntity = Object.EntityNo
 			ArmL[ArrayPos0].ArmJointLEntity += 9
@@ -550,7 +549,7 @@ sub ObjectMain
 			ArrayPos0++
 
 			ResetObjectEntity(ArrayPos0, TypeName[BossBumper], 0, Object.XPos, Object.YPos)
-			Boss[ArrayPos0].Priority = PRIORITY_ACTIVE
+			BossPart[ArrayPos0].Priority = PRIORITY_ACTIVE
 
 			BumperL[ArrayPos0].ArmLEntity = Object.EntityNo
 			BumperL[ArrayPos0].ArmLEntity += 10
@@ -560,8 +559,8 @@ sub ObjectMain
 			ArrayPos0++
 
 			ResetObjectEntity(ArrayPos0, TypeName[BossArmJoint], 0, Object.XPos, Object.YPos)
-			Boss[ArrayPos0].Priority = PRIORITY_ACTIVE
-			Boss[ArrayPos0].DrawOrder = 2
+			BossPart[ArrayPos0].Priority = PRIORITY_ACTIVE
+			BossPart[ArrayPos0].DrawOrder = 2
 
 			ArmJointR[ArrayPos0].ShoulderEntity = Object.EntityNo
 			ArmJointR[ArrayPos0].ShoulderEntity += 8
@@ -571,8 +570,8 @@ sub ObjectMain
 			ArrayPos0++
 
 			ResetObjectEntity(ArrayPos0, TypeName[BossArm], 0, Object.XPos, Object.YPos)
-			Boss[ArrayPos0].Priority = PRIORITY_ACTIVE
-			Boss[ArrayPos0].DrawOrder = 2
+			BossPart[ArrayPos0].Priority = PRIORITY_ACTIVE
+			BossPart[ArrayPos0].DrawOrder = 2
 
 			ArmR[ArrayPos0].ArmJointREntity = Object.EntityNo
 			ArmR[ArrayPos0].ArmJointREntity += 12
@@ -582,8 +581,8 @@ sub ObjectMain
 			ArrayPos0++
 
 			ResetObjectEntity(ArrayPos0, TypeName[BossBumper], 0, Object.XPos, Object.YPos)
-			Boss[ArrayPos0].Priority = PRIORITY_ACTIVE
-			Boss[ArrayPos0].DrawOrder = 2
+			BossPart[ArrayPos0].Priority = PRIORITY_ACTIVE
+			BossPart[ArrayPos0].DrawOrder = 2
 
 			BumperR[ArrayPos0].ArmREntity = Object.EntityNo
 			BumperR[ArrayPos0].ArmREntity += 13
@@ -639,8 +638,8 @@ sub ObjectPlayerInteraction
 								case 0
 									Object.Hit++
 									Object.Timer = 30
-									Object.Animation = ANI_HURT
-									Object.DamageTimer = 120
+									Object.Animation = EGGANI_HURT
+									Object.AnimationTimer = 120
 
 									ArrayPos0 = Object.ShoulderEntity
 									ArrayPos1 = Shoulder[ArrayPos0].ArmJointREntity
@@ -662,8 +661,8 @@ sub ObjectPlayerInteraction
 								case 1
 									Object.Hit++
 									Object.Timer = 30
-									Object.Animation = ANI_HURT
-									Object.DamageTimer = 120
+									Object.Animation = EGGANI_HURT
+									Object.AnimationTimer = 120
 
 									ArrayPos0 = Object.ShoulderEntity
 									ArrayPos1 = Shoulder[ArrayPos0].ArmJointLEntity
@@ -685,7 +684,7 @@ sub ObjectPlayerInteraction
 								case 2
 									Object.Hit++
 									Object.State = R1_EGGMAN_DEFEATED
-									Object.Animation = ANI_HURT
+									Object.Animation = EGGANI_HURT
 									ArrayPos0 = Object.BodyEntity
 									Body[ArrayPos0].State = BOSSBODY_DESTROYED
 
@@ -731,8 +730,8 @@ sub ObjectPlayerInteraction
 						end if
 					else
 						if Player.Invincible == 0
-							Object.Animation = ANI_LAUGH
-							Object.DamageTimer = 180
+							Object.Animation = EGGANI_LAUGH
+							Object.AnimationTimer = 180
 							Player.State = PlayerObject_Hurt
 							if Player.XPos > Object.XPos
 								Player.Speed = 131072	// 0x20000
@@ -750,35 +749,35 @@ end sub
 
 sub ObjectDraw
 	switch Object.Animation
-	case ANI_IDLE
+	case EGGANI_IDLE
 		DrawSprite(0)
 		break
 
-	case ANI_LAUGH
-		if Object.AnimationTimer < 8
-			Object.AnimationTimer = 8
+	case EGGANI_LAUGH
+		if Object.FrameTimer < 8
+			Object.FrameTimer = 8
 		else
-			if Object.AnimationTimer > 23
-				Object.AnimationTimer = 8
+			if Object.FrameTimer > 23
+				Object.FrameTimer = 8
 			end if
 		end if
-		Object.Frame = Object.AnimationTimer
+		Object.Frame = Object.FrameTimer
 		Object.Frame >>= 3
-		Object.AnimationTimer++
+		Object.FrameTimer++
 		DrawSprite(Object.Frame)
 		break
 
-	case ANI_HURT
-		if Object.AnimationTimer < 12
-			Object.AnimationTimer = 12
+	case EGGANI_HURT
+		if Object.FrameTimer < 12
+			Object.FrameTimer = 12
 		else
-			if Object.AnimationTimer > 27
-				Object.AnimationTimer = 12
+			if Object.FrameTimer > 27
+				Object.FrameTimer = 12
 			end if
 		end if
-		Object.Frame = Object.AnimationTimer
+		Object.Frame = Object.FrameTimer
 		Object.Frame >>= 2
-		Object.AnimationTimer++
+		Object.FrameTimer++
 		DrawSprite(Object.Frame)
 		break
 	end switch
