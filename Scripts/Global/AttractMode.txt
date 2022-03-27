@@ -126,20 +126,24 @@ sub ObjectStartup
 					LoadTextFile(MENU_1, "Data/Game/Demos/Key11a.bin", 0)
 					LampPost.Check = 0
 					break
+
 				case 1
 					LoadTextFile(MENU_1, "Data/Game/Demos/Special1.bin", 0)
 					LampPost.Check = 0
 					break
+
 				case 2
 					LoadTextFile(MENU_1, "Data/Game/Demos/Key43c.bin", 0)
 					Player.XPos = Object[ArrayPos0].XPos
 					Player.YPos = Object[ArrayPos0].YPos
 					LampPost.Check = 33
 					break
+
 				case 3
 					LoadTextFile(MENU_1, "Data/Game/Demos/Special6.bin", 0)
 					LampPost.Check = 0
 					break
+
 				case 4
 					LoadTextFile(MENU_1, "Data/Game/Demos/Key82a.bin", 0)
 					Player.XPos = Object[ArrayPos0].XPos
@@ -160,13 +164,41 @@ end sub
 // Editor Subs
 // ========================
 
+sub RSDKEdit
+	if Editor.ReturnVariable == true
+		switch Editor.VariableID
+		case EDIT_VAR_PROPVAL // property value
+			checkResult = Object.PropertyValue
+			break
+		case 0 // demoID
+			checkResult = Object.PropertyValue
+			break
+		end switch
+	else
+		switch Editor.variableID
+		case EDIT_VAR_PROPVAL // property value
+			Object.PropertyValue = Editor.VariableValue
+			break
+		case 0 // demoID
+			Object.propertyValue = Editor.VariableValue
+			break
+		end switch
+	end if
+end sub
+
 sub RSDKDraw
 	DrawSprite(0)
 end sub
 
-sub RSDK
-	LoadLoadSpriteSheet("Global/Display.gif")
+sub RSDKLoad
+	LoadSpriteSheet("Global/Display.gif")
 	SpriteFrame(-17, -5, 34, 11, 1, 176)		// #0 Demo
 
-	SetVariableAlias(ALIAS_VAR_PROPVAL, "unused")
+	AddEditorVariable("demoID")
+	SetActiveVariable("demoID")
+	AddEnumVariable("Palmtree Panic 1", 0)
+	AddEnumVariable("Special Zone 1", 1)
+	AddEnumVariable("Tidal Tempest 3", 2)
+	AddEnumVariable("Special Zone 6", 3)
+	AddEnumVariable("Metallic Madness 2", 4)
 end sub

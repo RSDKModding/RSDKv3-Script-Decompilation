@@ -36,12 +36,14 @@ sub ObjectMain
 		Object.XPos += Object.Value1
 		Object.YPos += Object.Value2
 	end if
+
 	TempValue0 = Object.XPos
 	TempValue0 -= TileLayer[0].XPos
 	TempValue0 >>= 8
 	TempValue1 = Object.YPos
 	TempValue1 -= TileLayer[0].ZPos
 	TempValue1 >>= 8
+
 	Sin(TempValue2, TileLayer[0].Angle)
 	TempValue2 *= TempValue1
 	Cos(TempValue3, TileLayer[0].Angle)
@@ -49,6 +51,7 @@ sub ObjectMain
 	Object.Value4 = TempValue2
 	Object.Value4 -= TempValue3
 	Object.Value4 >>= 9
+
 	Cos(TempValue2, TileLayer[0].Angle)
 	TempValue2 *= TempValue1
 	Sin(TempValue3, TileLayer[0].Angle)
@@ -56,6 +59,7 @@ sub ObjectMain
 	Object.Value5 = TempValue2
 	Object.Value5 += TempValue3
 	Object.Value5 >>= 9
+
 	if Player.YPos > 3538944
 		if Player.YPos < 7995392
 			if Object.Value5 < 22728
@@ -155,6 +159,7 @@ sub ObjectStartup
 	SpriteFrame(-40, -28, 80, 56, 82, 1)
 	SpriteFrame(-40, -28, 80, 56, 163, 1)
 	SpriteFrame(-40, -8, 80, 16, 1, 117)
+
 	ArrayPos0 = 32
 	while ArrayPos0 < 1056
 		if Object[ArrayPos0].Type == TypeName[UFO]
@@ -174,13 +179,59 @@ end sub
 // Editor Subs
 // ========================
 
+sub RSDKEdit
+	if Editor.ReturnVariable == true
+		switch Editor.VariableID
+		case EDIT_VAR_PROPVAL // property value
+			checkResult = Object.PropertyValue
+			break
+		case 0 // contents
+			checkResult = Object.PropertyValue
+			break
+		end switch
+	else
+		switch Editor.variableID
+		case EDIT_VAR_PROPVAL // property value
+			Object.PropertyValue = Editor.VariableValue
+			break
+		case 0 // contents
+			Object.propertyValue = Editor.VariableValue
+			break
+		end switch
+	end if
+end sub
+
 sub RSDKDraw
-	DrawSprite(0)
+	DrawSprite(Object.PropertyValue)
+
+	if Editor.ShowGizmos == true
+		ArrayPos1 = Object.EntityNo
+		ArrayPos0 = Object.EntityNo
+		ArrayPos0++
+		while Object[ArrayPos0].Type == TypeName[UFONode]
+			DrawArrow(Object[ArrayPos1].XPos, Object[ArrayPos1].YPos, Object[ArrayPos0].XPos, Object[ArrayPos0].YPos, 255, 255, 0)
+			ArrayPos0++
+			ArrayPos1++
+		loop
+
+		ArrayPos0 = Object.EntityNo
+		ArrayPos0++
+		if ArrayPos1 != Object.EntityNo
+			DrawArrow(Object[ArrayPos1].XPos, Object[ArrayPos1].YPos, Object[ArrayPos0].XPos, Object[ArrayPos0].YPos, 255, 255, 0)
+		end if
+	end if
 end sub
 
 sub RSDKLoad
-	LoadSpriteSheet("Global/Display.gif")
-	SpriteFrame(-16, -16, 32, 32, 1, 143)		// #0 - "Script" Icon
+	LoadSpriteSheet("Special/Objects.gif")
+	SpriteFrame(-40, -28, 80, 56, 1, 1)
+	SpriteFrame(-40, -28, 80, 56, 82, 1)
+	SpriteFrame(-40, -28, 80, 56, 163, 1)
+	SpriteFrame(-40, -8, 80, 16, 1, 117)
 
-	SetVariableAlias(ALIAS_VAR_PROPVAL, "unused")
+	AddEditorVariable("contents")
+	SetActiveVariable("contents")
+	AddEnumVariable("10 Rings", 0)
+	AddEnumVariable("Speed Shoes", 1)
+	AddEnumVariable("Extra Time", 2)
 end sub

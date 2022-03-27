@@ -10,7 +10,7 @@
 function Sonic_ProcessPlayer
 	if Options.AttractMode == false
 #platform: Mobile
-		if Options.TouchControls == 1
+		if Options.TouchControls == true
 			if Player.ControlMode == 0
 				CheckTouchRect(0, 96, Screen.CenterX, Screen.YSize)
 				if CheckResult > -1
@@ -38,6 +38,7 @@ function Sonic_ProcessPlayer
 						break
 					end switch
 				end if
+
 				CheckTouchRect(Screen.CenterX, 166, Screen.XSize, 240)
 				if CheckResult > -1
 					KeyDown.ButtonA = 1
@@ -1163,13 +1164,40 @@ end sub
 // Editor Subs
 // ========================
 
+sub RSDKEdit
+	if Editor.ReturnVariable == true
+		switch Editor.VariableID
+		case EDIT_VAR_PROPVAL // property value
+			checkResult = Object.PropertyValue
+			break
+		case 0 // startDir
+			checkResult = Object.PropertyValue
+			break
+		end switch
+	else
+		switch Editor.variableID
+		case EDIT_VAR_PROPVAL // property value
+			Object.PropertyValue = Editor.VariableValue
+			break
+		case 0 // startDir
+			Object.propertyValue = Editor.VariableValue
+			break
+		end switch
+	end if
+end sub
+
 sub RSDKDraw
 	DrawSprite(0)
 end sub
 
 sub RSDKLoad
-	LoadSpriteSheet("Global/Display.gif")
-	SpriteFrame(-16, -16, 32, 32, 1, 143)		// #0 - "Script" Icon
+	LoadSpriteSheet("Special/Sonic.gif")
+	SpriteFrame(-20, -48, 40, 48, 1, 246)
 
-	SetVariableAlias(ALIAS_VAR_PROPVAL, "unused")
+	AddEditorVariable("startDir")
+	SetActiveVariable("startDir")
+	AddEnumVariable("Up", 0)
+	AddEnumVariable("Left", 64)
+	AddEnumVariable("Down", 128)
+	AddEnumVariable("Right", 192)
 end sub
