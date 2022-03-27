@@ -239,6 +239,7 @@ sub ObjectStartup
 	SpriteFrame(-35, -46, 70, 92, 441, 860)	// #21 - Selected Border
 	SpriteFrame(-29, -22, 56, 21, 223, 679)	// #22 - Exit
 	SpriteFrame(20, 16, 8, 13, 330, 604)	// #23 - Lock
+
 	ArrayPos0 = 32
 	while ArrayPos0 < 1056
 		if Object[ArrayPos0].Type == TypeName[RoundIcon]
@@ -252,6 +253,7 @@ sub ObjectStartup
 		end if
 		ArrayPos0++
 	loop
+
 	3DScene.NoVertices = 4
 	3DScene.NoFaces = 1
 	FaceBuffer[0].a = 0
@@ -265,13 +267,83 @@ end sub
 // Editor Subs
 // ========================
 
+sub RSDKEdit
+	if Editor.ReturnVariable == true
+		switch Editor.VariableID
+		case EDIT_VAR_PROPVAL // property value
+			checkResult = Object.PropertyValue
+			checkResult &= 7
+			break
+		case 0 // roundID
+			checkResult = Object.PropertyValue
+			checkResult &= 7
+			break
+		end switch
+	else
+		switch Editor.variableID
+		case EDIT_VAR_PROPVAL // property value
+			Object.PropertyValue = Editor.VariableValue
+			Object.propertyValue &= 7
+			break
+		case 0 // roundID
+			Object.propertyValue = Editor.VariableValue
+			Object.propertyValue &= 7
+			break
+		end switch
+	end if
+end sub
+
 sub RSDKDraw
-	DrawSprite(0)
+	Object.Frame = Object.PropertyValue
+	Object.Frame += 11
+
+	DrawSprite(10)
+
+	if Object.PropertyValue < 7	// Draw for all main stages
+		DrawSprite(19)
+	else	// Draw the Exit
+		DrawSprite(20)
+		DrawSprite(22)
+	end if
+
+	DrawSprite(Object.Frame)
 end sub
 
 sub RSDKLoad
-	LoadSpriteSheet("Global/Display.gif")
-	SpriteFrame(-16, -16, 32, 32, 1, 143)		// #0 - "Script" Icon
+	LoadSpriteSheet("TAttack/TimeAttack.gif")
+	SpriteFrame(0, 0, 6, 8, 330, 577)		// #0  - 0
+	SpriteFrame(0, 0, 6, 8, 337, 577)		// #1  - 1
+	SpriteFrame(0, 0, 6, 8, 344, 577)		// #2  - 2
+	SpriteFrame(0, 0, 6, 8, 351, 577)		// #3  - 3
+	SpriteFrame(0, 0, 6, 8, 330, 586)		// #4  - 4
+	SpriteFrame(0, 0, 6, 8, 337, 586)		// #5  - 5
+	SpriteFrame(0, 0, 6, 8, 344, 586)		// #6  - 6
+	SpriteFrame(0, 0, 6, 8, 351, 586)		// #7  - 7
+	SpriteFrame(0, 0, 6, 8, 330, 595)		// #8  - 8
+	SpriteFrame(0, 0, 6, 8, 337, 595)		// #9  - 9
+	SpriteFrame(-34, -45, 68, 90, 1, 609)	// #10 - Border
+	SpriteFrame(-32, 15, 64, 16, 70, 577)	// #11 - Palmtree Panic
+	SpriteFrame(-32, 15, 64, 16, 135, 577)	// #12 - Collision Chaos
+	SpriteFrame(-32, 15, 64, 16, 200, 577)	// #13 - Tidal Tempest
+	SpriteFrame(-32, 15, 64, 16, 265, 577)	// #14 - Quartz Quadrant
+	SpriteFrame(-32, 15, 64, 16, 70, 593)	// #15 - Wacky Workbench
+	SpriteFrame(-32, 15, 64, 16, 135, 593)	// #16 - Stardust Speedway
+	SpriteFrame(-32, 15, 64, 16, 200, 593)	// #17 - Metallic Madness
+	SpriteFrame(-32, 15, 64, 16, 265, 593)	// #18 - Total Time
+	SpriteFrame(-32, 31, 64, 13, 70, 638)	// #19 - ' "
+	SpriteFrame(-32, 31, 64, 13, 70, 652)	// #20 -  ' "
+	SpriteFrame(-35, -46, 70, 92, 441, 860)	// #21 - Selected Border
+	SpriteFrame(-29, -22, 56, 21, 223, 679)	// #22 - Exit
+	SpriteFrame(20, 16, 8, 13, 330, 604)	// #23 - Lock
 
-	SetVariableAlias(ALIAS_VAR_PROPVAL, "unused")
+	AddEditorVariable("roundID")
+	SetActiveVariable("roundID")
+	AddEnumVariable("Palmtree Panic", 0)
+	AddEnumVariable("Collision Chaos", 1)
+	AddEnumVariable("Tidal Tempest", 2)
+	AddEnumVariable("Quartz Quadrant", 3)
+	AddEnumVariable("Wacky Workbench", 4)
+	AddEnumVariable("Stardust Speedway", 5)
+	AddEnumVariable("Metallic Madness", 6)
+	AddEnumVariable("Total Time", 7)
 end sub

@@ -5,16 +5,16 @@
 // Aliases
 #alias 34: TYPE_TITLECARD
 
-#alias Object.Value0:Object.BarPos
-#alias Object.Value1:Object.TextPos
-#alias Object.Value2:Object.TextSize
-#alias Object.Value3:Object.FadeA
-#alias Object.Value4:Object.FadeR
-#alias Object.Value5:Object.FadeG
-#alias Object.Value6:Object.FadeB
-#alias Object.Value7:Object.CharPos
+#alias Object.Value0 : Object.BarPos
+#alias Object.Value1 : Object.TextPos
+#alias Object.Value2 : Object.TextSize
+#alias Object.Value3 : Object.FadeA
+#alias Object.Value4 : Object.FadeR
+#alias Object.Value5 : Object.FadeG
+#alias Object.Value6 : Object.FadeB
+#alias Object.Value7 : Object.CharPos
 
-#alias Object[0].Value4:Player.Invincible
+#alias Object[0].Value4 : Player.Invincible
 
 sub ObjectPlayerInteraction
 	Player.Timer = 0
@@ -110,6 +110,7 @@ sub ObjectDraw
 		end if
 		break
 	end switch
+
 	if Object.Type > TypeName[Blank Object]
 		TempValue0 = 136
 		TempValue0 += Object.CharPos
@@ -134,6 +135,7 @@ sub ObjectStartup
 	else
 		LoadSpriteSheet("Global/Display_t.gif")
 	end if
+
 	if Options.Soundtrack == 0
 		switch Object[24].PropertyValue
 		case 0
@@ -165,6 +167,7 @@ sub ObjectStartup
 			break
 		end switch
 	end if
+
 	Flower_TypeNo = TypeName[Flower]
 	Object[20].Type = TypeName[TitleCard]
 	if Warp.XPos > 0
@@ -229,12 +232,55 @@ end sub
 // ========================
 
 sub RSDKDraw
-	DrawSprite(0)
+	Object.TextSize = 13
+	Object.TextSize += 9
+
+	TempValue0 = 136
+	TempValue0 += Object.CharPos
+	TempValue0 <<= 16
+
+	TempValue1 = 0x500000
+	TempValue1 += Object.YPos
+
+	DrawSpriteXY(0, TempValue0, Object.YPos)
+	DrawSpriteXY(Stage.ActNo, Object.XPos, TempValue1)
+	DrawSpriteXY(4, Object.XPos, TempValue1)
+	DrawSpriteXY(5, Object.XPos, TempValue1)
+	DrawSpriteXY(6, Object.XPos, TempValue1)
+	DrawSpriteXY(7, Object.XPos, TempValue1)
+
+	TempValue0 = 8
+	while TempValue0 < Object.TextSize
+		DrawSpriteXY(TempValue0, Object.XPos, TempValue1)
+		TempValue0++
+	loop
 end sub
 
 sub RSDKLoad
 	LoadSpriteSheet("Global/Display.gif")
-	SpriteFrame(-16, -16, 32, 32, 1, 143)		// #0 - "Script" Icon
+
+	SpriteFrame(0, 0, 32, 200, 223, 1)
+	SpriteFrame(96, 96, 48, 48, 41, 1)
+	SpriteFrame(96, 96, 48, 48, 90, 1)
+	SpriteFrame(96, 96, 48, 48, 139, 1)
+	SpriteFrame(64, 97, 48, 16, 41, 67)
+	SpriteFrame(64, 81, 160, 16, 41, 50)
+	SpriteFrame(72, 81, 160, 16, 49, 50)
+	SpriteFrame(16, 81, 160, 16, 41, 50)
+	SpriteFrame(100, 32, 24, 48, 188, 1)
+	SpriteFrame(0, 0, 24, 56, 41, 132)
+	SpriteFrame(24, 32, 11, 23, 43, 84)
+	SpriteFrame(36, 32, 9, 23, 159, 84)
+	SpriteFrame(45, 32, 17, 23, 169, 84)
+	SpriteFrame(62, 32, 10, 23, 81, 108)
+	SpriteFrame(72, 32, 12, 23, 57, 108)
+	SpriteFrame(84, 32, 9, 23, 88, 84)
+	SpriteFrame(93, 32, 9, 23, 88, 84)
+	SpriteFrame(0, 56, 24, 56, 41, 132)
+	SpriteFrame(24, 56, 11, 23, 43, 84)
+	SpriteFrame(36, 56, 11, 23, 187, 84)
+	SpriteFrame(48, 56, 5, 23, 131, 84)
+	SpriteFrame(54, 56, 8, 23, 67, 84)
 
 	SetVariableAlias(ALIAS_VAR_PROPVAL, "unused")
 end sub
