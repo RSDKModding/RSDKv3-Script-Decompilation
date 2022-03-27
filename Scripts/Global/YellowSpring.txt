@@ -270,6 +270,7 @@ end sub
 
 sub ObjectStartup
 	LoadSpriteSheet("Global/Items.gif")
+
 	ArrayPos0 = 32
 	while ArrayPos0 < 1056
 		if Object[ArrayPos0].Type == TypeName[YellowSpring]
@@ -279,6 +280,7 @@ sub ObjectStartup
 		end if
 		ArrayPos0++
 	loop
+
 	// Springs
 	SpriteFrame(-16, -8, 32, 16, 84, 183)		// #0  - Yellow Spring facing up
 	SpriteFrame(-8, -16, 16, 32, 215, 116)		// #1  - Yellow Spring facing right
@@ -309,7 +311,64 @@ sub ObjectStartup
 	SpriteFrame(-32, -32, 48, 48, 166, 83)		// #23 - Yellow Spring Launch diagonal left 2
 end sub
 
-sub RSDK
-	LoadSpriteSheet("Global/Display.gif")
-	SetEditorIcon(Icon0, SingleIcon, -16, -16, 32, 32, 1, 143)
+// ========================
+// Editor Subs
+// ========================
+
+sub RSDKEdit
+	if Editor.ReturnVariable == true
+		switch Editor.VariableID
+		case EDIT_VAR_PROPVAL // property value
+			checkResult = Object.PropertyValue
+			break
+		case 0 // type
+			checkResult = Object.PropertyValue
+			checkResult &= 7
+			break
+		end switch
+	else
+		switch Editor.variableID
+		case EDIT_VAR_PROPVAL // property value
+			Object.PropertyValue = Editor.VariableValue
+			break
+		case 0 // type
+			Object.propertyValue = Editor.VariableValue
+			Object.propertyValue &= 7
+			break
+		end switch
+	end if
+end sub
+
+sub RSDKDraw
+	Object.Direction = 0
+	if Object.PropertyValue > SPRING_FACING_DIAGONAL_UL
+		Object.Direction = 2
+	end if
+
+	DrawSpriteFX(Object.PropertyValue, FX_FLIP, Object.XPos, Object.YPos)
+end sub
+
+sub RSDKLoad
+	LoadSpriteSheet("Global/Items.gif")
+	
+	// Springs
+	SpriteFrame(-16, -8, 32, 16, 84, 183)		// #0  - Yellow Spring facing up
+	SpriteFrame(-8, -16, 16, 32, 215, 116)		// #1  - Yellow Spring facing right
+	SpriteFrame(-8, -16, 16, 32, 232, 116)		// #2  - Yellow Spring facing left
+	SpriteFrame(-16, -8, 32, 16, 184, 239)		// #3  - Yellow Spring facing down
+	SpriteFrame(-16, -16, 32, 32, 183, 165)		// #4  - Yellow Spring facing diagonal right
+	SpriteFrame(-16, -16, 32, 32, 216, 182)		// #5  - Yellow Spring facing diagonal left
+	SpriteFrame(-16, -16, 32, 32, 183, 165)		// #6  - Yellow Spring facing diagonal right 2
+	SpriteFrame(-16, -16, 32, 32, 216, 182)		// #7  - Yellow Spring facing diagonal left 2
+
+	AddEditorVariable("type")
+	SetActiveVariable("type")
+	AddEnumVariable("Up", 0)
+	AddEnumVariable("Right", 1)
+	AddEnumVariable("Left", 2)
+	AddEnumVariable("Down", 3)
+	AddEnumVariable("Diagonal (Up Right)", 4)
+	AddEnumVariable("Diagonal (Up Left)", 5)
+	AddEnumVariable("Diagonal (Down Right)", 6)
+	AddEnumVariable("Diagonal (Down Right)", 7)
 end sub

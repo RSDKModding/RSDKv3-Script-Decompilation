@@ -159,6 +159,7 @@ sub ObjectStartup
 	SpriteFrame(-16, -16, 32, 32, 51, 133)	// #8  - S Monitor
 	SpriteFrame(-16, -16, 32, 32, 51, 1)	// #9  - Monitor Static 1
 	SpriteFrame(-16, -16, 32, 32, 51, 34)	// #10 - Monitor Static 2
+
 	ArrayPos0 = 32
 	while ArrayPos0 < 1056
 		if Object[ArrayPos0].Type == TypeName[Monitor]
@@ -188,7 +189,7 @@ sub ObjectStartup
 		while ArrayPos0 < 1056
 			if Object[ArrayPos0].Type == TypeName[Monitor]
 				if Object[ArrayPos0].PropertyValue == SONIC_MONITOR
-					Object[ArrayPos0].Type = TypeName[BlankObject]
+					Object[ArrayPos0].Type = TypeName[Blank Object]
 				end if
 			end if
 			ArrayPos0++
@@ -196,7 +197,59 @@ sub ObjectStartup
 	end if
 end sub
 
-sub RSDK
-	LoadSpriteSheet("Global/Display.gif")
-	SetEditorIcon(Icon0, SingleIcon, -16, -16, 32, 32, 1, 143)
+// ========================
+// Editor Subs
+// ========================
+
+sub RSDKEdit
+	if Editor.ReturnVariable == true
+		switch Editor.VariableID
+		case EDIT_VAR_PROPVAL // property value
+			checkResult = Object.PropertyValue
+			break
+		case 0 // contents
+			checkResult = Object.PropertyValue
+			break
+		end switch
+	else
+		switch Editor.variableID
+		case EDIT_VAR_PROPVAL // property value
+			Object.PropertyValue = Editor.VariableValue
+			break
+		case 0 // contents
+			Object.propertyValue = Editor.VariableValue
+			break
+		end switch
+	end if
+end sub
+
+sub RSDKDraw
+	DrawSprite(Object.PropertyValue)
+end sub
+
+sub RSDKLoad
+	LoadSpriteSheet("Global/Items.gif")
+	SpriteFrame(-16, -16, 32, 32, 51, 67)	// #0  - Monitor
+	SpriteFrame(-16, -16, 32, 32, 18, 1)	// #1  - Ring Monitor
+	SpriteFrame(-16, -16, 32, 32, 18, 34)	// #2  - Blue Shield Monitor
+	SpriteFrame(-16, -16, 32, 32, 18, 67)	// #3  - Invincibility Monitor
+	SpriteFrame(-16, -16, 32, 32, 18, 100)	// #4  - Power Sneakers Monitor
+	SpriteFrame(-16, -16, 32, 32, 18, 133)	// #5  - Sonic Monitor
+	SpriteFrame(-16, -16, 32, 32, 18, 166)	// #6  - Time Monitor
+	SpriteFrame(-16, -16, 32, 32, 51, 100)	// #7  - Tails Monitor
+	SpriteFrame(-16, -16, 32, 32, 51, 133)	// #8  - S Monitor
+	SpriteFrame(-16, -16, 32, 32, 51, 1)	// #9  - Monitor Static 1
+	SpriteFrame(-16, -16, 32, 32, 51, 34)	// #10 - Monitor Static 2
+
+	AddEditorVariable("contents")
+	SetActiveVariable("contents")
+	AddEnumVariable("None", 0)
+	AddEnumVariable("10 Rings", 1)
+	AddEnumVariable("Blue Shield", 2)
+	AddEnumVariable("Invincibility", 3)
+	AddEnumVariable("Speed Shoes", 4)
+	AddEnumVariable("1UP (Sonic)", 5)
+	AddEnumVariable("Clock (Unused)", 6)
+	AddEnumVariable("1UP (Tails)", 7)
+	AddEnumVariable("S Monitor", 8)
 end sub

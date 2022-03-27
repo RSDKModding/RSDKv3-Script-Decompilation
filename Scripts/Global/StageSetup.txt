@@ -67,7 +67,7 @@ function StageSetup_SaveStageState
 	// Used Warp Signs
 	// Anything that transformed into a flower
 	while ArrayPos0 < 1056
-		if Object[ArrayPos0].Type == TypeName[BlankObject]
+		if Object[ArrayPos0].Type == TypeName[Blank Object]
 			SetBit(SaveRAM[ArrayPos1], HUD.TimePeriod, true)
 		else
 			if Object[ArrayPos0].Type == TypeName[BrokenMonitor]
@@ -117,7 +117,7 @@ function StageSetup_LoadStageState
 		if Object[ArrayPos0].Type == TypeName[Ring]
 			GetBit(TempValue0, SaveRAM[ArrayPos1], HUD.TimePeriod)
 			if TempValue0 == true
-				Object[ArrayPos0].Type = TypeName[BlankObject]
+				Object[ArrayPos0].Type = TypeName[Blank Object]
 			end if
 		else
 			if Object[ArrayPos0].Type == TypeName[Monitor]
@@ -141,7 +141,7 @@ function StageSetup_LoadStageState
 					else
 						GetBit(TempValue0, SaveRAM[ArrayPos1], TempValue1)
 						if TempValue0 == true
-							Object[ArrayPos0].Type = TypeName[BlankObject]
+							Object[ArrayPos0].Type = TypeName[Blank Object]
 						end if
 					end if
 				end if
@@ -246,7 +246,7 @@ sub ObjectStartup
 	ArrayPos0 = 32
 	while ArrayPos0 < 1056
 		if Object[ArrayPos0].Type == TypeName[StageSetup]
-			ResetObjectEntity(ArrayPos0, TypeName[BlankObject], 0, 0, 0)
+			ResetObjectEntity(ArrayPos0, TypeName[Blank Object], 0, 0, 0)
 		end if
 		ArrayPos0++
 	loop
@@ -254,7 +254,7 @@ sub ObjectStartup
 	ArrayPos0 = 32
 	while ArrayPos0 < 1056
 		if Object[ArrayPos0].Type == TypeName[HUD]	// Resets the HUD and carry over the time period
-			Object[ArrayPos0].Type = TypeName[BlankObject]
+			Object[ArrayPos0].Type = TypeName[Blank Object]
 			Object[24].Type 	= TypeName[HUD]
 			HUD.Priority 		= PRIORITY_ACTIVE
 			HUD.DrawOrder	 	= 6
@@ -311,7 +311,17 @@ sub ObjectStartup
 	Player.RoofBarrier = false
 end sub
 
-sub RSDK
+// ========================
+// Editor Subs
+// ========================
+
+sub RSDKDraw
+	DrawSprite(0)
+end sub
+
+sub RSDKLoad
 	LoadSpriteSheet("Global/Display.gif")
-	SetEditorIcon(Icon0, SingleIcon, -16, -16, 32, 32, 1, 143)
+	SpriteFrame(-16, -16, 32, 32, 1, 143)		// #0 - "Script" Icon
+
+	SetVariableAlias(ALIAS_VAR_PROPVAL, "unused")
 end sub

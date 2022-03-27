@@ -46,7 +46,7 @@ function Sonic_ProcessPlayer
 					KeyPress.ButtonA |= KeyDown.ButtonA
 				end if
 				Object[25].Value7 = KeyDown.ButtonA
-				if Object[9].Type == TypeName[BlankObject]
+				if Object[9].Type == TypeName[Blank Object]
 					CheckTouchRect(240, 0, Screen.XSize, 40)
 					if CheckResult > -1
 						Stage.State = STAGE_PAUSED
@@ -80,7 +80,7 @@ function Sonic_ProcessPlayer
 			end if
 		else
 			if Player.ControlMode == 0
-				if Object[9].Type == TypeName[BlankObject]
+				if Object[9].Type == TypeName[Blank Object]
 					if KeyPress.Start == true
 						KeyPress.Start = 0
 						Stage.State = STAGE_PAUSED
@@ -116,7 +116,7 @@ function Sonic_ProcessPlayer
 #endplatform
 #platform: Standard
 		if Player.ControlMode == 0
-			if Object[9].Type == TypeName[BlankObject]
+			if Object[9].Type == TypeName[Blank Object]
 				if KeyPress.Start == true
 					KeyPress.Start = false
 					if Options.DevMenuFlag == true
@@ -145,7 +145,7 @@ function Sonic_HandlePause
 	if Options.AttractMode == false
 #platform: Mobile
 		if Player.ControlMode == 0
-			if Object[9].Type == TypeName[BlankObject]
+			if Object[9].Type == TypeName[Blank Object]
 				CheckTouchRect(240, 0, Screen.XSize, 40)
 				if CheckResult > -1
 					Stage.State = STAGE_PAUSED
@@ -181,7 +181,7 @@ function Sonic_HandlePause
 
 #platform: Standard
 		if Player.ControlMode == 0
-			if Object[9].Type == TypeName[BlankObject]
+			if Object[9].Type == TypeName[Blank Object]
 				if KeyPress.Start == true
 					KeyPress.Start = false
 					if Options.DevMenuFlag == true
@@ -884,7 +884,7 @@ sub ObjectMain
 				Player.Angle += 512
 			end if
 		else
-			if Object[3].Type == TypeName[BlankObject]
+			if Object[3].Type == TypeName[Blank Object]
 				ResetObjectEntity(3, TypeName[TimeStone], 0, 0, -1572864)
 				Object[3].iXPos = Screen.CenterX
 				Object[3].Priority = 1
@@ -1036,7 +1036,7 @@ sub ObjectStartup
 			Player.YPos = 0
 			Player.Angle = Object[ArrayPos0].PropertyValue
 			Player.Angle <<= 1
-			ResetObjectEntity(ArrayPos0, TypeName[BlankObject], 0, 0, 0)
+			ResetObjectEntity(ArrayPos0, TypeName[Blank Object], 0, 0, 0)
 		end if
 		ArrayPos0++
 	loop
@@ -1159,7 +1159,17 @@ sub ObjectStartup
 	SpriteFrame(-16, -48, 32, 48, 149, 295)
 end sub
 
-sub RSDK
+// ========================
+// Editor Subs
+// ========================
+
+sub RSDKDraw
+	DrawSprite(0)
+end sub
+
+sub RSDKLoad
 	LoadSpriteSheet("Global/Display.gif")
-	SetEditorIcon(Icon0, SingleIcon, -16, -16, 32, 32, 1, 143)
+	SpriteFrame(-16, -16, 32, 32, 1, 143)		// #0 - "Script" Icon
+
+	SetVariableAlias(ALIAS_VAR_PROPVAL, "unused")
 end sub

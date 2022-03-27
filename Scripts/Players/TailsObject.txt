@@ -37,15 +37,18 @@ sub ObjectDraw
 		if Player.Animation > 4
 			Object.Frame = 0
 		end if
+
 		if Object.TailAnimation > 4
 			Object.Frame = 0
 		end if
 #endplatform
+
 		Object.TailAnimation = Player.Animation
 #platform: Standard
 		Object.Frame = 0
 #endplatform
 	end if
+
 	Object.Direction = Player.Direction
 	switch Object.TailAnimation
 	case TAILS_STOPPED
@@ -203,9 +206,11 @@ end sub
 sub ObjectStartup
 	if Stage.PlayerListPos == 1	// PlayerName[TAILS]
 		LoadSpriteSheet("Players/Tails1.gif")
+
 		Object[1].Type = TypeName[TailsObject]
 		TailsObject.DrawOrder= 7
 		TailsObject.Priority = PRIORITY_ACTIVE
+
 		// Idle
 		SpriteFrame(-22, -8, 16, 24, 82, 199)	// #0  - Tail Idle Frame 0
 		SpriteFrame(-26, -8, 20, 24, 99, 199)	// #1  - Tail Idle Frame 1
@@ -226,7 +231,17 @@ sub ObjectStartup
 	end if
 end sub
 
-sub RSDK
-	LoadSpriteSheet("Global/Display.gif")
-	SetEditorIcon(Icon0, SingleIcon, -16, -16, 32, 32, 1, 143)
+// ========================
+// Editor Subs
+// ========================
+
+sub RSDKDraw
+	DrawSprite(0)
+end sub
+
+sub RSDKLoad
+	LoadSpriteSheet("Players/Tails1.gif")
+	SpriteFrame(-22, -8, 16, 24, 82, 199)	// #0  - Tail Idle Frame 0
+
+	SetVariableAlias(ALIAS_VAR_PROPVAL, "unused")
 end sub

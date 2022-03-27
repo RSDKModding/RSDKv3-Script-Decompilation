@@ -9,7 +9,7 @@
 #alias Object.Value3	:	Object.AButtonXPos
 #alias Object.Value4	:	Object.DPadXPos
 #alias Object.Value6	:	Object.HelperSprite
-#alias Object.Rotation	:	Object.SelectedObject
+#alias Object.Rotation	:	Object.CurrentSelection
 
 // Ink
 #alias 2	:	INK_ALPHA
@@ -19,7 +19,7 @@
 #alias 4	:	PRIORITY_ACTIVE_BOUNDS_REMOVE
 
 function DebugMode_ChangeItem
-	switch Object.SelectedObject
+	switch Object.CurrentSelection
 	case 0
 	case 1
 	case 2
@@ -46,13 +46,15 @@ function DebugMode_ChangeItem
 	case 23
 	case 24
 	case 25
-		Object.Frame = Object.SelectedObject
+		Object.Frame = Object.CurrentSelection
 		Object.HelperSprite = 0
 		break
+
 	case 26
 		Object.Frame = 26
 		Object.HelperSprite = 27
 		break
+
 	case 27
 		Object.Frame = 28
 		Object.HelperSprite = 29
@@ -108,27 +110,28 @@ sub ObjectMain
 		Player.ObjectInteraction = true
 	else
 		if KeyPress.ButtonA == true
-			Object.SelectedObject++
-			if Object.SelectedObject > 27
-				Object.SelectedObject = 0
+			Object.CurrentSelection++
+			if Object.CurrentSelection > 27
+				Object.CurrentSelection = 0
 			end if
 			CallFunction(DebugMode_ChangeItem)
 		end if
 		if KeyDown.ButtonA == true
 			if KeyPress.ButtonC == true
-				Object.SelectedObject--
-				if Object.SelectedObject < 0
-					Object.SelectedObject = 27
+				Object.CurrentSelection--
+				if Object.CurrentSelection < 0
+					Object.CurrentSelection = 27
 				end if
 				CallFunction(DebugMode_ChangeItem)
 			end if
 		else
 			if KeyPress.ButtonC == true
-				switch Object.SelectedObject
+				switch Object.CurrentSelection
 				case 0
 					CreateTempObject(TypeName[Ring], 0, Player.XPos, Player.YPos)
 					Object[TempObjectPos].DrawOrder = 4
 					break
+
 				case 1
 				case 2
 				case 3
@@ -137,8 +140,9 @@ sub ObjectMain
 				case 6
 				case 7
 				case 8
-					CreateTempObject(TypeName[Monitor], Object.SelectedObject, Player.XPos, Player.YPos)
+					CreateTempObject(TypeName[Monitor], Object.CurrentSelection, Player.XPos, Player.YPos)
 					break
+
 				case 9
 				case 10
 				case 11
@@ -147,10 +151,11 @@ sub ObjectMain
 				case 14
 				case 15
 				case 16
-					TempValue0 = Object.SelectedObject
+					TempValue0 = Object.CurrentSelection
 					TempValue0 -= 9
 					CreateTempObject(TypeName[RedSpring], TempValue0, Player.XPos, Player.YPos)
 					break
+
 				case 17
 				case 18
 				case 19
@@ -159,20 +164,24 @@ sub ObjectMain
 				case 22
 				case 23
 				case 24
-					TempValue0 = Object.SelectedObject
+					TempValue0 = Object.CurrentSelection
 					TempValue0 -= 17
 					CreateTempObject(TypeName[YellowSpring], TempValue0, Player.XPos, Player.YPos)
 					break
+					
 				case 25
 					CreateTempObject(TypeName[LampPost], 0, Player.XPos, Player.YPos)
 					break
+
 				case 26
 					CreateTempObject(TypeName[FuturePost], 0, Player.XPos, Player.YPos)
 					break
+
 				case 27
 					CreateTempObject(TypeName[PastPost], 0, Player.XPos, Player.YPos)
 					break
 				end switch
+
 				Object[TempObjectPos].Priority = PRIORITY_ACTIVE_BOUNDS_REMOVE
 			end if
 		end if
@@ -320,7 +329,7 @@ sub ObjectStartup
 #endplatform
 
 #platform: Mobile
-	if Options.AttractMode == 0
+	if Options.AttractMode == false
 		LoadSpriteSheet("Global/DPad.gif")
 		Object[25].Type = TypeName[DebugMode]
 		Object[25].Priority = PRIORITY_ACTIVE
@@ -331,6 +340,7 @@ sub ObjectStartup
 		Object[25].PauseXPos = Screen.XSize
 		Object[25].PauseXPos -= 68
 		Object[25].AButtonXPos = Screen.XSize
+
 		if Engine.PlatformID == RETRO_WP7
 			Object[25].AButtonXPos -= 69
 			Object[25].DPadXPos = 24
@@ -340,9 +350,11 @@ sub ObjectStartup
 			Object[25].DPadXPos = 16
 			Options.DPadX = 48
 		end if
+
 		if Stage.ActiveList == SPECIAL_STAGE
 			Object[25].PauseXPos += 42
 		end if
+
 		SpriteFrame(0, 0, 64, 64, 0, 64)		// #0  - D-Pad
 		SpriteFrame(26, 0, 12, 25, 26, 0)		// #1  - Up
 		SpriteFrame(26, 38, 12, 26, 26, 38)		// #2  - Down
@@ -359,7 +371,17 @@ sub ObjectStartup
 #endplatform
 end sub
 
-sub RSDK
-	LoadSpriteSheet("Global/Display.gif")
-	SetEditorIcon(Icon0, SingleIcon, -16, -16, 32, 32, 1, 143)
+// ========================
+// Editor Subs
+// ========================
+
+sub RSDKDraw
+	DrawSprite(0)
+end sub
+
+sub RSDKLoad
+	LoadSpriteSheet("Global/Items.gif")
+	SpriteFrame(-8, -8, 16, 16, 1, 1)			// #0  - Ring
+
+	SetVariableAlias(ALIAS_VAR_PROPVAL, "unused")
 end sub

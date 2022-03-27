@@ -52,7 +52,42 @@ sub ObjectStartup
 	SpriteFrame(-20, -44, 40, 56, 34, 165)	// #0 - Goal Post
 end sub
 
-sub RSDK
-	LoadSpriteSheet("Global/Display.gif")
-	SetEditorIcon(Icon0, SingleIcon, -16, -16, 32, 32, 1, 143)
+// ========================
+// Editor Subs
+// ========================
+
+sub RSDKEdit
+	if Editor.ReturnVariable == true
+		switch Editor.VariableID
+		case EDIT_VAR_PROPVAL // property value
+			checkResult = Object.PropertyValue
+			break
+		case 0 // awardAchievement
+			checkResult = Object.PropertyValue
+			break
+		end switch
+	else
+		switch Editor.variableID
+		case EDIT_VAR_PROPVAL // property value
+			Object.PropertyValue = Editor.VariableValue
+			break
+		case 0 // awardAchievement
+			Object.propertyValue = Editor.VariableValue
+			break
+		end switch
+	end if
+end sub
+
+sub RSDKDraw
+	DrawSprite(0)
+end sub
+
+sub RSDKLoad
+	LoadSpriteSheet("Global/Items2.gif")
+	SpriteFrame(-20, -44, 40, 56, 34, 165)	// #0 - Goal Post
+
+	AddEditorVariable("awardAchievement")
+	SetActiveVariable("awardAchievement")
+	AddEnumVariable("false", false)
+	AddEnumVariable("true", true)
 end sub

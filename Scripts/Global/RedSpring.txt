@@ -302,6 +302,7 @@ end sub
 
 sub ObjectStartup
 	LoadSpriteSheet("Global/Items.gif")
+
 	ArrayPos0 = 32
 	while ArrayPos0 < 1056
 		if Object[ArrayPos0].Type == TypeName[RedSpring]
@@ -315,6 +316,7 @@ sub ObjectStartup
 		end if
 		ArrayPos0++
 	loop
+
 	// Springs
 	SpriteFrame(-16, -8, 32, 16, 84, 1)			// #0  - Red Spring facing up
 	SpriteFrame(-8, -16, 16, 32, 117, 1)		// #1  - Red Spring facing right
@@ -345,7 +347,64 @@ sub ObjectStartup
 	SpriteFrame(-32, -32, 48, 48, 166, 34)		// #23 - Red Spring Launch diagonal left 2
 end sub
 
-sub RSDK
-	LoadSpriteSheet("Global/Display.gif")
-	SetEditorIcon(Icon0, SingleIcon, -16, -16, 32, 32, 1, 143)
+// ========================
+// Editor Subs
+// ========================
+
+sub RSDKEdit
+	if Editor.ReturnVariable == true
+		switch Editor.VariableID
+		case EDIT_VAR_PROPVAL // property value
+			checkResult = Object.PropertyValue
+			break
+		case 0 // type
+			checkResult = Object.PropertyValue
+			checkResult &= 7
+			break
+		end switch
+	else
+		switch Editor.variableID
+		case EDIT_VAR_PROPVAL // property value
+			Object.PropertyValue = Editor.VariableValue
+			break
+		case 0 // type
+			Object.propertyValue = Editor.VariableValue
+			Object.propertyValue &= 7
+			break
+		end switch
+	end if
+end sub
+
+sub RSDKDraw
+	Object.Direction = 0
+	if Object.PropertyValue > SPRING_FACING_DIAGONAL_UL
+		Object.Direction = 2
+	end if
+
+	DrawSpriteFX(Object.PropertyValue, FX_FLIP, Object.XPos, Object.YPos)
+end sub
+
+sub RSDKLoad
+	LoadSpriteSheet("Global/Items.gif")
+	
+	// Springs
+	SpriteFrame(-16, -8, 32, 16, 84, 1)			// #0  - Red Spring facing up
+	SpriteFrame(-8, -16, 16, 32, 117, 1)		// #1  - Red Spring facing right
+	SpriteFrame(-8, -16, 16, 32, 175, 1)		// #2  - Red Spring facing left
+	SpriteFrame(-16, -8, 32, 16, 84, 59)		// #3  - Red Spring facing down
+	SpriteFrame(-16, -16, 32, 32, 84, 117)		// #4  - Red Spring facing diagonal right
+	SpriteFrame(-16, -16, 32, 32, 117, 165)		// #5  - Red Spring facing diagonal left
+	SpriteFrame(-16, -16, 32, 32, 84, 117)		// #6  - Red Spring facing diagonal right 2
+	SpriteFrame(-16, -16, 32, 32, 117, 165)		// #7  - Red Spring facing diagonal left 2
+
+	AddEditorVariable("type")
+	SetActiveVariable("type")
+	AddEnumVariable("Up", 0)
+	AddEnumVariable("Right", 1)
+	AddEnumVariable("Left", 2)
+	AddEnumVariable("Down", 3)
+	AddEnumVariable("Diagonal (Up Right)", 4)
+	AddEnumVariable("Diagonal (Up Left)", 5)
+	AddEnumVariable("Diagonal (Down Right)", 6)
+	AddEnumVariable("Diagonal (Down Right)", 7)
 end sub

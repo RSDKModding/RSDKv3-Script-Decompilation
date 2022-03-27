@@ -265,7 +265,7 @@ function PlayerObject_ProcessPlayer
 #platform: Standard
 	if Options.AttractMode == false
 		if Player.ControlMode == CONTROL_ENABLED
-			if Object[9].Type == TypeName[BlankObject]
+			if Object[9].Type == TypeName[Blank Object]
 				if KeyPress.Start == true
 					KeyPress.Start = false
 					if Options.DevMenuFlag == true
@@ -335,7 +335,7 @@ function PlayerObject_ProcessPlayer
 				end if
 
 				DebugMode.APress = KeyDown.ButtonA
-				if Object[9].Type == TypeName[BlankObject]
+				if Object[9].Type == TypeName[Blank Object]
 
 					CheckTouchRect(240, 0, Screen.XSize, 40)
 					if CheckResult > -1
@@ -373,7 +373,7 @@ function PlayerObject_ProcessPlayer
 			end if
 		else
 			if Player.ControlMode == CONTROL_ENABLED
-				if Object[9].Type == TypeName[BlankObject]
+				if Object[9].Type == TypeName[Blank Object]
 					if KeyPress.Start == true
 
 						KeyPress.Start = false
@@ -458,13 +458,13 @@ function PlayerObject_ProcessPlayer
 				case 0
 					TempValue0 = Player.EntityNo
 					TempValue0 += 2
-					ResetObjectEntity(TempValue0, TypeName[BlankObject], 0, 0, 0)
+					ResetObjectEntity(TempValue0, TypeName[Blank Object], 0, 0, 0)
 					break
 
 				case 1
 					TempValue0 = Player.EntityNo
 					TempValue0 += 2
-					ResetObjectEntity(TempValue0, TypeName[BlankObject], 0, 0, 0)
+					ResetObjectEntity(TempValue0, TypeName[Blank Object], 0, 0, 0)
 					Object[+2].Type = TypeName[BlueShield]
 					Object[+2].PropertyValue = 1
 					Object[+2].Priority = 1
@@ -686,7 +686,7 @@ function PlayerObject_HandleGround
 							end if
 						end if
 						Warp.Timer = 0
-						Object[3].Type = TypeName[BlankObject]
+						Object[3].Type = TypeName[Blank Object]
 					end if
 				else
 					// Spawns the Warp Stars
@@ -724,7 +724,7 @@ function PlayerObject_HandleGround
 							end if
 						end if
 						Warp.Timer = 0
-						Object[3].Type = TypeName[BlankObject]
+						Object[3].Type = TypeName[Blank Object]
 					end if
 				else
 					// Spawns the Warp Stars
@@ -1822,7 +1822,7 @@ function PlayerObject_Hurt
 	// if you had a shield, remove it
 	if Object[ArrayPos0].PropertyValue > 0
 		TempValue0 = DAMAGE_SHIELDED
-		ResetObjectEntity(ArrayPos0, TypeName[BlankObject], 0, 0, 0)
+		ResetObjectEntity(ArrayPos0, TypeName[Blank Object], 0, 0, 0)
 		PlaySfx(5, 0)
 	else
 		if Player.Rings == 0
@@ -2544,7 +2544,7 @@ function PlayerObject_SizeChange
 				break
 			case 1
 				LoadAnimation("MiniTails.Ani")
-				Object[1].Type = TypeName[BlankObject]	// Deletes TailsObject
+				Object[1].Type = TypeName[Blank Object]	// Deletes TailsObject
 				break
 			end switch
 		else
@@ -2752,13 +2752,23 @@ sub ObjectStartup
 			GetAnimationByName(ANI_RAMP_RUNNING6, "3D Ramp 6")
 			GetAnimationByName(ANI_ROLL3D, "3D Ramp 7")
 			GetAnimationByName(ANI_SIZE_CHANGE, "Size Change")
-			ResetObjectEntity(ArrayPos0, TypeName[BlankObject], 0, 0, 0)
+			ResetObjectEntity(ArrayPos0, TypeName[Blank Object], 0, 0, 0)
 		end if
 		ArrayPos0++
 	loop
 end sub
 
-sub RSDK
-	LoadSpriteSheet("Global/Display.gif")
-	SetEditorIcon(Icon0, SingleIcon, -16, -16, 32, 32, 1, 143)
+// ========================
+// Editor Subs
+// ========================
+
+sub RSDKDraw
+	DrawSprite(0)
+end sub
+
+sub RSDKLoad
+	LoadSpriteSheet("Players/Sonic1.gif")
+	SpriteFrame(-16, -19, 28, 39, 1, 1)
+
+	SetVariableAlias(ALIAS_VAR_PROPVAL, "unused")
 end sub
