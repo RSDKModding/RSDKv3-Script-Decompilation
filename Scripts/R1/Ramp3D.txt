@@ -52,9 +52,7 @@ sub ObjectPlayerInteraction
 
 					Player.AnimationSpeed = 0
 				end if
-
 			end if
-
 		end if
 		break
 
@@ -119,11 +117,8 @@ sub ObjectPlayerInteraction
 					if Player.Animation != ANI_JUMPING
 						Player.Animation = ANI_WALKING
 					end if
-
 				end if
-
 			end if
-
 		end if
 		break
 
@@ -152,19 +147,14 @@ sub ObjectPlayerInteraction
 							else
 								Player.Animation = ANI_ROLL3D
 							end if
-
 						end if
-
 					else
 
 						if Player.Speed != 0
 							Player.State = PlayerObject_Handle3DRampAnims
 						end if
-
 					end if
-
 				end if
-
 			end if
 
 			StarBush1.OriginPos.X  = Player.XPos
@@ -333,6 +323,7 @@ sub ObjectStartup
 		Object[15].Priority = PRIORITY_ACTIVE
 		Object[15].DrawOrder = 0
 	end if
+
 	if Player.XPos > 262144000	// 0xFA00000
 		Stage.YBoundary2 = 1024
 	end if
@@ -342,6 +333,28 @@ end sub
 // Editor Subs
 // ========================
 
+sub RSDKEdit
+	if Editor.ReturnVariable == true
+		switch Editor.VariableID
+		case EDIT_VAR_PROPVAL // property value
+			checkResult = Object.PropertyValue
+			break
+		case 0 // type
+			checkResult = Object.PropertyValue
+			break
+		end switch
+	else
+		switch Editor.variableID
+		case EDIT_VAR_PROPVAL // property value
+			Object.PropertyValue = Editor.VariableValue
+			break
+		case 0 // type
+			Object.propertyValue = Editor.VariableValue
+			break
+		end switch
+	end if
+end sub
+
 sub RSDKDraw
 	DrawSprite(0)
 end sub
@@ -350,5 +363,9 @@ sub RSDKLoad
 	LoadSpriteSheet("Global/Display.gif")
 	SpriteFrame(-16, -16, 32, 32, 1, 143)		// #0 - "Script" Icon
 
-	SetVariableAlias(ALIAS_VAR_PROPVAL, "unused")
+
+	AddEditorVariable("type")
+	SetActiveVariable("type")
+	AddEnumVariable("3D Ramp Run", 0)
+	AddEnumVariable("3D Ramp Start", 4)
 end sub

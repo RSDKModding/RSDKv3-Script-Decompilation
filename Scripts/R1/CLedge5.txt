@@ -162,13 +162,13 @@ sub ObjectDraw
 	case CLEDGE5_DELAY_FROM_LEFT
 	case CLEDGE5_COLLAPSE_RIGHT
 		TempValue0 = 0
-		TempValue1 = Object.Value0
+		TempValue1 = Object.HitboxLeft
 		TempValue1 <<= 16
 		TempValue1 += 524288	// 0x80000
 		TempValue1 += Object.XPos
 		TempValue2 = Object.PropertyValue
 		TempValue2--
-		while TempValue0 < Object.Value3
+		while TempValue0 < Object.Length
 			DrawSpriteXY(0, TempValue1, Object.YPos)
 			DrawSpriteXY(1, TempValue1, Object.YPos)
 			if TempValue0 == TempValue2
@@ -186,13 +186,13 @@ sub ObjectDraw
 		break
 	case CLEDGE5_COLLAPSE_LEFT
 		TempValue0 = 0
-		TempValue1 = Object.Value1
+		TempValue1 = Object.HitboxRight
 		TempValue1 <<= 16
 		TempValue1 -= 524288	// 0x80000
 		TempValue1 += Object.XPos
 		TempValue2 = Object.PropertyValue
 		TempValue2--
-		while TempValue0 < Object.Value3
+		while TempValue0 < Object.Length
 			DrawSpriteXY(0, TempValue1, Object.YPos)
 			DrawSpriteXY(1, TempValue1, Object.YPos)
 			if TempValue0 == TempValue2
@@ -219,14 +219,15 @@ end sub
 
 sub ObjectStartup
 	LoadSpriteSheet("R1/Objects2.gif")
+
 	ArrayPos0 = 32
 	while ArrayPos0 < 1056
 		if Object[ArrayPos0].Type == TypeName[CrumbleLedge5]
-			Object[ArrayPos0].Value3 = Object[ArrayPos0].PropertyValue
-			Object[ArrayPos0].Value0 = Object[ArrayPos0].PropertyValue
-			Object[ArrayPos0].Value0 <<= 3
-			Object[ArrayPos0].Value1 = Object[ArrayPos0].Value0
-			FlipSign(Object[ArrayPos0].Value0)
+			Object[ArrayPos0].Length = Object[ArrayPos0].PropertyValue
+			Object[ArrayPos0].HitboxLeft = Object[ArrayPos0].PropertyValue
+			Object[ArrayPos0].HitboxLeft <<= 3
+			Object[ArrayPos0].HitboxRight = Object[ArrayPos0].HitboxLeft
+			FlipSign(Object[ArrayPos0].HitboxLeft)
 		end if
 		ArrayPos0++
 	loop
@@ -242,12 +243,43 @@ end sub
 // ========================
 
 sub RSDKDraw
-	DrawSprite(0)
+	Object.Length = Object.PropertyValue
+	Object.HitboxLeft = Object.PropertyValue
+	Object.HitboxLeft <<= 3
+	Object.HitboxRight = Object.HitboxLeft
+	FlipSign(Object.HitboxLeft)
+
+	TempValue0 = 0
+	TempValue1 = Object.HitboxLeft
+	TempValue1 <<= 16
+	TempValue1 += 524288	// 0x80000
+	TempValue1 += Object.XPos
+	TempValue2 = Object.PropertyValue
+	TempValue2--
+	while TempValue0 < Object.Length
+		DrawSpriteXY(0, TempValue1, Object.YPos)
+		DrawSpriteXY(1, TempValue1, Object.YPos)
+		if TempValue0 == TempValue2
+			DrawSpriteXY(4, TempValue1, Object.YPos)
+		else
+			if TempValue0 == 0
+				DrawSpriteXY(2, TempValue1, Object.YPos)
+			else
+				DrawSpriteXY(3, TempValue1, Object.YPos)
+			end if
+		end if
+		TempValue0++
+		TempValue1 += 1048576	// 0x100000
+	loop
 end sub
 
 sub RSDKLoad
-	LoadSpriteSheet("Global/Display.gif")
-	SpriteFrame(-16, -16, 32, 32, 1, 143)		// #0 - "Script" Icon
+	LoadSpriteSheet("R1/Objects2.gif")
+	SpriteFrame(-8, -40, 16, 48, 163, 1)	// #0 - Ledge top
+	SpriteFrame(-8, 8, 16, 16, 190, 66)		// #1 - Ledge middle
+	SpriteFrame(-8, 24, 16, 16, 82, 49)		// #2 - Ledge bottom left
+	SpriteFrame(-8, 24, 16, 16, 98, 49)		// #3 - Ledge bottom middle
+	SpriteFrame(-8, 24, 16, 16, 130, 49)	// #4 - Ledge bottom right
 
 	SetVariableAlias(ALIAS_VAR_PROPVAL, "unused")
 end sub

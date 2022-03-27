@@ -12,7 +12,6 @@
 
 sub ObjectPlayerInteraction
 	if Object.PropertyValue == FLIPDOOR_HORIZONTAL
-
 		PlayerObjectCollision(C_PLATFORM, -24, -4, 24, 32)
 		PlayerObjectCollision(C_TOUCH, -24, -8, 24, 8)
 		if CheckResult == true
@@ -24,12 +23,9 @@ sub ObjectPlayerInteraction
 
 				Object.Timer = 10
 			end if
-
 		end if
-
 	else
 		if Player.XPos < Object.XPos
-
 			PlayerObjectCollision(C_TOUCH, -16, -24, 0, 24)
 			if CheckResult == true
 
@@ -39,15 +35,11 @@ sub ObjectPlayerInteraction
 
 				Object.Timer = 10
 			end if
-
 		else
-
 			if Object.Timer == 0
 				PlayerObjectCollision(C_BOX, -24, -24, 4, 24)
 			end if
-
 		end if
-
 	end if
 end sub
 
@@ -96,13 +88,45 @@ end sub
 // Editor Subs
 // ========================
 
+sub RSDKEdit
+	if Editor.ReturnVariable == true
+		switch Editor.VariableID
+		case EDIT_VAR_PROPVAL // property value
+			checkResult = Object.PropertyValue
+			checkResult &= 1
+			break
+		case 0 // orientation
+			checkResult = Object.PropertyValue
+			checkResult &= 1
+			break
+		end switch
+	else
+		switch Editor.variableID
+		case EDIT_VAR_PROPVAL // property value
+			Object.PropertyValue = Editor.VariableValue
+			Object.propertyValue &= 1
+			break
+		case 0 // orientation
+			Object.propertyValue = Editor.VariableValue
+			Object.propertyValue &= 1
+			break
+		end switch
+	end if
+end sub
+
 sub RSDKDraw
-	DrawSprite(0)
+	DrawSprite(Object.PropertyValue)
 end sub
 
 sub RSDKLoad
-	LoadSpriteSheet("Global/Display.gif")
-	SpriteFrame(-16, -16, 32, 32, 1, 143)		// #0 - "Script" Icon
+	LoadSpriteSheet("R1/Objects.gif")
 
-	SetVariableAlias(ALIAS_VAR_PROPVAL, "unused")
+	SpriteFrame(-24, -4, 48, 8, 117, 34)	// #0 - Flip Door Horizontal
+	SpriteFrame(-4, -24, 8, 48, 176, 43)	// #1 - Flip Door Vertical
+
+
+	AddEditorVariable("orientation")
+	SetActiveVariable("orientation")
+	AddEnumVariable("Horizontal", 0)
+	AddEnumVariable("Vertical", 1)
 end sub

@@ -216,8 +216,8 @@ sub ObjectStartup
 	LoadSpriteSheet("R1/Objects.gif")
 	SpriteFrame(-16, -15, 32, 29, 223, 34)	// #0 - Kamemusi Movement Frame 0
 	SpriteFrame(-16, -14, 32, 28, 223, 93)	// #1 - Kamemusi Movement Frame 1
-	SpriteFrame(-16, -15, 32, 29, 223, 34)	// #2 - Kamemusi Movement Frame 2
-	SpriteFrame(-16, -14, 32, 28, 223, 64)	// #3 - Kamemusi Movement Frame 3
+	SpriteFrame(-16, -15, 32, 29, 223, 34)	// #2 - Old Kamemusi Movement Frame 0
+	SpriteFrame(-16, -14, 32, 28, 223, 64)	// #3 - Old Kamemusi Movement Frame 1
 	SpriteFrame(-16, -17, 32, 31, 223, 122)	// #4 - Kamemusi Shoot Position
 end sub
 
@@ -225,13 +225,44 @@ end sub
 // Editor Subs
 // ========================
 
+sub RSDKEdit
+	if Editor.ReturnVariable == true
+		switch Editor.VariableID
+		case EDIT_VAR_PROPVAL // property value
+			checkResult = Object.PropertyValue
+			checkResult &= 1
+			break
+		case 0 // type
+			checkResult = Object.PropertyValue
+			checkResult &= 1
+			break
+		end switch
+	else
+		switch Editor.variableID
+		case EDIT_VAR_PROPVAL // property value
+			Object.PropertyValue = Editor.VariableValue
+			Object.propertyValue &= 1
+			break
+		case 0 // type
+			Object.propertyValue = Editor.VariableValue
+			Object.propertyValue &= 1
+			break
+		end switch
+	end if
+end sub
+
 sub RSDKDraw
-	DrawSprite(0)
+	DrawSprite(Object.PropertyValue)
 end sub
 
 sub RSDKLoad
-	LoadSpriteSheet("Global/Display.gif")
-	SpriteFrame(-16, -16, 32, 32, 1, 143)		// #0 - "Script" Icon
+	LoadSpriteSheet("R1/Objects.gif")
+	SpriteFrame(-16, -15, 32, 29, 223, 34)	// #0 - Kamemusi Movement Frame 0
+	SpriteFrame(-16, -15, 32, 29, 223, 34)	// #0 - Old Kamemusi Movement Frame 0
 
-	SetVariableAlias(ALIAS_VAR_PROPVAL, "unused")
+
+	AddEditorVariable("type")
+	SetActiveVariable("type")
+	AddEnumVariable("New", 0)
+	AddEnumVariable("Ruined", 1)
 end sub
