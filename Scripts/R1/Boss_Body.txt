@@ -3,7 +3,6 @@
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
 // Aliases
-#alias Object.Priority	:	Object.Priority
 #alias Object.Value0	:	Object.FaceEntity
 #alias Object.Value1	:	Object.LegJointREntity
 #alias Object.Value2	:	Object.LegJointLEntity
@@ -13,6 +12,9 @@
 #alias Object.Value5	:	Object.ChargeStart
 #alias Object.Value6	:	Object.ChargeDistance
 #alias Object.Value7	:	Object.ChargeXPos
+
+// General Aliases
+#alias Object.Value4	:	Boss.Charging
 
 // Face Aliases
 #alias Object[-1].YPos	:	Face.YPos
@@ -25,43 +27,37 @@
 // Leg Joint Aliases
 #alias Object.State		:	LegJointR.State
 #alias Object.Value1	:	LegJointR.LegREntity
-#alias Object.Value4	:	LegJointR.LegSide
 #alias Object.Value5	:	LegJointR.YOffSet
 
 #alias Object.State		:	LegJointL.State
 #alias Object.Value1	:	LegJointL.LegLEntity
-#alias Object.Value4	:	LegJointL.LegSide
 #alias Object.Value5	:	LegJointL.YOffSet
 
 #alias Object.Value1	:	LegJoint.LegEntity
 #alias Object.Value4	:	LegJoint.LegSide
 
 // Leg Aliases
-#alias Object.State		:	Leg.State
-#alias Object.Value1	:	Leg.FootEntity
-#alias Object.Value4	:	Leg.LegSide
-
 #alias Object.State		:	LegR.State
 #alias Object.Value1	:	LegR.FootREntity
 #alias Object.Value2	:	LegR.XOffSet
-#alias Object.Value4	:	LegR.LegSide
 #alias Object.Value5	:	LegR.YOffSet
 
 #alias Object.State		:	LegL.State
 #alias Object.Value1	:	LegL.FootLEntity
 #alias Object.Value2	:	LegL.XOffSet
-#alias Object.Value4	:	LegL.LegSide
 #alias Object.Value5	:	LegL.YOffSet
+
+#alias Object.State		:	Leg.State
+#alias Object.Value1	:	Leg.FootEntity
+#alias Object.Value4	:	Leg.LegSide
 
 // Foot Aliases
 #alias Object.State		:	FootR.State
 #alias Object.Value2	:	FootR.XOffSet
-#alias Object.Value4	:	FootR.LegSide
 #alias Object.Value5	:	FootR.YOffSet
 
 #alias Object.State		:	FootL.State
 #alias Object.Value2	:	FootL.XOffSet
-#alias Object.Value4	:	FootL.LegSide
 #alias Object.Value5	:	FootL.YOffSet
 
 #alias Object.Value4	:	Foot.LegSide
@@ -69,20 +65,16 @@
 // Arm Joint Aliases
 #alias Object.State		:	ArmJointR.State
 #alias Object.Value1	:	ArmJointR.ArmREntity
-#alias Object.Value4	:	ArmJointR.Charging
 #alias Object.Value5	:	ArmJointR.YOffSet
 
 #alias Object.State		:	ArmJointL.State
 #alias Object.Value1	:	ArmJointL.ArmLEntity
-#alias Object.Value4	:	ArmJointL.Charging
 #alias Object.Value5	:	ArmJointL.YOffSet
 
 // Arm Aliases
-#alias Object.Value4	:	ArmR.Charging
 #alias Object.State		:	ArmR.State
 #alias Object.Frame		:	ArmR.Frame
 
-#alias Object.Value4	:	ArmL.Charging
 #alias Object.State		:	ArmL.State
 #alias Object.Frame		:	ArmL.Frame
 
@@ -159,7 +151,7 @@
 #function BossBody_MoveRArmToFront
 #function BossBody_MoveLArmToFront
 #function BossBody_HandleCharge
-#function BossBody_Function58	// ????
+#function BossBody_SetArmsToCharge
 
 function BossBody_RestoreNormalSpeed
 	ArrayPos0 = Object.LegJointREntity
@@ -187,18 +179,18 @@ function BossBody_RestoreNormalSpeed
 	ArrayPos0 = Object.FaceEntity
 	ArrayPos1 = Face[ArrayPos0].ShoulderEntity
 	ArrayPos0 = Shoulder[ArrayPos1].ArmJointLEntity
-	SetBit(ArmJointL[ArrayPos0].Charging, 7, 0)
+	SetBit(Boss[ArrayPos0].Charging, 7, 0) // Left Arm Joing
 
 	ArrayPos1 = ArmJointL[ArrayPos0].ArmLEntity
-	SetBit(ArmL[ArrayPos1].Charging, 7, 0)
+	SetBit(Boss[ArrayPos1].Charging, 7, 0) // Left Arm
 
 	ArrayPos0 = Object.FaceEntity
 	ArrayPos1 = Face[ArrayPos0].ShoulderEntity
 	ArrayPos0 = Shoulder[ArrayPos1].ArmJointREntity
-	SetBit(ArmJointR[ArrayPos0].Charging, 7, 0)
+	SetBit(Boss[ArrayPos0].Charging, 7, 0)	// Right Arm Joint
 
 	ArrayPos1 = ArmJointR[ArrayPos0].ArmREntity
-	SetBit(ArmR[ArrayPos1].Charging, 7, 0)
+	SetBit(Boss[ArrayPos1].Charging, 7, 0)	// Right Arm
 end function
 
 
@@ -323,18 +315,18 @@ function BossBody_HandleCharge
 	ArrayPos0 = Object.FaceEntity
 	ArrayPos1 = Face[ArrayPos0].ShoulderEntity
 	ArrayPos0 = Shoulder[ArrayPos1].ArmJointLEntity
-	SetBit(ArmJointL[ArrayPos0].Charging, 7, 1)
+	SetBit(Boss[ArrayPos0].Charging, 7, 1) // Left Arm Joint
 
 	ArrayPos1 = ArmJointL[ArrayPos0].ArmLEntity
-	SetBit(ArmL[ArrayPos1].Charging, 7, 1)
+	SetBit(Boss[ArrayPos1].Charging, 7, 1) // Left Arm
 
 	ArrayPos0 = Object.FaceEntity
 	ArrayPos1 = Face[ArrayPos0].ShoulderEntity
 	ArrayPos0 = Shoulder[ArrayPos1].ArmJointREntity
-	SetBit(ArmJointR[ArrayPos0].Charging, 7, 1)
+	SetBit(Boss[ArrayPos0].Charging, 7, 1) // Right Arm Joint
 
 	ArrayPos1 = ArmJointR[ArrayPos0].ArmREntity
-	SetBit(ArmR[ArrayPos1].Charging, 7, 1)
+	SetBit(Boss[ArrayPos1].Charging, 7, 1) // Right Arm
 end function
 
 
@@ -390,7 +382,7 @@ sub ObjectMain
 		ArrayPos0 = Object.LegJointREntity
 		CallFunction(BossBody_SetLegPosSaveTrue)
 		ArrayPos0 = Object.LegJointREntity
-		GetBit(TempValue0, LegJointR[ArrayPos0].LegSide, 4)
+		GetBit(TempValue0, LegJoint[ArrayPos0].LegSide, 4)
 		if TempValue0 == false
 			Object.YPos += 98304			// 0x18000
 			ArrayPos0 = Object.FaceEntity
@@ -402,13 +394,13 @@ sub ObjectMain
 
 	case BOSSBODY_LANDING
 		ArrayPos0 = Object.LegJointLEntity
-		SetBit(LegJointL[ArrayPos0].LegSide, 0, 0)
+		SetBit(LegJoint[ArrayPos0].LegSide, 0, 0)
 
 		ArrayPos0 = Object.LegJointREntity
-		GetBit(TempValue0, LegJointR[ArrayPos0].LegSide, 0)
+		GetBit(TempValue0, LegJoint[ArrayPos0].LegSide, 0)
 		if TempValue0 == true
 
-			SetBit(LegJointR[ArrayPos0].LegSide, 0, 0)
+			SetBit(LegJoint[ArrayPos0].LegSide, 0, 0)
 			if LegJointR[ArrayPos0].State != BOSSLEGJOINT_DESCEND
 
 				if LegJointR[ArrayPos0].State != BOSSLEGJOINT_LANDING
@@ -451,11 +443,11 @@ sub ObjectMain
 		end if
 
 		ArrayPos0 = Object.LegJointREntity
-		GetBit(TempValue0, LegJointR[ArrayPos0].LegSide, 0)
+		GetBit(TempValue0, LegJoint[ArrayPos0].LegSide, 0)
 		if TempValue0 == true
 
 			ArrayPos0 = Object.LegJointLEntity
-			GetBit(TempValue0, LegJointL[ArrayPos0].LegSide, 0)
+			GetBit(TempValue0, LegJoint[ArrayPos0].LegSide, 0)
 			if TempValue0 == true
 				SetBit(Object.BitHolder, 1, MOVE_FORWARD)
 				SetBit(Object.BitHolder, 6, RIGHT_LEG_ACTIVE)
@@ -467,22 +459,22 @@ sub ObjectMain
 
 	case BOSSBODY_MOVE_FORWARD
 		ArrayPos0 = Object.LegJointREntity
-		GetBit(CheckResult, LegJointR[ArrayPos0].LegSide, 0)
+		GetBit(CheckResult, LegJoint[ArrayPos0].LegSide, 0)
 		ArrayPos0 = Object.LegJointLEntity
-		GetBit(TempValue0, LegJointL[ArrayPos0].LegSide, 0)
+		GetBit(TempValue0, LegJoint[ArrayPos0].LegSide, 0)
 		CheckResult &= TempValue0
 		if CheckResult == true
 			ArrayPos0 = Object.LegJointREntity
-			SetBit(LegJointR[ArrayPos0].LegSide, 0, 0)
+			SetBit(LegJoint[ArrayPos0].LegSide, 0, 0)
 
 			ArrayPos1 = LegJointR[ArrayPos0].LegREntity
-			SetBit(LegR[ArrayPos1].LegSide, 0, 0)
+			SetBit(Leg[ArrayPos1].LegSide, 0, 0)
 
 			ArrayPos0 = Object.LegJointLEntity
-			SetBit(LegJointL[ArrayPos0].LegSide, 0, 0)
+			SetBit(LegJoint[ArrayPos0].LegSide, 0, 0)
 
 			ArrayPos1 = LegJointL[ArrayPos0].LegLEntity
-			SetBit(LegL[ArrayPos1].LegSide, 0, 0)
+			SetBit(Leg[ArrayPos1].LegSide, 0, 0)
 
 			if Object.XPos < Object.ChargeDistance
 				Object.ChargeStart = 1
@@ -549,10 +541,10 @@ sub ObjectMain
 
 	case BOSSBODY_MOVE_BACKWARDS
 		ArrayPos0 = Object.LegJointREntity
-		GetBit(CheckResult, LegJointR[ArrayPos0].LegSide, 0)
+		GetBit(CheckResult, LegJoint[ArrayPos0].LegSide, 0)
 
 		ArrayPos0 = Object.LegJointLEntity
-		GetBit(TempValue0, LegJointL[ArrayPos0].LegSide, 0)
+		GetBit(TempValue0, LegJoint[ArrayPos0].LegSide, 0)
 
 		CheckResult &= TempValue0
 		if CheckResult == true
@@ -563,16 +555,16 @@ sub ObjectMain
 				CallFunction(BossBody_RestoreNormalSpeed)
 			else
 				ArrayPos0 = Object.LegJointREntity
-				SetBit(LegJointR[ArrayPos0].LegSide, 0, 0)
+				SetBit(LegJoint[ArrayPos0].LegSide, 0, 0)
 
 				ArrayPos1 = LegJointR[ArrayPos0].LegREntity
-				SetBit(LegR[ArrayPos1].LegSide, 0, 0)
+				SetBit(Leg[ArrayPos1].LegSide, 0, 0)
 
 				ArrayPos0 = Object.LegJointLEntity
-				SetBit(LegJointL[ArrayPos0].LegSide, 0, 0)
+				SetBit(LegJoint[ArrayPos0].LegSide, 0, 0)
 
 				ArrayPos1 = LegJointL[ArrayPos0].LegLEntity
-				SetBit(LegR[ArrayPos1].LegSide, 0, 0)
+				SetBit(Leg[ArrayPos1].LegSide, 0, 0)
 
 				if Object.XPos >= Object.ChargeXPos
 					Object.ChargeStart = 1
@@ -667,22 +659,22 @@ sub ObjectMain
 		end if
 
 		ArrayPos0 = Object.LegJointREntity
-		GetBit(CheckResult, LegJointR[ArrayPos0].LegSide, 0)
+		GetBit(CheckResult, LegJoint[ArrayPos0].LegSide, 0)
 		ArrayPos0 = Object.LegJointLEntity
-		GetBit(TempValue0, LegJointL[ArrayPos0].LegSide, 0)
+		GetBit(TempValue0, LegJoint[ArrayPos0].LegSide, 0)
 		CheckResult &= TempValue0
 		if CheckResult == true
 			ArrayPos0 = Object.LegJointREntity
-			SetBit(LegJointR[ArrayPos0].LegSide, 0, 0)
+			SetBit(LegJoint[ArrayPos0].LegSide, 0, 0)
 			
 			ArrayPos1 = LegJointR[ArrayPos0].LegREntity
-			SetBit(LegR[ArrayPos1].LegSide, 0, 0)
+			SetBit(Leg[ArrayPos1].LegSide, 0, 0)
 
 			ArrayPos0 = Object.LegJointLEntity
-			SetBit(LegJointL[ArrayPos0].LegSide, 0, 0)
+			SetBit(LegJoint[ArrayPos0].LegSide, 0, 0)
 
 			ArrayPos1 = LegJointL[ArrayPos0].LegLEntity
-			SetBit(LegL[ArrayPos1].LegSide, 0, 0)
+			SetBit(Leg[ArrayPos1].LegSide, 0, 0)
 
 			Object.ChargeStart--
 			if Object.ChargeStart == 0
@@ -693,7 +685,7 @@ sub ObjectMain
 				if TempValue0 == LEFT_LEG_ACTIVE
 					SetBit(Object.BitHolder, 6, RIGHT_LEG_ACTIVE)
 					ArrayPos0 = Object.LegJointREntity
-					SetBit(LegJointR[ArrayPos0].LegSide, 1, 0)
+					SetBit(LegJoint[ArrayPos0].LegSide, 1, 0)
 					CallFunction(BossBody_SetLegPosSaveTrue)
 
 					ArrayPos0 = Object.LegJointREntity
@@ -706,7 +698,7 @@ sub ObjectMain
 					FootR[ArrayPos0].State = BOSSFOOT_STEP
 
 					ArrayPos0 = Object.LegJointLEntity
-					SetBit(LegJointL[ArrayPos0].LegSide, 1, 0)
+					SetBit(LegJoint[ArrayPos0].LegSide, 1, 0)
 					LegJointL[ArrayPos0].State = BOSSLEGJOINT_STEP_START
 					CallFunction(BossBody_SetLegPosSaveFalse)
 
@@ -720,7 +712,7 @@ sub ObjectMain
 				else
 					SetBit(Object.BitHolder, 6, LEFT_LEG_ACTIVE)
 					ArrayPos0 = Object.LegJointLEntity
-					SetBit(LegJointL[ArrayPos0].LegSide, 1, 0)
+					SetBit(LegJoint[ArrayPos0].LegSide, 1, 0)
 					CallFunction(BossBody_SetLegPosSaveTrue)
 
 					ArrayPos0 = Object.LegJointLEntity
@@ -734,7 +726,7 @@ sub ObjectMain
 					FootL[ArrayPos0].State = BOSSFOOT_STEP
 
 					ArrayPos0 = Object.LegJointREntity
-					SetBit(LegJointR[ArrayPos0].LegSide, 1, 0)
+					SetBit(LegJoint[ArrayPos0].LegSide, 1, 0)
 
 					LegJointR[ArrayPos0].State = BOSSLEGJOINT_STEP_START
 					CallFunction(BossBody_SetLegPosSaveFalse)

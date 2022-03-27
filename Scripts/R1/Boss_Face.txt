@@ -21,7 +21,6 @@
 #alias Object[+1].iYPos		:	BossBody.iYPos
 #alias Object[+1].YPos		:	BossBody.YPos
 #alias Object[+1].State		:	BossBody.State
-#alias Object.Priority		:	Body.Priority
 #alias Object.Value0		:	Body.FaceEntity
 #alias Object.Value1		:	Body.LegJointREntity
 #alias Object.Value2		:	Body.LegJointLEntity
@@ -42,48 +41,42 @@
 #alias 0					:	LEFT_LEG_ACTIVE
 #alias 1					:	RIGHT_LEG_ACTIVE
 
+// General Aliases
+#alias Object.Priority		:	Boss.Priority
+#alias Object.DrawOrder		:	Boss.DrawOrder
+
 // HVC-001 Boss Right Leg Joint Aliases
 #alias Object[+2].YPos		:	BossLegJointR.YPos
-#alias Object.Priority		:	LegJointR.Priority
 #alias Object.Value0		:	LegJointR.BodyEntity
 #alias Object.Value1		:	LegJointR.LegREntity
 
 // HVC-001 Boss Right Leg Aliases
 #alias Object[+3].YPos		:	BossLegR.YPos
 #alias Object[+3].Value7	:	BossLegR.YVelocity
-#alias Object.Priority		:	LegR.Priority
 #alias Object.Value0		:	LegR.LegJointREntity
 #alias Object.Value1		:	LegR.FootREntity
 
 // HVC-001 Boss Right Foot Aliases
 #alias Object[+4].Value7	:	BossFootR.YVelocity
-#alias Object.Priority		:	FootR.Priority
 #alias Object.Value0		:	FootR.LegREntity
 #alias Object.Value1		:	FootR.BodyEntity
 // HVC-001 Boss Left Leg Joint Aliases
 #alias Object[+5].YPos		:	BossLegJointL.YPos
-#alias Object.Priority		:	LegJointL.Priority
-#alias Object.DrawOrder		:	LegJointL.DrawOrder
 #alias Object.Value0		:	LegJointL.BodyEntity
 #alias Object.Value1		:	LegJointL.LegLEntity
 
 // HVC-001 Boss Left Leg Aliases
 #alias Object[+6].Value7	:	BossLegL.YVelocity
-#alias Object.Priority		:	LegL.Priority
-#alias Object.DrawOrder		:	LegL.DrawOrder
 #alias Object.Value0		:	LegL.LegJointLEntity
 #alias Object.Value1		:	LegL.FootLEntity
 
 // HVC-001 Boss Left Foot Aliases
 #alias Object[+7].Value7	:	BossFootL.YVelocity
-#alias Object.Priority		:	FootL.Priority
-#alias Object.DrawOrder		:	FootL.DrawOrder
 #alias Object.Value0		:	FootL.LegLEntity
 #alias Object.Value1		:	FootL.BodyEntity
 
 // HVC-001 Boss Shoulder Aliases
 #alias Object[+8].YPos		:	BossShoulder.YPos
-#alias Object.Priority		:	Shoulder.Priority
 #alias Object.DrawOrder		:	Shoulder.DrawOrder
 #alias Object.Value0		:	Shoulder.FaceEntity
 #alias Object.Value1		:	Shoulder.ArmJointLEntity
@@ -91,40 +84,31 @@
 
 // HVC-001 Boss Left Arm Joint Aliases
 #alias Object[+9].YPos		:	BossArmJointL.YPos
-#alias Object.Priority		:	ArmJointL.Priority
 #alias Object.Value0		:	ArmJointL.ShoulderEntity
 #alias Object.Value1		:	ArmJointL.ArmLEntity
 
 // HVC-001 Boss Left Arm Aliases
 #alias Object[+10].YPos		:	BossArmL.YPos
-#alias Object.Priority		:	ArmL.Priority
 #alias Object.Value0		:	ArmL.ArmJointLEntity
 #alias Object.Value1		:	ArmL.BumperLEntity
 
 // HVC-001 Boss Left Bumper Joint Aliases
 #alias Object[+11].YPos		:	BossBumperL.YPos
-#alias Object.Priority		:	BumperL.Priority
 #alias Object.Value0		:	BumperL.ArmLEntity
 #alias Object.Value1		:	BumperL.BodyEntity
 
 // HVC-001 Boss Right Arm Joint Aliases
 #alias Object[+12].YPos		:	BossArmJointR.YPos
-#alias Object.Priority		:	ArmJointR.Priority
-#alias Object.DrawOrder		:	ArmJointR.DrawOrder
 #alias Object.Value0		:	ArmJointR.ShoulderEntity
 #alias Object.Value1		:	ArmJointR.ArmREntity
 
 // HVC-001 Boss Right Arm Aliases
 #alias Object[+13].YPos		:	BossArmR.YPos
-#alias Object.Priority		:	ArmR.Priority
-#alias Object.DrawOrder		:	ArmR.DrawOrder
 #alias Object.Value0		:	ArmR.ArmJointREntity
 #alias Object.Value1		:	ArmR.BumperREntity
 
 // HVC-001 Boss Right Bumper Joint Aliases
 #alias Object[+14].YPos		:	BossBumperR.YPos
-#alias Object.Priority		:	BumperR.Priority
-#alias Object.DrawOrder		:	BumperR.DrawOrder
 #alias Object.Value0		:	BumperR.ArmREntity
 #alias Object.Value1		:	BumperR.BodyEntity
 
@@ -146,15 +130,9 @@
 #alias 7					:	R1_EGGMAN_SPAWN_HVC
 
 // EGG-HVC-001 Body States
-#alias 0					:	BOSSBODY_SETUP
-#alias 1					:	BOSSBODY_DESCEND
-#alias 2					:	BOSSBODY_LANDING
-#alias 3					:	BOSSBODY_FIRST_STEP
-#alias 4					:	BOSSBODY_MOVE_FORWARD
 #alias 5					:	BOSSBODY_MOVE_BACKWARDS
 #alias 6					:	BOSSBODY_PREPARE_CHARGING
 #alias 7					:	BOSSBODY_DESTROYED
-#alias 8					:	BOSSBODY_STOP_CHARGE
 
 // EGG-HVC-001 Arm Joint States
 #alias 5					:	BOSSARMJOINT_DESTROYED
@@ -464,7 +442,7 @@ sub ObjectMain
 			ArrayPos0 = Object.EntityNo
 			ArrayPos0++
 			ResetObjectEntity(ArrayPos0, TypeName[BossBody], 0, Object.XPos, Object.YPos)
-			Body[ArrayPos0].Priority = PRIORITY_ACTIVE
+			Boss[ArrayPos0].Priority = PRIORITY_ACTIVE
 
 			Body[ArrayPos0].FaceEntity = Object.EntityNo
 
@@ -476,7 +454,7 @@ sub ObjectMain
 			ArrayPos0++
 
 			ResetObjectEntity(ArrayPos0, TypeName[BossLegJoint], 0, Object.XPos, Object.YPos)
-			LegJointR[ArrayPos0].Priority = PRIORITY_ACTIVE
+			Boss[ArrayPos0].Priority = PRIORITY_ACTIVE
 
 			LegJointR[ArrayPos0].BodyEntity = Object.EntityNo
 			LegJointR[ArrayPos0].BodyEntity += 1
@@ -486,7 +464,7 @@ sub ObjectMain
 			ArrayPos0++
 
 			ResetObjectEntity(ArrayPos0, TypeName[BossLeg], 0, Object.XPos, Object.YPos)
-			LegR[ArrayPos0].Priority = PRIORITY_ACTIVE
+			Boss[ArrayPos0].Priority = PRIORITY_ACTIVE
 
 			LegR[ArrayPos0].LegJointREntity = Object.EntityNo
 			LegR[ArrayPos0].LegJointREntity += 2
@@ -496,7 +474,7 @@ sub ObjectMain
 			ArrayPos0++
 
 			ResetObjectEntity(ArrayPos0, TypeName[BossFoot], 0, Object.XPos, Object.YPos)
-			FootR[ArrayPos0].Priority = PRIORITY_ACTIVE
+			Boss[ArrayPos0].Priority = PRIORITY_ACTIVE
 
 			FootR[ArrayPos0].LegREntity = Object.EntityNo
 			FootR[ArrayPos0].LegREntity += 3
@@ -506,8 +484,8 @@ sub ObjectMain
 			ArrayPos0++
 
 			ResetObjectEntity(ArrayPos0, TypeName[BossLegJoint], 0, Object.XPos, Object.YPos)
-			LegJointL[ArrayPos0].Priority = PRIORITY_ACTIVE
-			LegJointL[ArrayPos0].DrawOrder = 2
+			Boss[ArrayPos0].Priority = PRIORITY_ACTIVE
+			Boss[ArrayPos0].DrawOrder = 2
 
 			LegJointL[ArrayPos0].BodyEntity = Object.EntityNo
 			LegJointL[ArrayPos0].BodyEntity += 1
@@ -517,8 +495,8 @@ sub ObjectMain
 			ArrayPos0++
 
 			ResetObjectEntity(ArrayPos0, TypeName[BossLeg], 0, Object.XPos, Object.YPos)
-			LegL[ArrayPos0].Priority = PRIORITY_ACTIVE
-			LegL[ArrayPos0].DrawOrder = 2
+			Boss[ArrayPos0].Priority = PRIORITY_ACTIVE
+			Boss[ArrayPos0].DrawOrder = 2
 
 			LegL[ArrayPos0].LegJointLEntity = Object.EntityNo
 			LegL[ArrayPos0].LegJointLEntity += 5
@@ -528,8 +506,8 @@ sub ObjectMain
 			ArrayPos0++
 
 			ResetObjectEntity(ArrayPos0, TypeName[BossFoot], 0, Object.XPos, Object.YPos)
-			FootL[ArrayPos0].Priority = PRIORITY_ACTIVE
-			FootL[ArrayPos0].DrawOrder = 2
+			Boss[ArrayPos0].Priority = PRIORITY_ACTIVE
+			Boss[ArrayPos0].DrawOrder = 2
 
 			FootL[ArrayPos0].LegLEntity = Object.EntityNo
 			FootL[ArrayPos0].LegLEntity += 6
@@ -539,7 +517,7 @@ sub ObjectMain
 			ArrayPos0++
 
 			ResetObjectEntity(ArrayPos0, TypeName[BossShoulder], 0, Object.XPos, Object.YPos)
-			Shoulder[ArrayPos0].Priority = PRIORITY_ACTIVE
+			Boss[ArrayPos0].Priority = PRIORITY_ACTIVE
 			Shoulder[ArrayPos0].DrawOrder = 4
 
 			Shoulder[ArrayPos0].FaceEntity = Object.EntityNo
@@ -552,7 +530,7 @@ sub ObjectMain
 			ArrayPos0++
 
 			ResetObjectEntity(ArrayPos0, TypeName[BossArmJoint], 0, Object.XPos, Object.YPos)
-			ArmJointL[ArrayPos0].Priority = PRIORITY_ACTIVE
+			Boss[ArrayPos0].Priority = PRIORITY_ACTIVE
 
 			ArmJointL[ArrayPos0].ShoulderEntity = Object.EntityNo
 			ArmJointL[ArrayPos0].ShoulderEntity += 8
@@ -562,7 +540,7 @@ sub ObjectMain
 			ArrayPos0++
 
 			ResetObjectEntity(ArrayPos0, TypeName[BossArm], 0, Object.XPos, Object.YPos)
-			Object[ArrayPos0].Priority = PRIORITY_ACTIVE
+			Boss[ArrayPos0].Priority = PRIORITY_ACTIVE
 
 			ArmL[ArrayPos0].ArmJointLEntity = Object.EntityNo
 			ArmL[ArrayPos0].ArmJointLEntity += 9
@@ -572,7 +550,7 @@ sub ObjectMain
 			ArrayPos0++
 
 			ResetObjectEntity(ArrayPos0, TypeName[BossBumper], 0, Object.XPos, Object.YPos)
-			BumperL[ArrayPos0].Priority = PRIORITY_ACTIVE
+			Boss[ArrayPos0].Priority = PRIORITY_ACTIVE
 
 			BumperL[ArrayPos0].ArmLEntity = Object.EntityNo
 			BumperL[ArrayPos0].ArmLEntity += 10
@@ -582,8 +560,8 @@ sub ObjectMain
 			ArrayPos0++
 
 			ResetObjectEntity(ArrayPos0, TypeName[BossArmJoint], 0, Object.XPos, Object.YPos)
-			ArmJointR[ArrayPos0].Priority = PRIORITY_ACTIVE
-			ArmJointR[ArrayPos0].DrawOrder = 2
+			Boss[ArrayPos0].Priority = PRIORITY_ACTIVE
+			Boss[ArrayPos0].DrawOrder = 2
 
 			ArmJointR[ArrayPos0].ShoulderEntity = Object.EntityNo
 			ArmJointR[ArrayPos0].ShoulderEntity += 8
@@ -593,8 +571,8 @@ sub ObjectMain
 			ArrayPos0++
 
 			ResetObjectEntity(ArrayPos0, TypeName[BossArm], 0, Object.XPos, Object.YPos)
-			ArmR[ArrayPos0].Priority = PRIORITY_ACTIVE
-			ArmR[ArrayPos0].DrawOrder = 2
+			Boss[ArrayPos0].Priority = PRIORITY_ACTIVE
+			Boss[ArrayPos0].DrawOrder = 2
 
 			ArmR[ArrayPos0].ArmJointREntity = Object.EntityNo
 			ArmR[ArrayPos0].ArmJointREntity += 12
@@ -604,8 +582,8 @@ sub ObjectMain
 			ArrayPos0++
 
 			ResetObjectEntity(ArrayPos0, TypeName[BossBumper], 0, Object.XPos, Object.YPos)
-			BumperR[ArrayPos0].Priority = PRIORITY_ACTIVE
-			BumperR[ArrayPos0].DrawOrder = 2
+			Boss[ArrayPos0].Priority = PRIORITY_ACTIVE
+			Boss[ArrayPos0].DrawOrder = 2
 
 			BumperR[ArrayPos0].ArmREntity = Object.EntityNo
 			BumperR[ArrayPos0].ArmREntity += 13
