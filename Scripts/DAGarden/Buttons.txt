@@ -5,7 +5,7 @@
 // Aliases
 #alias 5: TYPE_TOUCHBUTTONS
 #alias Object.Value1			: Object.ButtonPressed
-#alias Object.PropertyValue		: Object.ButtonCount
+#alias Object.PropertyValue		: Object.ButtonID
 // This are also Touch Buttons
 #alias Object[35].PropertyValue	: Object.Button1Value
 #alias Object[36].PropertyValue	: Object.Button2Value
@@ -53,9 +53,9 @@ sub ObjectMain
 			TempValue1 -= Screen.XOffset
 			CheckTouchRect(TempValue0, 0, TempValue1, 32)
 			if CheckResult > -1
-				Object.ButtonPressed = Object.ButtonCount
+				Object.ButtonPressed = Object.ButtonID
 				Object.ButtonPressed++
-				switch Object.ButtonCount
+				switch Object.ButtonID
 				case 0
 					if Object.LPZoomDepth < 16384
 						Object.LPZoomDepth += 8
@@ -80,7 +80,7 @@ sub ObjectMain
 			else
 				CheckTouchRect(0, 0, Screen.XSize, Screen.YSize)
 				if CheckResult < 0
-					switch Object.ButtonCount
+					switch Object.ButtonID
 					// Zooming
 					case 0
 						if Object.ButtonPressed == 1
@@ -160,7 +160,7 @@ sub ObjectMain
 						break
 					end switch
 				else	// Reset buttons
-					switch Object.ButtonCount
+					switch Object.ButtonID
 					case 0
 						if Object.ButtonPressed == 1
 							Object.ButtonPressed = 0
@@ -215,10 +215,10 @@ end sub
 
 
 sub ObjectDraw
-	TempValue0 = Object.ButtonCount
+	TempValue0 = Object.ButtonID
 	TempValue0 <<= 1
 
-	TempValue1 = Object.ButtonCount
+	TempValue1 = Object.ButtonID
 	TempValue1++
 	if Object.ButtonPressed == TempValue1
 		TempValue0++
@@ -253,13 +253,64 @@ end sub
 // Editor Subs
 // ========================
 
+sub RSDKEdit
+	if Editor.ReturnVariable == true
+		switch Editor.VariableID
+		case EDIT_VAR_PROPVAL // property value
+			checkResult = Object.PropertyValue
+			break
+		case 0 // buttonID
+			checkResult = Object.PropertyValue
+			break
+		end switch
+	else
+		switch Editor.variableID
+		case EDIT_VAR_PROPVAL // property value
+			Object.PropertyValue = Editor.VariableValue
+			break
+		case 0 // buttonID
+			Object.propertyValue = Editor.VariableValue
+			break
+		end switch
+	end if
+end sub
+
 sub RSDKDraw
-	DrawSprite(0)
+	TempValue0 = Object.ButtonID
+	TempValue0 <<= 1
+	DrawSprite(TempValue0)
 end sub
 
 sub RSDKLoad
-	LoadSpriteSheet("Global/Display.gif")
-	SpriteFrame(-16, -16, 32, 32, 1, 143)		// #0 - "Script" Icon
+	LoadSpriteSheet("DAGarden/Objects.gif")
+	SpriteFrame(-32, -16, 63, 31, 146, 577)		// #0 - Zoom Out
+	SpriteFrame(-32, -16, 63, 31, 146, 609)		// #1 - Zoom Out Highlight
+	SpriteFrame(-32, -16, 63, 31, 210, 577)		// #2 - Zoom In
+	SpriteFrame(-32, -16, 63, 31, 210, 609)		// #3 - Zoom In Highlight
+	SpriteFrame(-32, -16, 63, 31, 274, 577)		// #4 - Rotate Right
+	SpriteFrame(-32, -16, 63, 31, 274, 609)		// #5 - Rotate Right Highlight
+	SpriteFrame(-32, -16, 63, 31, 338, 577)		// #6 - Rotate Left
+	SpriteFrame(-32, -16, 63, 31, 338, 609)		// #7 - Rotate Left Highlight
+	SpriteFrame(-32, -16, 63, 31, 210, 641)		// #8 - Previous Track
+	SpriteFrame(-32, -16, 63, 31, 210, 673)		// #9 - Previous Track Highlight
+	SpriteFrame(-32, -16, 63, 31, 274, 641)		// #10 - Play Track 
+	SpriteFrame(-32, -16, 63, 31, 274, 673)		// #11 - Play Track Highlight
+	SpriteFrame(-32, -16, 63, 31, 338, 641)		// #12 - Next Track
+	SpriteFrame(-32, -16, 63, 31, 338, 673)		// #13 - Next Track Highlight
+	SpriteFrame(-32, -16, 63, 31, 402, 641)		// #14 - Music Toggle
+	SpriteFrame(-32, -16, 63, 31, 402, 673)		// #15 - Music Toggle Highlight
+	SpriteFrame(-32, -16, 63, 31, 402, 577)		// #16 - Exit
+	SpriteFrame(-32, -16, 63, 31, 402, 609)		// #17 - Exit Highlight
 
-	SetVariableAlias(ALIAS_VAR_PROPVAL, "unused")
+	AddEditorVariable("buttonID")
+	SetActiveVariable("buttonID")
+	AddEnumVariable("Zoom Out", 0)
+	AddEnumVariable("Zoom In", 1)
+	AddEnumVariable("Rotate Right", 2)
+	AddEnumVariable("Rotate Left", 3)
+	AddEnumVariable("Previous Track", 4)
+	AddEnumVariable("Play Track ", 5)
+	AddEnumVariable("Next Track", 6)
+	AddEnumVariable("Music Toggle", 7)
+	AddEnumVariable("Exit", 8)
 end sub
