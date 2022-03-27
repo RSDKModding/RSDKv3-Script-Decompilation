@@ -24,6 +24,7 @@
 #alias Object.Value0		:	Body.FaceEntity
 #alias Object.Value1		:	Body.LegJointREntity
 #alias Object.Value2		:	Body.LegJointLEntity
+
 // Value4 is used to check key events, forward/backward movement and currently active leg
 #alias Object.Value4		:	Body.BitHolder
 #alias Object.Value5		:	Body.ChargeStart
@@ -44,36 +45,26 @@
 // General Aliases
 #alias Object.Priority		:	BossPart.Priority
 #alias Object.DrawOrder		:	BossPart.DrawOrder
+#alias Object.Value0		:	BossPart.PrevEntity
+#alias Object.Value1		:	BossPart.NextEntity
 
 // HVC-001 Boss Right Leg Joint Aliases
 #alias Object[+2].YPos		:	BossLegJointR.YPos
-#alias Object.Value0		:	LegJointR.BodyEntity
-#alias Object.Value1		:	LegJointR.LegREntity
 
 // HVC-001 Boss Right Leg Aliases
 #alias Object[+3].YPos		:	BossLegR.YPos
 #alias Object[+3].Value7	:	BossLegR.YVelocity
-#alias Object.Value0		:	LegR.LegJointREntity
-#alias Object.Value1		:	LegR.FootREntity
 
 // HVC-001 Boss Right Foot Aliases
 #alias Object[+4].Value7	:	BossFootR.YVelocity
-#alias Object.Value0		:	FootR.LegREntity
-#alias Object.Value1		:	FootR.BodyEntity
 // HVC-001 Boss Left Leg Joint Aliases
 #alias Object[+5].YPos		:	BossLegJointL.YPos
-#alias Object.Value0		:	LegJointL.BodyEntity
-#alias Object.Value1		:	LegJointL.LegLEntity
 
 // HVC-001 Boss Left Leg Aliases
 #alias Object[+6].Value7	:	BossLegL.YVelocity
-#alias Object.Value0		:	LegL.LegJointLEntity
-#alias Object.Value1		:	LegL.FootLEntity
 
 // HVC-001 Boss Left Foot Aliases
 #alias Object[+7].Value7	:	BossFootL.YVelocity
-#alias Object.Value0		:	FootL.LegLEntity
-#alias Object.Value1		:	FootL.BodyEntity
 
 // HVC-001 Boss Shoulder Aliases
 #alias Object[+8].YPos		:	BossShoulder.YPos
@@ -83,33 +74,20 @@
 
 // HVC-001 Boss Left Arm Joint Aliases
 #alias Object[+9].YPos		:	BossArmJointL.YPos
-#alias Object.Value0		:	ArmJointL.ShoulderEntity
-#alias Object.Value1		:	ArmJointL.ArmLEntity
 
 // HVC-001 Boss Left Arm Aliases
 #alias Object[+10].YPos		:	BossArmL.YPos
-#alias Object.Value0		:	ArmL.ArmJointLEntity
-#alias Object.Value1		:	ArmL.BumperLEntity
-
 // HVC-001 Boss Left Bumper Joint Aliases
 #alias Object[+11].YPos		:	BossBumperL.YPos
-#alias Object.Value0		:	BumperL.ArmLEntity
-#alias Object.Value1		:	BumperL.BodyEntity
 
 // HVC-001 Boss Right Arm Joint Aliases
 #alias Object[+12].YPos		:	BossArmJointR.YPos
-#alias Object.Value0		:	ArmJointR.ShoulderEntity
-#alias Object.Value1		:	ArmJointR.ArmREntity
 
 // HVC-001 Boss Right Arm Aliases
 #alias Object[+13].YPos		:	BossArmR.YPos
-#alias Object.Value0		:	ArmR.ArmJointREntity
-#alias Object.Value1		:	ArmR.BumperREntity
 
 // HVC-001 Boss Right Bumper Joint Aliases
 #alias Object[+14].YPos		:	BossBumperR.YPos
-#alias Object.Value0		:	BumperR.ArmREntity
-#alias Object.Value1		:	BumperR.BodyEntity
 
 #alias Object.State			:	Debris.State
 #alias Object.Value2		:	Debris.XOffSet
@@ -455,64 +433,76 @@ sub ObjectMain
 			ResetObjectEntity(ArrayPos0, TypeName[BossLegJoint], 0, Object.XPos, Object.YPos)
 			BossPart[ArrayPos0].Priority = PRIORITY_ACTIVE
 
-			LegJointR[ArrayPos0].BodyEntity = Object.EntityNo
-			LegJointR[ArrayPos0].BodyEntity += 1
+			// Boss Body
+			BossPart[ArrayPos0].PrevEntity = Object.EntityNo
+			BossPart[ArrayPos0].PrevEntity += 1
 
-			LegJointR[ArrayPos0].LegREntity = Object.EntityNo
-			LegJointR[ArrayPos0].LegREntity += 3
+			// Leg R
+			BossPart[ArrayPos0].NextEntity = Object.EntityNo
+			BossPart[ArrayPos0].NextEntity += 3
 			ArrayPos0++
 
 			ResetObjectEntity(ArrayPos0, TypeName[BossLeg], 0, Object.XPos, Object.YPos)
 			BossPart[ArrayPos0].Priority = PRIORITY_ACTIVE
 
-			LegR[ArrayPos0].LegJointREntity = Object.EntityNo
-			LegR[ArrayPos0].LegJointREntity += 2
+			// Leg Joint R
+			BossPart[ArrayPos0].PrevEntity = Object.EntityNo
+			BossPart[ArrayPos0].PrevEntity += 2
 
-			LegR[ArrayPos0].FootREntity = Object.EntityNo
-			LegR[ArrayPos0].FootREntity += 4
+			// Foot R
+			BossPart[ArrayPos0].NextEntity = Object.EntityNo
+			BossPart[ArrayPos0].NextEntity += 4
 			ArrayPos0++
 
 			ResetObjectEntity(ArrayPos0, TypeName[BossFoot], 0, Object.XPos, Object.YPos)
 			BossPart[ArrayPos0].Priority = PRIORITY_ACTIVE
 
-			FootR[ArrayPos0].LegREntity = Object.EntityNo
-			FootR[ArrayPos0].LegREntity += 3
+			// Leg R
+			BossPart[ArrayPos0].PrevEntity = Object.EntityNo
+			BossPart[ArrayPos0].PrevEntity += 3
 
-			FootR[ArrayPos0].BodyEntity = Object.EntityNo
-			FootR[ArrayPos0].BodyEntity += 1
+			// Boss Body
+			BossPart[ArrayPos0].NextEntity = Object.EntityNo
+			BossPart[ArrayPos0].NextEntity += 1
 			ArrayPos0++
 
 			ResetObjectEntity(ArrayPos0, TypeName[BossLegJoint], 0, Object.XPos, Object.YPos)
 			BossPart[ArrayPos0].Priority = PRIORITY_ACTIVE
 			BossPart[ArrayPos0].DrawOrder = 2
 
-			LegJointL[ArrayPos0].BodyEntity = Object.EntityNo
-			LegJointL[ArrayPos0].BodyEntity += 1
+			// Boss Body
+			BossPart[ArrayPos0].PrevEntity = Object.EntityNo
+			BossPart[ArrayPos0].PrevEntity += 1
 
-			LegJointL[ArrayPos0].LegLEntity = Object.EntityNo
-			LegJointL[ArrayPos0].LegLEntity += 6
+			// Leg L
+			BossPart[ArrayPos0].NextEntity = Object.EntityNo
+			BossPart[ArrayPos0].NextEntity += 6
 			ArrayPos0++
 
 			ResetObjectEntity(ArrayPos0, TypeName[BossLeg], 0, Object.XPos, Object.YPos)
 			BossPart[ArrayPos0].Priority = PRIORITY_ACTIVE
 			BossPart[ArrayPos0].DrawOrder = 2
 
-			LegL[ArrayPos0].LegJointLEntity = Object.EntityNo
-			LegL[ArrayPos0].LegJointLEntity += 5
+			// Leg Joint L
+			BossPart[ArrayPos0].PrevEntity = Object.EntityNo
+			BossPart[ArrayPos0].PrevEntity += 5
 
-			LegL[ArrayPos0].FootLEntity = Object.EntityNo
-			LegL[ArrayPos0].FootLEntity += 7
+			// Foot L
+			BossPart[ArrayPos0].NextEntity = Object.EntityNo
+			BossPart[ArrayPos0].NextEntity += 7
 			ArrayPos0++
 
 			ResetObjectEntity(ArrayPos0, TypeName[BossFoot], 0, Object.XPos, Object.YPos)
 			BossPart[ArrayPos0].Priority = PRIORITY_ACTIVE
 			BossPart[ArrayPos0].DrawOrder = 2
 
-			FootL[ArrayPos0].LegLEntity = Object.EntityNo
-			FootL[ArrayPos0].LegLEntity += 6
+			// Leg L
+			BossPart[ArrayPos0].PrevEntity = Object.EntityNo
+			BossPart[ArrayPos0].PrevEntity += 6
 
-			FootL[ArrayPos0].BodyEntity = Object.EntityNo
-			FootL[ArrayPos0].BodyEntity += 1
+			// Boss Body
+			BossPart[ArrayPos0].NextEntity = Object.EntityNo
+			BossPart[ArrayPos0].NextEntity += 1
 			ArrayPos0++
 
 			ResetObjectEntity(ArrayPos0, TypeName[BossShoulder], 0, Object.XPos, Object.YPos)
@@ -521,9 +511,11 @@ sub ObjectMain
 
 			Shoulder[ArrayPos0].FaceEntity = Object.EntityNo
 
+			// Arm Joint L
 			Shoulder[ArrayPos0].ArmJointLEntity = Object.EntityNo
 			Shoulder[ArrayPos0].ArmJointLEntity += 9
 
+			// Arm Joint R
 			Shoulder[ArrayPos0].ArmJointREntity = Object.EntityNo
 			Shoulder[ArrayPos0].ArmJointREntity += 12
 			ArrayPos0++
@@ -531,64 +523,76 @@ sub ObjectMain
 			ResetObjectEntity(ArrayPos0, TypeName[BossArmJoint], 0, Object.XPos, Object.YPos)
 			BossPart[ArrayPos0].Priority = PRIORITY_ACTIVE
 
-			ArmJointL[ArrayPos0].ShoulderEntity = Object.EntityNo
-			ArmJointL[ArrayPos0].ShoulderEntity += 8
+			// Shoulder
+			BossPart[ArrayPos0].PrevEntity = Object.EntityNo
+			BossPart[ArrayPos0].PrevEntity += 8
 
-			ArmJointL[ArrayPos0].ArmLEntity = Object.EntityNo
-			ArmJointL[ArrayPos0].ArmLEntity += 10
+			// Arm L
+			BossPart[ArrayPos0].NextEntity = Object.EntityNo
+			BossPart[ArrayPos0].NextEntity += 10
 			ArrayPos0++
 
 			ResetObjectEntity(ArrayPos0, TypeName[BossArm], 0, Object.XPos, Object.YPos)
 			BossPart[ArrayPos0].Priority = PRIORITY_ACTIVE
 
-			ArmL[ArrayPos0].ArmJointLEntity = Object.EntityNo
-			ArmL[ArrayPos0].ArmJointLEntity += 9
+			// Arm Joint L
+			BossPart[ArrayPos0].PrevEntity = Object.EntityNo
+			BossPart[ArrayPos0].PrevEntity += 9
 
-			ArmL[ArrayPos0].BumperLEntity = Object.EntityNo
-			ArmL[ArrayPos0].BumperLEntity += 11
+			// Bumper L
+			BossPart[ArrayPos0].NextEntity = Object.EntityNo
+			BossPart[ArrayPos0].NextEntity += 11
 			ArrayPos0++
 
 			ResetObjectEntity(ArrayPos0, TypeName[BossBumper], 0, Object.XPos, Object.YPos)
 			BossPart[ArrayPos0].Priority = PRIORITY_ACTIVE
 
-			BumperL[ArrayPos0].ArmLEntity = Object.EntityNo
-			BumperL[ArrayPos0].ArmLEntity += 10
+			// Arm L
+			BossPart[ArrayPos0].PrevEntity = Object.EntityNo
+			BossPart[ArrayPos0].PrevEntity += 10
 
-			BumperL[ArrayPos0].BodyEntity = Object.EntityNo
-			BumperL[ArrayPos0].BodyEntity += 1
+			// Boss Body
+			BossPart[ArrayPos0].NextEntity = Object.EntityNo
+			BossPart[ArrayPos0].NextEntity += 1
 			ArrayPos0++
 
 			ResetObjectEntity(ArrayPos0, TypeName[BossArmJoint], 0, Object.XPos, Object.YPos)
 			BossPart[ArrayPos0].Priority = PRIORITY_ACTIVE
 			BossPart[ArrayPos0].DrawOrder = 2
 
-			ArmJointR[ArrayPos0].ShoulderEntity = Object.EntityNo
-			ArmJointR[ArrayPos0].ShoulderEntity += 8
+			// Shoulder
+			BossPart[ArrayPos0].PrevEntity = Object.EntityNo
+			BossPart[ArrayPos0].PrevEntity += 8
 
-			ArmJointR[ArrayPos0].ArmREntity = Object.EntityNo
-			ArmJointR[ArrayPos0].ArmREntity += 13
+			// Arm R
+			BossPart[ArrayPos0].NextEntity = Object.EntityNo
+			BossPart[ArrayPos0].NextEntity += 13
 			ArrayPos0++
 
 			ResetObjectEntity(ArrayPos0, TypeName[BossArm], 0, Object.XPos, Object.YPos)
 			BossPart[ArrayPos0].Priority = PRIORITY_ACTIVE
 			BossPart[ArrayPos0].DrawOrder = 2
 
-			ArmR[ArrayPos0].ArmJointREntity = Object.EntityNo
-			ArmR[ArrayPos0].ArmJointREntity += 12
+			// Arm Joint R
+			BossPart[ArrayPos0].PrevEntity = Object.EntityNo
+			BossPart[ArrayPos0].PrevEntity += 12
 
-			ArmR[ArrayPos0].BumperREntity = Object.EntityNo
-			ArmR[ArrayPos0].BumperREntity += 14
+			// Bumper R
+			BossPart[ArrayPos0].NextEntity = Object.EntityNo
+			BossPart[ArrayPos0].NextEntity += 14
 			ArrayPos0++
 
 			ResetObjectEntity(ArrayPos0, TypeName[BossBumper], 0, Object.XPos, Object.YPos)
 			BossPart[ArrayPos0].Priority = PRIORITY_ACTIVE
 			BossPart[ArrayPos0].DrawOrder = 2
 
-			BumperR[ArrayPos0].ArmREntity = Object.EntityNo
-			BumperR[ArrayPos0].ArmREntity += 13
+			// Arm R
+			BossPart[ArrayPos0].PrevEntity = Object.EntityNo
+			BossPart[ArrayPos0].PrevEntity += 13
 
-			BumperR[ArrayPos0].BodyEntity = Object.EntityNo
-			BumperR[ArrayPos0].BodyEntity += 1
+			// Boss Body
+			BossPart[ArrayPos0].NextEntity = Object.EntityNo
+			BossPart[ArrayPos0].NextEntity += 1
 			ArrayPos0++
 		end if
 		break
@@ -647,12 +651,14 @@ sub ObjectPlayerInteraction
 									Debris[ArrayPos1].XOffSet = 65536	// 0x10000
 									Debris[ArrayPos1].YOffSet = 131072	// 0x20000
 
-									ArrayPos0 = ArmJointR[ArrayPos1].ArmREntity
+									// Arm Joint R to Arm R
+									ArrayPos0 = BossPart[ArrayPos1].NextEntity
 									Debris[ArrayPos0].State = BOSSARM_DESTROYED
 									Debris[ArrayPos0].XOffSet = 0
 									Debris[ArrayPos0].YOffSet = 65536	// 0x10000
 
-									ArrayPos1 = ArmR[ArrayPos0].BumperREntity
+									// Arm R to Bumper R
+									ArrayPos1 = BossPart[ArrayPos0].NextEntity
 									Debris[ArrayPos1].State = BOSSBUMPER_DESTROYED
 									Debris[ArrayPos1].XOffSet = 0
 									Debris[ArrayPos1].YOffSet = -98304	// -0x18000
@@ -670,12 +676,14 @@ sub ObjectPlayerInteraction
 									Debris[ArrayPos1].XOffSet = 65536	// 0x10000
 									Debris[ArrayPos1].YOffSet = 131072	// 0x20000
 									
-									ArrayPos0 = ArmJointL[ArrayPos1].ArmLEntity
+									// Arm Joint L to Arm L
+									ArrayPos0 = BossPart[ArrayPos1].NextEntity
 									Debris[ArrayPos0].State = BOSSARM_DESTROYED
 									Debris[ArrayPos0].XOffSet = 0
 									Debris[ArrayPos0].YOffSet = 65536	// 0x10000
 
-									ArrayPos1 = ArmL[ArrayPos0].BumperLEntity
+									// ArmL to Bumper L
+									ArrayPos1 = BossPart[ArrayPos0].NextEntity
 									Debris[ArrayPos1].State = BOSSBUMPER_DESTROYED
 									Debris[ArrayPos1].XOffSet = 0
 									Debris[ArrayPos1].YOffSet = -98304	// -0x18000
@@ -699,12 +707,14 @@ sub ObjectPlayerInteraction
 									Debris[ArrayPos1].XOffSet = 0
 									Debris[ArrayPos1].YOffSet = -163840	// -0x28000
 
-									ArrayPos0 = LegJointR[ArrayPos1].LegREntity
+									// Leg Joint R to Leg R
+									ArrayPos0 = BossPart[ArrayPos1].NextEntity
 									Debris[ArrayPos0].State = BOSSLEG_DESTROYED
 									Debris[ArrayPos0].XOffSet = 0
 									Debris[ArrayPos0].YOffSet = -131072	// -0x20000
 
-									ArrayPos1 = LegR[ArrayPos0].FootREntity
+									// Leg R to Foot R
+									ArrayPos1 = BossPart[ArrayPos0].NextEntity
 									Debris[ArrayPos1].State = BOSSFOOT_DESTROYED
 									Debris[ArrayPos1].XOffSet = 0
 									Debris[ArrayPos1].YOffSet = -143360	// -0x23000
@@ -715,12 +725,14 @@ sub ObjectPlayerInteraction
 									Debris[ArrayPos1].XOffSet = 0
 									Debris[ArrayPos1].YOffSet = -163840	// -0x28000
 
-									ArrayPos0 = LegJointL[ArrayPos1].LegLEntity
+									// Leg Joint L to Leg L
+									ArrayPos0 = BossPart[ArrayPos1].NextEntity
 									Debris[ArrayPos0].State = BOSSLEG_DESTROYED
 									Debris[ArrayPos0].XOffSet = 0
 									Debris[ArrayPos0].YOffSet = -131072	// -0x20000
 
-									ArrayPos1 = LegL[ArrayPos0].FootLEntity
+									// Leg L to Foot L
+									ArrayPos1 = BossPart[ArrayPos0].NextEntity
 									Debris[ArrayPos1].State = BOSSFOOT_DESTROYED
 									Debris[ArrayPos1].XOffSet = 0
 									Debris[ArrayPos1].YOffSet = -143360	// -0x23000
@@ -808,7 +820,6 @@ end sub
 
 sub RSDKLoad
 	LoadSpriteSheet("R1/Objects3.gif")
-
 	SpriteFrame(-28, -24, 40, 16, 206, 1)		// #0 - Eggman Idle
 
 	SetVariableAlias(ALIAS_VAR_PROPVAL, "unused")
