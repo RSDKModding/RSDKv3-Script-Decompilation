@@ -33,8 +33,8 @@
 
 // Engine & Callbacks
 #alias 2	:	MESSAGE_LOSTFOCUS
-#alias 3	:	MESSAGE_MESSAGE_3
-#alias 4	:	MESSAGE_MESSAGE_4
+#alias 3	:	MESSAGE_YES_SELECTED
+#alias 4	:	MESSAGE_NO_SELECTED
 
 #alias 6	:	CALLBACK_RESTART_SELECTED
 #alias 7	:	CALLBACK_EXIT_SELECTED
@@ -361,7 +361,7 @@ sub ObjectMain
 				Object.State = PAUSEMENU_EXIT_LEVEL
 #endplatform
 #platform: Mobile
-				if Engine.Message < MESSAGE_MESSAGE_3
+				if Engine.Message < MESSAGE_YES_SELECTED
 					switch Object.SelectedButton
 					case 1
 						EngineCallback(CALLBACK_RESTART_SELECTED)
@@ -390,7 +390,7 @@ sub ObjectMain
 						break
 					end switch
 				else
-					if Engine.Message == MESSAGE_MESSAGE_4
+					if Engine.Message == MESSAGE_NO_SELECTED
 						Object.Timer = 0
 						Object.AnimationTimer = 0
 						Object.Frame = 0
@@ -422,11 +422,13 @@ sub ObjectMain
 			ResumeMusic()
 			ResetObjectEntity(Object.EntityNo, TypeName[Blank Object], 0, 0, 0)
 			if Player.Animation == ANI_FLYING
-				PlaySfx(24, 1)
+				PlaySfx(24, true)
 			end if
+
 			if Player.Animation == ANI_FLYINGTIRED
-				PlaySfx(24, 1)
+				PlaySfx(24, true)
 			end if
+
 			if Engine.FrameSkipSetting > 0
 				Engine.FrameSkipTimer = 0
 			end if
@@ -479,7 +481,6 @@ sub ObjectMain
 			end switch
 		end if
 		break
-
 	end switch
 end sub
 
