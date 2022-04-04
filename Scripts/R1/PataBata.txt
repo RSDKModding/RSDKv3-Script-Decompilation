@@ -3,20 +3,21 @@
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
 // Aliases
-#alias Object.Value0	:	Object.Oscillation
-#alias Object.Value1	:	Object.OriginPos.Y
+#alias Object.Value0		:	Object.Oscillation
+#alias Object.Value1		:	Object.OriginPos.Y
+#alias Object.PropertyValue	:	Object.BadnikCondition
 
 // States
-#alias 0				:	PATABATA_FLY_DOWN
-#alias 1				:	PATABATA_FLY_UP
+#alias 0					:	PATABATA_FLY_DOWN
+#alias 1					:	PATABATA_FLY_UP
 
 // Property Values
-#alias 0				:	NEW
-#alias 1				:	OLD
+#alias 0					:	NEW
+#alias 1					:	OLD
 
 
 sub ObjectMain
-	if Object.PropertyValue == NEW
+	if Object.BadnikCondition == NEW
 		Object.Frame++
 		if Object.Frame > 39
 			Object.Frame = 0
@@ -105,7 +106,7 @@ end sub
 
 
 sub ObjectDraw
-	if Object.PropertyValue == NEW
+	if Object.BadnikCondition == NEW
 		TempValue0 = Object.Frame
 		TempValue0 >>= 3
 		DrawSpriteFX(TempValue0, FX_FLIP, Object.XPos, Object.YPos)
@@ -139,7 +140,7 @@ sub ObjectStartup
 		if Object[ArrayPos0].Type == TypeName[PataBata]
 			Object[ArrayPos0].OriginPos.Y = Object[ArrayPos0].YPos
 			Object[ArrayPos0].Oscillation = 1024
-			Object[ArrayPos0].Frame = Object[ArrayPos0].PropertyValue
+			Object[ArrayPos0].Frame = Object[ArrayPos0].BadnikCondition
 			Object[ArrayPos0].Frame *= 20
 		end if
 		ArrayPos0++

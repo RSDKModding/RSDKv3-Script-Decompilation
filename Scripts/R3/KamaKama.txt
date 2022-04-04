@@ -3,32 +3,33 @@
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
 // Aliases
-#alias Object.Value0	:	Object.Timer
-#alias Object.Value1	:	Object.AnimationTimer
-#alias Object.Value2	:	Object.XVelocity
-#alias Object.Value3	:	Object.OriginPos.X
-#alias Object.Value4	:	Object.OriginPos.Y
+#alias Object.Value0		:	Object.Timer
+#alias Object.Value1		:	Object.AnimationTimer
+#alias Object.Value2		:	Object.XVelocity
+#alias Object.Value3		:	Object.OriginPos.X
+#alias Object.Value4		:	Object.OriginPos.Y
+#alias Object.PropertyValue	:	Object.BadnikCondition
 
 // Blade Aliases
-#alias Object.Value2	:	Object.KamaKamaEntityNo
+#alias Object.Value2		:	Object.KamaKamaEntityNo
 
 // States
-#alias 0	:	KAMAKAMA_GUARD
-#alias 1	:	KAMAKAMA_LAUNCH_BLADE
-#alias 2	:	KAMAKAMA_PREPARE_CHARGE
-#alias 3	:	KAMAKAMA_CHARGE
-#alias 4	:	KAMAKAMA_SWITCH_DIRECTION
+#alias 0					:	KAMAKAMA_GUARD
+#alias 1					:	KAMAKAMA_LAUNCH_BLADE
+#alias 2					:	KAMAKAMA_PREPARE_CHARGE
+#alias 3					:	KAMAKAMA_CHARGE
+#alias 4					:	KAMAKAMA_SWITCH_DIRECTION
 
 // CSides
-#alias 0	:	CSIDE_FLOOR
+#alias 0					:	CSIDE_FLOOR
 
 // Property Values
-#alias 0	:	NEW
-#alias 1	:	OLD
+#alias 0					:	NEW
+#alias 1					:	OLD
 
 // Priority
-#alias 0	:	PRIORITY_ACTIVE_BOUNDS
-#alias 1	:	PRIORITY_ACTIVE
+#alias 0					:	PRIORITY_ACTIVE_BOUNDS
+#alias 1					:	PRIORITY_ACTIVE
 
 
 sub ObjectMain
@@ -47,7 +48,7 @@ sub ObjectMain
 		if CheckResult == true
 			Object.State = KAMAKAMA_LAUNCH_BLADE
 			Object.Priority = PRIORITY_ACTIVE
-			if Object.PropertyValue == NEW	// Only new badniks still have blades to throw
+			if Object.BadnikCondition == NEW	// Only new badniks still have blades to throw
 				CreateTempObject(TypeName[KamaKamaBlade], 24, Object.XPos, Object.YPos)
 				Object[TempObjectPos].Direction = Object.Direction
 				Object[TempObjectPos].iYPos -= 6
@@ -95,7 +96,7 @@ sub ObjectMain
 			else
 				Object.XVelocity = 65536
 			end if
-			if Object.PropertyValue > NEW
+			if Object.BadnikCondition > NEW
 				Object.XVelocity >>= 1
 			end if
 		end if
@@ -164,7 +165,7 @@ sub ObjectDraw
 		TempValue0 >>= 3
 		DrawSpriteFX(TempValue0, FX_FLIP, Object.XPos, Object.YPos)
 
-		if Object.PropertyValue == NEW
+		if Object.BadnikCondition == NEW
 			TempValue1 = TempValue0
 			TempValue1 += 4
 			DrawSpriteFX(TempValue1, FX_FLIP, Object.XPos, Object.YPos)
@@ -189,7 +190,7 @@ sub ObjectDraw
 		TempValue0 >>= 3
 		DrawSpriteFX(TempValue0, FX_FLIP, Object.XPos, Object.YPos)
 
-		if Object.PropertyValue == NEW
+		if Object.BadnikCondition == NEW
 			TempValue1 = TempValue0
 			TempValue1 += 4
 			DrawSpriteFX(TempValue1, FX_FLIP, Object.XPos, Object.YPos)
@@ -211,7 +212,7 @@ sub ObjectDraw
 		TempValue0 >>= 3
 		DrawSpriteFX(TempValue0, FX_FLIP, Object.XPos, Object.YPos)
 
-		if Object.PropertyValue == NEW
+		if Object.BadnikCondition == NEW
 			TempValue1 = TempValue0
 			TempValue1 += 4
 			DrawSpriteFX(TempValue1, FX_FLIP, Object.XPos, Object.YPos)
@@ -237,7 +238,7 @@ sub ObjectDraw
 		TempValue0 = Object.AnimationTimer
 		TempValue0 >>= 3
 
-		if Object.PropertyValue == NEW
+		if Object.BadnikCondition == NEW
 			TempValue1 = TempValue0
 			TempValue1 += 4
 			DrawSpriteFX(TempValue1, FX_FLIP, Object.XPos, Object.YPos)

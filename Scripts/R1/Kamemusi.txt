@@ -3,28 +3,29 @@
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
 // Aliases
-#alias Object.Value0	:	Object.Timer
-#alias Object.Value1	:	Object.FireTimer
+#alias Object.Value0		:	Object.Timer
+#alias Object.Value1		:	Object.FireTimer
+#alias Object.PropertyValue	:	Object.BadnikCondition
 
 // Bullet Aliases
-#alias OBject.Value1	:	Bullet.XVelocity
-#alias OBject.Value2	:	Bullet.YVelocity
+#alias OBject.Value1		:	Bullet.XVelocity
+#alias OBject.Value2		:	Bullet.YVelocity
 
 // States
-#alias 0				:	KAMEMUSI_MOVE_LEFT
-#alias 1				:	KAMEMUSI_MOVE_RIGHT
-#alias 2				:	KAMEMUSI_SHOOT
+#alias 0					:	KAMEMUSI_MOVE_LEFT
+#alias 1					:	KAMEMUSI_MOVE_RIGHT
+#alias 2					:	KAMEMUSI_SHOOT
 
 // CSides
-#alias 0	:	CSIDE_FLOOR
+#alias 0					:	CSIDE_FLOOR
 
 // Property Values
-#alias 0				:	NEW
-#alias 1				:	OLD
+#alias 0					:	NEW
+#alias 1					:	OLD
 
 
 sub ObjectMain
-	if Object.PropertyValue == NEW
+	if Object.BadnikCondition == NEW
 		switch Object.State
 		case KAMEMUSI_MOVE_LEFT
 			Object.Frame++
@@ -69,7 +70,7 @@ sub ObjectMain
 			end if
 
 			ObjectTileGrip(CSIDE_FLOOR, 0, 14, 0)	// Check if there's no more floor
-			if CheckResult == 0
+			if CheckResult == false
 				Object.State = KAMEMUSI_MOVE_LEFT
 				Object.Timer = 192
 				Object.Direction = FACING_RIGHT
@@ -191,7 +192,7 @@ end sub
 
 
 sub ObjectDraw
-	if Object.PropertyValue == NEW
+	if Object.BadnikCondition == NEW
 		if Object.State < KAMEMUSI_SHOOT
 			TempValue0 = Object.Frame
 			TempValue0 /= 30

@@ -3,26 +3,27 @@
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
 // Aliases
-#alias Object.Value0	:	Object.Timer
-#alias Object.Value1	:	Object.XVelocity
-#alias Object.Value2	:	Object.YVelocity
-#alias Object.Value3	:	Object.AnimationTimer
-#alias Object.Value4	:	Object.OriginPos.X
-#alias Object.Value5	:	Object.OriginPos.Y
+#alias Object.Value0		:	Object.Timer
+#alias Object.Value1		:	Object.XVelocity
+#alias Object.Value2		:	Object.YVelocity
+#alias Object.Value3		:	Object.AnimationTimer
+#alias Object.Value4		:	Object.OriginPos.X
+#alias Object.Value5		:	Object.OriginPos.Y
+#alias Object.PropertyValue	:	Object.BadnikCondition
 
 // States
-#alias 0	:	MOTH_IDLE
-#alias 1	:	MOTH_RESPAWN
-#alias 2	:	MOTH_REVEAL
-#alias 3	:	MOTH_FLY
+#alias 0					:	MOTH_IDLE
+#alias 1					:	MOTH_RESPAWN
+#alias 2					:	MOTH_REVEAL
+#alias 3					:	MOTH_FLY
 
 // Property Values
-#alias 0	:	NEW
-#alias 1	:	OLD
+#alias 0					:	NEW
+#alias 1					:	OLD
 
 // Priority
-#alias 0	:	PRIORITY_ACTIVE_BOUNDS
-#alias 1	:	PRIORITY_ACTIVE
+#alias 0					:	PRIORITY_ACTIVE_BOUNDS
+#alias 1					:	PRIORITY_ACTIVE
 
 
 sub ObjectMain
@@ -76,7 +77,7 @@ sub ObjectMain
 
 			Object.Timer = 0
 
-			if Object.PropertyValue > NEW
+			if Object.BadnikCondition > NEW
 				Object.XVelocity >>= 1
 			end if
 
@@ -102,7 +103,7 @@ sub ObjectMain
 		else
 			Object.Timer = 0
 			FlipSign(Object.YVelocity)
-			if Object.PropertyValue == NEW	// Only new moths drop sparkles
+			if Object.BadnikCondition == NEW	// Only new moths drop sparkles
 				CreateTempObject(TypeName[MothSparkle], 0, Object.XPos, Object.YPos)
 				Object[TempObjectPos].DrawOrder = 5
 			end if
@@ -114,7 +115,7 @@ sub ObjectMain
 		Object.Frame = Object.AnimationTimer
 		Object.Frame /= 5
 
-		if Object.PropertyValue == NEW
+		if Object.BadnikCondition == NEW
 			Object.Frame += 3
 		else
 			Object.Frame += 7

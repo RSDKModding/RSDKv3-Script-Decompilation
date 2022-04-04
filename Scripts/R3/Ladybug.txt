@@ -3,20 +3,21 @@
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
 // Aliases
-#alias Object.Value0	:	Object.Oscillation
-#alias Object.Value1	:	Object.XVelocity
-#alias Object.Value2	:	Object.BombTimer
+#alias Object.Value0		:	Object.Oscillation
+#alias Object.Value1		:	Object.XVelocity
+#alias Object.Value2		:	Object.BombTimer
+#alias Object.PropertyValue	:	Object.BadnikCondition
 // States
-#alias 0	:	LADYBUG_GUARD
-#alias 1	:	LADYBUG_FLEE
-#alias 2	:	LADYBUG_FLY
+#alias 0					:	LADYBUG_GUARD
+#alias 1					:	LADYBUG_FLEE
+#alias 2					:	LADYBUG_FLY
 
 // Property Values
-#alias 0	:	NEW
-#alias 1	:	OLD
+#alias 0					:	NEW
+#alias 1					:	OLD
 
 // CSides
-#alias 0	:	CSIDE_FLOOR
+#alias 0					:	CSIDE_FLOOR
 
 sub ObjectMain
 	switch Object.State
@@ -68,7 +69,7 @@ sub ObjectMain
 			Object.State = LADYBUG_FLY	// Once the ladybug runs out of floor, start flying up
 		end if
 
-		if Object.PropertyValue == NEW	// if the ladybug is new, set bombs while escaping
+		if Object.BadnikCondition == NEW	// if the ladybug is new, set bombs while escaping
 			if Object.BombTimer < 128
 				Object.BombTimer++
 			else
@@ -104,7 +105,7 @@ end sub
 sub ObjectDraw
 	TempValue0 = Object.Frame
 	TempValue0 >>= 2
-	if Object.PropertyValue == OLD
+	if Object.BadnikCondition == OLD
 		TempValue0 += 3
 	end if
 	DrawSpriteFX(TempValue0, FX_FLIP, Object.XPos, Object.YPos)
