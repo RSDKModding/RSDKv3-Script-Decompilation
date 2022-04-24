@@ -5,25 +5,30 @@
 // Aliases
 #alias 51: TYPE_VERTICALDOOR
 
+#alias Object.Value0 : Object.DrawPosY
+
 
 sub ObjectMain
+
 	switch Object.State
 	case 1
-		if Object.Value0 < 4194304
-			Object.Value0 += 131072
+		if Object.DrawPosY < 4194304
+			Object.DrawPosY += 131072
 			Object.YPos -= 131072
 		else
 			Object.State = 5
 		end if
 		break
+		
 	case 2
-		if Object.Value0 > 0
-			Object.Value0 -= 131072
+		if Object.DrawPosY > 0
+			Object.DrawPosY -= 131072
 			Object.YPos += 131072
 		else
 			Object.State = 6
 		end if
 		break
+		
 	case 3
 		TempValue0 = Player.CollisionRight
 		TempValue0 += 16
@@ -39,28 +44,39 @@ sub ObjectMain
 			end if
 		end if
 		break
+		
 	case 4
-		if Object.Value0 > 0
-			Object.Value0 -= 131072
+		if Object.DrawPosY > 0
+			Object.DrawPosY -= 131072
 			Object.YPos += 131072
 		end if
 		break
+		
 	end switch
+	
 end sub
 
 
 sub ObjectPlayerInteraction
+
 	switch Object.State
 	case 0
+		// Act as a tall vertical wall
 		PlayerObjectCollision(C_BOX, -16, -32, 16, 64)
 		break
+		
 	case 1
 	case 5
+		// Acting as a comparatively shorter wall (it's still pretty tall though!)
 		PlayerObjectCollision(C_BOX, -16, -32, 16, 32)
 		break
+		
 	case 2
 	case 6
+		// Acting as a *really* tall vertical wall
 		PlayerObjectCollision(C_BOX, -16, -32, 16, 128)
+		
+		// Enforce right bounds, make sure the player doesn't leave where they should be
 		TempValue0 = Player.CollisionRight
 		TempValue0 <<= 16
 		TempValue0 += Player.XPos
@@ -75,8 +91,12 @@ sub ObjectPlayerInteraction
 			Player.XPos -= TempValue0
 		end if
 		break
+		
 	case 3
+		// Somewhat tall vertical wall
 		PlayerObjectCollision(C_BOX, -16, -32, 16, 32)
+		
+		// And enforce right bounds here too
 		TempValue0 = Player.CollisionRight
 		TempValue0 <<= 16
 		TempValue0 += Player.XPos
@@ -91,7 +111,9 @@ sub ObjectPlayerInteraction
 			Player.XPos -= TempValue0
 		end if
 		break
+		
 	case 4
+		// Only enforcing right bounds, no need for collision checks anymore
 		TempValue0 = Player.CollisionRight
 		TempValue0 <<= 16
 		TempValue0 += Player.XPos
@@ -106,21 +128,31 @@ sub ObjectPlayerInteraction
 			Player.XPos -= TempValue0
 		end if
 		break
+		
 	end switch
+	
 end sub
 
 
 sub ObjectDraw
-	TempValue0 = Object.Value0
+
+	// Draw the extension sprite
+	TempValue0 = Object.DrawPosY
 	TempValue0 >>= 1
 	TempValue0 += Object.YPos
 	DrawSpriteXY(0, Object.XPos, TempValue0)
+
+	// Draw the base sprite
 	DrawSprite(1)
+
 end sub
 
 
 sub ObjectStartup
+
 	LoadSpriteSheet("R7/Objects.gif")
+
+	// Good future gets different sprites from other time periods
 	if Object[24].PropertyValue == 2
 		SpriteFrame(-16, -32, 32, 32, 117, 219)
 		SpriteFrame(-16, 0, 32, 32, 117, 219)
@@ -128,6 +160,7 @@ sub ObjectStartup
 		SpriteFrame(-16, -32, 32, 32, 1, 1)
 		SpriteFrame(-16, 0, 32, 32, 1, 1)
 	end if
+
 end sub
 
 // ========================
@@ -138,9 +171,10 @@ sub RSDKDraw
 	DrawSprite(0)
 end sub
 
+
 sub RSDKLoad
-	LoadSpriteSheet("Global/Display.gif")
-	SpriteFrame(-16, -16, 32, 32, 1, 143)		// #0 - "Script" Icon
+	LoadSpriteSheet("R7/Objects.gif")
+	SpriteFrame(-16, 0, 32, 32, 1, 1) // Sticking with the good variant here...
 
 	SetVariableAlias(ALIAS_VAR_PROPVAL, "unused")
 end sub

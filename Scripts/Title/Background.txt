@@ -5,16 +5,20 @@
 // Aliases
 #alias Object.Value0 : Object.LPlanetYOffset
 
+
 sub ObjectDraw
-	//Sets a solid background color
+	// Sets a solid background color
 	TempValue0 = Screen.CenterX
 	TempValue0 <<= 1
 	DrawRect(0, 0, TempValue0, 100, 0, 0, 96, 255)
+
 	#platform: Use_Decomp
-		DrawRect(0, 0, TempValue0, 180, 0, 0, 96, 255)	//Fixes gray rectangle with Non-Mobile Datafile
+		// Draw a small blue rectangle
+		// -> This fixes the gray rectangle that appears with Non-Mobile Datafiles
+		DrawRect(0, 0, TempValue0, 180, 0, 0, 96, 255)
 	#endplatform
 	
-	//Little Planet Movement
+	// Little Planet Movement
 	Sin(TempValue0, Object.LPlanetYOffset)
 	TempValue0 >>= 7
 	TempValue0 -= 16
@@ -22,7 +26,7 @@ sub ObjectDraw
 	Object.LPlanetYOffset++
 	Object.LPlanetYOffset &= 511
 
-	//Water Movement
+	// Water Movement
 	TempValue0 = 3
 	TempValue1 = 16
 	ArrayPos0 = 40
@@ -40,7 +44,8 @@ sub ObjectDraw
 		TempValue0++
 		TempValue1 += 8192
 	loop
-	//Unknown Use
+
+	// Unknown Use, the Value's never referenced anywhere else...
 	Object.Value1++
 	Object.Value1 &= 511
 end sub
@@ -66,6 +71,7 @@ sub ObjectStartup
 		TempValue0 += 4
 		TempValue1 += 4
 	loop
+
 	//#21 - #22 rows of water sprites, from back to front
 	TempValue0 -= 16
 	while TempValue1 < 240
@@ -84,9 +90,10 @@ sub RSDKDraw
 	DrawSprite(0)
 end sub
 
+
 sub RSDKLoad
-	LoadSpriteSheet("Global/Display.gif")
-	SpriteFrame(-16, -16, 32, 32, 1, 143)		// #0 - "Script" Icon
+	LoadSpriteSheet("Title/Title.gif")
+	SpriteFrame(0, 0, 120, 104, 257, 146)
 
 	SetVariableAlias(ALIAS_VAR_PROPVAL, "unused")
 end sub

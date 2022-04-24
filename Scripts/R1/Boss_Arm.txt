@@ -107,7 +107,9 @@ sub ObjectMain
 		if Object.XVelocity < 524288	// 0x80000
 			Object.XVelocity += 32768	// 0x8000
 		else
-			Object.Frame = 1	// Unused Frame yay!!!
+			// Set the arm to its retracted frame
+			// - However, because of an oversight when drawing, this change can't be seen anyways so it's unused
+			Object.Frame = 1
 		end if
 		
 		ArrayPos0 = Object.ArmJointEntity
@@ -128,7 +130,10 @@ end sub
 
 sub ObjectDraw
 	DrawSprite(3)
-	DrawSprite(0)	// This should be Object.Frame but ok
+		
+	// See above - this should actually be Object.Frame
+	// However, since it isn't, the arm just shows as extended all the time
+	DrawSprite(0)
 end sub
 
 
@@ -145,16 +150,14 @@ end sub
 // ========================
 
 sub RSDKDraw
-	DrawSprite(3)
-	DrawSprite(0)	// This should be Object.Frame but ok
+	DrawSprite(1)
+	DrawSprite(0)
 end sub
 
 sub RSDKLoad
 	LoadSpriteSheet("R1/Objects3.gif")
-	SpriteFrame(-15, -8, 32, 16, 141, 34)	// #0 - Arm Extend
-	SpriteFrame(-6, -8, 24, 16, 174, 34)	// #1 - Arm Retract Frame 0	(Unused by code mistake)
-	SpriteFrame(2, -8, 16, 16, 124, 51)		// #2 - Arm Retract Frame 1	(Unused)
-	SpriteFrame(9, -8, 24, 16, 141, 51)		// #3 - Arm Elbow
+	SpriteFrame(-15, -8, 32, 16, 141, 34) // Arm Extend
+	SpriteFrame(9, -8, 24, 16, 141, 51)   // Elbow
 
 	SetVariableAlias(ALIAS_VAR_PROPVAL, "unused")
 end sub

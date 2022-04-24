@@ -3,17 +3,26 @@
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
 // Aliases
-#alias 16: TYPE_BGEFFECTS
+// Values 0-1 are unused...
+#alias Object.Value2 : Object.PrevAngle
+#alias Object.Value3 : Object.Fans.Timer
+#alias Object.Value4 : Object.Crunchers.Timer
+#alias Object.Value5 : Object.Fans.Sprite
+#alias Object.Value6 : Object.Crunchers.Sprite
 
 
 sub ObjectDraw
-	Object.Value3++
-	if Object.Value3 > 2
-		Object.Value3 = 0
-		Object.Value5++
-		Object.Value5 %= 3
-		switch Object.Value5
+	
+	// Animate the Fans
+	Object.Fans.Timer++
+	if Object.Fans.Timer > 2
+		Object.Fans.Timer = 0
+		Object.Fans.Sprite++
+		Object.Fans.Sprite %= 3
+		switch Object.Fans.Sprite
 		case 0
+			// Fans are 4x4 tiles, with 8 unique tiles in them, so
+			// 8 tiles need to be updated to change the entire sprite
 			Copy16x16Tile(260, 420)
 			Copy16x16Tile(259, 421)
 			Copy16x16Tile(258, 422)
@@ -23,6 +32,7 @@ sub ObjectDraw
 			Copy16x16Tile(262, 426)
 			Copy16x16Tile(261, 427)
 			break
+
 		case 1
 			Copy16x16Tile(260, 428)
 			Copy16x16Tile(259, 429)
@@ -33,6 +43,7 @@ sub ObjectDraw
 			Copy16x16Tile(262, 434)
 			Copy16x16Tile(261, 435)
 			break
+
 		case 2
 			Copy16x16Tile(260, 436)
 			Copy16x16Tile(259, 437)
@@ -43,88 +54,127 @@ sub ObjectDraw
 			Copy16x16Tile(262, 442)
 			Copy16x16Tile(261, 443)
 			break
+
 		end switch
 	end if
-	Object.Value4++
-	if Object.Value4 > 5
-		Object.Value4 = 0
-		Object.Value6++
-		Object.Value6 &= 3
-		switch Object.Value6
+	
+	// Animate the Crunchers
+	Object.Crunchers.Timer++
+	if Object.Crunchers.Timer > 5
+		Object.Crunchers.Timer = 0
+		Object.Crunchers.Sprite++
+		Object.Crunchers.Sprite &= 3
+		switch Object.Crunchers.Sprite
 		case 0
+			// Crunchers are 2x2 tiles, so 4 tiles need to be updated
+			// in order to completely change their sprite
 			Copy16x16Tile(99, 444)
 			Copy16x16Tile(98, 445)
 			Copy16x16Tile(101, 448)
 			Copy16x16Tile(100, 449)
 			break
+
 		case 1
 			Copy16x16Tile(99, 446)
 			Copy16x16Tile(98, 447)
 			Copy16x16Tile(101, 450)
 			Copy16x16Tile(100, 451)
 			break
+
 		case 2
 			Copy16x16Tile(99, 452)
 			Copy16x16Tile(98, 453)
 			Copy16x16Tile(101, 456)
 			Copy16x16Tile(100, 457)
 			break
+
 		case 3
 			Copy16x16Tile(99, 454)
 			Copy16x16Tile(98, 455)
 			Copy16x16Tile(101, 458)
 			Copy16x16Tile(100, 459)
 			break
+
 		end switch
 	end if
-	TempValue1 = Object.Value2
+
+	// Find the difference between the current scroll and last scroll pos
+	TempValue1 = Object.PrevAngle
 	TempValue2 = TileLayer[0].Angle
 	if TempValue1 < TempValue2
 		TempValue3 = TempValue2
 		TempValue3 -= TempValue1
 		if TempValue3 > 256
+			// Account for looping
 			TempValue1 += 512
 		end if
 	else
 		TempValue3 = TempValue1
 		TempValue3 -= TempValue2
 		if TempValue3 > 256
+			// Account for looping
 			TempValue2 += 512
 		end if
 	end if
+	
 	TempValue0 = TempValue1
 	TempValue0 -= TempValue2
-	Object.Value2 = TileLayer[0].Angle
-	TempValue1 = 8192
-	TempValue2 = 131072
-	TempValue3 = 65536
-	TempValue1 *= TempValue0
+	
+	// Store the current angle for use next frame
+	Object.PrevAngle = TileLayer[0].Angle
+	
+	// Move all the other BG layers in accordance with the difference from last frame
+	TempValue1 = 8192   // AKA 0x2000, though this value doesn't seem to be used anyways. Is this meant to correspond with some BG layer..?
+	TempValue2 = 131072 // AKA 0x20000
+	TempValue3 = 65536  // AKA 0x10000
+	
+	TempValue1 *= TempValue0 // This stage only has two extra layers, and yet this still exists anyways...
 	TempValue2 *= TempValue0
 	TempValue3 *= TempValue0
+	
 	HParallax[2].ScrollPos += TempValue2
 	HParallax[3].ScrollPos += TempValue3
+
 end sub
 
 
 sub ObjectStartup
-	Stage.XBoundary1 = 58720256
-	Stage.XBoundary2 = 209715200
+
+	// Setup stage bounds
+	Stage.XBoundary1 = 58720256  // AKA 0x3800000
+	Stage.XBoundary2 = 209715200 // AKA 0xC800000
 	Stage.YBoundary1 = 58720256
 	Stage.YBoundary2 = 209715200
-	HParallax[0].ScrollPos += 983040
+	
+	// Set the initial BG position
+	HParallax[0].ScrollPos += 983040 // AKA 0xF0000
+	
 #platform: HW_Rendering
+	// Load the stage map sprite if using the hardware render
 	LoadSpriteSheet("Special/SSMap1.gif")
 #endplatform
+
+	// Setup all BGEffect objects present in the level
 	ArrayPos0 = 32
 	while ArrayPos0 < 1056
 		if Object[ArrayPos0].Type == TypeName[BGEffects]
+
+			// Set this object to always active
 			Object[ArrayPos0].Priority = 1
+
+			// Make it be among the first things to be processed for drawing
 			Object[ArrayPos0].DrawOrder = 0
-			Object[ArrayPos0].Value2 = 368
+
+			// Starting angle, assuming that Sonic is starting facing left
+			Object[ArrayPos0].PrevAngle = 368
+
 		end if
+
 		ArrayPos0++
 	loop
+	
 	SetLayerDeformation(2, 128, 16, 0, 0, 0)
+
 end sub
 
 // ========================
@@ -134,6 +184,7 @@ end sub
 sub RSDKDraw
 	DrawSprite(0)
 end sub
+
 
 sub RSDKLoad
 	LoadSpriteSheet("Special/SSMap1.gif")

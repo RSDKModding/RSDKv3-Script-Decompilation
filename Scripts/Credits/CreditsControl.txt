@@ -5,141 +5,189 @@
 // Aliases
 #alias 34: TYPE_CREDITSCONTROL
 
+#alias Object.Value0 : Object.Timer
+// Value1 is unused...
+#alias Object.Value2 : Object.Scroll
+#alias Object.Value3 : Object.EndCredits
+
+// Text Font Aliases
+#alias Object.Value1 : Object.TargetLine
+
+// Soundtrack Aliases
+#alias 0 : SOUNDTRACK_JP
+
+// Stage Aliases
+#alias 1 : STAGE_P_MENU
 
 sub ObjectMain
 	switch Object.State
 	case 0
-		Screen.YOffset = Object.Value2
+		Screen.YOffset = Object.Scroll
 		TempValue0 = 256
 		TempValue0 -= Screen.CenterX
 		Screen.XOffset = TempValue0
 		Object.DrawOrder = 0
-		if Object.Value0 < 8
-			Object.Value0++
+		if Object.Timer < 8
+			Object.Timer++
 		else
-			Object.Value0 = 254
+			Object.Timer = 254
 			PlayMusic(0)
 			Object.State++
 		end if
 		SetScreenFade(0, 0, 0, 255)
 		break
+
 	case 1
-		if Object.Value0 > 0
-			SetScreenFade(0, 0, 0, Object.Value0)
-			Object.Value0 -= 8
+		if Object.Timer > 0
+			SetScreenFade(0, 0, 0, Object.Timer)
+			Object.Timer -= 8
 		else
 			Object.State++
 		end if
 		break
+
 	case 2
-		Object.Value2++
+		Object.Scroll++
+
+		// Speed up the credits if the player wants
 		if KeyDown.ButtonA == true
-			Object.Value2++
+			Object.Scroll++
 		end if
 		if KeyDown.ButtonC == true
-			Object.Value2++
+			Object.Scroll++
 		end if
-		TempValue0 = Object.Value2
+
+		TempValue0 = Object.Scroll
 		TempValue0 >>= 1
 		Screen.YOffset = TempValue0
-		if Object.Value2 > Object.Value3
+
+		if Object.Scroll > Object.EndCredits
 			Object.State = 3
-			Object.Value0 = 0
+			Object.Timer = 0
 		end if
+
 		if KeyPress.Start == true
 			Object.State = 3
-			Object.Value0 = 0
+			Object.Timer = 0
 		end if
 		if KeyPress.ButtonB == true
 			Object.State = 3
-			Object.Value0 = 0
+			Object.Timer = 0
 		end if
+
 		CheckTouchRect(0, 0, Screen.XSize, Screen.YSize)
 		if CheckResult > -1
 			Object.State = 3
-			Object.Value0 = 0
+			Object.Timer = 0
 		end if
 		break
+
 	case 3
-		if Object.Value0 < 320
-			Object.Value0 += 8
+		if Object.Timer < 320
+			Object.Timer += 8
 			Music.Volume -= 2
 		else
 			StopMusic()
 			Stage.ActiveList = PRESENTATION_STAGE
-			Stage.ListPos = 1
+			Stage.ListPos = STAGE_P_MENU
 			LoadStage()
 		end if
-		TempValue0 = Object.Value0
+
+		TempValue0 = Object.Timer
 		if TempValue0 > 255
 			TempValue0 = 255
 		end if
 		SetScreenFade(0, 0, 0, TempValue0)
 		break
+
 	end switch
 end sub
 
 
 sub ObjectDraw
+	// The scene doesn't have a background or anything, so draw a new Black Rectangle here to avoid frame smear
 	DrawRect(0, 0, Screen.XSize, Screen.YSize, 0, 0, 0, 255)
 end sub
 
 
 sub ObjectStartup
-	if Options.Soundtrack == 0
+
+	if Options.Soundtrack == SOUNDTRACK_JP
 		SetMusicTrack("JP/TimeAttack.ogg", 0, 100512)
 	else
 		SetMusicTrack("US/DAGarden.ogg", 0, 117382)
 	end if
+
 #platform: Standard
-	LoadTextFile(MENU_1, "Data/Game/Credits_Console.txt", 0)
+	LoadTextFile(MENU_1, "Data/Game/Credits_Console.txt", false)
 #endplatform
 #platform: Mobile
-	LoadTextFile(MENU_1, "Data/Game/Credits_Mobile.txt", 0)
+	LoadTextFile(MENU_1, "Data/Game/Credits_Mobile.txt", false)
 #endplatform
-	Screen.CameraEnabled = 0
-	Object[0].Type = TypeName[CreditsControl]
+
+	Screen.CameraEnabled = false
+
+	Object[0].Type = TypeName[Credits Control]
 	Object[0].Priority = 1
+
+	// Get the row count of how many entries there are in the credits file
 	GetTextInfo(TempValue1, MENU_1, 2, 0, 0)
+
+	// Find the first unoccupied object slot
 	ArrayPos0 = 32
 	while Object[ArrayPos0].Type != TypeName[Blank Object]
 		ArrayPos0++
 	loop
+
+	// Create all the Credits text
+	// - TempValue0 is the current line being read from the file
+	// - TempValue2 is the X Position to spawn the text at (stays constant)
+	// - TempValue3 is the Y Position to spawn the text at
+
 	TempValue0 = 0
-	TempValue2 = 16777216
+	TempValue2 = 16777216 // AKA 0x1000000, 256 pixels from the left
 	TempValue3 = 16777216
 	while TempValue0 < TempValue1
+
+		// Get what type of entry it is
+		// [Reading the number inside the brackets]
 		GetTextInfo(TempValue4, MENU_1, 0, TempValue0, 1)
+
+		// Get the length of the entry
 		GetTextInfo(TempValue5, MENU_1, 1, TempValue0, 0)
 		if TempValue5 == 0
+			// This is a blank line, so don't put any text on the current line and instead create a new line 22 pixels tall
 			TempValue3 += 1441792
 		else
-			if TempValue4 == 48
+			if TempValue4 == 48 // '0'
 				ResetObjectEntity(ArrayPos0, TypeName[TextFont1], 0, TempValue2, TempValue3)
-				Object[ArrayPos0].Value1 = TempValue0
+				Object[ArrayPos0].TargetLine = TempValue0
 				ArrayPos0++
-				TempValue3 += 1441792
+				TempValue3 += 1441792 // 22 pixels tall
 			else
-				if TempValue4 == 49
+				if TempValue4 == 49 // '1'
 					ResetObjectEntity(ArrayPos0, TypeName[TextFont2], 0, TempValue2, TempValue3)
-					Object[ArrayPos0].Value1 = TempValue0
+					Object[ArrayPos0].TargetLine = TempValue0
 					ArrayPos0++
-					TempValue3 += 917504
+					TempValue3 += 917504 // 14 pixels tall
 				else
-					if TempValue4 == 50
+					if TempValue4 == 50 // '2'
 						ResetObjectEntity(ArrayPos0, TypeName[TextFont3], 0, TempValue2, TempValue3)
-						Object[ArrayPos0].Value1 = TempValue0
+						Object[ArrayPos0].TargetLine = TempValue0
 						ArrayPos0++
-						TempValue3 += 917504
+						TempValue3 += 917504 // 14 pixels tall
 					end if
 				end if
 			end if
 		end if
+
 		TempValue0++
 	loop
-	TempValue3 -= 917504
-	Object[0].Value3 = TempValue3
-	Object[0].Value3 >>= 15
+
+	TempValue3 -= 917504 // 14 pixels
+	Object[0].EndCredits = TempValue3
+	Object[0].EndCredits >>= 15
+
 end sub
 
 // ========================

@@ -3,84 +3,115 @@
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
 // Aliases
-#alias 43: TYPE_SPIKEBALL
+
+#alias Object.Value2 : Object.Velocity
+
+// Value3 is unused...
+
+// Timers
+// (These count towards the "Time" values, at which point states switch)
+#alias Object.Value0 : Object.PauseTimer
+#alias Object.Value1 : Object.SpikesOutTimer
+
+// Durations
+// (How long, in frames, the SpikeBall will do the action for)
+#alias Object.Value4 : Object.ShootTime
+#alias Object.Value5 : Object.RetractTime
+#alias Object.Value6 : Object.PauseTime
 
 
 sub ObjectMain
+
 	switch Object.State
+	
+	// Horizontal Spike Ball States
 	case 0
-		if Object.Value1 < Object.Value4
-			Object.Value1++
-			Object.XPos += Object.Value2
+		if Object.SpikesOutTimer < Object.ShootTime
+			Object.SpikesOutTimer++
+			Object.XPos += Object.Velocity
 		else
 			Object.State++
 		end if
 		break
+		
 	case 1
-		if Object.Value0 < Object.Value6
-			Object.Value0++
+		if Object.PauseTimer < Object.PauseTime
+			Object.PauseTimer++
 		else
-			Object.Value0 = 0
+			Object.PauseTimer = 0
 			Object.State++
 		end if
 		break
+		
 	case 2
-		if Object.Value1 > Object.Value5
-			Object.Value1--
-			Object.XPos -= Object.Value2
+		if Object.SpikesOutTimer > Object.RetractTime
+			Object.SpikesOutTimer--
+			Object.XPos -= Object.Velocity
 		else
 			Object.State++
 		end if
 		break
+		
 	case 3
-		if Object.Value0 < Object.Value6
-			Object.Value0++
+		if Object.PauseTimer < Object.PauseTime
+			Object.PauseTimer++
 		else
-			Object.Value0 = 0
+			Object.PauseTimer = 0
 			Object.State = 0
 		end if
 		break
+
+
+	// Vertical Spike Ball States
 	case 4
-		if Object.Value1 < Object.Value4
-			Object.Value1++
-			Object.YPos += Object.Value2
+		if Object.SpikesOutTimer < Object.ShootTime
+			Object.SpikesOutTimer++
+			Object.YPos += Object.Velocity
 		else
 			Object.State++
 		end if
 		break
+		
 	case 5
-		if Object.Value0 < Object.Value6
-			Object.Value0++
+		if Object.PauseTimer < Object.PauseTime
+			Object.PauseTimer++
 		else
-			Object.Value0 = 0
+			Object.PauseTimer = 0
 			Object.State++
 		end if
 		break
+		
 	case 6
-		if Object.Value1 > Object.Value5
-			Object.Value1--
-			Object.YPos -= Object.Value2
+		if Object.SpikesOutTimer > Object.RetractTime
+			Object.SpikesOutTimer--
+			Object.YPos -= Object.Velocity
 		else
 			Object.State++
 		end if
 		break
+		
 	case 7
-		if Object.Value0 < Object.Value6
-			Object.Value0++
+		if Object.PauseTimer < Object.PauseTime
+			Object.PauseTimer++
 		else
-			Object.Value0 = 0
+			Object.PauseTimer = 0
 			Object.State = 4
 		end if
 		break
+		
 	end switch
+	
 end sub
 
 
 sub ObjectPlayerInteraction
+	
 	PlayerObjectCollision(C_TOUCH, -12, -12, 12, 12)
-	if CheckResult == 1
+
+	if CheckResult == true
 		CallFunction(PlayerObject_Hit)
 	end if
+
 end sub
 
 
@@ -91,7 +122,10 @@ end sub
 
 sub ObjectStartup
 	LoadSpriteSheet("R7/Objects.gif")
+	
+	// Spike Ball Frame
 	SpriteFrame(-16, -16, 32, 32, 1, 199)
+	
 	ArrayPos0 = 32
 	while ArrayPos0 < 1056
 		if Object[ArrayPos0].Type == TypeName[SpikeBall]
@@ -99,64 +133,107 @@ sub ObjectStartup
 				Object[ArrayPos0].State = 4
 				switch Object[24].PropertyValue
 				case 0
-					Object[ArrayPos0].Value2 = 131072
-					Object[ArrayPos0].Value4 = 16
-					Object[ArrayPos0].Value5 = -16
-					Object[ArrayPos0].Value6 = 40
+					// Present
+					Object[ArrayPos0].Velocity = 131072
+					Object[ArrayPos0].ShootTime = 16
+					Object[ArrayPos0].RetractTime = -16
+					Object[ArrayPos0].PauseTime = 40
 					break
+					
 				case 1
-					Object[ArrayPos0].Value2 = 262144
-					Object[ArrayPos0].Value4 = 8
-					Object[ArrayPos0].Value5 = -8
-					Object[ArrayPos0].Value6 = 60
+					// Past
+					Object[ArrayPos0].Velocity = 262144
+					Object[ArrayPos0].ShootTime = 8
+					Object[ArrayPos0].RetractTime = -8
+					Object[ArrayPos0].PauseTime = 60
 					break
+					
 				case 2
 				case 3
-					Object[ArrayPos0].Value2 = 65536
-					Object[ArrayPos0].Value4 = 32
-					Object[ArrayPos0].Value5 = -32
-					Object[ArrayPos0].Value6 = 20
+					// Future
+					Object[ArrayPos0].Velocity = 65536
+					Object[ArrayPos0].ShootTime = 32
+					Object[ArrayPos0].RetractTime = -32
+					Object[ArrayPos0].PauseTime = 20
 					break
+					
 				end switch
 			else
 				switch Object[24].PropertyValue
 				case 0
-					Object[ArrayPos0].Value2 = 131072
-					Object[ArrayPos0].Value4 = 24
-					Object[ArrayPos0].Value5 = -24
-					Object[ArrayPos0].Value6 = 40
+					// Present
+					Object[ArrayPos0].Velocity = 131072
+					Object[ArrayPos0].ShootTime = 24
+					Object[ArrayPos0].RetractTime = -24
+					Object[ArrayPos0].PauseTime = 40
 					break
+					
 				case 1
-					Object[ArrayPos0].Value2 = 262144
-					Object[ArrayPos0].Value4 = 12
-					Object[ArrayPos0].Value5 = -12
-					Object[ArrayPos0].Value6 = 60
+					// Past
+					Object[ArrayPos0].Velocity = 262144
+					Object[ArrayPos0].ShootTime = 12
+					Object[ArrayPos0].RetractTime = -12
+					Object[ArrayPos0].PauseTime = 60
 					break
+					
 				case 2
 				case 3
-					Object[ArrayPos0].Value2 = 65536
-					Object[ArrayPos0].Value4 = 48
-					Object[ArrayPos0].Value5 = -48
-					Object[ArrayPos0].Value6 = 20
+					// Future
+					Object[ArrayPos0].Velocity = 65536
+					Object[ArrayPos0].ShootTime = 48
+					Object[ArrayPos0].RetractTime = -48
+					Object[ArrayPos0].PauseTime = 20
 					break
+					
 				end switch
 			end if
 		end if
+		
 		ArrayPos0++
 	loop
+	
 end sub
 
 // ========================
 // Editor Subs
 // ========================
 
-sub RSDKDraw
-	DrawSprite(0)
+sub RSDKEdit
+	if Editor.ReturnVariable == true
+		switch Editor.VariableID
+		case EDIT_VAR_PROPVAL // property value
+			CheckResult = Object.PropertyValue
+			break
+		case 0 // type
+			CheckResult = Object.PropertyValue
+			break
+		end switch
+	else
+		switch Editor.variableID
+		case EDIT_VAR_PROPVAL // property value
+			Object.PropertyValue = Editor.VariableValue
+			break
+		case 0 // type
+			Object.PropertyValue = Editor.VariableValue
+			break
+		end switch
+	end if
 end sub
 
-sub RSDKLoad
-	LoadSpriteSheet("Global/Display.gif")
-	SpriteFrame(-16, -16, 32, 32, 1, 143)		// #0 - "Script" Icon
 
-	SetVariableAlias(ALIAS_VAR_PROPVAL, "unused")
+sub RSDKDraw
+	DrawSprite(0)
+	
+	// TODO: draw an arrow or something to show the spike ball's direction
+end sub
+
+
+sub RSDKLoad
+	LoadSpriteSheet("R7/Objects.gif")
+	SpriteFrame(-16, -16, 32, 32, 1, 199)
+
+	AddEditorVariable("type")
+	SetActiveVariable("type")
+	AddEnumVariable("Horizontal", 0)
+	AddEnumVariable("Vertical",   1)
 end sub

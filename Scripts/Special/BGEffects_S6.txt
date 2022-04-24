@@ -3,17 +3,26 @@
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
 // Aliases
-#alias 16: TYPE_BGEFFECTS
-
+#alias Object.Value0 : Object.DeformTimer
+#alias Object.Value1 : Object.PaletteTimer
+#alias Object.Value2 : Object.PrevAngle
+#alias Object.Value3 : Object.Fans.Timer
+#alias Object.Value4 : Object.Crunchers.Timer
+#alias Object.Value5 : Object.Fans.Sprite
+#alias Object.Value6 : Object.Crunchers.Sprite
 
 sub ObjectDraw
-	Object.Value3++
-	if Object.Value3 > 2
-		Object.Value3 = 0
-		Object.Value5++
-		Object.Value5 %= 3
-		switch Object.Value5
+
+	// Animate the fans in the stage
+	Object.Fans.Timer++
+	if Object.Fans.Timer > 2
+		Object.Fans.Timer = 0
+		Object.Fans.Sprite++
+		Object.Fans.Sprite %= 3
+		switch Object.Fans.Sprite
 		case 0
+			// Fans are 4x4 tiles, comprised of 8 unique tiles, so
+			// 8 individual tiles need to be updated to change the entire sprite
 			Copy16x16Tile(37, 348)
 			Copy16x16Tile(38, 349)
 			Copy16x16Tile(39, 350)
@@ -23,6 +32,7 @@ sub ObjectDraw
 			Copy16x16Tile(43, 354)
 			Copy16x16Tile(44, 355)
 			break
+
 		case 1
 			Copy16x16Tile(37, 356)
 			Copy16x16Tile(38, 357)
@@ -33,6 +43,7 @@ sub ObjectDraw
 			Copy16x16Tile(43, 362)
 			Copy16x16Tile(44, 363)
 			break
+
 		case 2
 			Copy16x16Tile(37, 364)
 			Copy16x16Tile(38, 365)
@@ -43,54 +54,69 @@ sub ObjectDraw
 			Copy16x16Tile(43, 370)
 			Copy16x16Tile(44, 371)
 			break
+
 		end switch
 	end if
-	Object.Value4++
-	if Object.Value4 > 5
-		Object.Value4 = 0
-		Object.Value6++
-		Object.Value6 &= 3
-		switch Object.Value6
+
+	Object.Crunchers.Timer++
+	if Object.Crunchers.Timer > 5
+		Object.Crunchers.Timer = 0
+		Object.Crunchers.Sprite++
+		Object.Crunchers.Sprite &= 3
+		switch Object.Crunchers.Sprite
 		case 0
+			// Crunchers are 2x2 tiles, each tile unique,
+			// so 4 tiles need to be updated in order to completely change their sprite
 			Copy16x16Tile(134, 372)
 			Copy16x16Tile(135, 373)
 			Copy16x16Tile(136, 376)
 			Copy16x16Tile(137, 377)
 			break
+
 		case 1
 			Copy16x16Tile(134, 374)
 			Copy16x16Tile(135, 375)
 			Copy16x16Tile(136, 378)
 			Copy16x16Tile(137, 379)
 			break
+
 		case 2
 			Copy16x16Tile(134, 380)
 			Copy16x16Tile(135, 381)
 			Copy16x16Tile(136, 384)
 			Copy16x16Tile(137, 385)
 			break
+
 		case 3
 			Copy16x16Tile(134, 382)
 			Copy16x16Tile(135, 383)
 			Copy16x16Tile(136, 386)
 			Copy16x16Tile(137, 387)
 			break
+
 		end switch
 	end if
-	Object.Value0++
-	if Object.Value0 > 1
+
+	// Make the background all loopy
+	Object.DeformTimer++
+	if Object.DeformTimer > 1
 		TileLayer[1].DeformationOffset++
-		Object.Value0 = 0
+		Object.DeformTimer = 0
 	end if
+
 #platform: Standard
-	Object.Value1++
-	if Object.Value1 > 3
-		Object.Value1 = 0
+	// Animate the stage's palette
+	Object.PaletteTimer++
+	if Object.PaletteTimer > 3
+		Object.PaletteTimer = 0
 		RotatePalette(209, 221, 0)
 	end if
 #endplatform
-	TempValue1 = Object.Value2
+
+	// Find the difference between the current angle and the last angle
+	TempValue1 = Object.PrevAngle
 	TempValue2 = TileLayer[0].Angle
+
 	if TempValue1 < TempValue2
 		TempValue3 = TempValue2
 		TempValue3 -= TempValue1
@@ -104,35 +130,59 @@ sub ObjectDraw
 			TempValue2 += 512
 		end if
 	end if
+
 	TempValue0 = TempValue1
 	TempValue0 -= TempValue2
-	Object.Value2 = TileLayer[0].Angle
-	TempValue1 = 8192
-	TempValue2 = 131072
-	TempValue1 *= TempValue0
+
+	// Store the current angle for the same process next frame
+	Object.PrevAngle = TileLayer[0].Angle
+	
+	// Scroll the BG with parallax
+	TempValue1 = 8192   // AKA 0x2000, unused
+	TempValue2 = 131072 // AKA 0x20000
+	TempValue1 *= TempValue0 // There was likely some layer this corresponded to, but in the final version, only the buildings layer gets moved
 	TempValue2 *= TempValue0
 	HParallax[1].ScrollPos += TempValue2
+	
 end sub
 
 
 sub ObjectStartup
-	Stage.XBoundary1 = 41943040
-	Stage.XBoundary2 = 226492416
-	Stage.YBoundary1 = 50331648
-	Stage.YBoundary2 = 218103808
+	
+	// Setup Stage Bounds
+	// Aside from the Robotnik stage (which uses copies of these same numbers), this seems to be the only Special Stage with uneven left/right and top/bottom bounds
+	Stage.XBoundary1 = 41943040  // AKA 0x2800000
+	Stage.XBoundary2 = 226492416 // AKA 0xD800000
+	Stage.YBoundary1 = 50331648  // AKA 0x3000000
+	Stage.YBoundary2 = 218103808 // AKA 0xD000000
+
 	SetLayerDeformation(2, 64, 64, 0, 0, 0)
+
 #platform: HW_Rendering
 	LoadSpriteSheet("Special/SSMap6.gif")
 #endplatform
+
+	// Setup all BGEffects objects in the level
+	// (There should only ever be one though)
 	ArrayPos0 = 32
 	while ArrayPos0 < 1056
 		if Object[ArrayPos0].Type == TypeName[BGEffects]
+			// Initialise its values
+			
+			// Make the object always active, as the stage should always animate even when its animator object is out of bounds
 			Object[ArrayPos0].Priority = 1
+			
+			// Make the object the first thing to be drawn
 			Object[ArrayPos0].DrawOrder = 0
-			Object[ArrayPos0].Value2 = 368
+			
+			// And setup its starting angle too, assuming Sonic's starting facing left
+			Object[ArrayPos0].PrevAngle = 368
+
 		end if
+	
 		ArrayPos0++
 	loop
+
 end sub
 
 // ========================
@@ -142,6 +192,7 @@ end sub
 sub RSDKDraw
 	DrawSprite(0)
 end sub
+
 
 sub RSDKLoad
 	LoadSpriteSheet("Special/SSMap6.gif")

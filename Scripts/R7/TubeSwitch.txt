@@ -4,15 +4,21 @@
 
 // Aliases
 #alias 42: TYPE_TUBESWITCH
-#alias Player.Value6:Player.MinRollSpeed
+
+#alias Object.Value0 : Object.InTube
+
+#alias 0 : TUBESWITCH_GROUND
+#alias 0 : TUBESWITCH_GROUND
+
+#alias Player.Value6 : Player.MinRollSpeed
 
 
 sub ObjectPlayerInteraction
 	PlayerObjectCollision(C_TOUCH, -16, -16, 16, 16)
-	if CheckResult == 1
+	if CheckResult == true
 		switch Object.PropertyValue
 		case 0
-			if Object.Value0 == 0
+			if Object.InTube == false
 				if Player.State != PlayerObject_StartTTCtrlLock
 					Player.State = PlayerObject_StartTTCtrlLock
 					Player.Gravity = 0
@@ -24,6 +30,7 @@ sub ObjectPlayerInteraction
 				end if
 			end if
 			break
+
 		case 1
 			Player.State = PlayerObject_HandleAir
 			Player.Animation = ANI_JUMPING
@@ -56,8 +63,9 @@ sub ObjectPlayerInteraction
 			Player.XVelocity = 0
 			Player.Speed = 0
 			break
+
 		case 2
-			if Object.Value0 == 0
+			if Object.InTube == false
 				if Player.State != PlayerObject_StartTTCtrlLock
 					Player.XPos = Object.XPos
 					Player.State = PlayerObject_StartTTCtrlLock
@@ -101,8 +109,9 @@ sub ObjectPlayerInteraction
 				end if
 			end if
 			break
+
 		case 3
-			if Object.Value0 == 0
+			if Object.InTube == false
 				if Player.CollisionMode == 2
 					Player.CollisionMode = 0
 					Player.Angle = 0
@@ -111,8 +120,9 @@ sub ObjectPlayerInteraction
 				end if
 			end if
 			break
+
 		case 4
-			if Object.Value0 == 0
+			if Object.InTube == false
 				Player.State = PlayerObject_HandleRolling
 				Player.Animation = ANI_JUMPING
 				if Player.XPos < Object.XPos
@@ -128,6 +138,7 @@ sub ObjectPlayerInteraction
 				end if
 			end if
 			break
+
 		case 5
 			if Player.YVelocity < 0
 				if Player.State != PlayerObject_StartTTCtrlLock
@@ -158,8 +169,9 @@ sub ObjectPlayerInteraction
 				end if
 			end if
 			break
+
 		case 6
-			if Object.Value0 == 0
+			if Object.InTube == 0
 				if Player.State == PlayerObject_HandleAir
 					Player.XPos = Object.XPos
 					Player.XVelocity = 0
@@ -167,8 +179,9 @@ sub ObjectPlayerInteraction
 				end if
 			end if
 			break
+
 		case 7
-			if Object.Value0 == 0
+			if Object.InTube == false
 				if Player.CollisionMode == 2
 					Player.CollisionMode = 0
 					Player.Angle += 128
@@ -177,10 +190,12 @@ sub ObjectPlayerInteraction
 				end if
 			end if
 			break
+
 		end switch
-		Object.Value0 = 1
+
+		Object.InTube = true
 	else
-		Object.Value0 = 0
+		Object.InTube = false
 	end if
 end sub
 
@@ -189,12 +204,36 @@ end sub
 // ========================
 
 sub RSDKDraw
-	DrawSprite(0)
+	// This object doesn't have a debug view, so this is custom
+	// It draws a square out of tubeswitch icons
+
+	TempValue0 = Object.XPos
+	TempValue0 -= 0x80000
+	TempValue1 = Object.YPos
+	TempValue1 -= 0x80000
+	DrawSpriteXY(0, TempValue0, TempValue1)
+	TempValue0 += 0x100000
+	DrawSpriteXY(0, TempValue0, TempValue1)
+	TempValue1 += 0x100000
+	DrawSpriteXY(0, TempValue0, TempValue1)
+	TempValue0 -= 0x100000
+	DrawSpriteXY(0, TempValue0, TempValue1)
+	
+	if Editor.ShowGizmos == true
+		// Draw the tube switch's hitbox, purposefully ignoring Editor.DrawingOverlay
+		
+		TempValue0 = Object.XPos
+		TempValue0 -= 0x80000
+		TempValue1 = Object.YPos
+		TempValue1 -= 0x80000
+		DrawRectOutline(TempValue0, TempValue1, 0x100000, 0x100000, 255, 255, 255, 255)
+	end if
 end sub
+
 
 sub RSDKLoad
 	LoadSpriteSheet("Global/Display.gif")
-	SpriteFrame(-16, -16, 32, 32, 1, 143)		// #0 - "Script" Icon
+	SpriteFrame(-8, -8, 16, 16, 173, 67) // "T" (ubeswitch) icon
 
 	SetVariableAlias(ALIAS_VAR_PROPVAL, "unused")
 end sub
