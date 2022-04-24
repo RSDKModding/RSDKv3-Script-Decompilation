@@ -3,51 +3,110 @@
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
 // Aliases
-#alias 15: TYPE_STAGEFINISH
+#alias Object.Value0 : Object.Timer
+#alias Object.Value5 : Object.TimeBonus
+#alias Object.Value6 : Object.RingBonus
+#alias Object.Value7 : Object.Continues
 
-// Languages
-#alias 0 : ENGLISH
-#alias 1 : FRENCH
-#alias 2 : ITALIAN
-#alias 3 : DEUTSCH
-#alias 4 : SPANISH
-#alias 5 : JAPANESE
+// All texts have their own X position values
+#alias Object.XPos   : Object.LineXPos0
+#alias Object.Value1 : Object.LineXPos1
+#alias Object.Value2 : Object.LineXPos2
+#alias Object.Value3 : Object.LineXPos3
+#alias Object.Value4 : Object.LineXPos4
+
+// States
+#alias 0 : STAGEFINISH_INIT
+#alias 1 : STAGEFINISH_FADEOUT
+#alias 2 : STAGEFINISH_FADEIN
+#alias 3 : STAGEFINISH_SCROLLTEXT
+#alias 4 : STAGEFINISH_DISPLAYTALLY
+#alias 5 : STAGEFINISH_TALLYDOWN
+#alias 6 : STAGEFINISH_DISPLAYFINAL
+#alias 7 : STAGEFINISH_LOADNORMAL
+#alias 8 : STAGEFINISH_LOADTIMEATTACK
+#alias 9 : STAGEFINISH_LOADCREDITS
+
+// Player Aliases
+#alias 0 : PLAYER_SONIC
+
+// HUD Aliases
+#alias Object.Value1 : HUD.Time.Seconds
+#alias Object.Value3 : HUD.Rings
+
+// Language Aliases
+#alias 0 : LANGUAGE_ENGLISH
+#alias 1 : LANGUAGE_FRENCH
+#alias 2 : LANGUAGE_ITALIAN
+#alias 3 : LANGUAGE_DEUTSCH
+#alias 4 : LANGUAGE_SPANISH
+#alias 5 : LANGUAGE_JAPANESE
+
+// SFX Aliases
+#alias 16 : SFX_SCOREADD
+#alias 17 : SFX_SCORETOTAL
+#alias 19 : SFX_SPECIALWARP
+#alias 20 : SFX_1UP
+#alias 21 : SFX_ACHIEVEMENT
+
+// Soundtrack Aliases
+#alias 0 : SOUNDTRACK_JP
+
+// Stage Aliases
+#alias 0 : STAGE_P_TITLESCREEN
+#alias 2 : STAGE_P_TIMEATTACK
+#alias 7 : STAGE_P_CREDITS
+
 
 sub ObjectMain
+
 	switch Object.State
-	case 0
-		Object.XPos = -799
-		Object.Value1 = 1255
-		Object.Value2 = 1319
-		Object.Value3 = 1402
-		Object.Value4 = 1466
-		Object.State = 1
-		Object.Value0 = 0
+	case STAGEFINISH_INIT
+		// Setup the initial text line positions
+		Object.LineXPos0 = -799
+		Object.LineXPos1 = 1255
+		Object.LineXPos2 = 1319
+		Object.LineXPos3 = 1402
+		Object.LineXPos4 = 1466
+
+		Object.State = STAGEFINISH_FADEOUT
+		Object.Timer = 0
+		
+		// Setup alpha, used for fading in the Time Stones
 		Object.Alpha = 0
-		Object.InkEffect = 2 //INK_ALPHA
+		Object.InkEffect = 2
+
 		if Object.PropertyValue > 0
-			Object.Value5 = Object[4].Value1
-			Object.Value5 *= 200
+			// Setup the Time Bonus
+			Object.TimeBonus = HUD[4].Time.Seconds
+			Object.TimeBonus *= 200
+
+			// Set the corresponding Time Stone bit for this stage
 			TempValue0 = Stage.ActNo
 			TempValue0--
-			SetBit(SpecialStage.TimeStones, TempValue0, 1)
+			SetBit(SpecialStage.TimeStones, TempValue0, true)
 		else
-			Object.Value5 = 0
+			Object.TimeBonus = 0
 		end if
-		Object.Value6 = Object[4].Value3
-		Object.Value6 *= 200
+
+		// Setup the Ring Bonus
+		Object.RingBonus = HUD[4].Rings
+		Object.RingBonus *= 200
+
 		Stage.ListPos = SpecialStage.NextZone
 		Stage.ActiveList = REGULAR_STAGE
+
 		if SpecialStage.TimeStones < 127
-			TempValue0 = 0
-			while TempValue0 == 0
+			TempValue0 = false
+			while TempValue0 == false
 				SpecialStage.ListPos++
 				if SpecialStage.ListPos > 6
 					SpecialStage.ListPos = 0
 				end if
+
 				GetBit(TempValue1, SpecialStage.TimeStones, SpecialStage.ListPos)
-				if TempValue1 == 0
-					TempValue0 = 1
+				if TempValue1 == false
+					TempValue0 = true
 				end if
 			loop
 		else
@@ -56,11 +115,15 @@ sub ObjectMain
 			if TempValue0 == 9
 				Stage.ListPos--
 			end if
+
 			Good_Future_Count = 2
-			if Stage.PlayerListPos == 0
+
+			if Stage.PlayerListPos == PLAYER_SONIC
+				// If all Stones are collected, unlock the "Treasure Hunter" achievement
 				SetAchievement(8, 100)
 			end if
 		end if
+
 		if Options.GameMode == 1
 			ArrayPos1 = Options.SaveSlot
 			ArrayPos1 <<= 3
@@ -79,230 +142,281 @@ sub ObjectMain
 			ArrayPos1++
 			SaveRAM[ArrayPos1] = Player.ScoreBonus
 			ArrayPos1++
+
 			WriteSaveRAM()
 		end if
 		break
-	case 1
-		if Object.Value0 == 120
-			Object.State = 2
-			Object.Value0 = 256
+
+	case STAGEFINISH_FADEOUT
+		if Object.Timer == 120
+			Object.State = STAGEFINISH_FADEIN
+			Object.Timer = 256
 			if SpecialStage.TimeStones > 126
+				// If the player has all Stones, then turn this object into the "got 'em all" variant
 				Object.PropertyValue = 2
 			end if
 			PlayMusic(1)
 		else
-			Object.Value0++
+			Object.Timer++
 			Music.Volume--
-			if Object.Value0 == 24
+			if Object.Timer == 24
+				// Clear all game objects (aside from this one)
+
+				// First do all the reserved object slots
 				TempValue0 = 0
 				while TempValue0 < 30
 					ResetObjectEntity(TempValue0, TypeName[Blank Object], 0, 0, 0)
 					TempValue0++
 				loop
+
+				// Then do all the game object slots
 				TempValue0++
 				while TempValue0 < 1184
 					ResetObjectEntity(TempValue0, TypeName[Blank Object], 0, 0, 0)
 					TempValue0++
 				loop
+
+				// Set all layers to not draw
 				Stage[0].ActiveLayer = 9
 				Stage[1].ActiveLayer = 9
 				Stage[2].ActiveLayer = 9
 				Stage[3].ActiveLayer = 9
+
+				// Lock the player from doing stuff too
 				Player.ControlMode = 0
-				KeyDown.Left = 0
-				KeyDown.Right = 0
+				KeyDown.Left  = false
+				KeyDown.Right = false
 				Player.Direction = FACING_RIGHT
+
 			end if
 		end if
-		TempValue0 = Object.Value0
+
+		TempValue0 = Object.Timer
 		TempValue0 <<= 4
 		if TempValue0 > 255
 			TempValue0 = 255
 		end if
 		SetScreenFade(208, 255, 224, TempValue0)
 		break
-	case 2
-		Object.Value0 -= 16
-		if Object.Value0 == 0
-			Object.State = 3
+
+	case STAGEFINISH_FADEIN
+		Object.Timer -= 16
+		if Object.Timer == 0
+			Object.State = STAGEFINISH_SCROLLTEXT
 		end if
-		SetScreenFade(208, 255, 224, Object.Value0)
+		SetScreenFade(208, 255, 224, Object.Timer)
+
 		TempValue0 = Screen.CenterX
 		TempValue0 -= 88
-		if Object.XPos < TempValue0
-			Object.XPos += 16
-			if Object.XPos > TempValue0
-				Object.XPos = TempValue0
+		if Object.LineXPos0 < TempValue0
+			Object.LineXPos0 += 16
+			if Object.LineXPos0 > TempValue0
+				Object.LineXPos0 = TempValue0
 			end if
 		else
-			Object.XPos = TempValue0
+			Object.LineXPos0 = TempValue0
 		end if
+
 		TempValue0++
-		if Object.Value1 > TempValue0
-			Object.Value1 -= 16
-			if Object.Value1 < TempValue0
-				Object.Value1 = TempValue0
+		if Object.LineXPos1 > TempValue0
+			Object.LineXPos1 -= 16
+			if Object.LineXPos1 < TempValue0
+				Object.LineXPos1 = TempValue0
 			end if
 		else
-			Object.Value1 = TempValue0
+			Object.LineXPos1 = TempValue0
 		end if
-		if Object.Value2 > TempValue0
-			Object.Value2 -= 16
-			if Object.Value2 < TempValue0
-				Object.Value2 = TempValue0
+
+		if Object.LineXPos2 > TempValue0
+			Object.LineXPos2 -= 16
+			if Object.LineXPos2 < TempValue0
+				Object.LineXPos2 = TempValue0
 			end if
 		else
-			Object.Value2 = TempValue0
+			Object.LineXPos2 = TempValue0
 		end if
-		if Object.Value3 > TempValue0
-			Object.Value3 -= 16
-			if Object.Value3 < TempValue0
-				Object.Value3 = TempValue0
+
+		if Object.LineXPos3 > TempValue0
+			Object.LineXPos3 -= 16
+			if Object.LineXPos3 < TempValue0
+				Object.LineXPos3 = TempValue0
 			end if
 		else
-			Object.Value3 = TempValue0
+			Object.LineXPos3 = TempValue0
 		end if
-		if Object.Value4 > TempValue0
-			Object.Value4 -= 16
-			if Object.Value4 < TempValue0
-				Object.Value4 = TempValue0
+
+		if Object.LineXPos4 > TempValue0
+			Object.LineXPos4 -= 16
+			if Object.LineXPos4 < TempValue0
+				Object.LineXPos4 = TempValue0
 			end if
 		else
-			Object.Value4 = TempValue0
-			Object.State = 4
-			Object.Value0 = 0
+			Object.LineXPos4 = TempValue0
+			Object.State = STAGEFINISH_DISPLAYTALLY
+			Object.Timer = 0
 		end if
 		break
-	case 3
+
+	case STAGEFINISH_SCROLLTEXT
+		// Moving the text in
+
 		TempValue0 = Screen.CenterX
 		TempValue0 -= 88
-		if Object.XPos < TempValue0
-			Object.XPos += 16
-			if Object.XPos > TempValue0
-				Object.XPos = TempValue0
+
+		if Object.LineXPos0 < TempValue0
+			Object.LineXPos0 += 16
+			if Object.LineXPos0 > TempValue0
+				Object.LineXPos0 = TempValue0
 			end if
 		else
-			Object.XPos = TempValue0
+			Object.LineXPos0 = TempValue0
 		end if
+
 		TempValue0++
-		if Object.Value1 > TempValue0
-			Object.Value1 -= 16
-			if Object.Value1 < TempValue0
-				Object.Value1 = TempValue0
+		if Object.LineXPos1 > TempValue0
+			Object.LineXPos1 -= 16
+			if Object.LineXPos1 < TempValue0
+				Object.LineXPos1 = TempValue0
 			end if
 		else
-			Object.Value1 = TempValue0
+			Object.LineXPos1 = TempValue0
 		end if
-		if Object.Value2 > TempValue0
-			Object.Value2 -= 16
-			if Object.Value2 < TempValue0
-				Object.Value2 = TempValue0
+
+		if Object.LineXPos2 > TempValue0
+			Object.LineXPos2 -= 16
+			if Object.LineXPos2 < TempValue0
+				Object.LineXPos2 = TempValue0
 			end if
 		else
-			Object.Value2 = TempValue0
+			Object.LineXPos2 = TempValue0
 		end if
-		if Object.Value3 > TempValue0
-			Object.Value3 -= 16
-			if Object.Value3 < TempValue0
-				Object.Value3 = TempValue0
+
+		if Object.LineXPos3 > TempValue0
+			Object.LineXPos3 -= 16
+			if Object.LineXPos3 < TempValue0
+				Object.LineXPos3 = TempValue0
 			end if
 		else
-			Object.Value3 = TempValue0
+			Object.LineXPos3 = TempValue0
 		end if
-		if Object.Value4 > TempValue0
-			Object.Value4 -= 16
-			if Object.Value4 < TempValue0
-				Object.Value4 = TempValue0
+
+		if Object.LineXPos4 > TempValue0
+			Object.LineXPos4 -= 16
+			if Object.LineXPos4 < TempValue0
+				Object.LineXPos4 = TempValue0
 			end if
 		else
-			Object.Value4 = TempValue0
-			Object.State = 4
-			Object.Value0 = 0
+			Object.LineXPos4 = TempValue0
+			Object.State = STAGEFINISH_DISPLAYTALLY
+			Object.Timer = 0
 		end if
 		break
-	case 4
+
+	case STAGEFINISH_DISPLAYTALLY
+		// Waiting for a bit, to let the player see what they got
+
+		// Fade in the Stones
 		if Object.Alpha < 255
+			// TempValue0 is used to hold the target value since Object.Alpha is a byte, and therefore open to overflowing if too much is added
 			TempValue0 = Object.Alpha
 			TempValue0 += 8
 			if TempValue0 > 255
 				TempValue0 = 255
 			end if
+
 			Object.Alpha = TempValue0
 		end if
-		if Options.Soundtrack == 0
-			Object.Value0++
-			if Object.Value0 > 299
-				Object.Value0 = 0
-				Object.State = 5
+
+		// The different soundtrack jingles have different lenghts, so account for that
+		if Options.Soundtrack == SOUNDTRACK_JP
+			Object.Timer++
+			if Object.Timer > 299
+				Object.Timer = 0
+				Object.State = STAGEFINISH_TALLYDOWN
 			end if
 		else
-			Object.Value0++
-			if Object.Value0 > 429
-				Object.Value0 = 0
-				Object.State = 5
+			Object.Timer++
+			if Object.Timer > 429
+				Object.Timer = 0
+				Object.State = STAGEFINISH_TALLYDOWN
 			end if
 		end if
 		break
-	case 5
-		if Object.Value6 > 0
-			Object.Value6 -= 200
+
+	case STAGEFINISH_TALLYDOWN
+		// Tally up the bonuses, rings first then time
+		if Object.RingBonus > 0
+			Object.RingBonus -= 200
 			Player.Score += 200
-			if Object.Value6 < 0
-				Player.Score += Object.Value6
-				Object.Value6 = 0
+			if Object.RingBonus < 0
+				Player.Score += Object.RingBonus
+				Object.RingBonus = 0
 			end if
 		else
-			if Object.Value5 > 0
-				Object.Value5 -= 200
+			if Object.TimeBonus > 0
+				Object.TimeBonus -= 200
 				Player.Score += 200
-				if Object.Value5 < 0
-					Player.Score += Object.Value5
-					Object.Value5 = 0
+				if Object.TimeBonus < 0
+					Player.Score += Object.TimeBonus
+					Object.TimeBonus = 0
 				end if
 			end if
 		end if
+
 		if Player.Score >= Player.ScoreBonus
-			Object.Value7++
+			Object.Continues++
 			Player.Lives++
 			Player.ScoreBonus += 50000
-			if Stage.PlayerListPos == 0
-				PlaySfx(20, 0)
+
+			if Stage.PlayerListPos == PLAYER_SONIC
+				PlaySfx(SFX_1UP, false)
 			else
-				PlaySfx(21, 0)
+				PlaySfx(SFX_ACHIEVEMENT, false)
 			end if
 		end if
-		CheckGreater(Object.Value6, 0)
+
+		CheckGreater(Object.RingBonus, 0)
 		TempValue0 = CheckResult
-		CheckGreater(Object.Value5, 0)
+		CheckGreater(Object.TimeBonus, 0)
 		TempValue0 |= CheckResult
-		if TempValue0 == 1
-			Object.Value0++
-			if Object.Value0 == 2
-				PlaySfx(16, 0)
-				Object.Value0 = 0
+		if TempValue0 == true
+			Object.Timer++
+
+			if Object.Timer == 2
+				PlaySfx(SFX_SCOREADD, false)
+				Object.Timer = 0
 			end if
 		else
-			Object.State = 6
-			Object.Value0 = 0
-			PlaySfx(17, 0)
+			// The tally's done, proceed
+			Object.State = STAGEFINISH_DISPLAYFINAL
+			Object.Timer = 0
+
+			// And of course, the signature kaching!
+			PlaySfx(SFX_SCORETOTAL, false)
 		end if
 		break
-	case 6
-		Object.Value0++
-		if Object.Value0 == 160
-			Object.Value0 = 0
-			Object.State = 7
+
+	case STAGEFINISH_DISPLAYFINAL
+		// Wait some more, letting the player see what they *really* got
+		Object.Timer++
+		if Object.Timer == 160
+			Object.Timer = 0
+			Object.State = STAGEFINISH_LOADNORMAL
 			if Object[0].Type == TypeName[Blank Object]
-				PlaySfx(19, 0)
+				PlaySfx(SFX_SPECIALWARP, false)
 			end if
 		end if
 		break
-	case 7
+
+	case STAGEFINISH_LOADNORMAL
 		if Object[0].Type == TypeName[Blank Object]
-			Object.Value0 += 8
-			SetScreenFade(208, 255, 224, Object.Value0)
-			if Object.Value0 == 1024
+			Object.Timer += 8
+			SetScreenFade(208, 255, 224, Object.Timer)
+			if Object.Timer == 1024
 				if Options.GameMode == 1
+					// Saving the stage... but wasn't it done earlier by this object already?
+					// Why is it being done again..?
+
 					ArrayPos1 = Options.SaveSlot
 					ArrayPos1 <<= 3
 					SaveRAM[ArrayPos1] = Stage.PlayerListPos
@@ -320,60 +434,85 @@ sub ObjectMain
 					ArrayPos1++
 					SaveRAM[ArrayPos1] = Player.ScoreBonus
 					ArrayPos1++
+
 					WriteSaveRAM()
 				end if
+
+				// Write the correct colours to Fade_Colour so that the maingame fades back in with the same white
 				Fade_Colour = 208
 				Fade_Colour <<= 16
 				TempValue0 = 255
 				TempValue0 <<= 8
 				Fade_Colour += TempValue0
 				Fade_Colour += 224
+
 				if Stage.ListPos < Stage.ListSize
 					LoadStage()
 				else
+					// This should never happen, but you're somehow supposed to go to a stage that doesn't exist, so
+					// just go back to the title screen instead
 					Stage.ActiveList = PRESENTATION_STAGE
-					Stage.ListPos = 0
+					Stage.ListPos = STAGE_P_TITLESCREEN
 					LoadStage()
 				end if
 			end if
 		end if
 		break
-	case 8
-		if Object.Value0 < 480
-			Object.Value0 += 4
+
+	case STAGEFINISH_LOADTIMEATTACK
+		if Object.Timer < 480
+			Object.Timer += 4
 			Music.Volume--
 		else
 			StopMusic()
+
+			// Save the Time Attack results
 			TimeAttack.Result = Stage.Seconds
 			TimeAttack.Result *= 100
 			TempValue0 = Stage.Minutes
 			TempValue0 *= 6000
 			TimeAttack.Result += TempValue0
 			TimeAttack.Result += Stage.MilliSeconds
-			Stage.ListPos = 2
+
+			// Load the Time Attack Menu
+			Stage.ListPos = STAGE_P_TIMEATTACK
 			Stage.ActiveList = PRESENTATION_STAGE
+
 			LoadStage()
 		end if
-		SetScreenFade(0, 0, 0, Object.Value0)
+
+		SetScreenFade(0, 0, 0, Object.Timer)
 		break
-	case 9
-		if Object.Value0 < 480
-			Object.Value0 += 4
+
+	case STAGEFINISH_LOADCREDITS
+		// Used when exiting the hidden Robotnik stage
+
+		if Object.Timer < 480
+			Object.Timer += 4
 			Music.Volume--
 		else
+			// Load the credits scene
+			
 			StopMusic()
-			Stage.ListPos = 7
+			Stage.ListPos = STAGE_P_CREDITS
 			Stage.ActiveList = PRESENTATION_STAGE
+
 			LoadStage()
 		end if
-		SetScreenFade(0, 0, 0, Object.Value0)
+
+		SetScreenFade(0, 0, 0, Object.Timer)
 		break
+
 	end switch
+
 end sub
 
 
 sub ObjectDraw
-	if Object.State > 1
+
+	if Object.State > STAGEFINISH_FADEOUT
+
+		// Draw the background
 		TempValue0 = 0
 		while TempValue0 < 240
 			TempValue1 = 0
@@ -383,6 +522,11 @@ sub ObjectDraw
 			loop
 			TempValue0 += 48
 		loop
+
+		// Draw all the Time Stones the player has so far
+		// - TempValue0 is the current Stone
+		// - TempValue1 is the starting SpriteFrame for the Stones
+		// - TempValue2 is the draw position for the Stones
 		TempValue0 = 0
 		TempValue1 = 20
 		TempValue2 = Screen.CenterX
@@ -390,88 +534,151 @@ sub ObjectDraw
 		while TempValue0 < 7
 			GetBit(TempValue3, SpecialStage.TimeStones, TempValue0)
 			TempValue0++
-			if TempValue3 == 1
+			if TempValue3 == true
+				// If the player has the target Stone, then draw it
 				DrawSpriteScreenFX(TempValue1, FX_INK, TempValue2, 81)
 			end if
 			TempValue1++
 			TempValue2 += 24
 		loop
+
 	end if
+
+	// Draw the main text depending on what type of results are playing
 	switch Object.PropertyValue
 	case 0
-		DrawSpriteScreenXY(1, Object.XPos, 50)
+		// "SPECIAL ZONE"
+		DrawSpriteScreenXY(1, Object.LineXPos0, 50)
 		break
+
 	case 1
-		DrawSpriteScreenXY(2, Object.XPos, 50)
+		// "TIME STONES"
+		DrawSpriteScreenXY(2, Object.LineXPos0, 50)
 		break
+
 	case 2
-		DrawSpriteScreenXY(3, Object.XPos, 50)
+		// "GOT THEM ALL!!"
+		DrawSpriteScreenXY(3, Object.LineXPos0, 50)
 		break
+
 	end switch
-	DrawSpriteScreenXY(4, Object.Value1, 105)
-	TempValue0 = Object.Value1
+
+	// Draw the Score Text
+	DrawSpriteScreenXY(4, Object.LineXPos1, 105)
+
+	// Draw the actual Score numbers
+	TempValue0 = Object.LineXPos1
 	TempValue0 += 176
 	DrawNumbers(10, TempValue0, 105, Player.Score, 6, 8, 0)
-	DrawSpriteScreenXY(5, Object.Value2, 129)
-	TempValue0 = Object.Value2
+
+	// Draw the Ring Text
+	DrawSpriteScreenXY(5, Object.LineXPos2, 129)
+
+	// Draw the Bonus Text (to the right of "Ring")
+	TempValue0 = Object.LineXPos2
 	TempValue0 += 40
 	DrawSpriteScreenXY(7, TempValue0, 129)
+
+	// Draw the Rings number
 	TempValue0 += 136
-	DrawNumbers(10, TempValue0, 129, Object.Value6, 5, 8, 0)
-	DrawSpriteScreenXY(6, Object.Value3, 153)
-	TempValue0 = Object.Value3
+	DrawNumbers(10, TempValue0, 129, Object.RingBonus, 5, 8, 0)
+
+	// Draw the Time Text
+	DrawSpriteScreenXY(6, Object.LineXPos3, 153)
+
+	// Draw the Bonus Text (to the right of "Time")
+	TempValue0 = Object.LineXPos3
 	TempValue0 += 40
 	DrawSpriteScreenXY(7, TempValue0, 153)
+
+	// Draw the Time numbers
 	TempValue0 += 136
-	DrawNumbers(10, TempValue0, 153, Object.Value5, 5, 8, 0)
-	DrawSpriteScreenXY(8, Object.Value4, 177)
-	TempValue0 = Object.Value4
+	DrawNumbers(10, TempValue0, 153, Object.TimeBonus, 5, 8, 0)
+
+	// Draw the Extra Text
+	DrawSpriteScreenXY(8, Object.LineXPos4, 177)
+
+	// Draw the Lives Text
+	TempValue0 = Object.LineXPos4
 	TempValue0 += 49
 	DrawSpriteScreenXY(9, TempValue0, 177)
+
+	// Draw the Continue Icons
 	TempValue0 += 86
 	Object.Frame++
 	Object.Frame &= 15
 	TempValue1 = Object.Frame
 	TempValue1 >>= 3
 	TempValue1 += 27
-	TempValue2 = Object.Value7
+	TempValue2 = Object.Continues
 	while TempValue2 > 0
 		DrawSpriteScreenXY(TempValue1, TempValue0, 177)
 		TempValue2--
 		TempValue0 += 24
 	loop
+
 end sub
 
 
 sub ObjectStartup
+
+	// Load the correct sheet based on the current language
 	switch Engine.Language
-	case ENGLISH
-	case JAPANESE
+	case LANGUAGE_ENGLISH
+	case LANGUAGE_JAPANESE
+		// English and Japanese use the same sheet (the English sheet)
 		LoadSpriteSheet("Special/ScoreScreen.gif")
 		break
-	case FRENCH
+
+	case LANGUAGE_FRENCH
 		LoadSpriteSheet("Special/ScoreScreen_FR.gif")
 		break
-	case ITALIAN
+
+	case LANGUAGE_ITALIAN
 		LoadSpriteSheet("Special/ScoreScreen_IT.gif")
 		break
-	case DEUTSCH
+
+	case LANGUAGE_DEUTSCH
 		LoadSpriteSheet("Special/ScoreScreen_DE.gif")
 		break
-	case SPANISH
+
+	case LANGUAGE_SPANISH
 		LoadSpriteSheet("Special/ScoreScreen_ES.gif")
 		break
+
 	end switch
+
+	// 0 - Background
 	SpriteFrame(0, 0, 224, 48, 0, 63)
+
+	// 1 - "SPECIAL ZONE" Text
 	SpriteFrame(0, 0, 184, 14, 1, 1)
+
+	// 2 - "TIME STONES" Text
 	SpriteFrame(9, 0, 167, 14, 1, 16)
+
+	// 3 - "GOT THEM ALL!!" Text
 	SpriteFrame(-16, 0, 205, 14, 1, 48)
+
+	// 4 - "SCORE" Text
 	SpriteFrame(0, 0, 39, 11, 1, 112)
+
+	// 5 - "RING" Text
 	SpriteFrame(0, 0, 31, 11, 41, 112)
+
+	// 6 - "TIME" Text
 	SpriteFrame(0, 0, 31, 11, 73, 112)
+	
+	// 7 - "BONUS" Text
 	SpriteFrame(0, 0, 41, 11, 105, 112)
+	
+	// 8 - "EXTRA" Text
 	SpriteFrame(0, 0, 40, 11, 147, 112)
+
+	// 9 - "LIVES" Text
 	SpriteFrame(0, 0, 36, 11, 188, 112)
+
+	// 10-20 - Numbers 0-9
 	SpriteFrame(0, 0, 8, 11, 220, 1)
 	SpriteFrame(0, 0, 8, 11, 229, 1)
 	SpriteFrame(0, 0, 8, 11, 238, 1)
@@ -482,6 +689,8 @@ sub ObjectStartup
 	SpriteFrame(0, 0, 8, 11, 247, 13)
 	SpriteFrame(0, 0, 8, 11, 238, 25)
 	SpriteFrame(0, 0, 8, 11, 247, 25)
+
+	// 21-27 - Time Stones
 	SpriteFrame(0, 0, 16, 16, 1, 31)
 	SpriteFrame(0, 0, 16, 16, 18, 31)
 	SpriteFrame(0, 0, 16, 16, 35, 31)
@@ -489,13 +698,16 @@ sub ObjectStartup
 	SpriteFrame(0, 0, 16, 16, 69, 31)
 	SpriteFrame(0, 0, 16, 16, 86, 31)
 	SpriteFrame(0, 0, 16, 16, 103, 31)
-	if Stage.PlayerListPos == 0
+	
+	// 28-29 - Small Player Icons
+	if Stage.PlayerListPos == PLAYER_SONIC
 		SpriteFrame(0, 0, 16, 23, 169, 24)
 		SpriteFrame(0, 0, 16, 23, 186, 24)
 	else
 		SpriteFrame(0, 0, 16, 23, 139, 203)
 		SpriteFrame(0, 0, 16, 23, 156, 203)
 	end if
+
 end sub
 
 // ========================

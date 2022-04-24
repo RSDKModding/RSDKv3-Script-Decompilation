@@ -3,80 +3,126 @@
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
 // Aliases
-#alias 54: TYPE_AMY1
+
+// Values0-1 are skipped over...
+#alias Object.Value2 : Object.YVelocity
+#alias Object.Value3 : Object.Bounds.Left
+#alias Object.Value4 : Object.Bounds.Right
+
+#alias 0 : AMY1_CAUGHT
+#alias 1 : AMY1_FALLING
 
 
 sub ObjectMain
-	if Object.State == 1
-		Object.YPos += Object.Value2
-		Object.Value2 += 8192
+
+	if Object.State == AMY1_FALLING
+	
+		// Update falling movement
+		Object.YPos += Object.YVelocity
+		Object.YVelocity += 8192 // Gravity of 0x2000 per frame
+		
+		// Check if Amy's touched the floor
 		ObjectTileCollision(0, 0, 19, 0)
-		if CheckResult == 1
+		if CheckResult == true
+			
+			// Amy's landed on the ground now, replace her with an Amy2 object
 			ResetObjectEntity(Object.EntityNo, TypeName[Amy2], 0, Object.XPos, Object.YPos)
+			
 			Object.Frame = 4
 			Object.DrawOrder = 4
-			Object.Value3 = 1050935296
-			Object.Value4 = 1073741824
+			
+			// Set Amy's bounds to make sure she doesn't go too far
+			Object.Bounds.Left  = 1050935296 // Hardcoded left bounds  - 0x3EA40000 (or 16036 with the in-game debug position display)
+			Object.Bounds.Right = 1073741824 // Hardcoded right bounds - 0x40000000 (or 16384 with the in-game debug position display)
+		
 		end if
 	end if
+
 end sub
 
 
 sub ObjectPlayerInteraction
-	if Object.State == 0
+
+	if Object.State == AMY1_CAUGHT
 #platform: Mobile
+		// Due to how the engine works, there's a single frame upon landinig where this code is actually being run from an Amy2 object, so check against that
 		if Object.Type == TypeName[Amy1]
 #endplatform
+			// Check if Sonic's hit Amy
 			PlayerObjectCollision(C_TOUCH, -8, -16, 8, 16)
-			if CheckResult == 1
+			if CheckResult == true
+				// Free Amy if Sonic broke the rope (?)
+				
+				// Bounce Sonic off
 				FlipSign(Player.YVelocity)
 				Player.YVelocity >>= 1
-				Object.State = 1
+
+				Object.State = AMY1_FALLING
 				Object.Frame >>= 3
+				
 				CreateTempObject(TypeName[Explosion], 0, Object.XPos, Object.YPos)
-				Stage.TimeEnabled = 0
+				Stage.TimeEnabled = false
 				PlaySfx(22, 0)
 #platform: Mobile
 		end if
 #endplatform
 	end if
+	
 end sub
 
 
 sub ObjectDraw
-	if Object.State == 0
+
+	if Object.State == AMY1_CAUGHT
 		TempValue0 = Object.Frame
 		TempValue0 >>= 3
 		DrawSprite(TempValue0)
 		Object.Frame++
 		Object.Frame &= 31
 	else
+		// Stay static while falling down
 		DrawSprite(Object.Frame)
 	end if
+
 end sub
 
 
 sub ObjectStartup
+
 	LoadSpriteSheet("R7/Objects2.gif")
+
+	// Erase all Amy1 objects in the level if she's not supposed to appear
 	ArrayPos0 = 32
 	while ArrayPos0 < 1056
 		if Object[ArrayPos0].Type == TypeName[Amy1]
+			
+			// Only appear for Sonic
 			if Stage.PlayerListPos == 0
 				if Options.GameMode == 2
+					// Don't appear in time attack, unload
 					Object[ArrayPos0].Type = TypeName[Blank Object]
 				else
+					// All conditions passed - Amy can continue as normal
 					Object[ArrayPos0].DrawOrder = 4
 				end if
 			else
+				// Amy doesn't care about Tails, unload
 				Object[ArrayPos0].Type = TypeName[Blank Object]
 			end if
+
 		end if
+
 		ArrayPos0++
 	loop
+	
+	// Amy Frames
+	
+	// 0-3 - Hanging Frames
 	SpriteFrame(-12, -20, 24, 40, 1, 170)
 	SpriteFrame(-12, -20, 24, 40, 1, 211)
 	SpriteFrame(-12, -20, 24, 40, 124, 109)
 	SpriteFrame(-12, -20, 24, 40, 1, 211)
+
 end sub
 
 // ========================
@@ -87,9 +133,10 @@ sub RSDKDraw
 	DrawSprite(0)
 end sub
 
+
 sub RSDKLoad
-	LoadSpriteSheet("Global/Display.gif")
-	SpriteFrame(-16, -16, 32, 32, 1, 143)		// #0 - "Script" Icon
+	LoadSpriteSheet("R7/Objects2.gif")
+	SpriteFrame(-12, -20, 24, 40, 1, 170)
 
 	SetVariableAlias(ALIAS_VAR_PROPVAL, "unused")
 end sub

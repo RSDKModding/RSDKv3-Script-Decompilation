@@ -3,37 +3,83 @@
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
 // Aliases
-#alias 52: TYPE_KABASIRASHOT
+// Value0 is skipped over...
+#alias Object.Value1 : Object.XVelocity
+#alias Object.Value2 : Object.YVelocity
 
+// SFX Aliases
+#alias 22 : SFX_EXPLOSION
 
 sub ObjectMain
-	Object.XPos += Object.Value1
-	Object.YPos += Object.Value2
-	if Object.OutOfBounds == 1
+
+	// Update movement
+	Object.XPos += Object.XVelocity
+	Object.YPos += Object.YVelocity
+
+	if Object.OutOfBounds == true
 		Object.Type = TypeName[Blank Object]
 	end if
+
 end sub
 
 
 sub ObjectPlayerInteraction
+
 	PlayerObjectCollision(C_TOUCH, -6, -6, 6, 6)
-	if CheckResult == 1
+
+	if CheckResult == true
 		if Player.Animation == ANI_JUMPING
 			ResetObjectEntity(Object.EntityNo, TypeName[Explosion], 0, Object.XPos, Object.YPos)
-			PlaySfx(22, 0)
+			PlaySfx(SFX_EXPLOSION, false)
 		else
 			if Player.Animation == ANI_SPINDASH
 				ResetObjectEntity(Object.EntityNo, TypeName[Explosion], 0, Object.XPos, Object.YPos)
-				PlaySfx(22, 0)
+				PlaySfx(SFX_EXPLOSION, false)
 			else
+				// The player's not in an attacking animation, go ahead and hurt them
 				CallFunction(PlayerObject_Hit)
 			end if
 		end if
 	end if
+
 end sub
 
 
 sub ObjectDraw
+
+	// Use different sprites based on the shot's direction
+	if Object.PropertyValue == 0
+		// Going right!
+		DrawSpriteFX(0, FX_INK, Object.XPos, Object.YPos)
+		DrawSpriteFX(1, FX_INK, Object.XPos, Object.YPos)
+	else
+		// Heading left!
+		DrawSpriteFX(2, FX_INK, Object.XPos, Object.YPos)
+		DrawSpriteFX(3, FX_INK, Object.XPos, Object.YPos)
+	end if
+
+end sub
+
+
+sub ObjectStartup
+
+	LoadSpriteSheet("R7/Objects.gif")
+
+	// 0-1 - Going Right Frames
+	SpriteFrame(-8, -8, 16, 16, 133, 100)
+	SpriteFrame(-8, -6,  8,  8, 243, 101)
+
+	// 2-3 - Going Left Frames
+	SpriteFrame(-8, -8, 16, 16, 201, 100)
+	SpriteFrame( 4, -6,  8,  8, 240,  65)
+
+end sub
+
+// ========================
+// Editor Subs
+// ========================
+
+sub RSDKDraw
 	if Object.PropertyValue == 0
 		DrawSpriteFX(0, FX_INK, Object.XPos, Object.YPos)
 		DrawSpriteFX(1, FX_INK, Object.XPos, Object.YPos)
@@ -44,25 +90,16 @@ sub ObjectDraw
 end sub
 
 
-sub ObjectStartup
-	LoadSpriteSheet("R7/Objects.gif")
-	SpriteFrame(-8, -8, 16, 16, 133, 100)
-	SpriteFrame(-8, -6, 8, 8, 243, 101)
-	SpriteFrame(-8, -8, 16, 16, 201, 100)
-	SpriteFrame(4, -6, 8, 8, 240, 65)
-end sub
-
-// ========================
-// Editor Subs
-// ========================
-
-sub RSDKDraw
-	DrawSprite(0)
-end sub
-
 sub RSDKLoad
-	LoadSpriteSheet("Global/Display.gif")
-	SpriteFrame(-16, -16, 32, 32, 1, 143)		// #0 - "Script" Icon
+	LoadSpriteSheet("R7/Objects.gif")
 
+	SpriteFrame(-8, -8, 16, 16, 133, 100)
+	SpriteFrame(-8, -6,  8,  8, 243, 101)
+
+	SpriteFrame(-8, -8, 16, 16, 201, 100)
+	SpriteFrame( 4, -6,  8,  8, 240,  65)
+
+	// Although used by the object, this object shouldn't ever be placed in the scene at all
+	// (i still set up a object preview for it anyways though :)
 	SetVariableAlias(ALIAS_VAR_PROPVAL, "unused")
 end sub

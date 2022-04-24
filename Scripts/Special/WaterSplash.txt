@@ -3,42 +3,71 @@
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
 // Aliases
-#alias 11: TYPE_WATERSPLASH
+
+// HUD Aliases
+#alias Object.Value7 : HUD.WaterTimer
+
+// Player Alises
+#alias Player.XPos : SSSonic.XPos
+#alias Player.YPos : SSSonic.YPos
+#alias Object.Value0 : SSSonic.ZPos
+
+// SFX Aliases
+#alias 1 : SFX_WATERSPLASH
 
 
 sub ObjectDraw
-	if Player.YPos > 0
+	if SSSonic.YPos > 0
 		ResetObjectEntity(3, TypeName[Blank Object], 0, 0, 0)
 	else
-		TempValue0 = Player.XPos
+
+		// Find the player's truncated X and Z pos
+		TempValue0 = SSSonic.XPos
 		TempValue0 >>= 16
-		TempValue1 = Object[-1].Value0
+		TempValue1 = SSSonic[-1].ZPos
 		TempValue1 >>= 16
+
+		// Get the tile type Sonic's currently standing on
 		Get16x16TileInfo(CheckResult, TempValue0, TempValue1, 6)
+
+		// Is it a water tile?
 		if CheckResult == 2
+
 			if Object.Frame == 0
-				PlayStageSfx(1, 0)
-				if Stage.TimeEnabled == 0
-					Object[4].Value7 = 40
+				PlayStageSfx(SFX_WATERSPLASH, false)
+
+				if Stage.TimeEnabled == false
+					HUD[4].WaterTimer = 40
 				end if
 			end if
+
+			// Animate the object
 			Object.Frame++
 			if Object.Frame == 40
 				Object.Frame = 28
 			end if
+
+			// Get the frame it should draw
 			TempValue0 = Object.Frame
 			TempValue0 >>= 2
+
+			// Draw the sprite around the center of the screen
 			DrawSpriteScreenXY(TempValue0, Screen.CenterX, 224)
+
 		else
+			// Sonic's not on a water tile, so erase the Water Splash object
 			ResetObjectEntity(3, TypeName[Blank Object], 0, 0, 0)
-			Object[4].Value7 = 0
+			HUD[4].WaterTimer = 0
 		end if
 	end if
 end sub
 
 
 sub ObjectStartup
+
 	LoadSpriteSheet("Special/Objects.gif")
+
+	// Water Splash Frames
 	SpriteFrame(-20, -32, 40, 32, 1, 84)
 	SpriteFrame(-20, -32, 40, 32, 42, 84)
 	SpriteFrame(-20, -32, 40, 32, 83, 84)
@@ -49,6 +78,7 @@ sub ObjectStartup
 	SpriteFrame(-20, -32, 40, 32, 42, 84)
 	SpriteFrame(-20, -32, 40, 32, 83, 84)
 	SpriteFrame(-20, -32, 40, 32, 1, 84)
+
 end sub
 
 // ========================
@@ -59,9 +89,10 @@ sub RSDKDraw
 	DrawSprite(0)
 end sub
 
+
 sub RSDKLoad
 	LoadSpriteSheet("Special/Objects.gif")
-	SpriteFrame(-20, -8, 40, 8, 124, 116)
+	SpriteFrame(-20, -32, 40, 32, 42, 84)
 
 	SetVariableAlias(ALIAS_VAR_PROPVAL, "unused")
 end sub

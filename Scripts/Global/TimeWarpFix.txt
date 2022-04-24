@@ -45,6 +45,7 @@ sub ObjectMain
 			Player.XPos = Object[+1].XPos
 			Player.YPos = Object[+1].YPos
 		end if
+		
 		Object.DissapearTimer++
 		if Object.DissapearTimer == 2
 			Object.Type = TypeName[Blank Object]
@@ -59,6 +60,7 @@ sub ObjectMain
 			Player.YPos = Object[+1].YPos
 			Player.Gravity = GRAVITY_AIR
 		end if
+		
 		Object.DissapearTimer++
 		if Object.DissapearTimer == 2
 			Object.Type = TypeName[Blank Object]
@@ -107,15 +109,48 @@ sub RSDKDraw
 	DrawSprite(0)
 
 	if Editor.ShowGizmos == true
-		if Object.PropertyValue >= 2
+		switch Object.PropertyValue
+		case TIMEWARPFIX_ERASE_TOUCH
+			// Draw the object's hitbox
+			// (Initial idea was to tile T icons instead, but for a size of 32x32, it didn't look too good)
+			TempValue0 = Object.XPos
+			TempValue1 = Object.YPos
+			TempValue0 -= 1048576
+			TempValue1 -= 1048576
+			DrawRectOutline(TempValue0, TempValue1, 2097152, 2097152, 255, 255, 255, 0)
+			break
+
+		case TIMEWARPFIX_SAVE_POINT
+			// Draw hitbox rectangle
+			TempValue0 = Object.XPos
+			TempValue1 = Object.YPos
+			TempValue0 -= 3145728
+			TempValue1 -= 3145728
+			DrawRectOutline(TempValue0, TempValue1, 6291456, 6291456, 255, 255, 255, 0)
+			
+			// Draw an arrow to where the player will be sent
 			DrawArrow(Object.XPos, Object.YPos, Object[+1].XPos, Object[+1].YPos, 255, 255, 0)
-		end if
+			break
+
+		case TIMEWARPFIX_SAVE_POINT_AIR
+			// Draw hitbox rectangle
+			TempValue0 = Object.XPos
+			TempValue1 = Object.YPos
+			TempValue0 -= 6291456
+			TempValue1 -= 6291456
+			DrawRectOutline(TempValue0, TempValue1, 12582912, 12582912, 255, 255, 255, 0)
+			
+			// Draw an arrow to where the player will be sent
+			DrawArrow(Object.XPos, Object.YPos, Object[+1].XPos, Object[+1].YPos, 255, 255, 0)
+			break
+			
+		end switch
 	end if
 end sub
 
 sub RSDKLoad
 	LoadSpriteSheet("Global/Display.gif")
-	SpriteFrame(-8, -8, 16, 16, 173, 67)		// #0 - "T" (Trigger) Icon
+	SpriteFrame(-8, -8, 16, 16, 173, 67) // "T" (Trigger) Icon
 
 
 	AddEditorVariable("type")

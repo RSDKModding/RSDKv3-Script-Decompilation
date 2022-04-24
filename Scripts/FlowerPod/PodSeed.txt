@@ -3,34 +3,50 @@
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
 // Aliases
-#alias 60: TYPE_PODSEED
+#alias Object.PropertyValue : Object.ActivateResults
+#alias Object.Value0 : Object.Timer
+#alias Object.Value1 : Object.ParentPod
+#alias Object.Value2 : Object.XVelocity
+#alias Object.Value3 : Object.YVelocity
+
+// Flower Aliases
+#alias 2 : FLOWER_SEED_PLANTED_1
 
 // CSides
 #alias 0	:	CSIDE_FLOOR
 
 sub ObjectMain
-	Object.Frame = Object.Value0
+
+	// Animate the seed
+	Object.Frame = Object.Timer
 	Object.Frame /= 3
-	Object.Value0++
-	Object.Value0 %= 18
-	Object.XPos += Object.Value2
-	Object.YPos += Object.Value3
-	Object.Value3 += 16384
-	if Object.Value3 > 393216
+	Object.Timer++
+	Object.Timer %= 18
+	
+	// Update movements
+	Object.XPos += Object.XVelocity
+	Object.YPos += Object.YVelocity
+	Object.YVelocity += 16384 // Gravity of 0x4000
+
+	// Before landing, the object has to be going at a rate of at least 6px per frame
+	if Object.YVelocity > 393216
 		ObjectTileCollision(CSIDE_FLOOR, 0, 8, 0)
-		if CheckResult == 1
-			if Object.PropertyValue == 1
-				ArrayPos0 = Object.Value1
+		if CheckResult == true
+			if Object.ActivateResults == true
+				ArrayPos0 = Object.ParentPod
 				Object[ArrayPos0].State++
 				Player.ControlMode = -1
 			end if
+
+			// Grow into a Flower
 			ResetObjectEntity(Object.EntityNo, Flower_TypeNo, 0, Object.XPos, Object.YPos)
-			Object.YPos += 524288
-			Object.State = 2
+			Object.YPos += 524288 // Moving 8 pixels down
+			Object.State = FLOWER_SEED_PLANTED_1
 			Object.Frame = 2
 			Object.DrawOrder = 4
 		end if
 	end if
+	
 end sub
 
 
@@ -45,12 +61,15 @@ sub ObjectStartup
 	else
 		LoadSpriteSheet("Global/Items2_t.gif")
 	end if
+	
+	// Seed Frames
 	SpriteFrame(-8, -8, 16, 16, 83, 66)
 	SpriteFrame(-8, -8, 16, 16, 83, 83)
 	SpriteFrame(-8, -8, 16, 16, 83, 100)
 	SpriteFrame(-8, -8, 16, 16, 83, 117)
 	SpriteFrame(-8, -8, 16, 16, 83, 83)
 	SpriteFrame(-8, -8, 16, 16, 83, 134)
+	
 end sub
 
 // ========================

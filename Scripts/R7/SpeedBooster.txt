@@ -5,8 +5,12 @@
 // Aliases
 #alias 39: TYPE_SPEEDBOOSTER
 
+// Booster Cartridge Aliases
+#alias Object.Value1 : Object.XVelocity
+#alias Object.Value2 : Object.YVelocity
 
 sub ObjectMain
+
 	switch Object.State
 	case 1
 		if Object.Value0 < 6
@@ -17,6 +21,7 @@ sub ObjectMain
 			Object.State++
 		end if
 		break
+
 	case 2
 		if Object.Value0 < 6
 			Object.Value1 += 524288
@@ -27,6 +32,7 @@ sub ObjectMain
 			Object.Priority = 0
 		end if
 		break
+
 	case 3
 		if Object.Value0 < 6
 			Object.Value1 += 524288
@@ -36,6 +42,7 @@ sub ObjectMain
 			Object.State++
 		end if
 		break
+
 	case 4
 		if Object.Value0 < 6
 			Object.Value1 -= 524288
@@ -46,6 +53,7 @@ sub ObjectMain
 			Object.Priority = 0
 		end if
 		break
+
 	end switch
 end sub
 
@@ -54,7 +62,7 @@ sub ObjectPlayerInteraction
 	if Object.State == 0
 		if Player.State != PlayerObject_HandleAir
 			PlayerObjectCollision(C_TOUCH, -32, -12, 32, 4)
-			if CheckResult == 1
+			if CheckResult == true
 				Object.Priority = 1
 				PlayStageSfx(0, 0)
 #platform: Use_Haptics
@@ -64,48 +72,61 @@ sub ObjectPlayerInteraction
 					Object.State = 1
 					Player.Speed = 1048576
 					Player.Direction = FACING_RIGHT
+
 					CreateTempObject(TypeName[FireTrail], 0, Object.XPos, Object.YPos)
 					Object[TempObjectPos].XPos -= 1572864
 					Object[TempObjectPos].YPos -= 393216
+
 					CreateTempObject(TypeName[BoosterCartridge], 0, Object.XPos, Object.YPos)
-					Object[TempObjectPos].Value1 = -131072
-					Object[TempObjectPos].Value2 = -458752
+					Object[TempObjectPos].XVelocity = -131072
+					Object[TempObjectPos].YVelocity = -458752
 				else
 					Object.State = 3
 					Player.Speed = -1048576
 					Player.Direction = FACING_LEFT
+
 					CreateTempObject(TypeName[FireTrail], 0, Object.XPos, Object.YPos)
 					Object[TempObjectPos].XPos += 1572864
 					Object[TempObjectPos].YPos -= 393216
 					Object[TempObjectPos].Direction = FACING_LEFT
+
 					CreateTempObject(TypeName[BoosterCartridge], 0, Object.XPos, Object.YPos)
-					Object[TempObjectPos].Value1 = 131072
-					Object[TempObjectPos].Value2 = -458752
+					Object[TempObjectPos].XVelocity = 131072
+					Object[TempObjectPos].YVelocity = -458752
 					Object[TempObjectPos].Direction = FACING_LEFT
 				end if
 			end if
 		end if
 	end if
+
 end sub
 
 
 sub ObjectDraw
+
 	TempValue0 = Object.Value1
 	TempValue0 += Object.XPos
 	DrawSpriteXY(0, TempValue0, Object.YPos)
+
 end sub
 
 
 sub ObjectStartup
+
 	LoadSpriteSheet("R7/Objects.gif")
+
+	// Booster Frame
 	SpriteFrame(-32, -12, 64, 24, 34, 96)
+
 	ArrayPos0 = 32
 	while ArrayPos0 < 1056
 		if Object[ArrayPos0].Type == TypeName[SpeedBooster]
 			Object[ArrayPos0].DrawOrder = 4
 		end if
+
 		ArrayPos0++
 	loop
+
 end sub
 
 // ========================
@@ -116,9 +137,10 @@ sub RSDKDraw
 	DrawSprite(0)
 end sub
 
+
 sub RSDKLoad
-	LoadSpriteSheet("Global/Display.gif")
-	SpriteFrame(-16, -16, 32, 32, 1, 143)		// #0 - "Script" Icon
+	LoadSpriteSheet("R7/Objects.gif")
+	SpriteFrame(-32, -12, 64, 24, 34, 96)
 
 	SetVariableAlias(ALIAS_VAR_PROPVAL, "unused")
 end sub

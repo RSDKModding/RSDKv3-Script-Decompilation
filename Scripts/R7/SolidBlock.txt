@@ -2,48 +2,177 @@
 //--------Scripted by Christian Whitehead 'The Taxman'--------//
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
-// Aliases
-#alias 37: TYPE_SOLIDBLOCK
-
 
 sub ObjectPlayerInteraction
+
 	TempValue0 = Player.YPos
+
+	// Different collision widths & heights for different block types
 	switch Object.PropertyValue
-	case 0
-	case 7
+	case 0 // Single Block
+	case 7 // Invisible Block (same size as Single Block)
 		PlayerObjectCollision(C_BOX, -16, -16, 16, 16)
 		break
-	case 1
+	case 1 // Two Blocks H
 		PlayerObjectCollision(C_BOX, -32, -16, 32, 16)
 		break
-	case 2
+	case 2 // Three Blocks H
 		PlayerObjectCollision(C_BOX, -48, -16, 48, 16)
 		break
-	case 3
+	case 3 // Four Blocks H
 		PlayerObjectCollision(C_BOX, -64, -16, 64, 16)
 		break
-	case 4
+	case 4 // Two Blocks V
 		PlayerObjectCollision(C_BOX, -16, -32, 16, 32)
 		break
-	case 5
+	case 5 // Three Blocks V
 		PlayerObjectCollision(C_BOX, -16, -48, 16, 48)
 		break
-	case 6
+	case 6 // Four Blocks V
 		PlayerObjectCollision(C_BOX, -16, -64, 16, 64)
 		break
 	end switch
+
+	// Left Wall Collsion detected?
 	if CheckResult == 2
-		Player.RCollisionFlag = 1
+		// Set the Right Collision Flag to true
+		// (Used in the Metal Sonic race sequence)
+		Player.RCollisionFlag = true
 	end if
-	if Player.Gravity == 0
+
+	// Roof collision detected while the player's on the ground?
+	if Player.Gravity == false
 		if CheckResult == 4
+			// Move the player back ontop of the block
 			Player.YPos = TempValue0
 		end if
 	end if
+
 end sub
 
 
 sub ObjectDraw
+
+	switch Object.PropertyValue
+	case 0 // Single Block
+		DrawSprite(0)
+		break
+
+	case 1 // Two Blocks H
+		TempValue0 = Object.XPos
+		TempValue0 -= 1048576
+		DrawSpriteXY(0, TempValue0, Object.YPos)
+		TempValue0 += 2097152
+		DrawSpriteXY(0, TempValue0, Object.YPos)
+		break
+
+	case 2 // Three Blocks H
+		TempValue0 = Object.XPos
+		TempValue0 -= 2097152
+		DrawSpriteXY(0, TempValue0, Object.YPos)
+		TempValue0 += 2097152
+		DrawSpriteXY(0, TempValue0, Object.YPos)
+		TempValue0 += 2097152
+		DrawSpriteXY(0, TempValue0, Object.YPos)
+		break
+
+	case 3 // Four Blocks H
+		TempValue0 = Object.XPos
+		TempValue0 -= 3145728
+		DrawSpriteXY(0, TempValue0, Object.YPos)
+		TempValue0 += 2097152
+		DrawSpriteXY(0, TempValue0, Object.YPos)
+		TempValue0 += 2097152
+		DrawSpriteXY(0, TempValue0, Object.YPos)
+		TempValue0 += 2097152
+		DrawSpriteXY(0, TempValue0, Object.YPos)
+		break
+
+	case 4 // Two Blocks V
+		TempValue0 = Object.YPos
+		TempValue0 -= 1048576
+		DrawSpriteXY(0, Object.XPos, TempValue0)
+		TempValue0 += 2097152
+		DrawSpriteXY(0, Object.XPos, TempValue0)
+		break
+
+	case 5 // Three Blocks V
+		TempValue0 = Object.YPos
+		TempValue0 -= 2097152
+		DrawSpriteXY(0, Object.XPos, TempValue0)
+		TempValue0 += 2097152
+		DrawSpriteXY(0, Object.XPos, TempValue0)
+		TempValue0 += 2097152
+		DrawSpriteXY(0, Object.XPos, TempValue0)
+		break
+
+	case 6 // Four Blocks V
+		TempValue0 = Object.YPos
+		TempValue0 -= 3145728
+		DrawSpriteXY(0, Object.XPos, TempValue0)
+		TempValue0 += 2097152
+		DrawSpriteXY(0, Object.XPos, TempValue0)
+		TempValue0 += 2097152
+		DrawSpriteXY(0, Object.XPos, TempValue0)
+		TempValue0 += 2097152
+		DrawSpriteXY(0, Object.XPos, TempValue0)
+		break
+
+	end switch
+
+end sub
+
+
+sub ObjectStartup
+	
+	LoadSpriteSheet("R7/Objects.gif")
+	
+	// Load the appropriate version of the sprite based on the current time period
+	switch Object[24].PropertyValue
+	case 0
+	case 1
+	case 3
+		// Normal version of the sprite
+		SpriteFrame(-16, -16, 32, 32, 1, 1)
+		break
+	case 2
+		// Good future version of the sprite
+		SpriteFrame(-16, -16, 32, 32, 117, 219)
+		break
+	end switch
+
+end sub
+
+// ========================
+// Editor Subs
+// ========================
+
+sub RSDKEdit
+	if Editor.ReturnVariable == true
+		switch Editor.VariableID
+		case EDIT_VAR_PROPVAL // property value
+			CheckResult = Object.PropertyValue
+			break
+		case 0 // type
+			CheckResult = Object.PropertyValue
+			CheckResult &= 7
+			break
+		end switch
+	else
+		switch Editor.variableID
+		case EDIT_VAR_PROPVAL // property value
+			Object.PropertyValue = Editor.VariableValue
+			break
+		case 0 // type
+			Object.propertyValue = Editor.VariableValue
+			Object.propertyValue &= 7
+			break
+		end switch
+	end if
+end sub
+
+
+sub RSDKDraw
 	switch Object.PropertyValue
 	case 0
 		DrawSprite(0)
@@ -102,35 +231,48 @@ sub ObjectDraw
 		TempValue0 += 2097152
 		DrawSpriteXY(0, Object.XPos, TempValue0)
 		break
+	case 7 // This subtype acts as an invis block so normally it's invisible - but it has to show in the editor somehow!
+		Object.InkEffect = 1
+		DrawSpriteScreenFX(0, FX_INK, Object.XPos, Object.YPos)
+
+		if Editor.ShowGizmos == true
+			// The sprite is faint so draw the hitbox it'll use
+			
+			TempValue0 = Object.XPos
+			TempValue0 -= 0x80000
+			TempValue1 = Object.YPos
+			TempValue1 -= 0x80000
+			DrawRectOutline(TempValue0, TempValue1, 0x100000, 0x100000, 255, 255, 255, 255)
+		end if
+		break
 	end switch
 end sub
 
-
-sub ObjectStartup
-	LoadSpriteSheet("R7/Objects.gif")
-	switch Object[24].PropertyValue
-	case 0
-	case 1
-	case 3
-		SpriteFrame(-16, -16, 32, 32, 1, 1)
-		break
-	case 2
-		SpriteFrame(-16, -16, 32, 32, 117, 219)
-		break
-	end switch
-end sub
-
-// ========================
-// Editor Subs
-// ========================
-
-sub RSDKDraw
-	DrawSprite(0)
-end sub
 
 sub RSDKLoad
 	LoadSpriteSheet("Global/Display.gif")
-	SpriteFrame(-16, -16, 32, 32, 1, 143)		// #0 - "Script" Icon
 
-	SetVariableAlias(ALIAS_VAR_PROPVAL, "unused")
+	// Load the correct sprite based on the current time zone
+	CheckCurrentStageFolder("R71C")
+	TempValue0 = CheckResult
+	CheckCurrentStageFolder("R72C")
+	TempValue0 |= CheckResult
+	CheckCurrentStageFolder("R73C")
+	TempValue0 |= CheckResult
+	if TempValue0 == true
+		SpriteFrame(-16, -16, 32, 32, 117, 219)
+	else
+		SpriteFrame(-16, -16, 32, 32, 1, 1)
+	end if
+
+	AddEditorVariable("type")
+	SetActiveVariable("type")
+	AddEnumVariable("Single Block", 0)
+	AddEnumVariable("Two Blocks (Horizontal)", 1)
+	AddEnumVariable("Three Blocks (Horizontal)", 2)
+	AddEnumVariable("Four Blocks (Horizontal)", 3)
+	AddEnumVariable("Two Blocks (Vertical)", 4)
+	AddEnumVariable("Three Blocks (Vertical)", 5)
+	AddEnumVariable("Four Blocks (Vertical)", 6)
+	AddEnumVariable("Invisible Block", 7)
 end sub

@@ -5,40 +5,51 @@
 // Aliases
 #alias 49: TYPE_DANGO
 
+#alias Object.Value0 : Object.Timer
+#alias Object.Value1 : Object.OriginPosX
+#alias Object.Value2 : Object.OriginPosY
+#alias Object.Value3 : Object.XVelocity
+
+// Property Values
+#alias 0 : BADNIK_GOOD
+#alias 1 : BADNIK_BAD
+
 
 sub ObjectMain
 	if Object.PropertyValue == 0
 		switch Object.State
 		case 0
 			Object.Priority = 1
-			Object.Frame = Object.Value0
+			Object.Frame = Object.Timer
 			Object.Frame /= 10
-			Object.Value0++
-			Object.Value0 %= 20
-			Object.XPos += Object.Value3
+			Object.Timer++
+			Object.Timer %= 20
+			Object.XPos += Object.XVelocity
+
 			if Object.Direction == FACING_RIGHT
 				ObjectTileGrip(0, -5, 15, 0)
 			else
 				ObjectTileGrip(0, 5, 15, 0)
 			end if
-			if CheckResult == 0
-				FlipSign(Object.Value3)
+
+			if CheckResult == false
+				FlipSign(Object.XVelocity)
 				Object.Direction++
 				Object.Direction &= FACING_LEFT
 				Object.Value4 = 0
 			else
-				if Object.Value3 > 0
+				if Object.XVelocity > 0
 					ObjectTileCollision(1, 16, 8, 0)
-					if CheckResult == 1
-						FlipSign(Object.Value3)
+					if CheckResult == true
+						FlipSign(Object.XVelocity)
 						Object.Direction++
 						Object.Direction &= FACING_LEFT
 						Object.Value4 = 0
 					end if
 				else
 					ObjectTileCollision(2, -16, 8, 0)
-					if CheckResult == 1
-						FlipSign(Object.Value3)
+					if CheckResult == true
+						FlipSign(Object.XVelocity)
 						Object.Direction++
 						Object.Direction &= FACING_LEFT
 						Object.Value4 = 0
@@ -46,97 +57,104 @@ sub ObjectMain
 				end if
 			end if
 			break
+		
 		case 1
 			Object.Frame = 4
-			if Object.Value0 < 8
-				Object.Value0++
+			if Object.Timer < 8
+				Object.Timer++
 			else
-				Object.Value0 = 0
+				Object.Timer = 0
 				Object.State++
 			end if
 			break
+
 		case 2
 			Object.Frame = 5
-			if Object.Value0 < 6
-				Object.Value0++
+			if Object.Timer < 6
+				Object.Timer++
 			else
-				Object.Value0 = 0
+				Object.Timer = 0
 				Object.State++
 			end if
 			break
+
 		case 3
 			Object.Frame = Object.AnimationTimer
 			Object.Frame /= 5
 			Object.Frame += 6
 			Object.AnimationTimer++
 			Object.AnimationTimer %= 10
-			if Object.Value0 < 34
-				Object.Value0++
+			if Object.Timer < 34
+				Object.Timer++
 			else
-				Object.Value0 = 0
+				Object.Timer = 0
 				Object.State++
 				if Object.Direction == FACING_RIGHT
-					Object.Value3 = -262144
+					Object.XVelocity = -262144
 				else
-					Object.Value3 = 262144
+					Object.XVelocity = 262144
 				end if
 			end if
 			break
+
 		case 4
 			Object.Frame = Object.AnimationTimer
 			Object.Frame /= 5
 			Object.Frame += 6
 			Object.AnimationTimer++
 			Object.AnimationTimer %= 10
-			Object.XPos += Object.Value3
+			Object.XPos += Object.XVelocity
 			if Object.Direction == FACING_RIGHT
 				ObjectTileGrip(0, -5, 15, 0)
 			else
 				ObjectTileGrip(0, 5, 15, 0)
 			end if
-			if CheckResult == 0
+			if CheckResult == false
 				Object.State++
 				Object.Value4++
 			else
-				if Object.Value3 > 0
+				if Object.XVelocity > 0
 					ObjectTileCollision(1, 16, 8, 0)
-					if CheckResult == 1
+					if CheckResult == true
 						Object.State++
 						Object.Value4++
 					end if
 				else
 					ObjectTileCollision(2, -16, 8, 0)
-					if CheckResult == 1
+					if CheckResult == true
 						Object.State++
 						Object.Value4++
 					end if
 				end if
 			end if
 			break
+
 		case 5
 			Object.Frame = 5
-			if Object.Value0 < 6
-				Object.Value0++
+			if Object.Timer < 6
+				Object.Timer++
 			else
-				Object.Value0 = 0
+				Object.Timer = 0
 				Object.State++
 			end if
 			break
+
 		case 6
 			Object.Frame = 4
-			if Object.Value0 < 8
-				Object.Value0++
+			if Object.Timer < 8
+				Object.Timer++
 			else
-				Object.Value0 = 0
+				Object.Timer = 0
 				Object.State++
 			end if
 			break
+
 		case 7
 			Object.Frame = 0
-			if Object.Value0 < 16
-				Object.Value0++
+			if Object.Timer < 16
+				Object.Timer++
 			else
-				Object.Value0 = 0
+				Object.Timer = 0
 				Object.State = 0
 				if Object.Value4 > 7
 					Object.Direction++
@@ -144,52 +162,54 @@ sub ObjectMain
 					Object.Value4 = 0
 				end if
 				if Object.Direction == FACING_RIGHT
-					Object.Value3 = -24576
+					Object.XVelocity = -24576
 				else
-					Object.Value3 = 24576
+					Object.XVelocity = 24576
 				end if
 			end if
 			break
+
 		case 8
-			if Object.OutOfBounds == 1
+			if Object.OutOfBounds == true
 				Object.State = 0
 				Object.Priority = 0
 			end if
 			break
+
 		end switch
 	else
 		switch Object.State
 		case 0
 			Object.Priority = 1
-			Object.Frame = Object.Value0
+			Object.Frame = Object.Timer
 			Object.Frame /= 30
 			Object.Frame += 2
-			Object.Value0++
-			Object.Value0 %= 60
-			Object.XPos += Object.Value3
+			Object.Timer++
+			Object.Timer %= 60
+			Object.XPos += Object.XVelocity
 			if Object.Direction == FACING_RIGHT
 				ObjectTileGrip(0, -5, 15, 0)
 			else
 				ObjectTileGrip(0, 5, 15, 0)
 			end if
-			if CheckResult == 0
-				FlipSign(Object.Value3)
+			if CheckResult == false
+				FlipSign(Object.XVelocity)
 				Object.Direction++
 				Object.Direction &= FACING_LEFT
 				Object.Value4 = 0
 			else
-				if Object.Value3 > 0
+				if Object.XVelocity > 0
 					ObjectTileCollision(1, 16, 8, 0)
-					if CheckResult == 1
-						FlipSign(Object.Value3)
+					if CheckResult == true
+						FlipSign(Object.XVelocity)
 						Object.Direction++
 						Object.Direction &= FACING_LEFT
 						Object.Value4 = 0
 					end if
 				else
 					ObjectTileCollision(2, -16, 8, 0)
-					if CheckResult == 1
-						FlipSign(Object.Value3)
+					if CheckResult == true
+						FlipSign(Object.XVelocity)
 						Object.Direction++
 						Object.Direction &= FACING_LEFT
 						Object.Value4 = 0
@@ -197,97 +217,105 @@ sub ObjectMain
 				end if
 			end if
 			break
+	
 		case 1
 			Object.Frame = 4
-			if Object.Value0 < 20
-				Object.Value0++
+			if Object.Timer < 20
+				Object.Timer++
 			else
-				Object.Value0 = 0
+				Object.Timer = 0
 				Object.State++
 			end if
 			break
+		
 		case 2
 			Object.Frame = 5
-			if Object.Value0 < 12
-				Object.Value0++
+			if Object.Timer < 12
+				Object.Timer++
 			else
-				Object.Value0 = 0
+				Object.Timer = 0
 				Object.State++
 			end if
 			break
+	
 		case 3
 			Object.Frame = Object.AnimationTimer
 			Object.Frame /= 10
 			Object.Frame += 8
 			Object.AnimationTimer++
 			Object.AnimationTimer %= 20
-			if Object.Value0 < 96
-				Object.Value0++
+			if Object.Timer < 96
+				Object.Timer++
 			else
-				Object.Value0 = 0
+				Object.Timer = 0
 				Object.State++
 				if Object.Direction == FACING_RIGHT
-					Object.Value3 = -65536
+					Object.XVelocity = -65536
 				else
-					Object.Value3 = 65536
+					Object.XVelocity = 65536
 				end if
 			end if
 			break
+
 		case 4
 			Object.Frame = Object.AnimationTimer
 			Object.Frame /= 10
 			Object.Frame += 8
 			Object.AnimationTimer++
 			Object.AnimationTimer %= 20
-			Object.XPos += Object.Value3
+			Object.XPos += Object.XVelocity
 			if Object.Direction == FACING_RIGHT
 				ObjectTileGrip(0, -5, 15, 0)
 			else
 				ObjectTileGrip(0, 5, 15, 0)
 			end if
-			if CheckResult == 0
+			
+			if CheckResult == false
 				Object.State++
 				Object.Value4++
 			else
-				if Object.Value3 > 0
+				if Object.XVelocity > 0
 					ObjectTileCollision(1, 16, 8, 0)
-					if CheckResult == 1
+					if CheckResult == true
 						Object.State++
 						Object.Value4++
 					end if
 				else
 					ObjectTileCollision(2, -16, 8, 0)
-					if CheckResult == 1
+					if CheckResult == true
 						Object.State++
 						Object.Value4++
 					end if
 				end if
 			end if
 			break
+
 		case 5
 			Object.Frame = 5
-			if Object.Value0 < 12
-				Object.Value0++
+			if Object.Timer < 12
+				Object.Timer++
 			else
-				Object.Value0 = 0
+				Object.Timer = 0
 				Object.State++
 			end if
 			break
+
 		case 6
 			Object.Frame = 4
-			if Object.Value0 < 20
-				Object.Value0++
+			if Object.Timer < 20
+				Object.Timer++
 			else
-				Object.Value0 = 0
+				Object.Timer = 0
 				Object.State++
 			end if
 			break
+
 		case 7
 			Object.Frame = 2
-			if Object.Value0 < 64
-				Object.Value0++
+			if Object.Timer < 64
+				Object.Timer++
 			else
-				Object.Value0 = 0
+				Object.Timer = 0
 				Object.State = 0
 				if Object.Value4 > 7
 					Object.Direction++
@@ -295,36 +323,41 @@ sub ObjectMain
 					Object.Value4 = 0
 				end if
 				if Object.Direction == FACING_RIGHT
-					Object.Value3 = -4096
+					Object.XVelocity = -4096
 				else
-					Object.Value3 = 4096
+					Object.XVelocity = 4096
 				end if
 			end if
 			break
+
 		case 8
-			if Object.OutOfBounds == 1
+			if Object.OutOfBounds == true
 				Object.State = 0
 				Object.Priority = 0
 			end if
 			break
+
 		end switch
 	end if
+
 	CallFunction(StageSetup_CheckGoodFuture)
-	if Object.OutOfBounds == 1
+
+	if Object.OutOfBounds == true
 		TempValue0 = Object.XPos
 		TempValue1 = Object.YPos
-		Object.XPos = Object.Value1
-		Object.YPos = Object.Value2
-		if Object.OutOfBounds == 1
+		Object.XPos = Object.OriginPosX
+		Object.YPos = Object.OriginPosY
+		if Object.OutOfBounds == true
 			Object.Priority = 0
 			Object.State = 0
-			Object.Value0 = 0
+			Object.Timer = 0
 			Object.Direction = FACING_RIGHT
 			Object.Value4 = 0
+			
 			if Object.PropertyValue == 0
-				Object.Value3 = -24576
+				Object.XVelocity = -24576
 			else
-				Object.Value3 = -4096
+				Object.XVelocity = -4096
 			end if
 		else
 			Object.XPos = TempValue0
@@ -335,16 +368,19 @@ end sub
 
 
 sub ObjectPlayerInteraction
+
 	if Object.State == 0
 		if Object.Direction == FACING_RIGHT
 			PlayerObjectCollision(C_TOUCH, -112, -128, 0, 128)
 		else
 			PlayerObjectCollision(C_TOUCH, 0, -128, 112, 128)
 		end if
-		if CheckResult == 1
+
+		if CheckResult == true
 			Object.State = 1
 		end if
 	end if
+
 	switch Object.State
 	case 0
 	case 1
@@ -353,22 +389,26 @@ sub ObjectPlayerInteraction
 	case 6
 	case 7
 		PlayerObjectCollision(C_TOUCH, -14, -10, 14, 10)
-		if CheckResult == 1
+		if CheckResult == true
 			CallFunction(PlayerObject_BadnikBreak)
 		end if
 		break
+
 	case 3
 		PlayerObjectCollision(C_TOUCH, -14, -10, 14, 10)
-		if CheckResult == 1
+		if CheckResult == true
 			CheckEqual(Player.Animation, ANI_JUMPING)
 			TempValue0 = CheckResult
 			CheckEqual(Player.Animation, ANI_SPINDASH)
 			TempValue0 |= CheckResult
-			if TempValue0 == 1
+			if TempValue0 == true
+				// The player's jumped at the Dango, bounce them back
 				Player.Speed = Player.XPos
 				Player.Speed -= Object.XPos
 				Player.Speed >>= 2
 				Player.XVelocity = Player.Speed
+				
+				// Account for aerial bouncing too if needed
 				if Player.Gravity == 1
 					Player.YVelocity = Player.YPos
 					Player.YVelocity -= Object.YPos
@@ -379,15 +419,16 @@ sub ObjectPlayerInteraction
 			end if
 		end if
 		break
+
 	case 4
 		PlayerObjectCollision(C_TOUCH, -14, -10, 14, 10)
-		if CheckResult == 1
+		if CheckResult == true
 			CheckEqual(Player.Animation, ANI_JUMPING)
 			TempValue0 = CheckResult
 			CheckEqual(Player.Animation, ANI_SPINDASH)
 			TempValue0 |= CheckResult
-			if TempValue0 == 1
-				Object.Value3 = Player.XVelocity
+			if TempValue0 == true
+				Object.XVelocity = Player.XVelocity
 				Player.Speed = Player.XPos
 				Player.Speed -= Object.XPos
 				Player.Speed >>= 2
@@ -405,7 +446,9 @@ sub ObjectPlayerInteraction
 			end if
 		end if
 		break
+
 	end switch
+	
 end sub
 
 
@@ -418,27 +461,44 @@ end sub
 
 sub ObjectStartup
 	LoadSpriteSheet("R7/Objects.gif")
+
+	// Dango Frames
+
+	// 0-1 - Idle Animation, "Good" variant
 	SpriteFrame(-16, -7, 32, 24, 116, 121)
 	SpriteFrame(-16, -7, 32, 24, 149, 121)
+	
+	// 2-3 - Idle Animation, "Bad" variant (version with the cracked shell frames)
 	SpriteFrame(-16, -7, 32, 24, 116, 146)
 	SpriteFrame(-16, -7, 32, 24, 149, 146)
+	
+	// 4-5 - Curl
 	SpriteFrame(-16, -16, 32, 32, 51, 219)
 	SpriteFrame(-16, -16, 32, 32, 84, 219)
+	
+	// 6-9 - Rolling Frames
 	SpriteFrame(-16, -15, 32, 32, 51, 186)
 	SpriteFrame(-16, -15, 32, 32, 117, 186)
 	SpriteFrame(-16, -16, 32, 32, 84, 186)
 	SpriteFrame(-16, -15, 32, 32, 51, 186)
+	
+	// Cycle through the level and find all Dango objects
 	ArrayPos0 = 32
 	while ArrayPos0 < 1056
 		if Object[ArrayPos0].Type == TypeName[Dango]
-			Object[ArrayPos0].Value1 = Object[ArrayPos0].XPos
-			Object[ArrayPos0].Value2 = Object[ArrayPos0].YPos
-			if Object[ArrayPos0].PropertyValue == 0
-				Object[ArrayPos0].Value3 = -24576
+		
+			// Set the Dango's initial positions
+			Object[ArrayPos0].OriginPosX = Object[ArrayPos0].XPos
+			Object[ArrayPos0].OriginPosY = Object[ArrayPos0].YPos
+			
+			// Set its starting velocity as well, "Bad" Dangos go slower than "Good" ones since they're, y'know, "Bad"
+			if Object[ArrayPos0].PropertyValue == BADNIK_GOOD
+				Object[ArrayPos0].XVelocity = -24576 // 0.375 pixels per frame
 			else
-				Object[ArrayPos0].Value3 = -4096
+				Object[ArrayPos0].XVelocity = -4096  // 0.0625 pixels per frame... that's hardly anything!
 			end if
 		end if
+		
 		ArrayPos0++
 	loop
 end sub
@@ -447,13 +507,41 @@ end sub
 // Editor Subs
 // ========================
 
-sub RSDKDraw
-	DrawSprite(0)
+sub RSDKEdit
+	if Editor.ReturnVariable == true
+		switch Editor.VariableID
+		case EDIT_VAR_PROPVAL // property value
+			CheckResult = Object.PropertyValue
+			break
+		case 0 // condition
+			CheckResult = Object.PropertyValue
+			break
+		end switch
+	else
+		switch Editor.variableID
+		case EDIT_VAR_PROPVAL // property value
+			Object.PropertyValue = Editor.VariableValue
+			break
+		case 0 // condition
+			Object.PropertyValue = Editor.VariableValue
+			break
+		end switch
+	end if
 end sub
 
-sub RSDKLoad
-	LoadSpriteSheet("Global/Display.gif")
-	SpriteFrame(-16, -16, 32, 32, 1, 143)		// #0 - "Script" Icon
 
-	SetVariableAlias(ALIAS_VAR_PROPVAL, "unused")
+sub RSDKDraw
+	DrawSprite(Object.PropertyValue)
+end sub
+
+
+sub RSDKLoad
+	LoadSpriteSheet("R7/Objects.gif")
+	SpriteFrame(-16, -7, 32, 24, 116, 121) // Normal "Good" version
+	SpriteFrame(-16, -7, 32, 24, 116, 146) // Cracked "Bad" version
+
+	AddEditorVariable("condition")
+	SetActiveVariable("condition")
+	AddEnumVariable("Good", BADNIK_GOOD)
+	AddEnumVariable("Bad",  BADNIK_BAD)
 end sub

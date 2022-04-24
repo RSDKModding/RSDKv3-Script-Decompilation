@@ -3,16 +3,23 @@
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
 // Aliases
-#alias 16: TYPE_BGEFFECTS
+// Values 0-1 are unused...
+#alias Object.Value2 : Object.PrevAngle
+#alias Object.Value3 : Object.Fans.Timer
+#alias Object.Value4 : Object.Crunchers.Timer
+#alias Object.Value5 : Object.Fans.Sprite
+#alias Object.Value6 : Object.Crunchers.Sprite
 
 
 sub ObjectDraw
-	Object.Value3++
-	if Object.Value3 > 2
-		Object.Value3 = 0
-		Object.Value5++
-		Object.Value5 %= 3
-		switch Object.Value5
+
+	// Animate the fans in the level
+	Object.Fans.Timer++
+	if Object.Fans.Timer > 2
+		Object.Fans.Timer = 0
+		Object.Fans.Sprite++
+		Object.Fans.Sprite %= 3
+		switch Object.Fans.Sprite
 		case 0
 			Copy16x16Tile(269, 484)
 			Copy16x16Tile(270, 485)
@@ -23,6 +30,7 @@ sub ObjectDraw
 			Copy16x16Tile(275, 490)
 			Copy16x16Tile(276, 491)
 			break
+
 		case 1
 			Copy16x16Tile(269, 492)
 			Copy16x16Tile(270, 493)
@@ -33,6 +41,7 @@ sub ObjectDraw
 			Copy16x16Tile(275, 498)
 			Copy16x16Tile(276, 499)
 			break
+
 		case 2
 			Copy16x16Tile(269, 500)
 			Copy16x16Tile(270, 501)
@@ -43,41 +52,51 @@ sub ObjectDraw
 			Copy16x16Tile(275, 506)
 			Copy16x16Tile(276, 507)
 			break
+
 		end switch
 	end if
-	Object.Value4++
-	if Object.Value4 > 5
-		Object.Value4 = 0
-		Object.Value6++
-		Object.Value6 &= 3
-		switch Object.Value6
+
+	// Animate the crunchers in the level
+	Object.Crunchers.Timer++
+	if Object.Crunchers.Timer > 5
+		Object.Crunchers.Timer = 0
+		Object.Crunchers.Sprite++
+		Object.Crunchers.Sprite &= 3
+		switch Object.Crunchers.Sprite
 		case 0
 			Copy16x16Tile(129, 508)
 			Copy16x16Tile(130, 509)
 			Copy16x16Tile(134, 512)
 			Copy16x16Tile(135, 513)
 			break
+
 		case 1
 			Copy16x16Tile(129, 510)
 			Copy16x16Tile(130, 511)
 			Copy16x16Tile(134, 514)
 			Copy16x16Tile(135, 515)
 			break
+
 		case 2
 			Copy16x16Tile(129, 516)
 			Copy16x16Tile(130, 517)
 			Copy16x16Tile(134, 520)
 			Copy16x16Tile(135, 521)
 			break
+
 		case 3
 			Copy16x16Tile(129, 518)
 			Copy16x16Tile(130, 519)
 			Copy16x16Tile(134, 522)
 			Copy16x16Tile(135, 523)
 			break
+
 		end switch
 	end if
-	TempValue1 = Object.Value2
+	
+	// Move all the BG layers based on the scroll difference from last frame
+
+	TempValue1 = Object.PrevAngle
 	TempValue2 = TileLayer[0].Angle
 	if TempValue1 < TempValue2
 		TempValue3 = TempValue2
@@ -92,15 +111,21 @@ sub ObjectDraw
 			TempValue2 += 512
 		end if
 	end if
+
 	TempValue0 = TempValue1
 	TempValue0 -= TempValue2
-	Object.Value2 = TileLayer[0].Angle
-	TempValue1 = 65536
-	TempValue2 = 131072
-	TempValue3 = 196608
+
+	// Store the current angle so that the same thing can be done next frame
+	Object.PrevAngle = TileLayer[0].Angle
+	
+	TempValue1 = 65536  // AKA 0x10000
+	TempValue2 = 131072 // AKA 0x20000
+	TempValue3 = 196608 // AKA 0x30000
+	
 	TempValue1 *= TempValue0
 	TempValue2 *= TempValue0
 	TempValue3 *= TempValue0
+	
 	HParallax[0].ScrollPos += TempValue1
 	HParallax[1].ScrollPos += TempValue2
 	HParallax[2].ScrollPos += TempValue3
@@ -108,24 +133,44 @@ end sub
 
 
 sub ObjectStartup
-	Stage.XBoundary1 = 41943040
-	Stage.XBoundary2 = 226492416
+
+	Stage.XBoundary1 = 41943040  // AKA 0x2800000
+	Stage.XBoundary2 = 226492416 // AKA 0xD800000
 	Stage.YBoundary1 = 41943040
 	Stage.YBoundary2 = 226492416
+	
 #platform: HW_Rendering
+	// Load the Sprite version of the stage map if needed
 	LoadSpriteSheet("Special/SSMap7.gif")
 #endplatform
+
+	// Set the initial BG positions
+	// (8388608 is 0x800000)
 	HParallax[0].ScrollPos += 8388608
 	HParallax[2].ScrollPos -= 8388608
+
+	// Setup any and all BGEffects objects that may be present in the level
+	// Though, there should only ever be one
+
 	ArrayPos0 = 32
 	while ArrayPos0 < 1056
 		if Object[ArrayPos0].Type == TypeName[BGEffects]
+		
+			// Set the object to always active
 			Object[ArrayPos0].Priority = 1
+			
+			// Give it a low draw order
 			Object[ArrayPos0].DrawOrder = 0
+			
+			// And set its starting angle
+			// But all other stages use 368... why is this one different?
 			Object[ArrayPos0].Value2 = 256
+		
 		end if
+
 		ArrayPos0++
 	loop
+
 end sub
 
 // ========================
@@ -135,6 +180,7 @@ end sub
 sub RSDKDraw
 	DrawSprite(0)
 end sub
+
 
 sub RSDKLoad
 	LoadSpriteSheet("Special/SSMap7.gif")

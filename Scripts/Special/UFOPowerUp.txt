@@ -3,65 +3,109 @@
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
 // Aliases
-#alias 6: TYPE_UFOPOWERUP
+#alias Object.Value0 : Object.ExplosionDir
+#alias Object.Value1 : Object.ExplosionXVel
+#alias Object.Value2 : Object.ExplosionYVel
+#alias Object.Value3 : Object.Timer
+#alias Object.Value4 : Object.YVelocity
+// Value5 is unused here...
+#alias Object.Value6 : Object.ExplosionTimer
+#alias Object.Value7 : Object.StartResults
+
+// Player aliases
+#alias Object.State : SSSonic.State
+#alias 9 : SSSONIC_CAMERAPAN
+
+// SFX aliases
+#alias 22 : SFX_EXPLOSION
 
 
 sub ObjectDraw
-	if Object.Value4 < 262144
+
+	if Object.YVelocity < 262144 // AKA 0x40000
 		DrawSpriteScreenXY(Object.PropertyValue, Object.iXPos, Object.iYPos)
-		Object.Value4 += 8192
-		Object.YPos += Object.Value4
+		Object.YVelocity += 8192 // AKA 0x2000
+		Object.YPos += Object.YVelocity
 	end if
-	Object.Value6++
-	if Object.Value6 == 6
-		Object.Value6 = 0
-		PlaySfx(22, 0)
+
+	// Create explosions as needed
+	Object.ExplosionTimer++
+	if Object.ExplosionTimer == 6
+		Object.ExplosionTimer = 0
+		PlaySfx(SFX_EXPLOSION, false)
+
+		// Randomise the explosion offset a tad bit
 		Rand(TempValue0, 48)
 		TempValue0 -= 24
 		TempValue0 += Screen.XOffset
 		TempValue0 <<= 16
-		TempValue0 += Object.Value1
+		TempValue0 += Object.ExplosionXVel
+
 		Rand(TempValue1, 48)
 		TempValue1 -= 24
 		TempValue1 += Screen.YOffset
 		TempValue1 <<= 16
-		TempValue1 += Object.Value2
-		CreateTempObject(TypeName[SmokePuff], 0, TempValue0, TempValue1)
+		TempValue1 += Object.ExplosionYVel
+
+		CreateTempObject(TypeName[Smoke Puff], 0, TempValue0, TempValue1)
+
 		Object[TempObjectPos].DrawOrder = 4
 	end if
-	if Object.Value0 > 50
-		Object.Value1 += 131072
+
+	// Value is randomised by the parent UFO object, it's not set in this object's ObjectStartup or anything
+	if Object.ExplosionDir > 50
+		// Going to the right
+		Object.ExplosionXVel += 131072
 	else
-		Object.Value1 -= 131072
+		// Going to the left
+		Object.ExplosionXVel -= 131072
 	end if
-	Object.Value2 += 49152
-	Object.Value3++
-	if Object.Value3 == 160
-		if Object.Value7 == 1
+
+	// Make the explosions gravitate to the bottom corner of the screen
+	Object.ExplosionYVel += 49152
+
+	Object.Timer++
+	if Object.Timer == 160
+		if Object.StartResults == true
+			// If this object was the spawned by the last UFO, then end the stage
+
 			if Options.GameMode < 2
 				if Stage.ActNo < 8
-					Object[2].State = 9
+					// If in a normal Special Stage, then hand the rest of the ending sequence to Sonic
+					SSSonic[2].State = SSSONIC_CAMERAPAN
 				else
-					Object[30].Type = TypeName[StageFinish]
+					// If in the hidden Robotnik Special Stage, then go ahead and load the credits
+					Object[30].Type = TypeName[Stage Finish]
 					Object[30].State = 9
 					Object[30].DrawOrder = 7
 				end if
 			else
-				Object[30].Type = TypeName[StageFinish]
+				// If in time attack, then go ahead and fade out to the TA Menu scene
+				Object[30].Type = TypeName[Stage Finish]
 				Object[30].State = 8
 				Object[30].DrawOrder = 7
 			end if
 		end if
+
 		Object.Type = TypeName[Blank Object]
 	end if
+
 end sub
 
 
 sub ObjectStartup
+
 	LoadSpriteSheet("Special/Objects.gif")
+
+	// 0 - Ring Icon
 	SpriteFrame(-8, -8, 16, 16, 1, 67)
+
+	// 1 - Speed Shoes Icon
 	SpriteFrame(-8, -8, 16, 16, 18, 67)
+
+	// 2 - Clock Icon
 	SpriteFrame(-8, -8, 16, 16, 35, 67)
+
 end sub
 
 // ========================
@@ -72,9 +116,11 @@ sub RSDKDraw
 	DrawSprite(0)
 end sub
 
+
 sub RSDKLoad
 	LoadSpriteSheet("Special/Objects.gif")
 	SpriteFrame(-8, -8, 16, 16, 1, 67)
 
+	// Although used by the object, it shouldn't be set by the editor
 	SetVariableAlias(ALIAS_VAR_PROPVAL, "unused")
 end sub

@@ -3,12 +3,19 @@
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
 // Aliases
-#alias 35: TYPE_R7SETUP
+#alias Object.Value0 : Object.Timer
+#alias Object.Value1 : Object.ActivePalette
 
 // Function declarations
-#function R7Setup_Function49
+#function R7Setup_GetLoopTileInfo
 
-function R7Setup_Function49
+
+function R7Setup_GetLoopTileInfo
+	// Gets info from out of bounds chunks, located past the signpost
+
+	// Precondition:
+	//   - TempValue0 is the chunk ID of the chunk currentbly being checked against
+
 	TempValue3 = Player.XPos
 	TempValue3 >>= 16
 	TempValue3 &= 255
@@ -16,37 +23,48 @@ function R7Setup_Function49
 	TempValue0 -= 16
 	TempValue0 >>= 2
 	TempValue0 <<= 8
+
 	TempValue4 = Player.YPos
 	TempValue4 >>= 16
 	TempValue4 &= 255
 	TempValue4 += TempValue0
+
 	Get16x16TileInfo(TempValue0, TempValue3, TempValue4, 0)
 end function
 
 
 sub ObjectMain
-	Object.Value0++
-	if Object.Value0 == 5
-		Object.Value0 = 0
-		Object.Value1++
-		Object.Value1 %= 6
-		SetActivePalette(Object.Value1, 0, 240)
+
+	Object.Timer++
+	if Object.Timer == 5
+		Object.Timer = 0
+		Object.ActivePalette++
+		Object.ActivePalette %= 6
+		SetActivePalette(Object.ActivePalette, 0, 240)
 	end if
+
 end sub
 
 
 sub ObjectPlayerInteraction
+
+	// Manage stage layers
+
+	// Get the chunk ID of the chunk the player's currently in
 	TempValue1 = Player.XPos
 	TempValue1 >>= 23
 	TempValue2 = Player.YPos
 	TempValue2 >>= 23
 	GetTileLayerEntry(TempValue0, 0, TempValue1, TempValue2)
+
+	// If possible, jump to its corresponding entry over here now
 	switch TempValue0
 	case 16
 	case 17
 	case 18
 	case 19
-		CallFunction(R7Setup_Function49)
+		// Loop chunks, opening on left side
+		CallFunction(R7Setup_GetLoopTileInfo)
 		if Player.CollisionMode == 0
 			if TempValue0 == 1001
 				TempValue1 &= 1022
@@ -77,11 +95,13 @@ sub ObjectPlayerInteraction
 			end if
 		end if
 		break
+
 	case 20
 	case 21
 	case 22
 	case 23
-		CallFunction(R7Setup_Function49)
+		// Loop chunks, opening on right side
+		CallFunction(R7Setup_GetLoopTileInfo)
 		if Player.CollisionMode == 0
 			if TempValue0 == 1000
 				TempValue1 &= 1022
@@ -112,11 +132,15 @@ sub ObjectPlayerInteraction
 			end if
 		end if
 		break
+
 	case 24
 	case 25
 	case 26
 	case 27
-		CallFunction(R7Setup_Function49)
+		// Wavy chunks, opening on left side... or at least they should be
+		// However!
+		// These don't exist in Act 3, so this function call is actually checking against blank chunks...
+		CallFunction(R7Setup_GetLoopTileInfo)
 		if TempValue0 == 1001
 			TempValue1 &= 1022
 			TempValue2 &= 1022
@@ -130,11 +154,14 @@ sub ObjectPlayerInteraction
 			SetTileLayerEntry(31, 0, TempValue1, TempValue2)
 		end if
 		break
+
 	case 28
 	case 29
 	case 30
 	case 31
-		CallFunction(R7Setup_Function49)
+		// Wavy chunks, opening on right side, but see note above
+		// Same story here
+		CallFunction(R7Setup_GetLoopTileInfo)
 		if TempValue0 == 1000
 			TempValue1 &= 1022
 			TempValue2 &= 1022
@@ -148,11 +175,15 @@ sub ObjectPlayerInteraction
 			SetTileLayerEntry(27, 0, TempValue1, TempValue2)
 		end if
 		break
+
 	end switch
+
 end sub
 
 
 sub ObjectDraw
+	
+	// Find the XPos to draw the lamp at, since it's supposed to have parallax and loop around the stage
 	Object.XPos = Screen.XOffset
 	Object.XPos /= 420
 	Object.XPos *= 420
@@ -164,32 +195,48 @@ sub ObjectDraw
 	TempValue0 >>= 1
 	Object.XPos -= TempValue0
 	Object.YPos = 520
+	
+	// And now find the YPos to draw it at, there's also vertical parallax too
 	TempValue0 = Screen.YOffset
 	TempValue0 *= 23
 	TempValue0 >>= 4
 	Object.YPos -= TempValue0
+
 	DrawSpriteScreenXY(0, Object.XPos, Object.YPos)
 	DrawSpriteScreenXY(1, Object.XPos, Object.YPos)
 	DrawSpriteScreenXY(2, Object.XPos, Object.YPos)
 	DrawSpriteScreenXY(3, Object.XPos, Object.YPos)
+
 end sub
 
 
 sub ObjectStartup
+
 	LoadSpriteSheet("R7/Objects2.gif")
+
+	// Place the Setup object into slot 19, make it always active, and give it a high draworder so that it's in front of Sonic
 	Object[19].Type = TypeName[R7Setup]
 	Object[19].Priority = 1
 	Object[19].DrawOrder = 5
+
+	// Lamp Post Head
 	SpriteFrame(-24, -24, 48, 24, 173, 26)
+
+	// Lamp Post Post
 	SpriteFrame(-8, 0, 16, 224, 222, 26)
 	SpriteFrame(-8, 224, 16, 224, 222, 26)
 	SpriteFrame(-8, 448, 16, 224, 222, 26)
+
+	// Set initial stage bounds
 	Stage.XBoundary2 -= 288
+
+	// Setup the stage's palette cycle
 	CopyPalette(0, 1)
 	CopyPalette(0, 2)
 	CopyPalette(0, 3)
 	CopyPalette(0, 4)
 	CopyPalette(0, 5)
+
 	TempValue0 = 0
 	TempValue1 = 0
 	TempValue2 = 16
@@ -199,6 +246,7 @@ sub ObjectStartup
 		TempValue1 += 16
 		TempValue2 += 16
 	loop
+
 end sub
 
 // ========================
@@ -207,11 +255,13 @@ end sub
 
 sub RSDKDraw
 	DrawSprite(0)
+	DrawSprite(1)
 end sub
 
 sub RSDKLoad
-	LoadSpriteSheet("Global/Display.gif")
-	SpriteFrame(-16, -16, 32, 32, 1, 143)		// #0 - "Script" Icon
+	LoadSpriteSheet("R7/Objects2.gif")
+	SpriteFrame(-24, -24, 48, 24, 173, 26)
+	SpriteFrame(-8, 0, 16, 224, 222, 26)
 
 	SetVariableAlias(ALIAS_VAR_PROPVAL, "unused")
 end sub

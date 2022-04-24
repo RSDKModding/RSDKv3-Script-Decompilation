@@ -7,12 +7,14 @@
 
 
 sub ObjectDraw
+
 #platform: Mobile
-	if Options.TouchControls == 0
+	if Options.TouchControls == false
 		TempValue0 = -1
 	else
 		TempValue0 = Player.ControlMode
 	end if
+
 	if TempValue0 == 0
 		if Stage.State != STAGE_PAUSED
 			if Object.Value0 < 160
@@ -20,6 +22,7 @@ sub ObjectDraw
 				Object.Value1 = Object.Value0
 				Object.Value1 <<= 1
 			end if
+
 			Object.Alpha = Object.Value0
 			DrawSpriteScreenFX(0, FX_INK, Object.Value4, 160)
 			if Player.Left == true
@@ -29,6 +32,7 @@ sub ObjectDraw
 				Object.Alpha = Object.Value0
 				DrawSpriteScreenFX(3, FX_INK, Object.Value4, 160)
 			end if
+
 			if Player.Down == true
 				Object.Alpha = 160
 				DrawSpriteScreenFX(6, FX_INK, Object.Value4, 160)
@@ -36,6 +40,7 @@ sub ObjectDraw
 				Object.Alpha = Object.Value0
 				DrawSpriteScreenFX(2, FX_INK, Object.Value4, 160)
 			end if
+
 			if Player.Right == true
 				Object.Alpha = 160
 				DrawSpriteScreenFX(8, FX_INK, Object.Value4, 160)
@@ -43,6 +48,7 @@ sub ObjectDraw
 				Object.Alpha = Object.Value0
 				DrawSpriteScreenFX(4, FX_INK, Object.Value4, 160)
 			end if
+
 			if Player.Up == true
 				Object.Alpha = 160
 				DrawSpriteScreenFX(5, FX_INK, Object.Value4, 160)
@@ -50,7 +56,8 @@ sub ObjectDraw
 				Object.Alpha = Object.Value0
 				DrawSpriteScreenFX(1, FX_INK, Object.Value4, 160)
 			end if
-			if Player.JumpHold == 1
+
+			if Player.JumpHold == true
 				Object.Alpha = 160
 				DrawSpriteScreenFX(10, FX_INK, Object.Value3, 176)
 			else
@@ -60,6 +67,7 @@ sub ObjectDraw
 		else
 			Object.Value0 = 0
 		end if
+
 		if Object.Value1 < 256
 			Object.Alpha = Object.Value1
 			DrawSpriteScreenFX(11, FX_INK, Object.Value2, 8)
@@ -71,6 +79,7 @@ sub ObjectDraw
 			Object.Value0 -= 4
 			Object.Value1 -= 8
 		end if
+
 		Object.Alpha = Object.Value0
 		if Object.Alpha > 0
 			DrawSpriteScreenFX(0, FX_INK, Object.Value4, 160)
@@ -80,11 +89,13 @@ sub ObjectDraw
 			DrawSpriteScreenFX(3, FX_INK, Object.Value4, 160)
 			DrawSpriteScreenFX(9, FX_INK, Object.Value3, 176)
 		end if
+
 		if Object.Value1 < 0
 			Object.Alpha = 0
 		else
 			Object.Alpha = Object.Value1
 		end if
+
 		if Object.Value1 < 256
 			Object.Alpha = Object.Value1
 			DrawSpriteScreenFX(11, FX_INK, Object.Value2, 8)
@@ -93,14 +104,16 @@ sub ObjectDraw
 		end if
 	end if
 #endplatform
+
 end sub
 
 
 sub ObjectStartup
+
 #platform: Mobile
 	if Options.AttractMode == 0
 		LoadSpriteSheet("Special/Objects.gif")
-		Object[25].Type = TypeName[TouchControls]
+		Object[25].Type = TypeName[Touch Controls]
 		Object[25].Priority = 1
 		Object[25].DrawOrder = 6
 		Object[25].InkEffect = 2 //INK_ALPHA
@@ -118,9 +131,14 @@ sub ObjectStartup
 			Object[25].Value4 = 16
 			Options.DPadX = 48
 		end if
+
+		// So there's a check for being in a special stage... but this script is only ever used in special stages anyways
+		// It's worth noting, this check is in the standard TouchControls script too,
+		// where it's the opposite situation and it always returns false
 		if Stage.ActiveList == SPECIAL_STAGE
 			Object[25].Value2 += 42
 		end if
+
 		SpriteFrame(0, 0, 64, 64, 128, 192)
 		SpriteFrame(26, 0, 12, 25, 154, 128)
 		SpriteFrame(26, 38, 12, 26, 154, 166)
@@ -132,6 +150,8 @@ sub ObjectStartup
 		SpriteFrame(38, 25, 26, 13, 217, 243)
 		SpriteFrame(0, 0, 48, 48, 193, 128)
 		SpriteFrame(0, 0, 48, 48, 193, 177)
+
+		// Use a different offset for the sprite depending if on the Windows Phone
 		if Engine.PlatformID == RETRO_WP7
 			SpriteFrame(-20, 0, 16, 16, 200, 239)
 		else
@@ -139,6 +159,7 @@ sub ObjectStartup
 		end if
 	end if
 #endplatform
+
 end sub
 
 // ========================
@@ -148,6 +169,7 @@ end sub
 sub RSDKDraw
 	DrawSprite(0)
 end sub
+
 
 sub RSDKLoad
 	LoadSpriteSheet("Global/Display.gif")

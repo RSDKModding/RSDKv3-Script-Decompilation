@@ -3,86 +3,141 @@
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
 // Aliases
-#alias 1: TYPE_SPECIALSETUP
+
+// Universal
+#alias Object.Value5 : Object.ScreenDepth
+
+// HUD Aliases
+#alias Object.Value0 : HUD.UFOsCount
+#alias Object.Value1 : HUD.Time.Seconds
+#alias Object.Value2 : HUD.Time.Frames
+#alias Object.Value6 : HUD.BonusUFOPos
+#alias Object.Value7 : HUD.WaterTimer
+
+// UFO Alias
+#alias Object.YPos : Object.ZPos
+
+// Stage Finish State Aliases
+#alias 9 : STAGEFINISH_LOADCREDITS
+
+// SFX Aliases
+#alias 5 : SFX_TIMEUFO
+#alias 7 : SFX_DROWNALERT
+
+// Soundtrack Aliases
+#alias 0 : SOUNDTRACK_JP
 
 
 sub ObjectMain
+
 	3DScene.NoVertices = 0
 	3DScene.NoFaces = 0
 	
+	// Update the oscillation value
+	// Although it's normally used for synced movements throughout a stage, the Oscillation value is never actually used within the Special Stage
 	Oscillation++
 	if Oscillation == 512
 		Oscillation = 0
 	end if
 
-	if Object[4].Value0 > 0
-		if Stage.TimeEnabled == 0
-			Object[4].Value2++
-			if Object[4].Value2 == 60
-				Object[4].Value2 = 0
-				if Object[4].Value1 > 0
-					if Object[4].Value1 < 6
-						PlayStageSfx(7, 0)
+	// Time is managed here
+
+	if HUD[4].UFOsCount > 0
+		if Stage.TimeEnabled == false
+
+			// Progress the timer
+			HUD[4].Time.Frames++
+			if HUD[4].Time.Frames == 60
+				HUD[4].Time.Frames = 0
+
+				if HUD[4].Time.Seconds > 0
+
+					if HUD[4].Time.Seconds < 6
+						// Time's almost up, play a jingle to alert the player
+						PlayStageSfx(SFX_DROWNALERT, false)
 					end if
-					Object[4].Value1--
-					if Object[4].Value1 < 20
-						ArrayPos0 = Object[4].Value6
+
+					HUD[4].Time.Seconds--
+					if HUD[4].Time.Seconds < 20
+
+						// Less than 20 seconds left, quickly, spawn a time UFO to help the player!
+						ArrayPos0 = HUD[4].BonusUFOPos
+
+						// Make sure the bonus UFO doesn't exist already
 						if Object[ArrayPos0].Type != TypeName[UFO]
-							PlayStageSfx(5, 0)
+							PlayStageSfx(SFX_TIMEUFO, false)
 							ArrayPos1 = ArrayPos0
 							ArrayPos1++
 							Object[ArrayPos0].Type = TypeName[UFO]
 							Object[ArrayPos0].Priority = 1
 							Object[ArrayPos0].PropertyValue = 2
 							Object[ArrayPos0].XPos = Object[ArrayPos1].XPos
-							Object[ArrayPos0].YPos = Object[ArrayPos1].YPos
+							Object[ArrayPos0].ZPos = Object[ArrayPos1].ZPos
 						end if
+
 					end if
 				else
-					PlayStageSfx(7, 0)
-					Object[30].Type = TypeName[StageFinish]
+					PlayStageSfx(SFX_DROWNALERT, false)
+
+					// Time's over, start the stage results
+					Object[30].Type = TypeName[Stage Finish]
+
 					if Stage.ActNo == 8
-						Object[30].State = 9
+						// If in the Robotnik Special Stage, then go straight to the credits
+						Object[30].State = STAGEFINISH_LOADCREDITS
 						Object[30].DrawOrder = 7
 					end if
+
 					Player.ControlMode = -1
 				end if
 			end if
-			if Object[4].Value7 > 0
-				if Object[4].Value7 > 1
-					if Object[4].Value7 > 20
-						TempValue0 = Object[4].Value2
+			
+			if HUD[4].WaterTimer > 0
+				if HUD[4].WaterTimer > 1
+					if HUD[4].WaterTimer > 20
+						TempValue0 = HUD[4].Time.Frames
 						TempValue0 &= 1
-						if Object[4].Value1 > 0
-							Object[4].Value1 -= TempValue0
+
+						if HUD[4].Time.Seconds > 0
+							HUD[4].Time.Seconds -= TempValue0
 						else
-							Object[30].Type = TypeName[StageFinish]
+							// No more time left, end the stage by spawning the results
+							Object[30].Type = TypeName[Stage Finish]
+
 							if Stage.ActNo == 8
-								Object[30].State = 9
+								// If in the Robotnik Special Stage, then go straight to the credits
+								Object[30].State = STAGEFINISH_LOADCREDITS
 								Object[30].DrawOrder = 7
 							end if
+
 							Player.ControlMode = -1
 						end if
 					else
 						if Object[3].Type != TypeName[WaterSplash]
-							Object[4].Value7 = 0
+							HUD[4].WaterTimer = 0
 						end if
 					end if
-					Object[4].Value7--
+
+					HUD[4].WaterTimer--
 				else
 					if Object[3].Type != TypeName[WaterSplash]
-						Object[4].Value7 = 0
+						HUD[4].WaterTimer = 0
 					else
-						TempValue0 = Object[4].Value2
+						TempValue0 = HUD[4].Time.Frames
 						TempValue0 &= 1
-						if Object[4].Value1 > 0
-							Object[4].Value1 -= TempValue0
+
+						if HUD[4].Time.Seconds > 0
+							HUD[4].Time.Seconds -= TempValue0
 						else
-							Object[30].Type = TypeName[StageFinish]
+							// Player wasted too much time puddling around and now time's up, end the stage
+							Object[30].Type = TypeName[Stage Finish]
+
 							if Stage.ActNo == 8
-								Object[30].State = 9
+								// If in the Robotnik Special Stage, then go straight to the credits
+								Object[30].State = STAGEFINISH_LOADCREDITS
 								Object[30].DrawOrder = 7
 							end if
+
 							Player.ControlMode = -1
 						end if
 					end if
@@ -94,48 +149,77 @@ end sub
 
 
 sub ObjectDraw
+
+	// Sort the drawing orders of all entities
+	// (Things further away from the camera should be drawn first and things closest should be last, etc.)
+
 	TempValue0 = 0
 	TempValue1 = Screen[3].DrawListSize
 	while TempValue0 < TempValue1
 		TempValue2 = TempValue1
 		TempValue2--
+
 		while TempValue2 > TempValue0
 			TempValue3 = TempValue2
 			TempValue2--
+
+			// Get the object slots of the two objects
 			GetDrawListEntityRef(ArrayPos0, 3, TempValue3)
 			GetDrawListEntityRef(ArrayPos1, 3, TempValue2)
-			if Object[ArrayPos0].Value5 > Object[ArrayPos1].Value5
+
+			// Compare their sorted draw orders
+			if Object[ArrayPos0].ScreenDepth > Object[ArrayPos1].ScreenDepth
+				// Switch them around if needed
 				SetDrawListEntityRef(ArrayPos0, 3, TempValue2)
 				SetDrawListEntityRef(ArrayPos1, 3, TempValue3)
 			end if
 		loop
+
 		TempValue0++
 	loop
+
 end sub
 
 
 sub ObjectStartup
+
+	// Despite not having any SpriteFrames to draw with, go ahead and load the Special Stage objects sheet anyways
+	// (This somewhat helps loading times by doing initial loading i guess...?)
 	LoadSpriteSheet("Special/Objects.gif")
+
+	// Set the ground to the 3d sky type
 	TileLayer[0].Type = 4
-	if Options.Soundtrack == 0
-		SetMusicTrack("JP/SpecialStage.ogg", 0, 1)
-		SetMusicTrack("JP/ZoneComplete.ogg", 1, 0)
+
+	if Options.Soundtrack == SOUNDTRACK_JP
+		SetMusicTrack("JP/SpecialStage.ogg", 0, true)
+		SetMusicTrack("JP/ZoneComplete.ogg", 1, false)
 	else
 		SetMusicTrack("US/SpecialStage.ogg", 0, 270972)
-		SetMusicTrack("US/ZoneComplete.ogg", 1, 0)
+		SetMusicTrack("US/ZoneComplete.ogg", 1, true)
 	end if
-	Stage.PauseEnabled = 0
-	Stage.TimeEnabled = 0
-	Object[23].Type = TypeName[SpecialSetup]
+
+	Stage.PauseEnabled = false
+	Stage.TimeEnabled = false
+	
+	Object[23].Type = TypeName[Special Setup]
 	Object[23].Priority = 1
+
+	// Give it a draw order lower than the rest to make sure it can sort all other entities correctly
 	Object[23].DrawOrder = 2
+
+	// Cycle through all Blank Objects?
+	// There was likely a proper name here in the original source,
+	// but it was an invalid name so upon compiling, it got resolved as 0
+	// What this original name was though, we have no idea...
 	ArrayPos0 = 32
 	while ArrayPos0 < 1056
 		if Object[ArrayPos0].Type == TypeName[Blank Object]
+			// If the object is blank... then blank it again...
 			ResetObjectEntity(ArrayPos0, TypeName[Blank Object], 0, 0, 0)
 		end if
 		ArrayPos0++
 	loop
+
 end sub
 
 // ========================
@@ -146,9 +230,10 @@ sub RSDKDraw
 	DrawSprite(0)
 end sub
 
+
 sub RSDKLoad
 	LoadSpriteSheet("Global/Display.gif")
-	SpriteFrame(-16, -16, 32, 32, 1, 143)		// #0 - "Script" Icon
+	SpriteFrame(-16, -16, 32, 32, 1, 143)		// #0 - "Script" Box
 
 	SetVariableAlias(ALIAS_VAR_PROPVAL, "unused")
 end sub

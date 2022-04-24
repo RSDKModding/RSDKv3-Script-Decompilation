@@ -5,340 +5,489 @@
 // Aliases
 #alias 52: TYPE_METALSONIC
 
-// Function declarations
-#function MetalSonic_Function52
+#alias Object.Value0 : Object.Timer
 
-function MetalSonic_Function52
+#alias Object.Value1 : Object.XVelocity
+#alias Object.Value2 : Object.YVelocity
+
+// For the extra sprites associated with Metal Sonic, like his lightning effects
+#alias Object.Value3 : Object.AccessoryAnimation
+#alias Object.Value4 : Object.AccessoryFrame
+
+// State Aliases
+#alias 0 : METALSONIC_WAITING
+#alias 1 : METALSONIC_TURNRIGHT
+#alias 2 : METALSONIC_STARTUP
+#alias 3 : METALSONIC_ADVANCEMAIN
+#alias 4 : METALSONIC_CHARGEUP
+#alias 5 : METALSONIC_ELETRICSHIELD
+#alias 6 : METALSONIC_DASHING
+#alias 7 : METALSONIC_TAUNTING
+#alias 8 : METALSONIC_DEFEATED
+
+// Accessory Aliases, to be set to Object.AccessoryAnimation
+#alias 0 : ACCESSORY_NONE
+#alias 1 : ACCESSORY_CHARGE1
+#alias 2 : ACCESSORY_CHARGE2
+#alias 3 : ACCESSORY_CHARGE3
+#alias 4 : ACCESSORY_LIGHTNING
+
+// Metal Sonic has an entire animation file, these aliases correspond to animations in there
+#alias 0 : ANI_STANDING
+#alias 1 : ANI_TAUNTING
+#alias 2 : ANI_TURNING
+#alias 3 : ANI_HOVERING
+#alias 4 : ANI_HOVERINGFAST
+#alias 5 : ANI_ELECTRIFIED
+#alias 6 : ANI_DASHING1
+#alias 7 : ANI_DASHING2
+#alias 8 : ANI_DEFEATED
+#alias 9 : ANI_CHARGING
+
+// If you're wondering what Metal Sonic's SpriteFrames are then, it's for his effects like lightning and such
+
+
+// Function declarations
+#function MetalSonic_FollowGround
+
+
+function MetalSonic_FollowGround
+
+	// Move Metal Sonic 20 pixels up to help him follow the ground
 	Object.YPos -= 2097152
 	ObjectTileGrip(0, 0, 20, 0)
-	if CheckResult == 0
+	if CheckResult == false
+	
+		// Metal Sonic's in the air, move him 16 pixels down and try again
 		Object.YPos += 1048576
 		ObjectTileGrip(0, 0, 20, 0)
-		if CheckResult == 0
+		if CheckResult == false
+	
+			// He's still airborne even after moving him down before,
+			// Move him even further down and try again
 			Object.YPos += 1048576
 			ObjectTileGrip(0, 0, 20, 0)
 		end if
 	end if
+
 end function
 
 
 sub ObjectMain
+
 	switch Object.State
-	case 0
-		if Object.Animation == 0
-			if Player.JumpPress == 1
-				Object.Value0 = 120
-				Object.Animation = 1
+	case METALSONIC_WAITING
+		if Object.Animation == ANI_STANDING
+			if Player.JumpPress == true
+				// Player's goofing around, go ahead and taunt them for two seconds
+				Object.Timer = 120
+				Object.Animation = ANI_TAUNTING
 			end if
-		else
-			if Object.Value0 > 0
-				Object.Value0--
+		else // Object.Animation == ANI_TAUNTING
+			if Object.Timer > 0
+				Object.Timer--
 			else
-				Object.Animation = 0
+				Object.Animation = ANI_STANDING
 			end if
 		end if
 		break
-	case 1
-		if Object.Value0 < 140
-			Object.Value0++
+	
+	case METALSONIC_TURNRIGHT
+		// (He is turning to our right btw, not his right)
+		
+		if Object.Timer < 140
+			Object.Timer++
 		else
+			// From this point on make Metal Sonic always active, as the player may overtake it during the race and put it out of normal bounds
 			Object.Priority = 1
-			Object.Value0 = 0
-			Object.Value3 = 1
-			Object.Value4 = 0
+
+			// Get ready...
+			Object.Timer = 0
+			Object.AccessoryAnimation = ACCESSORY_CHARGE1
+			Object.AccessoryFrame = 0
 			Object.State++
 		end if
 		break
-	case 2
-		if Object.Value0 < 204
-			Object.Value0++
+
+	case METALSONIC_STARTUP
+		if Object.Timer < 204
+			Object.Timer++
 		else
-			Object.Value0 = 0
-			Object.Value3 = 2
-			Object.Animation = 4
-			Object.Value1 = 262144
-			Player.HeavyMetalFlag = 1
+			// And take off, at the speed of sound! (4 pixels per frame, to be exact!)
+
+			Object.Timer = 0
+			Object.AccessoryAnimation = ACCESSORY_CHARGE2
+			Object.Animation = ANI_HOVERINGFAST
+			Object.XVelocity = 262144
+			
+			// Reset the achievement value
+			Player.HeavyMetalFlag = true
+
 			Object.State++
 		end if
 		break
-	case 3
+
+	case METALSONIC_ADVANCEMAIN
+		// (Object [-2] is the final vertical door at the end of the race)
 		TempValue0 = Object[-2].XPos
-		TempValue0 -= 117440512
+		TempValue0 -= 117440512 // 0x7000000
+		
+		// Is the final door farther than 1792 pixels from Metal Sonic?
 		if Object.XPos < TempValue0
+		
+			// Go at a speed depending on how far the player is
 			TempValue0 = Object.XPos
 			TempValue0 -= Player.XPos
 			TempValue0 >>= 6
-			Object.Value1 = 262144
-			Object.Value1 -= TempValue0
-			if Object.Value1 < 131072
-				Object.Value1 = 131072
+			Object.XVelocity = 262144 // Base speed of 4 pixels per frame
+			Object.XVelocity -= TempValue0
+			
+			// Lower minimum speed of 2 pixels per frame
+			if Object.XVelocity < 131072
+				Object.XVelocity = 131072
 			end if
-			if Object.Value1 > 393216
-				Object.Value1 = 393216
+			
+			// Upper maximum speed of 6 pixels per frame
+			if Object.XVelocity > 393216
+				Object.XVelocity = 393216
 			end if
-			if Object.Value1 < 245760
-				Object.Value3 = 2
-				Object.Animation = 3
+			
+			// Threshold for the 3rd charge level animation is 3.75 pixels per frame
+			if Object.XVelocity < 245760
+				Object.AccessoryAnimation = ACCESSORY_CHARGE2
+				Object.Animation = ANI_HOVERING
 			else
-				Object.Value3 = 3
-				Object.Animation = 4
+				Object.AccessoryAnimation = ACCESSORY_CHARGE3
+				Object.Animation = ANI_HOVERINGFAST
 			end if
-			if Object.Value0 < 180
-				Object.Value0++
+			
+			if Object.Timer < 180
+				Object.Timer++
 			else
-				Object.Animation = 9
-				Object.Value0 = 0
-				Object.Value3 = 1
+				// Start attacking
+				Object.Animation = ANI_CHARGING
+				Object.Timer = 0
+				Object.AccessoryAnimation = ACCESSORY_CHARGE1
 				Object.State++
 				PlayStageSfx(4, 0)
 			end if
 		else
+			// Metal Sonic is within 1792 pixels of the door
+			
+			// Go at a speed depending on how far the player is
 			TempValue0 = Object.XPos
 			TempValue0 -= Player.XPos
 			TempValue0 >>= 6
-			Object.Value1 = 262144
-			Object.Value1 -= TempValue0
-			if Object.Value1 < 131072
-				Object.Value1 = 131072
+			Object.XVelocity = 262144 // Base speed of 4 pixels per frame
+			Object.XVelocity -= TempValue0
+			
+			// Lower minimum speed of 2 pixels per frame
+			if Object.XVelocity < 131072
+				Object.XVelocity = 131072
 			end if
-			if Object.Value1 > 393216
-				Object.Value1 = 393216
+			
+			// Upper maximum speed of 6 pixels per frame
+			if Object.XVelocity > 393216
+				Object.XVelocity = 393216
 			end if
-			if Object.Value1 < 245760
-				Object.Value3 = 2
-				Object.Animation = 3
+			
+			// Threshold for the 3rd charge level animation is 3.75 pixels per frame
+			if Object.XVelocity < 245760
+				Object.AccessoryAnimation = ACCESSORY_CHARGE2
+				Object.Animation = ANI_HOVERING
 			else
-				Object.Value3 = 3
-				Object.Animation = 4
+				Object.AccessoryAnimation = ACCESSORY_CHARGE3
+				Object.Animation = ANI_HOVERINGFAST
 			end if
+			
+			// Removed code here so that Metal doesn't switch states while near the door
 		end if
 		break
-	case 4
-		if Object.Value0 < 60
-			Object.Value0++
+
+	case METALSONIC_CHARGEUP
+		if Object.Timer < 60
+			Object.Timer++
 		else
-			Object.Value0 = 0
+			Object.Timer = 0
 			if Player.XPos > Object.XPos
-				Object.State = 6
-				Object.Animation = 6
-				Object.Value3 = 0
-				Object.Value4 = 0
+				// If the player's ahead of Metal Sonic then we gotta catch up, start a Super Dash!
+				Object.State = METALSONIC_DASHING
+				Object.Animation = ANI_DASHING1
+				Object.AccessoryAnimation = ACCESSORY_NONE
+				Object.AccessoryFrame = 0
 				PlayStageSfx(6, 0)
+				
 #platform: Use_Haptics
+				// and play a super dash-esque motion as well, even if the player probably doesn't even see Metal Sonic...
 				HapticEffect(55, 0, 0, 0)
-#endplatform
+#endplatformf
+
 			else
-				Object.State = 5
-				Object.Value1 = 131072
-				Object.Animation = 5
-				Object.Value3 = 4
-				Object.Value4 = 0
+				// The player's behind Metal Sonic so we don't want to run too far, just initiate the Eletric Shield instead
+				Object.State = METALSONIC_ELETRICSHIELD
+				
+				// Slowing down to a speed of 2 pixels per frame
+				Object.XVelocity = 131072
+				Object.Animation = ANI_ELECTRIFIED
+				Object.AccessoryAnimation = ACCESSORY_LIGHTNING
+				Object.AccessoryFrame = 0
 				PlayStageSfx(5, 0)
+				
 #platform: Use_Haptics
 				HapticEffect(60, 0, 0, 0)
 #endplatform
+
 			end if
 		end if
 		break
-	case 5
-		if Object.Value0 < 180
-			Object.Value0++
+
+	case METALSONIC_ELETRICSHIELD
+		if Object.Timer < 180
+			Object.Timer++
 			TempValue0 = Object[-1].XPos
 			TempValue0 += 4194304
 			if Object.XPos < TempValue0
-				Object.State = 6
-				Object.Value0 = 60
-				Object.Animation = 7
-				Object.Value3 = 0
-				Object.Value4 = 0
+				Object.State = METALSONIC_DASHING
+				Object.Timer = 60
+				Object.Animation = ANI_DASHING2
+				Object.AccessoryAnimation = ACCESSORY_NONE
+				Object.AccessoryFrame = 0
 				PlayStageSfx(6, 0)
 #platform: Use_Haptics
 				HapticEffect(55, 0, 0, 0)
 #endplatform
 			end if
 		else
-			Object.Value0 = 0
-			Object.State = 3
-			Object.Value4 = 0
+			Object.Timer = 0
+			Object.State = METALSONIC_ADVANCEMAIN
+			Object.AccessoryFrame = 0
 		end if
 		break
-	case 6
-		Object.Value1 += 2048
-		if Object.Value1 > 524288
-			Object.Value1 = 524288
+
+	case METALSONIC_DASHING
+		Object.XVelocity += 2048
+		if Object.XVelocity > 524288
+			Object.XVelocity = 524288
 		end if
-		if Object.Value0 < 180
-			Object.Value0++
-			if Object.Value0 == 10
-				Object.Animation = 7
+		
+		if Object.Timer < 180
+			Object.Timer++
+			if Object.Timer == 10
+				Object.Animation = ANI_DASHING2
 			end if
 		else
-			Object.Value0 = 0
-			Object.State = 3
+			Object.Timer = 0
+			Object.State = METALSONIC_ADVANCEMAIN
 		end if
 		break
-	case 7
+
+	case METALSONIC_TAUNTING
 		if Player.Animation == ANI_DYING
-			Object.Animation = 1
+			Object.Animation = ANI_TAUNTING
 		end if
 		break
-	case 8
-		Object.Value2 += 14336
-		Object.YPos += Object.Value2
-		if Object.Value2 > 1048576
+
+	case METALSONIC_DEFEATED
+		Object.YVelocity += 14336
+		Object.YPos += Object.YVelocity
+		if Object.YVelocity > 1048576
 			ResetObjectEntity(Object.EntityNo, TypeName[Blank Object], 0, 0, 0)
 		end if
 		break
+
 	end switch
-	if Object.Value1 > 0
+
+	if Object.XVelocity > 0
 		TempValue0 = Object[-1].XPos
 		TempValue0 += 4194304
 		if Object.XPos < TempValue0
 			Object.XPos = TempValue0
 		end if
-		if Object.Value1 > 196608
-			TempValue0 = Object.Value1
+		
+		if Object.XVelocity > 196608
+			TempValue0 = Object.XVelocity
 			TempValue0 -= 196608
 			Object.XPos += 196608
-			CallFunction(MetalSonic_Function52)
+			CallFunction(MetalSonic_FollowGround)
 			Object.XPos += TempValue0
-			CallFunction(MetalSonic_Function52)
+			CallFunction(MetalSonic_FollowGround)
 		else
-			Object.XPos += Object.Value1
-			CallFunction(MetalSonic_Function52)
+			Object.XPos += Object.XVelocity
+			CallFunction(MetalSonic_FollowGround)
 		end if
-		if CheckResult == 1
-			Object.Value2 = 0
+		
+		if CheckResult == true
+			// If on the ground, reset Metal Sonic's Y Velocity
+			Object.YVelocity = 0
 		else
-			Object.Value2 += 14336
-			Object.YPos += Object.Value2
+			Object.YVelocity += 14336
+			Object.YPos += Object.YVelocity
 		end if
+		
+		// Object [-2] is the final vertical door at the end of the race
 		switch Object[-2].State
 		case 2
 		case 6
-			if Player.HeavyMetalFlag == 1
+			// Door in its closed state
+
+			if Player.HeavyMetalFlag == true
 				if Stage.PlayerListPos == 0
+					// Player managed to get through the fight without getting hit, give them the Heavy Metal achievment
 					SetAchievement(6, 100)
 				end if
 			end if
+
 			TempValue0 = Object[-2].XPos
 			TempValue0 -= 1966080
 			if Object.XPos > TempValue0
 				Object.XPos = TempValue0
-				Object.Value1 = 0
-				Object.Value2 = -425984
-				Object.Value3 = 0
-				Object.Animation = 8
-				Object.State = 8
+				Object.XVelocity = 0
+				Object.YVelocity = -425984
+				
+				Object.AccessoryAnimation = ACCESSORY_NONE
+				Object.Animation = ANI_DEFEATED
+				
+				Object.State = METALSONIC_DEFEATED
 				CreateTempObject(TypeName[Explosion], 0, Object.XPos, Object.YPos)
 				TempValue0 = 0
 				TempValue1 = 4
 				while TempValue0 < 8
 					CreateTempObject(TypeName[Debris], TempValue1, Object.XPos, Object.YPos)
-					Rand(Object[TempObjectPos].Value1, 4)
-					Object[TempObjectPos].Value2++
-					Object[TempObjectPos].Value1 <<= 16
-					FlipSign(Object[TempObjectPos].Value1)
-					Rand(Object[TempObjectPos].Value2, 3)
-					Object[TempObjectPos].Value2 += 2
-					Object[TempObjectPos].Value2 <<= 16
-					FlipSign(Object[TempObjectPos].Value2)
+					Rand(Object[TempObjectPos].XVelocity, 4)
+					Object[TempObjectPos].YVelocity++
+					Object[TempObjectPos].XVelocity <<= 16
+					FlipSign(Object[TempObjectPos].XVelocity)
+					Rand(Object[TempObjectPos].YVelocity, 3)
+					Object[TempObjectPos].YVelocity += 2
+					Object[TempObjectPos].YVelocity <<= 16
+					FlipSign(Object[TempObjectPos].YVelocity)
 					TempValue0++
 					TempValue1++
 					if TempValue1 > 8
 						TempValue1 = 4
 					end if
 				loop
+				
 				PlaySfx(22, 0)
+				
 #platform: Use_Haptics
 				HapticEffect(90, 0, 0, 0)
 #endplatform
 			end if
 			break
+
 		case 4
 			TempValue0 = Object[-2].XPos
 			TempValue0 += 2359296
 			if Object.XPos > TempValue0
 				Object.XPos = TempValue0
-				Object.Value1 = 0
-				Object.Value3 = 0
-				Object.Animation = 0
-				Object.State = 7
+				Object.XVelocity = 0
+				Object.AccessoryAnimation = ACCESSORY_NONE
+				Object.Animation = ANI_STANDING
+				Object.State = METALSONIC_TAUNTING
 			end if
 			break
+
 		end switch
+
 	end if
+
 	ProcessAnimation()
 end sub
 
 
 sub ObjectPlayerInteraction
+
 	switch Object.Animation
-	case 5
-	case 7
+	case ANI_ELECTRIFIED
+	case ANI_DASHING2
+		// Metal Sonic is in a sparking animation, harm the player if they make contact
 		PlayerObjectCollision(C_TOUCH, -16, -12, 16, 12)
-		if CheckResult == 1
+		if CheckResult == true
 			CallFunction(PlayerObject_Hit)
-			Player.HeavyMetalFlag = 0
+			
+			// Now that the player's been hit, the achievement is unobtainable
+			Player.HeavyMetalFlag = false
 		end if
 		break
+
 	end switch
+
 end sub
 
 
 
 sub ObjectDraw
-	switch Object.Value3
+
+	// First, draw Metal Sonic's "accessory" (of sorts) behind him
+	switch Object.AccessoryAnimation
 	case 1
-		TempValue0 = Object.Value4
+		TempValue0 = Object.AccessoryFrame
 		TempValue0 >>= 1
 		DrawSprite(TempValue0)
-		Object.Value4++
-		Object.Value4 &= 7
+		Object.AccessoryFrame++
+		Object.AccessoryFrame &= 7
 		break
+
 	case 2
-		TempValue0 = Object.Value4
+		TempValue0 = Object.AccessoryFrame
 		TempValue0 >>= 1
 		TempValue0 += 4
 		DrawSprite(TempValue0)
-		Object.Value4++
-		Object.Value4 &= 7
+		Object.AccessoryFrame++
+		Object.AccessoryFrame &= 7
 		break
+
 	case 3
-		TempValue0 = Object.Value4
+		TempValue0 = Object.AccessoryFrame
 		TempValue0 >>= 1
 		TempValue0 += 8
 		DrawSprite(TempValue0)
-		Object.Value4++
-		Object.Value4 &= 7
+		Object.AccessoryFrame++
+		Object.AccessoryFrame &= 7
 		break
+
 	case 4
-		TempValue0 = Object.Value4
+		TempValue0 = Object.AccessoryFrame
 		TempValue0 += 12
 		DrawSprite(TempValue0)
-		Object.Value4++
-		Object.Value4 %= 10
+		Object.AccessoryFrame++
+		Object.AccessoryFrame %= 10
 		break
+
 	end switch
+
+	// And now draw Metal Sonic himself, notably done here so he appears on top of these other sprites
 	DrawObjectAnimation()
+	
 end sub
 
 
 sub ObjectStartup
+
 	LoadSpriteSheet("R7/Objects3.gif")
+
 	LoadAnimation("MetalSonic.Ani")
+
+	// 0-3 - Thruster Frames Set 1
 	SpriteFrame(0, 0, 0, 0, 1, 83)
 	SpriteFrame(-12, 3, 16, 16, 1, 83)
 	SpriteFrame(0, 0, 0, 0, 1, 83)
 	SpriteFrame(-12, 3, 16, 16, 18, 83)
+	
+	// 4-7 - Thruster Frames Set 2
 	SpriteFrame(0, 0, 0, 0, 1, 83)
 	SpriteFrame(-14, -8, 16, 16, 18, 83)
 	SpriteFrame(0, 0, 0, 0, 1, 83)
 	SpriteFrame(-18, -12, 24, 24, 1, 100)
+	
+	// 8-11 - Thruster Frames Set 3
 	SpriteFrame(0, 0, 0, 0, 1, 83)
 	SpriteFrame(-18, -12, 24, 24, 1, 100)
 	SpriteFrame(0, 0, 0, 0, 1, 83)
 	SpriteFrame(-22, -16, 32, 32, 1, 125)
+	
+	// 12-16 - Static Charge Shield Frames
 	SpriteFrame(-24, -28, 48, 48, 150, 75)
 	SpriteFrame(-24, -28, 48, 48, 150, 75)
 	SpriteFrame(-24, -28, 48, 48, 150, 75)
@@ -349,13 +498,18 @@ sub ObjectStartup
 	SpriteFrame(-24, -28, 48, 48, 199, 75)
 	SpriteFrame(-24, -28, 48, 48, 199, 75)
 	SpriteFrame(0, 0, 0, 0, 1, 83)
+
 	ArrayPos0 = 32
 	while ArrayPos0 < 1056
 		if Object[ArrayPos0].Type == TypeName[MetalSonic]
+			// Store Metal Sonic's EntityNo to the global variable for it
+			// (Used by spikes to know when they should break)
 			MetalSonic_EntityNo = ArrayPos0
 		end if
+		
 		ArrayPos0++
 	loop
+	
 end sub
 
 // ========================
@@ -365,6 +519,7 @@ end sub
 sub RSDKDraw
 	DrawSprite(0)
 end sub
+
 
 sub RSDKLoad
 	LoadSpriteSheet("Global/Display.gif")

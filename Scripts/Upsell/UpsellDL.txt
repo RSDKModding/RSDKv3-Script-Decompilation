@@ -13,6 +13,7 @@
 
 // Callbacks & Engine States
 #alias 8 : CALLBACK_BUY_FULL_GAME_SELECTED
+
 // Languages
 #alias 0 : ENGLISH
 #alias 1 : FRENCH
@@ -20,6 +21,7 @@
 #alias 3 : DEUTSCH
 #alias 4 : SPANISH
 #alias 5 : JAPANESE
+
 
 sub ObjectMain
 #platform: Mobile
@@ -30,6 +32,7 @@ sub ObjectMain
 		else
 			Object.ButtonCount = 0
 		end if
+
 		if Object.Fade < 16
 			Object.Fade++
 		else
@@ -57,6 +60,7 @@ sub ObjectMain
 				end if
 				PlaySfx(23, 0) 	//Menu Button SFX
 			end if
+
 			if KeyPress.Down == true
 				Object.ButtonCount++
 				if Object.ButtonCount > 1
@@ -64,6 +68,7 @@ sub ObjectMain
 				end if
 				PlaySfx(23, 0) 	//Menu Button SFX
 			end if
+
 			if KeyPress.Start == true
 				switch Object.ButtonCount
 				case 0
@@ -74,6 +79,7 @@ sub ObjectMain
 					break
 				end switch
 			end if
+
 			if KeyPress.ButtonA == true
 				switch Object.ButtonCount
 				case 0
@@ -84,6 +90,7 @@ sub ObjectMain
 					break
 				end switch
 			end if
+
 			CheckTouchRect(0, 0, Screen.XSize, Screen.YSize)
 			if CheckResult > -1
 				Options.PhysicalControls = false
@@ -111,6 +118,7 @@ sub ObjectMain
 					end if
 				end if
 			end if
+
 			TempValue0 = Screen.CenterX
 			TempValue0 -= 64
 			TempValue1 = Screen.CenterX
@@ -130,10 +138,12 @@ sub ObjectMain
 					end if
 				end if
 			end if
+
 			if KeyPress.Up == true
 				Object.ButtonCount = 1
 				Options.PhysicalControls = true
 			end if
+
 			if KeyPress.Down == true
 				Object.ButtonCount = 0
 				Options.PhysicalControls = true
@@ -144,11 +154,15 @@ sub ObjectMain
 		if Object.Fade < 288
 			Object.Fade += 8
 		else
+			// Going back to normal-quality graphics, signal the engine to exit high-res mode
 			Engine.State = 6
+
+			// Load the menu
 			Stage.ActiveList = PRESENTATION_STAGE
-			Stage.ListPos = 1		// Menu
+			Stage.ListPos = 1
 			LoadStage()
 		end if
+
 		TempValue0 = Object.Fade
 		if TempValue0 > 255
 			TempValue0 = 255
@@ -165,9 +179,12 @@ sub ObjectDraw
 	Object.Scale = 216
 	DrawSpriteScreenFX(0, FX_SCALE, Screen.CenterX, Screen.CenterY)
 	if Object.ButtonCount == 0
+		// The "Buy full game" button is selected, draw its selected sprite as well
 		DrawSpriteScreenFX(1, FX_SCALE, Screen.CenterX, 186)
 	end if
+
 	if Object.ButtonCount == 1
+		// The "Play again" button is selected, draw its selected sprite as well
 		DrawSpriteScreenFX(2, FX_SCALE, Screen.CenterX, 222)
 	end if
 #endplatform
@@ -176,18 +193,25 @@ end sub
 
 sub ObjectStartup
 #platform: Mobile
-	TempValue0 = 0
+
+	// Cycle through all scene objects and find if there are any Upsell DL Objects
+	TempValue0 = false
 	ArrayPos0 = 32
 	while ArrayPos0 < 1056
-		if Object[ArrayPos0].Type == TypeName[UpsellDL]
-			TempValue0 = 1
+		if Object[ArrayPos0].Type == TypeName[Upsell DL]
+			// If there are, then set the load sheet flag to true
+			TempValue0 = true
 		end if
+
 		ArrayPos0++
 	loop
-	if TempValue0 == 1
+
+	// Only if there's an Upsell DL object in the scene, load the sheet
+	// (It's a really large sheet! Loading it unnecessarily can heavily increase loading times!)
+	if TempValue0 == true
 		switch Engine.Language
 		case ENGLISH
-			//LoadSpriteSheet("Upsell/UpsellDL_EN.pvr")		//CD Lite format, just here for the record since the decomp can't load it
+			//LoadSpriteSheet("Upsell/UpsellDL_EN.pvr")		// Sonic CD Lite used PVRs, but the latest releases use gif instead
 			LoadSpriteSheet("Upsell/UpsellDL_EN.gif")
 			break
 		case FRENCH
@@ -203,21 +227,36 @@ sub ObjectStartup
 			LoadSpriteSheet("Upsell/UpsellDL_ES.gif")
 			break
 		case JAPANESE
-			//LoadSpriteSheet("Upsell/UpsellDL_JP.pvr")		//CD Lite format, just here for the record since the decomp can't load it
+			//LoadSpriteSheet("Upsell/UpsellDL_JP.pvr")		// Sonic CD Lite used PVRs, but the latest releases use gif instead
 			LoadSpriteSheet("Upsell/UpsellDL_JP.gif")
 			break
 		end switch
+
+		// Load the entire palette file, notably overriding the global section of the palette as well
 		LoadPalette("UpsellDL.act", 0, 0, 0, 256)
 	end if
+	
+	// The gif is a high-res sprite, so signal to the Engine to start up High-Res mode
 	Engine.State = 5
+
+	// Entire BG sprite
 	SpriteFrame(-512, -288, 1024, 576, 0, 0)
+
+	// The Japanese version of the selected frames are just a tad bit taller
 	if Engine.Language != JAPANESE
+		// "Buy full game" (or some equivalent in the chosen language)
 		SpriteFrame(-128, -35, 260, 69, 381, 580)
+
+		// "Try again" (or some equivalent in the chosen language)
 		SpriteFrame(-91, -24, 182, 49, 420, 673)
 	else
+		// "完全版の購入"
 		SpriteFrame(-128, -36, 260, 69, 381, 580)
+
+		// "もう一度遊ぶ"
 		SpriteFrame(-91, -24, 183, 49, 420, 677)
 	end if
+
 #endplatform
 end sub
 
@@ -228,6 +267,7 @@ end sub
 sub RSDKDraw
 	DrawSprite(0)
 end sub
+
 
 sub RSDKLoad
 	LoadSpriteSheet("Upsell/UpsellDL_EN.gif")
