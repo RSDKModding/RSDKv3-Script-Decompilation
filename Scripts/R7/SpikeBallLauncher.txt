@@ -3,7 +3,6 @@
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
 // Aliases
-
 #alias Object.Value0 : Object.Timer
 
 // Position is an offset relative to the base Spike Launcher Object, in world-space
@@ -189,23 +188,22 @@ sub ObjectDraw
 				
 			end switch // Object.PropertyValue
 			break
-
-		end switch // Object.State
 		
-			// Add the Object to Draw List 4 so that its other half can draw above the Spike Ball
-			SetDrawListEntityRef(Object.EntityNo, 4, Screen[4].DrawListSize)
-			Screen[4].DrawListSize++
-			Object.DrawOrder = 4
+		end switch // Object.State
 			
-		else
-			// Drawing the Spike Ball Launcher itself...
-			
-			// The object's direction is stored in its Property Value, which also happens to align with the correct Sprite Frames
-			DrawSprite(Object.PropertyValue)
-			
-			// Reset the object's Draw Order back to 3 so that this whole process can be done again next frame
-			Object.DrawOrder = 3
-		end if
+		// Add the Object to Draw List 4 so that its other half can draw above the Spike Ball
+		SetDrawListEntityRef(Object.EntityNo, 4, Screen.DrawListSize[4])
+		Screen.DrawListSize[4]++
+		Object.DrawOrder = 4
+		
+	else
+		// Drawing the Spike Ball Launcher itself...
+		
+		// The object's direction is stored in its Property Value, which also happens to align with the correct Sprite Frames
+		DrawSprite(Object.PropertyValue)
+		
+		// Reset the object's Draw Order back to 3 so that this whole process can be done again next frame
+		Object.DrawOrder = 3
 	end if
 	
 end sub
@@ -232,6 +230,7 @@ sub ObjectStartup
 	SpriteFrame(-16, -16, 32, 32, 1, 199)
 	
 end sub
+
 
 // ========================
 // Editor Subs
@@ -261,13 +260,37 @@ end sub
 
 
 sub RSDKDraw
-	DrawSprite(0)
+	DrawSprite(4)
+	DrawSprite(Object.PropertyValue)
+	
+	if Editor.ShowGizmos == true
+		TempValue0 = Object.XPos
+		TempValue1 = Object.YPos
+		
+		switch Object.PropertyValue
+		case 0
+		default
+			TempValue1 += 0x100000; break;
+		case 1
+			TempValue1 -= 0x100000; break;
+		case 2
+			TempValue0 += 0x100000; break;
+		case 3
+			TempValue0 -= 0x100000; break;
+		end switch
+
+		DrawArrow(Object.XPos, Object.YPos, TempValue0, TempValue1, 255, 255, 255)
+	end if
 end sub
 
 
 sub RSDKLoad
-	LoadSpriteSheet("Global/Display.gif")
-	SpriteFrame(-16, -16, 32, 32, 1, 143)		// #0 - "Script" Icon
+	LoadSpriteSheet("R7/Objects.gif")
+	SpriteFrame(-16, -16, 32, 16, 133, 1)
+	SpriteFrame(-16, 0, 32, 16, 166, 1)
+	SpriteFrame(-16, -16, 16, 32, 1, 166)
+	SpriteFrame(0, -16, 16, 32, 17, 166)
+	SpriteFrame(-16, -16, 32, 32, 1, 199)
 
 	AddEditorVariable("direction")
 	SetActiveVariable("direction")

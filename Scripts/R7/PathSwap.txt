@@ -18,6 +18,7 @@
 #alias 0 : PATHSWAP_UNTOUCHED
 #alias 1 : PATHSWAP_INTERACTED
 
+
 sub ObjectMain
 
 	if Object.State == PATHSWAP_INTERACTED
@@ -108,7 +109,7 @@ sub ObjectStartup
 
 	ArrayPos0 = 32
 	while ArrayPos0 < 1056
-		if Object[ArrayPos0].Type == TypeName[PathSwap]
+		if Object[ArrayPos0].Type == TypeName[Path Swap]
 
 			// Setup chunk positions
 
@@ -171,18 +172,20 @@ end sub
 
 sub RSDKDraw
 	if Object.PropertyValue == 2
+		// Invisible...
 		Object.InkEffect = 1
 	end if
+	
 	DrawSpriteFX(0, FX_INK, Object.XPos, Object.YPos)
 	
 	if Editor.ShowGizmos == true
 		Editor.DrawingOverlay = true
 		
-		TempValue0 = Object.XPos
-		TempValue0 -= 0x180000
-		TempValue1 = Object.YPos
-		TempValue1 -= 0x190000
-		DrawRectOutline(TempValue0, TempValue1, 0x300000, 0x280000, 255, 255, 255, 255)
+		TempValue0 = Object.iXPos
+		TempValue0 -= 16
+		TempValue1 = Object.iYPos
+		TempValue1 -= 16
+		DrawRectOutline(TempValue0, TempValue1, 32, 32, 255, 0, 0, 0)
 		
 		Editor.DrawingOverlay = false
 	end if
@@ -196,10 +199,10 @@ sub RSDKLoad
 	AddEditorVariable("type")
 	SetActiveVariable("type")
 
-	// Bit of a guess here
-	// Subtype 0 is used just about everywhere, 2 is used in SSZ1B once, and then 2 is completely unused it seems
+	// Bit of a guess here - 
+	// Subtype 0 is used just about everywhere, 2 is used in SSZ1B once, and then 2 is completely unused it seems?
 
 	AddEnumVariable("Normal", 0)
 	AddEnumVariable("Decoration", 1)
-	AddEnumVariable("Invisible", 2) // Used to update chunks but without the sign being visible there?
+	AddEnumVariable("Invisible", 2) // Used to update chunks but without the sign being visible there
 end sub

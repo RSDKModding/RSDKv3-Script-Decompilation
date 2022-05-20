@@ -3,7 +3,6 @@
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
 // Aliases
-
 #alias Object.Value2 : Object.Velocity
 
 // Value3 is unused...
@@ -19,13 +18,23 @@
 #alias Object.Value5 : Object.RetractTime
 #alias Object.Value6 : Object.PauseTime
 
+#alias 0 : SPIKEBALL_H_MOVERIGHT
+#alias 1 : SPIKEBALL_H_PAUSERIGHT
+#alias 2 : SPIKEBALL_H_MOVELEFT
+#alias 3 : SPIKEBALL_H_PAUSELEFT
+
+#alias 4 : SPIKEBALL_V_MOVEDOWN
+#alias 5 : SPIKEBALL_V_PAUSEDOWN
+#alias 6 : SPIKEBALL_V_MOVEUP
+#alias 7 : SPIKEBALL_V_PAUSEUP
+
 
 sub ObjectMain
 
 	switch Object.State
 	
 	// Horizontal Spike Ball States
-	case 0
+	case SPIKEBALL_H_MOVERIGHT
 		if Object.SpikesOutTimer < Object.ShootTime
 			Object.SpikesOutTimer++
 			Object.XPos += Object.Velocity
@@ -34,7 +43,7 @@ sub ObjectMain
 		end if
 		break
 		
-	case 1
+	case SPIKEBALL_H_PAUSERIGHT
 		if Object.PauseTimer < Object.PauseTime
 			Object.PauseTimer++
 		else
@@ -43,7 +52,7 @@ sub ObjectMain
 		end if
 		break
 		
-	case 2
+	case SPIKEBALL_H_MOVELEFT
 		if Object.SpikesOutTimer > Object.RetractTime
 			Object.SpikesOutTimer--
 			Object.XPos -= Object.Velocity
@@ -52,18 +61,18 @@ sub ObjectMain
 		end if
 		break
 		
-	case 3
+	case SPIKEBALL_H_PAUSELEFT
 		if Object.PauseTimer < Object.PauseTime
 			Object.PauseTimer++
 		else
 			Object.PauseTimer = 0
-			Object.State = 0
+			Object.State = SPIKEBALL_H_MOVERIGHT
 		end if
 		break
 
 
 	// Vertical Spike Ball States
-	case 4
+	case SPIKEBALL_V_MOVEDOWN
 		if Object.SpikesOutTimer < Object.ShootTime
 			Object.SpikesOutTimer++
 			Object.YPos += Object.Velocity
@@ -72,7 +81,7 @@ sub ObjectMain
 		end if
 		break
 		
-	case 5
+	case SPIKEBALL_V_PAUSEDOWN
 		if Object.PauseTimer < Object.PauseTime
 			Object.PauseTimer++
 		else
@@ -81,7 +90,7 @@ sub ObjectMain
 		end if
 		break
 		
-	case 6
+	case SPIKEBALL_V_MOVEUP
 		if Object.SpikesOutTimer > Object.RetractTime
 			Object.SpikesOutTimer--
 			Object.YPos -= Object.Velocity
@@ -90,12 +99,12 @@ sub ObjectMain
 		end if
 		break
 		
-	case 7
+	case SPIKEBALL_V_PAUSEUP
 		if Object.PauseTimer < Object.PauseTime
 			Object.PauseTimer++
 		else
 			Object.PauseTimer = 0
-			Object.State = 4
+			Object.State = SPIKEBALL_V_MOVEDOWN
 		end if
 		break
 		
@@ -194,6 +203,7 @@ sub ObjectStartup
 	
 end sub
 
+
 // ========================
 // Editor Subs
 // ========================
@@ -224,7 +234,8 @@ end sub
 sub RSDKDraw
 	DrawSprite(0)
 	
-	// TODO: draw an arrow or something to show the spike ball's direction
+	// TODO: it would be cool to see the path of the spike ball via an arrow
+	// however, spike movement is dependant on time period, so that complicates things...
 end sub
 
 

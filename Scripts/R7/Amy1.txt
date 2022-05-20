@@ -4,7 +4,7 @@
 
 // Aliases
 
-// Values0-1 are skipped over...
+// Values0-1 are skipped over... possibly to keep values parallel with the Amy 2 object
 #alias Object.Value2 : Object.YVelocity
 #alias Object.Value3 : Object.Bounds.Left
 #alias Object.Value4 : Object.Bounds.Right
@@ -25,8 +25,8 @@ sub ObjectMain
 		ObjectTileCollision(0, 0, 19, 0)
 		if CheckResult == true
 			
-			// Amy's landed on the ground now, replace her with an Amy2 object
-			ResetObjectEntity(Object.EntityNo, TypeName[Amy2], 0, Object.XPos, Object.YPos)
+			// Amy's landed on the ground now, replace her with an Amy 2 object
+			ResetObjectEntity(Object.EntityNo, TypeName[Amy 2], 0, Object.XPos, Object.YPos)
 			
 			Object.Frame = 4
 			Object.DrawOrder = 4
@@ -45,8 +45,8 @@ sub ObjectPlayerInteraction
 
 	if Object.State == AMY1_CAUGHT
 #platform: Mobile
-		// Due to how the engine works, there's a single frame upon landinig where this code is actually being run from an Amy2 object, so check against that
-		if Object.Type == TypeName[Amy1]
+		// Due to how the engine works, there's a single frame upon landinig where this code is actually being run from an Amy 2 object, so check against that
+		if Object.Type == TypeName[Amy 1]
 #endplatform
 			// Check if Sonic's hit Amy
 			PlayerObjectCollision(C_TOUCH, -8, -16, 8, 16)
@@ -62,9 +62,10 @@ sub ObjectPlayerInteraction
 				
 				CreateTempObject(TypeName[Explosion], 0, Object.XPos, Object.YPos)
 				Stage.TimeEnabled = false
+
 				PlaySfx(22, 0)
 #platform: Mobile
-		end if
+		end if // Object.Type == TypeName[Amy 1]
 #endplatform
 	end if
 	
@@ -91,10 +92,10 @@ sub ObjectStartup
 
 	LoadSpriteSheet("R7/Objects2.gif")
 
-	// Erase all Amy1 objects in the level if she's not supposed to appear
+	// Erase all Amy 1 objects in the level if she's not supposed to appear
 	ArrayPos0 = 32
 	while ArrayPos0 < 1056
-		if Object[ArrayPos0].Type == TypeName[Amy1]
+		if Object[ArrayPos0].Type == TypeName[Amy 1]
 			
 			// Only appear for Sonic
 			if Stage.PlayerListPos == 0
@@ -124,6 +125,7 @@ sub ObjectStartup
 	SpriteFrame(-12, -20, 24, 40, 1, 211)
 
 end sub
+
 
 // ========================
 // Editor Subs

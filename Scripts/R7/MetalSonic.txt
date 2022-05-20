@@ -3,8 +3,6 @@
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
 // Aliases
-#alias 52: TYPE_METALSONIC
-
 #alias Object.Value0 : Object.Timer
 
 #alias Object.Value1 : Object.XVelocity
@@ -45,6 +43,11 @@
 #alias 9 : ANI_CHARGING
 
 // If you're wondering what Metal Sonic's SpriteFrames are then, it's for his effects like lightning and such
+
+// Vertical Door Aliases
+#alias 2 : VERTICALDOOR_END_CLOSING
+#alias 4 : VERTICALDOOR_END_CLOSING_METAL
+#alias 6 : VERTICALDOOR_END_CLOSED_SONIC
 
 
 // Function declarations
@@ -326,8 +329,8 @@ sub ObjectMain
 		
 		// Object [-2] is the final vertical door at the end of the race
 		switch Object[-2].State
-		case 2
-		case 6
+		case VERTICALDOOR_END_CLOSING
+		case VERTICALDOOR_END_CLOSED_SONIC
 			// Door in its closed state
 
 			if Player.HeavyMetalFlag == true
@@ -376,7 +379,7 @@ sub ObjectMain
 			end if
 			break
 
-		case 4
+		case VERTICALDOOR_END_CLOSING_METAL
 			TempValue0 = Object[-2].XPos
 			TempValue0 += 2359296
 			if Object.XPos > TempValue0
@@ -421,7 +424,7 @@ sub ObjectDraw
 
 	// First, draw Metal Sonic's "accessory" (of sorts) behind him
 	switch Object.AccessoryAnimation
-	case 1
+	case ACCESSORY_CHARGE1
 		TempValue0 = Object.AccessoryFrame
 		TempValue0 >>= 1
 		DrawSprite(TempValue0)
@@ -429,7 +432,7 @@ sub ObjectDraw
 		Object.AccessoryFrame &= 7
 		break
 
-	case 2
+	case ACCESSORY_CHARGE2
 		TempValue0 = Object.AccessoryFrame
 		TempValue0 >>= 1
 		TempValue0 += 4
@@ -438,7 +441,7 @@ sub ObjectDraw
 		Object.AccessoryFrame &= 7
 		break
 
-	case 3
+	case ACCESSORY_CHARGE3
 		TempValue0 = Object.AccessoryFrame
 		TempValue0 >>= 1
 		TempValue0 += 8
@@ -447,7 +450,7 @@ sub ObjectDraw
 		Object.AccessoryFrame &= 7
 		break
 
-	case 4
+	case ACCESSORY_LIGHTNING
 		TempValue0 = Object.AccessoryFrame
 		TempValue0 += 12
 		DrawSprite(TempValue0)
@@ -522,8 +525,8 @@ end sub
 
 
 sub RSDKLoad
-	LoadSpriteSheet("Global/Display.gif")
-	SpriteFrame(-16, -16, 32, 32, 1, 143)		// #0 - "Script" Icon
+	LoadSpriteSheet("R7/Objects3.gif")
+	SpriteFrame(-20, -20, 40, 40, 83, 1) // Pose for the fans!
 
 	SetVariableAlias(ALIAS_VAR_PROPVAL, "unused")
 end sub

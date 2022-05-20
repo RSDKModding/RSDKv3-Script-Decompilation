@@ -178,7 +178,7 @@ sub ObjectMain
 		Object.YPos = Object.StartPosY
 		
 		// Reset the Hotarus to be 70 pixels apart
-		// (Regardless of their Property Value!)
+		// (Regardless of their Property Value, since that's already been reset...)
 		Object.Hotaru1X = -2293760
 		Object.Hotaru2X = 2293760
 		
@@ -332,6 +332,7 @@ sub ObjectMain
 		case HOTARU_FLASHING
 			// This is the state where the Sparks are active, although none of them are managed here
 			// Head over to ObjectDraw and ObjectPlayerInteraction for that
+			// (Or don't... it's not like the sparks even work right...)
 			
 			if Object.Timer < 100
 				Object.Timer++
@@ -367,9 +368,9 @@ sub ObjectMain
 				Object.YPos = Object.StartPosY
 				
 				// Reset the Hotarus to be 70 pixels apart
-				// (Regardless of their Property Value)
+				// (Regardless of their initial Property Value, since that's already been reset)
 				Object.Hotaru1X = -2293760
-				Object.Hotaru2X = 2293760
+				Object.Hotaru2X =  2293760
 			end if
 			break
 			
@@ -563,9 +564,9 @@ sub ObjectMain
 				Object.YPos = Object.StartPosY
 				
 				// Reset the Hotarus to be 70 pixels apart
-				// (Ignoring their Property Value)
+				// (Ignoring their Property Value, since it got replaced by Hotaru Condition during startup)
 				Object.Hotaru1X = -2293760
-				Object.Hotaru2X = 2293760
+				Object.Hotaru2X =  2293760
 			end if
 			break
 
@@ -636,7 +637,7 @@ sub ObjectPlayerInteraction
 		end if
 
 
-		// This check will always return true, won't it..?
+		// This check will always return true thanks to the switch-case, won't it..?
 		if Object.State < HOTARU_OFFSCREEN
 			
 			// Backup the base object's position
@@ -1007,8 +1008,6 @@ sub ObjectStartup
 	SpriteFrame(-12, -12, 24, 24, 150, 171)
 	SpriteFrame(-12, -12, 24, 24, 175, 171)
 	SpriteFrame(-12, -12, 24, 24, 150, 196)
-	
-	// R71A__ - 0x03D548
 
 	// Cycle through all Hotaru objects in the level
 	ArrayPos0 = 32
@@ -1141,28 +1140,23 @@ sub RSDKDraw
 	default
 		TempValue2 =  3932160
 		TempValue3 = -2293760
-		TempValue4 =  2293760
 		break
-
 	case 4
 		TempValue2 =  4456448
 		TempValue3 = -3276800
-		TempValue4 =  3276800
 		break
-
 	case 8
 		TempValue2 =  3670016
 		TempValue3 = -4587520
-		TempValue4 =  4587520
 		break
-
 	case 12
 		TempValue2 =  1179648
 		TempValue3 = -6291456
-		TempValue4 =  6291456
 		break
-
 	end switch
+	
+	TempValue4 = TempValue3
+	FlipSign(TempValue4)
 	
 	TempValue0 = TempValue3
 	TempValue0 += Object.XPos

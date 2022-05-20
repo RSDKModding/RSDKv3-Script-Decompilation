@@ -35,7 +35,7 @@ sub ObjectPlayerInteraction
 
 	// Left Wall Collsion detected?
 	if CheckResult == 2
-		// Set the Right Collision Flag to true
+		// Set the Player's Right Collision Flag to true
 		// (Used in the Metal Sonic race sequence)
 		Player.RCollisionFlag = true
 	end if
@@ -143,6 +143,7 @@ sub ObjectStartup
 
 end sub
 
+
 // ========================
 // Editor Subs
 // ========================
@@ -231,18 +232,20 @@ sub RSDKDraw
 		TempValue0 += 2097152
 		DrawSpriteXY(0, Object.XPos, TempValue0)
 		break
-	case 7 // This subtype acts as an invis block so normally it's invisible - but it has to show in the editor somehow!
+	case 7
+		// This subtype acts as an invis block so normally it's invisible - but it has to show in the editor somehow!
+		
 		Object.InkEffect = 1
 		DrawSpriteScreenFX(0, FX_INK, Object.XPos, Object.YPos)
 
 		if Editor.ShowGizmos == true
-			// The sprite is faint so draw the hitbox it'll use
+			// The sprite is faint so draw the hitbox of the box
 			
-			TempValue0 = Object.XPos
-			TempValue0 -= 0x80000
-			TempValue1 = Object.YPos
-			TempValue1 -= 0x80000
-			DrawRectOutline(TempValue0, TempValue1, 0x100000, 0x100000, 255, 255, 255, 255)
+			TempValue0 = Object.iXPos
+			TempValue0 -= 16
+			TempValue1 = Object.iYPos
+			TempValue1 -= 16
+			DrawRectOutline(TempValue0, TempValue1, 32, 32, 255, 255, 255, 255)
 		end if
 		break
 	end switch
@@ -250,7 +253,7 @@ end sub
 
 
 sub RSDKLoad
-	LoadSpriteSheet("Global/Display.gif")
+	LoadSpriteSheet("R7/Objects.gif")
 
 	// Load the correct sprite based on the current time zone
 	CheckCurrentStageFolder("R71C")
