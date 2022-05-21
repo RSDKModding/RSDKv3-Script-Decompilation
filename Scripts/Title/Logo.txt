@@ -36,7 +36,7 @@ sub ObjectDraw
 		else
 			Object.State = LOGO_SONIC_ANIMATE
 			Object.Frame = 4
-		endif
+		end if
 		break
 
 	case LOGO_SONIC_ANIMATE
@@ -50,8 +50,8 @@ sub ObjectDraw
 				TempValue0 = Screen.CenterX
 				TempValue0 -= 43
 				DrawSpriteScreenXY(3, TempValue0, 48)
-			endif
-		endif
+			end if
+		end if
 		TempValue0 = Screen.CenterX
 		TempValue0 -= 110
 		DrawSpriteScreenXY(1, TempValue0, 135)
@@ -66,8 +66,8 @@ sub ObjectDraw
 				Object[+1].Type = TypeName[Touch Start]
 				Object[+1].iXPos = Screen.CenterX
 				Object[+1].iYPos = 200
-			endif
-		endif
+			end if
+		end if
 		break
 
 	case LOGO_SONIC_RESET
@@ -89,8 +89,8 @@ sub ObjectDraw
 	if Engine.PlatformID == RETRO_WP7
 		if KeyPress.ButtonB == true
 			EngineCallback(CALLBACK_EXIT_SELECTED)
-		endif
-	endif
+		end if
+	end if
 #endplatform
 end sub
 
@@ -129,13 +129,16 @@ end sub
 // ========================
 
 sub RSDKDraw
-	DrawSprite(0)
+	Object.Direction = FACING_RIGHT
+	DrawSpriteFX(0, FX_FLIP, Object.XPos, Object.YPos)
+	Object.Direction = FACING_LEFT
+	DrawSpriteFX(0, FX_FLIP, Object.XPos, Object.YPos)
 end sub
 
 
 sub RSDKLoad
-	LoadSpriteSheet("Global/Display.gif")
-	SpriteFrame(-16, -16, 32, 32, 1, 143)		// #0 - "Script" Icon
+	LoadSpriteSheet("Title/Title.gif")
+	SpriteFrame(-130, 0, 130, 152, 381, 73)
 
 	SetVariableAlias(ALIAS_VAR_PROPVAL, "unused")
 end sub
