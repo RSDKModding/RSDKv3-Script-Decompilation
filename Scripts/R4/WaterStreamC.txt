@@ -3,27 +3,33 @@
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
 // Aliases
-#alias 80: TYPE_WATERSTREAMC
-
+#alias Object.Value1	:	Object.Oscillation
+#alias Object.Value2	:	Object.HitboxLeft
+#alias Object.Value3	:	Object.HitboxUp
+#alias Object.Value4	:	Object.HitboxRight
+#alias Object.Value5	:	Object.HitboxBottom
 
 sub ObjectPlayerInteraction
 	if Object[-1].PropertyValue == 1
 		Object.PropertyValue = 1
-		PlayerObjectCollision(C_TOUCH, Object.Value2, Object.Value4, Object.Value3, Object.Value5)
-		if CheckResult == 1
+		PlayerObjectCollision(C_TOUCH, Object.HitboxLeft, Object.HitboxRight, Object.HitboxUp, Object.HitboxBottom)
+		if CheckResult == true
 			if Player.State != PlayerObject_Knockback
 				if Player.State != PlayerObject_Death
 					if Player.State != PlayerObject_Drown
 						if Player.State != PlayerObject_Blank
-							Player.WaterStream = 1
+							Player.WaterStream = true
 							Player.State = PlayerObject_DebugMode
 							Player.Animation = ANI_FANROTATE
+
 							TempValue0 = Player.XPos
 							TempValue0 -= Object.XPos
+
 							TempValue1 = Player.YPos
 							TempValue1 -= Object.YPos
 							ATan2(TempValue2, TempValue0, TempValue1)
-							TempValue2 += Object.Value1
+							TempValue2 += Object.Oscillation
+
 							Cos256(Player.XVelocity, TempValue2)
 							Sin256(Player.YVelocity, TempValue2)
 							Player.XVelocity <<= 10
@@ -35,12 +41,12 @@ sub ObjectPlayerInteraction
 			end if
 		else
 			if Player.State == PlayerObject_DebugMode
-				if Player.WaterStream == 0
+				if Player.WaterStream == false
 					if Player.Left == true
-						Player.XVelocity = -131072
+						Player.XVelocity = -131072	// -0x20000
 					end if
 					if Player.Right == true
-						Player.XVelocity = 131072
+						Player.XVelocity = 131072	//  0x20000
 					end if
 					Player.Speed = Player.XVelocity
 					Player.State = PlayerObject_HandleAir
@@ -59,81 +65,81 @@ sub ObjectStartup
 		if Object[ArrayPos0].Type == TypeName[WaterStreamC]
 			switch Object[ArrayPos0].PropertyValue
 			case 0
-				Object[ArrayPos0].Value1 = 192
-				Object[ArrayPos0].Value2 = -96
-				Object[ArrayPos0].Value3 = 96
-				Object[ArrayPos0].Value4 = -96
-				Object[ArrayPos0].Value5 = 96
+				Object[ArrayPos0].Oscillation = 192
+				Object[ArrayPos0].HitboxLeft = -96
+				Object[ArrayPos0].HitboxUp = 96
+				Object[ArrayPos0].HitboxRight = -96
+				Object[ArrayPos0].HitboxBottom = 96
 				break
 			case 1
-				Object[ArrayPos0].Value1 = 64
-				Object[ArrayPos0].Value2 = -96
-				Object[ArrayPos0].Value3 = 96
-				Object[ArrayPos0].Value4 = -96
-				Object[ArrayPos0].Value5 = 96
+				Object[ArrayPos0].Oscillation = 64
+				Object[ArrayPos0].HitboxLeft = -96
+				Object[ArrayPos0].HitboxUp = 96
+				Object[ArrayPos0].HitboxRight = -96
+				Object[ArrayPos0].HitboxBottom = 96
 				break
 			case 2
-				Object[ArrayPos0].Value1 = 192
-				Object[ArrayPos0].Value2 = -128
-				Object[ArrayPos0].Value3 = 128
-				Object[ArrayPos0].Value4 = -128
-				Object[ArrayPos0].Value5 = 128
+				Object[ArrayPos0].Oscillation = 192
+				Object[ArrayPos0].HitboxLeft = -128
+				Object[ArrayPos0].HitboxUp = 128
+				Object[ArrayPos0].HitboxRight = -128
+				Object[ArrayPos0].HitboxBottom = 128
 				break
 			case 3
-				Object[ArrayPos0].Value1 = 64
-				Object[ArrayPos0].Value2 = -128
-				Object[ArrayPos0].Value3 = 128
-				Object[ArrayPos0].Value4 = -128
-				Object[ArrayPos0].Value5 = 128
+				Object[ArrayPos0].Oscillation = 64
+				Object[ArrayPos0].HitboxLeft = -128
+				Object[ArrayPos0].HitboxUp = 128
+				Object[ArrayPos0].HitboxRight = -128
+				Object[ArrayPos0].HitboxBottom = 128
 				break
 			case 4
-				Object[ArrayPos0].Value1 = 64
-				Object[ArrayPos0].Value2 = -160
-				Object[ArrayPos0].Value3 = 0
-				Object[ArrayPos0].Value4 = -96
-				Object[ArrayPos0].Value5 = 64
+				Object[ArrayPos0].Oscillation = 64
+				Object[ArrayPos0].HitboxLeft = -160
+				Object[ArrayPos0].HitboxUp = 0
+				Object[ArrayPos0].HitboxRight = -96
+				Object[ArrayPos0].HitboxBottom = 64
 				break
 			case 5
-				Object[ArrayPos0].Value1 = 192
-				Object[ArrayPos0].Value2 = 0
-				Object[ArrayPos0].Value3 = 96
-				Object[ArrayPos0].Value4 = -96
-				Object[ArrayPos0].Value5 = 0
+				Object[ArrayPos0].Oscillation = 192
+				Object[ArrayPos0].HitboxLeft = 0
+				Object[ArrayPos0].HitboxUp = 96
+				Object[ArrayPos0].HitboxRight = -96
+				Object[ArrayPos0].HitboxBottom = 0
 				break
 			case 6
-				Object[ArrayPos0].Value1 = 64
-				Object[ArrayPos0].Value2 = -96
-				Object[ArrayPos0].Value3 = 0
-				Object[ArrayPos0].Value4 = 0
-				Object[ArrayPos0].Value5 = 96
+				Object[ArrayPos0].Oscillation = 64
+				Object[ArrayPos0].HitboxLeft = -96
+				Object[ArrayPos0].HitboxUp = 0
+				Object[ArrayPos0].HitboxRight = 0
+				Object[ArrayPos0].HitboxBottom = 96
 				break
 			case 7
-				Object[ArrayPos0].Value1 = 64
-				Object[ArrayPos0].Value2 = -96
-				Object[ArrayPos0].Value3 = 0
-				Object[ArrayPos0].Value4 = -96
-				Object[ArrayPos0].Value5 = 0
+				Object[ArrayPos0].Oscillation = 64
+				Object[ArrayPos0].HitboxLeft = -96
+				Object[ArrayPos0].HitboxUp = 0
+				Object[ArrayPos0].HitboxRight = -96
+				Object[ArrayPos0].HitboxBottom = 0
 				break
 			case 8
-				Object[ArrayPos0].Value1 = 192
-				Object[ArrayPos0].Value2 = 0
-				Object[ArrayPos0].Value3 = 128
-				Object[ArrayPos0].Value4 = -128
-				Object[ArrayPos0].Value5 = 0
+				Object[ArrayPos0].Oscillation = 192
+				Object[ArrayPos0].HitboxLeft = 0
+				Object[ArrayPos0].HitboxUp = 128
+				Object[ArrayPos0].HitboxRight = -128
+				Object[ArrayPos0].HitboxBottom = 0
 				break
 			case 9
-				Object[ArrayPos0].Value1 = 64
-				Object[ArrayPos0].Value2 = -128
-				Object[ArrayPos0].Value3 = 0
-				Object[ArrayPos0].Value4 = -128
-				Object[ArrayPos0].Value5 = 128
+				Object[ArrayPos0].Oscillation = 64
+				Object[ArrayPos0].HitboxLeft = -128
+				Object[ArrayPos0].HitboxUp = 0
+				Object[ArrayPos0].HitboxRight = -128
+				Object[ArrayPos0].HitboxBottom = 128
 				break
 			case 10
-				Object[ArrayPos0].Value1 = 192
-				Object[ArrayPos0].Value2 = 0
-				Object[ArrayPos0].Value3 = 128
-				Object[ArrayPos0].Value4 = -128
-				Object[ArrayPos0].Value5 = 128
+				Object[ArrayPos0].Oscillation = 192
+				Object[ArrayPos0].HitboxLeft = 0
+				Object[ArrayPos0].HitboxUp = 128
+				Object[ArrayPos0].HitboxRight = -128
+				Object[ArrayPos0].HitboxBottom = 128
 				break
 			end switch
 		end if

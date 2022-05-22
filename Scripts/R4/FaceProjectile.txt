@@ -3,52 +3,58 @@
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
 // Aliases
-#alias 63: TYPE_FACEPROJECTILE
-
+#alias Object.Value1	:	Object.XVelocity
 
 sub ObjectMain
-	Object.XPos += Object.Value1
-	if Object.OutOfBounds == 1
+	Object.XPos += Object.XVelocity
+	if Object.OutOfBounds == true
 		Object.Type = TypeName[Blank Object]
 	end if
 end sub
 
 
 sub ObjectPlayerInteraction
+// These checks are different from the original source (standard doesn't have it) but makes it cleaner to read
 #platform: Mobile
-	if Player.YVelocity > -917504
+	CheckGreater(Player.YVelocity, -917504)	// 0xE0000
 #endplatform
+
+#platform: Standard
+	CheckResult = true
+#endplatform
+
+	if CheckResult == true
+
 		PlayerObjectCollision(C_TOUCH, -13, -8, 13, 8)
-		if CheckResult == 1
+		if CheckResult == true
 			if Object.Direction == FACING_RIGHT
 				if Player.Left == true
-					if Player.Speed > -196608
-						Player.Speed = -196608
+					if Player.Speed > -196608	//  0x30000
+						Player.Speed = -196608	//  0x30000
 					end if
 				else
 					if Player.Right == true
-						Player.Speed = -131072
+						Player.Speed = -131072	// -0x20000
 					else
-						Player.Speed = -196608
+						Player.Speed = -196608	// -0x30000
 					end if
 				end if
 			else
 				if Player.Right == true
-					if Player.Speed < 196608
-						Player.Speed = 196608
+					if Player.Speed < 196608	//  0x30000
+						Player.Speed = 196608	//  0x30000
 					end if
 				else
 					if Player.Left == true
-						Player.Speed = 131072
+						Player.Speed = 131072	//  0x20000
 					else
-						Player.Speed = 196608
+						Player.Speed = 196608	//  0x30000
 					end if
 				end if
 			end if
 		end if
-#platform: Mobile
+
 	end if
-#endplatform
 end sub
 
 
@@ -60,6 +66,7 @@ sub ObjectDraw
 	else
 		DrawSpriteFX(0, FX_FLIP, Object.XPos, Object.YPos)
 	end if
+
 	Object.AnimationTimer++
 	Object.AnimationTimer %= 20
 end sub
@@ -67,7 +74,7 @@ end sub
 
 sub ObjectStartup
 	LoadSpriteSheet("R4/Objects2.gif")
-	SpriteFrame(-16, -8, 32, 16, 152, 159)
+	SpriteFrame(-16, -8, 32, 16, 152, 159)	// #0 - Face Projectile
 end sub
 
 // ========================

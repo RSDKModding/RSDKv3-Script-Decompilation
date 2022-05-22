@@ -3,17 +3,17 @@
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
 // Aliases
-#alias 46: TYPE_ROTATINGSPIKES2
+#alias Object.Value0	:	Object.Angle
 
 
 sub ObjectMain
 	if Object.PropertyValue < 128
-		Object.Value0 += 2
-		Object.Value0 &= 511
+		Object.Angle += 2
+		Object.Angle &= 511
 	else
-		Object.Value0 -= 2
-		if Object.Value0 < 0
-			Object.Value0 += 512
+		Object.Angle -= 2
+		if Object.Angle < 0
+			Object.Angle += 512
 		end if
 	end if
 end sub
@@ -22,20 +22,26 @@ end sub
 sub ObjectPlayerInteraction
 	TempValue0 = Object.XPos
 	TempValue1 = Object.YPos
-	TempValue2 = Object.Value0
+
+	TempValue2 = Object.Angle
+
 	TempValue3 = 0
+
 	if Object.PropertyValue < 128
 		while TempValue3 < 4
 			Cos(Object.XPos, TempValue2)
 			Object.XPos <<= 13
 			Object.XPos += TempValue0
+
 			Sin(Object.YPos, TempValue2)
 			Object.YPos <<= 13
 			Object.YPos += TempValue1
+			
 			PlayerObjectCollision(C_TOUCH, -12, -12, 12, 12)
-			if CheckResult == 1
+			if CheckResult == true
 				CallFunction(PlayerObject_Hit)
 			end if
+			
 			TempValue2 += 16
 			TempValue3++
 		loop
@@ -49,7 +55,7 @@ sub ObjectPlayerInteraction
 			Object.YPos <<= 13
 			Object.YPos += TempValue1
 			PlayerObjectCollision(C_TOUCH, -12, -12, 12, 12)
-			if CheckResult == 1
+			if CheckResult == true
 				CallFunction(PlayerObject_Hit)
 			end if
 			TempValue2 -= 16
@@ -62,16 +68,18 @@ end sub
 
 
 sub ObjectDraw
-	TempValue2 = Object.Value0
+	TempValue2 = Object.Angle
 	TempValue3 = 0
 	if Object.PropertyValue < 128
 		while TempValue3 < 4
 			Cos(TempValue0, TempValue2)
 			TempValue0 <<= 13
 			TempValue0 += Object.XPos
+
 			Sin(TempValue1, TempValue2)
 			TempValue1 <<= 13
 			TempValue1 += Object.YPos
+
 			DrawSpriteXY(0, TempValue0, TempValue1)
 			TempValue2 += 16
 			TempValue3++
@@ -82,9 +90,11 @@ sub ObjectDraw
 			Cos(TempValue0, TempValue2)
 			TempValue0 <<= 13
 			TempValue0 += Object.XPos
+
 			Sin(TempValue1, TempValue2)
 			TempValue1 <<= 13
 			TempValue1 += Object.YPos
+
 			DrawSpriteXY(0, TempValue0, TempValue1)
 			TempValue2 -= 16
 			TempValue3++
@@ -95,7 +105,7 @@ end sub
 
 sub ObjectStartup
 	LoadSpriteSheet("R4/Objects.gif")
-	SpriteFrame(-16, -16, 32, 32, 221, 53)
+	SpriteFrame(-16, -16, 32, 32, 221, 53)	// #0 - Spike Ball
 end sub
 
 // ========================

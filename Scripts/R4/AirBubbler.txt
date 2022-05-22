@@ -3,50 +3,63 @@
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
 // Aliases
-#alias 41: TYPE_AIRBUBBLER
+#alias Object.Value0	:	Object.Timer
+#alias Object.Value1	:	Object.SpawnTimer
+#alias Object.Value2	:	Object.BubbleAmount
+#alias Object.Value3	:	Object.BubbleType
+
+// Air Bubbler alises
+#alias Object.XPos		:	AirBubble.XPos
+#alias Object.Value1	:	AirBubble.Angle
+#alias Object.Value2	:	AirBubble.XVelocity
+#alias Object.Value3	:	AirBubble.YVelocity
+#alias Object.DrawOrder	:	AirBubble.DrawOrder
 
 
 sub ObjectMain
 	Object.Frame++
 	Object.Frame %= 48
-	if Object.Value0 > 0
-		Object.Value0--
+
+	if Object.Timer > 0
+		Object.Timer--
 	else
-		Object.Value0 = 220
-		Rand(Object.Value2, 6)
-		Object.Value2++
-		if Object.Value2 > 6
-			Object.Value2 = 6
+		Object.Timer = 220
+		Rand(Object.BubbleAmount, 6)
+		Object.BubbleAmount++
+		if Object.BubbleAmount > 6
+			Object.BubbleAmount = 6
 		end if
-		Object.Value1 = 0
-		Object.Value3 = 0
+		Object.SpawnTimer = 0
+		Object.BubbleType = 0
 	end if
-	if Object.Value1 > 0
-		Object.Value1--
+
+	if Object.SpawnTimer > 0
+		Object.SpawnTimer--
 	else
-		if Object.Value2 > 0
-			Object.Value2--
-			Rand(Object.Value1, 32)
+		if Object.BubbleAmount > 0
+			Object.BubbleAmount--
+			Rand(Object.SpawnTimer, 32)
 			Rand(TempValue0, 3)
 			if TempValue0 == 2
-				if Object.Value3 == 0
-					Object.Value3 = 1
-					CreateTempObject(TypeName[AirBubble], 5, Object.XPos, Object.YPos)
+				if Object.BubbleType == 0
+					Object.BubbleType = 1
+					CreateTempObject(TypeName[AirBubble], 5, Object.XPos, Object.YPos)	// Breathable Bubble
 				else
-					CreateTempObject(TypeName[AirBubble], 4, Object.XPos, Object.YPos)
+					CreateTempObject(TypeName[AirBubble], 4, Object.XPos, Object.YPos)  // Medium-size Bubble
 				end if
 			else
-				CreateTempObject(TypeName[AirBubble], 2, Object.XPos, Object.YPos)
+				CreateTempObject(TypeName[AirBubble], 2, Object.XPos, Object.YPos)		// Small Bubble
 			end if
 			Rand(TempValue0, 16)
 			TempValue0 -= 8
 			TempValue0 <<= 16
-			Object[TempObjectPos].XPos += TempValue0
-			Object[TempObjectPos].Value2 = Object[TempObjectPos].XPos
-			Rand(Object[TempObjectPos].Value1, 256)
-			Object[TempObjectPos].Value1 <<= 1
-			Object[TempObjectPos].DrawOrder = 4
-			Object[TempObjectPos].Value3 = -34816
+
+			AirBubble[TempObjectPos].XPos += TempValue0
+			AirBubble[TempObjectPos].XVelocity = AirBubble[TempObjectPos].XPos
+			Rand(AirBubble[TempObjectPos].Angle, 256)
+			AirBubble[TempObjectPos].Angle <<= 1
+			AirBubble[TempObjectPos].DrawOrder = 4
+			AirBubble[TempObjectPos].YVelocity = -34816	// -0x8800
 		end if
 	end if
 end sub
@@ -61,9 +74,10 @@ end sub
 
 sub ObjectStartup
 	LoadSpriteSheet("R4/Objects.gif")
-	SpriteFrame(-8, -16, 16, 16, 165, 235)
-	SpriteFrame(-8, -16, 16, 16, 182, 235)
-	SpriteFrame(-8, -16, 16, 16, 199, 235)
+	SpriteFrame(-8, -16, 16, 16, 165, 235)	// #0 - Air Bubbler frame 0
+	SpriteFrame(-8, -16, 16, 16, 182, 235)	// #1 - Air Bubbler frame 1
+	SpriteFrame(-8, -16, 16, 16, 199, 235)	// #2 - Air Bubbler frame 2
+
 	ArrayPos0 = 32
 	while ArrayPos0 < 1056
 		if Object[ArrayPos0].Type == TypeName[AirBubbler]

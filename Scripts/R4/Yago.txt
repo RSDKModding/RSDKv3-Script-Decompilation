@@ -3,157 +3,205 @@
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
 // Aliases
-#alias 57: TYPE_YAGO
+#alias Object.Value0	:	Object.Timer
+#alias Object.Value1	:	Object.XVelocity
+#alias Object.Value2	:	Object.YVelocity
+#alias Object.Value3	:	Object.Speed
+#alias Object.Value4	:	Object.XOriginPos
+#alias Object.Value5	:	Object.YOriginPos
+#alias Object.PropertyValue	:	Object.Quality
+
+// States
+#alias 0	:	YAGO_DESCEND
+#alias 1	:	YAGO_ADVANCE
+#alias 2	:	YAGO_TURN_AROUND
+#alias 3	:	YAGO_DELAY
+#alias 4	:	YAGO_DASH_CHARGE
+#alias 5	:	YAGO_SET_DASH_PROPERTIES
+#alias 6	:	YAGO_GOOD_DASH
+#alias 7	:	YAGO_BAD_DASH
+
+// Property Values
+#alias 0	:	GOOD
+#alias 1	:	BAD
+
+// CSides
+#alias 0	:	CSIDE_FLOOR
+#alias 1	:	CSIDE_LWALL
+#alias 2	:	CSIDE_RWALL
+#alias 3	:	CSIDE_ROOF
+
+// Priority
+#alias 0				:	PRIORITY_ACTIVE_BOUNDS
+#alias 1				:	PRIORITY_ACTIVE
 
 
 sub ObjectMain
 	switch Object.State
-	case 0
-		Object.YPos += 65536
-		ObjectTileCollision(0, 0, 17, 0)
-		if CheckResult == 1
+	case YAGO_DESCEND
+		Object.YPos += 65536	// 0x10000
+		ObjectTileCollision(CSIDE_FLOOR, 0, 17, 0)
+		if CheckResult == true
 			Object.Direction = FACING_RIGHT
-			Object.Value3 = 5242880
-			Object.Value1 = -16384
-			Object.Priority = 1
+			Object.Speed = 5242880		//  0x500000
+			Object.XVelocity = -16384	// -04000
+			Object.Priority = PRIORITY_ACTIVE
 			Object.State++
 		end if
 		break
-	case 1
-		Object.Value3 += Object.Value1
-		if Object.Value3 >= 0
-			Object.XPos += Object.Value1
-			Object.YPos += 32768
-			ObjectTileCollision(0, 0, 17, 0)
+
+	case YAGO_ADVANCE
+		Object.Speed += Object.XVelocity
+		if Object.Speed >= 0
+			Object.XPos += Object.XVelocity
+			Object.YPos += 32768	// 0x8000
+			ObjectTileCollision(CSIDE_FLOOR, 0, 17, 0)
 			if Object.Direction == FACING_RIGHT
-				ObjectTileCollision(3, -20, 0, 0)
+				ObjectTileCollision(CSIDE_ROOF, -20, 0, 0)
 			else
-				ObjectTileCollision(1, 20, 0, 0)
+				ObjectTileCollision(CSIDE_LWALL, 20, 0, 0)
 			end if
-			if CheckResult == 1
+
+			if CheckResult == true
 				Object.State++
-				Object.Value0 = 30
+				Object.Timer = 30
 			else
+				// Check distance between Yago and the player
 				TempValue0 = Object.XPos
 				TempValue0 -= Player.XPos
 				if TempValue0 < 0
 					FlipSign(TempValue0)
 				end if
-				if TempValue0 < 5242880
-					Object.State = 4
-					Object.Value0 = 6
+
+				if TempValue0 < 5242880	// 0x500000
+					Object.State = YAGO_DASH_CHARGE
+					Object.Timer = 6
 				end if
 			end if
 		else
 			Object.State++
-			Object.Value0 = 30
+			Object.Timer = 30
 		end if
 		break
-	case 2
-		if Object.Value0 > 0
-			Object.Value0--
+
+	case YAGO_TURN_AROUND
+		if Object.Timer > 0
+			Object.Timer--
 		else
-			Object.Value0 = 30
-			Object.Value3 = 5242880
+			Object.Timer = 30
+			Object.Speed = 5242880	// 0x500000
+
 			Object.Direction++
 			Object.Direction &= FACING_LEFT
-			FlipSign(Object.Value1)
+			
+			FlipSign(Object.XVelocity)
 			Object.State++
 		end if
 		break
-	case 3
-		if Object.Value0 > 0
-			Object.Value0--
+
+	case YAGO_DELAY
+		if Object.Timer > 0
+			Object.Timer--
 		else
-			Object.State = 1
+			Object.State = YAGO_ADVANCE
 		end if
 		break
-	case 4
-		if Object.Value0 > 0
-			Object.Value0--
+
+	case YAGO_DASH_CHARGE
+		if Object.Timer > 0
+			Object.Timer--
 		else
-			Object.Value0 = 30
+			Object.Timer = 30
 			Object.State++
 		end if
 		break
-	case 5
-		Object.YPos += 8192
-		if Object.Value0 > 0
-			Object.Value0--
+
+	case YAGO_SET_DASH_PROPERTIES
+		Object.YPos += 8192	// 0x2000
+		if Object.Timer > 0
+			Object.Timer--
 		else
-			if Object.PropertyValue == 0
+			if Object.Quality == GOOD
 				if Object.Direction == FACING_RIGHT
-					Object.Value3 = -294912
+					Object.Speed = -294912	// -0x48000
 				else
-					Object.Value3 = 294912
+					Object.Speed = 294912	//  0x48000
 				end if
-				Object.Value2 = -98304
+				Object.YVelocity = -98304	// -0x18000
 			else
 				if Object.Direction == FACING_RIGHT
-					Object.Value3 = -65536
+					Object.Speed = -65536	// -0x10000
 				else
-					Object.Value3 = 65536
+					Object.Speed = 65536	//  0x10000
 				end if
 			end if
-			Object.Value2 = -98304
-			if Object.PropertyValue == 0
+
+			Object.YVelocity = -98304		// -0x18000
+			if Object.Quality == GOOD
 				Object.State++
 			else
-				Object.State = 7
+				Object.State = YAGO_BAD_DASH
 			end if
 		end if
 		break
-	case 6
-		Object.XPos += Object.Value3
+
+	case YAGO_GOOD_DASH
+		Object.XPos += Object.Speed
 		if Object.Direction == FACING_RIGHT
-			ObjectTileCollision(2, -20, 0, 0)
+			ObjectTileCollision(CSIDE_RWALL, -20, 0, 0)
 		else
-			ObjectTileCollision(1, 20, 0, 0)
+			ObjectTileCollision(CSIDE_LWALL, 20, 0, 0)
 		end if
-		if CheckResult == 1
-			Object.Value0 = 30
-			Object.State = 2
+		if CheckResult == true
+			Object.Timer = 30
+			Object.State = YAGO_TURN_AROUND
 		else
-			Object.YPos += Object.Value2
-			if Object.Value2 < 0
-				Object.Value2 += 8192
+			Object.YPos += Object.YVelocity
+			if Object.YVelocity < 0
+				Object.YVelocity += 8192	// 0x2000
 			end if
 		end if
 		break
-	case 7
-		Object.XPos += Object.Value3
+
+	case YAGO_BAD_DASH
+		Object.XPos += Object.Speed
 		if Object.Direction == FACING_RIGHT
-			ObjectTileCollision(2, -20, 0, 0)
+			ObjectTileCollision(CSIDE_RWALL, -20, 0, 0)
 		else
-			ObjectTileCollision(1, 20, 0, 0)
+			ObjectTileCollision(CSIDE_LWALL, 20, 0, 0)
 		end if
-		if CheckResult == 1
-			Object.Value0 = 30
-			Object.State = 2
+		if CheckResult == true
+			Object.Timer = 30
+			Object.State = YAGO_TURN_AROUND
 		else
-			Object.YPos += Object.Value2
-			Object.Value2 += 4096
-			if Object.Value2 > 0
-				ObjectTileCollision(0, 0, 17, 0)
-				if CheckResult == 1
-					Object.Value3 = 5242880
-					Object.State = 1
+			Object.YPos += Object.YVelocity
+			Object.YVelocity += 4096	// 0x1000
+			if Object.YVelocity > 0
+				ObjectTileCollision(CSIDE_FLOOR, 0, 17, 0)
+				if CheckResult == true
+					Object.Speed = 5242880	// 0x500000
+					Object.State = YAGO_ADVANCE
 				end if
 			end if
 		end if
 		break
+
 	end switch
+
 	Object.AnimationTimer++
 	Object.AnimationTimer %= 20
-	CallFunction(StageSetup_CheckGoodFuture)
-	if Object.OutOfBounds == 1
+	CallFunction(StageSetup_CheckGoodFuture)	// Check if this should be a flower
+
+	if Object.OutOfBounds == true
 		TempValue0 = Object.XPos
 		TempValue1 = Object.YPos
-		Object.XPos = Object.Value4
-		Object.YPos = Object.Value5
-		if Object.OutOfBounds == 1
-			Object.State = 0
-			Object.Priority = 0
+
+		Object.XPos = Object.XOriginPos
+		Object.YPos = Object.YOriginPos
+
+		if Object.OutOfBounds == true
+			Object.State = YAGO_DESCEND
+			Object.Priority = PRIORITY_ACTIVE_BOUNDS
 		else
 			Object.XPos = TempValue0
 			Object.YPos = TempValue1
@@ -164,7 +212,7 @@ end sub
 
 sub ObjectPlayerInteraction
 	PlayerObjectCollision(C_TOUCH, -20, -8, 20, 8)
-	if CheckResult == 1
+	if CheckResult == true
 		CallFunction(PlayerObject_BadnikBreak)
 	end if
 end sub
@@ -173,7 +221,7 @@ end sub
 sub ObjectDraw
 	TempValue0 = Object.AnimationTimer
 	TempValue0 /= 10
-	if Object.PropertyValue == 1
+	if Object.PropertyValue == BAD
 		TempValue0 += 2
 	end if
 	DrawSpriteFX(TempValue0, FX_FLIP, Object.XPos, Object.YPos)
@@ -182,15 +230,18 @@ end sub
 
 sub ObjectStartup
 	LoadSpriteSheet("R4/Objects.gif")
-	SpriteFrame(-24, -12, 48, 24, 67, 181)
-	SpriteFrame(-24, -12, 48, 24, 67, 206)
-	SpriteFrame(-24, -12, 48, 24, 18, 181)
-	SpriteFrame(-24, -12, 48, 24, 18, 206)
+
+	SpriteFrame(-24, -12, 48, 24, 67, 181)	// #0 - Yago Frame 0
+	SpriteFrame(-24, -12, 48, 24, 67, 206)	// #1 - Yago Frame 1
+
+	SpriteFrame(-24, -12, 48, 24, 18, 181)	// #2 - Broken Yago Frame 0
+	SpriteFrame(-24, -12, 48, 24, 18, 206)	// #3 - Broken Yago Frame 1
+
 	ArrayPos0 = 32
 	while ArrayPos0 < 1056
 		if Object[ArrayPos0].Type == TypeName[Yago]
-			Object[ArrayPos0].Value4 = Object[ArrayPos0].XPos
-			Object[ArrayPos0].Value5 = Object[ArrayPos0].YPos
+			Object[ArrayPos0].XOriginPos = Object[ArrayPos0].XPos
+			Object[ArrayPos0].YOriginPos = Object[ArrayPos0].YPos
 		end if
 		ArrayPos0++
 	loop

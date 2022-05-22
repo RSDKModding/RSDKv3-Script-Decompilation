@@ -9,7 +9,7 @@
 #alias Object.Value3		:	Object.AnimationTimer
 #alias Object.Value4		:	Object.OriginPos.X
 #alias Object.Value5		:	Object.OriginPos.Y
-#alias Object.PropertyValue	:	Object.BadnikCondition
+#alias Object.PropertyValue	:	Object.Quality
 
 // States
 #alias 0					:	MOTH_IDLE
@@ -18,8 +18,8 @@
 #alias 3					:	MOTH_FLY
 
 // Property Values
-#alias 0					:	NEW
-#alias 1					:	OLD
+#alias 0					:	GOOD
+#alias 1					:	BAD
 
 // Priority
 #alias 0					:	PRIORITY_ACTIVE_BOUNDS
@@ -77,7 +77,7 @@ sub ObjectMain
 
 			Object.Timer = 0
 
-			if Object.BadnikCondition > NEW
+			if Object.Quality > GOOD
 				Object.XVelocity >>= 1
 			end if
 
@@ -103,7 +103,7 @@ sub ObjectMain
 		else
 			Object.Timer = 0
 			FlipSign(Object.YVelocity)
-			if Object.BadnikCondition == NEW	// Only new moths drop sparkles
+			if Object.Quality == GOOD	// Only good quality moths drop sparkles
 				CreateTempObject(TypeName[MothSparkle], 0, Object.XPos, Object.YPos)
 				Object[TempObjectPos].DrawOrder = 5
 			end if
@@ -115,7 +115,7 @@ sub ObjectMain
 		Object.Frame = Object.AnimationTimer
 		Object.Frame /= 5
 
-		if Object.BadnikCondition == NEW
+		if Object.Quality == GOOD
 			Object.Frame += 3
 		else
 			Object.Frame += 7

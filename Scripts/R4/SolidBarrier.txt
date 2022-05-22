@@ -3,46 +3,65 @@
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
 // Aliases
-#alias 53: TYPE_SOLIDBARRIER
+#alias Object.Value0	:	Object.Timer
+// Property Values
+#alias 0	:	SOLIDBARRIER_INACTIVE
+#alias 1	:	SOLIDBARRIER_CLOSE_CHECK
+#alias 2	:	SOLIDBARRIER_CLOSE_AUTO
+#alias 3	:	SOLIDBARRIER_CLOSE_EGGMAN
+
+// HUD aliases
+#alias Object[24].PropertyValue	:	HUD.TimePeriod
+
+// Time Periods
+#alias 0	:	PRESENT
+#alias 1	:	PAST
+#alias 2	:	GOOD_FUTURE
+#alias 3	:	BAD_FUTURE
 
 
 sub ObjectMain
 	switch Object.PropertyValue
-	case 1
+	case SOLIDBARRIER_CLOSE_CHECK
 		PlayerObjectCollision(C_TOUCH, 112, -64, 256, 256)
-		if CheckResult == 1
-			Object.PropertyValue = 2
+		if CheckResult == true
+			Object.PropertyValue = SOLIDBARRIER_CLOSE_AUTO
 		end if
 		break
-	case 2
-		if Object.Value0 < 64
-			Object.Value0 += 4
-			Object.YPos += 262144
+
+	case SOLIDBARRIER_CLOSE_AUTO
+		if Object.Timer < 64
+			Object.Timer += 4
+			Object.YPos += 262144	// 0x40000
 		else
-			Object.PropertyValue = 0
+			Object.PropertyValue = SOLIDBARRIER_INACTIVE
 		end if
 		break
-	case 3
-		if Object.Value0 < 128
-			Object.Value0 += 4
-			Object.YPos += 262144
+
+	case SOLIDBARRIER_CLOSE_EGGMAN
+		if Object.Timer < 128
+			Object.Timer += 4
+			Object.YPos += 262144	// 0x40000
 		else
-			Object.PropertyValue = 0
+			Object.PropertyValue = SOLIDBARRIER_INACTIVE
 		end if
 		break
+
 	end switch
 end sub
 
 
 sub ObjectPlayerInteraction
 #platform: Mobile
-if Object.PropertyValue > 1
+	if Object.PropertyValue > SOLIDBARRIER_CLOSE_CHECK
 		PlayerObjectCollision(C_BOX, -64, -64, 64, 128)
 	else
-#endplatform
 		PlayerObjectCollision(C_BOX, -64, -64, 64, 64)
-#platform: Mobile
 	end if 
+#endplatform
+
+#platform: Standard
+	PlayerObjectCollision(C_BOX, -64, -64, 64, 64)
 #endplatform
 end sub
 
@@ -57,28 +76,33 @@ end sub
 
 
 sub ObjectStartup
-	switch Object[24].PropertyValue
-	case 0
+	switch HUD.TimePeriod
+	case PRESENT
 		LoadSpriteSheet("R4/Objects.gif")
 		TempValue2 = 163
 		TempValue3 = 1
 		break
-	case 1
+
+	case PAST
 		LoadSpriteSheet("R4/Objects2.gif")
 		TempValue2 = 1
 		TempValue3 = 157
 		break
-	case 2
+
+	case GOOD_FUTURE
 		LoadSpriteSheet("R4/Objects2.gif")
 		TempValue2 = 1
 		TempValue3 = 190
 		break
-	case 3
+
+	case BAD_FUTURE
 		LoadSpriteSheet("R4/Objects2.gif")
 		TempValue2 = 1
 		TempValue3 = 223
 		break
+
 	end switch
+
 	TempValue0 = -64
 	TempValue1 = -64
 	while TempValue1 < 64

@@ -3,40 +3,43 @@
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
 // Aliases
-#alias 45: TYPE_PUSHBUTTON
+#alias 0	:	PUSHBUTTON_INACTIVE
+#alias 1	:	PUSHBUTTON_PRESSED
 
 
 sub ObjectPlayerInteraction
-	if Object.PropertyValue == 0
+	if Object.PropertyValue == PUSHBUTTON_INACTIVE
 		if Player.YVelocity >= 0
 			PlayerObjectCollision(C_BOX, -16, -8, 16, 8)
-			if CheckResult == 1
-				Object.PropertyValue = 1
-				Player.YPos += 524288
+			if CheckResult == true
+				Object.PropertyValue = PUSHBUTTON_PRESSED
+				Player.YPos += 524288	// 0x80000
 				PlayStageSfx(8, 0)
 			else
-				Object.PropertyValue = 0
+				Object.PropertyValue = PUSHBUTTON_INACTIVE
 			end if
 		else
-			Object.PropertyValue = 0
+			Object.PropertyValue = PUSHBUTTON_INACTIVE
 		end if
 	else
 		PlayerObjectCollision(C_TOUCH, -16, -2, 16, 8)
-		if CheckResult == 1
+		if CheckResult == true
 			if Player.YVelocity > -1
-				Object.PropertyValue = 1
+				Object.PropertyValue = PUSHBUTTON_PRESSED
 				Player.Gravity = 0
 				Player.YVelocity = 0
+
 				Player.YPos = Player.CollisionBottom
 				FlipSign(Player.YPos)
 				Player.YPos <<= 16
 				Player.YPos += Object.YPos
 			end if
 		else
-			Object.PropertyValue = 0
+			Object.PropertyValue = PUSHBUTTON_INACTIVE
 			if Player.YVelocity > -1
 				Player.Gravity = 0
 				Player.YVelocity = 0
+
 				Player.YPos = Player.CollisionBottom
 				FlipSign(Player.YPos)
 				Player.YPos -= 8
@@ -55,8 +58,8 @@ end sub
 
 sub ObjectStartup
 	LoadSpriteSheet("R4/Objects.gif")
-	SpriteFrame(-16, -8, 32, 16, 130, 35)
-	SpriteFrame(-16, -8, 32, 16, 130, 52)
+	SpriteFrame(-16, -8, 32, 16, 130, 35)	// #0 - Push Button
+	SpriteFrame(-16, -8, 32, 16, 130, 52)	// #1 - Push Button pressed
 end sub
 
 // ========================

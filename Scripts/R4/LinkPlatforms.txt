@@ -4,27 +4,34 @@
 
 // Aliases
 #alias 65: TYPE_LINKPLATFORMS
-
+#alias Object.Value0	:	Object.Angle
+#alias Object.Value1	:	Object.XDrawPos
+#alias Object.Value2	:	Object.YDrawPos
+#alias Object.Value3	:	Object.XOffset
+#alias Object.Value4	:	Object.YOffset
+#alias Object.Value5	:	Object.AngleIncrease
 
 sub ObjectMain
-	Object.Value0 += Object.Value5
-	if Object.Value0 < 0
-		Object.Value0 += 512
+	Object.Angle += Object.AngleIncrease
+	if Object.Angle < 0
+		Object.Angle += 512
 	end if
-	Object.Value0 &= 511
+	Object.Angle &= 511
+	
 	TempValue1 = 96
-	Cos(Object.Value3, Object.Value0)
-	Object.Value3 *= TempValue1
-	Object.Value3 <<= 7
-	Object.Value3 += Object.XPos
-	Object.Value3 &= -65536
-	Object.Value3 -= Object.Value1
-	Sin(Object.Value4, Object.Value0)
-	Object.Value4 *= TempValue1
-	Object.Value4 <<= 7
-	Object.Value4 += Object.YPos
-	Object.Value4 &= -65536
-	Object.Value4 -= Object.Value2
+	Cos(Object.XOffset, Object.Angle)
+	Object.XOffset *= TempValue1
+	Object.XOffset <<= 7
+	Object.XOffset += Object.XPos
+	Object.XOffset &= -65536	// -0x10000
+	Object.XOffset -= Object.XDrawPos
+
+	Sin(Object.YOffset, Object.Angle)
+	Object.YOffset *= TempValue1
+	Object.YOffset <<= 7
+	Object.YOffset += Object.YPos
+	Object.YOffset &= -65536	// -0x10000
+	Object.YOffset -= Object.YDrawPos
 end sub
 
 
@@ -32,13 +39,16 @@ sub ObjectPlayerInteraction
 	if Object.Frame == 1
 		TempValue0 = Object.XPos
 		TempValue1 = Object.YPos
-		Object.XPos = Object.Value1
-		Object.YPos = Object.Value2
+
+		Object.XPos = Object.XDrawPos
+		Object.YPos = Object.YDrawPos
+
 		PlayerObjectCollision(C_PLATFORM, -32, -8, 32, 8)
-		if CheckResult == 1
-			Player.XPos += Object.Value3
-			Player.YPos += Object.Value4
+		if CheckResult == true
+			Player.XPos += Object.XOffset
+			Player.YPos += Object.YOffset
 		end if
+
 		Object.XPos = TempValue0
 		Object.YPos = TempValue1
 	end if
@@ -47,17 +57,19 @@ end sub
 
 sub ObjectDraw
 	TempValue1 = 96
-	Cos(Object.Value1, Object.Value0)
-	Object.Value1 *= TempValue1
-	Object.Value1 <<= 7
-	Object.Value1 += Object.XPos
-	Object.Value1 &= -65536
-	Sin(Object.Value2, Object.Value0)
-	Object.Value2 *= TempValue1
-	Object.Value2 <<= 7
-	Object.Value2 += Object.YPos
-	Object.Value2 &= -65536
-	DrawSpriteXY(Object.Frame, Object.Value1, Object.Value2)
+
+	Cos(Object.XDrawPos, Object.Angle)
+	Object.XDrawPos *= TempValue1
+	Object.XDrawPos <<= 7
+	Object.XDrawPos += Object.XPos
+	Object.XDrawPos &= -65536	// -0x10000
+
+	Sin(Object.YDrawPos, Object.Angle)
+	Object.YDrawPos *= TempValue1
+	Object.YDrawPos <<= 7
+	Object.YDrawPos += Object.YPos
+	Object.YDrawPos &= -65536	// -0x10000
+	DrawSpriteXY(Object.Frame, Object.XDrawPos, Object.YDrawPos)
 end sub
 
 
@@ -70,79 +82,97 @@ sub ObjectStartup
 		if Object[ArrayPos0].Type == TypeName[LinkPlatforms]
 			switch Object[ArrayPos0].PropertyValue
 			case 1
-				Object[ArrayPos0].Value0 = 112
+				Object[ArrayPos0].Angle = 112
 				Object[ArrayPos0].Frame = 0
-				Object[ArrayPos0].Value5 = 2
+				Object[ArrayPos0].AngleIncrease = 2
+
 				ArrayPos0++
-				Object[ArrayPos0].Value0 = 16
+				Object[ArrayPos0].Angle = 16
 				Object[ArrayPos0].Frame = 0
-				Object[ArrayPos0].Value5 = 2
+				Object[ArrayPos0].AngleIncrease = 2
+
 				ArrayPos0++
-				Object[ArrayPos0].Value0 = 32
+				Object[ArrayPos0].Angle = 32
 				Object[ArrayPos0].Frame = 0
-				Object[ArrayPos0].Value5 = 2
+				Object[ArrayPos0].AngleIncrease = 2
+
 				ArrayPos0++
-				Object[ArrayPos0].Value0 = 48
+				Object[ArrayPos0].Angle = 48
 				Object[ArrayPos0].Frame = 0
-				Object[ArrayPos0].Value5 = 2
+				Object[ArrayPos0].AngleIncrease = 2
+
 				ArrayPos0++
-				Object[ArrayPos0].Value0 = 96
+				Object[ArrayPos0].Angle = 96
 				Object[ArrayPos0].Frame = 0
-				Object[ArrayPos0].Value5 = 2
+				Object[ArrayPos0].AngleIncrease = 2
+
 				ArrayPos0++
-				Object[ArrayPos0].Value0 = 80
+				Object[ArrayPos0].Angle = 80
 				Object[ArrayPos0].Frame = 0
-				Object[ArrayPos0].Value5 = 2
+				Object[ArrayPos0].AngleIncrease = 2
+
 				ArrayPos0++
-				Object[ArrayPos0].Value0 = 64
+				Object[ArrayPos0].Angle = 64
 				Object[ArrayPos0].Frame = 1
-				Object[ArrayPos0].Value5 = 2
+				Object[ArrayPos0].AngleIncrease = 2
+
 				ArrayPos0++
-				Object[ArrayPos0].Value0 = 0
+				Object[ArrayPos0].Angle = 0
 				Object[ArrayPos0].Frame = 1
-				Object[ArrayPos0].Value5 = 2
+				Object[ArrayPos0].AngleIncrease = 2
+
 				ArrayPos0++
-				Object[ArrayPos0].Value0 = 128
+				Object[ArrayPos0].Angle = 128
 				Object[ArrayPos0].Frame = 1
-				Object[ArrayPos0].Value5 = 2
+				Object[ArrayPos0].AngleIncrease = 2
 				break
+				
 			case 2
-				Object[ArrayPos0].Value0 = 112
+				Object[ArrayPos0].Angle = 112
 				Object[ArrayPos0].Frame = 0
-				Object[ArrayPos0].Value5 = -2
+				Object[ArrayPos0].AngleIncrease = -2
+
 				ArrayPos0++
-				Object[ArrayPos0].Value0 = 16
+				Object[ArrayPos0].Angle = 16
 				Object[ArrayPos0].Frame = 0
-				Object[ArrayPos0].Value5 = -2
+				Object[ArrayPos0].AngleIncrease = -2
+
 				ArrayPos0++
-				Object[ArrayPos0].Value0 = 32
+				Object[ArrayPos0].Angle = 32
 				Object[ArrayPos0].Frame = 0
-				Object[ArrayPos0].Value5 = -2
+				Object[ArrayPos0].AngleIncrease = -2
+
 				ArrayPos0++
-				Object[ArrayPos0].Value0 = 48
+				Object[ArrayPos0].Angle = 48
 				Object[ArrayPos0].Frame = 0
-				Object[ArrayPos0].Value5 = -2
+				Object[ArrayPos0].AngleIncrease = -2
+
 				ArrayPos0++
-				Object[ArrayPos0].Value0 = 96
+				Object[ArrayPos0].Angle = 96
 				Object[ArrayPos0].Frame = 0
-				Object[ArrayPos0].Value5 = -2
+				Object[ArrayPos0].AngleIncrease = -2
+
 				ArrayPos0++
-				Object[ArrayPos0].Value0 = 80
+				Object[ArrayPos0].Angle = 80
 				Object[ArrayPos0].Frame = 0
-				Object[ArrayPos0].Value5 = -2
+				Object[ArrayPos0].AngleIncrease = -2
+
 				ArrayPos0++
-				Object[ArrayPos0].Value0 = 64
+				Object[ArrayPos0].Angle = 64
 				Object[ArrayPos0].Frame = 1
-				Object[ArrayPos0].Value5 = -2
+				Object[ArrayPos0].AngleIncrease = -2
+
 				ArrayPos0++
-				Object[ArrayPos0].Value0 = 0
+				Object[ArrayPos0].Angle = 0
 				Object[ArrayPos0].Frame = 1
-				Object[ArrayPos0].Value5 = -2
+				Object[ArrayPos0].AngleIncrease = -2
+				
 				ArrayPos0++
-				Object[ArrayPos0].Value0 = 128
+				Object[ArrayPos0].Angle = 128
 				Object[ArrayPos0].Frame = 1
-				Object[ArrayPos0].Value5 = -2
+				Object[ArrayPos0].AngleIncrease = -2
 				break
+				
 			end switch
 		end if
 		ArrayPos0++

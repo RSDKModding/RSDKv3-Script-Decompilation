@@ -2,22 +2,39 @@
 //--------Scripted by Christian Whitehead 'The Taxman'--------//
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
-// Aliases
-#alias 50: TYPE_FAN
+// States
+#alias 0	:	FAN_CLOSED
+#alias 1	:	FAN_OPEN
+#alias 2	:	FUTURE_FAN_CLOSED
+#alias 3	:	FUTURE_FAN_OPEN
+
+// Button alias
+#alias Object[-1].PropertyValue	:	Button.Pushed
+
+// HUD alias
+#alias Object[24].PropertyValue	:	Hud.TimePeriod
+
+// Time Periods
+#alias 0						:	PRESENT
+#alias 1						:	PAST
+#alias 2						:	GOOD_FUTURE
+#alias 3						:	BAD_FUTURE
+
 
 
 sub ObjectMain
 	switch Object.State
-	case 0
-	case 2
-		if Object[-1].PropertyValue == 1
+	case FAN_CLOSED
+	case FUTURE_FAN_CLOSED
+		if Button.Pushed == true
 			Object.PropertyValue = 1
 			Object.State++
 		end if
 		break
-	case 1
-	case 3
-		if Object[24].PropertyValue < 2
+
+	case FAN_OPEN
+	case FUTURE_FAN_OPEN
+		if Hud.TimePeriod < 2
 			Object.Frame++
 			if Object.Frame > 9
 				Object.Frame = 0
@@ -26,76 +43,85 @@ sub ObjectMain
 			Object.Frame = 2
 		end if
 		break
+
 	end switch
 end sub
 
 
 sub ObjectDraw
 	switch Object.State
-	case 0
+	case FAN_CLOSED
 		DrawSprite(0)
 		break
-	case 1
+
+	case FAN_OPEN
 		TempValue0 = Object.Frame
 		TempValue0 >>= 1
 		DrawSprite(TempValue0)
 		break
-	case 2
+		
+	case FUTURE_FAN_CLOSED
 		DrawSpriteFX(5, FX_FLIP, Object.XPos, Object.YPos)
 		break
-	case 3
+
+	case FUTURE_FAN_OPEN
 		TempValue0 = Object.Frame
 		TempValue0 >>= 1
 		TempValue0 += 5
 		DrawSpriteFX(TempValue0, FX_FLIP, Object.XPos, Object.YPos)
 		break
+
 	end switch
 end sub
 
 
 sub ObjectStartup
-	switch Object[24].PropertyValue
-	case 0
-	case 1
+	switch Hud.TimePeriod
+	case PRESENT
+	case PAST
 		LoadSpriteSheet("R4/Objects.gif")
-		SpriteFrame(-16, -8, 32, 16, 163, 35)
-		SpriteFrame(-12, -8, 24, 16, 229, 1)
-		SpriteFrame(-8, -8, 16, 16, 229, 18)
-		SpriteFrame(-12, -8, 24, 16, 196, 35)
-		SpriteFrame(-16, -8, 32, 16, 221, 35)
-		SpriteFrame(-8, -16, 16, 32, 239, 136)
-		SpriteFrame(-8, -12, 16, 24, 222, 169)
-		SpriteFrame(-8, -8, 16, 16, 239, 194)
-		SpriteFrame(-8, -12, 16, 24, 239, 169)
-		SpriteFrame(-8, -16, 16, 32, 222, 136)
+		SpriteFrame(-16, -8, 32, 16, 163, 35)	// #0 - Fan vertical frame 0
+		SpriteFrame(-12, -8, 24, 16, 229, 1)	// #1 - Fan vertical frame 1
+		SpriteFrame(-8, -8, 16, 16, 229, 18)	// #2 - Fan vertical frame 2
+		SpriteFrame(-12, -8, 24, 16, 196, 35)	// #3 - Fan vertical frame 3
+		SpriteFrame(-16, -8, 32, 16, 221, 35)	// #4 - Fan vertical frame 4
+		SpriteFrame(-8, -16, 16, 32, 239, 136)	// #5 - Fan horizontal frame 0
+		SpriteFrame(-8, -12, 16, 24, 222, 169)	// #6 - Fan horizontal frame 1
+		SpriteFrame(-8, -8, 16, 16, 239, 194)	// #7 - Fan horizontal frame 2
+		SpriteFrame(-8, -12, 16, 24, 239, 169)	// #8 - Fan horizontal frame 3
+		SpriteFrame(-8, -16, 16, 32, 222, 136)	// #9 - Fan horizontal frame 4
 		break
-	case 2
+
+	case GOOD_FUTURE
 		LoadSpriteSheet("R4/Objects3.gif")
-		SpriteFrame(-16, -8, 32, 16, 51, 67)
-		SpriteFrame(-16, -8, 32, 16, 51, 84)
-		SpriteFrame(-16, -8, 32, 16, 51, 84)
-		SpriteFrame(-16, -8, 32, 16, 51, 84)
-		SpriteFrame(-16, -8, 32, 16, 51, 84)
-		SpriteFrame(-8, -16, 16, 32, 50, 101)
-		SpriteFrame(-8, -16, 16, 32, 67, 101)
-		SpriteFrame(-8, -16, 16, 32, 67, 101)
-		SpriteFrame(-8, -16, 16, 32, 67, 101)
-		SpriteFrame(-8, -16, 16, 32, 67, 101)
+		SpriteFrame(-16, -8, 32, 16, 51, 67)	// #0 - Future fan vertical closed
+		SpriteFrame(-16, -8, 32, 16, 51, 84)	// #1 - Future fan vertical open
+		SpriteFrame(-16, -8, 32, 16, 51, 84)	// #2 - Future fan vertical open
+		SpriteFrame(-16, -8, 32, 16, 51, 84)	// #3 - Future fan vertical open
+		SpriteFrame(-16, -8, 32, 16, 51, 84)	// #4 - Future fan vertical open
+		SpriteFrame(-8, -16, 16, 32, 50, 101)	// #5 - Future fan horizontal closed
+		SpriteFrame(-8, -16, 16, 32, 67, 101)	// #6 - Future fan horizontal open
+		SpriteFrame(-8, -16, 16, 32, 67, 101)	// #7 - Future fan horizontal open
+		SpriteFrame(-8, -16, 16, 32, 67, 101)	// #8 - Future fan horizontal open
+		SpriteFrame(-8, -16, 16, 32, 67, 101)	// #9 - Future fan horizontal open
 		break
-	case 3
+
+	case BAD_FUTURE
 		LoadSpriteSheet("R4/Objects3.gif")
-		SpriteFrame(-16, -8, 32, 16, 62, 228)
-		SpriteFrame(-16, -8, 32, 16, 94, 228)
-		SpriteFrame(-16, -8, 32, 16, 94, 228)
-		SpriteFrame(-16, -8, 32, 16, 94, 228)
-		SpriteFrame(-16, -8, 32, 16, 94, 228)
-		SpriteFrame(-8, -16, 16, 32, 76, 144)
-		SpriteFrame(-8, -16, 16, 32, 93, 144)
-		SpriteFrame(-8, -16, 16, 32, 93, 144)
-		SpriteFrame(-8, -16, 16, 32, 93, 144)
-		SpriteFrame(-8, -16, 16, 32, 93, 144)
+		SpriteFrame(-16, -8, 32, 16, 62, 228)	// #0 - Future fan vertical closed
+		SpriteFrame(-16, -8, 32, 16, 94, 228)	// #1 - Future fan vertical open
+		SpriteFrame(-16, -8, 32, 16, 94, 228)	// #2 - Future fan vertical open
+		SpriteFrame(-16, -8, 32, 16, 94, 228)	// #3 - Future fan vertical open
+		SpriteFrame(-16, -8, 32, 16, 94, 228)	// #4 - Future fan vertical open
+		SpriteFrame(-8, -16, 16, 32, 76, 144)	// #5 - Future fan horizontal closed
+		SpriteFrame(-8, -16, 16, 32, 93, 144)	// #6 - Future fan horizontal open
+		SpriteFrame(-8, -16, 16, 32, 93, 144)	// #7 - Future fan horizontal open
+		SpriteFrame(-8, -16, 16, 32, 93, 144)	// #8 - Future fan horizontal open
+		SpriteFrame(-8, -16, 16, 32, 93, 144)	// #9 - Future fan horizontal open
 		break
+
 	end switch
+
 	ArrayPos0 = 32
 	while ArrayPos0 < 1056
 		if Object[ArrayPos0].Type == TypeName[Fan]

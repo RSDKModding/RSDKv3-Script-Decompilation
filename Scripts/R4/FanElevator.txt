@@ -4,50 +4,66 @@
 
 // Aliases
 #alias 74: TYPE_FANELEVATOR
+#alias Object.Value1	:	Object.MinHeight
+#alias Object.Value2	:	Object.YVelocity
+
+#alias 0	:	FAN_ELEVATOR_CLOSED
+#alias 1	:	FAN_ELEVATOR_OPEN
+// HUD alias
+#alias Object[24].PropertyValue	:	Hud.TimePeriod
+
+// Time Periods
+#alias 0						:	PRESENT
+#alias 1						:	PAST
+#alias 2						:	GOOD_FUTURE
+#alias 3						:	BAD_FUTURE
+
+// Priority
+#alias 3	:	PRIORITY_XBOUNDS
 
 
 sub ObjectMain
-	if Object.State == 0
-		if Object.Value2 < 65536
-			Object.Value2 += 8192
+	if Object.State == FAN_ELEVATOR_CLOSED
+		if Object.YVelocity < 65536		// 0x10000
+			Object.YVelocity += 8192	// 0x2000
 		end if
-		if Object.YPos == Object.Value1
+		if Object.YPos == Object.MinHeight
 			TempValue0 = Player.YPos
 			TempValue0 -= Object.YPos
-			if TempValue0 < 10485760
-				Object.Value2 = 0
+			if TempValue0 < 10485760	// 0xA00000
+				Object.YVelocity = 0
 			end if
 		else
 			TempValue0 = Object.YPos
-			TempValue0 -= Object.Value1
-			if TempValue0 > 44040192
-				Object.YPos = Object.Value1
+			TempValue0 -= Object.MinHeight
+			if TempValue0 > 44040192	// 0x2A00000
+				Object.YPos = Object.MinHeight
 			end if
 		end if
 	end if
-	Object.YPos += Object.Value2
+	Object.YPos += Object.YVelocity
 end sub
 
 
 sub ObjectPlayerInteraction
 	PlayerObjectCollision(C_PLATFORM, -32, -28, 32, 8)
-	if CheckResult == 1
-		Object.Value2 = -131072
-		if Object.State == 0
+	if CheckResult == true
+		Object.YVelocity = -131072	// 0x20000
+		if Object.State == FAN_ELEVATOR_CLOSED
 			PlayStageSfx(8, 0)
 		end if
-		Object.State = 1
+		Object.State = FAN_ELEVATOR_OPEN
 	else
-		if Object.Value2 < 0
-			Object.Value2 = 0
+		if Object.YVelocity < 0
+			Object.YVelocity = 0
 		end if
-		Object.State = 0
+		Object.State = FAN_ELEVATOR_CLOSED
 	end if
 end sub
 
 
 sub ObjectDraw
-	if Object.State == 0
+	if Object.State == FAN_ELEVATOR_CLOSED
 		DrawSprite(0)
 		DrawSprite(1)
 		DrawSpriteFX(0, FX_FLIP, Object.XPos, Object.YPos)
@@ -63,23 +79,24 @@ end sub
 
 sub ObjectStartup
 	LoadSpriteSheet("R4/Objects3.gif")
-	if Object[24].PropertyValue < 3
-		SpriteFrame(-32, -32, 32, 48, 84, 46)
-		SpriteFrame(-32, 16, 32, 16, 110, 144)
-		SpriteFrame(-32, -32, 32, 48, 84, 95)
-		SpriteFrame(-32, 16, 32, 16, 110, 161)
+	if Hud.TimePeriod < BAD_FUTURE
+		SpriteFrame(-32, -32, 32, 48, 84, 46)	// #0 - Fan Elevator Body
+		SpriteFrame(-32, 16, 32, 16, 110, 144)	// #1 - Fan closed looking down
+		SpriteFrame(-32, -32, 32, 48, 84, 95)	// #2 - Fan Elevator Body pressed
+		SpriteFrame(-32, 16, 32, 16, 110, 161)	// #3 - Fan open looking down
 	else
-		SpriteFrame(-32, -32, 32, 48, 84, 46)
-		SpriteFrame(-32, 16, 32, 16, 126, 228)
-		SpriteFrame(-32, -32, 32, 48, 84, 95)
-		SpriteFrame(-32, 16, 32, 16, 158, 228)
+		SpriteFrame(-32, -32, 32, 48, 84, 46)	// #0 - Fan Elevator Body
+		SpriteFrame(-32, 16, 32, 16, 126, 228)	// #1 - Fan closed looking down
+		SpriteFrame(-32, -32, 32, 48, 84, 95)	// #2 - Fan Elevator Body pressed
+		SpriteFrame(-32, 16, 32, 16, 158, 228)	// #3 - Fan open looking down
 	end if
+
 	ArrayPos0 = 32
 	while ArrayPos0 < 1056
 		if Object[ArrayPos0].Type == TypeName[FanElevator]
 			Object[ArrayPos0].Direction = FACING_LEFT
-			Object[ArrayPos0].Priority = 3
-			Object[ArrayPos0].Value1 = Object[ArrayPos0].YPos
+			Object[ArrayPos0].Priority = PRIORITY_XBOUNDS
+			Object[ArrayPos0].MinHeight = Object[ArrayPos0].YPos
 		end if
 		ArrayPos0++
 	loop
