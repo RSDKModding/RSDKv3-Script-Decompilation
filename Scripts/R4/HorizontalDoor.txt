@@ -3,37 +3,49 @@
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
 // Aliases
-#alias 49: TYPE_HORIZONTALDOOR
+#alias Object.Value0	:	Object.Timer
+// HUD alias
+#alias Object[24].PropertyValue	:	Hud.TimePeriod
 
+// Push Button alias
+#alias Object[-1].PropertyValue :	PushButton.PropertyValue
+
+// Property Values
+#alias 0	:	HORIZONTALDOOR_CLOSED
+#alias 1	:	HORIZONTALDOOR_OPEN
+
+// Push Button Property Values
+#alias 1						:	PUSHBUTTON_PRESSED
 
 sub ObjectMain
 	switch Object.PropertyValue
-	case 0
-		if Object.Value0 > 0
-			Object.Value0 -= 524288
+	case HORIZONTALDOOR_CLOSED
+		if Object.Timer > 0
+			Object.Timer -= 524288	// 0x80000
 			if Object.Direction == FACING_RIGHT
-				Object.XPos += 524288
+				Object.XPos += 524288	// 0x80000
 			else
-				Object.XPos -= 524288
+				Object.XPos -= 524288	// 0x80000
 			end if
 		end if
-		if Object[-1].PropertyValue == 1
-			Object.PropertyValue = 1
+		if PushButton.PropertyValue == PUSHBUTTON_PRESSED
+			Object.PropertyValue = HORIZONTALDOOR_OPEN
 		end if
 		break
-	case 1
-		if Object.Value0 < 8388608
-			Object.Value0 += 524288
+		
+	case HORIZONTALDOOR_OPEN
+		if Object.Value0 < 8388608	// 0x800000
+			Object.Value0 += 524288	// 0x80000
 			if Object.Direction == FACING_RIGHT
-				Object.XPos -= 524288
+				Object.XPos -= 524288	// 0x80000
 			else
-				Object.XPos += 524288
+				Object.XPos += 524288	// 0x80000
 			end if
 		end if
 		TempValue0 = Object.YPos
-		TempValue0 -= 3145728
+		TempValue0 -= 3145728	// 0x300000
 		if Player.YPos < TempValue0
-			Object.PropertyValue = 0
+			Object.PropertyValue = HORIZONTALDOOR_CLOSED
 		end if
 		break
 	end switch
@@ -54,12 +66,12 @@ end sub
 
 
 sub ObjectStartup
-	if Object[24].PropertyValue < 2
+	if Hud.TimePeriod < GOOD_FUTURE	// aka past or present
 		LoadSpriteSheet("R4/Objects.gif")
-		SpriteFrame(-64, -8, 128, 16, 18, 69)
+		SpriteFrame(-64, -8, 128, 16, 18, 69)	// Horizontal Door
 	else
 		LoadSpriteSheet("R4/Objects3.gif")
-		SpriteFrame(-64, -8, 128, 16, 62, 211)
+		SpriteFrame(-64, -8, 128, 16, 62, 211)	// Horizontal Door
 	end if
 	ArrayPos0 = 32
 	while ArrayPos0 < 1056

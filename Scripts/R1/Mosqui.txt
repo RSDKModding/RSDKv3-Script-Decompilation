@@ -6,7 +6,7 @@
 #alias Object.Value0		:	Object.Timer
 #alias Object.Value1		:	Object.OriginPos.X
 #alias Object.Value2		:	Object.OriginPos.Y
-#alias Object.PropertyValue	:	Object.BadnikCondition
+#alias Object.PropertyValue	:	Object.Quality
 
 // States
 #alias 0					:	MOSQUI_MOVE_LEFT
@@ -19,9 +19,9 @@
 // CSides
 #alias 0					:	CSIDE_FLOOR
 
-// Property Values
-#alias 0					:	NEW
-#alias 1					:	OLD
+// Badnik Quality / Property Values
+#alias 0					:	GOOD
+#alias 1					:	BAD
 
 // Priority
 #alias 0					:	PRIORITY_ACTIVE_BOUNDS
@@ -29,7 +29,7 @@
 
 
 sub ObjectMain
-	if Object.BadnikCondition == NEW
+	if Object.Quality == GOOD
 		switch Object.State
 		case MOSQUI_MOVE_LEFT
 			Object.Priority = PRIORITY_ACTIVE
@@ -258,7 +258,7 @@ end sub
 
 sub ObjectDraw
 	if Object.State < MOSQUI_RESTORE
-		if Object.BadnikCondition == NEW
+		if Object.Quality == GOOD
 			if Object.State < MOSQUI_TURN_DOWN
 				TempValue0 = Object.Frame
 				TempValue0 >>= 1

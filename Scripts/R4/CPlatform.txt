@@ -1,150 +1,194 @@
-//------------Sonic CD CPlatform Script-------------//
+//------------Sonic CD Collapsing Platform Script-------------//
 //--------Scripted by Christian Whitehead 'The Taxman'--------//
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
 // Aliases
-#alias 43: TYPE_CPLATFORM
+#alias Object.Value0	:	Object.HitboxLeft
+#alias Object.Value1	:	Object.HitboxRight
+#alias Object.Value2	:	Object.CollapseDelay
+#alias Object.Value3	:	Object.BridgeLength
+#alias Object.Value4	:	Object.YVelocity
+
+// States
+#alias 0	:	CPLATFORM_CHECK_COLLISION
+#alias 1	:	CPLATFORM_CRUMBLE_RIGHT
+#alias 2	:	CPLATFORM_CRUMBLE_LEFT
+#alias 3	:	CPLATFORM_COLLAPSE_LEFT
+#alias 4	:	CPLATFORM_COLLAPSE_RIGHT
+#alias 5	:	CPLATFORM_RESTORE	// Sonic Nexus leftover
+#alias 6	:	CPLATFORM_FALLING_DEBRIS
+
+// Priority
+#alias 0				:	PRIORITY_ACTIVE_BOUNDS
+#alias 1				:	PRIORITY_ACTIVE
 
 
 sub ObjectMain
 	switch Object.State
-	case 1
-		if Object.Value2 > 0
-			Object.Value2--
+	case CPLATFORM_CRUMBLE_RIGHT
+		if Object.CollapseDelay > 0
+			Object.CollapseDelay--
 		else
 			PlayStageSfx(3, 0)
-			Object.State = 4
+			Object.State = CPLATFORM_COLLAPSE_RIGHT
 		end if
 		break
-	case 2
-		if Object.Value2 > 0
-			Object.Value2--
+
+	case CPLATFORM_CRUMBLE_LEFT
+		if Object.CollapseDelay > 0
+			Object.CollapseDelay--
 		else
 			PlayStageSfx(3, 0)
-			Object.State = 3
+			Object.State = CPLATFORM_COLLAPSE_LEFT
 		end if
 		break
-	case 3
-		Object.Value2++
-		if Object.Value2 == 12
-			Object.Value2 = 0
-			if Object.Value0 < Object.Value1
-				Object.Value3--
-				Object.Value0 += 16
-				TempValue0 = Object.Value0
+
+	case CPLATFORM_COLLAPSE_LEFT
+		Object.CollapseDelay++
+		if Object.CollapseDelay == 12
+			Object.CollapseDelay = 0
+			if Object.HitboxLeft < Object.HitboxRight
+				Object.BridgeLength--
+				Object.HitboxLeft += 16
+
+				TempValue0 = Object.HitboxLeft
 				TempValue0 -= 8
 				TempValue0 <<= 16
 				TempValue0 += Object.XPos
+
 				TempValue1 = Object.YPos
-				TempValue1 -= 524288
+				TempValue1 -= 524288	// 0x80000
+
 				CreateTempObject(TypeName[CPlatform], 0, TempValue0, TempValue1)
-				Object[TempObjectPos].State = 6
-				Object[TempObjectPos].Value4 = -65536
-				TempValue1 += 1048576
+				Object[TempObjectPos].State = CPLATFORM_FALLING_DEBRIS
+				Object[TempObjectPos].YVelocity = -65536	// -0x10000
+				TempValue1 += 1048576						//  0x100000
+
 				CreateTempObject(TypeName[CPlatform], 0, TempValue0, TempValue1)
-				Object[TempObjectPos].State = 6
+				Object[TempObjectPos].State = CPLATFORM_FALLING_DEBRIS
 			else
 				ResetObjectEntity(Object.EntityNo, TypeName[Blank Object], 0, 0, 0)
 			end if
 		end if
 		break
-	case 4
-		Object.Value2++
-		if Object.Value2 == 12
-			Object.Value2 = 0
-			if Object.Value1 > Object.Value0
-				Object.Value3--
-				Object.Value1 -= 16
-				TempValue0 = Object.Value1
+
+	case CPLATFORM_COLLAPSE_RIGHT
+		Object.CollapseDelay++
+		if Object.CollapseDelay == 12
+			Object.CollapseDelay = 0
+			if Object.HitboxRight > Object.HitboxLeft
+				Object.BridgeLength--
+				Object.HitboxRight -= 16
+
+				TempValue0 = Object.HitboxRight
 				TempValue0 += 8
 				TempValue0 <<= 16
 				TempValue0 += Object.XPos
+
 				TempValue1 = Object.YPos
-				TempValue1 -= 524288
+				TempValue1 -= 524288	// 0x80000
+
 				CreateTempObject(TypeName[CPlatform], 0, TempValue0, TempValue1)
-				Object[TempObjectPos].State = 6
-				Object[TempObjectPos].Value4 = -65536
-				TempValue1 += 1048576
+				Object[TempObjectPos].State = CPLATFORM_FALLING_DEBRIS
+				Object[TempObjectPos].YVelocity = -65536	// -0x10000
+				TempValue1 += 1048576						//  0x100000
+
 				CreateTempObject(TypeName[CPlatform], 0, TempValue0, TempValue1)
-				Object[TempObjectPos].State = 6
+				Object[TempObjectPos].State = CPLATFORM_FALLING_DEBRIS
 			else
 				ResetObjectEntity(Object.EntityNo, TypeName[Blank Object], 0, 0, 0)
 			end if
 		end if
 		break
-	case 5
-		if Object.OutOfBounds == 1
-			Object.State = 0
-			Object.Value3 = Object.PropertyValue
-			Object.Value0 = Object.PropertyValue
-			Object.Value0 <<= 3
-			Object.Value1 = Object.Value0
-			FlipSign(Object.Value0)
-			Object.Priority = 0
-			Object.Value2 = 0
+
+	case CPLATFORM_RESTORE
+		if Object.OutOfBounds == true
+			Object.State = CPLATFORM_CHECK_COLLISION
+
+			Object.BridgeLength = Object.PropertyValue
+
+			Object.HitboxLeft = Object.PropertyValue
+			Object.HitboxLeft <<= 3
+
+			Object.HitboxRight = Object.HitboxLeft
+			FlipSign(Object.HitboxLeft)
+
+			Object.Priority = PRIORITY_ACTIVE_BOUNDS
+			Object.CollapseDelay = 0
 		end if
 		break
-	case 6
-		Object.Value4 += 16384
-		if Object.Value4 > 0
-			Object.YPos += Object.Value4
+
+	case CPLATFORM_FALLING_DEBRIS
+		Object.YVelocity += 16384	// 0x4000
+
+		if Object.YVelocity > 0
+			Object.YPos += Object.YVelocity
 		end if
-		if Object.OutOfBounds == 1
+
+		if Object.OutOfBounds == true
 			Object.Type = TypeName[Blank Object]
 		end if
 		break
+
 	end switch
 end sub
 
 
 sub ObjectPlayerInteraction
-	if Object.State == 0
-		PlayerObjectCollision(C_PLATFORM, Object.Value0, -16, Object.Value1, 16)
-		if CheckResult == 1
-			Object.Value2 = 1
-			Object.Priority = 1
+	if Object.State == CPLATFORM_CHECK_COLLISION
+		PlayerObjectCollision(C_PLATFORM, Object.HitboxLeft, -16, Object.HitboxRight, 16)
+		if CheckResult == true
+			Object.CollapseDelay = 1
+			Object.Priority = PRIORITY_ACTIVE
+
 			if Player.XPos > Object.XPos
-				Object.State = 1
+				Object.State = CPLATFORM_CRUMBLE_RIGHT
 			else
-				Object.State = 2
+				Object.State = CPLATFORM_CRUMBLE_LEFT
 			end if
 		end if
 	else
-		PlayerObjectCollision(C_PLATFORM, Object.Value0, -16, Object.Value1, 16)
+		PlayerObjectCollision(C_PLATFORM, Object.HitboxLeft, -16, Object.HitboxRight, 16)
 	end if
 end sub
 
 
 sub ObjectDraw
 	switch Object.State
-	case 0
-	case 1
-	case 2
-	case 4
+	case CPLATFORM_CHECK_COLLISION
+	case CPLATFORM_CRUMBLE_RIGHT
+	case CPLATFORM_CRUMBLE_LEFT
+	case CPLATFORM_COLLAPSE_RIGHT
 		TempValue0 = 0
-		TempValue1 = Object.Value0
+
+		TempValue1 = Object.HitboxLeft
 		TempValue1 <<= 16
-		TempValue1 += 524288
+		TempValue1 += 524288	// 0x80000
 		TempValue1 += Object.XPos
-		while TempValue0 < Object.Value3
+		
+		while TempValue0 < Object.BridgeLength
 			DrawSpriteXY(0, TempValue1, Object.YPos)
 			TempValue0++
-			TempValue1 += 1048576
+			TempValue1 += 1048576	// 0x100000
 		loop
 		break
-	case 3
+
+	case CPLATFORM_COLLAPSE_LEFT
 		TempValue0 = 0
-		TempValue1 = Object.Value1
+
+		TempValue1 = Object.HitboxRight
 		TempValue1 <<= 16
-		TempValue1 -= 524288
+		TempValue1 -= 524288	// 0x80000
 		TempValue1 += Object.XPos
-		while TempValue0 < Object.Value3
+
+		while TempValue0 < Object.BridgeLength
 			DrawSpriteXY(0, TempValue1, Object.YPos)
 			TempValue0++
-			TempValue1 -= 1048576
+			TempValue1 -= 1048576	// 0x100000
 		loop
 		break
-	case 6
+
+	case CPLATFORM_FALLING_DEBRIS
 		DrawSprite(1)
 		break
 	end switch
@@ -153,19 +197,22 @@ end sub
 
 sub ObjectStartup
 	LoadSpriteSheet("R4/Objects.gif")
+	SpriteFrame(-8, -16, 16, 32, 1, 198)	// #0 - Collapsing Platform
+	SpriteFrame(-8, -8, 16, 16, 1, 198)		// #1 - Collapsing Platform debris
+
 	ArrayPos0 = 32
 	while ArrayPos0 < 1056
 		if Object[ArrayPos0].Type == TypeName[CPlatform]
-			Object[ArrayPos0].Value3 = Object[ArrayPos0].PropertyValue
-			Object[ArrayPos0].Value0 = Object[ArrayPos0].PropertyValue
-			Object[ArrayPos0].Value0 <<= 3
-			Object[ArrayPos0].Value1 = Object[ArrayPos0].Value0
-			FlipSign(Object[ArrayPos0].Value0)
+			Object[ArrayPos0].BridgeLength = Object[ArrayPos0].PropertyValue
+
+			Object[ArrayPos0].HitboxLeft = Object[ArrayPos0].PropertyValue
+			Object[ArrayPos0].HitboxLeft <<= 3
+
+			Object[ArrayPos0].HitboxRight = Object[ArrayPos0].HitboxLeft
+			FlipSign(Object[ArrayPos0].HitboxLeft)
 		end if
 		ArrayPos0++
 	loop
-	SpriteFrame(-8, -16, 16, 32, 1, 198)
-	SpriteFrame(-8, -8, 16, 16, 1, 198)
 end sub
 
 // ========================

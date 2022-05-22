@@ -3,70 +3,94 @@
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
 // Aliases
-#alias 52: TYPE_DRAGONFLY
+#alias Object.Value0		:	Object.Angle
+#alias Object.Value1		:	Object.YVelocity
+#alias Object.PropertyValue	:	Object.Quality
+
+// States
+#alias 0					:	DRAGONFLY_MOVE_LEFT
+#alias 1					:	DRAGONFLY_MOVE_RIGHT
+
+// Badnik Quality / Property Value
+#alias 0					:	GOOD
+#alias 1					:	BAD
 
 
 sub ObjectMain
-	if Object.PropertyValue == 0
+	if Object.Quality == GOOD
 		switch Object.State
-		case 0
-			Sin(Object.YPos, Object.Value0)
+		case DRAGONFLY_MOVE_LEFT
+			Sin(Object.YPos, Object.Angle)
 			Object.YPos <<= 11
-			Object.YPos += Object.Value1
-			Object.XPos -= 65536
-			Object.Value0 -= 8
-			if Object.Value0 == 0
-				Object.State = 1
+			Object.YPos += Object.YVelocity
+
+			Object.XPos -= 65536	// 0x10000
+
+			Object.Angle -= 8
+			if Object.Angle == 0
+				Object.State = DRAGONFLY_MOVE_RIGHT
 				Object.Direction = FACING_LEFT
 			end if
 			break
-		case 1
-			Sin(Object.YPos, Object.Value0)
+
+		case DRAGONFLY_MOVE_RIGHT
+			Sin(Object.YPos, Object.Angle)
 			FlipSign(Object.YPos)
 			Object.YPos <<= 11
-			Object.YPos += Object.Value1
-			Object.XPos += 65536
-			Object.Value0 += 8
-			if Object.Value0 == 2048
-				Object.State = 0
+			Object.YPos += Object.YVelocity
+
+			Object.XPos += 65536	// 0x10000
+
+			Object.Angle += 8
+			if Object.Angle == 2048
+				Object.State = DRAGONFLY_MOVE_LEFT
 				Object.Direction = FACING_RIGHT
 			end if
 			break
+
 		end switch
+
 	else
 		switch Object.State
-		case 0
-			Sin(Object.YPos, Object.Value0)
+		case DRAGONFLY_MOVE_LEFT
+			Sin(Object.YPos, Object.Angle)
 			Object.YPos <<= 11
-			Object.YPos += Object.Value1
-			Object.XPos -= 32768
-			Object.Value0 -= 2
-			if Object.Value0 == 0
-				Object.State = 1
+			Object.YPos += Object.YVelocity
+
+			Object.XPos -= 32768	// 0x8000
+			
+			Object.Angle -= 2
+			if Object.Angle == 0
+				Object.State = DRAGONFLY_MOVE_RIGHT
 				Object.Direction = FACING_LEFT
 			end if
 			break
-		case 1
-			Sin(Object.YPos, Object.Value0)
+
+		case DRAGONFLY_MOVE_RIGHT
+			Sin(Object.YPos, Object.Angle)
 			FlipSign(Object.YPos)
 			Object.YPos <<= 11
-			Object.YPos += Object.Value1
-			Object.XPos += 32768
-			Object.Value0 += 2
-			if Object.Value0 == 1024
-				Object.State = 0
+			Object.YPos += Object.YVelocity
+
+			Object.XPos += 32768	// 0x8000
+
+			Object.Angle += 2
+			if Object.Angle == 1024
+				Object.State = DRAGONFLY_MOVE_LEFT
 				Object.Direction = FACING_RIGHT
 			end if
 			break
+
 		end switch
 	end if
-	CallFunction(StageSetup_CheckGoodFuture)
+
+	CallFunction(StageSetup_CheckGoodFuture)	// Check if it should be a flower
 end sub
 
 
 sub ObjectPlayerInteraction
 	PlayerObjectCollision(C_TOUCH, -20, -10, 20, 10)
-	if CheckResult == 1
+	if CheckResult == true
 		CallFunction(PlayerObject_BadnikBreak)
 	end if
 end sub
@@ -75,12 +99,14 @@ end sub
 sub ObjectDraw
 	TempValue0 = Object.Frame
 	TempValue0 /= 3
-	if Object.PropertyValue == 0
+
+	if Object.Quality == GOOD
 		DrawSpriteFX(TempValue0, FX_FLIP, Object.XPos, Object.YPos)
 	else
 		TempValue0 += 2
 		DrawSpriteFX(TempValue0, FX_FLIP, Object.XPos, Object.YPos)
 	end if
+
 	Object.Frame++
 	Object.Frame %= 6
 end sub
@@ -88,19 +114,20 @@ end sub
 
 sub ObjectStartup
 	LoadSpriteSheet("R4/Objects.gif")
+	SpriteFrame(-29, -20, 64, 32, 18, 119)	// #0 - Dragon Fly frame 0
+	SpriteFrame(-29, -16, 64, 28, 83, 152)	// #1 - Dragon Fly frame 1
+	SpriteFrame(-29, -20, 64, 32, 18, 86)	// #2 - Dragon Fly frame 2
+	SpriteFrame(-29, -16, 64, 28, 18, 152)	// #3 - Dragon Fly frame 3
+
 	ArrayPos0 = 32
 	while ArrayPos0 < 1056
 		if Object[ArrayPos0].Type == TypeName[Dragonfly]
-			Object[ArrayPos0].Value1 = Object[ArrayPos0].YPos
-			Object[ArrayPos0].Value0 = 1024
-			Object[ArrayPos0].Value0 >>= Object[ArrayPos0].PropertyValue
+			Object[ArrayPos0].YVelocity = Object[ArrayPos0].YPos
+			Object[ArrayPos0].Angle = 1024
+			Object[ArrayPos0].Angle >>= Object[ArrayPos0].Quality
 		end if
 		ArrayPos0++
 	loop
-	SpriteFrame(-29, -20, 64, 32, 18, 119)
-	SpriteFrame(-29, -16, 64, 28, 83, 152)
-	SpriteFrame(-29, -20, 64, 32, 18, 86)
-	SpriteFrame(-29, -16, 64, 28, 18, 152)
 end sub
 
 // ========================

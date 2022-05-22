@@ -3,61 +3,95 @@
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
 // Aliases
-#alias 64: TYPE_BUTTONBLOCKS1
+#alias Object.Value1			:	Object.MinHeight
+#alias Object.Value2			:	Object.YVelocity
+#alias Object.Value3			:	Object.MaxHeight
+
+// Push Button aliases
+#alias Object[+1].PropertyValue	:	PushButton.PropertyValue
+#alias Object[+1].XPos			:	PushButton.XPos
+#alias Object[+1].YPos			:	PushButton.YPos
+
+// HUD alias
+#alias Object[24].PropertyValue	:	Hud.TimePeriod
+
+// Gravity
+#alias 0						:	GRAVITY_GROUND
+
+// Collision
+#alias 1						:	FLOOR
+#alias 4						:	ROOF
+
+// Time Periods
+#alias 0						:	PRESENT
+#alias 1						:	PAST
+#alias 2						:	GOOD_FUTURE
+#alias 3						:	BAD_FUTURE
+
+// Push Button Property Values
+#alias 1						:	PUSHBUTTON_PRESSED
 
 
 sub ObjectMain
-	if Object[+1].PropertyValue == 1
-		if Object.Value2 > -65536
-			Object.Value2 -= 512
+	if PushButton.PropertyValue == PUSHBUTTON_PRESSED
+		if Object.YVelocity > -65536	// -0x10000
+			Object.YVelocity -= 512		//  0x200
 		end if
-		Object.YPos += Object.Value2
-		if Object.YPos < Object.Value3
-			Object.YPos = Object.Value3
-			Object.Value2 = 0
+		Object.YPos += Object.YVelocity
+
+		if Object.YPos < Object.MaxHeight
+			Object.YPos = Object.MaxHeight
+			Object.YVelocity = 0
 		end if
 	else
-		if Object.Value2 < 65536
-			Object.Value2 += 512
+		if Object.YVelocity < 65536	// 0x10000
+			Object.YVelocity += 512	// 0x200
 		end if
-		Object.YPos += Object.Value2
-		if Object.YPos > Object.Value1
-			Object.YPos = Object.Value1
-			Object.Value2 = 0
+		Object.YPos += Object.YVelocity
+
+		if Object.YPos > Object.MinHeight
+			Object.YPos = Object.MinHeight
+			Object.YVelocity = 0
 		end if
 	end if
-	Object[+1].XPos = Object.XPos
-	Object[+1].XPos += 1048576
-	Object[+1].YPos = Object.YPos
-	Object[+1].YPos -= 4718592
+
+	PushButton.XPos = Object.XPos
+	PushButton.XPos += 1048576		// 0x100000
+
+	PushButton.YPos = Object.YPos
+	PushButton.YPos -= 4718592		// 0x480000
 end sub
 
 
 sub ObjectPlayerInteraction
 	PlayerObjectCollision(C_BOX, -32, -1, 0, 64)
 	switch CheckResult
-	case 1
-		Player.YPos += 65536
+	case FLOOR
+		Player.YPos += 65536	// 0x10000
 		break
-	case 4
-		if Player.Gravity == 0
+
+	case ROOF
+		if Player.Gravity == GRAVITY_GROUND
 			CallFunction(PlayerObject_Kill)
 		end if
 		break
+
 	end switch
+
 	PlayerObjectCollision(C_BOX, 0, -73, 32, 64)
 	switch CheckResult
-	case 1
-		Player.YPos += 65536
+	case FLOOR
+		Player.YPos += 65536	// 0x10000
 		break
-	case 4
-		if Player.Gravity == 0
+
+	case ROOF
+		if Player.Gravity == GRAVITY_GROUND
 			CallFunction(PlayerObject_Kill)
 		end if
 		break
+
 	end switch
 end sub
-
 
 
 
@@ -72,44 +106,51 @@ end sub
 
 
 sub ObjectStartup
-	switch Object[24].PropertyValue
-	case 0
+	switch Hud.TimePeriod
+	case PRESENT
 		LoadSpriteSheet("R4/Objects.gif")
 		TempValue0 = 163
 		TempValue1 = 1
 		TempValue2 = 196
 		break
-	case 1
+
+	case PAST
 		LoadSpriteSheet("R4/Objects2.gif")
 		TempValue0 = 1
 		TempValue1 = 157
 		TempValue2 = 34
 		break
-	case 2
+
+	case GOOD_FUTURE
 		LoadSpriteSheet("R4/Objects2.gif")
 		TempValue0 = 1
 		TempValue1 = 190
 		TempValue2 = 34
 		break
-	case 3
+
+	case BAD_FUTURE
 		LoadSpriteSheet("R4/Objects2.gif")
 		TempValue0 = 1
 		TempValue1 = 223
 		TempValue2 = 34
 		break
+
 	end switch
+
+	// R4 Blocks
 	SpriteFrame(0, -64, 32, 32, TempValue0, TempValue1)
 	SpriteFrame(0, -32, 32, 32, TempValue0, TempValue1)
 	SpriteFrame(-32, 0, 32, 32, TempValue0, TempValue1)
 	SpriteFrame(0, 0, 32, 32, TempValue0, TempValue1)
 	SpriteFrame(-32, 32, 32, 32, TempValue0, TempValue1)
 	SpriteFrame(0, 32, 32, 32, TempValue0, TempValue1)
+
 	ArrayPos0 = 32
 	while ArrayPos0 < 1056
 		if Object[ArrayPos0].Type == TypeName[ButtonBlocks1]
-			Object[ArrayPos0].Value1 = Object[ArrayPos0].YPos
-			Object[ArrayPos0].Value3 = Object[ArrayPos0].YPos
-			Object[ArrayPos0].Value3 -= 8388608
+			Object[ArrayPos0].MinHeight = Object[ArrayPos0].YPos
+			Object[ArrayPos0].MaxHeight = Object[ArrayPos0].YPos
+			Object[ArrayPos0].MaxHeight -= 8388608	// 0x800000
 		end if
 		ArrayPos0++
 	loop

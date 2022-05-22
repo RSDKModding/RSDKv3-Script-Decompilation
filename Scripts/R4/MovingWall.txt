@@ -3,15 +3,27 @@
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
 // Aliases
-#alias 64: TYPE_MOVINGWALL
+#alias Object.Value0			:	Object.Timer
+
+// HUD alias
+#alias Object[24].PropertyValue	:	Hud.TimePeriod
+
+// Time Periods
+#alias 0						:	PRESENT
+#alias 1						:	PAST
+#alias 2						:	GOOD_FUTURE
+#alias 3						:	BAD_FUTURE
+
+// Collision
+#alias 3						:	RWALL
 
 
 sub ObjectMain
 	if Object.PropertyValue == 0
 		if Player.ControlMode > -1
-			if Object.Value0 < 384
-				Object.Value0++
-				Object.XPos += 32768
+			if Object.Timer < 384
+				Object.Timer++
+				Object.XPos += 32768	// 0x8000
 			else
 				Object.Priority = 0
 				Object.PropertyValue = 1
@@ -23,9 +35,10 @@ end sub
 
 sub ObjectPlayerInteraction
 	PlayerObjectCollision(C_BOX, -32, -64, 32, 64)
-	if CheckResult == 3
-		if Object.Value0 == 383
-			Player.XPos += 65536
+	// The player can actually stand in the floor while pushing instead of being thrown out by the wall, this checks fixes it
+	if CheckResult == RWALL
+		if Object.Timer == 383
+			Player.XPos += 65536	// 0x10000
 		end if
 	end if
 end sub
@@ -44,32 +57,38 @@ end sub
 
 
 sub ObjectStartup
-	switch Object[24].PropertyValue
-	case 0
+	switch Hud.TimePeriod
+	case PRESENT
 		LoadSpriteSheet("R4/Objects.gif")
 		TempValue0 = 163
 		TempValue1 = 1
 		TempValue2 = 196
 		break
-	case 1
+
+	case PAST
 		LoadSpriteSheet("R4/Objects2.gif")
 		TempValue0 = 1
 		TempValue1 = 157
 		TempValue2 = 34
 		break
-	case 2
+
+	case GOOD_FUTURE
 		LoadSpriteSheet("R4/Objects2.gif")
 		TempValue0 = 1
 		TempValue1 = 190
 		TempValue2 = 34
 		break
-	case 3
+
+	case BAD_FUTURE
 		LoadSpriteSheet("R4/Objects2.gif")
 		TempValue0 = 1
 		TempValue1 = 223
 		TempValue2 = 34
 		break
+
 	end switch
+
+	// R4 Blocks
 	SpriteFrame(-32, -64, 32, 32, TempValue0, TempValue1)
 	SpriteFrame(0, -64, 32, 32, TempValue0, TempValue1)
 	SpriteFrame(-32, -32, 32, 32, TempValue0, TempValue1)

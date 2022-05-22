@@ -3,13 +3,18 @@
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
 // Aliases
-#alias 35: TYPE_BGEFFECTS
+#alias Object.Value0		:	Object.Timer
+#alias Object[19].Value1	:	BGAnimation.CurrentPal
+
+// Priority
+#alias 1				:	PRIORITY_ACTIVE
 
 // Function declarations
-#function BGEffects_Function49
-#function BGEffects_Function50
+#function BGEffects_Deform_Left
+#function BGEffects_Deform_Right
 
-function BGEffects_Function49
+
+function BGEffects_Deform_Left
 	Stage[ArrayPos0].DeformationData1 = 1
 	ArrayPos0++
 	Stage[ArrayPos0].DeformationData1 = 1
@@ -37,7 +42,7 @@ function BGEffects_Function49
 end function
 
 
-function BGEffects_Function50
+function BGEffects_Deform_Right
 	Stage[ArrayPos0].DeformationData1 = -1
 	ArrayPos0++
 	Stage[ArrayPos0].DeformationData1 = -1
@@ -66,24 +71,29 @@ end function
 
 
 sub ObjectDraw
-	Object.Value0++
-	if Object.Value0 > 1
+	Object.Timer++
+	if Object.Timer > 1
 		TileLayer[0].DeformationOffsetW++
 		TileLayer[1].DeformationOffsetW++
-		Object.Value0 = 0
+		Object.Timer = 0
 	end if
+	
 	TempValue0 = Stage.WaterLevel
 	TempValue0 -= Screen.YOffset
 	if TempValue0 < 0
 		TempValue0 = 0
 	end if
+
 	if TempValue0 > Screen.YSize
 		TempValue0 = Screen.YSize
 	end if
-	SetActivePalette(Object[19].Value1, 0, TempValue0)
+
+	SetActivePalette(BGAnimation.CurrentPal, 0, TempValue0)
+
 #platform: SW_Rendering
 	SetActivePalette(7, TempValue0, Screen.YSize)
 #endplatform
+
 #platform: HW_Rendering
 	DrawRect(0, TempValue0, Screen.XSize, Screen.YSize, 32, 0, 64, 104)
 #endplatform
@@ -94,8 +104,9 @@ sub ObjectStartup
 	ArrayPos0 = 32
 	while ArrayPos0 < 1056
 		if Object[ArrayPos0].Type == TypeName[BGEffects]
-			Object[ArrayPos0].Priority = 1
+			Object[ArrayPos0].Priority = PRIORITY_ACTIVE
 			Object[ArrayPos0].DrawOrder = 5
+			// This looks dumb, and is dumb, but it's like that
 #platform: HW_Rendering
 			Object[ArrayPos0].DrawOrder = 5
 #endplatform
@@ -107,11 +118,14 @@ sub ObjectStartup
 	loop
 #platform: SW_Rendering
 	ArrayPos0 = 0
-	CallFunction(BGEffects_Function49)
+	CallFunction(BGEffects_Deform_Left)
+
 	ArrayPos0 = 128
-	CallFunction(BGEffects_Function49)
+	CallFunction(BGEffects_Deform_Left)
+
 	ArrayPos0 = 160
-	CallFunction(BGEffects_Function50)
+	CallFunction(BGEffects_Deform_Right)
+
 	ArrayPos0 = 256
 	while ArrayPos0 < 576
 		ArrayPos1 = ArrayPos0
@@ -120,7 +134,9 @@ sub ObjectStartup
 		ArrayPos0++
 	loop
 #endplatform
+
 	SetLayerDeformation(3, 128, 4, 0, 0, 0)
+
 	LoadPalette("R4D_WaterPal.act", 7, 0, 0, 256)
 end sub
 
@@ -138,3 +154,4 @@ sub RSDKLoad
 
 	SetVariableAlias(ALIAS_VAR_PROPVAL, "unused")
 end sub
+

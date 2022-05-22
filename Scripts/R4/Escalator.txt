@@ -3,31 +3,55 @@
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
 // Aliases
-#alias 47: TYPE_ESCALATOR
+#alias Object.Value0			:	Object.Timer
+#alias Object.Value1			:	Object.OnObject
+#alias Object.Value2			:	Object.Speed
+#alias Object.Value2			:	Object.TimerSet
+
+// HUD alias
+#alias Object[24].PropertyValue	:	Hud.TimePeriod
+
+// States
+#alias 0						:	ESCALATOR_IDLE
+#alias 1						:	ESCALATOR_ASCEND
+#alias 2						:	ESCALATOR_STOPPED
+#alias 3						:	ESCALATOR_RESTORE
+
+// Time Periods
+#alias 0						:	PRESENT
+#alias 1						:	PAST
+#alias 2						:	GOOD_FUTURE
+#alias 3						:	BAD_FUTURE
+
+// Priority
+#alias 0				:	PRIORITY_ACTIVE_BOUNDS
+#alias 1				:	PRIORITY_ACTIVE
+
 
 
 sub ObjectMain
 	switch Object.State
-	case 1
-		if Object.Value0 > 0
-			Object.Value0--
-			Object.XPos += Object.Value2
-			Object.YPos -= Object.Value2
+	case ESCALATOR_ASCEND
+		if Object.Timer > 0
+			Object.Timer--
+			Object.XPos += Object.Speed
+			Object.YPos -= Object.Speed
 		else
 			Object.State++
 		end if
 		break
-	case 2
-		if Object.OutOfBounds == 1
-			Object.State = 3
-			Object.XPos -= 10485760
-			Object.YPos += 10485760
+	case ESCALATOR_STOPPED
+		if Object.OutOfBounds == true
+			Object.State = ESCALATOR_RESTORE
+			Object.XPos -= 10485760	// 0xA00000
+			Object.YPos += 10485760	// 0xA00000
 		end if
 		break
-	case 3
-		if Object.OutOfBounds == 1
-			Object.State = 0
-			Object.Priority = 0
+
+	case ESCALATOR_RESTORE
+		if Object.OutOfBounds == true
+			Object.State = ESCALATOR_IDLE
+			Object.Priority = PRIORITY_ACTIVE_BOUNDS
 		end if
 		break
 	end switch
@@ -36,49 +60,60 @@ end sub
 
 sub ObjectPlayerInteraction
 	switch Object.State
-	case 0
+	case ESCALATOR_IDLE
 		PlayerObjectCollision(C_BOX, -16, -16, 16, 16)
-		if CheckResult == 1
-			Object.State = 1
-			Object.Value0 = Object.Value3
-			Object.Priority = 1
-			Player.TileCollisions = 0
-			Object.Value1 = 1
+		if CheckResult == true
+			Object.State    = ESCALATOR_ASCEND
+			Object.Timer    = Object.TimerSet
+			Object.Priority = PRIORITY_ACTIVE
+
+			Player.TileCollisions = false
+
+			Object.OnObject = true
 		else
-			if Object.Value1 == 1
-				Player.TileCollisions = 1
+			if Object.OnObject == true
+				Player.TileCollisions = true
 			end if
-			Object.Value1 = 0
+
+			Object.OnObject = false
 		end if
 		break
-	case 1
+
+	case ESCALATOR_ASCEND
 		PlayerObjectCollision(C_BOX, -16, -16, 16, 16)
-		if CheckResult == 1
-			Player.XPos += Object.Value2
-			Player.TileCollisions = 0
-			Object.Value1 = 1
+		if CheckResult == true
+			Player.XPos += Object.Speed
+
+			Player.TileCollisions = false
+
+			Object.OnObject = true
+
 			PlayerObjectCollision(C_BOX, 20, -32, 32, -16)
-			Player.Pushing = 0
+			Player.Pushing = false
 		else
-			if Object.Value1 == 1
-				Player.TileCollisions = 1
+			if Object.OnObject == true
+				Player.TileCollisions = true
 			end if
-			Object.Value1 = 0
+
+			Object.OnObject = false
 		end if
 		break
-	case 2
-		Player.Pushing = 0
+
+	case ESCALATOR_STOPPED
+		Player.Pushing = false
 		PlayerObjectCollision(C_BOX, -16, -16, 16, 16)
-		if CheckResult == 1
-			Player.TileCollisions = 0
-			Object.Value1 = 1
+		if CheckResult == true
+			Player.TileCollisions = false
+
+			Object.OnObject = true
 		else
-			if Object.Value1 == 1
-				Player.TileCollisions = 1
+			if Object.OnObject == true
+				Player.TileCollisions = true
 			end if
-			Object.Value1 = 0
+			Object.OnObject = false
 		end if
 		break
+
 	end switch
 end sub
 
@@ -91,30 +126,34 @@ end sub
 
 
 sub ObjectStartup
-	switch Object[24].PropertyValue
-	case 0
-	case 1
+	switch Hud.TimePeriod
+	case PRESENT
+	case PAST
 		LoadSpriteSheet("R4/Objects.gif")
-		SpriteFrame(-16, -16, 32, 32, 130, 1)
+		SpriteFrame(-16, -16, 32, 32, 130, 1)	// #0 - Escalator
 		break
-	case 2
+
+	case GOOD_FUTURE
 		LoadSpriteSheet("R4/Objects3.gif")
-		SpriteFrame(-16, -16, 32, 32, 1, 150)
+		SpriteFrame(-16, -16, 32, 32, 1, 150)	// #0 - Escalator
 		break
-	case 3
+
+	case BAD_FUTURE
 		LoadSpriteSheet("R4/Objects3.gif")
-		SpriteFrame(-16, -16, 32, 32, 1, 183)
+		SpriteFrame(-16, -16, 32, 32, 1, 183)	// #0 - Escalator
 		break
+
 	end switch
+
 	ArrayPos0 = 32
 	while ArrayPos0 < 1056
 		if Object[ArrayPos0].Type == TypeName[Escalator]
-			if Object[24].PropertyValue < 2
-				Object[ArrayPos0].Value2 = 65536
-				Object[ArrayPos0].Value3 = 160
+			if Hud.TimePeriod < GOOD_FUTURE	// aka present or past
+				Object[ArrayPos0].Speed = 65536		// 0x10000
+				Object[ArrayPos0].TimerSet = 160
 			else
-				Object[ArrayPos0].Value2 = 131072
-				Object[ArrayPos0].Value3 = 80
+				Object[ArrayPos0].Speed = 131072	// 0x20000
+				Object[ArrayPos0].TimerSet = 80
 			end if
 		end if
 		ArrayPos0++

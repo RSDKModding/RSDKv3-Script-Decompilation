@@ -4,29 +4,42 @@
 
 // Aliases
 #alias 73: TYPE_GRABPOLE
+#alias Object.Value0	:	OBject.BreakTimer
 
+#alias 0	:	GRABPOLE_IDLE
+#alias 1	:	GRABPOLE_HANGING
+#alias 2	:	GRABPOLE_BROKEN
+// HUD alias
+#alias Object[24].PropertyValue	:	Hud.TimePeriod
+
+// Time Periods
+#alias 0						:	PRESENT
+#alias 1						:	PAST
+#alias 2						:	GOOD_FUTURE
+#alias 3						:	BAD_FUTURE
 
 sub ObjectMain
-	if Object.State == 1
+	if Object.State == GRABPOLE_HANGING
 		if Player.State == PlayerObject_Death
-			Object.State = 0
+			Object.State = GRABPOLE_IDLE
 		end if
 		if Player.State == PlayerObject_Drown
-			Object.State = 0
+			Object.State = GRABPOLE_IDLE
 		end if
-		if Object.State > 0
-			if Object.Value0 < 180
-				Object.Value0++
+
+		if Object.State > GRABPOLE_IDLE
+			if Object.BreakTimer < 180
+				Object.BreakTimer++
 				Player.XPos = Object.XPos
 				Player.Direction = FACING_RIGHT
 				if Stage.PlayerListPos == 0
-					Player.XPos += 1310720
+					Player.XPos += 1310720	// 0x140000
 				else
-					Player.XPos += 1048576
+					Player.XPos += 1048576	// 0x100000
 				end if
 			else
 				Object.Frame = 1
-				Object.State = 2
+				Object.State = GRABPOLE_BROKEN
 				Player.State = PlayerObject_HandleAir
 			end if
 		end if
@@ -36,30 +49,36 @@ end sub
 
 sub ObjectPlayerInteraction
 	switch Object.State
-	case 0
+	case GRABPOLE_IDLE
 		PlayerObjectCollision(C_TOUCH, 16, -28, 32, 28)
-		if CheckResult == 1
-			Object.State = 1
+		if CheckResult == true
+			Object.State = GRABPOLE_HANGING
 			Player.State = PlayerObject_Blank
+
 			Player.Animation = ANI_CLINGING
 			Player.Direction = FACING_RIGHT
+			
 			Player.Speed = 0
 			Player.XVelocity = 0
 			Player.YVelocity = 0
 		end if
 		break
-	case 1
+
+	case GRABPOLE_HANGING
 		if Player.Up == true
 			Player.YPos -= 65536
 		end if
+
 		if Player.Down == true
 			Player.YPos += 65536
 		end if
-		if Player.JumpPress == 1
+
+		if Player.JumpPress == true
 			Object.Frame = 1
-			Object.State = 2
+			Object.State = GRABPOLE_BROKEN
 			Player.State = PlayerObject_HandleAir
 		end if
+
 		PlayerObjectCollision(C_BOX, 0, -64, 32, -46)
 		PlayerObjectCollision(C_BOX, 0, 46, 32, 64)
 		break
@@ -74,12 +93,12 @@ end sub
 
 sub ObjectStartup
 	LoadSpriteSheet("R4/Objects3.gif")
-	if Object[24].PropertyValue < 3
-		SpriteFrame(-4, -46, 8, 92, 134, 46)
-		SpriteFrame(-4, -46, 16, 92, 117, 46)
+	if Hud.TimePeriod < BAD_FUTURE
+		SpriteFrame(-4, -46, 8, 92, 134, 46)	// #0 - Pole
+		SpriteFrame(-4, -46, 16, 92, 117, 46)	// #1 - Broken Pole
 	else
-		SpriteFrame(-4, -46, 8, 92, 51, 163)
-		SpriteFrame(-4, -46, 16, 92, 34, 163)
+		SpriteFrame(-4, -46, 8, 92, 51, 163)	// #0 - Pole
+		SpriteFrame(-4, -46, 16, 92, 34, 163)	// #1 - Broken Pole
 	end if
 end sub
 

@@ -3,35 +3,39 @@
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
 // Aliases
-#alias 77: TYPE_WATERSTREAMU
+#alias Object.Value1	:	Object.HitboxUp
+#alias Object.Value2	:	Object.HitboxBottom
 
 
 sub ObjectPlayerInteraction
+	// Water streams are activated through a chain, originated from a push button
 	if Object[-1].PropertyValue == 1
 		Object.PropertyValue = 1
-		PlayerObjectCollision(C_TOUCH, -32, Object.Value1, 32, Object.Value2)
-		if CheckResult == 1
+		PlayerObjectCollision(C_TOUCH, -32, Object.HitboxUp, 32, Object.HitboxBottom)
+		if CheckResult == true
 			if Player.State != PlayerObject_Knockback
 				if Player.State != PlayerObject_Death
 					if Player.State != PlayerObject_Drown
 						if Player.State != PlayerObject_Blank
 							Player.State = PlayerObject_DebugMode
 							Player.Animation = ANI_FANROTATE
+
 							if Player.Left == false
 								if Player.Right == false
 									if Player.XPos < Object.XPos
-										Player.XPos += 65536
+										Player.XPos += 65536	// 0x10000
 									end if
 									if Player.XPos > Object.XPos
-										Player.XPos -= 65536
+										Player.XPos -= 65536	// 0x10000
 									end if
 								end if
 							end if
-							Player.YVelocity = -262144
-							if Player.WaterStream == 0
+							
+							Player.YVelocity = -262144	// -0x40000
+							if Player.WaterStream == false
 								Player.XVelocity = 0
 								Player.Speed = 0
-								Player.WaterStream = 1
+								Player.WaterStream = true
 							end if
 						end if
 					end if
@@ -39,7 +43,7 @@ sub ObjectPlayerInteraction
 			end if
 		else
 			if Player.State == PlayerObject_DebugMode
-				if Player.WaterStream == 0
+				if Player.WaterStream == false
 					Player.State = PlayerObject_HandleAir
 					Player.ControlMode = 0
 					Player.Animation = ANI_WALKING
@@ -54,10 +58,10 @@ sub ObjectStartup
 	ArrayPos0 = 32
 	while ArrayPos0 < 1056
 		if Object[ArrayPos0].Type == TypeName[WaterStreamU]
-			Object[ArrayPos0].Value1 = Object[ArrayPos0].PropertyValue
-			Object[ArrayPos0].Value1 <<= 3
-			Object[ArrayPos0].Value2 = Object[ArrayPos0].Value1
-			FlipSign(Object[ArrayPos0].Value1)
+			Object[ArrayPos0].HitboxUp = Object[ArrayPos0].PropertyValue
+			Object[ArrayPos0].HitboxUp <<= 3
+			Object[ArrayPos0].HitboxBottom = Object[ArrayPos0].HitboxUp
+			FlipSign(Object[ArrayPos0].HitboxUp)
 			Object[ArrayPos0].PropertyValue = 0
 		end if
 		ArrayPos0++

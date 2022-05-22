@@ -3,181 +3,223 @@
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
 // Aliases
-#alias 55: TYPE_TAGATAGA
+#alias Object.Value0		:	Object.Timer
+#alias Object.Value1		:	Object.XOriginPos
+#alias Object.PropertyValue	:	Object.Quality
+
+// States
+#alias 0	:	TAGATAGA_MOVE_LEFT
+#alias 1	:	TAGATAGA_MOVE_RIGHT
+#alias 2	:	TAGATAGA_SHOOT_LEFT
+#alias 3	:	TAGATAGA_SHOOT_RIGHT
+#alias 4	:	TAGATAGA_RESTORE
+
+// Taga Taga Property Values
+#alias 0	:	GOOD
+#alias 1	:	BAD
+
+// Taga Spikes Aliases
+#alias Object.Value1	:	Object.XVelocity
+#alias Object.Value2	:	Object.YVelocity
+
+// Priority
+#alias 0	:	PRIORITY_ACTIVE_BOUNDS
+#alias 1	:	PRIORITY_ACTIVE
 
 
 sub ObjectMain
-	if Object.PropertyValue == 0
+	if Object.Quality == GOOD
 		switch Object.State
-		case 0
-			if Object.Value0 == 0
-				Object.State = 1
+		case TAGATAGA_MOVE_LEFT
+			if Object.Timer == 0
+				Object.State = TAGATAGA_MOVE_RIGHT
 				Object.Direction = FACING_LEFT
-				Object.Value0 = 192
+				Object.Timer = 192
 			else
-				Object.Value0--
-				Object.XPos -= 65536
+				Object.Timer--
+				Object.XPos -= 65536	// 0x10000
 			end if
 			break
-		case 1
-			if Object.Value0 == 0
-				Object.State = 0
+
+		case TAGATAGA_MOVE_RIGHT
+			if Object.Timer == 0
+				Object.State = TAGATAGA_MOVE_LEFT
 				Object.Direction = FACING_RIGHT
-				Object.Value0 = 192
+				Object.Timer = 192
 			else
-				Object.Value0--
-				Object.XPos += 65536
+				Object.Timer--
+				Object.XPos += 65536	// 0x10000
 			end if
 			break
-		case 2
-			if Object.Value0 < 120
-				Object.Value0++
-				if Object.Value0 == 60
+
+		case TAGATAGA_SHOOT_LEFT
+			if Object.Timer < 120
+				Object.Timer++
+				if Object.Timer == 60
 					CreateTempObject(TypeName[TagaSpike], 0, Object.XPos, Object.YPos)
-					Object[TempObjectPos].XPos -= 65536
-					Object[TempObjectPos].YPos -= 655360
-					Object[TempObjectPos].Value1 = -131072
-					Object[TempObjectPos].Value2 = -196608
+					Object[TempObjectPos].XPos -= 65536			//  0x10000
+					Object[TempObjectPos].YPos -= 655360		//  0xA0000
+					Object[TempObjectPos].XVelocity = -131072	// -0x20000
+					Object[TempObjectPos].YVelocity = -196608	// -0x30000
+
 					CreateTempObject(TypeName[TagaSpike], 0, Object.XPos, Object.YPos)
-					Object[TempObjectPos].XPos += 196608
-					Object[TempObjectPos].YPos -= 655360
-					Object[TempObjectPos].Value1 = 65536
-					Object[TempObjectPos].Value2 = -196608
+					Object[TempObjectPos].XPos += 196608		//  0x30000
+					Object[TempObjectPos].YPos -= 655360		//  0xA0000
+					Object[TempObjectPos].XVelocity = 65536		//  0x10000
+					Object[TempObjectPos].YVelocity = -196608	// -0x30000
+
 					CreateTempObject(TypeName[TagaSpike], 0, Object.XPos, Object.YPos)
-					Object[TempObjectPos].XPos += 458752
-					Object[TempObjectPos].YPos -= 589824
-					Object[TempObjectPos].Value1 += 131072
-					Object[TempObjectPos].Value2 = -196608
+					Object[TempObjectPos].XPos += 458752		//  0x70000
+					Object[TempObjectPos].YPos -= 589824		//  0x90000
+					Object[TempObjectPos].XVelocity += 131072	//  0x20000
+					Object[TempObjectPos].YVelocity = -196608	// -0x30000
+
 					PlayStageSfx(5, 0)
 				end if
 			else
-				Object.XPos -= 262144
-				if Object.OutOfBounds == 1
-					Object.State = 4
-					Object.XPos = Object.Value1
+				Object.XPos -= 262144	// 0x40000
+				if Object.OutOfBounds == true
+					Object.State = TAGATAGA_RESTORE
+					Object.XPos = Object.XOriginPos
 				end if
 			end if
 			break
-		case 3
-			if Object.Value0 < 120
-				Object.Value0++
-				if Object.Value0 == 60
+
+		case TAGATAGA_SHOOT_RIGHT
+			if Object.Timer < 120
+				Object.Timer++
+				if Object.Timer == 60
 					CreateTempObject(TypeName[TagaSpike], 0, Object.XPos, Object.YPos)
-					Object[TempObjectPos].XPos += 65536
-					Object[TempObjectPos].YPos -= 655360
-					Object[TempObjectPos].Value1 = 131072
-					Object[TempObjectPos].Value2 = -196608
+					Object[TempObjectPos].XPos += 65536			//  0x10000
+					Object[TempObjectPos].YPos -= 655360		//  0xA0000
+					Object[TempObjectPos].XVelocity = 131072	//  0x20000
+					Object[TempObjectPos].YVelocity = -196608	// -0x30000
+
 					CreateTempObject(TypeName[TagaSpike], 0, Object.XPos, Object.YPos)
-					Object[TempObjectPos].XPos -= 196608
-					Object[TempObjectPos].YPos -= 655360
-					Object[TempObjectPos].Value1 = -65536
-					Object[TempObjectPos].Value2 = -196608
+					Object[TempObjectPos].XPos -= 196608		//  0x30000
+					Object[TempObjectPos].YPos -= 655360		//  0xA0000
+					Object[TempObjectPos].XVelocity = -65536	// -0x10000
+					Object[TempObjectPos].YVelocity = -196608	// -0x30000
+					
 					CreateTempObject(TypeName[TagaSpike], 0, Object.XPos, Object.YPos)
-					Object[TempObjectPos].XPos -= 458752
-					Object[TempObjectPos].YPos -= 589824
-					Object[TempObjectPos].Value1 = -131072
-					Object[TempObjectPos].Value2 = -196608
+					Object[TempObjectPos].XPos -= 458752		//  0x70000
+					Object[TempObjectPos].YPos -= 589824		//  0x90000
+					Object[TempObjectPos].XVelocity = -131072	// -0x20000
+					Object[TempObjectPos].YVelocity = -196608	// -0x30000
+
 					PlayStageSfx(5, 0)
 				end if
 			else
-				Object.XPos += 262144
-				if Object.OutOfBounds == 1
-					Object.State = 4
-					Object.XPos = Object.Value1
+				Object.XPos += 262144	// 0x40000
+				if Object.OutOfBounds == true
+					Object.State = TAGATAGA_RESTORE
+					Object.XPos = Object.XOriginPos
 				end if
 			end if
 			break
-		case 4
-			if Object.OutOfBounds == 1
+
+		case TAGATAGA_RESTORE
+			if Object.OutOfBounds == true
 				Object.State = 0
-				Object.Value0 = 0
+				Object.Timer = 0
 				Object.Direction = FACING_RIGHT
-				Object.XPos = Object.Value1
+				Object.XPos = Object.XOriginPos
 			end if
 			break
+
 		end switch
 	else
 		switch Object.State
-		case 0
-			if Object.Value0 == 0
-				Object.State = 1
+		case TAGATAGA_MOVE_LEFT
+			if Object.Timer == 0
+				Object.State = TAGATAGA_MOVE_RIGHT
 				Object.Direction = FACING_LEFT
-				Object.Value0 = 384
+				Object.Timer = 384
 			else
-				Object.Value0--
-				Object.XPos -= 32768
+				Object.Timer--
+				Object.XPos -= 32768	// 0x8000
 			end if
 			break
-		case 1
-			if Object.Value0 == 0
-				Object.State = 0
+
+		case TAGATAGA_MOVE_RIGHT
+			if Object.Timer == 0
+				Object.State = TAGATAGA_MOVE_LEFT
 				Object.Direction = FACING_RIGHT
-				Object.Value0 = 384
+				Object.Timer = 384
 			else
-				Object.Value0--
-				Object.XPos += 32768
+				Object.Timer--
+				Object.XPos += 32768	// 0x8000
 			end if
 			break
-		case 2
-			if Object.Value0 < 120
-				Object.Value0++
+
+		case TAGATAGA_SHOOT_LEFT
+			if Object.Timer < 120
+				Object.Timer++
 			else
-				Object.XPos -= 98304
-				if Object.OutOfBounds == 1
-					Object.State = 4
-					Object.XPos = Object.Value1
+				Object.XPos -= 98304	// 0x18000
+				if Object.OutOfBounds == true
+					Object.State = TAGATAGA_RESTORE
+					Object.XPos = Object.XOriginPos
 				end if
 			end if
 			break
-		case 3
-			if Object.Value0 < 120
-				Object.Value0++
+
+		case TAGATAGA_SHOOT_RIGHT
+			if Object.Timer < 120
+				Object.Timer++
 			else
-				Object.XPos += 98304
-				if Object.OutOfBounds == 1
-					Object.State = 4
-					Object.XPos = Object.Value1
+				Object.XPos += 98304	// 0x18000
+
+				if Object.OutOfBounds == true
+					Object.State = TAGATAGA_RESTORE
+					Object.XPos = Object.XOriginPos
 				end if
 			end if
 			break
-		case 4
-			if Object.OutOfBounds == 1
-				Object.State = 0
-				Object.Value0 = 0
+
+		case TAGATAGA_RESTORE
+			if Object.OutOfBounds == true
+				Object.State = TAGATAGA_MOVE_LEFT
+				Object.Timer = 0
 				Object.Direction = FACING_RIGHT
-				Object.XPos = Object.Value1
+				Object.XPos = Object.XOriginPos
 			end if
 			break
+
 		end switch
 	end if
-	CallFunction(StageSetup_CheckGoodFuture)
+
+	CallFunction(StageSetup_CheckGoodFuture)	// Check if this should be a flower
 end sub
 
 
 sub ObjectPlayerInteraction
-	if Object.PropertyValue == 0
+	if Object.Quality == GOOD
 		switch Object.State
-		case 0
+		case TAGATAGA_MOVE_LEFT
 			PlayerObjectCollision(C_TOUCH, -128, -32, 0, 8)
-			if CheckResult == 1
-				Object.State = 2
-				Object.Value0 = 0
-				Object.Priority = 1
+			if CheckResult == true
+				Object.State = TAGATAGA_SHOOT_LEFT
+				Object.Timer = 0
+				Object.Priority = PRIORITY_ACTIVE
 			end if
 			break
-		case 1
+
+		case TAGATAGA_MOVE_RIGHT
 			PlayerObjectCollision(C_TOUCH, 0, -32, 128, 8)
-			if CheckResult == 1
-				Object.State = 3
-				Object.Value0 = 0
-				Object.Priority = 1
+			if CheckResult == true
+				Object.State = TAGATAGA_SHOOT_RIGHT
+				Object.Timer = 0
+				Object.Priority = PRIORITY_ACTIVE
 			end if
 			break
+
 		end switch
 	end if
-	if Object.State < 4
+
+	if Object.State < TAGATAGA_RESTORE
 		PlayerObjectCollision(C_TOUCH, -12, -8, 12, 8)
-		if CheckResult == 1
+		if CheckResult == true
 			CallFunction(PlayerObject_BadnikBreak)
 		end if
 	end if
@@ -185,32 +227,34 @@ end sub
 
 
 sub ObjectDraw
-	if Object.PropertyValue == 0
-		if Object.State < 4
+	if Object.Quality == GOOD
+		if Object.State < TAGATAGA_RESTORE
 			TempValue0 = Object.Frame
 			TempValue0 >>= 5
 			DrawSpriteFX(TempValue0, FX_FLIP, Object.XPos, Object.YPos)
 		end if
-		if Object.State < 2
+
+		if Object.State < TAGATAGA_SHOOT_LEFT
 			DrawSpriteFX(2, FX_FLIP, Object.XPos, Object.YPos)
 			DrawSpriteFX(3, FX_FLIP, Object.XPos, Object.YPos)
 			DrawSpriteFX(4, FX_FLIP, Object.XPos, Object.YPos)
 			Object.Frame++
 			Object.Frame &= 63
 		else
-			if Object.Value0 < 60
+			if Object.Timer < 60
 				DrawSpriteFX(2, FX_FLIP, Object.XPos, Object.YPos)
 				DrawSpriteFX(3, FX_FLIP, Object.XPos, Object.YPos)
 				DrawSpriteFX(4, FX_FLIP, Object.XPos, Object.YPos)
 			end if
 		end if
 	else
-		if Object.State < 4
+		if Object.State < TAGATAGA_RESTORE
 			TempValue0 = Object.Frame
 			TempValue0 >>= 5
 			DrawSpriteFX(TempValue0, FX_FLIP, Object.XPos, Object.YPos)
 		end if
-		if Object.State < 2
+
+		if Object.State < TAGATAGA_SHOOT_LEFT
 			Object.Frame++
 			Object.Frame &= 63
 		end if
@@ -220,18 +264,20 @@ end sub
 
 sub ObjectStartup
 	LoadSpriteSheet("R4/Objects.gif")
+	SpriteFrame(-20, -12, 40, 24, 215, 86)	// #0 - Taga Taga Frame 0
+	SpriteFrame(-20, -12, 40, 24, 215, 111)	// #1 - Taga Taga Frame 1
+
+	SpriteFrame(-1, -10, 8, 8, 206, 52)		// #2 - Taga Taga Top Spike 1
+	SpriteFrame(3, -10, 8, 8, 206, 52)		// #3 - Taga Taga Top Spike 2
+	SpriteFrame(7, -9, 8, 8, 206, 52)		// #4 - Taga Taga Top Spike 3
+
 	ArrayPos0 = 32
 	while ArrayPos0 < 1056
 		if Object[ArrayPos0].Type == TypeName[TagaTaga]
-			Object[ArrayPos0].Value1 = Object[ArrayPos0].XPos
+			Object[ArrayPos0].XOriginPos = Object[ArrayPos0].XPos
 		end if
 		ArrayPos0++
 	loop
-	SpriteFrame(-20, -12, 40, 24, 215, 86)
-	SpriteFrame(-20, -12, 40, 24, 215, 111)
-	SpriteFrame(-1, -10, 8, 8, 206, 52)
-	SpriteFrame(3, -10, 8, 8, 206, 52)
-	SpriteFrame(7, -9, 8, 8, 206, 52)
 end sub
 
 // ========================

@@ -3,31 +3,50 @@
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
 // Aliases
-#alias 70: TYPE_VOBLOCKS5
+#alias Object.Value1	:	Object.YDrawPos
+#alias Object.Value2	:	Object.YOffset
+#alias Object.Value3	:	Object.Angle
+
+// HUD alias
+#alias Object[24].PropertyValue	:	Hud.TimePeriod
+
+// Time Periods
+#alias 0						:	PRESENT
+#alias 1						:	PAST
+#alias 2						:	GOOD_FUTURE
+#alias 3						:	BAD_FUTURE
+
+// Collision
+#alias 1				:	FLOOR
+#alias 4				:	ROOF
+
+// Gravity
+#alias 0				:	GRAVITY_GROUND
 
 
 sub ObjectMain
-	Object.Value3 = Object.PropertyValue
-	Object.Value3 <<= 1
-	Object.Value3 += Oscillation
-	Sin(Object.Value2, Object.Value3)
-	Object.Value2 <<= 14
-	Object.Value2 += Object.YPos
-	Object.Value2 &= -65536
-	Object.Value2 -= Object.Value1
+	Object.Angle = Object.PropertyValue
+	Object.Angle <<= 1
+	Object.Angle += Oscillation
+
+	Sin(Object.YOffset, Object.Angle)
+	Object.YOffset <<= 14
+	Object.YOffset += Object.YPos
+	Object.YOffset &= -65536	// -0x10000
+	Object.YOffset -= Object.YDrawPos
 end sub
 
 
 sub ObjectPlayerInteraction
 	TempValue0 = Object.YPos
-	Object.YPos = Object.Value1
+	Object.YPos = Object.YDrawPos
 	PlayerObjectCollision(C_BOX, -16, -32, 16, 32)
 	switch CheckResult
-	case 1
-		Player.YPos += Object.Value2
+	case FLOOR
+		Player.YPos += Object.YOffset
 		break
-	case 4
-		if Player.Gravity == 0
+	case ROOF
+		if Player.Gravity == GRAVITY_GROUND
 			CallFunction(PlayerObject_Kill)
 		end if
 		break
@@ -37,42 +56,48 @@ end sub
 
 
 sub ObjectDraw
-	Sin(Object.Value1, Object.Value3)
-	Object.Value1 <<= 14
-	Object.Value1 += Object.YPos
-	Object.Value1 &= -65536
-	DrawSpriteXY(0, Object.XPos, Object.Value1)
-	DrawSpriteXY(1, Object.XPos, Object.Value1)
+	Sin(Object.YDrawPos, Object.Angle)
+	Object.YDrawPos <<= 14
+	Object.YDrawPos += Object.YPos
+	Object.YDrawPos &= -65536	// -0x10000
+	DrawSpriteXY(0, Object.XPos, Object.YDrawPos)
+	DrawSpriteXY(1, Object.XPos, Object.YDrawPos)
 end sub
 
 
 sub ObjectStartup
-	switch Object[24].PropertyValue
-	case 0
+	switch Hud.TimePeriod
+	case PRESENT
 		LoadSpriteSheet("R4/Objects.gif")
 		TempValue0 = 163
 		TempValue1 = 1
 		TempValue2 = 196
 		break
-	case 1
+
+	case PAST
 		LoadSpriteSheet("R4/Objects2.gif")
 		TempValue0 = 1
 		TempValue1 = 157
 		TempValue2 = 34
 		break
-	case 2
+
+	case GOOD_FUTURE
 		LoadSpriteSheet("R4/Objects2.gif")
 		TempValue0 = 1
 		TempValue1 = 190
 		TempValue2 = 34
 		break
-	case 3
+
+	case BAD_FUTURE
 		LoadSpriteSheet("R4/Objects2.gif")
 		TempValue0 = 1
 		TempValue1 = 223
 		TempValue2 = 34
 		break
+
 	end switch
+
+	// R4 Blocks
 	SpriteFrame(-16, -32, 32, 32, TempValue0, TempValue1)
 	SpriteFrame(-16, 0, 32, 32, TempValue0, TempValue1)
 end sub

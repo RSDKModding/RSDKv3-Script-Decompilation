@@ -8,7 +8,7 @@
 #alias Object.Value2		:	Object.XVelocity
 #alias Object.Value3		:	Object.OriginPos.X
 #alias Object.Value4		:	Object.OriginPos.Y
-#alias Object.PropertyValue	:	Object.BadnikCondition
+#alias Object.PropertyValue	:	Object.Quality
 
 // Blade Aliases
 #alias Object.Value2		:	Object.KamaKamaEntityNo
@@ -24,8 +24,8 @@
 #alias 0					:	CSIDE_FLOOR
 
 // Property Values
-#alias 0					:	NEW
-#alias 1					:	OLD
+#alias 0					:	GOOD
+#alias 1					:	BAD
 
 // Priority
 #alias 0					:	PRIORITY_ACTIVE_BOUNDS
@@ -48,7 +48,7 @@ sub ObjectMain
 		if CheckResult == true
 			Object.State = KAMAKAMA_LAUNCH_BLADE
 			Object.Priority = PRIORITY_ACTIVE
-			if Object.BadnikCondition == NEW	// Only new badniks still have blades to throw
+			if Object.Quality == GOOD	// Only badniks in a good state still have blades to throw
 				CreateTempObject(TypeName[KamaKamaBlade], 24, Object.XPos, Object.YPos)
 				Object[TempObjectPos].Direction = Object.Direction
 				Object[TempObjectPos].iYPos -= 6
@@ -96,7 +96,7 @@ sub ObjectMain
 			else
 				Object.XVelocity = 65536
 			end if
-			if Object.BadnikCondition > NEW
+			if Object.Quality > GOOD
 				Object.XVelocity >>= 1
 			end if
 		end if
@@ -165,7 +165,7 @@ sub ObjectDraw
 		TempValue0 >>= 3
 		DrawSpriteFX(TempValue0, FX_FLIP, Object.XPos, Object.YPos)
 
-		if Object.BadnikCondition == NEW
+		if Object.Quality == GOOD
 			TempValue1 = TempValue0
 			TempValue1 += 4
 			DrawSpriteFX(TempValue1, FX_FLIP, Object.XPos, Object.YPos)
@@ -190,7 +190,7 @@ sub ObjectDraw
 		TempValue0 >>= 3
 		DrawSpriteFX(TempValue0, FX_FLIP, Object.XPos, Object.YPos)
 
-		if Object.BadnikCondition == NEW
+		if Object.Quality == GOOD
 			TempValue1 = TempValue0
 			TempValue1 += 4
 			DrawSpriteFX(TempValue1, FX_FLIP, Object.XPos, Object.YPos)
@@ -212,7 +212,7 @@ sub ObjectDraw
 		TempValue0 >>= 3
 		DrawSpriteFX(TempValue0, FX_FLIP, Object.XPos, Object.YPos)
 
-		if Object.BadnikCondition == NEW
+		if Object.Quality == GOOD
 			TempValue1 = TempValue0
 			TempValue1 += 4
 			DrawSpriteFX(TempValue1, FX_FLIP, Object.XPos, Object.YPos)
@@ -238,7 +238,7 @@ sub ObjectDraw
 		TempValue0 = Object.AnimationTimer
 		TempValue0 >>= 3
 
-		if Object.BadnikCondition == NEW
+		if Object.Quality == GOOD
 			TempValue1 = TempValue0
 			TempValue1 += 4
 			DrawSpriteFX(TempValue1, FX_FLIP, Object.XPos, Object.YPos)

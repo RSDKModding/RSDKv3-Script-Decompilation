@@ -2,25 +2,27 @@
 //--------Scripted by Christian Whitehead 'The Taxman'--------//
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
-// Aliases
-#alias 62: TYPE_SHOOTINGFACE
+// Alias
+#alias Object.Value0	:	Object.Timer
 
+// Face Projectile alias
+#alias Object.Value1	:	Object.XVelocity
 
 sub ObjectMain
-	Object.Value0++
-	if Object.Value0 == 32
-		Object.Value0 = 0
+	Object.Timer++
+	if Object.Timer == 32
+		Object.Timer = 0
 		CreateTempObject(TypeName[FaceProjectile], 0, Object.XPos, Object.YPos)
 		if Object.PropertyValue == 0
-			Object[TempObjectPos].XPos += 1048576
+			Object[TempObjectPos].XPos += 1048576	// 0x100000
 			Object[TempObjectPos].Direction = FACING_RIGHT
-			Object[TempObjectPos].Value1 = -196608
+			Object[TempObjectPos].XVelocity = -196608	// -0x30000
 		else
-			Object[TempObjectPos].XPos -= 1048576
+			Object[TempObjectPos].XPos -= 1048576	// 0x100000
 			Object[TempObjectPos].Direction = FACING_LEFT
-			Object[TempObjectPos].Value1 = 196608
+			Object[TempObjectPos].XVelocity = 196608	//  0x30000
 		end if
-		Object[TempObjectPos].YPos += 262144
+		Object[TempObjectPos].YPos += 262144	// 0x40000
 	end if
 end sub
 
@@ -32,6 +34,10 @@ end sub
 
 sub ObjectStartup
 	LoadSpriteSheet("R4/Objects2.gif")
+
+	SpriteFrame(-8, -16, 16, 32, 118, 151)	// #0 - Face Projectile facing left
+	SpriteFrame(-8, -16, 16, 32, 135, 151)	// #1 - Face Projectile facing right
+
 	ArrayPos0 = 32
 	while ArrayPos0 < 1056
 		if Object[ArrayPos0].Type == TypeName[ShootingFace]
@@ -39,8 +45,6 @@ sub ObjectStartup
 		end if
 		ArrayPos0++
 	loop
-	SpriteFrame(-8, -16, 16, 32, 118, 151)
-	SpriteFrame(-8, -16, 16, 32, 135, 151)
 end sub
 
 // ========================

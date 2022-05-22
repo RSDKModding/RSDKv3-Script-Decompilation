@@ -1,38 +1,51 @@
-//------------Sonic CD BossWaterTrigger Script-------------//
+//------------Sonic CD Boss Water Trigger Script-------------//
 //--------Scripted by Christian Whitehead 'The Taxman'--------//
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
 // Aliases
-#alias 44: TYPE_BOSSWATERTRIGGER
+#alias Object.Value0	:	Object.WaterEntity
+#alias Object.YPos		:	Water.YPos
+
+// Property Values
+#alias 0	:	BOSSWATERTRIGGER_RAISE_WATER
+#alias 1	:	BOSSWATERTRIGGER_SET_Y_BOUNDS
 
 
 sub ObjectMain
 	switch Object.PropertyValue
-	case 0
+	case BOSSWATERTRIGGER_RAISE_WATER
 		if Player.XPos > Object.XPos
+			// 0x4940000, Y - 1172 in map coords
 			if Stage.NewWaterLevel > 76808192
 				Stage.NewWaterLevel = 76808192
-				ArrayPos0 = Object.Value0
-				Object[ArrayPos0].YPos = Screen.YOffset
-				Object[ArrayPos0].YPos += 256
-				Object[ArrayPos0].YPos <<= 16
+				
+				ArrayPos0 = Object.WaterEntity
+
+				Water[ArrayPos0].YPos = Screen.YOffset
+				Water[ArrayPos0].YPos += 256
+				Water[ArrayPos0].YPos <<= 16
+
 				Stage.YBoundary2 = 1496
 			end if
 		else
+			// 0xC000000, Y - 3072 in map coords
 			if Stage.NewWaterLevel < 201326592
 				Stage.NewWaterLevel = 201326592
 				Stage.NewYBoundary2 = 2304
 			end if
-			ArrayPos0 = Object.Value0
+			
+			ArrayPos0 = Object.WaterEntity
+
 			TempValue0 = Screen.YOffset
 			TempValue0 += 256
 			TempValue0 <<= 16
-			if Object[ArrayPos0].YPos >= TempValue0
-				Object[ArrayPos0].YPos = 201326592
+			if Water[ArrayPos0].YPos >= TempValue0
+				Water[ArrayPos0].YPos = 201326592 // 0xC000000
 			end if
 		end if
 		break
-	case 1
+
+	case BOSSWATERTRIGGER_SET_Y_BOUNDS
 		if Player.XPos > Object.XPos
 			Stage.NewYBoundary2 = 1448
 		else
@@ -51,10 +64,11 @@ sub ObjectStartup
 		end if
 		ArrayPos0++
 	loop
+
 	ArrayPos0 = 32
 	while ArrayPos0 < 1056
 		if Object[ArrayPos0].Type == TypeName[BossWaterTrigger]
-			Object[ArrayPos0].Value0 = TempValue0
+			Object[ArrayPos0].WaterEntity = TempValue0
 		end if
 		ArrayPos0++
 	loop
