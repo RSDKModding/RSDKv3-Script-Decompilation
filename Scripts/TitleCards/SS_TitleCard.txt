@@ -6,12 +6,12 @@
 #alias 3: TYPE_TITLECARD
 
 // Languages
-#alias 0 : ENGLISH
-#alias 1 : FRENCH
-#alias 2 : ITALIAN
-#alias 3 : DEUTSCH
-#alias 4 : SPANISH
-#alias 5 : JAPANESE
+#alias 0 : LANGUAGE_ENGLISH
+#alias 1 : LANGUAGE_FRENCH
+#alias 2 : LANGUAGE_ITALIAN
+#alias 3 : LANGUAGE_DEUTSCH
+#alias 4 : LANGUAGE_SPANISH
+#alias 5 : LANGUAGE_JAPANESE
 
 #alias Object.Value0 : Object.BarPos
 #alias Object.Value1 : Object.TextPos
@@ -26,10 +26,11 @@
 #alias Object.Value1 : HUD.Time.Seconds
 #alias Object.Value2 : HUD.Time.Frames
 
+
 sub ObjectDraw
 
 	// Set the starting time values
-	// (Rather than disabling the HUD timer while the title card is active, its values are simply reset here every frame untill no longer needed)
+	// (Rather than disabling the HUD timer while the title card is active, its values are simply reset here every frame until no longer needed)
 	HUD[4].Time.Seconds = 100
 	HUD[4].Time.Frames  = 0
 
@@ -72,7 +73,8 @@ sub ObjectDraw
 		if Object.BarPos < 0
 			Object.BarPos += 8
 #platform: Standard
-		// Initial version - only the bar needs to be in the proper position to continue. This can cause issues sometimes, notably on devices with wider screens with wider resolutions
+		// Initial version - only the bar needs to be in the proper position to continue
+		// -> This can cause issues sometimes, notably on devices with wider screens with wider resolutions
 		else
 			Object.State = 2
 #endplatform
@@ -107,7 +109,7 @@ sub ObjectDraw
 
 	end switch
 
-	// Before drawing, make sure this object hasn't already been blanked already
+	// Before drawing, make sure this object hasn't been blanked already
 	// (Under certain circumstances, this can otherwise cause major graphical issues!!)
 	if Object.Type > TypeName[Blank Object]
 		TempValue0 = 136
@@ -130,24 +132,24 @@ end sub
 sub ObjectStartup
 
 	switch Engine.Language
-	case ENGLISH
-	case JAPANESE
+	case LANGUAGE_ENGLISH
+	case LANGUAGE_JAPANESE
 		LoadSpriteSheet("Special/ScoreScreen.gif")
 		break
 
-	case FRENCH
+	case LANGUAGE_FRENCH
 		LoadSpriteSheet("Special/ScoreScreen_FR.gif")
 		break
 
-	case ITALIAN
+	case LANGUAGE_ITALIAN
 		LoadSpriteSheet("Special/ScoreScreen_IT.gif")
 		break
 
-	case DEUTSCH
+	case LANGUAGE_DEUTSCH
 		LoadSpriteSheet("Special/ScoreScreen_DE.gif")
 		break
 
-	case SPANISH
+	case LANGUAGE_SPANISH
 		LoadSpriteSheet("Special/ScoreScreen_ES.gif")
 		break
 
@@ -162,8 +164,8 @@ sub ObjectStartup
 	Object[20].Priority = 1
 	Object[20].DrawOrder = 6
 
-	Object[20].BarPos = -216
-	Object[20].TextPos = 336
+	Object[20].BarPos  = -216
+	Object[20].TextPos =  336
 
 	Object[20].CharPos = Screen.CenterX
 	Object[20].CharPos -= 160
@@ -175,7 +177,10 @@ sub ObjectStartup
 	Object[20].TextPos += Object[20].CharPos
 	Object[20].TextPos += Object[20].CharPos
 
+	// "SPECIAL STAGE" is 12 letters
 	Object[20].TextSize = 12
+	
+	// And there are 8 Sprite Frames that preceed the letters
 	Object[20].TextSize += 8
 
 	// Preserve the colour used from the last fade
@@ -217,18 +222,20 @@ sub ObjectStartup
 	SpriteFrame(100, 32, 24, 48, 182, 124)
 
 	// 8-19 - Letters spelling out "Special Stage"
-	SpriteFrame(20, 0, 16, 55, 207, 124)
-	SpriteFrame(37, 32, 10, 23, 176, 180)
-	SpriteFrame(48, 32, 9, 23, 187, 180)
-	SpriteFrame(58, 32, 8, 23, 197, 180)
-	SpriteFrame(67, 32, 6, 23, 206, 180)
-	SpriteFrame(74, 32, 11, 23, 212, 180)
-	SpriteFrame(86, 32, 9, 23, 176, 203)
-	SpriteFrame(20, 56, 16, 55, 207, 124)
-	SpriteFrame(37, 56, 10, 23, 186, 203)
-	SpriteFrame(48, 56, 11, 23, 212, 180)
-	SpriteFrame(60, 56, 10, 23, 197, 203)
-	SpriteFrame(71, 56, 9, 23, 187, 180)
+
+	SpriteFrame(20, 0, 16, 55, 207, 124)	// S
+	SpriteFrame(37, 32, 10, 23, 176, 180)	// P
+	SpriteFrame(48, 32, 9, 23, 187, 180)	// E
+	SpriteFrame(58, 32, 8, 23, 197, 180)	// C
+	SpriteFrame(67, 32, 6, 23, 206, 180)	// I
+	SpriteFrame(74, 32, 11, 23, 212, 180)	// A
+	SpriteFrame(86, 32, 9, 23, 176, 203)	// L
+
+	SpriteFrame(20, 56, 16, 55, 207, 124)	// S
+	SpriteFrame(37, 56, 10, 23, 186, 203)	// T
+	SpriteFrame(48, 56, 11, 23, 212, 180)	// A
+	SpriteFrame(60, 56, 10, 23, 197, 203)	// G
+	SpriteFrame(71, 56, 9, 23, 187, 180)	// E
 
 #endplatform
 
@@ -241,19 +248,21 @@ sub ObjectStartup
 	// 7 - Three lines
 	SpriteFrame(100, 32, 24, 48, 182, 124)
 	
-	// 8-19 - Letters spelling out "Special Stage"
-	SpriteFrame(0, 0, 16, 55, 207, 124)
-	SpriteFrame(17, 32, 10, 23, 176, 180)
-	SpriteFrame(28, 32, 9, 23, 187, 180)
-	SpriteFrame(38, 32, 8, 23, 197, 180)
-	SpriteFrame(47, 32, 6, 23, 206, 180)
-	SpriteFrame(54, 32, 11, 23, 212, 180)
-	SpriteFrame(66, 32, 9, 23, 176, 203)
-	SpriteFrame(0, 56, 16, 55, 207, 124)
-	SpriteFrame(17, 56, 10, 23, 186, 203)
-	SpriteFrame(28, 56, 11, 23, 212, 180)
-	SpriteFrame(40, 56, 10, 23, 197, 203)
-	SpriteFrame(51, 56, 9, 23, 187, 180)
+	// 8-19 - Individual letters spelling out "Special Stage"
+
+	SpriteFrame(0, 0, 16, 55, 207, 124)		// S
+	SpriteFrame(17, 32, 10, 23, 176, 180)	// P
+	SpriteFrame(28, 32, 9, 23, 187, 180)	// E
+	SpriteFrame(38, 32, 8, 23, 197, 180)	// C
+	SpriteFrame(47, 32, 6, 23, 206, 180)	// I
+	SpriteFrame(54, 32, 11, 23, 212, 180)	// A
+	SpriteFrame(66, 32, 9, 23, 176, 203)	// L
+
+	SpriteFrame(0, 56, 16, 55, 207, 124)	// S
+	SpriteFrame(17, 56, 10, 23, 186, 203)	// T
+	SpriteFrame(28, 56, 11, 23, 212, 180)	// A
+	SpriteFrame(40, 56, 10, 23, 197, 203)	// G
+	SpriteFrame(51, 56, 9, 23, 187, 180)	// E
 
 #endplatform
 
@@ -275,7 +284,7 @@ sub RSDKDraw
 	DrawSpriteXY(7, Object.XPos, TempValue1)
 
 	TempValue0 = 8
-	while TempValue0 < 20 // 20 letters
+	while TempValue0 < 20 // 12 letters
 		DrawSpriteXY(TempValue0, Object.XPos, TempValue1)
 		TempValue0++
 	loop

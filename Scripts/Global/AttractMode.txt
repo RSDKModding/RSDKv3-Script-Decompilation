@@ -14,6 +14,7 @@
 // Engine & CallBacks
 #alias 2 				:	MESSAGE_LOSTFOCUS
 
+
 sub ObjectMain
 	switch Object.State
 	case ATTRACTMODE_SETUP
@@ -64,12 +65,15 @@ sub ObjectMain
 			if KeyPress.ButtonA == true
 				Object.DemoTime = Object.DemoInput
 			end if
+			
 			if KeyPress.ButtonB == true
 				Object.DemoTime = Object.DemoInput
 			end if
+			
 			if KeyPress.ButtonC == true
 				Object.DemoTime = Object.DemoInput
 			end if
+			
 			if KeyPress.AnyStart == true
 				Object.DemoTime = Object.DemoInput
 			end if
@@ -79,6 +83,7 @@ sub ObjectMain
 			if CheckResult > -1
 				Object.DemoTime = Object.DemoInput
 			end if
+			
 			if Engine.Message == MESSAGE_LOSTFOCUS
 				Object.DemoTime = Object.DemoInput
 			end if
@@ -91,12 +96,18 @@ end sub
 
 
 sub ObjectDraw
+
 	if Object[20].Type != TypeName[TitleCard]
 		Object.AnimationTimer++
 		Object.AnimationTimer %= 60
 		if Object.AnimationTimer > 29
+			// Code, presumably?
+			// This entire ObjectDraw sub exists, but nothing's actually drawn...
+			
+			// A fit guess would be the "Demo" sprite from below, but since it doesn't show up in the original game it may have been removed for accuracy reasons
 		end if
 	end if
+
 end sub
 
 
@@ -168,10 +179,10 @@ sub RSDKEdit
 	if Editor.ReturnVariable == true
 		switch Editor.VariableID
 		case EDIT_VAR_PROPVAL // property value
-			checkResult = Object.PropertyValue
+			CheckResult = Object.PropertyValue
 			break
 		case 0 // demoID
-			checkResult = Object.PropertyValue
+			CheckResult = Object.PropertyValue
 			break
 		end switch
 	else
@@ -180,19 +191,21 @@ sub RSDKEdit
 			Object.PropertyValue = Editor.VariableValue
 			break
 		case 0 // demoID
-			Object.propertyValue = Editor.VariableValue
+			Object.PropertyValue = Editor.VariableValue
 			break
 		end switch
 	end if
 end sub
 
+
 sub RSDKDraw
 	DrawSprite(0)
 end sub
 
+
 sub RSDKLoad
 	LoadSpriteSheet("Global/Display.gif")
-	SpriteFrame(-17, -5, 34, 11, 1, 176)		// #0 Demo
+	SpriteFrame(-17, -5, 34, 11, 1, 176) // "Demo"
 
 	AddEditorVariable("demoID")
 	SetActiveVariable("demoID")

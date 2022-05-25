@@ -26,7 +26,7 @@ sub ObjectMain
 	Cos(Object.XVelocity, Object.Oscillation)
 	Object.XVelocity *= 6144	// 0x1800
 	Object.XVelocity += Object.XPos
-	Object.XVelocity &= -65536	// -0x10000
+	Object.XVelocity &= 4294901760	// -0x10000
 	Object.XVelocity -= Object.OriginPos.X
 
 	if Object.OnObject == true
@@ -81,7 +81,7 @@ sub ObjectDraw
 	Cos(Object.OriginPos.X, Object.Oscillation)
 	Object.OriginPos.X *= 6144		// 0x1800
 	Object.OriginPos.X += Object.XPos
-	Object.OriginPos.X &= -65536	// -0x10000
+	Object.OriginPos.X &= 4294901760	// -0x10000
 
 	Object.YPos += Object.YVelocity
 	DrawSpriteXY(0, Object.OriginPos.X, Object.YPos)
@@ -102,23 +102,23 @@ sub RSDKEdit
 	if Editor.ReturnVariable == true
 		switch Editor.VariableID
 		case EDIT_VAR_PROPVAL // property value
-			checkResult = Object.PropertyValue
-			checkResult &= 1
+			CheckResult = Object.PropertyValue
+			CheckResult &= 1
 			break
 		case 0 // type
-			checkResult = Object.PropertyValue
-			checkResult &= 1
+			CheckResult = Object.PropertyValue
+			CheckResult &= 1
 			break
 		end switch
 	else
 		switch Editor.variableID
 		case EDIT_VAR_PROPVAL // property value
 			Object.PropertyValue = Editor.VariableValue
-			Object.propertyValue &= 1
+			Object.PropertyValue &= 1
 			break
 		case 0 // type
-			Object.propertyValue = Editor.VariableValue
-			Object.propertyValue &= 1
+			Object.PropertyValue = Editor.VariableValue
+			Object.PropertyValue &= 1
 			break
 		end switch
 	end if

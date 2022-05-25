@@ -26,7 +26,7 @@ sub ObjectMain
 	Sin(Object.YVelocity, Object.Oscillation)
 	Object.YVelocity *= 6144	// 0x1800
 	Object.YVelocity += Object.YPos
-	Object.YVelocity &= -65536	// -0x10000
+	Object.YVelocity &= 4294901760	// -0x10000
 	Object.YVelocity -= Object.CollisionOffset.Y
 end sub
 
@@ -48,7 +48,7 @@ sub ObjectDraw
 	Sin(Object.CollisionOffset.Y, Object.Oscillation)
 	Object.CollisionOffset.Y *= 6144	// 0x1800
 	Object.CollisionOffset.Y += Object.YPos
-	Object.CollisionOffset.Y &= -65536	// -0x10000
+	Object.CollisionOffset.Y &= 4294901760	// -0x10000
 
 	DrawSpriteXY(0, Object.XPos, Object.CollisionOffset.Y)
 end sub
@@ -68,23 +68,23 @@ sub RSDKEdit
 	if Editor.ReturnVariable == true
 		switch Editor.VariableID
 		case EDIT_VAR_PROPVAL // property value
-			checkResult = Object.PropertyValue
-			checkResult &= 1
+			CheckResult = Object.PropertyValue
+			CheckResult &= 1
 			break
 		case 0 // startDir
-			checkResult = Object.PropertyValue
-			checkResult &= 1
+			CheckResult = Object.PropertyValue
+			CheckResult &= 1
 			break
 		end switch
 	else
 		switch Editor.variableID
 		case EDIT_VAR_PROPVAL // property value
 			Object.PropertyValue = Editor.VariableValue
-			Object.propertyValue &= 1
+			Object.PropertyValue &= 1
 			break
 		case 0 // startDir
-			Object.propertyValue = Editor.VariableValue
-			Object.propertyValue &= 1
+			Object.PropertyValue = Editor.VariableValue
+			Object.PropertyValue &= 1
 			break
 		end switch
 	end if

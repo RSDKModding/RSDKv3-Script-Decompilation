@@ -17,8 +17,8 @@
 #alias Object.Value1 : SSSonic.FrameLoop
 #alias Object.Value2 : SSSonic.FrameEnd
 #alias Object.Value3 : SSSonic.FrameTimer
-#alias Object.Value4 : SSSonic.Unused1 // Completely unused
-#alias Object.Value5 : SSSonic.ScreenDepth // Same use as other SS objects
+#alias Object.Value4 : SSSonic.Unused // Completely unused
+#alias Object.Value5 : SSSonic.ScreenDepth // Same use as other Special Stage objects
 #alias Object.Value6 : SSSonic.Timer
 #alias Object.Value7 : SSSonic.Tilt
 
@@ -55,7 +55,7 @@
 #alias 11 : SSSONIC_SPRING
 
 // Animation aliases
-// Most are divided into three parts, where there's the start, its loop point, and its end
+// Most are divided into three parts where there's the animation's start, its loop point, and its end
 
 #alias 1 : ANI_STANDING_START
 // This standing animation doesn't, well, animate, so no extended aliases needed here
@@ -126,29 +126,36 @@
 #alias 4 : SFX_SMALLBOOSTER
 #alias 6 : SFX_FAN
 
+// ControlMode Aliases
+#alias -1 : CONTROLMODE_NONE
+#alias  0 : CONTROLMODE_NORMAL
+
+// Engine Callback Aliases
+#alias 13 : CALLBACK_PAUSE_REQUESTED
+
 
 function Sonic_ProcessPlayer
 
 	if Options.AttractMode == false
 #platform: Mobile
 		// Mobile has a lot more checks here than standard, especially because of the touchscreen, so it's just its own separate part here
-
+		
 		if Options.TouchControls == true
-			if SSSonic.ControlMode == 0
+			if SSSonic.ControlMode == CONTROLMODE_NORMAL
 				CheckTouchRect(0, 96, Screen.CenterX, Screen.YSize)
 				if CheckResult > -1
-
+					
 					// Move the current touch screen array pos to the one found by CheckTouchRect
 					ArrayPos0 = CheckResult
 					
 					// Move its XPos within range
 					TempValue0 = TouchScreen[ArrayPos0].XPos
 					TempValue0 -= Options.DPadX
-
+					
 					// And move its YPos within range too
 					TempValue1 = TouchScreen[ArrayPos0].YPos
 					TempValue1 -= 192
-
+					
 					// Find the arctan from the value pair and shift it a bit to match with one of four directions
 					ATan2(TempValue2, TempValue0, TempValue1)
 					TempValue2 += 32
@@ -160,22 +167,22 @@ function Sonic_ProcessPlayer
 					case 0
 						KeyDown.Right = true
 						break
-
+					
 					case 1
 						KeyDown.Down = true
 						break
-
+					
 					case 2
 						KeyDown.Left = true
 						break
-
+					
 					case 3
 						KeyDown.Up = true
 						break
-
+					
 					end switch
 				end if
-
+				
 				// Check if the jump button was pressed
 				CheckTouchRect(Screen.CenterX, 166, Screen.XSize, 240)
 				
@@ -188,10 +195,10 @@ function Sonic_ProcessPlayer
 					KeyPress.ButtonA |= KeyDown.ButtonA
 				end if
 				Object[25].Value7 = KeyDown.ButtonA
-
+				
 				// If the Pause Menu doesn't currently exist...
 				if Object[9].Type == TypeName[Blank Object]
-				
+					
 					// Check if the touch screen's pause button was pressed
 					CheckTouchRect(240, 0, Screen.XSize, 40)
 					if CheckResult > -1
@@ -233,7 +240,7 @@ function Sonic_ProcessPlayer
 					// Check if game focus was lost
 					// (As in, did the player exit the app?)
 					if Engine.Message == 2
-					
+						
 						// Pause the entire stage (including its objects)
 						Stage.State = STAGE_PAUSED
 						
@@ -270,15 +277,15 @@ function Sonic_ProcessPlayer
 			end if
 		else
 			// Using physical controls
-
-			if SSSonic.ControlMode == 0
 			
+			if SSSonic.ControlMode == CONTROLMODE_NORMAL
+				
 				// Check that no Pause Menu object exists yet
 				if Object[9].Type == TypeName[Blank Object]
 					
 					// First check for the physical start button being pressed
 					if KeyPress.Start == true
-
+						
 						// Clear the Start button state
 						// (This is here just to make sure "double-pauses" don't occur, where the game gets paused twice or more from a single pause button press)
 						KeyPress.Start = false
@@ -316,11 +323,11 @@ function Sonic_ProcessPlayer
 						TileLayer[0].Type = 3
 						
 					end if
-
-					// Then check if game focus was lost
-					// As in, did the player exit the app?
-					if Engine.Message == 2
 					
+					// Then check if game focus was lost
+					// Meaning, did the player exit the app?
+					if Engine.Message == 2
+						
 						// Pause the entire stage, along with all objects
 						Stage.State = STAGE_PAUSED
 						
@@ -350,9 +357,9 @@ function Sonic_ProcessPlayer
 						
 						// The floor should already be 3d here, but make it a 3d sky again in order to exit High Quality mode while paused
 						TileLayer[0].Type = 3
-
+						
 					end if
-
+					
 				end if 
 			end if 
 		end if 
@@ -361,19 +368,19 @@ function Sonic_ProcessPlayer
 #platform: Standard
 		// Standard doesn't need nearly as much code as mobile to handle its inputs,
 		// thanks to the lack of a touchscreen and other mobile things
-
-		if SSSonic.ControlMode == 0
 		
+		if SSSonic.ControlMode == CONTROLMODE_NORMAL
+			
 			// Make sure no Pause Menu object exists already
 			if Object[9].Type == TypeName[Blank Object]
 				if KeyPress.Start == true
-				
+					
 					// Clear the Start state in order to avoid "double-pauses" oddities
 					KeyPress.Start = false
 					
-					// If the player was brought here from the dev menu, use the game-object version of the pause menu
+					// If the player was brought here from the Dev Menu, use the game-object version of the pause menu
 					if Options.DevMenuFlag == true
-					
+						
 						// Pause the stage, and all objects in it
 						Stage.State = STAGE_PAUSED
 						
@@ -402,59 +409,65 @@ function Sonic_ProcessPlayer
 					else
 						
 						// In normal gameplay, call the engine's built-in pause menu
-						EngineCallback(13)
+						// (Although, do note, that with the fan-made engine decompilation of the game,
+						// this callback will just call the in-game Pause Menu anyways...)
+						EngineCallback(CALLBACK_PAUSE_REQUESTED)
 						
 					end if
 				end if
 			end if
 		end if
 #endplatform
-
+		
 		// Assign all Player.* input values to their corresponding Input.* values
 		ProcessPlayerControl()
-
+		
 	end if // Options.AttractMode == false
-
+	
 end function
 
 
 function Sonic_HandlePause
 	
 	// This function is only called while tripped, it's nearly identical to the normal pause function with the exception of control values not being set
-
+	// Don't really know why this exists, but there's probably some reason
+	
 	if Options.AttractMode == false
 #platform: Mobile
-		if SSSonic.ControlMode == 0
-
+		if SSSonic.ControlMode == CONTROLMODE_NORMAL
+			
 			// Make sure the Pause Menu doesn't already exist
 			if Object[9].Type == TypeName[Blank Object]
-
+				
 				// See if the player's touched the pause button
 				CheckTouchRect(240, 0, Screen.XSize, 40)
 				if CheckResult > -1
-
+					
 					// Pause the entire stage, including its objects
 					Stage.State = STAGE_PAUSED
-
+					
 					// And pause the music too
-					// Not completely stopping the music though, since it'll be resumed later
+					// Not completely stopping the music though, since it'll possibly resumed later
 					PauseMusic()
-
+					
 					// SFX
 					PlaySfx(SFX_SELECT, false)
 					StopSfx(SFX_FLYING)
 					StopSfx(SFX_TIRED)
-
-					// Create the pause menu and init its values
+					
+					// Create the pause menu and initialise its values
+					// - Object Type of [Pause Menu] (of course)
+					// - High Draw Order, above other things like even the HUD
+					// - Priority of PRIORITY_ACTIVE_PAUSED, since the Object should continue running even while the stage is paused
 					Object[9].Type = TypeName[Pause Menu]
 					Object[9].DrawOrder = 6
 					Object[9].Priority = 2
-
+					
 					// Disable frameskip when paused
 					if Engine.FrameSkipTimer > -1
 						Engine.FrameSkipTimer = -1
 					end if
-
+					
 					// Make the floor a lower quality 3d "sky" instead while paused
 					TileLayer[0].Type = 3
 					
@@ -462,89 +475,94 @@ function Sonic_HandlePause
 
 				// Check if focus was lost (as in, the player exiting the game)
 				if Engine.Message == 2
-
+					
 					// Pause the stage & music
 					Stage.State = STAGE_PAUSED
 					PauseMusic()
-
+					
 					// Play the menu SFX as it appears
 					PlaySfx(SFX_SELECT, false)
 					
 					// And stop some other game SFX, too
 					StopSfx(SFX_FLYING)
 					StopSfx(SFX_TIRED)
-
+					
 					// Place the Pause Menu in reserved object slot 9
 					Object[9].Type = TypeName[Pause Menu]
 					Object[9].DrawOrder = 6
 					Object[9].Priority = 2
-
+					
 					// No frame skip needed when paused, not much really happens then anyways
 					if Engine.FrameSkipTimer > -1
 						Engine.FrameSkipTimer = -1
 					end if
-
+					
 					// The floor should already be 3d, this is ensuring that it's drawn in standard quality rather than High Quality mode
 					TileLayer[0].Type = 3
-
+					
 				end if
 			end if
 		end if
 #endplatform
 
 #platform: Standard
-		if SSSonic.ControlMode == 0
-
+		if SSSonic.ControlMode == CONTROLMODE_NORMAL
+			
 			// Make sure the game isn't already paused via checking if the Pause Menu object exists or not
 			if Object[9].Type == TypeName[Blank Object]
 				if KeyPress.Start == true
-
+					
 					// Disable start for this frame, this'll help with "double-pausing" cases
 					KeyPress.Start = false
-
-					// Give different pause menus depending on if the player was brought here from the dev menu
+					
+					// Give different pause menus depending on if the player was brought here from the Dev Menu
 					// (...but why?)
 					if Options.DevMenuFlag == true
-
+						
 						// Pause the stage, this'll pause all the stage's objects too
 						Stage.State = STAGE_PAUSED
-
+						
 						// and pause the stage's music, as well
 						PauseMusic()
-
+						
 						// SFX dealings
 						PlaySfx(SFX_SELECT, false)
 						StopSfx(SFX_FLYING)
 						StopSfx(SFX_TIRED)
-
-						// Create the Pause Menu
+						
+						// Create the Pause Menu and set it up as needed
 						Object[9].Type = TypeName[Pause Menu]
 						Object[9].DrawOrder = 6
 						Object[9].Priority = 2
-
+						
 						// Turn the floor into low-quality 3d
 						TileLayer[0].Type = 3
-
+						
 					else
+
 						// Call the engine's built-in pause menu
-						EngineCallback(13)
+						EngineCallback(CALLBACK_PAUSE_REQUESTED)
+
+						// It may be worth noting, though, that when using the fan decompilation of the game, the Pause Menu callback
+						// just becomes a roundabout way of calling the in-game Pause Menu Object anyways...
+
 					end if
 				end if
 			end if
 		end if
 #endplatform
 	end if // Options.AttractMode == false
-
+	
 end function
 
 
 function Sonic_HandleMovement
-
-	// Update Sonic's tilt based on what dirs the player is currently holding
+	
+	// Update Sonic's tilt based on what directions the player is currently holding
 	// Left takes priority over right, similarly to the maingame
 	if Player.Left == true
 		SSSonic.Tilt--
-
+		
 		// Min tilt of -8
 		if SSSonic.Tilt < -8
 			SSSonic.Tilt = -8
@@ -552,56 +570,56 @@ function Sonic_HandleMovement
 	else
 		if Player.Right == true
 			SSSonic.Tilt++
-
+			
 			// Max tilt of 8
 			if SSSonic.Tilt > 8
 				SSSonic.Tilt = 8
 			end if
 		else
 			// Neither left nor right are held, restore Sonic's tilt to neutral position
-
+			
 			if SSSonic.Tilt > 0
 				SSSonic.Tilt--
 			end if
-
+			
 			if SSSonic.Tilt < 0
 				SSSonic.Tilt++
 			end if
 		end if
 	end if
-
+	
 	if Player.Left == true
 		SSSonic.Angle += 2
 	end if
-
+	
 	if Player.Right == true
 		SSSonic.Angle -= 2
 	end if
-
+	
 	if SSSonic.Angle < 0
 		// It's worth noting, Angle uses a 512-based value, which is why this is "allowed"
 		SSSonic.Angle += 512
 	end if
-
+	
 	SSSonic.Angle &= 511
-
+	
 	// Update movement based on the player's angle
-
+	
 	Sin(TempValue0, SSSonic.Angle)
 	TempValue0 *= SSSonic.Speed
 	TempValue0 >>= 9
 	SSSonic.XPos += TempValue0
-
+	
 	Cos(TempValue0, SSSonic.Angle)
 	TempValue0 *= SSSonic.Speed
 	TempValue0 >>= 9
 	SSSonic.ZPos += TempValue0
-
+	
 end function
 
 
 function Sonic_ProcessAnimation
-
+	
 	// This function is used for animating the object, here's a short overview of the values it uses
 	// (Frame values are in accordance with SpriteFrames set in ObjectStartup)
 	// -> SSSonic.AnimationSpeed is the speed at which Sonic should animate, it's added to his timer every frame
@@ -611,31 +629,31 @@ function Sonic_ProcessAnimation
 	// -> SSSonic.FrameEnd is the final frame of the animation
 	// -> SSSonic.FrameLoop is the loop point for the animation to go back to after reaching its end
 	// -> SSSonic.Frame is the frame to be displayed when drawing the object
-
+	
 	SSSonic.FrameTimer += SSSonic.AnimationSpeed
-
+	
 	if SSSonic.FrameTimer > 239
 		SSSonic.FrameTimer -= 240
-
+		
 		SSSonic.Frame++
 		if SSSonic.Frame > SSSonic.FrameEnd
 			SSSonic.Frame = SSSonic.FrameLoop
 		end if
 	end if
-
+	
 end function
 
 
 function Sonic_HandleBumperInteraction
-
+	
 	// Preconditions:
 	// - TempValue0 is player's truncated XPos, and
 	// - TempValue1 is truncated ZPos
-
+	
 	// Reset TempValue2, it's gonna get used as a bitfield for where bumper collision has been sensed,
 	// see below for which bits correspond to what "sensors"
 	TempValue2 = 0
-
+	
 	// Check upper-left tile, uses the first bit
 	TempValue0 -= 8
 	TempValue1 -= 8
@@ -643,14 +661,14 @@ function Sonic_HandleBumperInteraction
 	if CheckResult == 3
 		SetBit(TempValue2, 0, true)
 	end if
-
+	
 	// Check upper-right tile, uses the second bit
 	TempValue0 += 16
 	Get16x16TileInfo(CheckResult, TempValue0, TempValue1, 6)
 	if CheckResult == 3
 		SetBit(TempValue2, 1, true)
 	end if
-
+	
 	// Check bottom left tile, uses the third bit
 	TempValue0 -= 16
 	TempValue1 += 16
@@ -665,7 +683,7 @@ function Sonic_HandleBumperInteraction
 	if CheckResult == 3
 		SetBit(TempValue2, 3, true)
 	end if
-
+	
 	// Was any collision sensed?
 	if TempValue2 > 0
 		TempValue3 = SSSonic.Speed
@@ -678,41 +696,41 @@ function Sonic_HandleBumperInteraction
 		SSSonic.Timer = 32
 		
 		// Jump to the corresponding collision match, each match is labelled in accordance with what sensors are triggered
-
+		
 		switch TempValue2
 		case 1 // Upper left tile only
 			SSSonic.ScreenXPos = TempValue3
 			SSSonic.ScreenYPos = TempValue3
 			break
-
+		
 		case 2 // Upper right tile only
 			SSSonic.ScreenXPos = TempValue3
 			SSSonic.ScreenYPos = TempValue3
 			FlipSign(SSSonic.ScreenXPos)
 			break
-
+		
 		case 3 // Upper left tile and upper right
 			SSSonic.ScreenXPos = 0
 			SSSonic.ScreenYPos = TempValue3
 			break
-
+		
 		case 4 // Bottom left tile only
 			SSSonic.ScreenXPos = TempValue3
 			SSSonic.ScreenYPos = TempValue3
 			FlipSign(SSSonic.ScreenYPos)
 			break
-
+		
 		case 5 // Upper left tile and bottom left tile
 			SSSonic.ScreenXPos = TempValue3
 			SSSonic.ScreenYPos = 0
 			break
-
+		
 		case 6 // Upper right tile and bottom left tile
 		case 7 // Upper left tile, upper right tile, and bottom left tile
 			SSSonic.ScreenXPos = TempValue3
 			SSSonic.ScreenYPos = TempValue3
 			break
-
+		
 		case 8  // Bottom right tile only
 		case 14 // Upper right tile, bottom left tile, and bottom right tile
 		case 15 // Upper left tile, upper right tile, bottom left tile, and bottom right tile
@@ -721,54 +739,54 @@ function Sonic_HandleBumperInteraction
 			FlipSign(SSSonic.ScreenXPos)
 			FlipSign(SSSonic.ScreenYPos)
 			break
-
+		
 		case 9  // Upper left tile and bottom right tile
 		case 11 // Upper left tile, upper right tile, and bottom right tile
 			SSSonic.ScreenXPos = TempValue3
 			SSSonic.ScreenYPos = TempValue3
 			FlipSign(SSSonic.ScreenXPos)
 			break
-
+		
 		case 10 // Upper right tile and bottom right tile
 			SSSonic.ScreenXPos = TempValue3
 			SSSonic.ScreenYPos = 0
 			FlipSign(SSSonic.ScreenXPos)
 			break
-
+		
 		case 12 // Bottom left tile and bottom right tile
 			SSSonic.ScreenXPos = 0
 			SSSonic.ScreenYPos = TempValue3
 			FlipSign(SSSonic.ScreenYPos)
 			break
-
+		
 		case 13 // Upper left tile, bottom left tile, and bottom right tile
 			SSSonic.ScreenXPos = TempValue3
 			SSSonic.ScreenYPos = TempValue3
 			FlipSign(SSSonic.ScreenYPos)
 			break
-
+		
 		end switch
 	end if
-
+	
 end function
 
 function Sonic_HandleTileInteractions
-
+	
 	// Get the player's truncated XPos and ZPos for tile collision purposes
 	TempValue0 = SSSonic.XPos
 	TempValue0 >>= 16
 	TempValue1 = SSSonic.ZPos
 	TempValue1 >>= 16
-
+	
 	// Pass the results over to the bumper function for bumping interations
 	CallFunction(Sonic_HandleBumperInteraction)
-
+	
 	// Get the player's truncated XPos and ZPos for tile collision purposes (again)
 	TempValue0 = SSSonic.XPos
 	TempValue0 >>= 16
 	TempValue1 = SSSonic.ZPos
 	TempValue1 >>= 16
-
+	
 	// Find what tile type the player is currently standing on
 	Get16x16TileInfo(CheckResult, TempValue0, TempValue1, 6)
 	switch CheckResult
@@ -776,7 +794,7 @@ function Sonic_HandleTileInteractions
 		// Offroad tile, slow down Sonic and kick up some dust
 		Object[3].Type = TypeName[Dust Puff]
 		Object[3].DrawOrder = 4
-
+		
 		if HUD[4].SpeedShoes == 0
 			if SSSonic.Speed > 163840
 				// Max speed of 0x28000 while on dust without speed shoes
@@ -789,7 +807,7 @@ function Sonic_HandleTileInteractions
 			end if
 		end if
 		break
-
+		
 	case 2
 		// Water tile, slow down the player and make a splash
 		Object[3].Type = TypeName[WaterSplash]
@@ -797,7 +815,7 @@ function Sonic_HandleTileInteractions
 		
 		// Give the water splash a Z Pos of just a tad bit lower than Sonic in order to make it draw behind him
 		Object[3].ScreenDepth = 22526
-
+		
 		if HUD[4].SpeedShoes > 0
 			if SSSonic.Speed > 327680
 				// Max speed of 0x50000 while on water with speed shoes
@@ -805,33 +823,34 @@ function Sonic_HandleTileInteractions
 			end if
 		end if
 		break
-
+		
 	// 3, the value used by the bumper tiles, is skipped here
 	// It's handled in Sonic_HandleBumperInteraction instead, called above
-
+	
 	case 4
 		// Ouch, a Cruncher!
 		// Make Sonic fall
-
+		
 		SSSonic.State     = SSSONIC_TRIPPED
 		SSSonic.Timer     = 136
 		
 		SSSonic.Frame     = ANI_TRIP_START
 		SSSonic.FrameLoop = ANI_TRIP_LOOP
 		SSSonic.FrameEnd  = ANI_TRIP_END
+		
 		SSSonic.AnimationSpeed = 40
 		SSSonic.FrameTimer = 0
-
+		
 		// Go to a speed of 1px per frame
 		SSSonic.Speed = 65536
-
+		
 		if HUD[4].Rings > 0
 			PlaySfx(SFX_LOSERINGS, false)
 			
 			// Cut the player's rings in half
 			TempValue0 = HUD[4].Rings
 			HUD[4].Rings >>= 1
-
+			
 			// Find how many rings were lost
 			TempValue0 -= HUD[4].Rings
 			
@@ -839,22 +858,22 @@ function Sonic_HandleTileInteractions
 			if TempValue0 > 8
 				TempValue0 = 8
 			end if
-
+			
 			// Create all the dropped rings
 			while TempValue0 > 0
 				CreateTempObject(TypeName[Ring], 0, SSSonic.XPos, 0)
 				Object[TempObjectPos].Priority = 1
-
+				
 				// Move the Ring to Sonic
 				// (XPos is matched already via object spawning function)
 				Ring[TempObjectPos].ZPos = SSSonic.ZPos
-
+				
 				// Randomise the X Velocity
 				Rand(TempValue1, 64)
 				TempValue1 -= 32
 				TempValue1 <<= 10
 				Ring[TempObjectPos].XVelocity = TempValue1
-
+				
 				// Make the Rings fall in the general direction of Sonic, though
 				Sin(TempValue1, SSSonic.Angle)
 				TempValue1 *= 96
@@ -865,68 +884,70 @@ function Sonic_HandleTileInteractions
 				TempValue1 += 32
 				TempValue1 <<= 12
 				Ring[TempObjectPos].YVelocity = TempValue1
-
-				// No further stuff needed for Y Velocity since there's really only one way for them to go - up
-
+				
+				// No further stuff needed for Y Velocity since there's really only one way for them to go - up!
+				
 				// Randomise the Ring's Z Velocity too
 				Rand(TempValue1, 64)
 				TempValue1 -= 32
 				TempValue1 <<= 10
 				Ring[TempObjectPos].ZVelocity = TempValue1
-
+				
 				// And make it somewhat match Sonic's direction
 				Cos(TempValue1, SSSonic.Angle)
 				TempValue1 *= 96
 				Ring[TempObjectPos].ZVelocity += TempValue1
-
+				
 				TempValue0--
 			loop
 		end if
 		break
-
+	
 	case 5
 		// Spring, send the player up, up, and away into the skies
 		SSSonic.State     = SSSONIC_SPRING
 		SSSonic.Timer     = 0
-
+		
 		SSSonic.Frame     = ANI_JUMPING_START
 		SSSonic.FrameLoop = ANI_JUMPING_LOOP
 		SSSonic.FrameEnd  = ANI_JUMPING_END
+		
 		SSSonic.AnimationSpeed = 80
 		SSSonic.FrameTimer = 0
-
+		
 		// Ascending at a rate of 8.75 pixels per frame
 		SSSonic.YVelocity = 573440
-
+		
 		PlaySfx(SFX_SPRING, false)
 		break
-
+		
 	case 6
 		// Fan, starting gliding
 		SSSonic.State     = SSSONIC_FAN
 		SSSonic.Timer     = 0
-
+		
 		SSSonic.Frame     = ANI_FAN_START
 		SSSonic.FrameLoop = ANI_FAN_LOOP
 		SSSonic.FrameEnd  = ANI_FAN_END
+
 		SSSonic.AnimationSpeed = 24
 		SSSonic.FrameTimer = 0
-
+		
 		// Fans don't give that much upwards boost, only giving a starting velocity of 2.5 pixels per frame
 		SSSonic.YVelocity = 163840
-
+		
 		PlayStageSfx(SFX_FAN, false)
 		break
-
+		
 	case 7
 		// Large arrow booster pad, facing left
 		SSSonic.Timer = 40
 		SSSonic.ScreenXPos = -786432
 		SSSonic.ScreenYPos = 0
-
+		
 		// Get the tile's flip directions
 		Get16x16TileInfo(CheckResult, TempValue0, TempValue1, 1)
-
+		
 		// Flip Sonic's direction if needed
 		if CheckResult == 1
 			FlipSign(SSSonic.ScreenXPos)
@@ -935,20 +956,21 @@ function Sonic_HandleTileInteractions
 				FlipSign(SSSonic.ScreenXPos)
 			end if
 		end if
-
+		
 		if SSSonic.State != SSSONIC_SPEEDBOOSTER
 			PlayStageSfx(SFX_LARGEBOOSTER, false)
 		end if
-
+		
 		SSSonic.State     = SSSONIC_SPEEDBOOSTER
-
+		
 		SSSonic.Frame     = ANI_BRAKING_START
 		SSSonic.FrameLoop = ANI_BRAKING_LOOP
 		SSSonic.FrameEnd  = ANI_BRAKING_END
+		
 		SSSonic.AnimationSpeed = 24
 		SSSonic.FrameTimer = 0
 		break
-
+		
 	case 8
 		// Large arrow booster pad, facing right
 		SSSonic.Timer = 40
@@ -957,7 +979,7 @@ function Sonic_HandleTileInteractions
 		
 		// Get the tile's flip directions
 		Get16x16TileInfo(CheckResult, TempValue0, TempValue1, 1)
-
+		
 		// Flip Sonic's direction if needed
 		if CheckResult == 1
 			FlipSign(SSSonic.ScreenXPos)
@@ -966,20 +988,21 @@ function Sonic_HandleTileInteractions
 				FlipSign(SSSonic.ScreenXPos)
 			end if
 		end if
-
+		
 		if SSSonic.State != SSSONIC_SPEEDBOOSTER
 			PlayStageSfx(SFX_LARGEBOOSTER, false)
 		end if
-
+		
 		SSSonic.State     = SSSONIC_SPEEDBOOSTER
-
+		
 		SSSonic.Frame     = ANI_BRAKING_START
 		SSSonic.FrameLoop = ANI_BRAKING_LOOP
 		SSSonic.FrameEnd  = ANI_BRAKING_END
+		
 		SSSonic.AnimationSpeed = 24
 		SSSonic.FrameTimer = 0
 		break
-
+		
 	case 9
 		// Large arrow booster pad, facing up
 		SSSonic.Timer = 40
@@ -988,7 +1011,7 @@ function Sonic_HandleTileInteractions
 		
 		// Get the tile's flip directions
 		Get16x16TileInfo(CheckResult, TempValue0, TempValue1, 1)
-
+		
 		// Flip Sonic's direction if needed
 		if CheckResult == 2
 			FlipSign(SSSonic.ScreenYPos)
@@ -997,20 +1020,21 @@ function Sonic_HandleTileInteractions
 				FlipSign(SSSonic.ScreenYPos)
 			end if
 		end if
-
+		
 		if SSSonic.State != SSSONIC_SPEEDBOOSTER
 			PlayStageSfx(SFX_LARGEBOOSTER, false)
 		end if
-
+		
 		SSSonic.State     = SSSONIC_SPEEDBOOSTER
-
+		
 		SSSonic.Frame     = ANI_BRAKING_START
 		SSSonic.FrameLoop = ANI_BRAKING_LOOP
 		SSSonic.FrameEnd  = ANI_BRAKING_END
+		
 		SSSonic.AnimationSpeed = 24
 		SSSonic.FrameTimer = 0
 		break
-
+		
 	case 10
 		// Large arrow booster pad, facing down
 		SSSonic.Timer = 40
@@ -1019,7 +1043,7 @@ function Sonic_HandleTileInteractions
 		
 		// Get the tile's flip directions
 		Get16x16TileInfo(CheckResult, TempValue0, TempValue1, 1)
-
+		
 		// Flip Sonic's direction if needed
 		if CheckResult == 2
 			FlipSign(SSSonic.ScreenYPos)
@@ -1028,7 +1052,7 @@ function Sonic_HandleTileInteractions
 				FlipSign(SSSonic.ScreenYPos)
 			end if
 		end if
-
+		
 		if SSSonic.State != SSSONIC_SPEEDBOOSTER
 			PlayStageSfx(SFX_LARGEBOOSTER, false)
 		end if
@@ -1038,23 +1062,24 @@ function Sonic_HandleTileInteractions
 		SSSonic.Frame     = ANI_BRAKING_START
 		SSSonic.FrameLoop = ANI_BRAKING_LOOP
 		SSSonic.FrameEnd  = ANI_BRAKING_END
+		
 		SSSonic.AnimationSpeed = 24
 		SSSonic.FrameTimer = 0
 		break
-
+		
 	case 11
 		// Small arrow booster pad, facing left
 		if SSSonic.Timer != 16
 			PlayStageSfx(SFX_SMALLBOOSTER, false)
 		end if
-
+		
 		SSSonic.Timer = 16
 		SSSonic.ScreenXPos = -524288
 		SSSonic.ScreenYPos = 0
 		
 		// Get the tile's flip directions
 		Get16x16TileInfo(CheckResult, TempValue0, TempValue1, 1)
-
+		
 		// Flip Sonic's direction if needed
 		if CheckResult == 1
 			FlipSign(SSSonic.ScreenXPos)
@@ -1064,20 +1089,20 @@ function Sonic_HandleTileInteractions
 			end if
 		end if
 		break
-
+		
 	case 12
 		// Small arrow booster pad, facing right
 		if SSSonic.Timer != 16
 			PlayStageSfx(SFX_SMALLBOOSTER, false)
 		end if
-
+		
 		SSSonic.Timer = 16
 		SSSonic.ScreenXPos = 524288
 		SSSonic.ScreenYPos = 0
 		
 		// Get the tile's flip directions
 		Get16x16TileInfo(CheckResult, TempValue0, TempValue1, 1)
-
+		
 		// Flip Sonic's direction if needed
 		if CheckResult == 1
 			FlipSign(SSSonic.ScreenXPos)
@@ -1087,20 +1112,20 @@ function Sonic_HandleTileInteractions
 			end if
 		end if
 		break
-
+		
 	case 13
 		// Small arrow booster pad, facing up
 		if SSSonic.Timer != 16
 			PlayStageSfx(SFX_SMALLBOOSTER, false)
 		end if
-
+		
 		SSSonic.Timer = 16
 		SSSonic.ScreenXPos = 0
 		SSSonic.ScreenYPos = -524288
 		
 		// Get the tile's flip directions
 		Get16x16TileInfo(CheckResult, TempValue0, TempValue1, 1)
-
+		
 		// Flip Sonic's direction if needed
 		if CheckResult == 2
 			FlipSign(SSSonic.ScreenYPos)
@@ -1110,20 +1135,20 @@ function Sonic_HandleTileInteractions
 			end if
 		end if
 		break
-
+		
 	case 14
 		// Small arrow booster pad, facing down
 		if SSSonic.Timer != 16
 			PlayStageSfx(SFX_SMALLBOOSTER, false)
 		end if
-
+		
 		SSSonic.Timer = 16
 		SSSonic.ScreenXPos = 0
 		SSSonic.ScreenYPos = 524288
 		
 		// Get the tile's flip directions
 		Get16x16TileInfo(CheckResult, TempValue0, TempValue1, 1)
-
+		
 		// Flip Sonic's direction if needed
 		if CheckResult == 2
 			FlipSign(SSSonic.ScreenYPos)
@@ -1133,17 +1158,15 @@ function Sonic_HandleTileInteractions
 			end if
 		end if
 		break
-
+		
 	end switch
-
+	
 end function
 
 
 sub ObjectMain
 
-	// Update speed shoes
-	// No, the HUD doesn't have Speed Shoes, it's just that for some reason, the value is stored within the HUD object
-	// I truly have no idea why, since the main Sonic object already has a few free values
+	// Update Speed Shoes, the value's stored within the HUD object for whatever reason
 	if HUD[4].SpeedShoes > 0
 		HUD[4].SpeedShoes--
 	end if
@@ -1157,9 +1180,11 @@ sub ObjectMain
 			SSSonic.Timer = 0
 
 			SSSonic.State     = SSSONIC_INTROTURNAROUND
+
 			SSSonic.Frame     = ANI_FACINGAHEAD_START
 			SSSonic.FrameLoop = ANI_FACINGAHEAD_LOOP
 			SSSonic.FrameEnd  = ANI_FACINGAHEAD_END
+
 			SSSonic.FrameTimer = 0
 			SSSonic.AnimationSpeed = 20
 		end if
@@ -1174,9 +1199,11 @@ sub ObjectMain
 
 			// Start advancing ahead
 			SSSonic.State     = SSSONIC_WALKING
+			
 			SSSonic.Frame     = ANI_WALKING_START
 			SSSonic.FrameLoop = ANI_WALKING_LOOP
 			SSSonic.FrameEnd  = ANI_WALKING_END
+			
 			SSSonic.Speed = 0
 		end if
 		break
@@ -1202,19 +1229,19 @@ sub ObjectMain
 		SSSonic.AnimationSpeed *= 15
 		SSSonic.AnimationSpeed /= 81920
 		SSSonic.AnimationSpeed += 20
-
+		
 		CallFunction(Sonic_HandleMovement)
 		CallFunction(Sonic_ProcessAnimation)
-
-		// Update gimmick interaction timer
+		
+		// Update Sonic's gimmick interaction timer
 		if SSSonic.Timer > 0
 			SSSonic.Timer--
 			SSSonic.XPos += SSSonic.ScreenXPos
 			SSSonic.ZPos += SSSonic.ScreenYPos
 		end if
-
+		
 		CallFunction(Sonic_HandleTileInteractions)
-
+		
 		// Check for jumping
 		if Player.JumpPress == true
 			SSSonic.State     = SSSONIC_JUMPING
@@ -1228,79 +1255,83 @@ sub ObjectMain
 			PlaySfx(SFX_JUMP, false)
 		end if
 		break
-
+		
 	case SSSONIC_JUMPING
 		CallFunction(Sonic_ProcessPlayer)
 		if SSSonic.Speed < 327680
 			SSSonic.Speed += 2048
 		end if
-
+		
 		if KeyDown.Down == true
 			SSSonic.Speed -= 3072
 			if SSSonic.Speed < 122880
 				SSSonic.Speed = 122880
 			end if
 		end if
-
+		
 		if Player.JumpHold == false
 			if SSSonic.YVelocity > 172032
 				SSSonic.YVelocity = 172032
 			end if
 		end if
-
+		
 		CallFunction(Sonic_HandleMovement)
 		CallFunction(Sonic_ProcessAnimation)
-
+		
 		// Gravity of 0x2000 per frame
 		SSSonic.YVelocity -= 8192
-
+		
 		SSSonic.YPos += SSSonic.YVelocity
-
+		
 		// Touched the ground?
 		if SSSonic.YPos < 0
 			SSSonic.YPos = 0
-
+			
 			if HUD[4].UFOsCount > 0
 				if HUD[4].SpeedShoes == 0
 					SSSonic.State     = SSSONIC_WALKING
+					
 					SSSonic.Frame     = ANI_WALKING_START
 					SSSonic.FrameLoop = ANI_WALKING_LOOP
 					SSSonic.FrameEnd  = ANI_WALKING_END
+					
 					SSSonic.FrameTimer = 0
 				else
 					SSSonic.State     = SSSONIC_SPEEDSHOESRUN
+					
 					SSSonic.Frame     = ANI_RUN_START
 					SSSonic.FrameLoop = ANI_RUN_LOOP
 					SSSonic.FrameEnd  = ANI_RUN_END
+					
 					SSSonic.AnimationSpeed = 80
 					SSSonic.FrameTimer = 0
 				end if
 			else
-				SSSonic.ControlMode = -1
+				SSSonic.ControlMode = CONTROLMODE_NONE
 				SSSonic.State = SSSONIC_FINISHSTAND
 				Stage.TimeEnabled = false
 			end if
 		end if
 		break
-
+		
 	case SSSONIC_SPEEDBOOSTER
 		CallFunction(Sonic_ProcessPlayer)
-
+		
 		if SSSonic.Speed < 327680
 			SSSonic.Speed += 2048
 		end if
-
+		
 		if KeyDown.Down == true
 			SSSonic.Speed -= 3072
-
+			
 			if SSSonic.Speed < 122880
 				SSSonic.Speed = 122880
 			end if
 		end if
-
+		
 		CallFunction(Sonic_HandleMovement)
 		CallFunction(Sonic_ProcessAnimation)
-
+		
 		// Update the booster timer
 		if SSSonic.Timer > 0
 			SSSonic.Timer--
@@ -1308,42 +1339,49 @@ sub ObjectMain
 			SSSonic.ZPos += SSSonic.ScreenYPos
 		else
 			// Booster's over, restore the player to normal
-
+			
 			if HUD[4].SpeedShoes == 0
 				SSSonic.State     = SSSONIC_WALKING
+				
 				SSSonic.Frame     = ANI_WALKING_START
 				SSSonic.FrameLoop = ANI_WALKING_LOOP
 				SSSonic.FrameEnd  = ANI_WALKING_END
+				
 				SSSonic.FrameTimer = 0
 			else
 				SSSonic.State     = SSSONIC_SPEEDSHOESRUN
+				
 				SSSonic.Frame     = ANI_RUN_START
 				SSSonic.FrameLoop = ANI_RUN_LOOP
 				SSSonic.FrameEnd  = ANI_RUN_END
+				
 				SSSonic.AnimationSpeed = 80
 				SSSonic.FrameTimer = 0
 			end if
 
 		end if
-
+		
 		CallFunction(Sonic_HandleTileInteractions)
-
+		
 		// See if the player wants to jump out of the boost
 		if Player.JumpPress == true
 			SSSonic.State     = SSSONIC_JUMPING
 			SSSonic.Timer     = 0
+			
 			SSSonic.Frame     = ANI_JUMPING_START
 			SSSonic.FrameLoop = ANI_JUMPING_LOOP
 			SSSonic.FrameEnd  = ANI_JUMPING_END
+			
 			SSSonic.AnimationSpeed = 80
 			SSSonic.YVelocity = 286720
+			
 			PlaySfx(SFX_JUMP, false)
 		end if
 		break
 
 	case SSSONIC_FAN
 		CallFunction(Sonic_ProcessPlayer)
-
+		
 		if SSSonic.Speed < 327680
 			SSSonic.Speed += 2048
 		end if
@@ -1355,114 +1393,126 @@ sub ObjectMain
 		SSSonic.YVelocity -= 2048
 		
 		SSSonic.YPos += SSSonic.YVelocity
-
+		
 		// Touched the ground?
 		if SSSonic.YPos < 0
 			SSSonic.YPos = 0
-
+			
 			if HUD[4].UFOsCount > 0
 				if HUD[4].SpeedShoes == 0
 					SSSonic.State     = SSSONIC_WALKING
+					
 					SSSonic.Frame     = ANI_WALKING_START
 					SSSonic.FrameLoop = ANI_WALKING_LOOP
 					SSSonic.FrameEnd  = ANI_WALKING_END
+					
 					SSSonic.FrameTimer = 0
 				else
 					SSSonic.State     = SSSONIC_SPEEDSHOESRUN
+					
 					SSSonic.Frame     = ANI_RUN_START
 					SSSonic.FrameLoop = ANI_RUN_LOOP
 					SSSonic.FrameEnd  = ANI_RUN_END
+					
 					SSSonic.AnimationSpeed = 80
 					SSSonic.FrameTimer = 0
 				end if
 			else
 				SSSonic.State = SSSONIC_FINISHSTAND
-				SSSonic.ControlMode = -1
+				SSSonic.ControlMode = CONTROLMODE_NONE
 				Stage.TimeEnabled = false
 			end if
 		end if
 		break
-
+		
 	case SSSONIC_TRIPPED
 		CallFunction(Sonic_HandlePause)
-
+		
 		// Lock movement
 		Player.Left = false
 		Player.Right = false
-
+		
 		CallFunction(Sonic_HandleMovement)
 		CallFunction(Sonic_ProcessAnimation)
-
+		
 		// Get the player's truncated XPos and ZPos
-
+		
 		TempValue0 = SSSonic.XPos
 		TempValue0 >>= 16
-
+		
 		TempValue1 = SSSonic.ZPos
 		TempValue1 >>= 16
-
+		
 		Get16x16TileInfo(CheckResult, TempValue0, TempValue1, 6)
-
-		// If the player's hit a bumper tile, then start walking again
+		
+		// If the player's hit a bumper tile, then get up and start walking again
 		if CheckResult == 3
 			SSSonic.State     = SSSONIC_WALKING
+			
 			SSSonic.Frame     = ANI_WALKING_START
 			SSSonic.FrameLoop = ANI_WALKING_LOOP
 			SSSonic.FrameEnd  = ANI_WALKING_END
+			
 			SSSonic.FrameTimer = 0
 		end if
-
+		
 		if SSSonic.Timer > 0
 			SSSonic.Timer--
 		else
 			if HUD[4].SpeedShoes == 0
 				SSSonic.State     = SSSONIC_WALKING
+
 				SSSonic.Frame     = ANI_WALKING_START
 				SSSonic.FrameLoop = ANI_WALKING_LOOP
 				SSSonic.FrameEnd  = ANI_WALKING_END
+				
 				SSSonic.FrameTimer = 0
 			else
 				SSSonic.State     = SSSONIC_SPEEDSHOESRUN
+				
 				SSSonic.Frame     = ANI_RUN_START
 				SSSonic.FrameLoop = ANI_RUN_LOOP
 				SSSonic.FrameEnd  = ANI_RUN_END
+				
 				SSSonic.AnimationSpeed = 80
 				SSSonic.FrameTimer = 0
 			end if
 		end if
 		break
-	
+		
 	case SSSONIC_SPEEDSHOESRUN
 		CallFunction(Sonic_ProcessPlayer)
-
+		
 		if SSSonic.Speed < 458752
 			SSSonic.Speed += 4096
 		end if
-
+		
 		if KeyDown.Down == true
 			SSSonic.Speed -= 3072
 			if SSSonic.Speed < 122880
 				SSSonic.Speed = 122880
 			end if
 		end if
-
+		
 		CallFunction(Sonic_HandleMovement)
 		CallFunction(Sonic_ProcessAnimation)
-
+		
 		if SSSonic.Timer > 0
 			SSSonic.Timer--
 			SSSonic.XPos += SSSonic.ScreenXPos
 			SSSonic.ZPos += SSSonic.ScreenYPos
 		end if
-
+		
 		CallFunction(Sonic_HandleTileInteractions)
-
+		
 		if Player.JumpPress == true
 			SSSonic.State     = SSSONIC_JUMPING
 			SSSonic.Timer     = 0
+			
 			SSSonic.Frame     = ANI_JUMPING_START
 			SSSonic.FrameLoop = ANI_JUMPING_LOOP
 			SSSonic.FrameEnd  = ANI_JUMPING_END
+			
 			SSSonic.FrameTimer = 0
 			SSSonic.AnimationSpeed = 80
 			SSSonic.YVelocity = 286720
@@ -1471,20 +1521,24 @@ sub ObjectMain
 
 		if HUD[4].SpeedShoes == 0
 			SSSonic.State     = SSSONIC_WALKING
+			
 			SSSonic.Frame     = ANI_WALKING_START
 			SSSonic.FrameLoop = ANI_WALKING_LOOP
 			SSSonic.FrameEnd  = ANI_WALKING_END
+			
 			SSSonic.FrameTimer = 0
 		end if
 		break
-
+		
 	case SSSONIC_FINISHSTAND
 		SSSonic.Frame = ANI_STANDING_START
 		SSSonic.Timer = 0
 		SSSonic.Speed = 0
 		break
-
+		
 	case SSSONIC_CAMERAPAN
+		// This state is given to Sonic from the Time Stone object, not from himself
+		
 		if SSSonic.Timer < 128
 			SSSonic.Timer++
 			SSSonic.Angle -= 2
@@ -1499,93 +1553,99 @@ sub ObjectMain
 				Object[3].Priority = 1
 			end if
 		end if
-
+		
 		SSSonic.Frame = SSSonic.Timer
 		SSSonic.Frame >>= 4
 		SSSonic.Frame += 81
 		break
-
+		
 	case SSSONIC_STONEGRABBED
 		if SSSonic.Timer == 308
+			// Spawn the Stage Results, as the "TIME STONES" variant
+			
 			Object[30].Type = TypeName[Stage Finish]
 			Object[30].PropertyValue = 1
 		else
 			SSSonic.Timer++
 		end if
 		break
-
+		
 	case SSSONIC_SPRING
 		CallFunction(Sonic_ProcessPlayer)
-
+		
 		if SSSonic.Speed < 327680
 			SSSonic.Speed += 2048
 		end if
-
+		
 		if KeyDown.Down == true
 			SSSonic.Speed -= 3072 // Decelerate at a rate of 0xC00 per frame
-
+			
 			if SSSonic.Speed < 122880  // AKA 0x1E000
 				SSSonic.Speed = 122880
 			end if
 		end if
-
+		
 		CallFunction(Sonic_HandleMovement)
 		CallFunction(Sonic_ProcessAnimation)
-
-		// Update gravity
+		
+		// Update gravity with an eight of a pixel per frame as a gravity value
 		SSSonic.YVelocity -= 8192
 		SSSonic.YPos += SSSonic.YVelocity
-
+		
 		if SSSonic.YPos < 0
 			SSSonic.YPos = 0
 			if HUD[4].UFOsCount > 0
 				if HUD[4].SpeedShoes == 0
 					SSSonic.State     = SSSONIC_WALKING
+					
 					SSSonic.Frame     = ANI_WALKING_START
 					SSSonic.FrameLoop = ANI_WALKING_LOOP
 					SSSonic.FrameEnd  = ANI_WALKING_END
+					
 					SSSonic.FrameTimer = 0
 				else
 					SSSonic.State     = SSSONIC_SPEEDSHOESRUN
+					
 					SSSonic.Frame     = ANI_RUN_START
 					SSSonic.FrameLoop = ANI_RUN_LOOP
 					SSSonic.FrameEnd  = ANI_RUN_END
+					
 					SSSonic.AnimationSpeed = 80
 					SSSonic.FrameTimer = 0
 				end if
 			else
-				SSSonic.ControlMode = -1
+				SSSonic.ControlMode = CONTROLMODE_NONE
 				SSSonic.State = SSSONIC_FINISHSTAND
 			end if
 		end if
 		break
-
+		
 	end switch
 	
 	// Enforce stage bounds
 	// Stage size is set by the stage's BGEffects object
-
+	
 	if SSSonic.XPos > Stage.XBoundary2
 		SSSonic.XPos = Stage.XBoundary2
 	end if
-
+	
 	if SSSonic.XPos < Stage.XBoundary1
 		SSSonic.XPos = Stage.XBoundary1
 	end if
-
+	
 	if SSSonic.ZPos > Stage.YBoundary2
 		SSSonic.ZPos = Stage.YBoundary2
 	end if
-
+	
 	if SSSonic.ZPos < Stage.YBoundary1
 		SSSonic.ZPos = Stage.YBoundary1
 	end if
-
+	
 	// So we're not actually moving around a 3d stage - instead, we're moving the entire world around Sonic
 	// So do the calculations for that
-
+	
 	TileLayer[0].Angle = SSSonic.Angle
-
+	
 	// X/Z movement
 	Sin(TileLayer[0].XPos, TileLayer[0].Angle)
 	Cos(TileLayer[0].ZPos, TileLayer[0].Angle)
@@ -1593,17 +1653,17 @@ sub ObjectMain
 	TileLayer[0].ZPos *= -11264
 	TileLayer[0].XPos += SSSonic.XPos
 	TileLayer[0].ZPos += SSSonic.ZPos
-
+	
 	// Y movement is much easier, no complex calcuations needed here
 	TileLayer[0].YPos = SSSonic.YPos
 	TileLayer[0].YPos /= 3
 	TileLayer[0].YPos += 5767168 // Offset of 88 pixels
-
+	
 end sub
 
 
 sub ObjectDraw
-
+	
 	// First draw Sonic's shadow
 	
 	// Find his the ground position to draw the shadow on
@@ -1627,7 +1687,7 @@ sub ObjectDraw
 	TempValue0 += 128
 	
 	// If in the outro animation where the camera pans, jump to its corresponding special drawing code,
-	// otherwise just do the standard drawing routine
+	// otherwise just do the standard drawing sprite routine
 	switch SSSonic.State
 	default
 		DrawSpriteScreenXY(SSSonic.Frame, Screen.CenterX, TempValue0)
@@ -1635,7 +1695,7 @@ sub ObjectDraw
 
 	case SSSONIC_WALKING
 		// Bump Sonic's sprite based on how "tilted" he is
-
+		
 		// First calculate the angle to the nearest fifth
 		TempValue1 = SSSonic.Frame
 		TempValue2 = SSSonic.Tilt
@@ -1649,33 +1709,33 @@ sub ObjectDraw
 			TempValue1 += 6
 			SSSonic.Direction = FACING_LEFT
 			break
-
+			
 		case 1
 			TempValue1 += 12
 			SSSonic.Direction = FACING_LEFT
 			break
-
+			
 		case 2
 			SSSonic.Direction = FACING_RIGHT
 			break
-
+			
 		case 3
 			TempValue1 += 18
 			SSSonic.Direction = FACING_RIGHT
 			break
-
+			
 		case 4
 			TempValue1 += 24
 			SSSonic.Direction = FACING_RIGHT
 			break
-
+			
 		end switch
-
+		
 		DrawSpriteScreenFX(TempValue1, FX_FLIP, Screen.CenterX, TempValue0)
 		break
-
+		
 	end switch
-
+	
 end sub
 
 
@@ -1687,7 +1747,7 @@ sub ObjectStartup
 	else
 		LoadSpriteSheet("Special/Tails.gif")
 	end if
-
+	
 	// Place a Sonic object into reserved object slot 2 and initialise its values
 	SSSonic[2].Type = TypeName[Sonic]
 	
@@ -1696,60 +1756,60 @@ sub ObjectStartup
 	
 	// Give him a standard draw order, since it's just about in the middle of
 	SSSonic[2].ScreenDepth = 22528
-
+	
 	// Start with him doing the intro pose
 	SSSonic[2].Frame     = ANI_INTROPOSE_START
 	SSSonic[2].FrameLoop = ANI_INTROPOSE_LOOP
 	SSSonic[2].FrameEnd  = ANI_INTROPOSE_END
 	SSSonic[2].AnimationSpeed = 30
-
+	
 	// Cycle through the scene and find all Sonic objects
 	ArrayPos0 = 32
 	while ArrayPos0 < 1056
 		if Object[ArrayPos0].Type == TypeName[Sonic]
-
+			
 			SSSonic.XPos = Object[ArrayPos0].XPos
-
+			
 			// Due to the difference between editor and game, turn YPos into ZPos here
 			SSSonic[2].ZPos = Object[ArrayPos0].YPos
-
+			
 			// And then reset YPos, starting on the floor
 			SSSonic.YPos = 0
-
+			
 			// PropertyValue is Sonic's starting direction
 			// Sonic's PropertyValue is normally always 192/0xC0, which is facing left
 			SSSonic.Angle = Object[ArrayPos0].PropertyValue
 			SSSonic.Angle <<= 1
-
+			
 			// Remove this Sonic object from the scene set of objects,
 			// as it's been moved to a reserved object slot now
 			ResetObjectEntity(ArrayPos0, TypeName[Blank Object], 0, 0, 0)
-
+			
 		end if
-
+		
 		ArrayPos0++
 	loop
-
+	
 	// Player Frames
 	// Refer to the ANI_* constants too, those are a good outline of what these SpriteFrames are
-
+	
 	// 0 - Shadow Frame
 	SpriteFrame(-20, -4, 40, 8, 210, 377)
-
+	
 	// 1 - Standing Frame
 	SpriteFrame(-20, -48, 40, 48, 1, 197)
-
+	
 	// 2-4 - Turning Ahead Frames
 	SpriteFrame(-20, -48, 40, 48, 83, 197)
 	SpriteFrame(-20, -48, 40, 48, 42, 197)
 	SpriteFrame(-20, -48, 40, 48, 1, 197)
-
+	
 	// 5-8 - Intro Animation Frames
 	SpriteFrame(-20, -48, 40, 48, 1, 246)
 	SpriteFrame(-20, -48, 40, 48, 42, 246)
 	SpriteFrame(-20, -48, 40, 48, 83, 246)
 	SpriteFrame(-20, -48, 40, 48, 42, 246)
-
+	
 	// 9-14 - Walking Ahead Frames
 	SpriteFrame(-20, -48, 40, 48, 1, 1)
 	SpriteFrame(-20, -48, 40, 48, 42, 1)
@@ -1757,7 +1817,7 @@ sub ObjectStartup
 	SpriteFrame(-20, -48, 40, 48, 1, 50)
 	SpriteFrame(-20, -48, 40, 48, 42, 50)
 	SpriteFrame(-20, -48, 40, 48, 83, 50)
-
+	
 	// 15-20 - Heavily Leaning Right Frames
 	SpriteFrame(-20, -48, 40, 48, 1, 99)
 	SpriteFrame(-20, -48, 40, 48, 42, 99)
@@ -1765,7 +1825,7 @@ sub ObjectStartup
 	SpriteFrame(-20, -48, 40, 48, 1, 148)
 	SpriteFrame(-20, -48, 40, 48, 42, 148)
 	SpriteFrame(-20, -48, 40, 48, 83, 148)
-
+	
 	// 21-26 - Lightly Leaning Right Frames
 	SpriteFrame(-20, -48, 40, 48, 124, 1)
 	SpriteFrame(-20, -48, 40, 48, 165, 1)
@@ -1773,13 +1833,13 @@ sub ObjectStartup
 	SpriteFrame(-20, -48, 40, 48, 124, 50)
 	SpriteFrame(-20, -48, 40, 48, 165, 50)
 	SpriteFrame(-20, -48, 40, 48, 206, 50)
-
+	
 	// 27-29 - Leaning Right Frames again..?
 	// Seems to be unused, perhaps these only exist to pad out the frame number
 	SpriteFrame(-20, -48, 40, 48, 124, 50)
 	SpriteFrame(-20, -48, 40, 48, 165, 50)
 	SpriteFrame(-20, -48, 40, 48, 206, 50)
-
+	
 	// 30-35 - Lightly Leaning Right Frames
 	SpriteFrame(-20, -48, 40, 48, 124, 1)
 	SpriteFrame(-20, -48, 40, 48, 165, 1)
@@ -1787,18 +1847,18 @@ sub ObjectStartup
 	SpriteFrame(-20, -48, 40, 48, 1, 148)
 	SpriteFrame(-20, -48, 40, 48, 42, 148)
 	SpriteFrame(-20, -48, 40, 48, 83, 148)
-
+	
 	// 36-38 - Heavily Leaning Right Frames
 	SpriteFrame(-20, -48, 40, 48, 1, 99)
 	SpriteFrame(-20, -48, 40, 48, 42, 99)
 	SpriteFrame(-20, -48, 40, 48, 83, 99)
-
+	
 	// 39-42 - Jumping Animation Frames
 	SpriteFrame(-20, -40, 40, 40, 165, 99)
 	SpriteFrame(-20, -40, 40, 40, 206, 99)
 	SpriteFrame(-20, -40, 40, 40, 124, 140)
 	SpriteFrame(-20, -40, 40, 40, 124, 99)
-
+	
 	// 43-47 - Braking Animation
 	SpriteFrame(-20, -48, 40, 48, 51, 344)
 	SpriteFrame(-21, -48, 42, 48, 182, 295)
@@ -1810,9 +1870,9 @@ sub ObjectStartup
 		SpriteFrame(-21, -48, 42, 48, 135, 426)
 		SpriteFrame(-20, -48, 40, 48, 178, 426)
 	end if
-
+	
 	// 48-53 - Fan Animation
-	SpriteFrame(-16, -32, 54, 32, 17, 442)  // Not accurate to the purple sprite box, it's actually cropped a bit from that
+	SpriteFrame(-16, -32, 54, 32, 17, 442)  // Not accurate to the pink sprite box, it's actually cropped a bit from that
 	SpriteFrame(-26, -32, 52, 32, 78, 442)  // Same story here, too
 	SpriteFrame(-37, -32, 54, 32, 178, 475) // And here...
 	SpriteFrame(-32, -32, 48, 32, 1, 475)
@@ -1822,8 +1882,9 @@ sub ObjectStartup
 	// 54-76 - Falling Down Animation
 	SpriteFrame(-28, -48, 56, 48, 92, 344)
 	SpriteFrame(-30, -32, 60, 32, 54, 475)
+
+	// Most Frames in the animation varies between Sonic and Tails
 	if Stage.PlayerListPos == PLAYER_SONIC
-		// Animation varies between Sonic & Tails
 		SpriteFrame(-29, -32, 58, 32, 149, 344)
 		SpriteFrame(-30, -32, 60, 32, 149, 377)
 		SpriteFrame(-30, -32, 60, 32, 149, 377)
