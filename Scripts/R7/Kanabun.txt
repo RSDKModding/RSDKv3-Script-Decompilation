@@ -7,7 +7,7 @@
 #alias Object.Value1 : Object.Angle
 #alias Object.Value2 : Object.StartPosX
 #alias Object.Value3 : Object.StartPosY
-#alias Object.Value4 : Object.Distance
+#alias Object.Value4 : Object.Depth
 #alias Object.Value5 : Object.DrawOrderEX
 
 // States
@@ -145,67 +145,73 @@ sub ObjectMain
 	end if
 
 	// Make the Kanabun move around, vertically
-	// Object.Distance is 0, 2, or 4, based on how into the background the Kanabun is
+	// Object.Depth is 0, 2, or 4, based on how into the background the Kanabun is
 	// 0 for FG, 4 for furthest in the BG
 	// These also correspond to Sprite Frames, with smaller sprites
 	
 	Sin(Object.YPos, Object.Angle)
 	if Object.Angle < 128
 		Object.DrawOrder = 5
-		Object.Distance = 0
+
+		Object.Depth = 0
 		if Object.YPos < -384
-			Object.Distance = 2
+			Object.Depth = 2
 		end if
 		
 		if Object.YPos > 384
-			Object.Distance = 2
+			Object.Depth = 2
 		end if
 	else
 		if Object.Angle > 384
 			Object.DrawOrder = 5
-			Object.Distance = 0
+			
+			Object.Depth = 0
 			if Object.YPos < -384
-				Object.Distance = 2
+				Object.Depth = 2
 			end if
 			
 			if Object.YPos > 384
-				Object.Distance = 2
+				Object.Depth = 2
 			end if
 		else
 			Object.DrawOrder = Object.DrawOrderEX
 
-			Object.Distance = 4
+			Object.Depth = 4
 			if Object.YPos < -384
-				Object.Distance = 2
+				Object.Depth = 2
 			end if
 
 			if Object.YPos > 384
-				Object.Distance = 2
+				Object.Depth = 2
 			end if
 		end if
 	end if
 	
-	Object.Frame += Object.Distance
+	Object.Frame += Object.Depth
 	
 	Object.YPos <<= 13
 	Object.YPos += Object.StartPosY
 	
+	// See if the Kanabun should become a Flower instead
 	CallFunction(StageSetup_CheckGoodFuture)
 	
 end sub
 
 
 sub ObjectPlayerInteraction
-
+	
 	if Object.State < KANABUN_OFFSCREEN
-		if Object.Distance == 0
+		if Object.Depth == 0
 			// If in the Foreground, then act as a normal badnik
+
 			PlayerObjectCollision(C_TOUCH, -14, -14, 14, 14)
 			if CheckResult == true
 				CallFunction(PlayerObject_BadnikBreak)
 			end if
 		else
 			// If in the BG, only interact with the player if the player is curled
+			// (Don't want to damage them unfairly!)
+
 			if Player.Animation == ANI_JUMPING
 				PlayerObjectCollision(C_TOUCH, -14, -14, 14, 14)
 				if CheckResult == true
@@ -214,7 +220,7 @@ sub ObjectPlayerInteraction
 			end if
 		end if
 	end if
-
+	
 end sub
 
 
@@ -231,18 +237,30 @@ sub ObjectStartup
 	// All these Sprite Frames are in sets of 2 for all the depth levels of the Kanabun
 	
 	// "Good" Kanabun Frames
+	
+	// Nearest to the screen
 	SpriteFrame(-16, -16, 32, 32, 1, 100)
 	SpriteFrame(-16, -16, 32, 32, 1, 133)
+	
+	// Middle depth to the screen
 	SpriteFrame(-12, -12, 24, 24, 34, 71)
 	SpriteFrame(-12, -12, 27, 27, 62, 43)
+	
+	// Furthest away from the screen
 	SpriteFrame(-12, -12, 24, 24, 59, 71)
 	SpriteFrame(-12, -12, 24, 24, 84, 71)
-
+	
 	// "Bad" Kanabun Frames
+	
+	// Closest to the screen
 	SpriteFrame(-16, -16, 32, 32, 1, 34)
 	SpriteFrame(-16, -16, 32, 32, 1, 67)
+	
+	// Somewhat away from the screen
 	SpriteFrame(-12, -12, 24, 24, 34, 18)
 	SpriteFrame(-12, -12, 27, 27, 34, 43)
+	
+	// Farthest away from the screen
 	SpriteFrame(-12, -12, 24, 24, 59, 18)
 	SpriteFrame(-12, -12, 24, 24, 84, 18)
 	
@@ -250,10 +268,10 @@ sub ObjectStartup
 	ArrayPos0 = 32
 	while ArrayPos0 < 1056
 		if Object[ArrayPos0].Type == TypeName[Kanabun]
-		
+			
 			// Make the Kanabun start halfway across its movement cycle, right in the middle
 			Object[ArrayPos0].Angle = 256
-
+			
 			// And store the Kanabun's starating position, not only for object resetting but also for Y movement calculations
 			Object[ArrayPos0].StartPosX = Object[ArrayPos0].XPos
 			Object[ArrayPos0].StartPosY = Object[ArrayPos0].YPos
@@ -266,7 +284,7 @@ sub ObjectStartup
 				Object[ArrayPos0].DrawOrderEX = 2
 			end if
 		end if
-	
+
 		ArrayPos0++
 	loop
 

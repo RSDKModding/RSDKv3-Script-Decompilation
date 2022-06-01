@@ -5,14 +5,14 @@
 // Aliases
 #alias 34: TYPE_TITLECARD
 
-#alias Object.Value0:Object.BarPos
-#alias Object.Value1:Object.TextPos
-#alias Object.Value2:Object.TextSize
-#alias Object.Value3:Object.FadeA
-#alias Object.Value4:Object.FadeR
-#alias Object.Value5:Object.FadeG
-#alias Object.Value6:Object.FadeB
-#alias Object.Value7:Object.CharPos
+#alias Object.Value0 : Object.BarPos
+#alias Object.Value1 : Object.TextPos
+#alias Object.Value2 : Object.TextSize
+#alias Object.Value3 : Object.FadeA
+#alias Object.Value4 : Object.FadeR
+#alias Object.Value5 : Object.FadeG
+#alias Object.Value6 : Object.FadeB
+#alias Object.Value7 : Object.CharPos
 
 #alias Object.Value4:Player.Invincible
 
@@ -34,6 +34,7 @@ sub ObjectDraw
 		if Warp.XPos < 1
 			Player.Speed = 0
 		end if
+		
 		if Object.FadeA > 0
 			if Object.FadeA == 256
 				PlayMusic(0)
@@ -71,26 +72,29 @@ sub ObjectDraw
 			end if
 		end if
 		break
+		
 	case 1
 		TempValue0 = 144
 		TempValue0 += Object.CharPos
 		if Object.TextPos > TempValue0
 			Object.TextPos -= 8
-		else
 #platform: Mobile
+		else
 			if Object.BarPos == 0
 				Object.State = 2
 			end if
 #endplatform
 		end if
+		
 		if Object.BarPos < 0
 			Object.BarPos += 8
-		else
 #platform: Standard
+		else
 			Object.State = 2
 #endplatform
 		end if
 		break
+		
 	case 2
 		if Object.FadeA == 90
 			Object.State = 3
@@ -98,6 +102,7 @@ sub ObjectDraw
 			Object.FadeA++
 		end if
 		break
+		
 	case 3
 		if Object.TextPos < 408
 			Object.TextPos += 16
@@ -109,7 +114,9 @@ sub ObjectDraw
 			Warp.XPos = 0
 		end if
 		break
+		
 	end switch
+	
 	if Object.Type > TypeName[Blank Object]
 		TempValue0 = 136
 		TempValue0 += Object.CharPos
@@ -165,6 +172,7 @@ sub ObjectStartup
 			break
 		end switch
 	end if
+	
 	Flower_TypeNo = TypeName[Flower]
 	Object[20].Type = TypeName[TitleCard]
 	if Warp.XPos > 0
