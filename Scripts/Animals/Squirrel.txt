@@ -3,72 +3,117 @@
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
 // Aliases
-#alias 70: TYPE_SQUIRREL
+#alias Object.Value0 : Object.YVelocity
+
+#alias 0 : SQUIRREL_HOPRIGHT
+#alias 1 : SQUIRREL_HOPLEFT
+
+// Time Period Aliases
+#alias 2 : PERIOD_FUTURE_G
 
 
 sub ObjectMain
-	Object.YPos += Object.Value0
-	Object.Value0 += 10240
+	
+	Object.YPos += Object.YVelocity
+	
+	// Apply a Gravity of about 0.156px
+	Object.YVelocity += 10240
+	
 	switch Object.State
-	case 0
+	case SQUIRREL_HOPRIGHT
+	
+		// Move a pixel right
 		Object.XPos += 65536
-		if Object.Value0 > 0
+		
+		// Only check for collision when going downwards
+		if Object.YVelocity > 0
 			ObjectTileCollision(0, 0, 8, 0)
-			if CheckResult == 1
+			
+			if CheckResult == true
+				// Turn around
+				
 				Object.Direction = FACING_RIGHT
-				Object.Value0 = -327680
-				Object.State = 1
+				
+				// Bounce back up, at a starting rate of 5px per frame
+				Object.YVelocity = -327680
+				
+				Object.State = SQUIRREL_HOPLEFT
 			end if
 		end if
 		break
-	case 1
+		
+	case SQUIRREL_HOPLEFT
+	
+		// Move a pixel to the left
 		Object.XPos -= 65536
-		if Object.Value0 > 0
+		
+		// Collision's only checked when falling
+		if Object.YVelocity > 0
 			ObjectTileCollision(0, 0, 8, 0)
-			if CheckResult == 1
+			
+			if CheckResult == true
+				// Turn right back around
+				
 				Object.Direction = FACING_LEFT
-				Object.Value0 = -327680
-				Object.State = 0
+				
+				// Starting Y Velocity of 5px upwards per frame
+				Object.YVelocity = -327680
+				
+				Object.State = SQUIRREL_HOPRIGHT
 			end if
 		end if
 		break
+		
 	end switch
+	
 end sub
 
 
 sub ObjectDraw
-	if MetalSonic_Destroyed == 1
-		if Object.Value0 < 0
+	
+	if MetalSonic_Destroyed == true
+		if Object.YVelocity < 0
 			DrawSpriteFX(0, FX_FLIP, Object.XPos, Object.YPos)
 		else
 			DrawSpriteFX(1, FX_FLIP, Object.XPos, Object.YPos)
 		end if
 	end if
-	if Object[24].PropertyValue == 2
-		if Object.Value0 < 0
+	
+	if Object[24].PropertyValue == PERIOD_FUTURE_G
+		if Object.YVelocity < 0
 			DrawSpriteFX(0, FX_FLIP, Object.XPos, Object.YPos)
 		else
 			DrawSpriteFX(1, FX_FLIP, Object.XPos, Object.YPos)
 		end if
 	end if
+	
 end sub
 
 
 sub ObjectStartup
 	LoadSpriteSheet("Global/Items3.gif")
-
+	
+	// Locate all the stealthy Squirrels in the level
 	ArrayPos0 = 32
 	while ArrayPos0 < 1056
 		if Object[ArrayPos0].Type == TypeName[Squirrel]
-			Object[ArrayPos0].Value0 = -327680
+			
+			// Give the Squirrel a starting Y Velocity of 5px up
+			Object[ArrayPos0].YVelocity = -327680
+			
+			// Start the Squirrel facing Right
+			// (The base Sprite itself is facing towards the left, which is why this label may not seem right)
 			Object[ArrayPos0].Direction = FACING_LEFT
+			
 		end if
+		
 		ArrayPos0++
 	loop
 
 	SpriteFrame(-10, -8, 24, 16, 150, 35)
 	SpriteFrame(-10, -8, 24, 16, 150, 52)
 end sub
+
 
 // ========================
 // Editor Subs
@@ -77,6 +122,7 @@ end sub
 sub RSDKDraw
 	DrawSprite(0)
 end sub
+
 
 sub RSDKLoad
 	LoadSpriteSheet("Global/Items3.gif")
