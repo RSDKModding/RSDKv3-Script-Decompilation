@@ -19,80 +19,80 @@
 
 
 sub ObjectMain
-
-	if Object.PropertyValue == BREAKSPIKES_MAIN
 	
+	if Object.PropertyValue == BREAKSPIKES_MAIN
+		
 		// Compare Metal Sonic's position with the spikes to see if they should be broken
 		
 		// Take the spike position and subtract 20 pixels from it
 		TempValue0 = Object.XPos
 		TempValue0 -= 1310720
-
-		ArrayPos0 = MetalSonic_EntityNo
-
-		if Object[ArrayPos0].XPos > TempValue0
 		
+		ArrayPos0 = MetalSonic_EntityNo
+		
+		if Object[ArrayPos0].XPos > TempValue0
+			
 			// Metal Sonic has passed these spikes, destroy them
 			
 			// Play the Crumble SFX
 			PlayStageSfx(7, 0)
-
+			
 #platform: Use_Haptics
 			// Do a strong shake
 			HapticEffect(96, 0, 0, 0)
 #endplatform
-
+			
 			// Create a bunch of spike fragments
 			// Their property value is what frame they should use
-
+			
 			CreateTempObject(TypeName[Break Spikes], 1, Object.XPos, Object.YPos)
 			Object[TempObjectPos].XVelocity = 32768
 			Object[TempObjectPos].YVelocity = -131072
 			Object[TempObjectPos].YAcceleration = 12288
 			Object[TempObjectPos].InkEffect = 2 //INK_ALPHA
 			Object[TempObjectPos].Alpha = 254
-
+			
 			CreateTempObject(TypeName[Break Spikes], 2, Object.XPos, Object.YPos)
 			Object[TempObjectPos].XVelocity = 65536
 			Object[TempObjectPos].YVelocity = -262144
 			Object[TempObjectPos].YAcceleration = 12288
 			Object[TempObjectPos].InkEffect = 2 //INK_ALPHA
 			Object[TempObjectPos].Alpha = 254
-
+			
 			CreateTempObject(TypeName[Break Spikes], 3, Object.XPos, Object.YPos)
 			Object[TempObjectPos].XVelocity = 98304
 			Object[TempObjectPos].YVelocity = -131072
 			Object[TempObjectPos].YAcceleration = 8192
 			Object[TempObjectPos].InkEffect = 2 //INK_ALPHA
 			Object[TempObjectPos].Alpha = 254
-
+			
 			CreateTempObject(TypeName[Break Spikes], 4, Object.XPos, Object.YPos)
 			Object[TempObjectPos].XVelocity = 131072
 			Object[TempObjectPos].YVelocity = -262144
 			Object[TempObjectPos].YAcceleration = 16384
 			Object[TempObjectPos].InkEffect = 2 //INK_ALPHA
 			Object[TempObjectPos].Alpha = 254
-
+			
 			// Clear the main spikes object
 			ResetObjectEntity(Object.EntityNo, TypeName[Blank Object], 0, 0, 0)
 		end if
-
+		
 		ArrayPos0 = 0
 	else
 		// Spike fragment
-
+		
 		// Fade out
 		if Object.Alpha > 0
 			Object.Alpha -= 2
 		end if
-
+		
 		// Update movement
 		Object.XPos += Object.XVelocity
 		Object.YPos += Object.YVelocity
 		
 		// The top and bottom spikes get different gravities, which is why gravity is just stored as an object variable in this case
 		Object.YVelocity += Object.YAcceleration
-
+		
 		if Object.OutOfBounds == true
 			// Unload if out of bounds, since the object's not needed anymore
 			Object.Type = TypeName[Blank Object]
@@ -103,17 +103,17 @@ end sub
 
 
 sub ObjectPlayerInteraction
-
+	
 	if Object.PropertyValue == BREAKSPIKES_MAIN
-
+		
 		// Act as a box for the player
 		PlayerObjectCollision(C_BOX, -16, -15, 16, 16)
-
+		
 		// And now check for actual touching of the sharp spikes
 		if Player.YVelocity > -1
 			if Player.Invincible == 0
 				PlayerObjectCollision(C_TOUCH, -15, -16, 15, -12)
-
+				
 				if CheckResult == true
 				
 					// Damage the player
@@ -133,11 +133,11 @@ sub ObjectPlayerInteraction
 				end if
 			end if
 		end if
-
+		
 	end if
 	
 	// Spike fragments don't really do anything, so there's nothing for them here
-
+	
 end sub
 
 
@@ -147,7 +147,7 @@ end sub
 
 
 sub ObjectStartup
-
+	
 	LoadSpriteSheet("Global/Items3.gif")
 	
 	// Spike Frames
@@ -160,7 +160,7 @@ sub ObjectStartup
 	SpriteFrame(-8, -16, 8, 32, 50, 1)
 	SpriteFrame(0, -16, 8, 32, 50, 1)
 	SpriteFrame(8, -16, 8, 32, 50, 1)
-
+	
 end sub
 
 

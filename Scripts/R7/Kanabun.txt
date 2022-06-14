@@ -290,9 +290,33 @@ sub ObjectStartup
 
 end sub
 
+
 // ========================
 // Editor Subs
 // ========================
+
+sub RSDKEdit
+	if Editor.ReturnVariable == true
+		switch Editor.VariableID
+		case EDIT_VAR_PROPVAL // Property Value
+			CheckResult = Object.PropertyValue
+			break
+		case 0 // Condition
+			CheckResult = Object.PropertyValue
+			break
+		end switch
+	else
+		switch Editor.variableID
+		case EDIT_VAR_PROPVAL // Property Value
+			Object.PropertyValue = Editor.VariableValue
+			break
+		case 0 // Condition
+			Object.PropertyValue = Editor.VariableValue
+			break
+		end switch
+	end if
+end sub
+
 
 sub RSDKDraw
 	DrawSprite(Object.PropertyValue)
@@ -305,8 +329,8 @@ sub RSDKLoad
 	SpriteFrame(-16, -16, 32, 32, 1, 34)
 	SpriteFrame(-16, -16, 32, 32, 1, 100)
 
-	AddEditorVariable("condition")
-	SetActiveVariable("condition")
+	AddEditorVariable("Condition")
+	SetActiveVariable("Condition")
 	AddEnumVariable("Good", 0)
 	AddEnumVariable("Bad", 1)
 	AddEnumVariable("Good (Return to high layer)", 2)

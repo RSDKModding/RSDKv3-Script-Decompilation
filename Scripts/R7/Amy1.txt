@@ -14,7 +14,7 @@
 
 
 sub ObjectMain
-
+	
 	if Object.State == AMY1_FALLING
 	
 		// Update falling movement
@@ -37,12 +37,12 @@ sub ObjectMain
 		
 		end if
 	end if
-
+	
 end sub
 
 
 sub ObjectPlayerInteraction
-
+	
 	if Object.State == AMY1_CAUGHT
 #platform: Mobile
 		// Due to how the engine works, there's a single frame upon landinig where this code is actually being run from an Amy 2 object, so check against that
@@ -56,13 +56,13 @@ sub ObjectPlayerInteraction
 				// Bounce Sonic off
 				FlipSign(Player.YVelocity)
 				Player.YVelocity >>= 1
-
+				
 				Object.State = AMY1_FALLING
 				Object.Frame >>= 3
 				
 				CreateTempObject(TypeName[Explosion], 0, Object.XPos, Object.YPos)
 				Stage.TimeEnabled = false
-
+				
 				PlaySfx(22, 0)
 #platform: Mobile
 		end if // Object.Type == TypeName[Amy 1]
@@ -73,7 +73,7 @@ end sub
 
 
 sub ObjectDraw
-
+	
 	if Object.State == AMY1_CAUGHT
 		TempValue0 = Object.Frame
 		TempValue0 >>= 3
@@ -84,14 +84,14 @@ sub ObjectDraw
 		// Stay static while falling down
 		DrawSprite(Object.Frame)
 	end if
-
+	
 end sub
 
 
 sub ObjectStartup
-
+	
 	LoadSpriteSheet("R7/Objects2.gif")
-
+	
 	// Erase all Amy 1 objects in the level if she's not supposed to appear
 	ArrayPos0 = 32
 	while ArrayPos0 < 1056
@@ -110,9 +110,9 @@ sub ObjectStartup
 				// Amy doesn't care about Tails, unload
 				Object[ArrayPos0].Type = TypeName[Blank Object]
 			end if
-
+			
 		end if
-
+		
 		ArrayPos0++
 	loop
 	
@@ -123,7 +123,7 @@ sub ObjectStartup
 	SpriteFrame(-12, -20, 24, 40, 1, 211)
 	SpriteFrame(-12, -20, 24, 40, 124, 109)
 	SpriteFrame(-12, -20, 24, 40, 1, 211)
-
+	
 end sub
 
 
