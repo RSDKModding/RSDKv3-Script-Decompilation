@@ -2,24 +2,27 @@
 //--------Scripted by Christian Whitehead 'The Taxman'--------//
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
-// Aliases
-#alias 37: TYPE_STATICROCK
-
 
 sub ObjectPlayerInteraction
+
 	switch Object.PropertyValue
 	case 0
 		PlayerObjectCollision(C_BOX, -16, -16, 16, 16)
 		break
+
 	case 1
 		PlayerObjectCollision(C_TOUCH, -16, -14, 16, 16)
-		if CheckResult == 1
+		if CheckResult == true
 			if Player.XPos < Object.XPos
+				// Move the player to be 16 pixels to the left of the object
+
 				Player.XPos = Player.CollisionLeft
 				Player.XPos <<= 16
 				Player.XPos += Object.XPos
 				Player.XPos -= 1048576
 			else
+				// Move the player to be 16 pixels to the right of the object
+				
 				Player.XPos = Player.CollisionRight
 				Player.XPos <<= 16
 				Player.XPos += Object.XPos
@@ -27,10 +30,13 @@ sub ObjectPlayerInteraction
 			end if
 		end if
 		break
+
 	case 2
+		// Wall Collision Modes are hardly ever used in CD, let alone this stage, so why is this here..?
+		// Knuckles?
 		if Player.CollisionMode == 1
 			PlayerObjectCollision(C_TOUCH, -16, -16, 16, 16)
-			if CheckResult == 1
+			if CheckResult == true
 				Player.YPos = Player.CollisionBottom
 				Player.YPos <<= 16
 				Player.YPos += Object.YPos
@@ -38,9 +44,10 @@ sub ObjectPlayerInteraction
 				Player.Speed = 0
 			end if
 		end if
+
 		if Player.CollisionMode == 3
 			PlayerObjectCollision(C_TOUCH, -16, -16, 16, 16)
-			if CheckResult == 1
+			if CheckResult == true
 				Player.YPos = Player.CollisionBottom
 				Player.YPos <<= 16
 				Player.YPos += Object.YPos
@@ -49,7 +56,9 @@ sub ObjectPlayerInteraction
 			end if
 		end if
 		break
+
 	end switch
+
 end sub
 
 
@@ -60,22 +69,77 @@ end sub
 
 sub ObjectStartup
 	LoadSpriteSheet("R5/Objects.gif")
+	
+	// 0 - Rock Frame
 	SpriteFrame(-16, -16, 32, 32, 92, 18)
+
+	// 1-2 - Invisible Frames
+	// (here for ease in drawing)
 	SpriteFrame(0, 0, 0, 0, 1, 1)
 	SpriteFrame(0, 0, 0, 0, 1, 1)
+	
 end sub
+
 
 // ========================
 // Editor Subs
 // ========================
 
-sub RSDKDraw
-	DrawSprite(0)
+sub RSDKEdit
+	if Editor.ReturnVariable == true
+		switch Editor.VariableID
+		case EDIT_VAR_PROPVAL // Property Value
+			CheckResult = Object.PropertyValue
+			break
+		case 0 // Type
+			CheckResult = Object.PropertyValue
+			break
+		end switch
+	else
+		switch Editor.variableID
+		case EDIT_VAR_PROPVAL // Property Value
+			Object.PropertyValue = Editor.VariableValue
+			break
+		case 0 // Type
+			Object.PropertyValue = Editor.VariableValue
+			break
+		end switch
+	end if
 end sub
 
-sub RSDKLoad
-	LoadSpriteSheet("Global/Display.gif")
-	SpriteFrame(-16, -16, 32, 32, 1, 143)		// #0 - "Script" Icon
 
-	SetVariableAlias(ALIAS_VAR_PROPVAL, "unused")
+sub RSDKDraw
+	CheckGreater(Object.PropertyValue, 0)
+	Object.InkEffect = CheckResult
+	DrawSprite(Object.PropertyValue, FX_INK, Object.XPos, Object.YPos)
+	
+	TempValue0 = 16
+	switch Object.PropertyValue
+	case 1
+		// Slightly different box size makes everything wonky - can't draw a blend version of the box since then it'd technically be representing the wrong size...
+		TempValue0 = 14
+	case 2
+		TempValue1 = TempValue0
+		TempValue1 += 16
+		TempValue2 = Object.iXPos
+		TempValue2 -= TempValue0
+		TempValue3 = Object.iYPos
+		TempValue3 -= 16
+		DrawRectOutline(TempValue2, TempValue3, 32, TempValue1, 255, 255, 255, 255)
+		break
+	end switch
+end sub
+
+
+sub RSDKLoad
+	LoadSpriteSheet("R5/Objects.gif")
+	SpriteFrame(-16, -16, 32, 32, 92, 18)
+	SpriteFrame(-16, -14, 32, 30, 94, 18)
+	SpriteFrame(-16, -16, 32, 32, 92, 18)
+
+	AddEditorVariable("Type")
+	SetActiveVariable("Type")
+	AddEnumVariable("Normal Block", 0)
+	AddEnumVariable("Invsible (Floor)", 1)
+	AddEnumVariable("Invisible (Roof)", 2)
 end sub

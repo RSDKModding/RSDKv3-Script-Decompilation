@@ -3,112 +3,175 @@
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
 // Aliases
-#alias 46: TYPE_DIPPINGPLATFORM
+#alias Object.Value0 : Object.Ridden
+#alias Object.Value1 : Object.PlatformY
+#alias Object.Value2 : Object.ChangeY
+
+// Time Period Aliases
+#alias 0 : PERIOD_PRESENT
+#alias 1 : PERIOD_PAST
+#alias 2 : PERIOD_FUTURE_G
+#alias 3 : PERIOD_FUTURE_B
 
 
 sub ObjectMain
-	if Object.Value0 == 1
-		if Object.Value1 < 16
-			Object.Value1++
-			TempValue0 = Object.Value1
+	
+	if Object.Ridden == true
+		if Object.PlatformY < 16
+			Object.PlatformY++
+			
+			TempValue0 = Object.PlatformY
 			TempValue0 &= 3
+			
 			if TempValue0 == 3
-				Object.Value2 = 65536
+				// The Platform will be moved 1 pixel down
+				Object.ChangeY = 65536
 			else
-				Object.Value2 = 0
+				Object.ChangeY = 0
 			end if
 		else
-			Object.Value2 = 0
+			Object.ChangeY = 0
 		end if
 	else
-		if Object.Value1 > 0
-			Object.Value1--
-			TempValue0 = Object.Value1
+		if Object.PlatformY > 0
+			Object.PlatformY--
+			
+			TempValue0 = Object.PlatformY
 			TempValue0 &= 3
+			
 			if TempValue0 == 3
-				Object.Value2 = -65536
+				// The Platform should be moved 1 pixel up
+				Object.ChangeY = -65536
 			else
-				Object.Value2 = 0
+				Object.ChangeY = 0
 			end if
 		else
-			Object.Value2 = 0
+			Object.ChangeY = 0
 		end if
 	end if
-	Object.Value0 = 0
+	
+	Object.Ridden = false
+	
 end sub
 
 
 sub ObjectPlayerInteraction
+	
 	switch Object.PropertyValue
 	case 0
+		// Small Platform
+		
 		PlayerObjectCollision(C_PLATFORM, -16, -16, 16, 12)
-		if CheckResult == 1
-			Object.Value0 = 1
-			Player.YPos += Object.Value2
+		if CheckResult == true
+			Object.Ridden = true
+			
+			// Move the Player along with the Platform
+			Player.YPos += Object.ChangeY
 		end if
 		break
+		
 	case 1
+		// Medium-sized Platform
+		
 		PlayerObjectCollision(C_PLATFORM, -32, -16, 32, 12)
-		if CheckResult == 1
-			Object.Value0 = 1
-			Player.YPos += Object.Value2
+		if CheckResult == true
+			Object.Ridden = true
+			
+			// Move the Player in accordance with the Platform
+			Player.YPos += Object.ChangeY
 		end if
 		break
+		
 	case 2
+		// Large Platform
+		
 		PlayerObjectCollision(C_PLATFORM, -48, -16, 48, 12)
-		if CheckResult == 1
-			Object.Value0 = 1
-			Player.YPos += Object.Value2
+		if CheckResult == true
+			Object.Ridden = true
+			
+			// As needed, nudge the Player so that the follow the Platform
+			Player.YPos += Object.ChangeY
 		end if
 		break
+		
 	case 3
+		// Small Conveyor Platform
+		
 		PlayerObjectCollision(C_PLATFORM, -16, -16, 16, 12)
-		if CheckResult == 1
-			Object.Value0 = 1
-			Player.YPos += Object.Value2
+		if CheckResult == true
+			Object.Ridden = true
+			
+			// Update the Player's Y Position to follow the Platform
+			Player.YPos += Object.ChangeY
+			
+			// Also, update their X Position as needed with the Conveyor Belt too
 			if ConveyorBelt_Flag == 0
 				Player.XPos += ConveyorBelt_Speed
 			else
 				Player.XPos -= ConveyorBelt_Speed
 			end if
+			
 		end if
 		break
+		
 	case 4
+		// Medium-sized Conveyor Platform
+		
 		PlayerObjectCollision(C_PLATFORM, -32, -16, 32, 12)
-		if CheckResult == 1
-			Object.Value0 = 1
-			Player.YPos += Object.Value2
+		if CheckResult == true
+			Object.Ridden = true
+			
+			// Make the Player follow the Platform
+			Player.YPos += Object.ChangeY
+			
+			// And make them follow the Conveyor Belt as well
 			if ConveyorBelt_Flag == 0
 				Player.XPos += ConveyorBelt_Speed
 			else
 				Player.XPos -= ConveyorBelt_Speed
 			end if
+			
 		end if
 		break
+		
 	case 5
+		// Large Conveyor Platform
+		
 		PlayerObjectCollision(C_PLATFORM, -48, -16, 48, 12)
-		if CheckResult == 1
-			Object.Value0 = 1
-			Player.YPos += Object.Value2
+		if CheckResult == true
+			Object.Ridden = true
+			
+			// The Platform moves vertically, so should the Player!
+			Player.YPos += Object.ChangeY
+			
+			// And don't forget about the Conveyor Belt, too!
 			if ConveyorBelt_Flag == 0
 				Player.XPos += ConveyorBelt_Speed
 			else
 				Player.XPos -= ConveyorBelt_Speed
 			end if
+			
 		end if
 		break
+		
 	end switch
+	
 end sub
 
 
 sub ObjectDraw
-	Object.YPos += Object.Value2
+	
+	Object.YPos += Object.ChangeY
+	
 	switch Object.PropertyValue
 	case 0
 	case 1
 	case 2
+		// Standard Platform
 		DrawSprite(Object.PropertyValue)
 		break
+		
+	// These below 3 are Conveyor Platforms, so they need the Conveyor overlay Sprite drawn ontop of them too
 	case 3
 		DrawSprite(0)
 		DrawSprite(3)
@@ -122,13 +185,32 @@ sub ObjectDraw
 		DrawSprite(5)
 		break
 	end switch
+	
 end sub
 
 
 sub ObjectStartup
+	
+	// So a sheet is loaded here, but then it's loaded again for each time zone?
+	// Probably just a small oversight...
 	LoadSpriteSheet("R5/Objects.gif")
+	
+	// But anyways...
+	// Order of Sprite Frames:
+	
+	// 0 - Small Platform Frame
+	// 1 - Normal Sized Platform Frame
+	// 2 - Large Platform Frame
+	
+	// 3 - Small Conveyor Belt Frame
+	// 4 - Medium Sized Conveyor Belt Frame
+	// 5 - Large Conveyor Belt Frame
+	
+	// The Conveyor Belt Frames are overlayed ontop of the normal Platform Frames
+	
+	// Load the corresponding sprites for each Time Period
 	switch Object[24].PropertyValue
-	case 0
+	case PERIOD_PRESENT
 		LoadSpriteSheet("R5/Objects.gif")
 		SpriteFrame(-16, -16, 32, 32, 1, 51)
 		SpriteFrame(-32, -16, 64, 32, 34, 51)
@@ -137,7 +219,8 @@ sub ObjectStartup
 		SpriteFrame(-32, -16, 64, 16, 1, 208)
 		SpriteFrame(-48, -16, 96, 16, 1, 191)
 		break
-	case 1
+		
+	case PERIOD_PAST
 		LoadSpriteSheet("R5/Objects3.gif")
 		SpriteFrame(-16, -16, 32, 32, 1, 170)
 		SpriteFrame(-32, -16, 64, 32, 34, 170)
@@ -146,7 +229,8 @@ sub ObjectStartup
 		SpriteFrame(-32, -16, 64, 16, 159, 148)
 		SpriteFrame(-48, -16, 96, 16, 159, 131)
 		break
-	case 2
+	
+	case PERIOD_FUTURE_G
 		LoadSpriteSheet("R5/Objects3.gif")
 		SpriteFrame(-16, -16, 32, 32, 1, 170)
 		SpriteFrame(-32, -16, 64, 32, 34, 170)
@@ -155,7 +239,8 @@ sub ObjectStartup
 		SpriteFrame(-32, -16, 64, 16, 159, 182)
 		SpriteFrame(-48, -16, 96, 16, 159, 165)
 		break
-	case 3
+		
+	case PERIOD_FUTURE_B
 		LoadSpriteSheet("R5/Objects3.gif")
 		SpriteFrame(-16, -16, 32, 32, 1, 170)
 		SpriteFrame(-32, -16, 64, 32, 34, 170)
@@ -164,20 +249,68 @@ sub ObjectStartup
 		SpriteFrame(-32, -16, 64, 16, 159, 216)
 		SpriteFrame(-48, -16, 96, 16, 159, 199)
 		break
+		
 	end switch
+	
 end sub
+
 
 // ========================
 // Editor Subs
 // ========================
 
-sub RSDKDraw
-	DrawSprite(0)
+sub RSDKEdit
+	if Editor.ReturnVariable == true
+		switch Editor.VariableID
+		case EDIT_VAR_PROPVAL // Property Value
+			CheckResult = Object.PropertyValue
+			break
+		case 0 // Type
+			CheckResult = Object.PropertyValue
+			break
+		end switch
+	else
+		switch Editor.variableID
+		case EDIT_VAR_PROPVAL // Property Value
+			Object.PropertyValue = Editor.VariableValue
+			break
+		case 0 // Type
+			Object.PropertyValue = Editor.VariableValue
+			break
+		end switch
+	end if
 end sub
 
-sub RSDKLoad
-	LoadSpriteSheet("Global/Display.gif")
-	SpriteFrame(-16, -16, 32, 32, 1, 143)		// #0 - "Script" Icon
 
-	SetVariableAlias(ALIAS_VAR_PROPVAL, "unused")
+sub RSDKDraw
+	if Object.PropertyValue >= 3
+		TempValue0 = -3
+		TempValue0 += Object.PropertyValue
+		DrawSprite(TempValue0)
+	end if
+	
+	DrawSprite(Object.PropertyValue)
+end sub
+
+
+sub RSDKLoad
+	LoadSpriteSheet("R5/Objects.gif")
+	
+	// TODO: supporting other time periods
+	// surely there's some better way to do it than a bunch of unique and boring checkCurrentStageFolder checks?
+	SpriteFrame(-16, -16, 32, 32, 1, 51)
+	SpriteFrame(-32, -16, 64, 32, 34, 51)
+	SpriteFrame(-48, -16, 96, 32, 1, 84)
+	SpriteFrame(-16, -16, 32, 16, 65, 208)
+	SpriteFrame(-32, -16, 64, 16, 1, 208)
+	SpriteFrame(-48, -16, 96, 16, 1, 191)
+
+	AddEditorVariable("Type")
+	SetActiveVariable("Type")
+	AddEnumVariable("Small", 0)
+	AddEnumVariable("Medium", 1)
+	AddEnumVariable("Large", 2)
+	AddEnumVariable("Small Conveyor", 3)
+	AddEnumVariable("Medium Conveyor", 4)
+	AddEnumVariable("Large Conveyor", 5)
 end sub

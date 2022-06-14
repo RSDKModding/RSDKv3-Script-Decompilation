@@ -3,48 +3,81 @@
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
 // Aliases
-#alias 63: TYPE_BOSSSPARK
+#alias Object.Value0 : Object.Timer
+#alias Object.Value1 : Object.XVelocity
+#alias Object.Value2 : Object.YVelocity
+
+#alias 0 : BOSSSPARK_GRIND
+#alias 1 : BOSSSPARK_LAND
 
 
 sub ObjectMain
-	Object.Value1 -= 8192
-	if Object.Value1 < -196608
-		Object.Value1 = -196608
+	
+	// Have a horizontal deceleration value of 0.125 pixels per frame
+	Object.XVelocity -= 8192
+	
+	// Enforce a maximum left velocity of 3 pixels per frame
+	if Object.XVelocity < -196608
+		Object.XVelocity = -196608
 	end if
-	Object.XPos += Object.Value1
-	if Object.PropertyValue == 1
-		Object.Value2 += 8192
-		Object.YPos += Object.Value2
-		if Object.OutOfBounds == 1
+	
+	// Update X movement
+	Object.XPos += Object.XVelocity
+	
+	if Object.PropertyValue == BOSSSPARK_LAND
+		
+		// Move the Spark down by 0.125 pixels
+		Object.YVelocity += 8192
+		
+		// Update the Spark's Y Position
+		Object.YPos += Object.YVelocity
+		
+		// Unload when no longer needed
+		if Object.OutOfBounds == true
 			Object.Type = TypeName[Blank Object]
 		end if
+		
 	else
-		if Object.Value0 < 36
-			Object.Value0++
+		// For a grinding-generated Spark, just show for around half a second and disappear after that
+		
+		if Object.Timer < 36
+			Object.Timer++
 		else
 			Object.Type = TypeName[Blank Object]
 		end if
+		
 	end if
+	
 end sub
 
 
 sub ObjectDraw
+	
 	TempValue0 = Object.Frame
 	TempValue0 >>= 2
+	
 	DrawSprite(TempValue0)
+	
+	// Object animation is progressed here, as well
 	Object.Frame++
 	Object.Frame %= 20
+	
 end sub
 
 
 sub ObjectStartup
 	LoadSpriteSheet("R5/Objects2.gif")
+	
+	// Boss Spark Frames
+	// They're offset isn't in the center, these sprites are actually offset to the left a bit
 	SpriteFrame(-2, -4, 16, 8, 131, 155)
 	SpriteFrame(-2, -4, 16, 8, 131, 164)
 	SpriteFrame(-2, -4, 16, 8, 131, 173)
 	SpriteFrame(-2, -4, 16, 8, 131, 182)
 	SpriteFrame(-2, -4, 16, 8, 148, 182)
+	
 end sub
+
 
 // ========================
 // Editor Subs
@@ -54,9 +87,11 @@ sub RSDKDraw
 	DrawSprite(0)
 end sub
 
-sub RSDKLoad
-	LoadSpriteSheet("Global/Display.gif")
-	SpriteFrame(-16, -16, 32, 32, 1, 143)		// #0 - "Script" Icon
 
+sub RSDKLoad
+	LoadSpriteSheet("R5/Objects2.gif")
+	SpriteFrame(-2, -4, 16, 8, 131, 155)
+
+	// Although used by the object, it shouldn't be set from the editor
 	SetVariableAlias(ALIAS_VAR_PROPVAL, "unused")
 end sub
