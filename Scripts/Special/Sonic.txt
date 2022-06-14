@@ -56,6 +56,7 @@
 
 // Animation aliases
 // Most are divided into three parts where there's the animation's start, its loop point, and its end
+// This is to match with how this Object animates itself, check out Sonic_ProcessAnimation for more info
 
 #alias 1 : ANI_STANDING_START
 // This standing animation doesn't, well, animate, so no extended aliases needed here
@@ -629,6 +630,8 @@ function Sonic_ProcessAnimation
 	// -> SSSonic.FrameEnd is the final frame of the animation
 	// -> SSSonic.FrameLoop is the loop point for the animation to go back to after reaching its end
 	// -> SSSonic.Frame is the frame to be displayed when drawing the object
+	
+	// For each animation's corresponding values, check out the ANI_* aliases up above
 	
 	SSSonic.FrameTimer += SSSonic.AnimationSpeed
 	
@@ -1633,6 +1636,7 @@ sub ObjectMain
 		SSSonic.XPos = Stage.XBoundary1
 	end if
 	
+	// The Stage Bounds are setup for a 2d plane, which is why ZPos is being paired with the Y Bounds here
 	if SSSonic.ZPos > Stage.YBoundary2
 		SSSonic.ZPos = Stage.YBoundary2
 	end if
@@ -1686,24 +1690,25 @@ sub ObjectDraw
 	TempValue0 /= 22528
 	TempValue0 += 128
 	
-	// If in the outro animation where the camera pans, jump to its corresponding special drawing code,
+	// If in the walking animation, jump to its corresponding special drawing code,
 	// otherwise just do the standard drawing sprite routine
 	switch SSSonic.State
 	default
+		// Just draw Sonic's sprite, nothing special needed here
 		DrawSpriteScreenXY(SSSonic.Frame, Screen.CenterX, TempValue0)
 		break
 
 	case SSSONIC_WALKING
-		// Bump Sonic's sprite based on how "tilted" he is
+		// Bump Sonic's sprite based on how "tilted" he is in relation to the camera
 		
-		// First calculate the angle to the nearest fifth
 		TempValue1 = SSSonic.Frame
+		
 		TempValue2 = SSSonic.Tilt
 		TempValue2 >>= 2
 		TempValue2 += 2
 		
 		// And now jump to the result
-		// Alternate SpriteFrames are used, but sprite flipping is utilised too
+		// Alternate SpriteFrames are used, as well as sprite flipping too
 		switch TempValue2
 		case 0
 			TempValue1 += 6
@@ -1731,6 +1736,7 @@ sub ObjectDraw
 			
 		end switch
 		
+		// And now draw the result sprite from that
 		DrawSpriteScreenFX(TempValue1, FX_FLIP, Screen.CenterX, TempValue0)
 		break
 		
@@ -1754,10 +1760,10 @@ sub ObjectStartup
 	// Make Sonic always active
 	SSSonic[2].Priority = 1
 	
-	// Give him a standard draw order, since it's just about in the middle of
+	// Give him a standard draw order, since he's just about in the middle of the screen
 	SSSonic[2].ScreenDepth = 22528
 	
-	// Start with him doing the intro pose
+	// Start with him doing his intro pose
 	SSSonic[2].Frame     = ANI_INTROPOSE_START
 	SSSonic[2].FrameLoop = ANI_INTROPOSE_LOOP
 	SSSonic[2].FrameEnd  = ANI_INTROPOSE_END
@@ -1773,7 +1779,7 @@ sub ObjectStartup
 			// Due to the difference between editor and game, turn YPos into ZPos here
 			SSSonic[2].ZPos = Object[ArrayPos0].YPos
 			
-			// And then reset YPos, starting on the floor
+			// And then reset YPos, so that he's starting on the floor
 			SSSonic.YPos = 0
 			
 			// PropertyValue is Sonic's starting direction
@@ -1946,6 +1952,7 @@ sub ObjectStartup
 	SpriteFrame(-16, -48, 32, 48, 149, 295)
 
 end sub
+
 
 // ========================
 // Editor Subs
