@@ -16,14 +16,18 @@
 #alias Player.Value10	:	Player.FlightFunction
 #alias Player.Value11	:	Player.PeeloutFunction
 #alias Player.Value12	:	Player.SpindashFunction
-#alias Player.Value13	:	Player.Unused1 //Completely unused
-#alias Player.Value14	:	Player.Unused2 //Completely unused
+#alias Player.Value13	:	Player.Unused1 // Completely unused
+#alias Player.Value14	:	Player.Unused2 // Completely unused
 #alias Player.Value15	:	Player.FlightGravity
 
+// Player List Pos Aliases
+#alias 0 : PLAYER_SONIC
+#alias 1 : PLAYER_TAILS
+
 // Flailing states, v4 names explains this much better
-#alias Player[0].Flailing	:	Player.FloorSensorL
-#alias Player[1].Flailing	:	Player.FloorSensorC
-#alias Player[2].Flailing	:	Player.FloorSensorR
+#alias Player.Flailing[0]	:	Player.FloorSensorL
+#alias Player.Flailing[1]	:	Player.FloorSensorC
+#alias Player.Flailing[2]	:	Player.FloorSensorR
 
 // Warp Star aliases
 #alias Object[3].Value0		:	WarpStar.Timer
@@ -102,6 +106,18 @@
 #alias 0	:	NONE
 #alias 1	:	PAST
 #alias 2	:	FUTURE
+
+// Time Warp Aliases
+
+// The initial release of the game (Standard) had a time of 220,
+// while updated versions of the game (Mobile) use a more accurate time of 204
+#platform: Standard
+	#alias 220 : TIMEWARP_TIME
+#endplatform
+#platform: Mobile
+	#alias 204 : TIMEWARP_TIME
+#endplatform
+
 
 // Function declarations
 #function PlayerObject_BadnikBreak
@@ -411,9 +427,11 @@ function PlayerObject_ProcessPlayer
 			end if
 
 		end if
+		
 		ProcessPlayerControl()
 	end if
 #endplatform
+
 	// Speed Shoes control
 	if Player.SpeedShoes > 0
 		Player.SpeedShoes--
@@ -426,6 +444,7 @@ function PlayerObject_ProcessPlayer
 			end if
 		end if
 	end if
+	
 	// Invincibility Control
 	if Player.Invincible > 0
 		if Player.State != PlayerObject_Knockback
@@ -434,6 +453,7 @@ function PlayerObject_ProcessPlayer
 				Player.BlinkTimer = 3
 			end if
 		end if
+		
 		if Player.BlinkTimer > 0
 			Player.BlinkTimer++
 			if Player.BlinkTimer > 8
@@ -445,6 +465,7 @@ function PlayerObject_ProcessPlayer
 				Player.Visible = true
 			end if
 		end if
+		
 		Player.Invincible--
 		if Player.Invincible == 0
 			Player.BlinkTimer = 0
@@ -501,21 +522,15 @@ function PlayerObject_ProcessPlayer
 	if Warp.Timer > 0
 
 		Warp.Timer++
-#platform: Standard
-		CheckEqual(Warp.Timer,220)
-#endplatform
-#platform: Mobile
-		CheckEqual(Warp.Timer,204)
-#endplatform
-		if CheckResult == true
-
-			Screen.CameraEnabled = 0
+		
+		if Warp.Timer == TIMEWARP_TIME
+			Screen.CameraEnabled = false
 			CreateTempObject(TypeName[TimeWarp], 0, 0, 0)
 			Object[TempObjectPos].DrawOrder = 6
-
 		end if
 
 	end if
+	
 	// Keeps the camera in place for a bit after releasing S2 Spin Dash
 	if Player.ScrollDelay > 0
 		Player.ScrollDelay--
@@ -541,10 +556,15 @@ function PlayerObject_Blank
 end function
 
 
-// Animation speed while rolling
+// Updates animation speed while rolling
 function PlayerObject_RollAnimSpeed
+
 #platform: Mobile
-	if Stage.PlayerListPos == 1		// PlayerName[TAILS]
+	// In the updated Mobile scripts, Tails gets a animation constant speed of 120 while rolling
+	// while Sonic gets a speed dependant on his actual speed
+	// -> This is indeed accurate to how Tails's spinning was in the original games
+	
+	if Stage.PlayerListPos == PLAYER_TAILS
 		Player.CustomAnimSpeed = 120
 	else
 		Player.CustomAnimSpeed = Player.Speed
@@ -558,6 +578,9 @@ function PlayerObject_RollAnimSpeed
 #endplatform
 
 #platform: Standard
+	// In the original, Standard release scripts, however, all characters had speed-dependant animation speeds,
+	// including Tails
+
 	Player.CustomAnimSpeed = Player.Speed
 	if Player.CustomAnimSpeed < 0
 		FlipSign(Player.CustomAnimSpeed)
@@ -566,6 +589,7 @@ function PlayerObject_RollAnimSpeed
 	Player.CustomAnimSpeed /= 393216	// 0x60000
 	Player.CustomAnimSpeed += 48
 #endplatform
+
 end function
 
 
@@ -608,13 +632,7 @@ function PlayerObject_HandleGround
 			// Consumes the warp if you stop too late during warping run
 			if Warp.Destination > 0
 				if Warp.Timer > 99
-#platform: Standard
-					CheckLower(Warp.Timer,220)
-#endplatform
-#platform: Mobile
-					CheckLower(Warp.Timer,204)
-#endplatform
-					if CheckResult == true
+					if Warp.Timer < TIMEWARP_TIME
 						Warp.Destination = NONE
 					end if
 
@@ -629,7 +647,7 @@ function PlayerObject_HandleGround
 					Player.Timer++
 				else	// Waiting animation
 					Player.Animation = ANI_WAITING
-					if Stage.PlayerListPos == 0	// PlayerName[SONIC]
+					if Stage.PlayerListPos == PLAYER_SONIC
 						Player.Timer++
 
 						if Player.Timer == 10620	// I'm Outta Here!
@@ -674,13 +692,7 @@ function PlayerObject_HandleGround
 					// Consumes the warp if you stop too late during warping run, plus deletes the warp star
 					if Warp.Destination > NONE
 						if Warp.Timer > 99
-#platform: Standard
-							CheckLower(Warp.Timer,220)
-#endplatform
-#platform: Mobile
-							CheckLower(Warp.Timer,204)
-#endplatform
-							if CheckResult == true
+							if Warp.Timer < TIMEWARP_TIME
 								Warp.Destination = NONE
 							end if
 						end if
@@ -712,13 +724,7 @@ function PlayerObject_HandleGround
 					// Consumes the warp if you stop too late during warping run, plus deletes the warp star
 					if Warp.Destination > NONE
 						if Warp.Timer > 99
-#platform: Standard
-							CheckLower(Warp.Timer,220)
-#endplatform
-#platform: Mobile
-							CheckLower(Warp.Timer,204)
-#endplatform
-							if CheckResult == true
+							if Warp.Timer < TIMEWARP_TIME
 								Warp.Destination = NONE
 							end if
 						end if
@@ -849,13 +855,7 @@ function PlayerObject_HandleRolling
 		if TempValue0 < 390594		// 0x5F5C2
 			if Warp.Destination > NONE
 				if Warp.Timer > 99
-#platform: Standard
-					CheckLower(Warp.Timer,220)
-#endplatform
-#platform: Mobile
-					CheckLower(Warp.Timer,204)
-#endplatform
-					if CheckResult == true
+					if Warp.Timer < TIMEWARP_TIME
 						Warp.Destination = NONE
 					end if
 				end if
@@ -977,15 +977,10 @@ function PlayerObject_HandleAir
 					if TempValue0 < 0
 						FlipSign(TempValue0)
 					end if
+					
 					if TempValue0 > 262144
 						if Warp.Timer > 99
-#platform: Standard
-							CheckLower(Warp.Timer,220)
-#endplatform
-#platform: Mobile
-							CheckLower(Warp.Timer,204)
-#endplatform
-							if CheckResult == true
+							if Warp.Timer < TIMEWARP_TIME
 								Warp.Destination = NONE
 							end if
 						end if
@@ -1746,13 +1741,7 @@ function PlayerObject_HandleTailsFlight
 			TempValue0 += TempValue1
 			if TempValue0 < 262144		// 0x40000
 				if Warp.Timer > 99
-#platform: Standard
-					CheckLower(Warp.Timer,220)
-#endplatform
-#platform: Mobile
-					CheckLower(Warp.Timer,204)
-#endplatform
-					if CheckResult == true
+					if Warp.Timer < TIMEWARP_TIME
 						Warp.Destination = NONE
 					end if
 				end if
@@ -1959,13 +1948,7 @@ function PlayerObject_Hurt
 	// lose your warp-run if you receive damage
 	if Warp.Destination > NONE
 		if Warp.Timer > 99
-#platform: Standard
-			CheckLower(Warp.Timer,220)
-#endplatform
-#platform: Mobile
-			CheckLower(Warp.Timer,204)
-#endplatform
-			if CheckResult == true
+			if Warp.Timer < TIMEWARP_TIME
 				Warp.Destination = NONE
 			end if
 		end if
@@ -2154,13 +2137,7 @@ function PlayerObject_HangingBar
 	// Cancel warp
 	if Warp.Destination > NONE
 		if Warp.Timer > 99
-#platform: Standard
-			CheckLower(Warp.Timer,220)
-#endplatform
-#platform: Mobile
-			CheckLower(Warp.Timer,204)
-#endplatform
-			if CheckResult == true
+			if Warp.Timer < TIMEWARP_TIME
 				Warp.Destination = NONE
 			end if
 		end if
@@ -2267,13 +2244,7 @@ function PlayerObject_Tunnel
 			// Warp Star delete checks
 			if Warp.Destination > NONE
 				if Warp.Timer > 99
-#platform: Standard
-					CheckLower(Warp.Timer,220)
-#endplatform
-#platform: Mobile
-					CheckLower(Warp.Timer,204)
-#endplatform
-					if CheckResult == true
+					if Warp.Timer < TIMEWARP_TIME
 						Warp.Destination = NONE
 					end if
 				end if
@@ -2323,13 +2294,7 @@ function PlayerObject_StartTTCtrlLock
 		if TempValue0 < 390594		// 0x5F5C2
 			if Warp.Destination > NONE
 				if Warp.Timer > 99
-#platform: Standard
-					CheckLower(Warp.Timer,220)
-#endplatform
-#platform: Mobile
-					CheckLower(Warp.Timer,204)
-#endplatform
-					if CheckResult == true
+					if Warp.Timer < TIMEWARP_TIME
 						Warp.Destination = NONE
 					end if
 				end if
@@ -2385,13 +2350,7 @@ function PlayerObject_Hugged
 		// Warp cancel check
 		if Warp.Destination > NONE
 			if Warp.Timer > 99
-#platform: Standard
-				CheckLower(Warp.Timer,220)
-#endplatform
-#platform: Mobile
-				CheckLower(Warp.Timer,204)
-#endplatform
-				if CheckResult == true
+				if Warp.Timer < TIMEWARP_TIME
 					Warp.Destination = NONE
 				end if
 			end if
@@ -2429,13 +2388,7 @@ function PlayerObject_Handle3DRampAnims
 			// Warp Star erase check
 			if Warp.Destination > NONE
 				if Warp.Timer > 99
-#platform: Standard
-					CheckLower(Warp.Timer,220)
-#endplatform
-#platform: Mobile
-					CheckLower(Warp.Timer,204)
-#endplatform
-					if CheckResult == true
+					if Warp.Timer < TIMEWARP_TIME
 						Warp.Destination = NONE
 					end if
 				end if
@@ -2641,7 +2594,7 @@ sub ObjectMain
 	end if
 #endplatform
 
-#platform: Mobile	// No debug for android users
+#platform: Mobile	// No debug for mobile players!
 	CallFunction(PlayerObject_ProcessPlayer)
 	CallFunction(Player.State)
 	ProcessAnimation()
@@ -2653,9 +2606,11 @@ sub ObjectMain
 			Player.iYPos += Player.CameraOffset
 		end if
 	end if
+	
 	if Player.YVelocity > 1048576		// 0x100000
 		Player.YVelocity = 1048576		// 0x100000
 	end if
+	
 	PlayerTileCollision()
 	if CheckResult == true
 		if Player.Animation == ANI_JUMPING
@@ -2677,6 +2632,7 @@ sub ObjectDraw
 		Player.AnimationTimer = 0
 		Player.AnimationSpeed = 0
 	end if
+	
 	DrawPlayerAnimation()
 end sub
 
@@ -2684,10 +2640,10 @@ end sub
 sub ObjectStartup
 	ArrayPos0 = 32
 	while ArrayPos0 < 1056
-		if Object[ArrayPos0].Type == TypeName[PlayerObject]
+		if Object[ArrayPos0].Type == TypeName[Player Object]
 			switch Stage.PlayerListPos
-			case 0	// PlayerName[SONIC]
-				ResetObjectEntity(0, TypeName[PlayerObject], 0, Object[ArrayPos0].XPos, Object[ArrayPos0].YPos)
+			case PLAYER_SONIC
+				ResetObjectEntity(0, TypeName[Player Object], 0, Object[ArrayPos0].XPos, Object[ArrayPos0].YPos)
 				Player.XPos = Object[ArrayPos0].XPos
 				Player.YPos = Object[ArrayPos0].YPos
 				LoadAnimation("Sonic.Ani")
@@ -2714,8 +2670,9 @@ sub ObjectStartup
 					Player.SpindashFunction = PlayerObject_StartSpindashCD
 				end if
 				break
-			case 1	// PlayerName[TAILS]
-				ResetObjectEntity(0, TypeName[PlayerObject], 0, Object[ArrayPos0].XPos, Object[ArrayPos0].YPos)
+				
+			case PLAYER_TAILS
+				ResetObjectEntity(0, TypeName[Player Object], 0, Object[ArrayPos0].XPos, Object[ArrayPos0].YPos)
 				Player.XPos = Object[ArrayPos0].XPos
 				Player.YPos = Object[ArrayPos0].YPos
 				LoadAnimation("Tails.Ani")

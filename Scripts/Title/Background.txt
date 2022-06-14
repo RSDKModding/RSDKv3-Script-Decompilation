@@ -4,6 +4,7 @@
 
 // Aliases
 #alias Object.Value0 : Object.LPlanetYOffset
+#alias Object.Value1 : Object.Unused
 
 
 sub ObjectDraw
@@ -33,8 +34,10 @@ sub ObjectDraw
 	while TempValue0 < 39
 		Object[ArrayPos0].XPos += TempValue1
 		if Object[ArrayPos0].XPos > 33554432
+			// Wrap the water 512 pixels back
 			Object[ArrayPos0].XPos -= 33554432
 		end if
+
 		TempValue2 = Object[ArrayPos0].XPos
 		TempValue2 >>= 16
 		ArrayPos0++
@@ -46,20 +49,23 @@ sub ObjectDraw
 	loop
 
 	// Unknown Use, the Value's never referenced anywhere else...
-	Object.Value1++
-	Object.Value1 &= 511
+	Object.Unused++
+	Object.Unused &= 511
 end sub
 
 
 sub ObjectStartup
 	LoadSpriteSheet("Title/Title.gif")
+
 	SpriteFrame(0, 0, 176, 68, 256, 4)		// #0 - Left Mountain
+
 #platform: Standard
 	SpriteFrame(-124, 0, 124, 68, 256, 77)	// #1 - Right Mountain
 #endplatform
 #platform: Mobile
 	SpriteFrame(-174, 0, 174, 68, 246, 267)	// #2 - Right Mountain (Mobile Data Only)
 #endplatform
+
 	SpriteFrame(0, 0, 120, 104, 257, 146)	// #3 - Little Planet
 	
 	//#4 - #20 rows of water sprites, from back to front

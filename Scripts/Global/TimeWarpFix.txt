@@ -72,7 +72,12 @@ end sub
 
 
 sub ObjectPlayerInteraction
+
+	// Check some interaction with the Player... but don't do anything with it
 	PlayerObjectCollision(C_TOUCH, -14, -15, 14, 16)
+	
+	// All the actual interaction is handled in ObjectMain instead, which is certainly quite the risky business..
+	
 end sub
 
 // ========================
@@ -83,23 +88,23 @@ sub RSDKEdit
 	if Editor.ReturnVariable == true
 		switch Editor.VariableID
 		case EDIT_VAR_PROPVAL // property value
-			checkResult = Object.PropertyValue
-			checkResult &= 3
+			CheckResult = Object.PropertyValue
+			CheckResult &= 3
 			break
 		case 0 // type
-			checkResult = Object.PropertyValue
-			checkResult &= 3
+			CheckResult = Object.PropertyValue
+			CheckResult &= 3
 			break
 		end switch
 	else
 		switch Editor.variableID
 		case EDIT_VAR_PROPVAL // property value
 			Object.PropertyValue = Editor.VariableValue
-			Object.propertyValue &= 3
+			Object.PropertyValue &= 3
 			break
 		case 0 // type
-			Object.propertyValue = Editor.VariableValue
-			Object.propertyValue &= 3
+			Object.PropertyValue = Editor.VariableValue
+			Object.PropertyValue &= 3
 			break
 		end switch
 	end if
@@ -113,32 +118,32 @@ sub RSDKDraw
 		case TIMEWARPFIX_ERASE_TOUCH
 			// Draw the object's hitbox
 			// (Initial idea was to tile T icons instead, but for a size of 32x32, it didn't look too good)
-			TempValue0 = Object.XPos
-			TempValue1 = Object.YPos
-			TempValue0 -= 1048576
-			TempValue1 -= 1048576
-			DrawRectOutline(TempValue0, TempValue1, 2097152, 2097152, 255, 255, 255, 0)
+			TempValue0 = Object.iXPos
+			TempValue1 = Object.iYPos
+			TempValue0 -= 16
+			TempValue1 -= 16
+			DrawRectOutline(TempValue0, TempValue1, 32, 32, 255, 255, 255, 255)
 			break
 
 		case TIMEWARPFIX_SAVE_POINT
 			// Draw hitbox rectangle
-			TempValue0 = Object.XPos
-			TempValue1 = Object.YPos
-			TempValue0 -= 3145728
-			TempValue1 -= 3145728
-			DrawRectOutline(TempValue0, TempValue1, 6291456, 6291456, 255, 255, 255, 0)
+			TempValue0 = Object.iXPos
+			TempValue1 = Object.iYPos
+			TempValue0 -= 48
+			TempValue1 -= 48
+			DrawRectOutline(TempValue0, TempValue1, 96, 96, 255, 255, 255, 255)
 			
 			// Draw an arrow to where the player will be sent
-			DrawArrow(Object.XPos, Object.YPos, Object[+1].XPos, Object[+1].YPos, 255, 255, 0)
+			DrawArrow(Object.XPos, Object.YPos, Object[+1].XPos, Object[+1].YPos, 255, 255, 255)
 			break
 
 		case TIMEWARPFIX_SAVE_POINT_AIR
 			// Draw hitbox rectangle
-			TempValue0 = Object.XPos
-			TempValue1 = Object.YPos
-			TempValue0 -= 6291456
-			TempValue1 -= 6291456
-			DrawRectOutline(TempValue0, TempValue1, 12582912, 12582912, 255, 255, 255, 0)
+			TempValue0 = Object.iXPos
+			TempValue1 = Object.iYPos
+			TempValue0 -= 96
+			TempValue1 -= 96
+			DrawRectOutline(TempValue0, TempValue1, 192, 192, 255, 255, 255, 255)
 			
 			// Draw an arrow to where the player will be sent
 			DrawArrow(Object.XPos, Object.YPos, Object[+1].XPos, Object[+1].YPos, 255, 255, 0)
@@ -150,7 +155,7 @@ end sub
 
 sub RSDKLoad
 	LoadSpriteSheet("Global/Display.gif")
-	SpriteFrame(-8, -8, 16, 16, 173, 67) // "T" (Trigger) Icon
+	SpriteFrame(-8, -8, 16, 16, 173, 67) // "T" (rigger) Icon
 
 
 	AddEditorVariable("type")

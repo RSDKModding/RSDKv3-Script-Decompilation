@@ -3,16 +3,6 @@
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
 // Aliases
-#alias 3: TYPE_TITLECARD
-
-// Languages
-#alias 0 : ENGLISH
-#alias 1 : FRENCH
-#alias 2 : ITALIAN
-#alias 3 : DEUTSCH
-#alias 4 : SPANISH
-#alias 5 : JAPANESE
-
 #alias Object.Value0 : Object.BarPos
 #alias Object.Value1 : Object.TextPos
 #alias Object.Value2 : Object.TextSize
@@ -22,239 +12,293 @@
 #alias Object.Value6 : Object.FadeB
 #alias Object.Value7 : Object.CharPos
 
+#alias 0 : TITLECARD_FADEIN
+#alias 1 : TITLECARD_SLIDEIN
+#alias 2 : TITLECARD_DISPLAY
+#alias 3 : TITLECARD_SLIDEOUT
+
+// Languages
+#alias 0 : LANGUAGE_ENGLISH
+#alias 1 : LANGUAGE_FRENCH
+#alias 2 : LANGUAGE_ITALIAN
+#alias 3 : LANGUAGE_DEUTSCH
+#alias 4 : LANGUAGE_SPANISH
+#alias 5 : LANGUAGE_JAPANESE
+
+// SS Sonic aliases
+#alias Player.ControlMode : SSSonic.ControlMode
+
+// ControlMode Aliases
+#alias -1 : CONTROLMODE_NONE
+#alias  0 : CONTROLMODE_NORMAL
+
 // HUD Aliases
 #alias Object.Value1 : HUD.Time.Seconds
 #alias Object.Value2 : HUD.Time.Frames
 
-sub ObjectDraw
 
+sub ObjectDraw
+	
 	// Set the starting time values
-	// (Rather than disabling the HUD timer while the title card is active, its values are simply reset here every frame untill no longer needed)
+	// (Rather than disabling the HUD timer while the title card is active,
+	//  its values are simply reset here every frame until no longer needed)
 	HUD[4].Time.Seconds = 100
 	HUD[4].Time.Frames  = 0
-
+	
 	switch Object.State
-	case 0
+	case TITLECARD_FADEIN
 		if Object.Timer > 0
 			if Object.Timer == 256
-				// Start the stage music
+				// Start the stage music!
 				PlayMusic(0)
-
-				// Free player control
+				
+				// Free Sonic's control
 				// (But, it gets locked again right after anyways...)
-				Player.ControlMode = 0
+				SSSonic.ControlMode = CONTROLMODE_NORMAL
 			end if
-
+			
 			SetScreenFade(Object.FadeR, Object.FadeG, Object.FadeB, Object.Timer)
 			Object.Timer -= 8
 		else
-			Object.State = 1
+			// Make the Title Card start appearing
+			
+			Object.State = TITLECARD_SLIDEIN
 			Object.Timer = 0
 		end if
-
-		Player.ControlMode = -1
+		
+		// Lock Sonic's control
+		SSSonic.ControlMode = CONTROLMODE_NONE
 		break
-
-	case 1
+		
+	case TITLECARD_SLIDEIN
 		TempValue0 = 144
 		TempValue0 += Object.CharPos
 		if Object.TextPos > TempValue0
+			// Slide the text to the left
 			Object.TextPos -= 8
 #platform: Mobile
 		// Updated version - both the text AND the bar have to be on screen for the title card to progress
 		else
 			if Object.BarPos == 0
-				Object.State = 2
+				Object.State = TITLECARD_DISPLAY
 			end if
 #endplatform
 		end if
-
+		
 		if Object.BarPos < 0
+			// Move the Bar down
 			Object.BarPos += 8
 #platform: Standard
-		// Initial version - only the bar needs to be in the proper position to continue. This can cause issues sometimes, notably on devices with wider screens with wider resolutions
+		// Initial version - only the bar needs to be in the proper position to continue
+		// -> This can cause issues sometimes, notably on devices with wider screens with wider resolutions
 		else
-			Object.State = 2
+			Object.State = TITLECARD_DISPLAY
 #endplatform
 		end if
 		break
-
-	case 2
+		
+	case TITLECARD_DISPLAY
+		// Hold for a moment to let the Player see what a nice Title Card this is
+		
 		if Object.Timer == 160
-			Object.State = 3
+			// Time's up, start sliding out!
+			Object.State = TITLECARD_SLIDEOUT
 		else
 			Object.Timer++
 		end if
 		break
-
-	case 3
+		
+	case TITLECARD_SLIDEOUT
 		if Object.TextPos < 408
+		
+			// Move the text to the right, and...
 			Object.TextPos += 16
+			
+			// ...move the bar updwards as well
 			Object.BarPos -= 16
+			
 		else
 			// The Title Card's job is done, despawn it
 			ResetObjectEntity(20, TypeName[Blank Object], 0, 0, 0)
-
-			// Free player control, for real this time
-			Player.ControlMode = 0
-
+			
+			// Free Sonic's control, for real this time
+			SSSonic.ControlMode = CONTROLMODE_NORMAL
+			
 			if Options.GameMode == 2
 				// If in time attack, start proper time progression
 				Stage.TimeEnabled = true
 			end if
 		end if
 		break
-
+		
 	end switch
-
-	// Before drawing, make sure this object hasn't already been blanked already
+	
+	// Before drawing, make sure this object hasn't been blanked already
 	// (Under certain circumstances, this can otherwise cause major graphical issues!!)
 	if Object.Type > TypeName[Blank Object]
 		TempValue0 = 136
 		TempValue0 += Object.CharPos
+		
+		// Draw the Title Card Bar
 		DrawSpriteScreenXY(0, TempValue0, Object.BarPos)
+		
+		// SpriteFrames 1-4 aren't needed here, they're just leftovers from the traditional zone Title Card format
+		
+		// Draw the "SONIC THE HEDGEHOG" bar, along with the set of three squiggly lines
 		DrawSpriteScreenXY(5, Object.TextPos, 64)
 		DrawSpriteScreenXY(6, Object.TextPos, 64)
 		DrawSpriteScreenXY(7, Object.TextPos, 64)
-
+		
+		// And then draw all the Letters
+		// (Letters start at Sprite Frame 8)
 		TempValue0 = 8
 		while TempValue0 < Object.TextSize
 			DrawSpriteScreenXY(TempValue0, Object.TextPos, 64)
 			TempValue0++
 		loop
 	end if
-
+	
 end sub
 
 
 sub ObjectStartup
-
+	
+	// Load different sheets based on the Engine's current language
 	switch Engine.Language
-	case ENGLISH
-	case JAPANESE
+	case LANGUAGE_ENGLISH
+	case LANGUAGE_JAPANESE
+		// English and Japanese share the same sheet
 		LoadSpriteSheet("Special/ScoreScreen.gif")
 		break
-
-	case FRENCH
+		
+	case LANGUAGE_FRENCH
 		LoadSpriteSheet("Special/ScoreScreen_FR.gif")
 		break
-
-	case ITALIAN
+		
+	case LANGUAGE_ITALIAN
 		LoadSpriteSheet("Special/ScoreScreen_IT.gif")
 		break
-
-	case DEUTSCH
+		
+	case LANGUAGE_DEUTSCH
 		LoadSpriteSheet("Special/ScoreScreen_DE.gif")
 		break
-
-	case SPANISH
+		
+	case LANGUAGE_SPANISH
 		LoadSpriteSheet("Special/ScoreScreen_ES.gif")
 		break
-
+		
 	end switch
-
+	
 	// Place the Title Card object into the level and setup its values
 	Object[20].Type = TypeName[TitleCard]
-
+	
 	Object[20].Timer = 384
-
+	
 	// The Title Card is a HUD object, so it should always be active and draw above other sprites
 	Object[20].Priority = 1
 	Object[20].DrawOrder = 6
-
-	Object[20].BarPos = -216
-	Object[20].TextPos = 336
-
+	
+	Object[20].BarPos  = -216
+	Object[20].TextPos =  336
+	
 	Object[20].CharPos = Screen.CenterX
 	Object[20].CharPos -= 160
 	if Object[20].CharPos > 3
 		Object[20].CharPos -= 4
 	end if
 	Object[20].CharPos &= 248
-
+	
 	Object[20].TextPos += Object[20].CharPos
 	Object[20].TextPos += Object[20].CharPos
-
+	
+	// "SPECIAL STAGE" is 12 letters
 	Object[20].TextSize = 12
+	
+	// And there are 8 Sprite Frames that preceed the letters
 	Object[20].TextSize += 8
-
+	
 	// Preserve the colour used from the last fade
-
+	
 	Object[20].FadeR = Fade_Colour
 	Object[20].FadeR >>= 16
-
+	
 	Object[20].FadeG = Fade_Colour
 	Object[20].FadeG &= 65280 // 0x00FF00, limiting it to the middle 2 green bytes of the value
 	Object[20].FadeG >>= 8
-
+	
 	Object[20].FadeB = Fade_Colour
 	Object[20].FadeB &= 255
-
+	
 	// 0 - Red Bar Frame
 	SpriteFrame(0, 0, 32, 184, 224, 37)
-
+	
 	// These next few frames are unused leftovers from the maingame Title Card script
-	// They appear as garbage sprites here since they weren't made for the SS sheet
-
+	// They appear as garbage sprites here since they use values from the normal Global Display sheet,
+	// and not the Special Stage version of the sheet
+	
 	// 1-3 - Act Bubbles, appear as random texts with this sheet
 	SpriteFrame(96, 96, 48, 48, 41, 1)
 	SpriteFrame(96, 96, 48, 48, 90, 1)
 	SpriteFrame(96, 96, 48, 48, 139, 1)
-
+	
 	// 4 - "Zone" text, appears as part of BG with this sheet though
 	SpriteFrame(64, 97, 48, 16, 41, 67)
-
+	
 	// All the letters used by the Title Card
 	// They got updated a bit post-release, which is why the Standard (initial) and Mobile (updated) portions are just entirely different
-
+	
 #platform: Standard
-
+	
 	// 5-6 - "SONIC THE HEGDEHOG" bar
 	SpriteFrame(64, 81, 160, 16, 52, 227)
 	SpriteFrame(39, 81, 160, 16, 52, 227)
-
-	// 7 - Three lines
-	SpriteFrame(100, 32, 24, 48, 182, 124)
-
-	// 8-19 - Letters spelling out "Special Stage"
-	SpriteFrame(20, 0, 16, 55, 207, 124)
-	SpriteFrame(37, 32, 10, 23, 176, 180)
-	SpriteFrame(48, 32, 9, 23, 187, 180)
-	SpriteFrame(58, 32, 8, 23, 197, 180)
-	SpriteFrame(67, 32, 6, 23, 206, 180)
-	SpriteFrame(74, 32, 11, 23, 212, 180)
-	SpriteFrame(86, 32, 9, 23, 176, 203)
-	SpriteFrame(20, 56, 16, 55, 207, 124)
-	SpriteFrame(37, 56, 10, 23, 186, 203)
-	SpriteFrame(48, 56, 11, 23, 212, 180)
-	SpriteFrame(60, 56, 10, 23, 197, 203)
-	SpriteFrame(71, 56, 9, 23, 187, 180)
-
-#endplatform
-
-#platform: Mobile
-
-	// 5-6 - "SONIC THE HEGDEHOG" bar
-	SpriteFrame(72, 81, 160, 16, 60, 227)
-	SpriteFrame(16, 81, 160, 16, 52, 227)
-
+	
 	// 7 - Three lines
 	SpriteFrame(100, 32, 24, 48, 182, 124)
 	
 	// 8-19 - Letters spelling out "Special Stage"
-	SpriteFrame(0, 0, 16, 55, 207, 124)
-	SpriteFrame(17, 32, 10, 23, 176, 180)
-	SpriteFrame(28, 32, 9, 23, 187, 180)
-	SpriteFrame(38, 32, 8, 23, 197, 180)
-	SpriteFrame(47, 32, 6, 23, 206, 180)
-	SpriteFrame(54, 32, 11, 23, 212, 180)
-	SpriteFrame(66, 32, 9, 23, 176, 203)
-	SpriteFrame(0, 56, 16, 55, 207, 124)
-	SpriteFrame(17, 56, 10, 23, 186, 203)
-	SpriteFrame(28, 56, 11, 23, 212, 180)
-	SpriteFrame(40, 56, 10, 23, 197, 203)
-	SpriteFrame(51, 56, 9, 23, 187, 180)
-
+	
+	SpriteFrame(20, 0, 16, 55, 207, 124)	// S
+	SpriteFrame(37, 32, 10, 23, 176, 180)	// P
+	SpriteFrame(48, 32, 9, 23, 187, 180)	// E
+	SpriteFrame(58, 32, 8, 23, 197, 180)	// C
+	SpriteFrame(67, 32, 6, 23, 206, 180)	// I
+	SpriteFrame(74, 32, 11, 23, 212, 180)	// A
+	SpriteFrame(86, 32, 9, 23, 176, 203)	// L
+	
+	SpriteFrame(20, 56, 16, 55, 207, 124)	// S
+	SpriteFrame(37, 56, 10, 23, 186, 203)	// T
+	SpriteFrame(48, 56, 11, 23, 212, 180)	// A
+	SpriteFrame(60, 56, 10, 23, 197, 203)	// G
+	SpriteFrame(71, 56, 9, 23, 187, 180)	// E
+	
+#endplatform
+	
+#platform: Mobile
+	
+	// 5-6 - "SONIC THE HEGDEHOG" bar
+	SpriteFrame(72, 81, 160, 16, 60, 227)
+	SpriteFrame(16, 81, 160, 16, 52, 227)
+	
+	// 7 - Three lines
+	SpriteFrame(100, 32, 24, 48, 182, 124)
+	
+	// 8-19 - Individual letters spelling out "Special Stage"
+	
+	SpriteFrame(0, 0, 16, 55, 207, 124)		// S
+	SpriteFrame(17, 32, 10, 23, 176, 180)	// P
+	SpriteFrame(28, 32, 9, 23, 187, 180)	// E
+	SpriteFrame(38, 32, 8, 23, 197, 180)	// C
+	SpriteFrame(47, 32, 6, 23, 206, 180)	// I
+	SpriteFrame(54, 32, 11, 23, 212, 180)	// A
+	SpriteFrame(66, 32, 9, 23, 176, 203)	// L
+	
+	SpriteFrame(0, 56, 16, 55, 207, 124)	// S
+	SpriteFrame(17, 56, 10, 23, 186, 203)	// T
+	SpriteFrame(28, 56, 11, 23, 212, 180)	// A
+	SpriteFrame(40, 56, 10, 23, 197, 203)	// G
+	SpriteFrame(51, 56, 9, 23, 187, 180)	// E
+	
 #endplatform
 
 end sub
@@ -264,18 +308,21 @@ end sub
 // ========================
 
 sub RSDKDraw
-	TempValue0 = 8912896
-
-	TempValue1 = 0x400000
+	TempValue0 = 136
+	TempValue0 <<= 16
+	TempValue0 += Object.XPos
+	
+	TempValue1 = 64
+	TempValue1 <<= 16
 	TempValue1 += Object.YPos
-
+	
 	DrawSpriteXY(0, TempValue0, Object.YPos)
 	DrawSpriteXY(5, Object.XPos, TempValue1)
 	DrawSpriteXY(6, Object.XPos, TempValue1)
 	DrawSpriteXY(7, Object.XPos, TempValue1)
-
+	
 	TempValue0 = 8
-	while TempValue0 < 20 // 20 letters
+	while TempValue0 < 20 // 12 letters
 		DrawSpriteXY(TempValue0, Object.XPos, TempValue1)
 		TempValue0++
 	loop

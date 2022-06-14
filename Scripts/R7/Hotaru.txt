@@ -56,12 +56,12 @@
 
 
 function Hotaru_HotaruBreak
-
+	
 	// This function is called to see if the individual Hotaru being checked should break
 	// Preconditions:
 	// - Object.XPos & Object.YPos are set to the positions of the Hotaru being checked (not the base Hotaru object!)
 	// - ArrayPos1 is the EntityNo of where to spawn the Hotaru, if it needs to be broken
-
+	
 	CheckEqual(Player.Animation, ANI_JUMPING)
 	TempValue0 = CheckResult
 	CheckEqual(Player.Animation, ANI_SPINDASH)
@@ -83,7 +83,7 @@ function Hotaru_HotaruBreak
 		
 		CreateTempObject(TypeName[ObjectScore], Object[26].Value0, Object.XPos, Object.YPos)
 		Object[TempObjectPos].DrawOrder = 4
-
+		
 		PlaySfx(8, 0)
 		
 		if Player.YVelocity > 0
@@ -91,25 +91,25 @@ function Hotaru_HotaruBreak
 		else
 			Player.YVelocity += 49152
 		end if
-
+		
 		// Grant the player some score
 		switch Object[26].Value0
 		case 0
 			Player.Score += 100
 			break
-
+			
 		case 1
 			Player.Score += 200
 			break
-
+			
 		case 2
 			Player.Score += 500
 			break
-
+			
 		case 3
 			Player.Score += 1000
 			break
-
+			
 		end switch
 	else
 		ArrayPos0 = Player.EntityNo
@@ -167,7 +167,7 @@ end function
 
 
 sub ObjectMain
-
+	
 	if Object.OutOfBounds == true
 		Object.State = HOTARU_OFFSCREEN
 		Object.Timer = 0
@@ -178,13 +178,13 @@ sub ObjectMain
 		Object.YPos = Object.StartPosY
 		
 		// Reset the Hotarus to be 70 pixels apart
-		// (Regardless of their Property Value!)
+		// (Regardless of their Property Value, since that's already been reset...)
 		Object.Hotaru1X = -2293760
 		Object.Hotaru2X = 2293760
 		
 		Object.EletricityActive = false
 	end if
-
+	
 	// Even if there are really only small differences between the two's behaviours, the GOOD and BAD badnik types just have entirely different
 	if Object.PropertyValue == BADNIK_GOOD
 		switch Object.State
@@ -258,7 +258,7 @@ sub ObjectMain
 				end if
 			end if
 			break
-
+			
 		case HOTARU_PAUSE
 			if Object.Timer < 100
 				Object.Timer++
@@ -332,6 +332,7 @@ sub ObjectMain
 		case HOTARU_FLASHING
 			// This is the state where the Sparks are active, although none of them are managed here
 			// Head over to ObjectDraw and ObjectPlayerInteraction for that
+			// (Or don't... it's not like the sparks even work right...)
 			
 			if Object.Timer < 100
 				Object.Timer++
@@ -356,7 +357,7 @@ sub ObjectMain
 			Object.Frame = Object.Timer
 			Object.Frame /= 10
 			Object.Frame++
-
+			
 			if Object.OutOfBounds == true
 				Object.State = HOTARU_OFFSCREEN
 				Object.Timer = 0
@@ -367,9 +368,9 @@ sub ObjectMain
 				Object.YPos = Object.StartPosY
 				
 				// Reset the Hotarus to be 70 pixels apart
-				// (Regardless of their Property Value)
+				// (Regardless of their initial Property Value, since that's already been reset)
 				Object.Hotaru1X = -2293760
-				Object.Hotaru2X = 2293760
+				Object.Hotaru2X =  2293760
 			end if
 			break
 			
@@ -381,7 +382,7 @@ sub ObjectMain
 				Object.Frame = 0
 			end if
 			break
-
+			
 		end switch
 	else
 		switch Object.State
@@ -400,7 +401,7 @@ sub ObjectMain
 				Object.State = HOTARU_IDLE2
 			end if
 			break
-
+			
 		case HOTARU_IDLE2
 			// Left range of 115 pixels for Hotaru 1
 			if Object.Hotaru1X > -7536640
@@ -412,7 +413,7 @@ sub ObjectMain
 				Object.State = HOTARU_IDLE1
 			end if
 			break
-
+			
 		case HOTARU_TRACKPLAYER
 			// Make the Hotarus follow the screen
 			
@@ -455,7 +456,7 @@ sub ObjectMain
 				end if
 			end if
 			break
-
+			
 		case HOTARU_PAUSE
 			if Object.Timer < 100
 				Object.Timer++
@@ -470,7 +471,7 @@ sub ObjectMain
 			break
 			
 		// A series of very small and similar states - each frame in the flicker animation is its own state
-
+		
 		case HOTARU_LIGHTSON1
 			if Object.Timer < 10
 				Object.Timer++
@@ -479,7 +480,7 @@ sub ObjectMain
 				Object.State++
 			end if
 			break
-
+			
 		case HOTARU_LIGHTSOFF1
 			if Object.Timer < 30
 				Object.Timer++
@@ -488,7 +489,7 @@ sub ObjectMain
 				Object.State++
 			end if
 			break
-
+			
 		case HOTARU_LIGHTSON2
 			if Object.Timer < 20
 				Object.Timer++
@@ -497,7 +498,7 @@ sub ObjectMain
 				Object.State++
 			end if
 			break
-
+			
 		case HOTARU_LIGHTSOFF2
 			if Object.Timer < 20
 				Object.Timer++
@@ -506,7 +507,7 @@ sub ObjectMain
 				Object.State++
 			end if
 			break
-
+			
 		case HOTARU_LIGHTSON3
 			if Object.Timer < 30
 				Object.Timer++
@@ -515,7 +516,7 @@ sub ObjectMain
 				Object.State++
 			end if
 			break
-
+			
 		case HOTARU_LIGHTSOFF3
 			if Object.Timer < 10
 				Object.Timer++
@@ -525,7 +526,7 @@ sub ObjectMain
 				Object.State++
 			end if
 			break
-
+			
 		case HOTARU_FLASHING
 			// This is the state where the Sparks are active, but Bad Hotarus have broken bulbs so they don't get to light up...
 			
@@ -540,7 +541,7 @@ sub ObjectMain
 			Object.Frame /= 20
 			Object.Frame += 4
 			break
-
+			
 		case HOTARU_FLYAWAY
 			// Ascend at a rate of 2 pixels per second
 			// (This is rather slow, isn't it?)
@@ -552,7 +553,7 @@ sub ObjectMain
 			Object.Frame = Object.Timer
 			Object.Frame /= 20
 			Object.Frame += 4
-
+			
 			if Object.OutOfBounds == true
 				Object.State = HOTARU_OFFSCREEN
 				Object.Timer = 0
@@ -563,12 +564,12 @@ sub ObjectMain
 				Object.YPos = Object.StartPosY
 				
 				// Reset the Hotarus to be 70 pixels apart
-				// (Ignoring their Property Value)
+				// (Ignoring their Property Value, since it got replaced by Hotaru Condition during startup)
 				Object.Hotaru1X = -2293760
-				Object.Hotaru2X = 2293760
+				Object.Hotaru2X =  2293760
 			end if
 			break
-
+			
 		case HOTARU_OFFSCREEN
 			// This state is here so that, if the Hotarus' start position is within bounds, they won't just suddently teleport in front of the player
 			if Object.OutOfBounds == true
@@ -577,22 +578,22 @@ sub ObjectMain
 				Object.Frame = 0
 			end if
 			break
-
+			
 		end switch
 	end if
-
+	
 	CallFunction(StageSetup_CheckGoodFuture)
-
+	
 	if Object.ActiveHotarus == 0
 		// If this object doesn't have any more alive Hotarus, than just unload now as it serves no purpose
 		ResetObjectEntity(Object.EntityNo, TypeName[Blank Object], 0, 0, 0)
 	end if
-
+	
 end sub
 
 
 sub ObjectPlayerInteraction
-
+	
 	switch Object.State
 	case HOTARU_IDLE1
 	case HOTARU_IDLE2
@@ -634,9 +635,9 @@ sub ObjectPlayerInteraction
 			end if
 		
 		end if
-
-
-		// This check will always return true, won't it..?
+		
+		
+		// This check will always return true thanks to the switch-case, won't it..?
 		if Object.State < HOTARU_OFFSCREEN
 			
 			// Backup the base object's position
@@ -670,7 +671,7 @@ sub ObjectPlayerInteraction
 				Object.XPos = TempValue6
 				Object.YPos = TempValue7
 			end if
-
+			
 			// Check collision for Hotaru 2
 			GetBit(TempValue1, Object.ActiveHotarus, 1)
 			if TempValue1 == true
@@ -694,14 +695,14 @@ sub ObjectPlayerInteraction
 					end if
 				end if
 			end if
-
+			
 			// This never hits...
 			if Object.State == HOTARU_FLASHING
 				if Object.EletricityActive == true
 					if Object.ActiveHotarus == 3
 					
 						// Check collision for the Sparks
-						// (This code is never even called, though...)
+						// (This code is never even called though, thanks to the above checks, so this is all unused)
 						
 						// First, backup the object's position
 						Object.XPos = TempValue6
@@ -764,7 +765,7 @@ end sub
 
 
 sub ObjectDraw
-
+	
 	switch Object.State
 	case HOTARU_IDLE1
 		GetBit(CheckResult, Object.ActiveHotarus, 0)
@@ -776,7 +777,7 @@ sub ObjectDraw
 			Object.Direction = FACING_LEFT
 			DrawSpriteFX(Object.Frame, FX_FLIP, TempValue0, TempValue1)
 		end if
-
+		
 		GetBit(CheckResult, Object.ActiveHotarus, 1)
 		if CheckResult == true
 			TempValue0 = Object.Hotaru2X
@@ -787,7 +788,7 @@ sub ObjectDraw
 			DrawSpriteFX(Object.Frame, FX_FLIP, TempValue0, TempValue1)
 		end if
 		break
-
+		
 	case HOTARU_IDLE2
 		GetBit(CheckResult, Object.ActiveHotarus, 0)
 		if CheckResult == true
@@ -798,7 +799,7 @@ sub ObjectDraw
 			Object.Direction = FACING_RIGHT
 			DrawSpriteFX(Object.Frame, FX_FLIP, TempValue0, TempValue1)
 		end if
-
+		
 		GetBit(CheckResult, Object.ActiveHotarus, 1)
 		if CheckResult == true
 			TempValue0 = Object.Hotaru2X
@@ -817,7 +818,7 @@ sub ObjectDraw
 		else
 			Object.Direction = FACING_LEFT
 		end if
-
+		
 		GetBit(CheckResult, Object.ActiveHotarus, 0)
 		if CheckResult == true
 			TempValue0 = Object.Hotaru1X
@@ -826,7 +827,7 @@ sub ObjectDraw
 			TempValue1 -= Object.HotaruRadius
 			DrawSpriteFX(Object.Frame, FX_FLIP, TempValue0, TempValue1)
 		end if
-
+		
 		GetBit(CheckResult, Object.ActiveHotarus, 1)
 		if CheckResult == true
 			TempValue0 = Object.Hotaru2X
@@ -844,7 +845,7 @@ sub ObjectDraw
 		Object.YPos = Screen.YOffset
 		Object.YPos += 104
 		Object.YPos <<= 16
-
+		
 		GetBit(CheckResult, Object.ActiveHotarus, 0)
 		if CheckResult == true
 			TempValue0 = Object.Hotaru1X
@@ -853,7 +854,7 @@ sub ObjectDraw
 			TempValue1 -= Object.HotaruRadius
 			DrawSpriteFX(Object.Frame, FX_FLIP, TempValue0, TempValue1)
 		end if
-
+		
 		GetBit(CheckResult, Object.ActiveHotarus, 1)
 		if CheckResult == true
 			TempValue0 = Object.Hotaru2X
@@ -877,7 +878,7 @@ sub ObjectDraw
 			DrawSpriteFX(6, FX_FLIP, TempValue0, TempValue1)
 			DrawSpriteFX(Object.Frame, FX_FLIP, TempValue0, TempValue1)
 		end if
-
+		
 		GetBit(CheckResult, Object.ActiveHotarus, 1)
 		if CheckResult == true
 			TempValue0 = Object.Hotaru2X
@@ -900,7 +901,7 @@ sub ObjectDraw
 			TempValue1 -= Object.HotaruRadius
 			DrawSpriteFX(Object.Frame, FX_FLIP, TempValue0, TempValue1)
 		end if
-
+		
 		GetBit(CheckResult, Object.ActiveHotarus, 1)
 		if CheckResult == true
 			TempValue0 = Object.Hotaru2X
@@ -910,7 +911,7 @@ sub ObjectDraw
 			DrawSpriteFX(Object.Frame, FX_FLIP, TempValue0, TempValue1)
 		end if
 		break
-
+		
 	case HOTARU_FLASHING
 		GetBit(CheckResult, Object.ActiveHotarus, 0)
 		if CheckResult == true
@@ -921,7 +922,7 @@ sub ObjectDraw
 			DrawSpriteFX(6, FX_FLIP, TempValue0, TempValue1)
 			DrawSpriteFX(Object.Frame, FX_FLIP, TempValue0, TempValue1)
 		end if
-
+		
 		GetBit(CheckResult, Object.ActiveHotarus, 1)
 		if CheckResult == true
 			TempValue0 = Object.Hotaru2X
@@ -931,7 +932,7 @@ sub ObjectDraw
 			DrawSpriteFX(6, FX_FLIP, TempValue0, TempValue1)
 			DrawSpriteFX(Object.Frame, FX_FLIP, TempValue0, TempValue1)
 		end if
-
+		
 		if Object.EletricityActive == true
 			if Object.ActiveHotarus == 3 // Both bits in the number active, meaning that both Hotarus are alive and well
 				
@@ -978,14 +979,14 @@ sub ObjectDraw
 			end if
 		end if
 		break
-
+		
 	end switch
-
+	
 end sub
 
 
 sub ObjectStartup
-
+	
 	LoadSpriteSheet("R7/Objects.gif")
 	
 	// Hotaru Frames
@@ -1008,8 +1009,6 @@ sub ObjectStartup
 	SpriteFrame(-12, -12, 24, 24, 175, 171)
 	SpriteFrame(-12, -12, 24, 24, 150, 196)
 	
-	// R71A__ - 0x03D548
-
 	// Cycle through all Hotaru objects in the level
 	ArrayPos0 = 32
 	while ArrayPos0 < 1056
@@ -1018,7 +1017,7 @@ sub ObjectStartup
 			// First, set their starting positions
 			Object[ArrayPos0].StartPosX = Object[ArrayPos0].XPos
 			Object[ArrayPos0].StartPosY = Object[ArrayPos0].YPos
-
+	
 			// Hotarus draw above other objects, including the Player
 			Object[ArrayPos0].DrawOrder = 5
 			
@@ -1037,60 +1036,61 @@ sub ObjectStartup
 				Object[ArrayPos0].Hotaru1X = -2293760
 				Object[ArrayPos0].Hotaru2X = 2293760
 				break
-
+	
 			case 4
 				Object[ArrayPos0].HotaruRadius = 4456448
 				Object[ArrayPos0].PropertyValue = BADNIK_GOOD
 				Object[ArrayPos0].Hotaru1X = -3276800
 				Object[ArrayPos0].Hotaru2X = 3276800
 				break
-
+	
 			case 5
 				Object[ArrayPos0].HotaruRadius = 4456448
 				Object[ArrayPos0].PropertyValue = BADNIK_BAD
 				Object[ArrayPos0].Hotaru1X = -3276800
 				Object[ArrayPos0].Hotaru2X = 3276800
 				break
-
+	
 			case 8
 				Object[ArrayPos0].HotaruRadius = 3670016
 				Object[ArrayPos0].PropertyValue = BADNIK_GOOD
 				Object[ArrayPos0].Hotaru1X = -4587520
 				Object[ArrayPos0].Hotaru2X = 4587520
 				break
-
+	
 			case 9
 				Object[ArrayPos0].HotaruRadius = 3670016
 				Object[ArrayPos0].PropertyValue = BADNIK_BAD
 				Object[ArrayPos0].Hotaru1X = -4587520
 				Object[ArrayPos0].Hotaru2X = 4587520
 				break
-
+	
 			case 12
 				Object[ArrayPos0].HotaruRadius = 1179648
 				Object[ArrayPos0].PropertyValue = BADNIK_GOOD
 				Object[ArrayPos0].Hotaru1X = -6291456
 				Object[ArrayPos0].Hotaru2X = 6291456
 				break
-
+	
 			case 13
 				Object[ArrayPos0].HotaruRadius = 1179648
 				Object[ArrayPos0].PropertyValue = BADNIK_BAD
 				Object[ArrayPos0].Hotaru1X = -6291456
 				Object[ArrayPos0].Hotaru2X = 6291456
 				break
-
+	
 			end switch
-
+			
 			// Set both of the object's Hotarus to active
 			SetBit(Object[ArrayPos0].ActiveHotarus, 0, true)
 			SetBit(Object[ArrayPos0].ActiveHotarus, 1, true)
 		end if
-
+		
 		ArrayPos0++
 	loop
-
+	
 end sub
+
 
 // ========================
 // Editor Subs
@@ -1099,10 +1099,10 @@ end sub
 sub RSDKEdit
 	if Editor.ReturnVariable == true
 		switch Editor.VariableID
-		case EDIT_VAR_PROPVAL // property value
+		case EDIT_VAR_PROPVAL // Property Value
 			CheckResult = Object.PropertyValue
 			break
-		case 0 // can you believe it guys?
+		case 0 // Condition
 			CheckResult = Object.PropertyValue
 			CheckResult &= 1
 			break
@@ -1113,10 +1113,10 @@ sub RSDKEdit
 		end switch
 	else
 		switch Editor.variableID
-		case EDIT_VAR_PROPVAL // property value
+		case EDIT_VAR_PROPVAL // Property Value
 			Object.PropertyValue = Editor.VariableValue
 			break
-		case 0 // woohoo!
+		case 0 // Condition
 			CheckNotEqual(Editor.VariableValue, false)
 			SetBit(Object.PropertyValue, 0, CheckResult)
 			break
@@ -1133,7 +1133,7 @@ end sub
 sub RSDKDraw
 	TempValue5 = Object.PropertyValue
 	TempValue5 &= 1
-		
+	
 	TempValue0 = Object.PropertyValue
 	TempValue0 &= 254
 	switch TempValue0
@@ -1141,28 +1141,23 @@ sub RSDKDraw
 	default
 		TempValue2 =  3932160
 		TempValue3 = -2293760
-		TempValue4 =  2293760
 		break
-
 	case 4
 		TempValue2 =  4456448
 		TempValue3 = -3276800
-		TempValue4 =  3276800
 		break
-
 	case 8
 		TempValue2 =  3670016
 		TempValue3 = -4587520
-		TempValue4 =  4587520
 		break
-
 	case 12
 		TempValue2 =  1179648
 		TempValue3 = -6291456
-		TempValue4 =  6291456
 		break
-
 	end switch
+	
+	TempValue4 = TempValue3
+	FlipSign(TempValue4)
 	
 	TempValue0 = TempValue3
 	TempValue0 += Object.XPos
@@ -1185,13 +1180,13 @@ sub RSDKLoad
 	SpriteFrame(-20, -12, 40, 24, 182, 121)
 	SpriteFrame(-20, -12, 40, 24, 182, 146)
 
-	AddEditorVariable("condition")
-	SetActiveVariable("condition")
+	AddEditorVariable("Condition")
+	SetActiveVariable("Condition")
 	AddEnumVariable("Good", BADNIK_GOOD)
 	AddEnumVariable("Bad",  BADNIK_BAD)
 	
-	AddEditorVariable("behaviour")
-	SetActiveVariable("behaviour")
+	AddEditorVariable("Behaviour")
+	SetActiveVariable("Behaviour")
 	AddEnumVariable("Formation A", 0)
 	AddEnumVariable("Formation B", 4)
 	AddEnumVariable("Formation C", 8)

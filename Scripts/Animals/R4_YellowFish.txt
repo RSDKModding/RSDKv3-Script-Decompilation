@@ -3,60 +3,93 @@
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
 // Aliases
-#alias 83: TYPE_YELLOWFISH
+#alias Object.Value0 : Object.Timer
+#alias Object.Value1 : Object.Angle
+
+#alias 0 : YELLOWFISH_SWIMRIGHT
+#alias 1 : YELLOWFISH_SWIMLEFT
+
+// Time Period Aliases
+#alias 2 : PERIOD_FUTURE_G
 
 
 sub ObjectMain
+	
 	switch Object.State
-	case 0
-		if Object.Value1 < 512
-			Object.Value1 += 2
+	case YELLOWFISH_SWIMRIGHT
+		if Object.Angle < 512
+			Object.Angle += 2
+			
+			// Move the fish right a pixel
 			Object.XPos += 65536
 		else
-			Object.State = 1
+			// Turn around
+			
+			Object.State = YELLOWFISH_SWIMLEFT
 			Object.Direction = FACING_LEFT
 		end if
 		break
-	case 1
-		if Object.Value1 > 0
-			Object.Value1 -= 2
+		
+	case YELLOWFISH_SWIMLEFT
+		if Object.Angle > 0
+			Object.Angle -= 2
+			
+			// Move the fish a pixel left
 			Object.XPos -= 65536
 		else
-			Object.State = 0
+			// Turn once back around
+			
+			Object.State = YELLOWFISH_SWIMRIGHT
 			Object.Direction = FACING_RIGHT
 		end if
 		break
+		
 	end switch
-	Object.Value0++
-	if Object.Value0 > 19
-		Object.Value0 = 0
+	
+	// Animate the Fish
+	Object.Timer++
+	if Object.Timer > 19
+		Object.Timer = 0
+		
 		Object.Frame++
 		Object.Frame &= 1
 	end if
+	
 end sub
 
 
 sub ObjectDraw
-	if MetalSonic_Destroyed == 1
-		Sin(TempValue1, Object.Value1)
+	
+	if MetalSonic_Destroyed == true
+		Sin(TempValue1, Object.Angle)
 		TempValue1 <<= 12
 		TempValue1 += Object.YPos
+		
 		DrawSpriteFX(Object.Frame, FX_FLIP, Object.XPos, TempValue1)
 	end if
-	if Object[24].PropertyValue == 2
-		Sin(TempValue1, Object.Value1)
+	
+	if Object[24].PropertyValue == PERIOD_FUTURE_G
+		Sin(TempValue1, Object.Angle)
 		TempValue1 <<= 12
 		TempValue1 += Object.YPos
+		
 		DrawSpriteFX(Object.Frame, FX_FLIP, Object.XPos, TempValue1)
 	end if
+	
 end sub
 
 
 sub ObjectStartup
+	
 	LoadSpriteSheet("R4/Objects3.gif")
+	
+	// Fish Frames
+	
 	SpriteFrame(-8, -12, 16, 24, 1, 92)
 	SpriteFrame(-8, -12, 16, 24, 18, 92)
+	
 end sub
+
 
 // ========================
 // Editor Subs
@@ -66,9 +99,10 @@ sub RSDKDraw
 	DrawSprite(0)
 end sub
 
+
 sub RSDKLoad
-	LoadSpriteSheet("Global/Display.gif")
-	SpriteFrame(-16, -16, 32, 32, 1, 143)		// #0 - "Script" Icon
+	LoadSpriteSheet("R4/Objects3.gif")
+	SpriteFrame(-8, -12, 16, 24, 1, 92)
 
 	SetVariableAlias(ALIAS_VAR_PROPVAL, "unused")
 end sub

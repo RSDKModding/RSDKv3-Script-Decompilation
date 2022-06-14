@@ -1,4 +1,4 @@
-//------------Sonic CD Amy2 Script-------------//
+//------------Sonic CD Amy 2 Script-------------//
 //--------Scripted by Christian Whitehead 'The Taxman'--------//
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
@@ -36,16 +36,17 @@ sub ObjectMain
 			// Can't run away forever!
 			// It's been 10 seconds of chasing Sonic already so just take away Sonic's control and end the level regardless if he wants it or not
 			Object.FallBackTimer = 601
+			
 			Player.Left  = false
 			Player.Right = false
 			Player.Up    = false
 			Player.Down  = false
 			Player.ControlMode = -1
-
-			CreateTempObject(TypeName[FadeMusic], 3, Object.XPos, Object.YPos)
+			
+			CreateTempObject(TypeName[Fade Music], 3, Object.XPos, Object.YPos)
 		end if
 	end if
-
+	
 	switch Object.State
 	case AMY2_CHASEPLAYER
 		Object.Timer++
@@ -57,6 +58,7 @@ sub ObjectMain
 				Object.Frame++
 			end if
 			break
+			
 		case 5
 		case 7
 			if Object.Timer == 3
@@ -64,6 +66,7 @@ sub ObjectMain
 				Object.Frame++
 			end if
 			break
+			
 		end switch
 
 		if Object.Frame > 7
@@ -97,7 +100,7 @@ sub ObjectMain
 									Player.Up    = false
 									Player.Down  = false
 									Player.ControlMode = -1
-
+									
 									CreateTempObject(TypeName[FadeMusic], 3, Object.XPos, Object.YPos)
 								end if
 #platform: Use_Haptics
@@ -159,14 +162,16 @@ sub ObjectMain
 							else
 								if Object.FallBackTimer < 600
 									Object.FallBackTimer = 601
+									
 									Player.Left  = false
 									Player.Right = false
 									Player.Up    = false
 									Player.Down  = false
 									Player.ControlMode = -1
-
+									
 									CreateTempObject(TypeName[FadeMusic], 3, Object.XPos, Object.YPos)
 								end if
+								
 								Object.State = AMY2_HUGGING
 								Object.Frame = 8
 								Object.Timer = 0
@@ -218,7 +223,7 @@ sub ObjectMain
 		end if
 		
 		PlayerObjectCollision(C_TOUCH, -4, -360, 4, 360)
-		if CheckResult == 0
+		if CheckResult == false
 			if Player.Gravity == 0
 				Object.State = AMY2_CHASEPLAYER
 				Object.Frame = 4
@@ -311,7 +316,7 @@ sub ObjectMain
 	// (Perhaps it was the hugging state? It is for PPZ's Amy, which is what this object seems to be based on)
 	if Object.State == 7
 		if Object.HeartsTimer > 15
-			CreateTempObject(TypeName[LoveHeart], 0, Object.XPos, Object.YPos)
+			CreateTempObject(TypeName[Love Heart], 0, Object.XPos, Object.YPos)
 			Object[TempObjectPos].iYPos -= 6
 
 			// Give the Heart the INK_ALPHA effect and start it at full opacity
@@ -322,7 +327,7 @@ sub ObjectMain
 		end if
 	else
 		if Object.HeartsTimer > 41
-			CreateTempObject(TypeName[LoveHeart], 0, Object.XPos, Object.YPos)
+			CreateTempObject(TypeName[Love Heart], 0, Object.XPos, Object.YPos)
 			Object[TempObjectPos].iYPos -= 6
 			
 			// Start the Love Heart with the alpha effect and at full opacity
@@ -386,6 +391,7 @@ sub ObjectStartup
 	SpriteFrame(-12, -20, 24, 40, 107, 208)
 
 end sub
+
 
 // ========================
 // Editor Subs

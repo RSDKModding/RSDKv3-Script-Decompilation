@@ -3,49 +3,57 @@
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
 // Aliases
-#alias 51: TYPE_VERTICALDOOR
-
 #alias Object.Value0 : Object.DrawPosY
+
+#alias 0 : VERTICALDOOR_CLOSED
+#alias 1 : VERTICALDOOR_START_OPENING
+#alias 2 : VERTICALDOOR_END_CLOSING
+#alias 3 : VERTICALDOOR_END_OPENED
+#alias 4 : VERTICALDOOR_END_CLOSING_METAL
+#alias 5 : VERTICALDOOR_START_OPENED
+#alias 6 : VERTICALDOOR_END_CLOSED_SONIC
 
 
 sub ObjectMain
 
 	switch Object.State
-	case 1
+	case VERTICALDOOR_START_OPENING
 		if Object.DrawPosY < 4194304
 			Object.DrawPosY += 131072
 			Object.YPos -= 131072
 		else
-			Object.State = 5
+			Object.State = VERTICALDOOR_START_OPENED
 		end if
 		break
 		
-	case 2
+	case VERTICALDOOR_END_CLOSING
 		if Object.DrawPosY > 0
 			Object.DrawPosY -= 131072
 			Object.YPos += 131072
 		else
-			Object.State = 6
+			Object.State = VERTICALDOOR_END_CLOSED_SONIC
 		end if
 		break
 		
-	case 3
+	case VERTICALDOOR_END_OPENED
 		TempValue0 = Player.CollisionRight
 		TempValue0 += 16
 		TempValue0 <<= 16
 		TempValue0 += Object.XPos
 		if Player.XPos > TempValue0
-			Object.State = 2
+			// Player is past the door, do the standard closing routine
+			Object.State = VERTICALDOOR_END_CLOSING
 			PlayStageSfx(3, 0)
 		else
 			if Object[+2].XPos > Object.XPos
-				Object.State = 4
+				// If Metal Sonic is past the door
+				Object.State = VERTICALDOOR_END_CLOSING_METAL
 				PlayStageSfx(3, 0)
 			end if
 		end if
 		break
 		
-	case 4
+	case VERTICALDOOR_END_CLOSING_METAL
 		if Object.DrawPosY > 0
 			Object.DrawPosY -= 131072
 			Object.YPos += 131072
@@ -60,19 +68,19 @@ end sub
 sub ObjectPlayerInteraction
 
 	switch Object.State
-	case 0
+	case VERTICALDOOR_CLOSED
 		// Act as a tall vertical wall
 		PlayerObjectCollision(C_BOX, -16, -32, 16, 64)
 		break
 		
-	case 1
-	case 5
+	case VERTICALDOOR_START_OPENING
+	case VERTICALDOOR_START_OPENED
 		// Acting as a comparatively shorter wall (it's still pretty tall though!)
 		PlayerObjectCollision(C_BOX, -16, -32, 16, 32)
 		break
 		
-	case 2
-	case 6
+	case VERTICALDOOR_END_CLOSING
+	case VERTICALDOOR_END_CLOSED_SONIC
 		// Acting as a *really* tall vertical wall
 		PlayerObjectCollision(C_BOX, -16, -32, 16, 128)
 		
@@ -92,7 +100,7 @@ sub ObjectPlayerInteraction
 		end if
 		break
 		
-	case 3
+	case VERTICALDOOR_END_OPENED
 		// Somewhat tall vertical wall
 		PlayerObjectCollision(C_BOX, -16, -32, 16, 32)
 		
@@ -112,7 +120,7 @@ sub ObjectPlayerInteraction
 		end if
 		break
 		
-	case 4
+	case VERTICALDOOR_END_CLOSING_METAL
 		// Only enforcing right bounds, no need for collision checks anymore
 		TempValue0 = Player.CollisionRight
 		TempValue0 <<= 16
@@ -163,18 +171,21 @@ sub ObjectStartup
 
 end sub
 
+
 // ========================
 // Editor Subs
 // ========================
 
 sub RSDKDraw
 	DrawSprite(0)
+	DrawSprite(1)
 end sub
 
 
 sub RSDKLoad
 	LoadSpriteSheet("R7/Objects.gif")
-	SpriteFrame(-16, 0, 32, 32, 1, 1) // Sticking with the good variant here...
+	SpriteFrame(-16, 0, 32, 32, 1, 1) // Sticking with the normal variant here...
+	SpriteFrame(-16, -32, 32, 32, 1, 1)
 
 	SetVariableAlias(ALIAS_VAR_PROPVAL, "unused")
 end sub

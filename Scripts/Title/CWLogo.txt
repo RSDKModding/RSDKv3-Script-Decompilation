@@ -5,7 +5,7 @@
 
 // Aliases
 #alias Object.Value0	: Object.Timer
-#alias Object.Value1	: Object.RectAlpha	//Only used in mobile
+#alias Object.Value1	: Object.RectAlpha	// Only used on mobile
 #alias Object.Value2 	: Object.BGScale
 
 #alias Object.Rotation	: Object.Rotation
@@ -24,6 +24,7 @@
 #alias 7 : CALLBACK_EXIT_SELECTED
 
 #alias 6 : ENGINE_EXIT_HIRESMODE
+
 
 sub ObjectMain
 	switch Object.State
@@ -44,6 +45,7 @@ sub ObjectMain
 			Object.RectAlpha = 256
 			Object.State++
 		end if
+		
 		Object.Rotation += 8
 		Object.Rotation &= 511
 		break
@@ -58,6 +60,7 @@ sub ObjectMain
 			Object.Rotation += 8
 			Object.Rotation &= 511
 		end if
+		
 		if Object.RectAlpha > 0
 			Object.RectAlpha -= 8
 		else
@@ -70,9 +73,13 @@ sub ObjectMain
 			Object.Timer++
 		else
 			Object.Timer = 0
+
 #platform: Mobile
-			Object.Value3 = 0	//Unknown Use
+			// It's unknown exactly what this does, it's never referenced anywhere else
+			// And it was only added in post via an update as well, certainly quite strange...
+			Object.Value3 = 0
 #endplatform
+
 			Object.State++
 		end if
 		break
@@ -84,11 +91,13 @@ sub ObjectMain
 			else
 				Object.BGScale -= 128
 			end if
+
 			Object.Rotation -= 8
 			if Object.Rotation < 0
 				Object.Rotation += 512
 			end if
 		end if
+
 		if Object.RectAlpha < 256
 			Object.RectAlpha += 10
 		else
@@ -104,6 +113,7 @@ sub ObjectMain
 			else
 				Object.BGScale -= 128
 			end if
+
 			Object.Rotation -= 8
 			if Object.Rotation < 0
 				Object.Rotation += 512
@@ -111,7 +121,8 @@ sub ObjectMain
 		else
 			if Object.Timer == 16
 				ResetObjectEntity(Object.EntityNo, TypeName[Sonic], 0, Object.XPos, Object.YPos)
-				Object.InkEffect = 2 //INK_ALPHA
+
+				Object.InkEffect = 2 // INK_ALPHA
 				Object.Alpha = 0
 				Object.Timer = 0
 #platform: Mobile
@@ -137,14 +148,16 @@ end sub
 
 
 sub ObjectDraw
-	//8 Point Star Pattern
+	// 8 Point Star Pattern
 	DrawRect(0, 0, Screen.XSize, Screen.YSize, 0, 0, 96, 255)
 	Object.Scale = Object.BGScale
 	DrawSpriteFX(1, FX_ROTOZOOM, Object.XPos, Object.YPos)
 	Object.Rotation += 64
 	DrawSpriteFX(1, FX_ROTOZOOM, Object.XPos, Object.YPos)
+
 	Object.Rotation -= 64
-	//Logo Fade In-Out
+
+	// Logo Fade In-Out
 	switch Object.State
 	case CWLOGO_BGSCALE_INCREASE_2
 	case CWLOGO_LOGO_FADEIN
@@ -184,6 +197,8 @@ end sub
 sub RSDKLoad
 	LoadSpriteSheet("Global/Display.gif")
 	SpriteFrame(-16, -16, 32, 32, 1, 143)		// #0 - "Script" Icon
+
+	// (The actual CW Logo sprite is meant for Hi-res mode, which isn't available in the editor)
 
 	SetVariableAlias(ALIAS_VAR_PROPVAL, "unused")
 end sub

@@ -3,23 +3,27 @@
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
 // Aliases
-#alias 48: TYPE_RPLATFORM
-
-
 #alias Object.Value0 : Object.Angle
 #alias Object.Value1 : Object.PlatformX
 #alias Object.Value2 : Object.PlatformY
 #alias Object.Value3 : Object.ChangeX
 #alias Object.Value4 : Object.ChangeY
 #alias Object.Value5 : Object.SwingAngle
-#alias Object.Value6 : Object.Chains
+#alias Object.Value6 : Object.ChainsNo
+
+#alias 0 : RPLATFORM_FULL_CW_SLOWAPEX
+#alias 1 : RPLATFORM_FULL_CW
+#alias 2 : RPLATFORM_FULL_CCW
+#alias 3 : RPLATFORM_TOP180
+#alias 4 : RPLATFORM_RIGHT180
+#alias 5 : RPLATFORM_BOTTOM180
 
 
 sub ObjectMain
 
 	// Each state directly corresponds to a subtype of the platform
 	switch Object.State
-	case 0
+	case RPLATFORM_FULL_CW_SLOWAPEX
 		Object.SwingAngle++
 		Object.SwingAngle &= 511
 		Sin(Object.Angle, Object.SwingAngle)
@@ -27,7 +31,7 @@ sub ObjectMain
 		Object.Angle += 640
 		break
 
-	case 1
+	case RPLATFORM_FULL_CW
 		Object.SwingAngle++
 		Object.SwingAngle &= 511
 		TempValue0 = Object.SwingAngle
@@ -38,7 +42,7 @@ sub ObjectMain
 		Object.Angle -= TempValue1
 		break
 
-	case 2
+	case RPLATFORM_FULL_CCW
 		Object.SwingAngle++
 		Object.SwingAngle &= 511
 		TempValue0 = Object.SwingAngle
@@ -48,7 +52,7 @@ sub ObjectMain
 		Object.Angle += 640
 		break
 
-	case 3
+	case RPLATFORM_TOP180
 		Object.SwingAngle++
 		Object.SwingAngle &= 511
 		Sin(Object.Angle, Object.SwingAngle)
@@ -56,7 +60,7 @@ sub ObjectMain
 		Object.Angle += 896
 		break
 
-	case 4
+	case RPLATFORM_RIGHT180
 		Object.SwingAngle++
 		Object.SwingAngle &= 511
 		Sin(Object.Angle, Object.SwingAngle)
@@ -64,7 +68,7 @@ sub ObjectMain
 		Object.Angle += 512
 		break
 
-	case 5
+	case RPLATFORM_BOTTOM180
 		Object.SwingAngle++
 		Object.SwingAngle &= 511
 		Sin(Object.Angle, Object.SwingAngle)
@@ -74,7 +78,7 @@ sub ObjectMain
 
 	end switch
 
-	TempValue1 = Object.Chains
+	TempValue1 = Object.ChainsNo
 	TempValue1++
 	TempValue1 <<= 4
 
@@ -194,7 +198,7 @@ sub ObjectDraw
 	// Draw all the chains
 	TempValue0 = 0
 	TempValue1 = 16
-	while TempValue0 < Object.Chains
+	while TempValue0 < Object.ChainsNo
 		Cos(TempValue2, Object.Angle)
 		TempValue2 *= TempValue1
 		TempValue2 <<= 7
@@ -228,7 +232,7 @@ sub ObjectDraw
 	Object.PlatformY &= 4294901760 // Same as above
 
 	DrawSpriteXY(2, Object.PlatformX, Object.PlatformY)
-
+	
 end sub
 
 
@@ -249,33 +253,33 @@ sub ObjectStartup
 	while ArrayPos0 < 1056
 		if Object[ArrayPos0].Type == TypeName[RPlatform]
 			if Object[ArrayPos0].PropertyValue == 19
-				Object[ArrayPos0].State = 5
-				Object[ArrayPos0].Chains = 2
+				Object[ArrayPos0].State = RPLATFORM_BOTTOM180
+				Object[ArrayPos0].ChainsNo = 2
 			end if
 
 			if Object[ArrayPos0].PropertyValue == 35
-				Object[ArrayPos0].State = 3
-				Object[ArrayPos0].Chains = 2
+				Object[ArrayPos0].State = RPLATFORM_TOP180
+				Object[ArrayPos0].ChainsNo = 2
 			end if
 
 			if Object[ArrayPos0].PropertyValue == 54
-				Object[ArrayPos0].State = 0
-				Object[ArrayPos0].Chains = 5
+				Object[ArrayPos0].State = RPLATFORM_FULL_CW_SLOWAPEX
+				Object[ArrayPos0].ChainsNo = 5
 			end if
 
 			if Object[ArrayPos0].PropertyValue == 67
-				Object[ArrayPos0].State = 4
-				Object[ArrayPos0].Chains = 2
+				Object[ArrayPos0].State = RPLATFORM_RIGHT180
+				Object[ArrayPos0].ChainsNo = 2
 			end if
 
 			if Object[ArrayPos0].PropertyValue == 99
-				Object[ArrayPos0].State = 1
-				Object[ArrayPos0].Chains = 2
+				Object[ArrayPos0].State = RPLATFORM_FULL_CW
+				Object[ArrayPos0].ChainsNo = 2
 			end if
 
 			if Object[ArrayPos0].PropertyValue == 115
-				Object[ArrayPos0].State = 2
-				Object[ArrayPos0].Chains = 2
+				Object[ArrayPos0].State = RPLATFORM_FULL_CCW
+				Object[ArrayPos0].ChainsNo = 2
 			end if
 		end if
 
@@ -284,11 +288,10 @@ sub ObjectStartup
 
 end sub
 
+
 // ========================
 // Editor Subs
 // ========================
-
-// TODO: incomplete, i'm not even gonna attempt this if i can't see what i'm doing since this object seems to be so complex
 
 // the property value format seems to be
 // lowest three bits - chain length
@@ -299,19 +302,19 @@ end sub
 sub RSDKEdit
 	if Editor.ReturnVariable == true
 		switch Editor.VariableID
-		case EDIT_VAR_PROPVAL // property value
+		case EDIT_VAR_PROPVAL // Property Value
 			CheckResult = Object.PropertyValue
 			break
-		case 0 // type
+		case 0 // Type
 			CheckResult = Object.PropertyValue
 			break
 		end switch
 	else
 		switch Editor.variableID
-		case EDIT_VAR_PROPVAL // property value
+		case EDIT_VAR_PROPVAL // Property Value
 			Object.PropertyValue = Editor.VariableValue
 			break
-		case 0 // type
+		case 0 // Type
 			Object.PropertyValue = Editor.VariableValue
 			break
 		end switch
@@ -322,7 +325,6 @@ end sub
 
 sub RSDKDraw
 
-	// Note - each platform has a unique angle & chain length, do the stuff here
 	TempValue4 = 0 // chainsNo
 	TempValue1 = 0 // behaviour
 
@@ -356,29 +358,18 @@ sub RSDKDraw
 	
 	switch TempValue1
 	case 0
-		Object.Angle = 640
-		break
 	case 1
-		Object.Angle = 640
-		break
 	case 2
-		Object.Angle += 640
-		break
-	case 3
-		Object.Angle = 896
-		break
-	case 4
-		Object.Angle = 512
-		break
 	case 5
-		Object.Angle = 640
-		break
+		Object.Angle = 640; break
+	case 3
+		Object.Angle = 896; break
+	case 4
+		Object.Angle = 512; break
 	end switch
 
-	// Draw the platform post frame
 	DrawSprite(0)
 
-	// Draw all the chains
 	TempValue0 = 0
 	TempValue1 = 16
 	while TempValue0 < TempValue4
@@ -420,8 +411,9 @@ sub RSDKLoad
 	SpriteFrame(-8, -8, 16, 16, 51, 1)  // Chain
 	SpriteFrame(-32, -8, 64, 16, 68, 1) // Platform
 
-	AddEditorVariable("type")
-	SetActiveVariable("type")
+	// TODO: actual names lol
+	AddEditorVariable("Type")
+	SetActiveVariable("Type")
 	AddEnumVariable("why do", 19)
 	AddEnumVariable("the values", 35)
 	AddEnumVariable("jump around", 54)

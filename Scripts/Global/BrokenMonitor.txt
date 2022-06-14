@@ -3,7 +3,7 @@
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
 // Aliases
-#alias Object.Value0			:	Object.YVelocity
+#alias Object.Value0			:	Object.PowerupPos
 #alias Object.Value1			:	Object.Timer
 
 // Power Up Aliases
@@ -53,11 +53,12 @@
 // GameModes
 #alias 2						:	GAMEMODE_TIMEATTACK
 
+
 sub ObjectMain
 	switch Object.State
 	case BROKENMONITOR_SPAWN_POWERUP
 		if Object.Timer < 0
-			Object.YVelocity += Object.Timer
+			Object.PowerupPos += Object.Timer
 			Object.Timer += 6144
 		else
 			Object.Timer = 0
@@ -199,8 +200,9 @@ end sub
 
 sub ObjectDraw
 	DrawSprite(0)
+	
 	if Object.PropertyValue > 0
-		DrawSpriteFX(Object.PropertyValue, FX_INK, Object.XPos, Object.YVelocity)
+		DrawSpriteFX(Object.PropertyValue, FX_INK, Object.XPos, Object.PowerupPos)
 	end if
 end sub
 
@@ -209,6 +211,7 @@ sub ObjectStartup
 	LoadSpriteSheet("Global/Items.gif")
 
 	SpriteFrame(-16, 0, 32, 16, 51, 166)		// #0 - Broken Monitor
+	
 	// Icons
 	SpriteFrame(-8, -8, 16, 16, 26, 7)			// #1 - Ring
 	SpriteFrame(-8, -8, 16, 16, 26, 40)			// #2 - Blue Shield
@@ -220,6 +223,7 @@ sub ObjectStartup
 	SpriteFrame(-8, -8, 16, 16, 59, 139)		// #8 - S
 end sub
 
+
 // ========================
 // Editor Subs
 // ========================
@@ -228,11 +232,12 @@ sub RSDKDraw
 	DrawSprite(0)
 end sub
 
+
 sub RSDKLoad
 	LoadSpriteSheet("Global/Items.gif")
 
 	SpriteFrame(-16, 0, 32, 16, 51, 166)		// #0 - Broken Monitor
 
-	// Not used in-editor
+	// Not to be used in-editor
 	SetVariableAlias(ALIAS_VAR_PROPVAL, "unused")
 end sub

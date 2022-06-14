@@ -7,35 +7,57 @@
 
 
 sub ObjectDraw
+
+	// The clouds move at a speed of 8px per second
 	Object.Speed += 8
+	
+	// Limit it to 0x07FF
 	Object.Speed &= 2047
+	
+	// The clouds should be scrolling towards the screen, not away!
 	TempValue0 = Object.Speed
 	FlipSign(TempValue0)
+	
 	MatrixTranslateXYZ(MAT_WORLD, -512, 720, TempValue0)
+	
 	Draw3DScene()
+
 end sub
 
 
 sub ObjectStartup
+
+	// Load the Clouds Sprite Sheet
 	LoadSpriteSheet("Title/Clouds.gif")
+	
+	// No Sprite Frames need to be setup,
+	// since the entire sheet will be projected onto the Face
+	
 	3DScene.NoVertices = 0
 	3DScene.NoFaces = 0
 	ArrayPos0 = 3DScene.NoVertices
 	ArrayPos1 = 3DScene.NoFaces
+	
+	// Reset vertexes to their starting position
 	MatrixTranslateXYZ(MAT_WORLD, 0, 0, 0)
 	MatrixRotateXYZ(MAT_WORLD, 0, 0, 0)
 	MatrixRotateXYZ(MAT_VIEW, 8, 0, 0)
+	
 	ArrayPos0 = 0
 	ArrayPos1 = 0
-	TempValue2 = 0	//TempValue2 is the starting point of the clouds after loop
-	TempValue3 = 0	//TempValue3 is the minimal value for the amount of clouds to generate
-	TempValue4 = 0	//TempValue4 is the width of the cloud sprite
-	TempValue5 = 0	//TempValue5 is the height of the cloud sprite
-	while TempValue3 < 10	//Makes 10 Cloud "Rows"
+	TempValue2 = 0	// TempValue2 is the starting point of the clouds after loop
+	TempValue3 = 0	// TempValue3 is the minimal value for the amount of clouds to generate
+	TempValue4 = 0	// TempValue4 is the width of the cloud sprite
+	TempValue5 = 0	// TempValue5 is the height of the cloud sprite
+
+	// Make 10 Cloud "Rows"
+	while TempValue3 < 10
 		TempValue0 = 0
 		TempValue1 = -8192
 		TempValue4 = 0
-		while TempValue0 < 16	//Long Story Short, sets the angles for 16 cloud "Columns"
+
+		// Long Story Short, this sets the angles for 16 cloud "Columns"
+		while TempValue0 < 16
 			VertexBuffer[ArrayPos0].x = TempValue1
 			VertexBuffer[ArrayPos0].y = 0
 			VertexBuffer[ArrayPos0].z = TempValue2
@@ -82,14 +104,17 @@ sub ObjectStartup
 			ArrayPos0 += 4
 			ArrayPos1++
 			TempValue0++
+
 			3DScene.NoVertices += 4
 			3DScene.NoFaces++
 		loop
+
 		TempValue5 += 64
 		TempValue5 &= 255
 		TempValue2 += 512
 		TempValue3++
 	loop
+	
 end sub
 
 // ========================
@@ -100,9 +125,10 @@ sub RSDKDraw
 	DrawSprite(0)
 end sub
 
+
 sub RSDKLoad
-	LoadSpriteSheet("Global/Display.gif")
-	SpriteFrame(-16, -16, 32, 32, 1, 143)		// #0 - "Script" Icon
+	LoadSpriteSheet("Title/Clouds.gif")
+	SpriteFrame(-128, -128, 256, 256, 0, 0)
 
 	SetVariableAlias(ALIAS_VAR_PROPVAL, "unused")
 end sub

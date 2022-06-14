@@ -5,11 +5,13 @@
 // Aliases
 #alias 17: TYPE_HWBACKGROUND
 
+#alias Object.Value0 : Object.Timer
+
 
 sub ObjectDraw
-	Object.Value0++
-	if Object.Value0 > 5
-		Object.Value0 = 0
+	Object.Timer++
+	if Object.Timer > 5
+		Object.Timer = 0
 		Object.Frame++
 		Object.Frame &= 31
 		if Object.Frame > 15
@@ -17,6 +19,7 @@ sub ObjectDraw
 		else
 			SetActivePalette(0, 0, Screen.YSize)
 		end if
+		
 		Object.Value1 = Object.Frame
 		Object.Value1 &= 3
 		Object.Value1 <<= 7
@@ -29,6 +32,7 @@ sub ObjectDraw
 		Object.Value4 = Object.Value3
 		Object.Value4 += 127
 	end if
+	
 	Object.Value5++
 	Object.Value5 &= 1023
 	TempValue4 = Object.Value5
@@ -169,10 +173,14 @@ end sub
 
 
 sub ObjectStartup
+
 	MatrixTranslateXYZ(MAT_WORLD, 0, 0, 0)
 	MatrixTranslateXYZ(MAT_VIEW, 0, 0, 0)
-	Stage[0].ActiveLayer = 3
+	
+	Stage.ActiveLayer[0] = 3
+	
 	LoadSpriteSheet("Special/SSBG1.gif")
+	
 	Object[31].Type = TypeName[HWBackground]
 	Object[31].Priority = 1
 	Object[31].DrawOrder = 0
@@ -180,6 +188,7 @@ sub ObjectStartup
 	Object[31].Value2 = 128
 	Object[31].Value3 = 0
 	Object[31].Value4 = 128
+	
 	ArrayPos0 = 0
 	TempValue0 = 0
 #platform: Standard
@@ -272,6 +281,7 @@ sub ObjectStartup
 		LoadPalette("SS1H_PalCycle.act", 1, 208, 0, 32)
 	loop
 end sub
+
 
 // ========================
 // Editor Subs

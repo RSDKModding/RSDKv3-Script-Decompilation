@@ -5,14 +5,22 @@
 // Aliases
 #alias 62: TYPE_TUNNELPATH1
 
+#alias Object.Value0 : Object.Timer
+
+#alias 0 : TUNNELPATH_IDLE
+#alias 1 : TUNNELPATH_ACTIVE
+
 
 sub ObjectMain
-	if Object.State == 1
+	
+	if Object.State == TUNNELPATH_ACTIVE
 		if Player.State == PlayerObject_Death
-			Object.State = 0
+			Object.State = TUNNELPATH_IDLE
 		end if
-		TempValue0 = Object.Value0
-		Object.Value0++
+		
+		TempValue0 = Object.Timer
+		
+		Object.Timer++
 		Player.Speed = Player.XPos
 		Player.Animation = ANI_JUMPING
 		Player.AnimationSpeed = 240
@@ -282,9 +290,10 @@ sub ObjectMain
 			Player.Speed = 655360
 			Player.YVelocity = 393216
 			Player.State = PlayerObject_HandleAir
-			Player.ObjectInteraction = 1
+			Player.ObjectInteraction = true
 			break
 		end switch
+
 		Player.XPos += Object.XPos
 		Player.YPos += Object.YPos
 		if Object.State > 0
@@ -296,20 +305,29 @@ end sub
 
 
 sub ObjectPlayerInteraction
+	
 	if Object.PropertyValue == 0
 		if Player.State != PlayerObject_Blank
 			PlayerObjectCollision(C_TOUCH, -8, -16, 8, 16)
-			if CheckResult == 1
+			
+			if CheckResult == true
+				// Engage the Player with the Tunnel
+				
 				Player.State = PlayerObject_Blank
-				Player.ObjectInteraction = 0
-				Object.State = 1
-				Object.Value0 = 0
+				Player.ObjectInteraction = false
+				Object.State = TUNNELPATH_ACTIVE
+				Object.Timer = 0
+				
+				// Make this Object always active, as if it ever stops running,
+				// then the Player will be stuck in the Tube forever
 				Object.Priority = 1
 				PlaySfx(7, 0)
 			end if
 		end if
 	end if
+	
 end sub
+
 
 // ========================
 // Editor Subs
@@ -317,7 +335,351 @@ end sub
 
 sub RSDKDraw
 	DrawSprite(0)
+	
+	if Editor.ShowGizmos == true
+		// heh i hope this works lol
+		// gonna ignore editor.drawingoverlay for this because i don't imagine this'll be kept anyways
+		
+		TempValue2 = 0
+		while TempValue2 < 64
+			switch TempValue2
+			case 0
+				TempValue0 = 55808
+				TempValue1 = 47616
+				break
+			
+			case 1
+				TempValue0 = 55808
+				TempValue1 = 702976
+				break
+			
+			case 2
+				TempValue0 = 55808
+				TempValue1 = 1358336
+				break
+			
+			case 3
+				TempValue0 = 55808
+				TempValue1 = 2013696
+				break
+			
+			case 4
+				TempValue0 = 55808
+				TempValue1 = 2669056
+				break
+			
+			case 5
+				TempValue0 = 55808
+				TempValue1 = 3324416
+				break
+			
+			case 6
+				TempValue0 = 55808
+				TempValue1 = 3717632
+				break
+			
+			case 7
+				TempValue0 = 711168
+				TempValue1 = 4209152
+				break
+			
+			case 8
+				TempValue0 = 1366528
+				TempValue1 = 4700672
+				break
+			
+			case 9
+				TempValue0 = 2021888
+				TempValue1 = 5192192
+				break
+			
+			case 10
+				TempValue0 = 2152960
+				TempValue1 = 5257728
+				break
+			
+			case 11
+				TempValue0 = 1497600
+				TempValue1 = 5421568
+				break
+			
+			case 12
+				TempValue0 = 842240
+				TempValue1 = 5585408
+				break
+			
+			case 13
+				TempValue0 = 186880
+				TempValue1 = 5749248
+				break
+			
+			case 14
+				TempValue0 = -468480
+				TempValue1 = 5913088
+				break
+			
+			case 15
+				TempValue0 = -1123840
+				TempValue1 = 6076928
+				break
+			
+			case 16
+				TempValue0 = -1779200
+				TempValue1 = 6240768
+				break
+			
+			case 17
+				TempValue0 = -2434560
+				TempValue1 = 6404608
+				break
+			
+			case 18
+				TempValue0 = -3089920
+				TempValue1 = 6568448
+				break
+			
+			case 19
+				TempValue0 = -3745280
+				TempValue1 = 6732288
+				break
+			
+			case 20
+				TempValue0 = -4400640
+				TempValue1 = 6896128
+				break
+			
+			case 21
+				TempValue0 = -5056000
+				TempValue1 = 7059968
+				break
+			
+			case 22
+				TempValue0 = -5711360
+				TempValue1 = 7223808
+				break
+			
+			case 23
+				TempValue0 = -6235648
+				TempValue1 = 7354880
+				break
+			
+			case 24
+				TempValue0 = -5580288
+				TempValue1 = 7518720
+				break
+			
+			case 25
+				TempValue0 = -4924928
+				TempValue1 = 7682560
+				break
+			
+			case 26
+				TempValue0 = -4269568
+				TempValue1 = 7846400
+				break
+			
+			case 27
+				TempValue0 = -3614208
+				TempValue1 = 8010240
+				break
+			
+			case 28
+				TempValue0 = -2958848
+				TempValue1 = 8174080
+				break
+			
+			case 29
+				TempValue0 = -2303488
+				TempValue1 = 8337920
+				break
+			
+			case 30
+				TempValue0 = -1648128
+				TempValue1 = 8501760
+				break
+			
+			case 31
+				TempValue0 = -992768
+				TempValue1 = 8665600
+				break
+			
+			case 32
+				TempValue0 = -337408
+				TempValue1 = 8829440
+				break
+			
+			case 33
+				TempValue0 = 317952
+				TempValue1 = 8993280
+				break
+			
+			case 34
+				TempValue0 = 973312
+				TempValue1 = 9157120
+				break
+			
+			case 35
+				TempValue0 = 1628672
+				TempValue1 = 9320960
+				break
+			
+			case 36
+				TempValue0 = 2152960
+				TempValue1 = 9452032
+				break
+			
+			case 37
+				TempValue0 = 1497600
+				TempValue1 = 9615872
+				break
+			
+			case 38
+				TempValue0 = 842240
+				TempValue1 = 9779712
+				break
+			
+			case 39
+				TempValue0 = 186880
+				TempValue1 = 9943552
+				break
+			
+			case 40
+				TempValue0 = -468480
+				TempValue1 = 10107392
+				break
+			
+			case 41
+				TempValue0 = -1123840
+				TempValue1 = 10271232
+				break
+			
+			case 42
+				TempValue0 = -1779200
+				TempValue1 = 10435072
+				break
+			
+			case 43
+				TempValue0 = -2434560
+				TempValue1 = 10598912
+				break
+			
+			case 44
+				TempValue0 = -3089920
+				TempValue1 = 10762752
+				break
+			
+			case 45
+				TempValue0 = -3745280
+				TempValue1 = 10926592
+				break
+			
+			case 46
+				TempValue0 = -4400640
+				TempValue1 = 11090432
+				break
+			
+			case 47
+				TempValue0 = -5056000
+				TempValue1 = 11254272
+				break
+			
+			case 48
+				TempValue0 = -5711360
+				TempValue1 = 11418112
+				break
+			
+			case 49
+				TempValue0 = -6235648
+				TempValue1 = 11549184
+				break
+			
+			case 50
+				TempValue0 = -5580288
+				TempValue1 = 11713024
+				break
+			
+			case 51
+				TempValue0 = -4924928
+				TempValue1 = 11876864
+				break
+			
+			case 52
+				TempValue0 = -4269568
+				TempValue1 = 12040704
+				break
+			
+			case 53
+				TempValue0 = -3614208
+				TempValue1 = 12204544
+				break
+			
+			case 54
+				TempValue0 = -2958848
+				TempValue1 = 12368384
+				break
+			
+			case 55
+				TempValue0 = -2303488
+				TempValue1 = 12532224
+				break
+			
+			case 56
+				TempValue0 = -1648128
+				TempValue1 = 12696064
+				break
+			
+			case 57
+				TempValue0 = -992768
+				TempValue1 = 12859904
+				break
+			
+			case 58
+				TempValue0 = -337408
+				TempValue1 = 13023744
+				break
+			
+			case 59
+				TempValue0 = 317952
+				TempValue1 = 13187584
+				break
+			
+			case 60
+				TempValue0 = 973312
+				TempValue1 = 13351424
+				break
+			
+			case 61
+				TempValue0 = 1628672
+				TempValue1 = 13515264
+				break
+			
+			case 62
+				TempValue0 = 2152960
+				TempValue1 = 13646336
+				break
+			
+			case 63
+				TempValue0 = 2808320
+				TempValue1 = 14727680
+				break
+			
+			case 64
+				TempValue0 = 3463680
+				TempValue1 = 15233536
+				break
+			
+			end switch
+			
+			TempValue0 += Object.XPos
+			TempValue1 += Object.YPos
+			
+			DrawRectWorld(TempValue0, TempValue1, 1, 1, 255, 255, 255, 255)
+			
+			TempValue2++
+		loop
+	end if
 end sub
+
 
 sub RSDKLoad
 	LoadSpriteSheet("Global/Display.gif")

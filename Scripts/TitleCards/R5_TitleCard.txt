@@ -3,18 +3,39 @@
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
 // Aliases
-#alias 34: TYPE_TITLECARD
+#alias Object.Value0 : Object.BarPos
+#alias Object.Value1 : Object.TextPos
+#alias Object.Value2 : Object.TextSize
+#alias Object.Value3 : Object.Timer
+#alias Object.Value4 : Object.FadeR
+#alias Object.Value5 : Object.FadeG
+#alias Object.Value6 : Object.FadeB
+#alias Object.Value7 : Object.CharPos
 
-#alias Object.Value0:Object.BarPos
-#alias Object.Value1:Object.TextPos
-#alias Object.Value2:Object.TextSize
-#alias Object.Value3:Object.FadeA
-#alias Object.Value4:Object.FadeR
-#alias Object.Value5:Object.FadeG
-#alias Object.Value6:Object.FadeB
-#alias Object.Value7:Object.CharPos
+// States
+#alias 0 : TITLECARD_FADEIN
+#alias 1 : TITLECARD_SLIDEIN
+#alias 2 : TITLECARD_DISPLAY
+#alias 3 : TITLECARD_SLIDEOUT
 
-#alias Object.Value4:Player.Invincible
+// Player aliases
+#alias Object.Value4 : Player.Invincible
+
+#alias 0 : PLAYER_SONIC
+
+// ControlMode Aliases
+#alias -1 : CONTROLMODE_NONE
+#alias  0 : CONTROLMODE_NORMAL
+
+// Soundtrack Aliases
+#alias 0 : SOUNDTRACK_JP
+
+// Time Period Aliases
+#alias 0 : PERIOD_PRESENT
+#alias 1 : PERIOD_PAST
+#alias 2 : PERIOD_FUTURE_G
+#alias 3 : PERIOD_FUTURE_B
+
 
 sub ObjectPlayerInteraction
 	Player.Timer = 0
@@ -22,28 +43,39 @@ end sub
 
 
 sub ObjectDraw
+	
 	switch Object.State
-	case 0
-		Player.ControlMode = -1
-		Player.Up = 0
-		Player.Down = 0
-		Player.Left = 0
-		Player.Right = 0
-		Player.JumpPress = 0
-		Player.JumpHold = 0
+	case TITLECARD_FADEIN
+		// Lock Player Control
+		Player.ControlMode 	= CONTROLMODE_NONE
+		Player.Up 			= false
+		Player.Down 		= false
+		Player.Left 		= false
+		Player.Right 		= false
+		Player.JumpPress 	= false
+		Player.JumpHold 	= false
+		
 		if Warp.XPos < 1
+			// If the Player isn't Warping, then reset their speed
 			Player.Speed = 0
 		end if
+		
 		if Object.FadeA > 0
 			if Object.FadeA == 256
 				PlayMusic(0)
+				
 				if Warp.XPos > 0
+					// If the Player's coming in from a warp, then restore all their values
+					
 					Player.XPos = Warp.XPos
 					Player.YPos = Warp.YPos
+					
 					Player.XVelocity = Warp.XVelocity
 					Player.YVelocity = Warp.YVelocity
 					Player.Speed = Warp.XVelocity
+					
 					Player.State = Warp.State
+					
 					Stage.MilliSeconds = Rec_Milliseconds
 					Stage.Seconds = Rec_Seconds
 #platform: Mobile
@@ -51,164 +83,288 @@ sub ObjectDraw
 #endplatform
 					Player[0].Invincible = 8000
 				end if
+				
 				Warp.Timer = 0
 				Warp.Frame = 0
 			end if
+			
 			SetScreenFade(Object.FadeR, Object.FadeG, Object.FadeB, Object.FadeA)
+			
 			Object.FadeA -= 8
 		else
 			Fade_Colour = 0
+			
 			CheckEqual(Warp.XPos, 0)
 			TempValue0 = CheckResult
 			CheckLower(LampPost.Check, 32)
 			TempValue0 &= CheckResult
-			if TempValue0 == 1
-				Object.State = 1
+			if TempValue0 == true
+				// If the level's been entered by normal means, then carry on as normal
+				Object.State = TITLECARD_SLIDEIN
 				Object.FadeA = 0
 			else
-				Player.ControlMode = 0
-				Stage.TimeEnabled = 1
+				// The Player's warping in so just start the Stage,
+				// no need to show the Title Card or anything
+				
+				Player.ControlMode = CONTROLMODE_NORMAL
+				Stage.TimeEnabled = true
 				ResetObjectEntity(20, TypeName[Blank Object], 0, 0, 0)
 				Warp.XPos = 0
 			end if
 		end if
 		break
-	case 1
+		
+	case TITLECARD_SLIDEIN
 		TempValue0 = 144
 		TempValue0 += Object.CharPos
+		
 		if Object.TextPos > TempValue0
 			Object.TextPos -= 8
-		else
 #platform: Mobile
+			// Updated mobile version - both text and the bar have to
+			// be in the correct position for the title card to progress
+		else
 			if Object.BarPos == 0
-				Object.State = 2
+				Object.State = TITLECARD_DISPLAY
 			end if
 #endplatform
 		end if
+		
 		if Object.BarPos < 0
 			Object.BarPos += 8
-		else
 #platform: Standard
-			Object.State = 2
+			// Initial version of the game - only the bar has to be
+			// in the correct position for the title card to progress
+			// (This is why the Title Card text is offset when playing on the fan-made decompilation of the Retro Engine v3)
+		else
+			Object.State = TITLECARD_DISPLAY
 #endplatform
 		end if
 		break
-	case 2
+		
+	case TITLECARD_DISPLAY
 		if Object.FadeA == 90
-			Object.State = 3
+			Object.State = TITLECARD_SLIDEOUT
 		else
+			// Hold for a second and a half
 			Object.FadeA++
 		end if
 		break
-	case 3
+		
+	case TITLECARD_SLIDEOUT
 		if Object.TextPos < 408
+			// Slide the text to the right, and the bar upwards
 			Object.TextPos += 16
 			Object.BarPos -= 16
 		else
-			Player.ControlMode = 0
-			Stage.TimeEnabled = 1
+			// Start the stage, proper
+			Player.ControlMode = CONTROLMODE_NORMAL
+			
+			Stage.TimeEnabled = true
 			ResetObjectEntity(20, TypeName[Blank Object], 0, 0, 0)
 			Warp.XPos = 0
 		end if
 		break
+		
 	end switch
+	
+	// Make sure that this object isn't already blanked, before drawing
+	// (If it is, it has the potential to draw random garbage sprites to the screen, which isn't what we want!)
 	if Object.Type > TypeName[Blank Object]
 		TempValue0 = 136
 		TempValue0 += Object.CharPos
+		
+		// Draw the Red Bar
 		DrawSpriteScreenXY(0, TempValue0, Object.BarPos)
+		
+		// And then, draw the act number
 		DrawSpriteScreenXY(Stage.ActNo, Object.TextPos, 80)
+		
+		// And then draw the Zone text, the Sonic CD bar, and the weird three lines
 		DrawSpriteScreenXY(4, Object.TextPos, 80)
 		DrawSpriteScreenXY(5, Object.TextPos, 80)
 		DrawSpriteScreenXY(6, Object.TextPos, 80)
 		DrawSpriteScreenXY(7, Object.TextPos, 80)
+		
+		// After that, draw all the letters
 		TempValue0 = 8
 		while TempValue0 < Object.TextSize
 			DrawSpriteScreenXY(TempValue0, Object.TextPos, 80)
 			TempValue0++
 		loop
 	end if
+	
 end sub
 
 
 sub ObjectStartup
-	if Stage.PlayerListPos == 0
+	
+	// Load the Display sheet for the current Player
+	if Stage.PlayerListPos == PLAYER_SONIC
 		LoadSpriteSheet("Global/Display.gif")
 	else
 		LoadSpriteSheet("Global/Display_t.gif")
 	end if
-	if Options.Soundtrack == 0
+	
+	// Set the music for the Stage
+	if Options.Soundtrack == SOUNDTRACK_JP
 		switch Object[24].PropertyValue
-		case 0
-			SetMusicTrack("JP/R5A.ogg", 0, 1)
+		case PERIOD_PRESENT
+			SetMusicTrack("JP/R5A.ogg", 0, true)
 			break
-		case 1
+			
+		case PERIOD_PAST
 			SetMusicTrack("R5B.ogg", 0, 619562)
 			break
-		case 2
+			
+		case PERIOD_FUTURE_G
 			SetMusicTrack("JP/R5C.ogg", 0, 367046)
 			break
-		case 3
-			SetMusicTrack("JP/R5D.ogg", 0, 1)
+			
+		case PERIOD_FUTURE_B
+			SetMusicTrack("JP/R5D.ogg", 0, true)
 			break
+			
 		end switch
 	else
 		switch Object[24].PropertyValue
-		case 0
-			SetMusicTrack("US/R5A.ogg", 0, 1)
+		case PERIOD_PRESENT
+			SetMusicTrack("US/R5A.ogg", 0, true)
 			break
-		case 1
+			
+		case PERIOD_PAST
 			SetMusicTrack("R5B.ogg", 0, 619562)
 			break
-		case 2
+			
+		case PERIOD_FUTURE_G
 			SetMusicTrack("US/R5C.ogg", 0, 705830)
 			break
-		case 3
+			
+		case PERIOD_FUTURE_B
 			SetMusicTrack("US/R5D.ogg", 0, 93672)
 			break
+			
 		end switch
 	end if
+	
+	// Set the Flower Type for the Stage
 	Flower_TypeNo = TypeName[Flower]
-	Object[20].Type = TypeName[TitleCard]
+	
+	// Spawn the Title Card
+	Object[20].Type = TypeName[Title Card]
+	
+	// Initialise the Title Card's Values
+	
 	if Warp.XPos > 0
+		// If the Player is warping in, have a shorter fade-in time
 		Object[20].FadeA = 256
 	else
 		Object[20].FadeA = 384
 	end if
-	Player.RoofBarrier = 1
+	
+	// Quarts Quadrant should indeed enforce a roof,
+	// though the upper bounds should never be reachable by the Player anyways
+	Player.RoofBarrier = true
+	
+	// Make the Title Card always active, and have it draw above all other Objects
 	Object[20].Priority = 1
 	Object[20].DrawOrder = 6
+	
 	Object[20].BarPos = -216
 	Object[20].TextPos = 336
+	
 	Object[20].CharPos = Screen.CenterX
 	Object[20].CharPos -= 160
+	
 	if Object[20].CharPos > 3
 		Object[20].CharPos -= 4
 	end if
+	
 	Object[20].CharPos &= 248
+	
 	Object[20].TextPos += Object[20].CharPos
 	Object[20].TextPos += Object[20].CharPos
+	
+	// "Quartz Quadrant"... that makes 14 letters
 	Object[20].TextSize = 14
+	
+	// And then bump it by 8 to correspond with the order of the Sprite Frames
 	Object[20].TextSize += 8
+	
+	// Unpack Fade_Colour so that the Title Card will seamlessly resume the same colour as the last fade
+	// Fade_Colour is stored as RRGGBB, in hex
 	Object[20].FadeR = Fade_Colour
 	Object[20].FadeR >>= 16
+	
 	Object[20].FadeG = Fade_Colour
 	Object[20].FadeG &= 65280
 	Object[20].FadeG >>= 8
+	
 	Object[20].FadeB = Fade_Colour
 	Object[20].FadeB &= 255
+	
+	// 0 - Bar Frame
 	SpriteFrame(0, 0, 32, 200, 223, 1)
+	
+	// 1-3 - Act Bubbles
 	SpriteFrame(96, 96, 48, 48, 41, 1)
 	SpriteFrame(96, 96, 48, 48, 90, 1)
 	SpriteFrame(96, 96, 48, 48, 139, 1)
+	
+	// 4 - "Zone" text
 	SpriteFrame(64, 97, 48, 16, 41, 67)
+	
+	// 5 - "Sonic the Hedgehog CD" bar
+	// The sprite's positioned differently in Mobile Data files
 #platform: Standard
 	SpriteFrame(64, 81, 160, 16, 41, 50)
 #endplatform
 #platform: Mobile
 	SpriteFrame(72, 81, 160, 16, 49, 50)
 #endplatform
+	
+	// 6 - Continuation of the Sonic CD bar
 	SpriteFrame(16, 81, 160, 16, 41, 50)
+	
+	// 7 - Set of three lines
 	SpriteFrame(100, 32, 24, 48, 188, 1)
+	
+	// 8-22 - Letters spelling out Quarts Quadrant
+	
+	// "Quartz"
+	SpriteFrame(0, 0, 20, 55, 100, 133) 	// "Q"
+	SpriteFrame(20, 32, 11, 23, 92, 108) 	// "u"
+	SpriteFrame(32, 32, 11, 23, 43, 84) 	// "a"
+	SpriteFrame(44, 32, 12, 23, 57, 108) 	// "r"
+	SpriteFrame(56, 32, 10, 23, 81, 108) 	// "t"
+	SpriteFrame(66, 32, 10, 23, 158, 108) 	// "z"
+	
+	// "Quadrant"
+	SpriteFrame(0, 56, 20, 55, 100, 133) 	// "Q"
+	SpriteFrame(20, 56, 11, 23, 92, 108) 	// "u"
+	SpriteFrame(32, 56, 11, 23, 43, 84) 	// "a"
+	SpriteFrame(44, 56, 11, 23, 76, 84) 	// "d"
+	SpriteFrame(56, 56, 12, 23, 57, 108) 	// "r"
+	SpriteFrame(69, 56, 11, 23, 43, 84) 	// "a"
+	SpriteFrame(81, 56, 11, 23, 187, 84) 	// "n"
+	SpriteFrame(92, 56, 10, 23, 81, 108) 	// "t"
+	
+end sub
+
+// ========================
+// Editor Subs
+// ========================
+
+sub RSDKDraw
+	TempValue0 = 0
+	while TempValue0 < 13
+		DrawSprite(TempValue0)
+		TempValue0++
+	loop
+end sub
+
+sub RSDKLoad
+	LoadSpriteSheet("Global/Display.gif")
 	SpriteFrame(0, 0, 20, 55, 100, 133)
 	SpriteFrame(20, 32, 11, 23, 92, 108)
 	SpriteFrame(32, 32, 11, 23, 43, 84)
@@ -223,19 +379,6 @@ sub ObjectStartup
 	SpriteFrame(69, 56, 11, 23, 43, 84)
 	SpriteFrame(81, 56, 11, 23, 187, 84)
 	SpriteFrame(92, 56, 10, 23, 81, 108)
-end sub
-
-// ========================
-// Editor Subs
-// ========================
-
-sub RSDKDraw
-	DrawSprite(0)
-end sub
-
-sub RSDKLoad
-	LoadSpriteSheet("Global/Display.gif")
-	SpriteFrame(-16, -16, 32, 32, 1, 143)		// #0 - "Script" Icon
 
 	SetVariableAlias(ALIAS_VAR_PROPVAL, "unused")
 end sub

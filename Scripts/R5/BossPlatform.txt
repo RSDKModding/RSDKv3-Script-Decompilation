@@ -2,189 +2,399 @@
 //--------Scripted by Christian Whitehead 'The Taxman'--------//
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
+// Notes:
+// This Boss Platform is the main controller in this Boss Fight so I'll put everything here
+
+// The order of Objects in the scene is:
+// - Boss Spikes
+// - Boss Bomb
+// - Bomb Carrier
+// - Boss Top
+// - Boss Back Panel
+// - Eggman
+// - Boss Platform
+
+// All the Objects in this Boss Fight are very interconnected, they reach and interact with each other often
+// As such, it is paramount that they are all setup right, or else the Fight will break quite so!
+
 // Aliases
-#alias 58: TYPE_BOSSPLATFORM
+
+// Value0 servers two distinct purposes across this Object's different states
+// For clarity, they're just separately named
+#alias Object.Value0 : Object.Timer
+
+#alias Object.Value0 : Object.Bounces
+
+#alias Object.Value1 : Object.BaseX
+
+#alias Object.Value2 : Object.YVelocity
+
+#alias Object.Value5 : Object.Grind
+
+#alias Object.Value6 : Object.SparksTimer
+
+// These set of Values are for the Conveyor Belt beneath the Boss
+// BeltFrame corresponds to one of the palette banks
+#alias Object.Value3 : Object.BeltSpeed
+#alias Object.Value4 : Object.BeltTimer
+#alias Object.Value7 : Object.BeltFrame
+
+// States
+#alias 0  : BOSSPLATFORM_IDLE
+#alias 1  : BOSSPLATFORM_SHAKE
+#alias 2  : BOSSPLATFORM_FALL_1
+#alias 3  : BOSSPLATFORM_FIGHT_1
+#alias 4  : BOSSPLATFORM_FALL_2
+#alias 5  : BOSSPLATFORM_FIGHT_2
+#alias 6  : BOSSPLATFORM_FALL_3
+#alias 7  : BOSSPLATFORM_FIGHT_3
+#alias 8  : BOSSPLATFORM_FALL_4
+#alias 9  : BOSSPLATFORM_FIGHT_4
+#alias 10 : BOSSPLATFORM_EGGFLEE
+#alias 11 : BOSSPLATFORM_EXPLODE
+
+// Bomb Carrier Aliases
+#alias 3 : BOMBCARRIER_SLIDERIGHT
+
+// Boss Top Aliases
+#alias Object.Value1 : Object.BoundsR
+#alias Object.Value2 : Object.OldBoundsR
+
+#alias 1 : BOSSTOP_MOVEBOUNDS
+
+// Boss Spark Aliases
+#alias Object.Value1 : Object.XVelocity
+
+#alias 0 : BOSSSPARK_GRIND
+#alias 1 : BOSSSPARK_LAND
+
+// Eggman Aliases
+#alias 0 : EGGMAN_IDLE
+#alias 2 : EGGMAN_DAMAGED
+#alias 3 : EGGMAN_PANICK_JUMP
+#alias 6 : EGGMAN_FLEE
+
+// SFX Aliases
+
+// Global SFX
+#alias 22 : SFX_EXPLOSION
+
+// Stage SFX
+#alias 3 : SFX_BOSSHIT
+#alias 4 : SFX_IMPACT1
+
 
 // Function declarations
-#function BossPlatform_Function49
-#function BossPlatform_Function50
-#function BossPlatform_Function51
+#function BossPlatform_Conveyor_Update
+#function BossPlatform_Conveyor_WindDown
+#function BossPlatform_SpawnLandingSparks
 
-function BossPlatform_Function49
+function BossPlatform_Conveyor_Update
+	
 	if Player.Gravity == 0
-		if Player.ObjectInteraction == 1
-			if Player.Speed > Object.Value3
-				Object.Value3 += 1536
-				if Object.Value3 > 380928
-					Object.Value3 = 380928
+		// The Player's on the Ground
+		
+		if Player.ObjectInteraction == true
+			if Player.Speed > Object.BeltSpeed
+				// The Player's going faster than the Conveyor Belt, but the Belt's gotta keep up!
+				
+				// Increase the Belt's Speed by ~0.02 pixels
+				Object.BeltSpeed += 1536
+				
+				// Cap the Belt Speed to be ~5.81 pixels per frame maximum
+				if Object.BeltSpeed > 380928
+					Object.BeltSpeed = 380928
 				end if
 			else
-				Object.Value3 -= 1536
-				if Object.Value3 < 49152
-					Object.Value3 = 49152
+				// The Player's going slower than (or the same speed as) the Conveyor Belt
+				
+				// Let's help the Player a bit and decelerate at a rate of about 0.02 pixels per frame
+				Object.BeltSpeed -= 1536
+				
+				// Enforce a lower minimum cap of 0.75 pixels per frame
+				if Object.BeltSpeed < 49152
+					Object.BeltSpeed = 49152
 				end if
 			end if
+			
+			// First, set TempValue0 to be the value of a speed of 2 pixels to the left per frame
 			TempValue0 = -131072
-			TempValue0 += Object.Value3
+			
+			// Then, add the Belt's actual speed to it
+			TempValue0 += Object.BeltSpeed
+			
+			// Don't wanna become positive...
 			if TempValue0 > 0
 				TempValue0 = 0
 			end if
+			
+			// And now compare the Player's speed with Temp0
+			// (Do note, TempValue0 is a speed in the left direction, where values are negative, 
+			//  so "smaller" values are faster)
 			if Player.Speed < TempValue0
+				// If the Player's going faster than Temp0, enforce a maximum speed
+				
 				Player.Speed = TempValue0
 				Player.XVelocity = TempValue0
 			end if
-			Player.XPos -= Object.Value3
+			
+			// And then, y'know, actually act as a Conveyor Belt and push the Player left
+			Player.XPos -= Object.BeltSpeed
 		end if
 	else
+		// The Player's in the Air, slow down the Conveyor belt
+		
+		// If the Player is flying, make the Belt decelerate faster
 		if Player.State == PlayerObject_HandleTailsFlight
-			Object.Value3 -= 2048
+			// Make it decelerate by around 0.031 pixels per frame
+			Object.BeltSpeed -= 2048
 		else
-			Object.Value3 -= 256
+			// The Player's just in the air normally, decelerate at a rate of 0.0039 pixels per frame
+			Object.BeltSpeed -= 256
 		end if
-		if Object.Value3 < 49152
-			Object.Value3 = 49152
+		
+		// Enforce a minumum speed of 0.75 pixels per frame
+		if Object.BeltSpeed < 49152
+			Object.BeltSpeed = 49152
 		end if
-		if Player.JumpPress == 1
+		
+		// Did the Player press the jump button earlier this frame?
+		// (The Player Object is in slot 0, while this one's all the way
+		//  down in the Stage Object list, which is why this can be checked this way)
+		if Player.JumpPress == true
+			
+			// Player.JumpStrength is normally a positive number, which is why this needs to be done
 			TempValue0 = Player.JumpStrength
 			FlipSign(TempValue0)
+			
+			// If the Player's Y Velocity is equal to their base Jump Strength, then that means
+			// they just jumped this frame
+			// -> There's nothing that needs to be accounted for on behalf of slopes because,
+			//    the arena's all just one flat line
 			if Player.YVelocity == TempValue0
+				// Silently reset their Horizontal movement values, in order to make their jumping
+				// more responsive
+				
 				Player.XVelocity = 0
 				Player.Speed = 0
 			end if
+			
 		end if
 	end if
-	TempValue0 = Object.Value3
+	
+	// Update the Grinding on the Boss's Platform
+	
+	TempValue0 = Object.BeltSpeed
+	
+	// Subtract the baseline speed - 0.75 per frame - from it
 	TempValue0 -= 49152
+	
+	// And then divide the remainder from that to level it down from 0-3
 	TempValue0 /= 110592
 	switch TempValue0
 	case 0
-		Object.Value4++
-		Object.Value5++
-		Object.Value6++
-		Object.XPos = Object.Value1
+		// Lowest grind speed...
+		
+		Object.BeltTimer++
+		Object.Grind++
+		Object.SparksTimer++
+		
+		// The Speed's so low, the Boss isn't even shaking...
+		Object.XPos = Object.BaseX
 		Object[-2].XPos = Object.XPos
 		break
+		
 	case 1
-		Object.Value4 += 2
-		Object.Value5 += 2
-		Object.Value6 += 4
+		// Getting faster...
+		
+		Object.BeltTimer += 2
+		Object.Grind += 2
+		Object.SparksTimer += 4
+		
+		// Get the lowest bit of the global Oscillation value
 		TempValue1 = Oscillation
 		TempValue1 &= 1
+		
+		// Shake the boss either a pixel left or back to its neutral position - a 2-pixel movement range
 		if TempValue1 == 1
-			Object.XPos = Object.Value1
+			Object.XPos = Object.BaseX
 			Object.XPos -= 65536
 		else
-			Object.XPos = Object.Value1
+			Object.XPos = Object.BaseX
 		end if
+		
+		// And then move the Boss Back Panel to match
 		Object[-2].XPos = Object.XPos
 		break
+		
 	case 2
 	case 3
-		Object.Value4 += 4
-		Object.Value5 += 4
-		Object.Value6 += 8
+		// Woah! That's a pretty fast speed!
+		// Cases 2/3 are just combined here for simplicity's sake
+		
+		Object.BeltTimer += 4
+		Object.Grind += 4
+		Object.SparksTimer += 8
+		
+		// Get the lowest bit of the Oscillation value
 		TempValue1 = Oscillation
 		TempValue1 &= 1
+		
+		// From that result, move the Boss a pixel either left or right - a 3-pixel movement range
 		if TempValue1 == 1
-			Object.XPos = Object.Value1
+			Object.XPos = Object.BaseX
 			Object.XPos -= 65536
 		else
-			Object.XPos = Object.Value1
+			Object.XPos = Object.BaseX
 			Object.XPos += 65536
 		end if
+		
+		// And yup, carry the Boss Back Panel along for the ride as well!
 		Object[-2].XPos = Object.XPos
 		break
+		
 	end switch
-	if Object.Value4 > 3
-		Object.Value4 = 0
-		Object.Value7--
-		if Object.Value7 < 0
-			Object.Value7 = 2
+	
+	// Update the Conveyor Belt animation
+	// - This Boss erases the normal Conveyor Belt Object,
+	//    which is why this now has to be done here
+	if Object.BeltTimer > 3
+		Object.BeltTimer = 0
+		
+		Object.BeltFrame--
+		if Object.BeltFrame < 0
+			Object.BeltFrame = 2
 		end if
-		SetActivePalette(Object.Value7, 0, Screen.YSize)
+		
+		SetActivePalette(Object.BeltFrame, 0, Screen.YSize)
 	end if
+	
+	// Enforce Left Bounds
+	
 	TempValue0 = Player.CollisionLeft
 	TempValue0 <<= 16
 	TempValue0 += Player.XPos
+	
+	// Is the Player behind the Boss Spikes?
 	if TempValue0 < Object[-6].XPos
+		// Move them to be ahead of the Boss Spikes
+		
 		Player.XPos = Object[-6].XPos
 		TempValue0 = Player.CollisionLeft
 		TempValue0 <<= 16
 		Player.XPos -= TempValue0
 	end if
+	
+	// Enforce Right Bounds
+	
 	TempValue0 = Player.CollisionRight
 	TempValue0 <<= 16
 	TempValue0 += Player.XPos
-	TempValue1 = Object[-3].Value1
+	
+	// Object[-3] is the Boss Top, where the Right bounds are stored
+	TempValue1 = Object[-3].BoundsR
+	
+	// Is the Player ahead of the Right Bounds?
 	if TempValue0 > TempValue1
 		Player.XPos = TempValue1
+		
 		TempValue0 = Player.CollisionRight
 		TempValue0 <<= 16
 		Player.XPos -= TempValue0
+		
 		if Player.State == PlayerObject_HandleTailsFlight
+			// if the Player's flying, then do some stuff to make sure they don't go too far
+			
 			Player.Speed = 0
 			Player.XVelocity = 0
 		end if
 	end if
+	
 end function
 
 
-function BossPlatform_Function50
-	Object.Value3 -= 4096
-	if Object.Value3 < 0
-		Object.Value3 = 0
+function BossPlatform_Conveyor_WindDown
+	// For the most part, this function is just a slimmed version of BossPlatform_Conveyor_Update
+	
+	// Slow down the Conveyor Belt, at a rate of 0.0625 pixels per frame
+	Object.BeltSpeed -= 4096
+	if Object.BeltSpeed < 0
+		// Nope, don't wanna step into the negatives!
+		Object.BeltSpeed = 0
 	end if
+	
 	if Player.Gravity == 0
-		if Player.ObjectInteraction == 1
+		// The Player's on the Ground
+		
+		if Player.ObjectInteraction == true
 			TempValue0 = -131072
-			TempValue0 += Object.Value3
+			TempValue0 += Object.BeltSpeed
+			
 			if TempValue0 > 0
 				TempValue0 = 0
 			end if
+			
 			if Player.Speed < TempValue0
 				Player.Speed = TempValue0
 				Player.XVelocity = TempValue0
 			end if
-			Player.XPos -= Object.Value3
+			
+			Player.XPos -= Object.BeltSpeed
 		end if
 	else
-		if Player.JumpPress == 1
+		// The Player's in the air
+		
+		if Player.JumpPress == true
 			TempValue0 = Player.JumpStrength
 			FlipSign(TempValue0)
+			
 			if Player.YVelocity == TempValue0
 				Player.XVelocity = 0
 				Player.Speed = 0
 			end if
 		end if
 	end if
-	TempValue0 = Object.Value3
+	
+	// Even if the boss is defeated, still update some of the grinding stuff
+	// Just, without all the Boss shaking side of the stuff
+	
+	TempValue0 = Object.BeltSpeed
 	TempValue0 /= 110592
+	
 	switch TempValue0
 	case 0
-		Object.Value4++
-		Object.Value5++
-		Object.Value6++
+		Object.BeltTimer++
+		Object.Grind++
+		Object.SparksTimer++
 		break
+		
 	case 1
-		Object.Value4 += 2
-		Object.Value5 += 2
-		Object.Value6 += 4
+		Object.BeltTimer += 2
+		Object.Grind += 2
+		Object.SparksTimer += 4
 		break
+		
 	case 2
 	case 3
-		Object.Value4 += 4
-		Object.Value5 += 4
-		Object.Value6 += 8
+		Object.BeltTimer += 4
+		Object.Grind += 4
+		Object.SparksTimer += 8
 		break
+		
 	end switch
-	if Object.Value4 > 3
-		Object.Value4 = 0
-		Object.Value7--
-		if Object.Value7 < 0
-			Object.Value7 = 2
+	
+	if Object.BeltTimer > 3
+		Object.BeltTimer = 0
+		Object.BeltFrame--
+		if Object.BeltFrame < 0
+			Object.BeltFrame = 2
 		end if
-		SetActivePalette(Object.Value7, 0, Screen.YSize)
+		
+		SetActivePalette(Object.BeltFrame, 0, Screen.YSize)
 	end if
+	
+	// Enforce Left Bounds
+	
 	TempValue0 = Player.CollisionLeft
 	TempValue0 <<= 16
 	TempValue0 += Player.XPos
@@ -194,333 +404,564 @@ function BossPlatform_Function50
 		TempValue0 <<= 16
 		Player.XPos -= TempValue0
 	end if
+	
+	// No enforcing Right Bounds here, the Object's already quite literally a giant box in its ObjectPlayerInteraction
+	
 end function
 
 
-function BossPlatform_Function51
-	CreateTempObject(TypeName[BossSpark], 1, Object.XPos, Object.YPos)
+function BossPlatform_SpawnLandingSparks
+	
+	// As you may have guessed, this Function spawns all the cool Sparks the Boss makes
+	// Preconditions:
+	// - TempValue0 is set to the Y Offset for the Sparks
+	
+	CreateTempObject(TypeName[Boss Spark], BOSSSPARK_LAND, Object.XPos, Object.YPos)
 	Object[TempObjectPos].XPos -= 1048576
 	Object[TempObjectPos].YPos += TempValue0
-	Object[TempObjectPos].Value1 = -65536
-	Object[TempObjectPos].Value2 = -98304
-	CreateTempObject(TypeName[BossSpark], 1, Object.XPos, Object.YPos)
+	Object[TempObjectPos].XVelocity = -65536
+	Object[TempObjectPos].YVelocity = -98304
+	
+	CreateTempObject(TypeName[Boss Spark], BOSSSPARK_LAND, Object.XPos, Object.YPos)
 	Object[TempObjectPos].XPos += 1048576
 	Object[TempObjectPos].YPos += TempValue0
-	Object[TempObjectPos].Value1 = -65536
-	Object[TempObjectPos].Value2 = -98304
+	Object[TempObjectPos].XVelocity = -65536
+	Object[TempObjectPos].YVelocity = -98304
+	
 	TempValue0 += 524288
-	CreateTempObject(TypeName[BossSpark], 1, Object.XPos, Object.YPos)
+	
+	CreateTempObject(TypeName[Boss Spark], BOSSSPARK_LAND, Object.XPos, Object.YPos)
 	Object[TempObjectPos].XPos -= 1572864
 	Object[TempObjectPos].YPos += TempValue0
-	Object[TempObjectPos].Value1 = -65536
-	Object[TempObjectPos].Value2 = -98304
-	CreateTempObject(TypeName[BossSpark], 1, Object.XPos, Object.YPos)
+	Object[TempObjectPos].XVelocity = -65536
+	Object[TempObjectPos].YVelocity = -98304
+	
+	CreateTempObject(TypeName[Boss Spark], BOSSSPARK_LAND, Object.XPos, Object.YPos)
 	Object[TempObjectPos].XPos -= 262144
 	Object[TempObjectPos].YPos += TempValue0
-	Object[TempObjectPos].Value1 = -65536
-	Object[TempObjectPos].Value2 = -98304
-	CreateTempObject(TypeName[BossSpark], 1, Object.XPos, Object.YPos)
+	Object[TempObjectPos].XVelocity = -65536
+	Object[TempObjectPos].YVelocity = -98304
+	
+	CreateTempObject(TypeName[Boss Spark], BOSSSPARK_LAND, Object.XPos, Object.YPos)
 	Object[TempObjectPos].XPos += 1572864
 	Object[TempObjectPos].YPos += TempValue0
-	Object[TempObjectPos].Value1 = -65536
-	Object[TempObjectPos].Value2 = -98304
-	CreateTempObject(TypeName[BossSpark], 1, Object.XPos, Object.YPos)
+	Object[TempObjectPos].XVelocity = -65536
+	Object[TempObjectPos].YVelocity = -98304
+	
+	CreateTempObject(TypeName[Boss Spark], BOSSSPARK_LAND, Object.XPos, Object.YPos)
 	Object[TempObjectPos].XPos += 262144
 	Object[TempObjectPos].YPos += TempValue0
-	Object[TempObjectPos].Value1 = -65536
-	Object[TempObjectPos].Value2 = -98304
+	Object[TempObjectPos].XVelocity = -65536
+	Object[TempObjectPos].YVelocity = -98304
+	
 	TempValue0 += 524288
-	CreateTempObject(TypeName[BossSpark], 1, Object.XPos, Object.YPos)
+	
+	CreateTempObject(TypeName[Boss Spark], BOSSSPARK_LAND, Object.XPos, Object.YPos)
 	Object[TempObjectPos].XPos -= 1048576
 	Object[TempObjectPos].YPos += TempValue0
-	Object[TempObjectPos].Value1 = -65536
-	Object[TempObjectPos].Value2 = -98304
-	CreateTempObject(TypeName[BossSpark], 1, Object.XPos, Object.YPos)
+	Object[TempObjectPos].XVelocity = -65536
+	Object[TempObjectPos].YVelocity = -98304
+	
+	CreateTempObject(TypeName[Boss Spark], BOSSSPARK_LAND, Object.XPos, Object.YPos)
 	Object[TempObjectPos].XPos += 1048576
 	Object[TempObjectPos].YPos += TempValue0
-	Object[TempObjectPos].Value1 = -65536
-	Object[TempObjectPos].Value2 = -98304
+	Object[TempObjectPos].XVelocity = -65536
+	Object[TempObjectPos].YVelocity = -98304
+	
 end function
 
 
 sub ObjectMain
+	
 	switch Object.State
-	case 1
-		if Object.Value0 < 60
-			Object.Value0++
-			TempValue0 = Object.Value0
+	case BOSSPLATFORM_SHAKE
+		if Object.Timer < 60
+			Object.Timer++
+			
+			// Get the lowest bit of the Timer
+			TempValue0 = Object.Timer
 			TempValue0 &= 1
+			
+			// Shake a bit, direction depending on what that Bit is
 			if TempValue0 == 1
+				// Move a pixel down
 				Object.YPos += 131072
 			else
+				// Move a pixel up
 				Object.YPos -= 131072
 			end if
 		else
-			Object.Value0 = 0
-			Object.State = 2
-			Object[-1].State = 2
+			// Start falling
+			
+			Object.Timer = 0
+			Object.State = BOSSPLATFORM_FALL_1
+			
+			// Make Robotnik go into his shock animation
+			Object[-1].State = EGGMAN_DAMAGED
 			Object[-1].Frame = 0
-			Object[-1].Value0 = 0
+			Object[-1].Timer = 0
 		end if
+		
+		// Move Robotnik along, to be 28 pixels above the Platform's Y Position
 		Object[-1].YPos = Object.YPos
 		Object[-1].YPos -= 1835008
+		
+		// And then move the Boss's Back Panel too
 		Object[-2].YPos = Object.YPos
-		CallFunction(BossPlatform_Function49)
-		Object.XPos = Object.Value1
-		Object[-2].XPos = Object.Value1
+		
+		// Start up the Conveyor
+		CallFunction(BossPlatform_Conveyor_Update)
+		
+		// For now, regardless of the Coveyor's Speed, stay at the base position
+		Object.XPos = Object.BaseX
+		
+		// And apply this to the Boss Back Panel as well
+		Object[-2].XPos = Object.BaseX
 		break
-	case 2
-		Object.Value2 += 6144
-		Object.YPos += Object.Value2
+		
+	case BOSSPLATFORM_FALL_1
+		
+		// Accelerate the falling speed at a rate of about 0.09 pixels per frame
+		Object.YVelocity += 6144
+		
+		// And then, y'know, do the actual falling
+		Object.YPos += Object.YVelocity
+		
+		// Check to see if this Object's hit the ground
+		// (Note the use of 31 for the Y Offset here, it changes for every falling cycle)
 		ObjectTileCollision(0, 0, 31, 0)
-		if CheckResult == 1
+		
+		if CheckResult == true
 			Screen.ShakeY = 4
-			PlayStageSfx(4, 0)
-			if Object.Value0 < 1
-				Object.Value0++
-				Object.Value2 >>= 1
-				FlipSign(Object.Value2)
+			
+			PlayStageSfx(SFX_IMPACT1, false)
+			
+			// Bounce once
+			if Object.Bounces < 1
+				Object.Bounces++
+				
+				// Tone the Y Velocity down a bit and turn it right around!
+				Object.YVelocity >>= 1
+				FlipSign(Object.YVelocity)
 			else
-				Object.State = 3
-				Object[-1].State = 0
-				Object.Value0 = 0
-				Object.Value5 = 0
+				// Start the first main phase of the Fight
+				
+				Object.State = BOSSPLATFORM_FIGHT_1
+				Object[-1].State = EGGMAN_IDLE
+				Object.Bounces = 0
+				Object.Grind = 0
 			end if
+			
+			// Spawn Sparks, with an offset of 19 pixels
 			TempValue0 = 1245184
-			CallFunction(BossPlatform_Function51)
+			CallFunction(BossPlatform_SpawnLandingSparks)
+			
 #platform: Use_Haptics
 			HapticEffect(97, 0, 0, 0)
 #endplatform
 		end if
+		
+		
 		Object[-1].YPos = Object.YPos
 		Object[-1].YPos -= 1835008
+		
 		Object[-2].YPos = Object.YPos
-		CallFunction(BossPlatform_Function49)
-		Object.XPos = Object.Value1
-		Object[-2].XPos = Object.Value1
+		
+		// Update the Conveyor Belt, but...
+		CallFunction(BossPlatform_Conveyor_Update)
+		
+		// Revert whatever it does to the Boss's position, as the Boss is still in the air
+		Object.XPos = Object.BaseX
+		Object[-2].XPos = Object.BaseX
 		break
-	case 3
-		CallFunction(BossPlatform_Function49)
-		if Object.Value5 > 2399
+		
+	case BOSSPLATFORM_FIGHT_1
+		// First main phase of the fight
+		
+		CallFunction(BossPlatform_Conveyor_Update)
+		
+		if Object.Grind > 2399
 			Object.State++
 		end if
-		if Object.Value6 > 47
-			Object.Value6 %= 48
-			CreateTempObject(TypeName[BossSpark], 0, Object.XPos, Object.YPos)
+		
+		if Object.SparksTimer > 47
+			Object.SparksTimer %= 48
+			
+			// Create a Spark, with properties of:
+			// - 24 pixels right from the Boss Platform
+			// - 27 pixels below the Boss Platform
+			// - Starting X Velocity of one pixel a frame to the left
+			CreateTempObject(TypeName[Boss Spark], BOSSSPARK_GRIND, Object.XPos, Object.YPos)
 			Object[TempObjectPos].XPos += 1572864
 			Object[TempObjectPos].YPos += 1769472
-			Object[TempObjectPos].Value1 = -65536
+			Object[TempObjectPos].XVelocity = -65536
 		end if
 		break
-	case 4
-		Object.Value2 += 6144
-		Object.YPos += Object.Value2
+		
+	case BOSSPLATFORM_FALL_2
+		
+		// Falling acceleration speed rate of about 0.09 pixels per frame
+		Object.YVelocity += 6144
+		
+		Object.YPos += Object.YVelocity
+		
+		// Check to see if the Boss Platform's hit the ground
+		// Note that the Y Offset is 23 here, shorter than the 31 from last time
 		ObjectTileCollision(0, 0, 23, 0)
-		if CheckResult == 1
+		
+		if CheckResult == true
 			Screen.ShakeY = 4
-			PlayStageSfx(4, 0)
-			if Object.Value0 < 1
-				Object.Value0++
-				Object.Value2 >>= 1
-				FlipSign(Object.Value2)
+			
+			PlayStageSfx(SFX_IMPACT1, false)
+			
+			// Bounce once when initially hitting the ground
+			if Object.Bounces < 1
+				Object.Bounces++
+				
+				// Lower Velocity it turn it around
+				Object.YVelocity >>= 1
+				FlipSign(Object.YVelocity)
 			else
-				Object.State = 5
-				Object.Value0 = 0
-				Object.Value5 = 0
+				Object.State = BOSSPLATFORM_FIGHT_2
+				Object.Bounces = 0
+				Object.Grind = 0
 			end if
+			
+			// Spawn landing Sparks, with an offset of 11 pixels
 			TempValue0 = 720896
-			CallFunction(BossPlatform_Function51)
+			CallFunction(BossPlatform_SpawnLandingSparks)
+			
 #platform: Use_Haptics
 			HapticEffect(97, 0, 0, 0)
 #endplatform
 		end if
+		
+		// Move Eggman to match this Object's position, 28 pixels above
 		Object[-1].YPos = Object.YPos
 		Object[-1].YPos -= 1835008
+		
+		// And move the Boss Back Panel along as well
 		Object[-2].YPos = Object.YPos
-		CallFunction(BossPlatform_Function49)
+		
+		// Update the Conveyor underneat the Boss, even if the Boss may not be on it
+		// -> With this, however, the Boss's Base Position isn't restored afterwards
+		//    so the Boss may still shake slightly horizontally while in the air
+		CallFunction(BossPlatform_Conveyor_Update)
 		break
-	case 5
-		CallFunction(BossPlatform_Function49)
-		if Object.Value5 > 2399
+		
+	case BOSSPLATFORM_FIGHT_2
+		CallFunction(BossPlatform_Conveyor_Update)
+		
+		if Object.Grind > 2399
 			Object.State++
 		end if
-		if Object.Value6 > 47
-			Object.Value6 %= 48
-			CreateTempObject(TypeName[BossSpark], 0, Object.XPos, Object.YPos)
+		
+		if Object.SparksTimer > 47
+			Object.SparksTimer %= 48
+			
+			// Create a Boss Spark, with values of:
+			// - 24 pixels right from the Boss's Position
+			// - 19 pixels below the Boss's Position
+			// - X Velocity of 1 pixel left per frame
+			CreateTempObject(TypeName[Boss Spark], BOSSSPARK_GRIND, Object.XPos, Object.YPos)
 			Object[TempObjectPos].XPos += 1572864
 			Object[TempObjectPos].YPos += 1245184
-			Object[TempObjectPos].Value1 = -65536
+			Object[TempObjectPos].XVelocity = -65536
 		end if
 		break
-	case 6
-		Object.Value2 += 6144
-		Object.YPos += Object.Value2
+		
+	case BOSSPLATFORM_FALL_3
+		
+		// Fall with an acceleration speed of about 0.09 pixels per frame
+		Object.YVelocity += 6144
+		
+		Object.YPos += Object.YVelocity
+		
+		// Check for Floor collision, now with a Y Offset of 15
 		ObjectTileCollision(0, 0, 15, 0)
-		if CheckResult == 1
+		
+		if CheckResult == true
 			Screen.ShakeY = 4
-			PlayStageSfx(4, 0)
-			if Object.Value0 < 1
-				Object.Value0++
-				Object.Value2 >>= 1
-				FlipSign(Object.Value2)
+			
+			PlayStageSfx(SFX_IMPACT1, false)
+			
+			// Bounce a single time upon initially landing
+			if Object.Bounces < 1
+				Object.Bounces++
+				
+				Object.YVelocity >>= 1
+				FlipSign(Object.YVelocity)
 			else
-				Object.State = 7
-				Object.Value0 = 0
-				Object.Value5 = 0
+				Object.State = BOSSPLATFORM_FIGHT_3
+				Object.Bounces = 0
+				Object.Grind = 0
 			end if
+			
+			// Create landing Sparks, with an offset of 3 pixels this time
 			TempValue0 = 196608
-			CallFunction(BossPlatform_Function51)
+			CallFunction(BossPlatform_SpawnLandingSparks)
+			
 #platform: Use_Haptics
 			HapticEffect(97, 0, 0, 0)
 #endplatform
 		end if
+		
+		// Carry Eggman along, to be 28 pixels above this Platform's Position
 		Object[-1].YPos = Object.YPos
 		Object[-1].YPos -= 1835008
+		
+		// And his Back Panel, too
 		Object[-2].YPos = Object.YPos
-		CallFunction(BossPlatform_Function49)
+		
+		CallFunction(BossPlatform_Conveyor_Update)
 		break
-	case 7
-		CallFunction(BossPlatform_Function49)
-		if Object.Value5 > 2399
+		
+	case BOSSPLATFORM_FIGHT_3
+		CallFunction(BossPlatform_Conveyor_Update)
+		
+		if Object.Grind > 2399
 			Object.State++
-			Object[-1].State = 3
+			Object[-1].State = EGGMAN_PANICK_JUMP
 			Object[-1].Frame = 0
-			Object[-1].Value0 = 0
+			Object[-1].Timer = 0
 		end if
-		if Object.Value6 > 47
-			Object.Value6 %= 48
-			CreateTempObject(TypeName[BossSpark], 0, Object.XPos, Object.YPos)
+		
+		if Object.SparksTimer > 47
+			Object.SparksTimer %= 48
+			
+			// Create a Boss Spark Object, with starting values of:
+			// - X Position of 24 pixels right of this Boss Platform
+			// - Y Position of 11 pixels below this Boss Platform
+			// - X Velocity of 1 pixel left per frame
+			CreateTempObject(TypeName[Boss Spark], BOSSSPARK_GRIND, Object.XPos, Object.YPos)
 			Object[TempObjectPos].XPos += 1572864
 			Object[TempObjectPos].YPos += 720896
-			Object[TempObjectPos].Value1 = -65536
+			Object[TempObjectPos].XVelocity = -65536
 		end if
 		break
-	case 8
-		Object.Value2 += 6144
-		Object.YPos += Object.Value2
+		
+	case BOSSPLATFORM_FALL_4
+		
+		// Apply a falling acceleration of roughly 0.09 pixels per frame
+		Object.YVelocity += 6144
+		
+		Object.YPos += Object.YVelocity
+		
+		// Check for Ground Collision, now with an even smaller Y Offset of 7 pixels
 		ObjectTileCollision(0, 0, 7, 0)
-		if CheckResult == 1
+		
+		if CheckResult == true
 			Screen.ShakeY = 4
-			PlayStageSfx(4, 0)
-			if Object.Value0 < 1
-				Object.Value0++
-				Object.Value2 >>= 1
-				FlipSign(Object.Value2)
+			
+			PlayStageSfx(SFX_IMPACT1, false)
+			
+			// Just like every other time, bounce one time upon initially landing
+			if Object.Bounces < 1
+				Object.Bounces++
+				
+				// Minimize & flip the Y Velocity
+				Object.YVelocity >>= 1
+				FlipSign(Object.YVelocity)
 			else
-				Object.State = 9
-				Object.Value0 = 0
-				Object.Value5 = 0
+				Object.State = BOSSPLATFORM_FIGHT_4
+				Object.Bounces = 0
+				Object.Grind = 0
 			end if
+			
+			// Spawn some Landing Sparks, with an offset of 3 pixels up
 			TempValue0 = -196608
-			CallFunction(BossPlatform_Function51)
+			CallFunction(BossPlatform_SpawnLandingSparks)
+			
 #platform: Use_Haptics
 			HapticEffect(97, 0, 0, 0)
 #endplatform
 		end if
+		
+		// Carry Eggman along, keeping him 28 pixels above this Object's Base Y Position
 		Object[-1].YPos = Object.YPos
 		Object[-1].YPos -= 1835008
+		
+		// And then Eggman's control Panel too, he needs something to hold on to!
 		Object[-2].YPos = Object.YPos
-		CallFunction(BossPlatform_Function49)
+		
+		CallFunction(BossPlatform_Conveyor_Update)
 		break
-	case 9
-		CallFunction(BossPlatform_Function49)
-		if Object.Value5 > 2399
+		
+	case BOSSPLATFORM_FIGHT_4
+		// We're in the final strech now!
+		
+		CallFunction(BossPlatform_Conveyor_Update)
+		
+		if Object.Grind > 2399
 			Object.State++
-			Object[-1].State = 6
+			
+			// Make Robotnik start running away
+			Object[-1].State = EGGMAN_FLEE
 			Object[-1].Frame = 0
-			Object[-1].Value0 = 0
+			Object[-1].Timer = 0
+			
+			// Move him to draw ontop of this Boss Platform Object and all its other accessories
 			Object[-1].DrawOrder = 4
-			Object.XPos = Object.Value1
+			
+			// Move this Object back to its Base Position as well, and move the Boss Back Panel with it too
+			Object.XPos = Object.BaseX
 			Object[-2].XPos = Object.XPos
-			Object.Value0 = 0
+			
+			Object.Timer = 0
 		end if
-		if Object.Value6 > 47
-			Object.Value6 %= 48
-			CreateTempObject(TypeName[BossSpark], 0, Object.XPos, Object.YPos)
+		
+		if Object.SparksTimer > 47
+			Object.SparksTimer %= 48
+			
+			// Create a Boss Spark, with properties of:
+			// - 24 pixels left right from this Platform
+			// - 3 pixels below this Platform Object
+			// - Velocity of 1 pixel left per frame
+			CreateTempObject(TypeName[Boss Spark], BOSSSPARK_GRIND, Object.XPos, Object.YPos)
 			Object[TempObjectPos].XPos += 1572864
 			Object[TempObjectPos].YPos += 196608
-			Object[TempObjectPos].Value1 = -65536
+			Object[TempObjectPos].XVelocity = -65536
 		end if
 		break
-	case 10
-		if Object.Value0 == 19
-			Object.Value0 = 0
+		
+	case BOSSPLATFORM_EGGFLEE
+		if Object.Timer == 19
+			Object.Timer = 0
 			TempValue0 = -196608
-			CallFunction(BossPlatform_Function51)
+			CallFunction(BossPlatform_SpawnLandingSparks)
 		end if
-		Object.Value0++
-		if Object.Value3 > 0
-			CallFunction(BossPlatform_Function50)
+		
+		Object.Timer++
+		
+		if Object.BeltSpeed > 0
+			// If the Belt's still running, then slow it down
+			
+			CallFunction(BossPlatform_Conveyor_WindDown)
+			
+			// Restore Stage Bounds as well, in a way to make the camera pan to the right
+			// -> The full restoring of those bounds is done right below, with the Boss Platform's OldBoundsR
 			Stage.XBoundary2 += 4
 		else
-			Stage.NewXBoundary2 = Object[-3].Value2
+			
+			// Restore the Stage's Bounds to normal
+			Stage.NewXBoundary2 = Object[-3].OldBoundsR
+			
 			Object.State++
-			Object.Value0 = 0
-			Object.InkEffect = 2 //INK_ALPHA
-			Object[-3].InkEffect = 2 //INK_ALPHA
+			Object.Timer = 0
+			
+			// Set this Object's Ink Effect to INK_ALPHA, for its red flashing
+			Object.InkEffect = 2
+			
+			// And set the Boss Top to be INK_ALPHA as well, for the same purpose
+			Object[-3].InkEffect = 2
+			
 #platform: Use_Haptics
 			HapticEffect(97, 0, 0, 0)
 #endplatform
 		end if
 		break
-	case 11
-		Sin(TempValue0, Object.Value0)
+		
+	case BOSSPLATFORM_EXPLODE
+		
+		// Oscillate the red flashing of this & the Boss Top's red flashing
+		
+		Sin(TempValue0, Object.Timer)
+		
 		TempValue0 /= 3
 		if TempValue0 < 0
+			// Stay in the positives here
 			FlipSign(TempValue0)
 		end if
+		
 		if TempValue0 > 255
+			// And cap at 255, as well
 			TempValue0 = 255
 		end if
+		
+		// Set this and the Boss Top's Alpha to be the same
 		Object.Alpha = TempValue0
 		Object[-3].Alpha = TempValue0
-		TempValue0 = Object.Value0
+		
+		TempValue0 = Object.Timer
 		TempValue0 &= 127
+		
 		if TempValue0 == 0
-			CreateTempObject(TypeName[BossExplosion], 0, Object.XPos, Object.YPos)
+			// Create an Explosion, 32 pixels left and 16 pixels above this Object
+			
+			CreateTempObject(TypeName[Boss Explosion], 0, Object.XPos, Object.YPos)
 			Object[TempObjectPos].XPos -= 2097152
 			Object[TempObjectPos].YPos -= 1048576
 		end if
+		
 		if TempValue0 == 32
-			CreateTempObject(TypeName[BossExplosion], 0, Object.XPos, Object.YPos)
+			// Create an Explosion, now 16 pixels left from this object
+			
+			CreateTempObject(TypeName[Boss Explosion], 0, Object.XPos, Object.YPos)
 			Object[TempObjectPos].XPos -= 1048576
 		end if
+		
 		if TempValue0 == 64
-			CreateTempObject(TypeName[BossExplosion], 0, Object.XPos, Object.YPos)
+			// Create an Explosion, this one 32 pixels to the right and 16 pixels above this Object
+			
+			CreateTempObject(TypeName[Boss Explosion], 0, Object.XPos, Object.YPos)
 			Object[TempObjectPos].XPos += 2097152
 			Object[TempObjectPos].YPos -= 1048576
 		end if
-		TempValue0 = Object.Value0
+		
+		TempValue0 = Object.Timer
 		TempValue0 &= 31
 		if TempValue0 == 0
-			PlaySfx(22, 0)
+			PlaySfx(SFX_EXPLOSION, false)
 		end if
-		Object.Value0 += 8
-		if Object.Value0 > 960
+		
+		Object.Timer += 8
+		if Object.Timer > 960
 			Player.Score += 1000
-			CreateTempObject(TypeName[FadeMusic], 1, 0, 0)
+			CreateTempObject(TypeName[Fade Music], 1, 0, 0)
+			
+			// Clear all of the Boss's Objects
+			
+			// Let's start with this one - the Boss Platform
 			TempValue0 = Object.EntityNo
 			ResetObjectEntity(TempValue0, TypeName[Blank Object], 0, 0, 0)
+			
+			// Then, the Eggman Object
 			TempValue0--
 			ResetObjectEntity(TempValue0, TypeName[Blank Object], 0, 0, 0)
+			
+			// Then, the Boss Back Panel Object
 			TempValue0--
 			ResetObjectEntity(TempValue0, TypeName[Blank Object], 0, 0, 0)
+			
+			// After that comes the Boss Top Object
 			TempValue0--
 			ResetObjectEntity(TempValue0, TypeName[Blank Object], 0, 0, 0)
+			
+			// Then the Bomb Carrier Object
 			TempValue0--
 			ResetObjectEntity(TempValue0, TypeName[Blank Object], 0, 0, 0)
+			
+			// And finally, the Boss Bomb Object
 			TempValue0--
 			ResetObjectEntity(TempValue0, TypeName[Blank Object], 0, 0, 0)
+			
+			// The Object after all those, the Boss Spikes Object, is left alone
 		end if
 		break
+	
 	end switch
+	
 end sub
 
 
 sub ObjectPlayerInteraction
-	if Object.State == 0
+	
+	if Object.State == BOSSPLATFORM_IDLE
+		// See if the Player's hit the currently static machine
+		
 		PlayerObjectCollision(C_TOUCH, -32, -48, 32, 32)
-		if CheckResult == 1
+		
+		if CheckResult == true
 			FlipSign(Player.XVelocity)
 			FlipSign(Player.YVelocity)
 			TempValue0 = Player.XVelocity
@@ -528,74 +969,124 @@ sub ObjectPlayerInteraction
 			Player.Speed = TempValue0
 			Player.XVelocity = TempValue0
 			Player.YVelocity = TempValue1
-			Object.State = 1
-			Object.Value1 = Object.XPos
-			Object[-3].State = 1
-			Object[-4].State = 3
-			PlayStageSfx(3, 0)
+			Object.State = BOSSPLATFORM_SHAKE
+			
+			// Set the Object's Base/Origin Position, this needs to be stored as the Object will 
+			// slightly shake horizontally during the Boss Fight
+			Object.BaseX = Object.XPos
+			
+			// Tell the Boss Top to start moving the stage boundary left
+			Object[-3].State = BOSSTOP_MOVEBOUNDS
+			
+			// Made the Bomb Carrier start up, as well
+			Object[-4].State = BOMBCARRIER_SLIDERIGHT
+			
+			// Ka-thunk!
+			PlayStageSfx(SFX_BOSSHIT, false)
+			
 #platform: Use_Haptics
 			HapticEffect(97, 0, 0, 0)
 #endplatform
 		end if
 	else
+		// Just act as a box for the Player
+		// -> All the actual cool, fun stuff is done over in ObjectMain instead
 		PlayerObjectCollision(C_BOX, -32, -256, 32, 24)
 	end if
+	
 end sub
 
 
 sub ObjectDraw
+	
+	// Each State gets its own Drawing routine
+	// -> For the most part, these are all the same, but with different latter frames for the Boss Platform's bottom
 	switch Object.State
-	case 0
-	case 1
-	case 2
+	case BOSSPLATFORM_IDLE
+	case BOSSPLATFORM_SHAKE
+	case BOSSPLATFORM_FALL_1
 		DrawSprite(0)
 		DrawSprite(1)
 		break
-	case 3
+		
+	case BOSSPLATFORM_FIGHT_1
 		DrawSprite(0)
 		DrawSprite(2)
 		break
-	case 4
-	case 5
+		
+	case BOSSPLATFORM_FALL_2
+	case BOSSPLATFORM_FIGHT_2
 		DrawSprite(0)
 		DrawSprite(3)
 		break
-	case 6
-	case 7
+		
+	case BOSSPLATFORM_FALL_3
+	case BOSSPLATFORM_FIGHT_3
 		DrawSprite(0)
 		DrawSprite(4)
 		break
-	case 8
-	case 9
+		
+	case BOSSPLATFORM_FALL_4
+	case BOSSPLATFORM_FIGHT_4
 		DrawSprite(0)
 		DrawSprite(5)
 		break
-	case 10
+		
+	case BOSSPLATFORM_EGGFLEE
 		DrawSprite(0)
 		DrawSprite(5)
+		
+		// Now that Robotnik's fleeing, he's taking the ControL Panel sprite with him,
+		// so draw our own here
 		DrawSprite(6)
 		break
-	case 11
+		
+	case BOSSPLATFORM_EXPLODE
 		DrawSprite(0)
 		DrawSprite(5)
 		DrawSprite(6)
+		
+		// Draw the Red Flashing Frame, with an Alpha of whatever Object.Alpha is set to
 		DrawSpriteFX(7, FX_INK, Object.XPos, Object.YPos)
 		break
+		
 	end switch
+	
 end sub
 
 
 sub ObjectStartup
+	
 	LoadSpriteSheet("R5/Objects2.gif")
+	
+	// Boss Platform Frames
+	
+	// Main Boss Platform Frame
 	SpriteFrame(-32, -48, 64, 48, 1, 50)
+	
+	// Perfect, Ungrinded Bottom Frame
 	SpriteFrame(-32, 0, 64, 32, 1, 98)
+	
+	// Gently Grinded Bottom Frame
 	SpriteFrame(-32, 0, 64, 32, 1, 131)
+	
+	// Slightly move Grinded Frame
 	SpriteFrame(-32, 0, 64, 24, 1, 164)
+	
+	// Considerably more Grinded Frame
 	SpriteFrame(-32, 0, 64, 16, 1, 189)
+	
+	// Heavily Grinded Frame (- there's almost nothing left now!)
 	SpriteFrame(-32, 0, 64, 8, 1, 206)
+	
+	// Control Panel Frame (normally part of Eggman's sprite itself, for the most part)
 	SpriteFrame(-32, -48, 26, 24, 1, 215)
+	
+	// Flashing Red Boss Platform Frame
 	SpriteFrame(-32, -48, 64, 56, 75, 50)
+	
 end sub
+
 
 // ========================
 // Editor Subs
@@ -605,9 +1096,11 @@ sub RSDKDraw
 	DrawSprite(0)
 end sub
 
+
 sub RSDKLoad
-	LoadSpriteSheet("Global/Display.gif")
-	SpriteFrame(-16, -16, 32, 32, 1, 143)		// #0 - "Script" Icon
+	LoadSpriteSheet("R5/Objects2.gif")
+	SpriteFrame(-32, -48, 64, 48, 1, 50)
+	SpriteFrame(-32, 0, 64, 32, 1, 98)
 
 	SetVariableAlias(ALIAS_VAR_PROPVAL, "unused")
 end sub

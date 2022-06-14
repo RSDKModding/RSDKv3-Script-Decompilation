@@ -7,8 +7,8 @@
 
 #alias Object.Value0 : Object.InTube
 
-#alias 0 : TUBESWITCH_GROUND
-#alias 0 : TUBESWITCH_GROUND
+// TODO: i have no idea how the naming conventions for this should work
+#alias 0 : TUBESWITCH_IDK
 
 #alias Player.Value6 : Player.MinRollSpeed
 
@@ -154,6 +154,7 @@ sub ObjectPlayerInteraction
 						Player.YVelocity = 0
 						Player.XPos -= 524288
 					end if
+					
 					if Player.Right == true
 						Player.State = PlayerObject_StartTTCtrlLock
 						Player.Gravity = 0
@@ -171,7 +172,7 @@ sub ObjectPlayerInteraction
 			break
 
 		case 6
-			if Object.InTube == 0
+			if Object.InTube == false
 				if Player.State == PlayerObject_HandleAir
 					Player.XPos = Object.XPos
 					Player.XVelocity = 0
@@ -199,6 +200,7 @@ sub ObjectPlayerInteraction
 	end if
 end sub
 
+
 // ========================
 // Editor Subs
 // ========================
@@ -222,11 +224,11 @@ sub RSDKDraw
 	if Editor.ShowGizmos == true
 		// Draw the tube switch's hitbox, purposefully ignoring Editor.DrawingOverlay
 		
-		TempValue0 = Object.XPos
-		TempValue0 -= 0x80000
-		TempValue1 = Object.YPos
-		TempValue1 -= 0x80000
-		DrawRectOutline(TempValue0, TempValue1, 0x100000, 0x100000, 255, 255, 255, 255)
+		TempValue0 = Object.iXPos
+		TempValue0 -= 16
+		TempValue1 = Object.iYPos
+		TempValue1 -= 16
+		DrawRectOutline(TempValue0, TempValue1, 32, 32, 255, 255, 255, 255)
 	end if
 end sub
 
@@ -235,5 +237,5 @@ sub RSDKLoad
 	LoadSpriteSheet("Global/Display.gif")
 	SpriteFrame(-8, -8, 16, 16, 173, 67) // "T" (ubeswitch) icon
 
-	SetVariableAlias(ALIAS_VAR_PROPVAL, "unused")
+	// TODO: how would you even name these
 end sub

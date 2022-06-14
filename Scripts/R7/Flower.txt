@@ -20,9 +20,12 @@
 #alias 8				:	FLOWER_ANIM_2
 #alias 9				:	FLOWER_ANIM_3
 
+
 sub ObjectMain
+	
 	switch Object.State
 	case FLOWER_SEED_SPAWN
+		// Hover as a seed for a brief moment
 		Object.Frame = 8
 		Object.Timer++
 		if Object.Timer == 20
@@ -30,22 +33,30 @@ sub ObjectMain
 			Object.State++
 		end if
 		break
-
+		
 	case FLOWER_SEED_FALL
 		Object.Frame = Object.Timer
 		Object.Frame >>= 2
 		Object.Timer++
 		Object.Timer &= 7
-		Object.YPos += 131072	// 0x20000
-		ObjectTileCollision(0, 0, 8, 0)	// Check if it touched the ground
+		
+		// Fall at a graceful speed of 2 pixels per frame
+		Object.YPos += 131072
+		
+		// Check if the Flower has touched the ground
+		ObjectTileCollision(0, 0, 8, 0)
 		if CheckResult == true
-			Object.YPos += 524288	// 0x80000
+			// If it has, then turn it into a full-on Flower
+			
+			// First, move the seed 8 pixels down since Flowers are taller than seeds
+			Object.YPos += 524288
+			
 			Object.State++
 			Object.Timer = 0
 			Object.Frame = 2
 		end if
 		break
-
+		
 	case FLOWER_SEED_PLANTED_1
 		Object.Timer++
 		if Object.Timer == 4
@@ -63,7 +74,7 @@ sub ObjectMain
 			Object.Frame = 2
 		end if
 		break
-
+		
 	case FLOWER_SEED_PLANTED_3
 		Object.Timer++
 		if Object.Timer == 4
@@ -72,7 +83,7 @@ sub ObjectMain
 			Object.Frame = 3
 		end if
 		break
-
+		
 	case FLOWER_ROOT_GROWTH_1
 		Object.Timer++
 		if Object.Timer == 5
@@ -81,7 +92,7 @@ sub ObjectMain
 			Object.Frame = 4
 		end if
 		break
-
+		
 	case FLOWER_ROOT_GROWTH_2
 		Object.Timer++
 		if Object.Timer == 4
@@ -90,7 +101,7 @@ sub ObjectMain
 			Object.Frame = 5
 		end if
 		break
-
+		
 	case FLOWER_ANIM_1
 		Object.Timer++
 		if Object.Timer == 2
@@ -99,7 +110,7 @@ sub ObjectMain
 			Object.Frame = 6
 		end if
 		break
-
+		
 	case FLOWER_ANIM_2
 		Object.Timer++
 		if Object.Timer == 20
@@ -108,7 +119,7 @@ sub ObjectMain
 			Object.Frame = 7
 		end if
 		break
-
+		
 	case FLOWER_ANIM_3
 		Object.Timer++
 		if Object.Timer == 20
@@ -117,7 +128,7 @@ sub ObjectMain
 			Object.Frame = 6
 		end if
 		break
-
+		
 	end switch
 end sub
 
@@ -132,18 +143,20 @@ sub ObjectStartup
 	
 	SpriteFrame(-4, -8, 8, 16, 26, 170)		// #0 - Seed Frame 0
 	SpriteFrame(-4, -8, 8, 16, 35, 170)		// #1 - Seed Frame 1
-
+	
 	SpriteFrame(-8, -8, 16, 16, 44, 170)	// #2 - Planted Seed Frame 0
 	SpriteFrame(-8, -8, 16, 16, 26, 187)	// #3 - Planted Seed Frame 1
-
+	
 	SpriteFrame(0, -8, 8, 16, 66, 99) 		// #4 - Flower Growth Frame 0
 	SpriteFrame(-12, -24, 24, 24, 66, 25) 	// #5 - Flower Growth Frame 1
-
+	
 	SpriteFrame(-12, -48, 24, 48, 66, 1) 	// #6 - Flower Frame 0
 	SpriteFrame(-12, -48, 24, 48, 66, 50) 	// #7 - Flower Frame 1
-
+	
 	SpriteFrame(0, 0, 0, 0, 73, 132)		// #8 - Cheat Sprite, blank frame
+	
 end sub
+
 
 // ========================
 // Editor Subs
@@ -155,8 +168,8 @@ end sub
 
 
 sub RSDKLoad
-	LoadSpriteSheet("Global/Display.gif")
-	SpriteFrame(-16, -16, 32, 32, 1, 143)		// #0 - "Script" Icon
+	LoadSpriteSheet("R7/Objects2.gif")
+	SpriteFrame(-12, -48, 24, 48, 66, 1)
 
 	SetVariableAlias(ALIAS_VAR_PROPVAL, "unused")
 end sub

@@ -3,159 +3,300 @@
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
 // Aliases
-#alias 40: TYPE_VPLATFORMLARGE
+#alias Object.Value0 : Object.Oscillation
+#alias Object.Value1 : Object.PlatformY
+#alias Object.Value2 : Object.ChangeY
+#alias Object.Value3 : Object.Angle
+
+// Time Period Aliases
+#alias 0 : PERIOD_PRESENT
+#alias 1 : PERIOD_PAST
+#alias 2 : PERIOD_FUTURE_G
+#alias 3 : PERIOD_FUTURE_B
 
 
 sub ObjectMain
-	Object.Value0++
-	if Object.Value0 == 312
-		Object.Value0 = 0
+	
+	// Update the Platform's base Oscillation Value
+	Object.Oscillation++
+	if Object.Oscillation == 312
+		Object.Oscillation = 0
 	end if
-	Object.Value3 = Object.Value0
-	Object.Value3 <<= 6
-	Object.Value3 /= 39
-	Sin(Object.Value2, Object.Value3)
+	
+	// From that Oscillation Value, get the Angle for the Platform to be at
+	// The result will range somewhere from 0 to 510
+	Object.Angle = Object.Oscillation
+	Object.Angle <<= 6
+	Object.Angle /= 39
+	
+	// Get the base Y change value for the Platform
+	Sin(Object.ChangeY, Object.Angle)
+	
+	// And from here, jump to the specific handling case needed for the different Platform types
 	switch Object.PropertyValue
 	case 0
 	case 2
-		Object.Value2 *= 6144
-		Object.Value2 += 3145728
-		Object.Value2 += Object.YPos
-		Object.Value2 &= -65536
-		Object.Value2 -= Object.Value1
+		// Downwards Platform
+		Object.ChangeY *= 6144
+		Object.ChangeY += 3145728
+		Object.ChangeY += Object.YPos
+		Object.ChangeY &= 4294901760
+		Object.ChangeY -= Object.PlatformY
 		break
+		
 	case 3
 	case 5
-		Object.Value2 *= -6144
-		Object.Value2 -= 3145728
-		Object.Value2 += Object.YPos
-		Object.Value2 &= -65536
-		Object.Value2 -= Object.Value1
+		// Upwards Platform
+		Object.ChangeY *= -6144
+		Object.ChangeY -= 3145728
+		Object.ChangeY += Object.YPos
+		Object.ChangeY &= 4294901760
+		Object.ChangeY -= Object.PlatformY
 		break
+		
 	case 1
-		Object.Value2 *= 6144
-		Object.Value2 += 3145728
-		Object.Value2 += Object.YPos
-		Object.Value2 &= -65536
-		Object.Value2 -= Object.Value1
+		// Unused duplicate of down Platform
+		Object.ChangeY *= 6144
+		Object.ChangeY += 3145728
+		Object.ChangeY += Object.YPos
+		Object.ChangeY &= 4294901760
+		Object.ChangeY -= Object.PlatformY
 		break
+		
 	case 4
-		Object.Value2 *= -6144
-		Object.Value2 -= 3145728
-		Object.Value2 += Object.YPos
-		Object.Value2 &= -65536
-		Object.Value2 -= Object.Value1
+		// Unused duplicate of upwards Platform
+		Object.ChangeY *= -6144
+		Object.ChangeY -= 3145728
+		Object.ChangeY += Object.YPos
+		Object.ChangeY &= 4294901760
+		Object.ChangeY -= Object.PlatformY
 		break
+		
 	end switch
+	
 end sub
 
 
 sub ObjectPlayerInteraction
+	
+	// First, back up the Object's base Y Position
 	TempValue0 = Object.YPos
-	Object.YPos = Object.Value1
+	
+	// Then, move the Object to where its Platform is
+	Object.YPos = Object.PlatformY
+	
+	// From here, jump as needed to the needed Platform type
 	switch Object.PropertyValue
 	case 0
 	case 3
+		// Standard Platform
 		PlayerObjectCollision(C_PLATFORM, -48, -16, 48, 12)
-		if CheckResult == 1
-			Player.YPos += Object.Value2
+		if CheckResult == true
+			// Move the Player along with the Platform to keep them on
+			Player.YPos += Object.ChangeY
 		end if
 		break
+		
 	case 2
 	case 5
+		// Conveyor Platform
 		PlayerObjectCollision(C_PLATFORM, -48, -16, 48, 12)
-		if CheckResult == 1
-			Player.YPos += Object.Value2
+		if CheckResult == true
+			
+			// Move the Player vertically to say with the Platform
+			Player.YPos += Object.ChangeY
+			
+			// And then move the player horizontally as needed with the Conveyor Belt
 			if ConveyorBelt_Flag == 0
 				Player.XPos += ConveyorBelt_Speed
 			else
 				Player.XPos -= ConveyorBelt_Speed
 			end if
+			
 		end if
 		break
+		
 	end switch
+	
+	// And now restore the Object's base Y Position
 	Object.YPos = TempValue0
+	
 end sub
 
 
 sub ObjectDraw
+
 	switch Object.PropertyValue
 	case 0
 	case 1
-		Sin(Object.Value1, Object.Value3)
-		Object.Value1 *= 6144
-		Object.Value1 += 3145728
-		Object.Value1 += Object.YPos
-		Object.Value1 &= -65536
-		DrawSpriteXY(0, Object.XPos, Object.Value1)
+		// Standard downwards Platform
+		Sin(Object.PlatformY, Object.Angle)
+		Object.PlatformY *= 6144
+		Object.PlatformY += 3145728
+		Object.PlatformY += Object.YPos
+		Object.PlatformY &= 4294901760
+		DrawSpriteXY(0, Object.XPos, Object.PlatformY)
 		break
+		
 	case 2
-		Sin(Object.Value1, Object.Value3)
-		Object.Value1 *= 6144
-		Object.Value1 += 3145728
-		Object.Value1 += Object.YPos
-		Object.Value1 &= -65536
-		DrawSpriteXY(0, Object.XPos, Object.Value1)
-		DrawSpriteXY(1, Object.XPos, Object.Value1)
+		// Downwards Conveyor Platform
+		Sin(Object.PlatformY, Object.Angle)
+		Object.PlatformY *= 6144
+		Object.PlatformY += 3145728
+		Object.PlatformY += Object.YPos
+		Object.PlatformY &= 4294901760
+		DrawSpriteXY(0, Object.XPos, Object.PlatformY)
+		DrawSpriteXY(1, Object.XPos, Object.PlatformY)
 		break
+		
 	case 3
 	case 4
-		Sin(Object.Value1, Object.Value3)
-		Object.Value1 *= -6144
-		Object.Value1 -= 3145728
-		Object.Value1 += Object.YPos
-		Object.Value1 &= -65536
-		DrawSpriteXY(0, Object.XPos, Object.Value1)
+		// Standard upwards Platform
+		Sin(Object.PlatformY, Object.Angle)
+		Object.PlatformY *= -6144
+		Object.PlatformY -= 3145728
+		Object.PlatformY += Object.YPos
+		Object.PlatformY &= 4294901760
+		DrawSpriteXY(0, Object.XPos, Object.PlatformY)
 		break
+		
 	case 5
-		Sin(Object.Value1, Object.Value3)
-		Object.Value1 *= -6144
-		Object.Value1 -= 3145728
-		Object.Value1 += Object.YPos
-		Object.Value1 &= -65536
-		DrawSpriteXY(0, Object.XPos, Object.Value1)
-		DrawSpriteXY(1, Object.XPos, Object.Value1)
+		// Upwards Conveyor Platform
+		Sin(Object.PlatformY, Object.Angle)
+		Object.PlatformY *= -6144
+		Object.PlatformY -= 3145728
+		Object.PlatformY += Object.YPos
+		Object.PlatformY &= 4294901760
+		DrawSpriteXY(0, Object.XPos, Object.PlatformY)
+		DrawSpriteXY(1, Object.XPos, Object.PlatformY)
 		break
+		
 	end switch
+	
 end sub
 
 
 sub ObjectStartup
+	
+	// Use different Sprites for the different Time Periods
 	switch Object[24].PropertyValue
-	case 0
+	case PERIOD_PRESENT
 		LoadSpriteSheet("R5/Objects.gif")
 		SpriteFrame(-48, -16, 96, 32, 1, 84)
 		SpriteFrame(-48, -16, 96, 16, 1, 191)
 		break
-	case 1
+		
+	case PERIOD_PAST
 		LoadSpriteSheet("R5/Objects3.gif")
 		SpriteFrame(-48, -16, 96, 32, 1, 203)
 		SpriteFrame(-48, -16, 96, 16, 159, 131)
 		break
-	case 2
+		
+	case PERIOD_FUTURE_G
 		LoadSpriteSheet("R5/Objects3.gif")
 		SpriteFrame(-48, -16, 96, 32, 1, 203)
 		SpriteFrame(-48, -16, 96, 16, 159, 165)
 		break
-	case 3
+		
+	case PERIOD_FUTURE_B
 		LoadSpriteSheet("R5/Objects3.gif")
 		SpriteFrame(-48, -16, 96, 32, 1, 203)
 		SpriteFrame(-48, -16, 96, 16, 159, 199)
 		break
+		
 	end switch
+	
 end sub
+
 
 // ========================
 // Editor Subs
 // ========================
 
-sub RSDKDraw
-	DrawSprite(0)
+sub RSDKEdit
+	if Editor.ReturnVariable == true
+		switch Editor.VariableID
+		case EDIT_VAR_PROPVAL // Property Value
+			CheckResult = Object.PropertyValue
+			break
+		case 0 // Direction
+			CheckResult = Object.PropertyValue
+			break
+		end switch
+	else
+		switch Editor.variableID
+		case EDIT_VAR_PROPVAL // Property Value
+			Object.PropertyValue = Editor.VariableValue
+			break
+		case 0 // Direction
+			Object.PropertyValue = Editor.VariableValue
+			break
+		end switch
+	end if
 end sub
 
-sub RSDKLoad
-	LoadSpriteSheet("Global/Display.gif")
-	SpriteFrame(-16, -16, 32, 32, 1, 143)		// #0 - "Script" Icon
 
-	SetVariableAlias(ALIAS_VAR_PROPVAL, "unused")
+sub RSDKDraw
+	TempValue2 = false
+	
+	switch Object.PropertyValue
+	case 2
+		TempValue2 = true
+	case 0
+	default
+		TempValue0 = 6144
+		TempValue1 = 3145728
+		break
+		
+	case 5
+		TempValue2 = true
+	case 3
+		TempValue0 *= -6144
+		TempValue1 -= 3145728
+		break
+		
+	end switch
+	
+	TempValue3 = Object.YPos
+	TempValue3 &= 4294901760
+	DrawSpriteXY(0, Object.XPos, TempValue3)
+	
+	if TempValue2 == true
+		DrawSpriteXY(1, Object.XPos, TempValue3)
+	end if
+	
+	if Editor.ShowGizmos
+		
+		// Draw the Platform's path as a line
+		
+		Sin(TempValue4, 128)
+		TempValue4 *= TempValue0
+		TempValue4 += TempValue1
+		TempValue4 += Object.YPos
+		TempValue4 &= 4294901760
+		
+		Editor.DrawingOverlay = true
+		
+		DrawLine(Object.XPos, TempValue3, Object.XPos, TempValue4, 255, 255, 255)
+		
+		Editor.DrawingOverlay = false
+		
+	end if
+end sub
+
+
+sub RSDKLoad
+	LoadSpriteSheet("R5/Objects.gif")
+	// TODO: using present frames here, do something for other time periods
+	SpriteFrame(-48, -16, 96, 32, 1, 84)
+	SpriteFrame(-48, -16, 96, 16, 1, 191)
+
+	AddEditorVariable("Direction")
+	SetActiveVariable("Direction")
+	AddEnumVariable("Downwards", 0)
+	// 1 is unused
+	AddEnumVariable("Downwards (Conveyor)", 2)
+	AddEnumVariable("Upwards", 3)
+	// 4 is unused
+	AddEnumVariable("Upwards (Conveyor)", 5)
 end sub

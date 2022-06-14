@@ -2,29 +2,69 @@
 //--------Scripted by Christian Whitehead 'The Taxman'--------//
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
+// Note: We're using R7Eggman as a prefix here because there's like 5 "Eggman" objects in the game, it's less confusing this way
+
 // Aliases
-#alias 48: TYPE_EGGMAN
-
-// TODO: the rest of this object
-
 #alias Object.Value0 : Object.Timer
 #alias Object.Value1 : Object.XVelocity
 #alias Object.Value2 : Object.LaserActive
 #alias Object.Value3 : Object.DebrisTimer
 #alias Object.Value4 : Object.LastExplosion
 #alias Object.Value5 : Object.LaserOffset
+#alias Object.Value6 : Object.Acceleration
 
-// States
-// 0 - await player
-// 1 - wait
-// 2 - fly in (right from left)
-// 3 - fly in (left to right)
-// 4+ - several small states
-// 13 - chase section
+// Initial few States
+#alias 0  : R7EGGMAN_AWAITPLAYER
+#alias 1  : R7EGGMAN_WAIT
+
+// Flying across the Screen, Right -> Left, then Left -> Right
+#alias 2  : R7EGGMAN_FLYIN_RL
+#alias 3  : R7EGGMAN_FLYIN_LR
+
+// Some States for taking care of Metal
+#alias 4  : R7EGGMAN_GOTOMETAL
+#alias 5  : R7EGGMAN_STARTUPMETAL
+
+// A bunch of small States for when he's flashing the laser on and off
+#alias 6  : R7EGGMAN_INTROLASERON1
+#alias 7  : R7EGGMAN_INTROLASEROFF1
+#alias 8  : R7EGGMAN_INTROLASERON2
+#alias 9  : R7EGGMAN_INTROLASEROFF2
+#alias 10 : R7EGGMAN_INTROLASERON3
+#alias 11 : R7EGGMAN_INTROLASEROFF3
+
+// Chasing the pair of Blues during the race
+#alias 12 : R7EGGMAN_CHASESTART
+#alias 13 : R7EGGMAN_CHASEMAIN
+
+// After the race, a series of states for him repeatedly lasering Metal Sonic's scrapped remains (?)
+#alias 14 : R7EGGMAN_ENDLASERON1
+#alias 15 : R7EGGMAN_ENDLASEROFF1
+#alias 16 : R7EGGMAN_ENDLASERON2
+#alias 17 : R7EGGMAN_ENDLASEROFF2
+#alias 18 : R7EGGMAN_ENDLASERON3
+#alias 19 : R7EGGMAN_ENDLASEROFF3
+
+// After that fit, now he descends and flies off to the right
+#alias 20 : R7EGGMAN_DESCEND
+#alias 21 : R7EGGMAN_PAUSE
+#alias 22 : R7EGGMAN_FLYAWAY
+
+// Thruster Animations
+#alias 0 : R7EGGMANANI_THRUSTEROFF
+#alias 1 : R7EGGMANANI_THRUSTERON
 
 // Metal Sonic (Object[+1]) Aliases
 #alias 1 : METALSONIC_TURNRIGHT
 #alias 2 : ANI_TURNING
+
+// Vertical Door (Object [-2] and [-1]) Aliases
+#alias Object.Value0 : Object.DrawPosY
+
+#alias 1 : VERTICALDOOR_START_OPENING
+#alias 3 : VERTICALDOOR_END_OPENED
+
+// Object[-2] is the door at the start of the race, [-1] is the final door
 
 // Debris Aliases
 // (XVel is coincidentally the same value as the main Eggman object so it doesn't need to be redeclared here)
@@ -35,176 +75,202 @@
 
 
 // Function declarations
-#function Eggman_FollowGround
+#function R7Eggman_FollowGround
 
 
-function Eggman_FollowGround
+function R7Eggman_FollowGround
+	// The track has all sorts of curves and ramps and stairs and such, this function is called to make Robotnik trace them
+	
 	// First move Robotnik 32 pixels up and attempt to find ground
 	Object.YPos -= 2097152
 	ObjectTileGrip(0, 6, 176, 0)
-	if CheckResult == false	
-
+	if CheckResult == false
+		
 		// No ground was found, so move Robotnik 16 pixels down and try again
 		Object.YPos += 1048576
 		ObjectTileGrip(0, 6, 176, 0)
 		if CheckResult == false
-
+			
 			// Still no collision, try once more
 			Object.YPos += 1048576
 			ObjectTileGrip(0, 6, 176, 0)
 			if CheckResult == false
-
+				
 				// Give up - move Eggman but don't try to follow the ground anymore
 				Object.YPos += 1048576
 			end if
 		end if
 	end if
+	
 end function
 
 
 sub ObjectMain
-
+	
 	switch Object.State
-	case 0
+	case R7EGGMAN_AWAITPLAYER
 		Stage.XBoundary2 = Object.iXPos
 		Stage.XBoundary2 -= 64
 		TempValue0 = Stage.XBoundary2
 		TempValue0 -= Screen.XSize
 		Stage.NewXBoundary1 = TempValue0
+		
+		// Player Object collision checking in ObjectMain, that's certainly risky!
+		// (This only checks against the last player on the list! Not a big issue with CD's single Player setup, but still worthy of concern...)
 		PlayerObjectCollision(C_TOUCH, -256, -256, 0, 256)
+		
 		if CheckResult == true
+			// If the player's within range, start the startup sequence
+			
 			CreateTempObject(TypeName[FadeMusic], 0, Object.XPos, Object.YPos)
+			
 			Object.Direction = FACING_LEFT
+			
+			// From this point on, make Robotnik always active, as the Player very well may outrun him during the race
 			Object.Priority = 1
+			
 			Object.State++
 		end if
 		break
 		
-	case 1
-		if Object.Value0 < 120
-			Object.Value0++
+	case R7EGGMAN_WAIT
+		// Before making his grand enterance, hide off screen for a couple of seconds...
+		if Object.Timer < 120
+			Object.Timer++
 		else
-			Object.Value0 = 0
-			Object.Animation = 1
+			// He's prepared, turn the thruster on and start moving!
+			Object.Timer = 0
+			Object.Animation = R7EGGMANANI_THRUSTERON
 			Object.State++
 		end if
 		break
 		
-	case 2
-		if Object.Value0 < 140
+	// The following set of two states is for Robotnik flying across the screen, he's got a movement speed of 6 pixels per second and that's about all that's interesting about them
+	
+	case R7EGGMAN_FLYIN_RL
+		if Object.Timer < 140
 			Object.XPos -= 393216
-			Object.Value0++
+			Object.Timer++
 		else
-			Object.Value0 = 0
+			Object.Timer = 0
 			Object.Direction = FACING_RIGHT
 			Object.State++
 		end if
 		break
 		
-	case 3
-		if Object.Value0 < 160
+	case R7EGGMAN_FLYIN_LR
+		if Object.Timer < 160
 			Object.XPos += 393216
-			Object.Value0++
+			Object.Timer++
 		else
-			Object.Value0 = 0
+			Object.Timer = 0
 			Object.Direction = FACING_LEFT
 			Object.State++
 		end if
 		break
 		
-	case 4
-		if Object.Value0 < 47
+	case R7EGGMAN_GOTOMETAL
+		if Object.Timer < 47
 			Object.XPos -= 393216
-			Object.Value0++
+			Object.Timer++
 		else
-			Object.Value0 = 0
-			Object.Animation = 0
+			// Arrived at Metal, stop for a moment while powering him on
+			Object.Timer = 0
+			Object.Animation = R7EGGMANANI_THRUSTEROFF
 			Object.State++
 		end if
 		break
 		
-	case 5
-		if Object.Value0 < 94
-			Object.Value0++
-			if Object.Value0 == 30
+	case R7EGGMAN_STARTUPMETAL
+		if Object.Timer < 94
+			Object.Timer++
+			if Object.Timer == 30
+				// Object[+1] is Metal Sonic
 				Object[+1].State = METALSONIC_TURNRIGHT
 				Object[+1].Animation = ANI_TURNING
-				Object[+1].Value0 = 0
+				Object[+1].Timer = 0
 			end if
-			if Object.Value0 == 90
+			
+			if Object.Timer == 90
+				// Metal's now ready, but is Sonic?
 				Object.LaserActive = true
 			end if
 		else
-			Object.Value0 = 0
-			Object.Animation = 1
-			Object.Value5 = -393216
+			Object.Timer = 0
+			Object.Animation = R7EGGMANANI_THRUSTERON
+			
+			// This laser around, the explosions should be 6 pixels left of Robotnik
+			Object.LaserOffset = -393216
 			Object.State++
 		end if
 		break
 		
-	case 6
+	// Following are a bunch of small states to manage Robotnik turning his laser on and off a bunch, with a movement speed of 2 pixels per second
+	
+	case R7EGGMAN_INTROLASERON1
 		Object.XPos -= 131072
-		if Object.Value0 < 6
-			Object.Value0++
+		if Object.Timer < 6
+			Object.Timer++
 		else
-			Object.Value0 = 0
+			Object.Timer = 0
 			Object.LaserActive = false
 			Object.State++
 		end if
 		break
-
-	case 7
+		
+	case R7EGGMAN_INTROLASEROFF1
 		Object.XPos -= 131072
-		if Object.Value0 < 30
-			Object.Value0++
+		if Object.Timer < 30
+			Object.Timer++
 		else
-			Object.Value0 = 0
-			Object.LaserActive = true
-			Object.State++
-		end if
-		break
-
-	case 8
-		Object.XPos -= 131072
-		if Object.Value0 < 10
-			Object.Value0++
-		else
-			Object.Value0 = 0
-			Object.LaserActive = false
-			Object.State++
-		end if
-		break
-
-	case 9
-		Object.XPos -= 131072
-		if Object.Value0 < 30
-			Object.Value0++
-		else
-			Object.Value0 = 0
+			Object.Timer = 0
 			Object.LaserActive = true
 			Object.State++
 		end if
 		break
 		
-	case 10
+	case R7EGGMAN_INTROLASERON2
 		Object.XPos -= 131072
-		if Object.Value0 < 10
-			Object.Value0++
+		if Object.Timer < 10
+			Object.Timer++
 		else
-			Object.Value0 = 0
+			Object.Timer = 0
 			Object.LaserActive = false
 			Object.State++
 		end if
-		CallFunction(Eggman_FollowGround)
 		break
 		
-	case 11
+	case R7EGGMAN_INTROLASEROFF2
 		Object.XPos -= 131072
-		if Object.Value0 < 120
-			Object.Value0++
+		if Object.Timer < 30
+			Object.Timer++
+		else
+			Object.Timer = 0
+			Object.LaserActive = true
+			Object.State++
+		end if
+		break
+		
+	case R7EGGMAN_INTROLASERON3
+		Object.XPos -= 131072
+		if Object.Timer < 10
+			Object.Timer++
+		else
+			Object.Timer = 0
+			Object.LaserActive = false
+			Object.State++
+		end if
+		
+		CallFunction(R7Eggman_FollowGround)
+		break
+		
+	case R7EGGMAN_INTROLASEROFF3
+		Object.XPos -= 131072
+		if Object.Timer < 120
+			Object.Timer++
 		else
 			if Object[24].PropertyValue == 2
-				// In the Bad Future nothing needs to happen, but in the Good Future start playing the Bad Future music
+				// In the Bad Future nothing needs to happen, but if in the Good Future then start playing the Bad Future music
 				if Options.Soundtrack == SOUNDTRACK_JP
 					SetMusicTrack("JP/R7D.ogg", 0, true)
 				else
@@ -214,21 +280,28 @@ sub ObjectMain
 			
 			CreateTempObject(TypeName[FadeMusic], 2, Object.XPos, Object.YPos)
 			
-			Object[-2].State = 1
-			Object[-1].State = 3
-			Object[-1].Value0 = 4194304
+			// Open the starting door
+			Object[-2].State = VERTICALDOOR_START_OPENING
+			
+			// And open the ending door as well
+			Object[-1].State = VERTICALDOOR_END_OPENED
+			Object[-1].DrawPosY = 4194304
 			Object[-1].YPos -= 4194304
-			Object.Value0 = 0
+			
+			Object.Timer = 0
 			Object.Direction = FACING_RIGHT
 			Object.LaserActive = true
-			Object.Value5 = 393216
+			Object.LaserOffset = 393216
 			Object.XVelocity = 131072
 			Object.State++
 		end if
-		CallFunction(Eggman_FollowGround)
+		
+		CallFunction(R7Eggman_FollowGround)
 		break
 		
-	case 12
+	case R7EGGMAN_CHASESTART
+		// This state is essentially an easier version of CHASEMAIN, just toned down a bit since the race just started and the player (& screen bounds) need to adjust
+		
 		Object.XPos += Object.XVelocity
 		TempValue0 = Object.iXPos
 		TempValue0 -= 16
@@ -243,26 +316,30 @@ sub ObjectMain
 			Stage.XBoundary1 = TempValue0
 		end if
 		
-		if Object.Value0 < 360
-			Object.Value0++
+		if Object.Timer < 360
+			Object.Timer++
 		else
-			Object.Value0 = 0
+			Object.Timer = 0
 			Stage.XBoundary2 = Object[-1].iXPos
 			Stage.XBoundary2 += 112
 			Object.State++
 		end if
 		
-		CallFunction(Eggman_FollowGround)
+		CallFunction(R7Eggman_FollowGround)
 		break
 		
-	case 13
+	case R7EGGMAN_CHASEMAIN
 		TempValue0 = Object.XVelocity
-		Object.Value6++
-		Object.Value6 &= 16383
-		TempValue1 = Object.Value6
+		
+		// As the race progresses, Robotnik speeds up...
+		Object.Acceleration++
+		Object.Acceleration &= 16383
+		
+		TempValue1 = Object.Acceleration
 		TempValue1 >>= 4
 		Object.XVelocity += TempValue1
 		if Object.XVelocity > 327680
+			// Maximum speed of 5 pixels per frame
 			Object.XVelocity = 327680
 		end if
 		
@@ -276,19 +353,23 @@ sub ObjectMain
 			end if
 			TempValue0 += TempValue1
 		end if
+		
 		if TempValue0 > 327680
 			TempValue0 = 327680
 		end if
+		
 		if TempValue0 > 196608
 			TempValue0 -= 196608
 			Object.XPos += 196608
-			CallFunction(Eggman_FollowGround)
+			CallFunction(R7Eggman_FollowGround)
 			Object.XPos += TempValue0
-			CallFunction(Eggman_FollowGround)
+			CallFunction(R7Eggman_FollowGround)
 		else
 			Object.XPos += TempValue0
-			CallFunction(Eggman_FollowGround)
+			CallFunction(R7Eggman_FollowGround)
 		end if
+		
+		// Move the left side of the screen along with Robotnik
 		TempValue0 = Object.iXPos
 		TempValue0 -= 16
 		if Stage.XBoundary1 < TempValue0
@@ -297,100 +378,107 @@ sub ObjectMain
 				Stage.XBoundary1 = 15840
 			end if
 		end if
+		
+		// Is Robotnik further than 34 pixels before the last door?
+		// (Strange way to put it, I hope you don't mind...)
 		TempValue0 = Object[-1].XPos
 		TempValue0 -= 2228224
 		if Object.XPos > TempValue0
 			Object.XPos = TempValue0
-			Object.Animation = 0
+			Object.Animation = R7EGGMANANI_THRUSTEROFF
 			Object.XVelocity = 0
 			Object.State++
 		end if
 		break
 		
-	case 14
+	// The following 6 states are for when Robotnik turns the laser on and off a bunch of times after the race
+	// Is his button broken or something? I never understood why he'd need to do it so many times like that...
+	
+	case R7EGGMAN_ENDLASERON1
 		if Player.Animation != ANI_DYING
-			if Object.Value0 < 50
-				Object.Value0++
+			if Object.Timer < 50
+				Object.Timer++
 			else
-				Object.Value0 = 0
+				Object.Timer = 0
 				Object.LaserActive = false
 				Object.State++
 			end if
 		end if
 		break
 		
-	case 15
-		if Object.Value0 < 20
-			Object.Value0++
+	case R7EGGMAN_ENDLASEROFF1
+		if Object.Timer < 20
+			Object.Timer++
 		else
-			Object.Value0 = 0
+			Object.Timer = 0
 			Object.LaserActive = true
 			Object.State++
 		end if
 		break
 		
-	case 16
-		if Object.Value0 < 20
-			Object.Value0++
+	case R7EGGMAN_ENDLASERON2
+		if Object.Timer < 20
+			Object.Timer++
 		else
-			Object.Value0 = 0
+			Object.Timer = 0
 			Object.LaserActive = false
 			Object.State++
 		end if
 		break
 		
-	case 17
-		if Object.Value0 < 20
-			Object.Value0++
+	case R7EGGMAN_ENDLASEROFF2
+		if Object.Timer < 20
+			Object.Timer++
 		else
-			Object.Value0 = 0
+			Object.Timer = 0
 			Object.LaserActive = true
 			Object.State++
 		end if
 		break
 		
-	case 18
-		if Object.Value0 < 20
-			Object.Value0++
+	case R7EGGMAN_ENDLASERON3
+		if Object.Timer < 20
+			Object.Timer++
 		else
-			Object.Value0 = 0
+			Object.Timer = 0
 			Object.LaserActive = false
 			Object.State++
 		end if
 		break
 		
-	case 19
-		if Object.Value0 < 60
-			Object.Value0++
+	case R7EGGMAN_ENDLASEROFF3
+		if Object.Timer < 60
+			Object.Timer++
 		else
-			Object.Value0 = 0
+			Object.Timer = 0
 			Object.State++
 		end if
 		break
 		
-	case 20
+	case R7EGGMAN_DESCEND
+		// Going down for a moment before retreating...
 		Object.YPos += 131072
-		if Object.Value0 < 42
-			Object.Value0++
+		if Object.Timer < 42
+			Object.Timer++
 		else
-			Object.Value0 = 0
+			Object.Timer = 0
 			Object.LaserActive = false
 			Object.State++
 		end if
 		break
 		
-	case 21
-		if Object.Value0 < 60
-			Object.Value0++
+	case R7EGGMAN_PAUSE
+		if Object.Timer < 60
+			Object.Timer++
 		else
 			Player.Score += 1000
-			Object.Value0 = 0
-			Object.Animation = 1
+			Object.Timer = 0
+			Object.Animation = R7EGGMANANI_THRUSTERON
 			Object.State++
 		end if
 		break
 		
-	case 22
+	case R7EGGMAN_FLYAWAY
 		Object.XPos += 393216
 		if Object.OutOfBounds == true
 			Object.Type = TypeName[Blank Object]
@@ -415,19 +503,24 @@ sub ObjectMain
 	if Object.LaserActive == true
 		if Object.DebrisTimer == 0
 			CreateTempObject(TypeName[Explosion], 0, Object.XPos, Object.YPos)
-			Object[TempObjectPos].XPos += Object.Value5
+			
+			// Offset the new object accordingly as needed
+			// (11534336 is 176 pixels down, which is where the base of the laser touches the ground)
+			Object[TempObjectPos].XPos += Object.LaserOffset
 			Object[TempObjectPos].YPos += 11534336
+			
 			ArrayPos0 = Object.LastExplosion
 			Object.LastExplosion = Object[TempObjectPos].EntityNo
 			Object.DebrisTimer = 8
 			if Object[ArrayPos0].DrawOrder == 3
 				Object[TempObjectPos].DrawOrder = 4
 				
-				// Create some Debris with randomised properties
+				// Create some Debris with a randomised sprite
 	
 				Rand(TempValue0, 4)
 				CreateTempObject(TypeName[Debris], TempValue0, Object.XPos, Object.YPos)
-				Object[TempObjectPos].XPos += Object.Value5
+				
+				Object[TempObjectPos].XPos += Object.LaserOffset
 				Object[TempObjectPos].YPos += 11534336
 				
 				Rand(Object[TempObjectPos].XVelocity, 6)
@@ -441,61 +534,73 @@ sub ObjectMain
 				FlipSign(Object[TempObjectPos].YVelocity)
 			end if
 		else
+			// Move the last explosion along with the laser for a little bit
+			
 			ArrayPos0 = Object.LastExplosion
 			Object[ArrayPos0].XPos = Object.XPos
-			Object[ArrayPos0].XPos += Object.Value5
+			Object[ArrayPos0].XPos += Object.LaserOffset
+			
 			Object[ArrayPos0].YPos = Object.YPos
 			Object[ArrayPos0].YPos += 11534336
+			
 			Object.DebrisTimer--
 		end if
 	else
 		if Object.DebrisTimer > 0
+			// Move the last explosion along with the laser for a little bit
+			
 			ArrayPos0 = Object.LastExplosion
 			Object[ArrayPos0].XPos = Object.XPos
-			Object[ArrayPos0].XPos += Object.Value5
+			Object[ArrayPos0].XPos += Object.LaserOffset
 			
 			Object[ArrayPos0].YPos = Object.YPos
 			Object[ArrayPos0].YPos += 11534336
+			
 			Object.DebrisTimer--
 		end if
 	end if
-
+	
 end sub
 
 
 sub ObjectPlayerInteraction
-
+	
 	if Object.LaserActive == true
-		if Object.State < 12
+		if Object.State < R7EGGMAN_CHASESTART
+			// Use the intro version of the laser hitbox
+			
 			PlayerObjectCollision(C_TOUCH, -12, 48, 12, 176)
-
+			
 			if CheckResult == true
 				CallFunction(PlayerObject_Hit)
 			end if
 		else
 			if Player.XPos < Object.XPos
 				Player.XPos = Object.XPos
+				
+				// Player.RCollisionFlag is a flag set by Solid Blocks upon having the Player collide to the block's left (the player's right)
 				if Player.RCollisionFlag == true
 					CallFunction(PlayerObject_Kill)
 				end if
 			end if
 			
+			// Reset the flag, regardless if it was previously true or not
 			Player.RCollisionFlag = false
 			
-			if Object.State < 14
+			if Object.State < R7EGGMAN_ENDLASERON1
 				PlayerObjectCollision(C_TOUCH, -12, 48, 12, 176)
 			else
 				PlayerObjectCollision(C_TOUCH, -64, -256, 16, 176)
 			end if
-
+			
 			if CheckResult == true
 				CallFunction(PlayerObject_Kill)
 			end if
 		end if
 	end if
 	
-	// Limit Tails flight when needed
-
+	// Limit Tails's flight when needed
+	
 	if Player.YPos < Object.YPos // Is the Player Object higher up than the Robotnik object?
 		if Player.XPos < 234881024 // And has the Player Object not yet passed X Position 3584?
 			if Player.State == PlayerObject_HandleTailsFlight
@@ -518,9 +623,9 @@ end sub
 
 
 sub ObjectDraw
-
+	
 	switch Object.Animation
-	case 0
+	case R7EGGMANANI_THRUSTEROFF
 		DrawSpriteFX(0, FX_FLIP, Object.XPos, Object.YPos)
 		
 		TempValue0 = Object.AnimationTimer
@@ -533,21 +638,29 @@ sub ObjectDraw
 		end if
 		
 		if Object.LaserActive == true
+			// Draw the laser, as a series of smaller, chained together sprites
 			TempValue0 = Object.AnimationTimer
 			TempValue0 &= 3
 			TempValue0 >>= 1
 			TempValue0 += 12
+			
 			TempValue1 = Object.XPos
+			
+			// Start 48 pixels below Robotnik
 			TempValue2 = Object.YPos
 			TempValue2 += 3145728
 			DrawSpriteXY(TempValue0, TempValue1, TempValue2)
+			
+			// For the rest of the pieces, space them away 32 pixels vertically and 2 pixels horizontally, with the horizontal offset depending on Robotnik's direction
 			if Object.Direction == FACING_RIGHT
 				TempValue2 += 2097152
 				TempValue1 += 131072
 				DrawSpriteXY(TempValue0, TempValue1, TempValue2)
+				
 				TempValue2 += 2097152
 				TempValue1 += 131072
 				DrawSpriteXY(TempValue0, TempValue1, TempValue2)
+				
 				TempValue2 += 2097152
 				TempValue1 += 131072
 				DrawSpriteXY(TempValue0, TempValue1, TempValue2)
@@ -555,9 +668,11 @@ sub ObjectDraw
 				TempValue2 += 2097152
 				TempValue1 -= 131072
 				DrawSpriteXY(TempValue0, TempValue1, TempValue2)
+				
 				TempValue2 += 2097152
 				TempValue1 -= 131072
 				DrawSpriteXY(TempValue0, TempValue1, TempValue2)
+				
 				TempValue2 += 2097152
 				TempValue1 -= 131072
 				DrawSpriteXY(TempValue0, TempValue1, TempValue2)
@@ -567,7 +682,7 @@ sub ObjectDraw
 		Object.AnimationTimer %= 12
 		break
 		
-	case 1
+	case R7EGGMANANI_THRUSTERON
 		TempValue0 = Object.AnimationTimer
 		TempValue0 &= 1
 		if TempValue0 == 1
@@ -591,23 +706,27 @@ sub ObjectDraw
 			DrawSpriteFX(3, FX_FLIP, Object.XPos, Object.YPos)
 		end if
 		
-		if Object.Value2 == true
+		if Object.LaserActive == true
 			// Draw the Laser
 			TempValue0 = Object.AnimationTimer
 			TempValue0 &= 3
 			TempValue0 >>= 1
 			TempValue0 += 12
+			
 			TempValue1 = Object.XPos
 			TempValue2 = Object.YPos
 			TempValue2 += 3145728
+			
 			DrawSpriteXY(TempValue0, TempValue1, TempValue2)
 			if Object.Direction == FACING_RIGHT
 				TempValue2 += 2097152
 				TempValue1 += 131072
 				DrawSpriteXY(TempValue0, TempValue1, TempValue2)
+				
 				TempValue2 += 2097152
 				TempValue1 += 131072
 				DrawSpriteXY(TempValue0, TempValue1, TempValue2)
+				
 				TempValue2 += 2097152
 				TempValue1 += 131072
 				DrawSpriteXY(TempValue0, TempValue1, TempValue2)
@@ -615,14 +734,17 @@ sub ObjectDraw
 				TempValue2 += 2097152
 				TempValue1 -= 131072
 				DrawSpriteXY(TempValue0, TempValue1, TempValue2)
+				
 				TempValue2 += 2097152
 				TempValue1 -= 131072
 				DrawSpriteXY(TempValue0, TempValue1, TempValue2)
+				
 				TempValue2 += 2097152
 				TempValue1 -= 131072
 				DrawSpriteXY(TempValue0, TempValue1, TempValue2)
 			end if
 		end if
+		
 		Object.AnimationTimer++
 		Object.AnimationTimer %= 12
 		break
@@ -634,7 +756,7 @@ end sub
 
 sub ObjectStartup
 	LoadSpriteSheet("R7/Objects2.gif")
-
+	
 	// Main Robotnik + Ship Frame
 	SpriteFrame(-40, -24, 72, 72, 91, 1)
 	
@@ -660,8 +782,9 @@ sub ObjectStartup
 	// Laser
 	SpriteFrame(-8, 0, 16, 32, 91, 74)
 	SpriteFrame(-8, 0, 16, 32, 108, 74)
-
+	
 end sub
+
 
 // ========================
 // Editor Subs
@@ -670,6 +793,7 @@ end sub
 sub RSDKDraw
 	DrawSprite(0)
 end sub
+
 
 sub RSDKLoad
 	LoadSpriteSheet("R7/Objects2.gif")

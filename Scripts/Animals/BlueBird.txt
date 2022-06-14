@@ -3,54 +3,83 @@
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
 // Aliases
-#alias 69: TYPE_BIRD
+#alias Object.Value0 : Object.Timer
+#alias Object.Value1 : Object.Angle
+
+#alias 0 : BLUEBIRD_FLYRIGHT
+#alias 1 : BLUEBIRD_FLYLEFT
+
+// Time Period Aliases
+#alias 2 : PERIOD_FUTURE_G
 
 
 sub ObjectMain
+	
+	// This Object is always running & updating, regardless of the Stage's current state
+	// However, it will only draw itself under the specific conditions, though it is being
+	// updated all the same
+	
 	switch Object.State
-	case 0
-		if Object.Value1 > 0
-			Object.Value1 -= 2
+	case BLUEBIRD_FLYRIGHT
+		if Object.Angle > 0
+			Object.Angle -= 2
 		else
-			Object.State = 1
+			// Apex hit, turn around
+			
+			Object.State = BLUEBIRD_FLYLEFT
 			Object.Direction = FACING_LEFT
 		end if
 		break
-	case 1
-		if Object.Value1 < 256
-			Object.Value1 += 2
+		
+	case BLUEBIRD_FLYLEFT
+		if Object.Angle < 256
+			Object.Angle += 2
 		else
-			Object.State = 0
+			// Other apex hit now, return to the other direction
+			
+			Object.State = BLUEBIRD_FLYRIGHT
 			Object.Direction = FACING_RIGHT
 		end if
 		break
+		
 	end switch
-	Object.Value0++
-	if Object.Value0 > 19
-		Object.Value0 = 0
+	
+	// Animate the Blue Bird
+	Object.Timer++
+	if Object.Timer > 19
+		Object.Timer = 0
+		
 		Object.Frame++
+		
+		// The Bird bounces between 2 frames total
 		Object.Frame &= 1
 	end if
+	
 end sub
 
 
 sub ObjectDraw
-	if MetalSonic_Destroyed == 1
-		Cos(TempValue0, Object.Value1)
+	if MetalSonic_Destroyed == true
+		Cos(TempValue0, Object.Angle)
 		TempValue0 <<= 14
 		TempValue0 += Object.XPos
-		Sin(TempValue1, Object.Value1)
+		
+		Sin(TempValue1, Object.Angle)
 		TempValue1 <<= 14
 		TempValue1 += Object.YPos
+		
 		DrawSpriteFX(Object.Frame, FX_FLIP, TempValue0, TempValue1)
 	end if
-	if Object[24].PropertyValue == 2
-		Cos(TempValue0, Object.Value1)
+	
+	if Object[24].PropertyValue == PERIOD_FUTURE_G
+		Cos(TempValue0, Object.Angle)
 		TempValue0 <<= 14
 		TempValue0 += Object.XPos
-		Sin(TempValue1, Object.Value1)
+		
+		Sin(TempValue1, Object.Angle)
 		TempValue1 <<= 14
 		TempValue1 += Object.YPos
+		
 		DrawSpriteFX(Object.Frame, FX_FLIP, TempValue0, TempValue1)
 	end if
 end sub
@@ -58,9 +87,11 @@ end sub
 
 sub ObjectStartup
 	LoadSpriteSheet("Global/Items3.gif")
+	
 	SpriteFrame(-8, -8, 16, 16, 240, 199)
 	SpriteFrame(-8, -8, 16, 16, 240, 216)
 end sub
+
 
 // ========================
 // Editor Subs
@@ -69,6 +100,7 @@ end sub
 sub RSDKDraw
 	DrawSprite(0)
 end sub
+
 
 sub RSDKLoad
 	LoadSpriteSheet("Global/Items3.gif")

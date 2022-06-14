@@ -3,102 +3,144 @@
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
 // Aliases
-#alias 44: TYPE_RPLATFORM
+#alias Object.Value0 : Object.Angle
+#alias Object.Value1 : Object.PlatformX
+#alias Object.Value2 : Object.PlatformY
+#alias Object.Value3 : Object.ChangeX
+#alias Object.Value4 : Object.ChangeY
+
+// For the button mounted atop this Object, either true or false
+#alias Object.PropertyValue : Object.Pressed
 
 
 sub ObjectMain
-	Object.Value0 += 2
-	Object.Value0 &= 511
+	
+	Object.Angle += 2
+	Object.Angle &= 511
+	
 	TempValue1 = 96
-	Cos(Object.Value3, Object.Value0)
-	Object.Value3 *= TempValue1
-	Object.Value3 <<= 7
-	Object.Value3 += Object.XPos
-	Object.Value3 &= -65536
-	Object.Value3 -= Object.Value1
+	
+	Cos(Object.ChangeX, Object.Angle)
+	Object.ChangeX *= TempValue1
+	Object.ChangeX <<= 7
+	Object.ChangeX += Object.XPos
+	Object.ChangeX &= 4294901760
+	Object.ChangeX -= Object.PlatformX
 
-	Sin(Object.Value4, Object.Value0)
-	Object.Value4 *= TempValue1
-	Object.Value4 <<= 7
-	Object.Value4 += Object.YPos
-	Object.Value4 &= -65536
-	Object.Value4 -= Object.Value2
+	Sin(Object.ChangeY, Object.Angle)
+	Object.ChangeY *= TempValue1
+	Object.ChangeY <<= 7
+	Object.ChangeY += Object.YPos
+	Object.ChangeY &= 4294901760
+	Object.ChangeY -= Object.PlatformY
 end sub
 
 
 sub ObjectPlayerInteraction
+
+	// Backup the Object's base position
 	TempValue0 = Object.XPos
 	TempValue1 = Object.YPos
-	Object.XPos = Object.Value1
-	Object.YPos = Object.Value2
+
+	// Move to where the Object's Platform is
+	Object.XPos = Object.PlatformX
+	Object.YPos = Object.PlatformY
+
+	// Check to see if the Player is riding on it
 	PlayerObjectCollision(C_PLATFORM, -32, -8, 32, 8)
-	if CheckResult == 1
-		Player.XPos += Object.Value3
-		Player.YPos += Object.Value4
+	if CheckResult == true
+		// Move the Player along with the Platform
+		
+		Player.XPos += Object.ChangeX
+		Player.YPos += Object.ChangeY
 	end if
 
-	if Object.PropertyValue == 0
+	if Object.Pressed == false
 		PlayerObjectCollision(C_BOX, 0, -24, 32, 0)
-		if CheckResult == 1
-			if Object.PropertyValue == 0
+		if CheckResult == true
+			// The Player is on the button
+			
+			if Object.Pressed == false
 				PlayStageSfx(8, 0)
 			end if
-			Object.PropertyValue = 1
+			
+			Object.Pressed = true
+			
+			// Move the Player along with the Platform's movements
 			Player.YPos += 524288
-			Player.XPos += Object.Value3
-			Player.YPos += Object.Value4
+			Player.XPos += Object.ChangeX
+			Player.YPos += Object.ChangeY
 		else
-			Object.PropertyValue = 0
+			Object.Pressed = false
 		end if
 	else
 		PlayerObjectCollision(C_BOX, 0, -16, 32, 0)
-		if CheckResult == 1
-			Object.PropertyValue = 1
-			Player.XPos += Object.Value3
-			Player.YPos += Object.Value4
+		if CheckResult == true
+			Object.Pressed = true
+			Player.XPos += Object.ChangeX
+			Player.YPos += Object.ChangeY
 		else
-			Object.PropertyValue = 0
+			Object.Pressed = false
 		end if
 	end if
+	
+	// Move the Object back to its base position
 	Object.XPos = TempValue0
 	Object.YPos = TempValue1
+	
 end sub
 
 
 sub ObjectDraw
+
+	// First, draw the Object's Joint
 	DrawSprite(2)
+	
+	// Then, draw all the Chains connecting the Platform to its Joint
 	TempValue0 = 0
 	TempValue1 = 16
 	while TempValue0 < 5
-		Cos(TempValue2, Object.Value0)
+		Cos(TempValue2, Object.Angle)
 		TempValue2 *= TempValue1
 		TempValue2 <<= 7
 		TempValue2 += Object.XPos
-		Sin(TempValue3, Object.Value0)
+		
+		Sin(TempValue3, Object.Angle)
 		TempValue3 *= TempValue1
 		TempValue3 <<= 7
 		TempValue3 += Object.YPos
+		
 		DrawSpriteXY(3, TempValue2, TempValue3)
+		
 		TempValue0++
 		TempValue1 += 16
 	loop
-	Cos(Object.Value1, Object.Value0)
-	Object.Value1 *= TempValue1
-	Object.Value1 <<= 7
-	Object.Value1 += Object.XPos
-	Object.Value1 &= -65536
-	Sin(Object.Value2, Object.Value0)
-	Object.Value2 *= TempValue1
-	Object.Value2 <<= 7
-	Object.Value2 += Object.YPos
-	Object.Value2 &= -65536
-	DrawSpriteXY(4, Object.Value1, Object.Value2)
-	DrawSpriteXY(Object.PropertyValue, Object.Value1, Object.Value2)
+	
+	// And now, find the positions to draw the Platform at
+	Cos(Object.PlatformX, Object.Angle)
+	Object.PlatformX *= TempValue1
+	Object.PlatformX <<= 7
+	Object.PlatformX += Object.XPos
+	Object.PlatformX &= 4294901760
+	
+	Sin(Object.PlatformY, Object.Angle)
+	Object.PlatformY *= TempValue1
+	Object.PlatformY <<= 7
+	Object.PlatformY += Object.YPos
+	Object.PlatformY &= 4294901760
+	
+	// Finally, draw the Platform itself
+	DrawSpriteXY(4, Object.PlatformX, Object.PlatformY)
+	
+	// But wait! There's a button that rides the Platform, so draw that too!
+	DrawSpriteXY(Object.Pressed, Object.PlatformX, Object.PlatformY)
+	
 end sub
 
 
 sub ObjectStartup
 	LoadSpriteSheet("R4/Objects.gif")
+	
 	SpriteFrame(0, -24, 32, 16, 130, 35)	// #0 - Push Button
 	SpriteFrame(0, -24, 32, 16, 130, 52)	// #1 - Push Button Pressed
 	SpriteFrame(-8, -8, 16, 16, 163, 52)	// #2 - Platform Joint
@@ -106,17 +148,59 @@ sub ObjectStartup
 	SpriteFrame(-32, -8, 64, 16, 147, 69)	// #4 - Platform
 end sub
 
+
 // ========================
 // Editor Subs
 // ========================
 
 sub RSDKDraw
-	DrawSprite(0)
+	DrawSprite(2)
+
+	TempValue0 = 0
+	TempValue1 = 16
+	while TempValue0 < 5
+		Cos(TempValue2, 128)
+		TempValue2 *= TempValue1
+		TempValue2 <<= 7
+		TempValue2 += Object.XPos
+		
+		Sin(TempValue3, 128)
+		TempValue3 *= TempValue1
+		TempValue3 <<= 7
+		TempValue3 += Object.YPos
+		
+		DrawSpriteXY(3, TempValue2, TempValue3)
+		
+		TempValue0++
+		TempValue1 += 16
+	loop
+
+	Cos(Object.PlatformX, 128)
+	Object.PlatformX *= TempValue1
+	Object.PlatformX <<= 7
+	Object.PlatformX += Object.XPos
+	Object.PlatformX &= 4294901760
+	
+	Sin(Object.PlatformY, 128)
+	Object.PlatformY *= TempValue1
+	Object.PlatformY <<= 7
+	Object.PlatformY += Object.YPos
+	Object.PlatformY &= 4294901760
+
+	DrawSpriteXY(4, Object.PlatformX, Object.PlatformY)
+
+	DrawSpriteXY(Object.Pressed, Object.PlatformX, Object.PlatformY)
 end sub
 
-sub RSDKLoad
-	LoadSpriteSheet("Global/Display.gif")
-	SpriteFrame(-16, -16, 32, 32, 1, 143)		// #0 - "Script" Icon
 
+sub RSDKLoad
+	LoadSpriteSheet("R4/Objects.gif")
+	SpriteFrame(0, -24, 32, 16, 130, 35)
+	SpriteFrame(0, -24, 32, 16, 130, 52)
+	SpriteFrame(-8, -8, 16, 16, 163, 52)
+	SpriteFrame(-8, -8, 16, 16, 180, 52)
+	SpriteFrame(-32, -8, 64, 16, 147, 69)
+
+	// Although used by the Object, it shouldn't be set from the editor
 	SetVariableAlias(ALIAS_VAR_PROPVAL, "unused")
 end sub
