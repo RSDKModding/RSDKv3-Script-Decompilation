@@ -20,7 +20,7 @@
 
 
 sub ObjectMain
-
+	
 	switch Object.State
 	case RISEPLATFORM2_AWAITPLAYER
 		// Waiting for the Player to step on it to Launch
@@ -167,6 +167,7 @@ end sub
 
 
 sub ObjectStartup
+	
 	LoadSpriteSheet("R5/Objects.gif")
 	
 	// Large Platform Frame
@@ -184,8 +185,10 @@ sub ObjectStartup
 			Object[ArrayPos0].Priority = 3
 			
 		end if
+		
 		ArrayPos0++
 	loop
+	
 end sub
 
 
@@ -195,6 +198,19 @@ end sub
 
 sub RSDKDraw
 	DrawSprite(0)
+	
+	if Editor.ShowGizmos == true
+		// Draw the Platform's destination
+		
+		TempValue0 = Object.YPos
+		TempValue0 -= 20971520
+		
+		Editor.DrawingOverlay = true
+		
+		DrawArrow(Object.XPos, Object.YPos, Object.XPos, TempValue0, 255, 255, 255)
+		
+		Editor.DrawingOverlay = false
+	end if
 end sub
 
 

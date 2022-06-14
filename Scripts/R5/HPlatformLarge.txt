@@ -349,52 +349,50 @@ end sub
 // ========================
 
 sub RSDKDraw
+	
+	TempValue2 = false
+	
 	switch Object.PropertyValue
+	case 2
+		TempValue2 = true
 	case 0
 	case 1
-		// Right-moving Platform
-		Sin(Object.PlatformX, Object.Angle)
-		Object.PlatformX *= 6144
-		Object.PlatformX += 3145728
-		Object.PlatformX += Object.XPos
-		Object.PlatformX &= 4294901760
-		DrawSpriteXY(0, Object.PlatformX, Object.YPos)
+		TempValue0 = 6144
+		TempValue1 = 3145728
 		break
-		
-	case 2
-		// Right-moving Conveyor Platform
-		Sin(Object.PlatformX, Object.Angle)
-		Object.PlatformX *= 6144
-		Object.PlatformX += 3145728
-		Object.PlatformX += Object.XPos
-		Object.PlatformX &= 4294901760
-		DrawSpriteXY(0, Object.PlatformX, Object.YPos)
-		DrawSpriteXY(1, Object.PlatformX, Object.YPos)
-		break
-		
+	
+	
+	case 5
+		TempValue2 = true
 	case 3
 	case 4
-		// Left-moving Platform
-		Sin(Object.PlatformX, Object.Angle)
-		Object.PlatformX *= -6144
-		Object.PlatformX -= 3145728
-		Object.PlatformX += Object.XPos
-		Object.PlatformX &= 4294901760
-		DrawSpriteXY(0, Object.PlatformX, Object.YPos)
-		break
-		
-	case 5
-		// Left-moving Conveyor Platform
-		Sin(Object.PlatformX, Object.Angle)
-		Object.PlatformX *= -6144
-		Object.PlatformX -= 3145728
-		Object.PlatformX += Object.XPos
-		Object.PlatformX &= 4294901760
-		DrawSpriteXY(0, Object.PlatformX, Object.YPos)
-		DrawSpriteXY(1, Object.PlatformX, Object.YPos)
+		TempValue0 = -6144
+		TempValue1 = -3145728
 		break
 		
 	end switch
+	
+	TempValue3 = Object.XPos
+	TempValue3 &= 4294901760
+	DrawSpriteXY(0, TempValue3, Object.YPos)
+	DrawSpriteXY(TempValue2, TempValue3, Object.YPos)
+	
+	if Editor.ShowGizmos == true
+		Editor.DrawingOverlay = true
+		
+		// Show the Platform's path
+		
+		Sin(TempValue4, 128)
+		TempValue4 *= TempValue0
+		TempValue4 += TempValue1
+		TempValue4 += Object.XPos
+		TempValue4 &= 4294901760
+		
+		DrawLine(TempValue3, Object.YPos, TempValue4, Object.YPos, 255, 255, 255)
+		
+		Editor.DrawingOverlay = false
+	end if
+	
 end sub
 
 

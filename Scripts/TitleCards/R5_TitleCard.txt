@@ -60,8 +60,8 @@ sub ObjectDraw
 			Player.Speed = 0
 		end if
 		
-		if Object.FadeA > 0
-			if Object.FadeA == 256
+		if Object.Timer > 0
+			if Object.Timer == 256
 				PlayMusic(0)
 				
 				if Warp.XPos > 0
@@ -88,9 +88,9 @@ sub ObjectDraw
 				Warp.Frame = 0
 			end if
 			
-			SetScreenFade(Object.FadeR, Object.FadeG, Object.FadeB, Object.FadeA)
+			SetScreenFade(Object.FadeR, Object.FadeG, Object.FadeB, Object.Timer)
 			
-			Object.FadeA -= 8
+			Object.Timer -= 8
 		else
 			Fade_Colour = 0
 			
@@ -101,7 +101,7 @@ sub ObjectDraw
 			if TempValue0 == true
 				// If the level's been entered by normal means, then carry on as normal
 				Object.State = TITLECARD_SLIDEIN
-				Object.FadeA = 0
+				Object.Timer = 0
 			else
 				// The Player's warping in so just start the Stage,
 				// no need to show the Title Card or anything
@@ -143,11 +143,11 @@ sub ObjectDraw
 		break
 		
 	case TITLECARD_DISPLAY
-		if Object.FadeA == 90
+		if Object.Timer == 90
 			Object.State = TITLECARD_SLIDEOUT
 		else
 			// Hold for a second and a half
-			Object.FadeA++
+			Object.Timer++
 		end if
 		break
 		
@@ -257,9 +257,9 @@ sub ObjectStartup
 	
 	if Warp.XPos > 0
 		// If the Player is warping in, have a shorter fade-in time
-		Object[20].FadeA = 256
+		Object[20].Timer = 256
 	else
-		Object[20].FadeA = 384
+		Object[20].Timer = 384
 	end if
 	
 	// Quarts Quadrant should indeed enforce a roof,
