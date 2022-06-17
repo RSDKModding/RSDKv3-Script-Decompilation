@@ -140,7 +140,8 @@ sub ObjectPlayerInteraction
 		// Restore the object's base position
 		Object.XPos = TempValue0
 		Object.YPos = TempValue1
-		break
+		
+		// No break is used here, although it doesn't matter too much anyways since there's nothing afterwards
 		
 	end switch
 
@@ -187,10 +188,11 @@ sub ObjectDraw
 				break
 				
 			end switch // Object.PropertyValue
-			break
+		
+		// No break is used here, as it's not needed
 		
 		end switch // Object.State
-			
+		
 		// Add the Object to Draw List 4 so that its other half can draw above the Spike Ball
 		SetDrawListEntityRef(Object.EntityNo, 4, Screen.DrawListSize[4])
 		Screen.DrawListSize[4]++
@@ -270,13 +272,13 @@ sub RSDKDraw
 		switch Object.PropertyValue
 		case 0
 		default
-			TempValue1 += 0x100000; break;
+			TempValue1 += 1048576; break;
 		case 1
-			TempValue1 -= 0x100000; break;
+			TempValue1 -= 1048576; break;
 		case 2
-			TempValue0 += 0x100000; break;
+			TempValue0 += 1048576; break;
 		case 3
-			TempValue0 -= 0x100000; break;
+			TempValue0 -= 1048576; break;
 		end switch
 
 		DrawArrow(Object.XPos, Object.YPos, TempValue0, TempValue1, 255, 255, 255)
