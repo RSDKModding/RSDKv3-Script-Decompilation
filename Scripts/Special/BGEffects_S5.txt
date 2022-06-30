@@ -32,7 +32,7 @@ sub ObjectDraw
 			Copy16x16Tile(185, 478)
 			Copy16x16Tile(186, 479)
 			break
-
+			
 		case 1
 			Copy16x16Tile(174, 480)
 			Copy16x16Tile(175, 481)
@@ -43,7 +43,7 @@ sub ObjectDraw
 			Copy16x16Tile(185, 486)
 			Copy16x16Tile(186, 487)
 			break
-
+			
 		case 2
 			Copy16x16Tile(174, 488)
 			Copy16x16Tile(175, 489)
@@ -54,10 +54,10 @@ sub ObjectDraw
 			Copy16x16Tile(185, 494)
 			Copy16x16Tile(186, 495)
 			break
-
+			
 		end switch
 	end if
-
+	
 	// Animate the Crunching tiles in the level
 	Object.Crunchers.Timer++
 	if Object.Crunchers.Timer > 5
@@ -73,36 +73,36 @@ sub ObjectDraw
 			Copy16x16Tile(82, 500)
 			Copy16x16Tile(83, 501)
 			break
-
+			
 		case 1
 			Copy16x16Tile(76, 498)
 			Copy16x16Tile(77, 499)
 			Copy16x16Tile(82, 502)
 			Copy16x16Tile(83, 503)
 			break
-
+			
 		case 2
 			Copy16x16Tile(76, 504)
 			Copy16x16Tile(77, 505)
 			Copy16x16Tile(82, 508)
 			Copy16x16Tile(83, 509)
 			break
-
+			
 		case 3
 			Copy16x16Tile(76, 506)
 			Copy16x16Tile(77, 507)
 			Copy16x16Tile(82, 510)
 			Copy16x16Tile(83, 511)
 			break
-
+			
 		end switch
 	end if
-
+	
 	// Find the difference from the last and current scroll pos
 	
 	TempValue1 = Object.PrevAngle
 	TempValue2 = TileLayer[0].Angle
-
+	
 	// Acount for looping before doing the actual calculations
 	if TempValue1 < TempValue2
 		TempValue3 = TempValue2
@@ -117,135 +117,140 @@ sub ObjectDraw
 			TempValue2 += 512
 		end if
 	end if
-
+	
 	// The actual finding of the difference
 	TempValue0 = TempValue1
 	TempValue0 -= TempValue2
-
+	
 	// Store the current scroll pos for use next frame
 	Object.PrevAngle = TileLayer[0].Angle
-
+	
 	// Move the other BG layers based on the difference found
-
-	TempValue1 = 65536  // AKA 0x10000
-	TempValue2 = 131072 // AKA 0x20000
-
+	
+	TempValue1 = 65536  // 1 pixel
+	TempValue2 = 131072 // 2 pixels
+	
 	TempValue1 *= TempValue0
+	
 	HParallax[0].ScrollPos += TempValue1
-
+	
 	TempValue2 *= TempValue0
 	HParallax[2].ScrollPos += TempValue2
-	HParallax[2].ScrollPos %= 6291456 // AKA 0x600000
+	
+	// Make it only move 96 pixels max, otherwise wrap around
+	HParallax[2].ScrollPos %= 6291456
+	
+	// And move the third layer to match
 	HParallax[3].ScrollPos = HParallax[2].ScrollPos
 	HParallax[3].ScrollPos >>= 16
 	
 	// Update the pseudo-3d-ness of the BG red bars using deformation
 	// Process is done from the bottom of the screen -> upwards
-
+	
 	// - ArrayPos0 is the number of lines to change
 	// - TempValue2 (0x4000) is the starting offset
 	// - TempValue3 gets applied to the offset after every line in order to make the top of the screen move less drastically to the bottom
-
+	
 	ArrayPos0 = 128
 	TempValue2 = 16384
 	TempValue3 = 0
 	while ArrayPos0 > -1
 		TempValue4 = HParallax[3].ScrollPos
 		TempValue4 *= TempValue2
-
+		
 		// Shift it by different amounts depending on the current renderer
 		// 14 is used for when using Software Rendering, 10 is used for Hardware
 		// Do note - swapping them around WILL crash the game!
 		// These values must've been picked with great care in order for that to happen
-
-#platform: Mobile
-
+		
+		
+		// The different platforms shift it by different amounts
+		// TODO: this is somewhat new code, it tied back to something that needs to be fixed on the engine decomp itself seemingly?
+		// Not quite sure of much beyond this, gotta get to the bottom of that...
 	#platform: SW_Rendering
 		TempValue4 >>= 14
 	#endplatform
-
+		
 	#platform: HW_Rendering
 		TempValue4 >>= 10
 	#endplatform
-
-#endplatform
-
-#platform: Standard
-
-	#platform: SW_Rendering
-		TempValue4 >>= 14
-	#endplatform
-
-	// No Hardware case here because Standard platforms should never use Hardware Rendering anyways
-
-#endplatform
-
+		
 		Stage.DeformationData2[ArrayPos0] = TempValue4
 		TempValue2 -= TempValue3
 		TempValue3++
-
+		
 		ArrayPos0--
 	loop
-
+	
 #platform: HW_Rendering
 	// If using the hardware render, draw the BG as a sprite & rect here
-
+	
 	DrawSpriteScreenFX(0, FX_SCALE, 0, 0)
+	
+	// Draw a black rectagle across the screen
 	DrawRect(296, 0, 256, 128, 0, 0, 0, 255)
 #endplatform
-
+	
 end sub
 
 
 sub ObjectStartup
-
+	
 	// Set the stage's bounds
-	Stage.XBoundary1 = 50331648  // AKA 0x3000000
-	Stage.XBoundary2 = 218103808 // AKA 0xD000000
-	Stage.YBoundary1 = 50331648
-	Stage.YBoundary2 = 218103808
-
+	Stage.XBoundary1 = 50331648  // left bounds  @ 768 pixels
+	Stage.XBoundary2 = 218103808 // right bounds @ 3328 pixels
+	Stage.YBoundary1 = 50331648  // upper bounds @ 768 pixels
+	Stage.YBoundary2 = 218103808 // lower bounds @ 3328 pixels
+	
 #platform: HW_Rendering
 	// If needed, do some setup for hardware rendering
 	LoadSpriteSheet("Special/SSMap5.gif")
-
-	SpriteFrame(0, 0, 32, 48, 107, 384) // Seems to be a random patch in the middle of nowhere?
+	
+	// Seems to be a random patch in the middle of nowhere?
+	SpriteFrame(0, 0, 32, 48, 107, 384)
 #endplatform
-
-	// Set starting scroll position
-	HParallax[0].ScrollPos = 11534336 // AKA 0xB00000
-
+	
+	// Set starting scroll positions
+	
+	// Make the first parallax layer start at 176 pixels from its base position
+	HParallax[0].ScrollPos = 11534336
+	
 	// Set the other starting scroll position, but with respect to the screen's size to make it start in the right place
 	TempValue0 = Screen.XSize
 	TempValue0 -= 320
 	TempValue0 <<= 15
-	HParallax[1].ScrollPos = 6291456 // AKA 0x600000
+	
+	// Base position of 96 pixels
+	HParallax[1].ScrollPos = 6291456
+	
+	// And then subtract from that as needed
 	HParallax[1].ScrollPos -= TempValue0
-
+	
 	// Setup all BGEffect objects in the level
 	ArrayPos0 = 32
 	while ArrayPos0 < 1056
 		if Object[ArrayPos0].Type == TypeName[BGEffects]
-
+			
 			// Make it always active
 			Object[ArrayPos0].Priority = 1
-
+			
 			// It should the first object to have its draw code run
 			Object[ArrayPos0].DrawOrder = 0
-
+			
 			// Set the starting angle... but why is this 192? All other ones are 368 instead...
 			Object[ArrayPos0].PrevAngle = 192
-
+			
 			// Set the scale for the object to draw at
 			// (Only used for hardware rendering)
 			Object[ArrayPos0].Scale = 1536
-
+			
 		end if
-
+		
 		ArrayPos0++
 	loop
-
+	
 end sub
+
 
 // ========================
 // Editor Subs

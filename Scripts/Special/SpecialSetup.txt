@@ -92,6 +92,7 @@ sub ObjectMain
 					
 					if Stage.ActNo == 8
 						// If in the Robotnik Special Stage, then go straight to the credits
+						
 						Object[30].State = STAGEFINISH_LOADCREDITS
 						Object[30].DrawOrder = 7
 					end if
@@ -114,6 +115,7 @@ sub ObjectMain
 							
 							if Stage.ActNo == 8
 								// If in the Robotnik Special Stage, then go straight to the credits
+								
 								Object[30].State = STAGEFINISH_LOADCREDITS
 								Object[30].DrawOrder = 7
 							end if
@@ -163,7 +165,7 @@ sub ObjectDraw
 	// (Things further away from the camera should be drawn first and things closest should be last, etc.)
 	
 	TempValue0 = 0
-	TempValue1 = Screen[3].DrawListSize
+	TempValue1 = Screen.DrawListSize[3]
 	while TempValue0 < TempValue1
 		TempValue2 = TempValue1
 		TempValue2--
@@ -178,7 +180,7 @@ sub ObjectDraw
 			
 			// Compare their sorted draw orders
 			if Object[ArrayPos0].ScreenDepth > Object[ArrayPos1].ScreenDepth
-				// Switch them around if needed
+				// Swap them around if needed
 				SetDrawListEntityRef(ArrayPos0, 3, TempValue2)
 				SetDrawListEntityRef(ArrayPos1, 3, TempValue3)
 			end if
@@ -243,7 +245,7 @@ end sub
 
 sub RSDKLoad
 	LoadSpriteSheet("Global/Display.gif")
-	SpriteFrame(-16, -16, 32, 32, 1, 143)		// #0 - "Script" Box
+	SpriteFrame(-16, -16, 32, 32, 1, 143) // "Script" Box
 
 	SetVariableAlias(ALIAS_VAR_PROPVAL, "unused")
 end sub

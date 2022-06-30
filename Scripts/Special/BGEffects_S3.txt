@@ -13,7 +13,7 @@
 
 
 sub ObjectDraw
-
+	
 	// Animate the Fans in the level
 	Object.Fans.Timer++
 	if Object.Fans.Timer > 2
@@ -33,7 +33,7 @@ sub ObjectDraw
 			Copy16x16Tile(302, 526)
 			Copy16x16Tile(303, 527)
 			break
-
+			
 		case 1
 			Copy16x16Tile(296, 528)
 			Copy16x16Tile(297, 529)
@@ -44,7 +44,7 @@ sub ObjectDraw
 			Copy16x16Tile(302, 534)
 			Copy16x16Tile(303, 535)
 			break
-
+			
 		case 2
 			Copy16x16Tile(296, 536)
 			Copy16x16Tile(297, 537)
@@ -55,10 +55,10 @@ sub ObjectDraw
 			Copy16x16Tile(302, 542)
 			Copy16x16Tile(303, 543)
 			break
-
+			
 		end switch
 	end if
-
+	
 	// Animate the Crunchers in the level
 	Object.Crunchers.Timer++
 	if Object.Crunchers.Timer > 5
@@ -74,21 +74,21 @@ sub ObjectDraw
 			Copy16x16Tile(191, 548)
 			Copy16x16Tile(192, 549)
 			break
-
+			
 		case 1
 			Copy16x16Tile(189, 546)
 			Copy16x16Tile(190, 547)
 			Copy16x16Tile(191, 550)
 			Copy16x16Tile(192, 551)
 			break
-
+			
 		case 2
 			Copy16x16Tile(189, 552)
 			Copy16x16Tile(190, 553)
 			Copy16x16Tile(191, 556)
 			Copy16x16Tile(192, 557)
 			break
-
+			
 		case 3
 			Copy16x16Tile(189, 554)
 			Copy16x16Tile(190, 555)
@@ -98,7 +98,7 @@ sub ObjectDraw
 			
 		end switch
 	end if
-
+	
 	// Handle the palette animation
 	Object.AnimationTimer++
 	if Object.AnimationTimer > 7
@@ -107,7 +107,7 @@ sub ObjectDraw
 		Object.ActivePalette &= 3
 		SetActivePalette(Object.ActivePalette, 0, Screen.YSize)
 	end if
-
+	
 	// Find the difference between the current scroll pos and last scroll pos
 	TempValue1 = Object.PrevAngle
 	TempValue2 = TileLayer[0].Angle
@@ -127,25 +127,25 @@ sub ObjectDraw
 			TempValue2 += 512
 		end if
 	end if
-
+	
 	TempValue0 = TempValue1
 	TempValue0 -= TempValue2
-
+	
 	// Store the current angle for calculations next frame
 	Object.PrevAngle = TileLayer[0].Angle
 	
 	// Move the other BG layers in accordance with the difference found
-
-	TempValue1 = 262144 // AKA 0x40000
-	TempValue2 = 196608 // AKA 0x30000
-	TempValue3 = 65536  // AKA 0x10000
-	TempValue4 = 131072 // AKA 0x20000
-
+	
+	TempValue1 = 262144 // 4 pixels
+	TempValue2 = 196608 // 3 pixels
+	TempValue3 = 65536  // 1 pixel
+	TempValue4 = 131072 // 2 pixels
+	
 	TempValue1 *= TempValue0
 	TempValue2 *= TempValue0
 	TempValue3 *= TempValue0
 	TempValue4 *= TempValue0
-
+	
 	HParallax[1].ScrollPos += TempValue1
 	HParallax[2].ScrollPos += TempValue2
 	HParallax[3].ScrollPos += TempValue3
@@ -155,38 +155,39 @@ end sub
 
 
 sub ObjectStartup
-
+	
 	// Set stage bounds
-	Stage.XBoundary1 = 54525952  // AKA 0x3400000
-	Stage.XBoundary2 = 213909504 // AKA 0xCC00000
-	Stage.YBoundary1 = 54525952
-	Stage.YBoundary2 = 213909504
-
+	Stage.XBoundary1 = 54525952  // 832 pixels to the left
+	Stage.XBoundary2 = 213909504 // 3264 pixels to the right
+	Stage.YBoundary1 = 54525952  // 832 pixels upwards
+	Stage.YBoundary2 = 213909504 // 3264 pixels downwards
+	
 #platform: HW_Rendering
 	// Load the map sheet if needed for HW rendering
+	
 	LoadSpriteSheet("Special/SSMap3.gif")
 #endplatform
-
+	
 	// Setup all BGEffects in the level
 	ArrayPos0 = 32
 	while ArrayPos0 < 1056
 		if Object[ArrayPos0].Type == TypeName[BGEffects]
-
+			
 			// Set the object to always active
 			Object[ArrayPos0].Priority = 1
-
+			
 			// Make the object among the first to have its draw code be run
 			Object[ArrayPos0].DrawOrder = 0
-
+			
 			// Set the starting angle
 			// (Assuming Sonic starts facing left)
 			Object[ArrayPos0].PrevAngle = 368
-
+			
 		end if
-
+		
 		ArrayPos0++
 	loop
-
+	
 	// Setup the alternate palettes
 	TempValue0 = 1
 	while TempValue0 < 4
@@ -195,11 +196,12 @@ sub ObjectStartup
 		CopyPalette(0, TempValue0)
 		TempValue0++
 	loop
-
-	// Restore the palette to what it was originally
+	
+	// And shift it one last time, to restore the palette to what it was originally
 	RotatePalette(202, 205, true)
-
+	
 end sub
+
 
 // ========================
 // Editor Subs

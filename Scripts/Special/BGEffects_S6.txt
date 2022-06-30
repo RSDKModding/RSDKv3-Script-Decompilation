@@ -12,7 +12,7 @@
 #alias Object.Value6 : Object.Crunchers.Sprite
 
 sub ObjectDraw
-
+	
 	// Animate the fans in the stage
 	Object.Fans.Timer++
 	if Object.Fans.Timer > 2
@@ -32,7 +32,7 @@ sub ObjectDraw
 			Copy16x16Tile(43, 354)
 			Copy16x16Tile(44, 355)
 			break
-
+			
 		case 1
 			Copy16x16Tile(37, 356)
 			Copy16x16Tile(38, 357)
@@ -43,7 +43,7 @@ sub ObjectDraw
 			Copy16x16Tile(43, 362)
 			Copy16x16Tile(44, 363)
 			break
-
+			
 		case 2
 			Copy16x16Tile(37, 364)
 			Copy16x16Tile(38, 365)
@@ -54,10 +54,10 @@ sub ObjectDraw
 			Copy16x16Tile(43, 370)
 			Copy16x16Tile(44, 371)
 			break
-
+			
 		end switch
 	end if
-
+	
 	Object.Crunchers.Timer++
 	if Object.Crunchers.Timer > 5
 		Object.Crunchers.Timer = 0
@@ -72,47 +72,51 @@ sub ObjectDraw
 			Copy16x16Tile(136, 376)
 			Copy16x16Tile(137, 377)
 			break
-
+			
 		case 1
 			Copy16x16Tile(134, 374)
 			Copy16x16Tile(135, 375)
 			Copy16x16Tile(136, 378)
 			Copy16x16Tile(137, 379)
 			break
-
+			
 		case 2
 			Copy16x16Tile(134, 380)
 			Copy16x16Tile(135, 381)
 			Copy16x16Tile(136, 384)
 			Copy16x16Tile(137, 385)
 			break
-
+			
 		case 3
 			Copy16x16Tile(134, 382)
 			Copy16x16Tile(135, 383)
 			Copy16x16Tile(136, 386)
 			Copy16x16Tile(137, 387)
 			break
-
+			
 		end switch
 	end if
-
+	
 	// Make the background all loopy
 	Object.DeformTimer++
 	if Object.DeformTimer > 1
 		TileLayer[1].DeformationOffset++
 		Object.DeformTimer = 0
 	end if
-
-#platform: Standard
-	// Animate the stage's palette
+	
+#platform: SW_Rendering
+	// Animate the stage's palette for the background
+	// Palette changing is only available with the Software renderer,
+	// check out the HW Background Object for what's used with the Hardware renderer
+	
 	Object.PaletteTimer++
+	
 	if Object.PaletteTimer > 3
 		Object.PaletteTimer = 0
-		RotatePalette(209, 221, 0)
+		RotatePalette(209, 221, false)
 	end if
 #endplatform
-
+	
 	// Find the difference between the current angle and the last angle
 	TempValue1 = Object.PrevAngle
 	TempValue2 = TileLayer[0].Angle
@@ -129,18 +133,21 @@ sub ObjectDraw
 			TempValue2 += 512
 		end if
 	end if
-
+	
 	TempValue0 = TempValue1
 	TempValue0 -= TempValue2
-
+	
 	// Store the current angle for the same process next frame
 	Object.PrevAngle = TileLayer[0].Angle
 	
 	// Scroll the BG with parallax
-	TempValue1 = 8192   // AKA 0x2000, unused
-	TempValue2 = 131072 // AKA 0x20000
+	TempValue1 = 8192   // An eight of a pixel, unused
+	TempValue2 = 131072 // 2 pixels
+	
 	TempValue1 *= TempValue0 // There was likely some layer this corresponded to, but in the final version, only the buildings layer [1] gets moved
 	TempValue2 *= TempValue0
+	
+	// Perhaps that unused value corresponded to the wave background?
 	HParallax[1].ScrollPos += TempValue2
 	
 end sub
@@ -150,17 +157,20 @@ sub ObjectStartup
 	
 	// Setup Stage Bounds
 	// Aside from the Robotnik stage (which uses copies of these same numbers), this seems to be the only Special Stage with uneven left/right and top/bottom bounds
-	Stage.XBoundary1 = 41943040  // AKA 0x2800000
-	Stage.XBoundary2 = 226492416 // AKA 0xD800000
-	Stage.YBoundary1 = 50331648  // AKA 0x3000000
-	Stage.YBoundary2 = 218103808 // AKA 0xD000000
-
+	Stage.XBoundary1 = 41943040  // left bounds at 640 pixels
+	Stage.XBoundary2 = 226492416 // right bounds at 3456 pixels
+	Stage.YBoundary1 = 50331648  // upper bounds at 768 pixels
+	Stage.YBoundary2 = 218103808 // lower bounds at 3328 pixels
+	
+	// Reset deformation
 	SetLayerDeformation(2, 64, 64, 0, 0, 0)
-
+	
 #platform: HW_Rendering
+	// Load the map as a sheet if needed for the hardware renderer
+	
 	LoadSpriteSheet("Special/SSMap6.gif")
 #endplatform
-
+	
 	// Setup all BGEffects objects in the level
 	// (There should only ever be one though)
 	ArrayPos0 = 32
@@ -176,13 +186,14 @@ sub ObjectStartup
 			
 			// And setup its starting angle too, assuming Sonic's starting facing left
 			Object[ArrayPos0].PrevAngle = 368
-
+			
 		end if
-	
+		
 		ArrayPos0++
 	loop
-
+	
 end sub
+
 
 // ========================
 // Editor Subs

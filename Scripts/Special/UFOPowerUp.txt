@@ -25,37 +25,44 @@
 
 
 sub ObjectDraw
-
-	if Object.YVelocity < 262144 // AKA 0x40000
+	
+	// If the Object isn't falling at a rate of 4px per frame yet, then...
+	if Object.YVelocity < 262144
+		
+		// Draw the Power Up icon
 		DrawSpriteScreenXY(Object.PropertyValue, Object.iXPos, Object.iYPos)
-		Object.YVelocity += 8192 // AKA 0x2000
+		
+		// Apply a gravity of 0.125 pixels per frame
+		Object.YVelocity += 8192
+		
+		// And then update the Power Up Velocity
 		Object.YPos += Object.YVelocity
 	end if
-
+	
 	// Create explosions as needed
 	Object.ExplosionTimer++
 	if Object.ExplosionTimer == 6
 		Object.ExplosionTimer = 0
 		PlaySfx(SFX_EXPLOSION, false)
-
+		
 		// Randomise the explosion offset a tad bit
 		Rand(TempValue0, 48)
 		TempValue0 -= 24
 		TempValue0 += Screen.XOffset
 		TempValue0 <<= 16
 		TempValue0 += Object.ExplosionXVel
-
+		
 		Rand(TempValue1, 48)
 		TempValue1 -= 24
 		TempValue1 += Screen.YOffset
 		TempValue1 <<= 16
 		TempValue1 += Object.ExplosionYVel
-
+		
 		CreateTempObject(TypeName[Smoke Puff], 0, TempValue0, TempValue1)
-
+		
 		Object[TempObjectPos].DrawOrder = 4
 	end if
-
+	
 	// Value is randomised by the parent UFO object, it's not set in this object's ObjectStartup or anything
 	if Object.ExplosionDir > 50
 		// Going to the right
@@ -64,15 +71,15 @@ sub ObjectDraw
 		// Going to the left
 		Object.ExplosionXVel -= 131072
 	end if
-
+	
 	// Make the explosions gravitate to the bottom corner of the screen
 	Object.ExplosionYVel += 49152
-
+	
 	Object.Timer++
 	if Object.Timer == 160
 		if Object.StartResults == true
 			// If this object was the spawned by the last UFO, then end the stage
-
+			
 			if Options.GameMode < 2
 				if Stage.ActNo < 8
 					// If in a normal Special Stage, then hand the rest of the ending sequence to Sonic
@@ -90,27 +97,28 @@ sub ObjectDraw
 				Object[30].DrawOrder = 7
 			end if
 		end if
-
+		
 		Object.Type = TypeName[Blank Object]
 	end if
-
+	
 end sub
 
 
 sub ObjectStartup
-
+	
 	LoadSpriteSheet("Special/Objects.gif")
-
+	
 	// 0 - Ring Icon
 	SpriteFrame(-8, -8, 16, 16, 1, 67)
-
+	
 	// 1 - Speed Shoes Icon
 	SpriteFrame(-8, -8, 16, 16, 18, 67)
-
+	
 	// 2 - Clock Icon
 	SpriteFrame(-8, -8, 16, 16, 35, 67)
-
+	
 end sub
+
 
 // ========================
 // Editor Subs

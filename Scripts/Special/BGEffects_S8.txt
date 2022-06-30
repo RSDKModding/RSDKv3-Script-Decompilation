@@ -12,7 +12,7 @@
 
 
 sub ObjectDraw
-
+	
 	// Animate the fans that are in the level
 	Object.Fans.Timer++
 	if Object.Fans.Timer > 2
@@ -32,7 +32,7 @@ sub ObjectDraw
 			Copy16x16Tile(243, 314)
 			Copy16x16Tile(244, 315)
 			break
-
+			
 		case 1
 			Copy16x16Tile(237, 316)
 			Copy16x16Tile(238, 317)
@@ -43,7 +43,7 @@ sub ObjectDraw
 			Copy16x16Tile(243, 322)
 			Copy16x16Tile(244, 323)
 			break
-
+			
 		case 2
 			Copy16x16Tile(237, 324)
 			Copy16x16Tile(238, 325)
@@ -54,10 +54,10 @@ sub ObjectDraw
 			Copy16x16Tile(243, 330)
 			Copy16x16Tile(244, 331)
 			break
-
+			
 		end switch
 	end if
-
+	
 	// Animate the hungry crunchers throughout the level, too
 	Object.Crunchers.Timer++
 	if Object.Crunchers.Timer > 5
@@ -73,31 +73,31 @@ sub ObjectDraw
 			Copy16x16Tile(137, 336)
 			Copy16x16Tile(138, 337)
 			break
-
+			
 		case 1
 			Copy16x16Tile(135, 334)
 			Copy16x16Tile(136, 335)
 			Copy16x16Tile(137, 338)
 			Copy16x16Tile(138, 339)
 			break
-
+			
 		case 2
 			Copy16x16Tile(135, 340)
 			Copy16x16Tile(136, 341)
 			Copy16x16Tile(137, 344)
 			Copy16x16Tile(138, 345)
 			break
-
+			
 		case 3
 			Copy16x16Tile(135, 342)
 			Copy16x16Tile(136, 343)
 			Copy16x16Tile(137, 346)
 			Copy16x16Tile(138, 347)
 			break
-
+			
 		end switch
 	end if
-
+	
 	// Find the difference between the current scroll position and the last scroll position... but nothing's really done with the result
 	// This script was likely just copied over from the other BGEffects scripts, and this was never removed
 	TempValue1 = Object.PrevAngle
@@ -115,53 +115,61 @@ sub ObjectDraw
 			TempValue2 += 512
 		end if
 	end if
-
+	
 	// Object.PrevAngle would normally be updated here, it looks like at least *some* effort was taken to remove the useless code
-
+	
 end sub
 
 
 sub ObjectStartup
-
+	
 	// Setup stage bounds
-	// Interestingly, this stage seems to be the only one with different widths and heights
-	Stage.XBoundary1 = 41943040  // AKA 0x2800000
-	Stage.XBoundary2 = 226492416 // AKA 0xD800000
-	Stage.YBoundary1 = 50331648  // AKA 0x3000000
-	Stage.YBoundary2 = 218103808 // AKA 0xD000000
-
+	// Interestingly, this stage has different widths and heights, not making it a square like the others
+	Stage.XBoundary1 = 41943040  // left bounds at 640 pixels
+	Stage.XBoundary2 = 226492416 // right bounds at 3456 pixels
+	Stage.YBoundary1 = 50331648  // upper bounds at 768 pixels
+	Stage.YBoundary2 = 218103808 // lower bounds at 3328 pixels
+	
 #platform: HW_Rendering
 	// Load the stage map as a sprite if needed
+	
 	LoadSpriteSheet("Special/SSMap8.gif")
 #endplatform
-
+	
 	// Center the stage's background so that Robotnik's amazing mug can be in the middle of the screen
 	TempValue0 = Screen.XSize
 	TempValue0 -= 320
+	
+	// Shouldn't this be <<= 16? If it's going from screen-space to world-space...
 	TempValue0 <<= 15
+	
+	// Base position of 96 pixels
 	HParallax[0].ScrollPos = 6291456
+	
+	// And then shift it as needed to match the center
 	HParallax[0].ScrollPos -= TempValue0
-
+	
 	// Cycle through all BGEffects objects and set them up
 	ArrayPos0 = 32
 	while ArrayPos0 < 1056
 		if Object[ArrayPos0].Type == TypeName[BGEffects]
-
+			
 			// Make the object always be run, since fans and tiles should be animated always
 			Object[ArrayPos0].Priority = 1
-
+			
 			// Give it the lowest draw order as well, in order to make it run before other objects' draw events
 			Object[ArrayPos0].DrawOrder = 0
-
+			
 			// Set the initial starting angle, although it's not really used...
 			Object[ArrayPos0].PrevAngle = 368
-
+			
 		end if
-	
+		
 		ArrayPos0++
 	loop
-
+	
 end sub
+
 
 // ========================
 // Editor Subs
