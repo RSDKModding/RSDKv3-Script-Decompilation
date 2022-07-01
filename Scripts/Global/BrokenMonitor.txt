@@ -21,6 +21,8 @@
 #alias Player.Value4			:	Player.Invincible
 #alias Player.Value5			:	Player.BlinkTimer
 
+#alias 0 : PLAYER_SONIC
+
 // OST
 #alias 0						:	JP_OST
 
@@ -63,7 +65,7 @@ sub ObjectMain
 		else
 			Object.Timer = 0
 		end if
-
+		
 		if Object.Timer == 0
 			Object.State = BROKENMONITOR_FADE_POWERUP
 			Object.InkEffect = INK_ALPHA
@@ -85,7 +87,7 @@ sub ObjectMain
 				if Player.Rings >= Ring.ExtraLife
 					if Options.GameMode != GAMEMODE_TIMEATTACK
 						Player.Lives++
-						if Stage.PlayerListPos == 0		// PlayerName[SONIC]
+						if Stage.PlayerListPos == PLAYER_SONIC
 							PlaySfx(20, 0)
 						else
 							PlaySfx(21, 0)
@@ -99,7 +101,7 @@ sub ObjectMain
 
 					// King of the Rings Unlock Criteria
 					if Player.Rings >= 200
-						if Stage.PlayerListPos == 0		// PlayerName[SONIC]
+						if Stage.PlayerListPos == PLAYER_SONIC
 							if Stage.DebugMode == false
 								SetAchievement(4, 100)
 							end if
