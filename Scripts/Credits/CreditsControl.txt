@@ -15,12 +15,13 @@
 
 // Credits Source File Aliases
 // The difference platforms pull from different Credits Files
-#platform: Standard
-	#alias "Data/Game/Credits_Console.txt" : CREDITSCONTROL_SOURCEFILE
-#endplatform
-#platform: Mobile
-	#alias "Data/Game/Credits_Mobile.txt" : CREDITSCONTROL_SOURCEFILE
-#endplatform
+
+// The current version is the Mobile ver, so let's stick with that
+// (And yeah, the "Mobile" version is used in Origins too...)
+
+#alias "Data/Game/Credits_Mobile.txt" : CREDITSCONTROL_SOURCEFILE
+
+// On Standard Platforms (ie PC 2012 & consoles) "Data/Game/Credits_Console.txt" is used instead
 
 // Text Font Aliases
 #alias Object.Value1 : Object.TargetLine
@@ -33,140 +34,186 @@
 
 
 sub ObjectMain
+	
 	switch Object.State
 	case CREDITSCONTROL_INIT
+		
+		// Object.Scroll should be 0 at this point, so this is
+		// essentially resetting the Camera Y Offset to be 0
 		Screen.YOffset = Object.Scroll
+		
+		// Center the camera to be around 256 pixels in, to make sure the text is centered
 		TempValue0 = 256
 		TempValue0 -= Screen.CenterX
+		
 		Screen.XOffset = TempValue0
+		
+		// This Object is what draws the backgound, so it needs to draw low
 		Object.DrawOrder = 0
+		
 		if Object.Timer < 8
+			// Hold for a moment...
+			
 			Object.Timer++
 		else
+			// Start fading in
+			
 			Object.Timer = 254
 			PlayMusic(0)
 			Object.State++
 		end if
+		
+		// Set the screen to be black for now
 		SetScreenFade(0, 0, 0, 255)
 		break
-
+		
 	case CREDITSCONTROL_FADEIN
 		if Object.Timer > 0
 			SetScreenFade(0, 0, 0, Object.Timer)
+			
 			Object.Timer -= 8
 		else
 			Object.State++
 		end if
 		break
-
+		
 	case CREDITSCONTROL_MAIN
 		Object.Scroll++
-
+		
 		// Speed up the credits if the player wants
 		if KeyDown.ButtonA == true
 			Object.Scroll++
 		end if
+		
 		if KeyDown.ButtonC == true
 			Object.Scroll++
 		end if
-
+		
 		TempValue0 = Object.Scroll
 		TempValue0 >>= 1
+		
 		Screen.YOffset = TempValue0
-
+		
+		// If at the end of the Credits, then fade out
 		if Object.Scroll > Object.EndCredits
 			Object.State = CREDITSCONTROL_FADEOUT
 			Object.Timer = 0
 		end if
-
+		
+		// And then, let the Player just skip the Credits if they want to
+		
 		if KeyPress.Start == true
 			Object.State = CREDITSCONTROL_FADEOUT
 			Object.Timer = 0
 		end if
+		
 		if KeyPress.ButtonB == true
 			Object.State = CREDITSCONTROL_FADEOUT
 			Object.Timer = 0
 		end if
-
+		
 		CheckTouchRect(0, 0, Screen.XSize, Screen.YSize)
 		if CheckResult > -1
 			Object.State = CREDITSCONTROL_FADEOUT
 			Object.Timer = 0
 		end if
 		break
-
+		
 	case CREDITSCONTROL_FADEOUT
 		if Object.Timer < 320
 			Object.Timer += 8
 			Music.Volume -= 2
 		else
 			StopMusic()
+			
+			// Go back to the menu now
+			
 			Stage.ActiveList = PRESENTATION_STAGE
 			Stage.ListPos = STAGE_P_MENU
 			LoadStage()
 		end if
-
+		
+		// Have a maximum fade value of 255, since that's all that a byte can hold
 		TempValue0 = Object.Timer
 		if TempValue0 > 255
 			TempValue0 = 255
 		end if
+		
 		SetScreenFade(0, 0, 0, TempValue0)
 		break
-
+	
 	end switch
+	
 end sub
 
 
 sub ObjectDraw
-
+	
 	// The scene doesn't have a background or anything, so draw a Black Rectangle here to avoid frame smear
+	
 	DrawRect(0, 0, Screen.XSize, Screen.YSize, 0, 0, 0, 255)
-
+	
 end sub
 
 
 sub ObjectStartup
-
+	
+	// There's no exact "credits" song for either regions, per se, so
+	// the Japanese soundtrack uses the Time Attack theme and the
+	// American soundtrack uses the DA Garden theme
 	if Options.Soundtrack == SOUNDTRACK_JP
 		SetMusicTrack("JP/TimeAttack.ogg", 0, 100512)
 	else
 		SetMusicTrack("US/DAGarden.ogg", 0, 117382)
 	end if
-
-	// The different platforms have different credits, CREDITSCONTROL_SOURCEFILE is the path to a file as defined up above in the Aliases
+	
+	// CREDITSCONTROL_SOURCEFILE is the path to a file as defined up above in the Aliases
 	LoadTextFile(MENU_1, CREDITSCONTROL_SOURCEFILE, false)
-
+	
+	// In this scene, we control the camera manually
 	Screen.CameraEnabled = false
-
+	
 	// Place the Credits Control object into the scene
 	Object[0].Type = TypeName[Credits Control]
+	
+	// Make sure that it's always active, since it's the master control in this scene
 	Object[0].Priority = 1
-
+	
 	// Get the row count of how many entries there are in the credits file
 	GetTextInfo(TempValue1, MENU_1, 2, 0, 0)
-
+	
 	// Find the first unoccupied object slot in the stage
 	ArrayPos0 = 32
 	while Object[ArrayPos0].Type != TypeName[Blank Object]
 		ArrayPos0++
 	loop
-
+	
 	// Create all the Credits text
 	// - TempValue0 is the current line being read from the file
 	// - TempValue2 is the X Position to spawn the text at (stays constant)
 	// - TempValue3 is the Y Position to spawn the text at
-
+	
+	// Starting values:
+	
+	// Starting line should be 0 (ofc)
 	TempValue0 = 0
-	TempValue2 = 16777216 // AKA 0x1000000, 256 pixels from the left
+	
+	// X Position should be 256 pixels to the right
+	TempValue2 = 16777216
+	
+	// And starting Y Position should be 256 pixels as well
 	TempValue3 = 16777216
+	
+	// And now, let's enter the loop!
 	while TempValue0 < TempValue1
-
+		
 		// Get what type of entry it is
 		// [Reading the number inside the brackets]
 		GetTextInfo(TempValue4, MENU_1, 0, TempValue0, 1)
-
+		
 		// Get the length of the entry
 		GetTextInfo(TempValue5, MENU_1, 1, TempValue0, 0)
+		
 		if TempValue5 == 0
 			// This is a blank line, so don't put any text on the current line and instead create a new line 22 pixels tall
 			TempValue3 += 1441792
@@ -198,15 +245,16 @@ sub ObjectStartup
 				end if
 			end if
 		end if
-
+		
 		TempValue0++
 	loop
-
+	
 	TempValue3 -= 917504 // 14 pixels
 	Object[0].EndCredits = TempValue3
 	Object[0].EndCredits >>= 15
-
+	
 end sub
+
 
 // ========================
 // Editor Subs
