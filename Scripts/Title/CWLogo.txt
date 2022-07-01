@@ -1,18 +1,14 @@
 //------------Sonic CD CWLogo Script-------------//
 //--------Scripted by Christian Whitehead 'The Taxman'--------//
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
-//---This Object is normally only used by Mobile Data files---//
 
 // Aliases
-#alias Object.Value0	: Object.Timer
-#alias Object.Value1	: Object.RectAlpha	// Only used on mobile
-#alias Object.Value2 	: Object.BGScale
+#alias Object.Value0 : Object.Timer
+#alias Object.Value1 : Object.RectAlpha
+#alias Object.Value2 : Object.BGScale
+#alias Object.Value3 : Object.Unused
 
-#alias Object.Rotation	: Object.Rotation
-#alias Object.Alpha		: Object.Alpha
-#alias Object.Scale		: Object.Scale
-
-//-------States--------//
+// States
 #alias 0 : CWLOGO_SETUP
 #alias 1 : CWLOGO_BGSCALE_INCREASE_1
 #alias 2 : CWLOGO_BGSCALE_INCREASE_2
@@ -20,20 +16,22 @@
 #alias 4 : CWLOGO_BGSCALE_DECREASE
 #alias 5 : CWLOGO_LOGO_FADEOUT
 
-//--Callbacks & Engine States--//
-#alias 7 : CALLBACK_EXIT_SELECTED
+// This value was originally 160, but updates changed it to 192 instead
+#alias 192 : CWLOGO_SCALE
 
-#alias 6 : ENGINE_EXIT_HIRESMODE
+// Callbacks & Engine States
+#alias 7 : CALLBACK_EXIT_SELECTED
 
 
 sub ObjectMain
+	
 	switch Object.State
 	case CWLOGO_SETUP
 		Object.Rotation = 0
 		Object.BGScale = 0
 		Object.State++
 		break
-
+		
 	case CWLOGO_BGSCALE_INCREASE_1
 		if Object.BGScale < 2048
 			if Object.BGScale < 2048
@@ -49,7 +47,7 @@ sub ObjectMain
 		Object.Rotation += 8
 		Object.Rotation &= 511
 		break
-
+		
 	case CWLOGO_BGSCALE_INCREASE_2
 		if Object.BGScale < 4096
 			if Object.BGScale < 2048
@@ -67,23 +65,21 @@ sub ObjectMain
 			Object.State++
 		end if
 		break
-
+		
 	case CWLOGO_LOGO_FADEIN
 		if Object.Timer < 144
 			Object.Timer++
 		else
 			Object.Timer = 0
-
-#platform: Mobile
+			
 			// It's unknown exactly what this does, it's never referenced anywhere else
 			// And it was only added in post via an update as well, certainly quite strange...
-			Object.Value3 = 0
-#endplatform
-
+			Object.Unused = 0
+			
 			Object.State++
 		end if
 		break
-
+		
 	case CWLOGO_BGSCALE_DECREASE
 		if Object.BGScale > 0
 			if Object.BGScale < 2048
@@ -91,13 +87,13 @@ sub ObjectMain
 			else
 				Object.BGScale -= 128
 			end if
-
+			
 			Object.Rotation -= 8
 			if Object.Rotation < 0
 				Object.Rotation += 512
 			end if
 		end if
-
+		
 		if Object.RectAlpha < 256
 			Object.RectAlpha += 10
 		else
@@ -105,7 +101,7 @@ sub ObjectMain
 			Object.RectAlpha = 256
 		end if
 		break
-
+		
 	case CWLOGO_LOGO_FADEOUT
 		if Object.BGScale > 0
 			if Object.BGScale < 2048
@@ -113,7 +109,7 @@ sub ObjectMain
 			else
 				Object.BGScale -= 128
 			end if
-
+			
 			Object.Rotation -= 8
 			if Object.Rotation < 0
 				Object.Rotation += 512
@@ -121,54 +117,52 @@ sub ObjectMain
 		else
 			if Object.Timer == 16
 				ResetObjectEntity(Object.EntityNo, TypeName[Sonic], 0, Object.XPos, Object.YPos)
-
+				
 				Object.InkEffect = 2 // INK_ALPHA
 				Object.Alpha = 0
 				Object.Timer = 0
-#platform: Mobile
-				Engine.State = ENGINE_EXIT_HIRESMODE
-				Object.RectAlpha = 256
-#endplatform
 			else
 				Object.Timer++
 			end if
 		end if
 		break
-
+		
 	end switch
-
-#platform: Mobile
+	
+	// Windows Phone 7, certainly quite the anomaly
 	if Engine.PlatformID == RETRO_WP7
-		if KeyPress.ButtonB == true
+		if KeyPress[0].ButtonB == true
 			EngineCallback(CALLBACK_EXIT_SELECTED)
 		end if
 	end if
-#endplatform
+	
 end sub
 
 
 sub ObjectDraw
-	// 8 Point Star Pattern
+	
+	// First, draw the solid colour background
 	DrawRect(0, 0, Screen.XSize, Screen.YSize, 0, 0, 96, 255)
+	
+	// Then, draw the 8 Point Star pattern
 	Object.Scale = Object.BGScale
 	DrawSpriteFX(1, FX_ROTOZOOM, Object.XPos, Object.YPos)
 	Object.Rotation += 64
 	DrawSpriteFX(1, FX_ROTOZOOM, Object.XPos, Object.YPos)
-
 	Object.Rotation -= 64
-
+	
 	// Logo Fade In-Out
 	switch Object.State
 	case CWLOGO_BGSCALE_INCREASE_2
 	case CWLOGO_LOGO_FADEIN
 	case CWLOGO_BGSCALE_DECREASE
-#platform: Standard
-		Object.Scale = 160
-#endplatform
-#platform: Mobile
-		Object.Scale = 192
-#endplatform
+		
+		// Draw the CW Logo at its own Scale
+		Object.Scale = CWLOGO_SCALE
+		
 		DrawSpriteFX(0, FX_SCALE, Object.XPos, Object.YPos)
+		
+		// And then draw its own little background
 		TempValue0 = Screen.CenterX
 		TempValue0 -= 96
 		TempValue1 = Screen.CenterY
@@ -177,14 +171,22 @@ sub ObjectDraw
 		break
 		
 	end switch
+	
 end sub
 
 
 sub ObjectStartup
+	
 	LoadSpriteSheet("Title/CWLogo.gif")
-	SpriteFrame(-255, -117, 510, 235, 1, 1)	// #0 - Christian Whitehead Logo 
-	SpriteFrame(-32, -32, 64, 64, 1, 1)		// #1 - Background
+	
+	// 0 - Christian Whitehead Logo 
+	SpriteFrame(-255, -117, 510, 235, 1, 1)
+	
+	// 1 - Background
+	SpriteFrame(-32, -32, 64, 64, 1, 1)
+	
 end sub
+
 
 // ========================
 // Editor Subs
@@ -193,6 +195,7 @@ end sub
 sub RSDKDraw
 	DrawSprite(0)
 end sub
+
 
 sub RSDKLoad
 	LoadSpriteSheet("Global/Display.gif")
