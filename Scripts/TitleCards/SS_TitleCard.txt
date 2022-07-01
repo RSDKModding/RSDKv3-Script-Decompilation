@@ -76,24 +76,25 @@ sub ObjectDraw
 		if Object.TextPos > TempValue0
 			// Slide the text to the left
 			Object.TextPos -= 8
-#platform: Mobile
-		// Updated version - both the text AND the bar have to be on screen for the title card to progress
+			
+			// Now, this part got changed in an update
+			
 		else
+			// -> Updated version - both the text AND the bar have to be on screen for the title card to progress
+
 			if Object.BarPos == 0
 				Object.State = TITLECARD_DISPLAY
 			end if
-#endplatform
 		end if
 		
 		if Object.BarPos < 0
 			// Move the Bar down
 			Object.BarPos += 8
-#platform: Standard
-		// Initial version - only the bar needs to be in the proper position to continue
-		// -> This can cause issues sometimes, notably on devices with wider screens with wider resolutions
-		else
-			Object.State = TITLECARD_DISPLAY
-#endplatform
+			
+			// There used to be code here in older versions, but not anymore...
+			// -> Initial version - only the bar needed to be in the proper position for the title card to continue
+			//    This had text get incorrectly often
+			
 		end if
 		break
 		
@@ -144,9 +145,19 @@ sub ObjectDraw
 		
 		// SpriteFrames 1-4 aren't needed here, they're just leftovers from the traditional zone Title Card format
 		
-		// Draw the "SONIC THE HEDGEHOG" bar, along with the set of three squiggly lines
+#platform: Use_Decomp
+		// Extension of the black Sonic CD bar, since the base sprite isn't wide enough on Steam data files
+		
+		TempValue0 = Object.TextPos
+		TempValue0 += 150
+		DrawRect(TempValue0, 147, 180, 9, 0, 0, 0, 255)
+#endplatform
+		
+		// Draw the "SONIC THE HEDGEHOG" bar proper now
 		DrawSpriteScreenXY(5, Object.TextPos, 64)
 		DrawSpriteScreenXY(6, Object.TextPos, 64)
+		
+		// And also the set of three squiggly lines following
 		DrawSpriteScreenXY(7, Object.TextPos, 64)
 		
 		// And then draw all the Letters
@@ -245,39 +256,16 @@ sub ObjectStartup
 	SpriteFrame(64, 97, 48, 16, 41, 67)
 	
 	// All the letters used by the Title Card
-	// They got updated a bit post-release, which is why the Standard (initial) and Mobile (updated) portions are just entirely different
+	// They got updated a bit post-release, we're using the updated version here
 	
-#platform: Standard
-	
-	// 5-6 - "SONIC THE HEGDEHOG" bar
-	SpriteFrame(64, 81, 160, 16, 52, 227)
-	SpriteFrame(39, 81, 160, 16, 52, 227)
-	
-	// 7 - Three lines
-	SpriteFrame(100, 32, 24, 48, 182, 124)
-	
-	// 8-19 - Letters spelling out "Special Stage"
-	
-	SpriteFrame(20, 0, 16, 55, 207, 124)	// S
-	SpriteFrame(37, 32, 10, 23, 176, 180)	// P
-	SpriteFrame(48, 32, 9, 23, 187, 180)	// E
-	SpriteFrame(58, 32, 8, 23, 197, 180)	// C
-	SpriteFrame(67, 32, 6, 23, 206, 180)	// I
-	SpriteFrame(74, 32, 11, 23, 212, 180)	// A
-	SpriteFrame(86, 32, 9, 23, 176, 203)	// L
-	
-	SpriteFrame(20, 56, 16, 55, 207, 124)	// S
-	SpriteFrame(37, 56, 10, 23, 186, 203)	// T
-	SpriteFrame(48, 56, 11, 23, 212, 180)	// A
-	SpriteFrame(60, 56, 10, 23, 197, 203)	// G
-	SpriteFrame(71, 56, 9, 23, 187, 180)	// E
-	
-#endplatform
-	
-#platform: Mobile
-	
-	// 5-6 - "SONIC THE HEGDEHOG" bar
+	// 5 - Main part of the "SONIC THE HEGDEHOG" bar
+	// It's different between different data files, we're sticking with the updated version (Origins/mobile)
 	SpriteFrame(72, 81, 160, 16, 60, 227)
+	
+	// On Steam datafiles, you'll want to use the following instead
+// SpriteFrame(64, 81, 160, 16, 52, 227)
+	
+	// 6 - Other part of the Sonic abr
 	SpriteFrame(16, 81, 160, 16, 52, 227)
 	
 	// 7 - Three lines
@@ -298,8 +286,6 @@ sub ObjectStartup
 	SpriteFrame(28, 56, 11, 23, 212, 180)	// A
 	SpriteFrame(40, 56, 10, 23, 197, 203)	// G
 	SpriteFrame(51, 56, 9, 23, 187, 180)	// E
-	
-#endplatform
 
 end sub
 
