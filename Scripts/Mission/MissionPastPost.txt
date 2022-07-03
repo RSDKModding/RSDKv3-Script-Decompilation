@@ -1,0 +1,116 @@
+//------------Sonic CD M_PastPost Script-------------//
+//--------Scripted by Christian Whitehead 'The Taxman'--------//
+//-------Unpacked By Rubberduckycooly's Script Unpacker-------//
+
+// Aliases
+#alias 76: TYPE_M_PASTPOST
+
+
+sub ObjectPlayerInteraction
+	switch Object.State
+	case 0
+		if Player.CollisionPlane == Object.Value1
+			PlayerObjectCollision(C_TOUCH,-8,-24,8,32)
+			if CheckResult == 1
+				Warp.Destination=1
+				Object.State=1
+				Object.Priority=1
+				Object.Frame=1
+				PlaySfx(13,0)
+			end if
+		end if
+		break
+	case 2
+		if Object.OutOfBounds == 1
+			TempValue0=Stage.Minutes
+			TempValue0 *= 60
+			TempValue0 += Stage.Seconds
+			if Object.Value0 == 0
+				Object.Value0=TempValue0
+				Object.Value0 += 10
+			else
+				if TempValue0 >= Object.Value0
+					Object.State=0
+					Object.Value0=0
+					Object.Priority=0
+				end if
+			end if
+		end if
+		break
+	end switch
+end sub
+
+
+sub ObjectDraw
+	switch Object.State
+	case 0
+		DrawSprite(0)
+		DrawSprite(1)
+		break
+	case 1
+		DrawSprite(0)
+		Object.Value0++
+		if Object.Value0 == 64
+			Object.Value0=0
+			Object.State=2
+		end if
+		DrawSprite(Object.Frame)
+		TempValue0=Object.Value0
+		TempValue0&=1
+		Object.Frame += TempValue0
+		if Object.Frame>8
+			Object.Frame=1
+		end if
+		break
+	case 2
+		DrawSprite(0)
+		DrawSprite(5)
+		break
+	end switch
+end sub
+
+
+sub ObjectStartup
+	LoadSpriteSheet("Global/Items.gif")
+	SpriteFrame(-8,-24,16,48,35,204)
+	SpriteFrame(-16,-40,32,16,118,239)
+	SpriteFrame(-8,-40,16,16,51,183)
+	SpriteFrame(-3,-40,8,16,68,183)
+	SpriteFrame(-8,-40,16,16,52,200)
+	SpriteFrame(-16,-40,32,16,151,239)
+	SpriteFrame(-8,-40,16,16,51,183)
+	SpriteFrame(-3,-40,8,16,68,183)
+	SpriteFrame(-8,-40,16,16,52,200)
+	ArrayPos0=32
+	while ArrayPos0<1056
+		if Object[ArrayPos0].Type == TypeName[PastPost]
+			if Object[ArrayPos0].PropertyValue == 1
+				Object[ArrayPos0].DrawOrder=1
+				Object[ArrayPos0].Value1=1
+			end if
+			if Options.GameMode == 2
+				Object[ArrayPos0].Type=TypeName[BlankObject]
+			end if
+		end if
+		ArrayPos0++
+	loop
+end sub
+
+
+// ========================
+// Editor Subs
+// ========================
+
+sub RSDKDraw
+	DrawSprite(0)
+end sub
+
+
+sub RSDKLoad
+	LoadSpriteSheet("Global/Display.gif")
+	SpriteFrame(-16, -16, 32, 32, 1, 143)		// #0 - "Script" Icon
+	
+	SetVariableAlias(ALIAS_VAR_PROPVAL, "unused")
+end sub
+
+

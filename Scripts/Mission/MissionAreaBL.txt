@@ -1,0 +1,82 @@
+//------------Sonic CD MissionAreaBL Script-------------//
+//--------Scripted by Christian Whitehead 'The Taxman'--------//
+//-------Unpacked By Rubberduckycooly's Script Unpacker-------//
+
+// Aliases
+#alias 59: TYPE_MISSIONAREABL
+
+#alias Object.State : Object.SetBounds
+
+sub ObjectMain
+	
+	// If it hasn't been done already, set the Stage's boundaries
+	if Object.SetBounds == false
+		
+		// Move the X Bounds to 16 pixels to the left of this Object
+		Stage.NewXBoundary1 = Object.XPos
+		Stage.NewXBoundary1 >>= 16
+		Stage.NewXBoundary1 -= 16
+		
+		// And then move the Y Bounds to be right at this Object's position
+		Stage.NewYBoundary2 = Object.YPos
+		Stage.NewYBoundary2 >>= 16
+		
+		// Set the flag, as the bounds have been set now
+		Object.SetBounds = true
+	end if
+	
+	if Stage.State == STAGE_RUNNING
+		if Player.YPos > Object.YPos
+			CheckEqual(Player.State, 26)
+			TempValue0 = CheckResult
+			CheckEqual(Player.State, 27)
+			CheckResult |= TempValue0
+			if CheckResult == 0
+				Player.YVelocity = 0
+				Player.Speed = 0
+				Player.YPos = Object.YPos
+				game.forceKillPlayer = 1
+			end if
+			
+			Object.Priority = 5
+		end if
+		
+		if Player.XPos < Object.XPos
+			Player.XVelocity = 0
+			Player.Speed = 0
+			Player.XPos = Object.XPos
+		end if
+	end if
+	
+end sub
+
+
+sub ObjectStartup
+	
+	ArrayPos0=32
+	while ArrayPos0<1056
+		if Object[ArrayPos0].Type == TypeName[MissionAreaBL]
+			Object[ArrayPos0].Priority=1
+		end if
+		
+		ArrayPos0++
+	loop
+	
+end sub
+
+
+// ========================
+// Editor Subs
+// ========================
+
+sub RSDKDraw
+	DrawSprite(0)
+end sub
+
+
+sub RSDKLoad
+	LoadSpriteSheet("Global/Display.gif")
+	SpriteFrame(-16, -16, 32, 32, 1, 143)		// #0 - "Script" Icon
+	
+	SetVariableAlias(ALIAS_VAR_PROPVAL, "unused")
+end sub
