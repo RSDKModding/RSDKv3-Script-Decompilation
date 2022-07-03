@@ -48,6 +48,7 @@ sub ObjectDraw
 	case TITLECARD_FADEIN
 		// Lock Player Control
 		Player.ControlMode 	= CONTROLMODE_NONE
+		
 		Player.Up 			= false
 		Player.Down 		= false
 		Player.Left 		= false
@@ -78,9 +79,11 @@ sub ObjectDraw
 					
 					Stage.MilliSeconds = Rec_Milliseconds
 					Stage.Seconds = Rec_Seconds
-#platform: Mobile
+					
+					// Originally, they forgot this line to restore Minutes after warping, only in the R5 Title Card script specifically...
+					// A mobile update (+ Origins) fixes the issue though!
 					Stage.Minutes = Rec_Minutes
-#endplatform
+					
 					Player[0].Invincible = 8000
 				end if
 				
@@ -120,25 +123,22 @@ sub ObjectDraw
 		
 		if Object.TextPos > TempValue0
 			Object.TextPos -= 8
-#platform: Mobile
-			// Updated mobile version - both text and the bar have to
-			// be in the correct position for the title card to progress
 		else
+			// Updated version of this script - both text and the bar have to
+			// be in the correct position for the title card to progress
+			
 			if Object.BarPos == 0
 				Object.State = TITLECARD_DISPLAY
 			end if
-#endplatform
 		end if
 		
 		if Object.BarPos < 0
 			Object.BarPos += 8
-#platform: Standard
-			// Initial version of the game - only the bar has to be
-			// in the correct position for the title card to progress
-			// (This is why the Title Card text is offset when playing on the fan-made decompilation of the Retro Engine v3)
-		else
-			Object.State = TITLECARD_DISPLAY
-#endplatform
+//			// Initial version of the game - only the bar has to be
+//			// in the correct position for the title card to progress
+//			// (This is why the Title Card text is offset when playing on the fan-made decompilation of RSDKv3)
+//		else
+//			Object.State = TITLECARD_DISPLAY
 		end if
 		break
 		
@@ -315,13 +315,9 @@ sub ObjectStartup
 	SpriteFrame(64, 97, 48, 16, 41, 67)
 	
 	// 5 - "Sonic the Hedgehog CD" bar
-	// The sprite's positioned differently in Mobile Data files
-#platform: Standard
-	SpriteFrame(64, 81, 160, 16, 41, 50)
-#endplatform
-#platform: Mobile
-	SpriteFrame(72, 81, 160, 16, 49, 50)
-#endplatform
+	// The sprite's positioned differently in updated Data files as opposed to initial (Steam) data files
+	SpriteFrame(72, 81, 160, 16, 49, 50) // Updated (Mobile, Origins)
+// 	SpriteFrame(64, 81, 160, 16, 41, 50) // Initial (Steam, console)
 	
 	// 6 - Continuation of the Sonic CD bar
 	SpriteFrame(16, 81, 160, 16, 41, 50)
@@ -351,6 +347,7 @@ sub ObjectStartup
 	
 end sub
 
+
 // ========================
 // Editor Subs
 // ========================
@@ -362,6 +359,7 @@ sub RSDKDraw
 		TempValue0++
 	loop
 end sub
+
 
 sub RSDKLoad
 	LoadSpriteSheet("Global/Display.gif")
