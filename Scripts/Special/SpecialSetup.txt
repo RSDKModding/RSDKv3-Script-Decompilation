@@ -24,7 +24,10 @@
 #alias -1 : CONTROLMODE_NONE
 
 // Stage Finish State Aliases
-#alias 9 : STAGEFINISH_LOADCREDITS
+#alias 9 : STAGEFINISH_LOADLEVELSELECT
+
+// Game Mode Aliases
+#alias 2 : GAMEMODE_TIMEATTACK
 
 // SFX Aliases
 #alias 5 : SFX_TIMEUFO
@@ -49,7 +52,9 @@ sub ObjectMain
 	// Time is managed here
 	
 	if HUD[4].UFOsCount > 0
-		if Stage.TimeEnabled == false
+		
+		// This used to be checking if it was false, but Origins changed it up a bit
+		if Stage.TimeEnabled == true
 			
 			// Progress the timer
 			HUD[4].Time.Frames++
@@ -85,19 +90,29 @@ sub ObjectMain
 
 					end if
 				else
-					PlayStageSfx(SFX_DROWNALERT, false)
 					
-					// Time's over, start the stage results
-					Object[30].Type = TypeName[Stage Finish]
-					
-					if Stage.ActNo == 8
-						// If in the Robotnik Special Stage, then go straight to the credits
+					// In Time Attack, let's be lenient on the Player
+					if Options.GameMode != GAMEMODE_TIMEATTACK
 						
-						Object[30].State = STAGEFINISH_LOADCREDITS
-						Object[30].DrawOrder = 7
+						// Time's over, so start the stage results
+						Object[30].Type = TypeName[Stage Finish]
+						
+						if Stage.ActNo == 8
+							
+							// If in the Robotnik Special Stage, then go to the Level Select
+							
+							Object[30].State = STAGEFINISH_LOADLEVELSELECT
+							Object[30].DrawOrder = 7
+							
+						else
+							
+							// Nope, we can just do normal results
+							Object[30].DrawOrder = 6
+							
+						end if
+						
+						SSSonic.ControlMode = CONTROLMODE_NONE
 					end if
-					
-					SSSonic.ControlMode = CONTROLMODE_NONE
 				end if
 			end if
 			
@@ -110,17 +125,31 @@ sub ObjectMain
 						if HUD[4].Time.Seconds > 0
 							HUD[4].Time.Seconds -= TempValue0
 						else
-							// No more time left, end the stage by spawning the results
-							Object[30].Type = TypeName[Stage Finish]
 							
-							if Stage.ActNo == 8
-								// If in the Robotnik Special Stage, then go straight to the credits
+							// In Time Attack, you can't run out of time
+							if Options.GameMode != GAMEMODE_TIMEATTACK
 								
-								Object[30].State = STAGEFINISH_LOADCREDITS
-								Object[30].DrawOrder = 7
+								// No more time left, end the stage by spawning the results
+								Object[30].Type = TypeName[Stage Finish]
+								
+								if Stage.ActNo == 8
+									
+									// If in the Robotnik Special Stage, then go back to the Level Select rather than the normal SS results
+									
+									Object[30].State = STAGEFINISH_LOADLEVELSELECT
+									Object[30].DrawOrder = 7
+									
+								else
+									
+									// We're in a normal stage, so show the results as normal
+									
+									Object[30].DrawOrder = 6
+									
+								end if
+								
+								SSSonic.ControlMode = CONTROLMODE_NONE
 							end if
 							
-							SSSonic.ControlMode = CONTROLMODE_NONE
 						end if
 					else
 						if Object[3].Type != TypeName[WaterSplash]
@@ -139,16 +168,31 @@ sub ObjectMain
 						if HUD[4].Time.Seconds > 0
 							HUD[4].Time.Seconds -= TempValue0
 						else
-							// Player wasted too much time puddling around and now time's up, end the stage
-							Object[30].Type = TypeName[Stage Finish]
 							
-							if Stage.ActNo == 8
-								// If in the Robotnik Special Stage, then go straight to the credits
-								Object[30].State = STAGEFINISH_LOADCREDITS
-								Object[30].DrawOrder = 7
+							// In Time Attack, you can't muddle your time up and time out
+							if Options.GameMode != GAMEMODE_TIMEATTACK
+								
+								// Player wasted too much time puddling around and now time's up, end the stage
+								Object[30].Type=TypeName[Stage Finish]
+								
+								if Stage.ActNo == 8
+									
+									// If we're in Robotnik's secret Special Stage, then return to the level select
+									
+									Object[30].State = STAGEFINISH_LOADLEVELSELECT
+									Object[30].DrawOrder = 7
+									
+								else
+									
+									// We're in a normal stage, so show the normal results
+									
+									Object[30].DrawOrder = 6
+									
+								end if
+								
+								SSSonic.ControlMode = CONTROLMODE_NONE
 							end if
 							
-							SSSonic.ControlMode = CONTROLMODE_NONE
 						end if
 					end if
 				end if
@@ -210,7 +254,13 @@ sub ObjectStartup
 	end if
 	
 	Stage.PauseEnabled = false
-	Stage.TimeEnabled = false
+	
+	// Origins changed this up a bit - before, Time would always be disabled, but Origins makes it enabled for standard play
+	if Options.GameMode == GAMEMODE_TIMEATTACK
+		Stage.TimeEnabled = false
+	else
+		Stage.TimeEnabled = true
+	endif
 	
 	Object[23].Type = TypeName[Special Setup]
 	Object[23].Priority = 1

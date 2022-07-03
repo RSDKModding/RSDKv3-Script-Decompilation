@@ -96,6 +96,7 @@
 // HUD aliases
 #alias Object.Value0 : HUD.UFOsCount
 #alias Object.Value3 : HUD.Rings
+#alias Object.Value4 : HUD.LastUFOType
 #alias Object.Value5 : HUD.SpeedShoes
 
 // Ring aliases
@@ -166,19 +167,19 @@ function Sonic_ProcessPlayer
 					// Take the result and match it with the corresponding direction of the DPad
 					switch TempValue2
 					case 0
-						KeyDown.Right = true
+						KeyDown[1].Right = true
 						break
 					
 					case 1
-						KeyDown.Down = true
+						KeyDown[1].Down = true
 						break
 					
 					case 2
-						KeyDown.Left = true
+						KeyDown[1].Left = true
 						break
 					
 					case 3
-						KeyDown.Up = true
+						KeyDown[1].Up = true
 						break
 					
 					end switch
@@ -188,14 +189,14 @@ function Sonic_ProcessPlayer
 				CheckTouchRect(Screen.CenterX, 166, Screen.XSize, 240)
 				
 				if CheckResult > -1
-					KeyDown.ButtonA = true
+					KeyDown[1].ButtonA = true
 				end if
 				
 				// If the jump button wasn't held last frame, then that means the current touch is a new press
 				if Object[25].Value7 == false
-					KeyPress.ButtonA |= KeyDown.ButtonA
+					KeyPress[1].ButtonA |= KeyDown[1].ButtonA
 				end if
-				Object[25].Value7 = KeyDown.ButtonA
+				Object[25].Value7 = KeyDown[1].ButtonA
 				
 				// If the Pause Menu doesn't currently exist...
 				if Object[9].Type == TypeName[Blank Object]
@@ -285,11 +286,11 @@ function Sonic_ProcessPlayer
 				if Object[9].Type == TypeName[Blank Object]
 					
 					// First check for the physical start button being pressed
-					if KeyPress.Start == true
+					if KeyPress[1].Start == true
 						
 						// Clear the Start button state
 						// (This is here just to make sure "double-pauses" don't occur, where the game gets paused twice or more from a single pause button press)
-						KeyPress.Start = false
+						KeyPress[1].Start = false
 						
 						// Pause the entire stage (including its objects)
 						Stage.State = STAGE_PAUSED
@@ -374,10 +375,10 @@ function Sonic_ProcessPlayer
 			
 			// Make sure no Pause Menu object exists already
 			if Object[9].Type == TypeName[Blank Object]
-				if KeyPress.Start == true
+				if KeyPress[1].Start == true
 					
 					// Clear the Start state in order to avoid "double-pauses" oddities
-					KeyPress.Start = false
+					KeyPress[1].Start = false
 					
 					// If the player was brought here from the Dev Menu, use the game-object version of the pause menu
 					if Options.DevMenuFlag == true
@@ -511,10 +512,10 @@ function Sonic_HandlePause
 			
 			// Make sure the game isn't already paused via checking if the Pause Menu object exists or not
 			if Object[9].Type == TypeName[Blank Object]
-				if KeyPress.Start == true
+				if KeyPress[1].Start == true
 					
 					// Disable start for this frame, this'll help with "double-pausing" cases
-					KeyPress.Start = false
+					KeyPress[1].Start = false
 					
 					// Give different pause menus depending on if the player was brought here from the Dev Menu
 					// (...but why?)
@@ -861,6 +862,11 @@ function Sonic_HandleTileInteractions
 			if TempValue0 > 8
 				TempValue0 = 8
 			end if
+			
+			// If Sonic has 0 rings now, then reset the UFO streak
+			if HUD[4].Rings == 0
+				HUD[4].LastUFOType = -1
+			endif
 			
 			// Create all the dropped rings
 			while TempValue0 > 0
@@ -1219,7 +1225,7 @@ sub ObjectMain
 			SSSonic.Speed = 327680
 		end if
 		
-		if KeyDown.Down == true
+		if KeyDown[1].Down == true
 			SSSonic.Speed -= 3072
 			
 			if SSSonic.Speed < 122880
@@ -1265,8 +1271,9 @@ sub ObjectMain
 			SSSonic.Speed += 2048
 		end if
 		
-		if KeyDown.Down == true
+		if KeyDown[1].Down == true
 			SSSonic.Speed -= 3072
+			
 			if SSSonic.Speed < 122880
 				SSSonic.Speed = 122880
 			end if
@@ -1324,7 +1331,7 @@ sub ObjectMain
 			SSSonic.Speed += 2048
 		end if
 		
-		if KeyDown.Down == true
+		if KeyDown[1].Down == true
 			SSSonic.Speed -= 3072
 			
 			if SSSonic.Speed < 122880
@@ -1490,8 +1497,9 @@ sub ObjectMain
 			SSSonic.Speed += 4096
 		end if
 		
-		if KeyDown.Down == true
+		if KeyDown[1].Down == true
 			SSSonic.Speed -= 3072
+			
 			if SSSonic.Speed < 122880
 				SSSonic.Speed = 122880
 			end if
@@ -1580,7 +1588,7 @@ sub ObjectMain
 			SSSonic.Speed += 2048
 		end if
 		
-		if KeyDown.Down == true
+		if KeyDown[1].Down == true
 			SSSonic.Speed -= 3072 // Decelerate at a rate of 0xC00 per frame
 			
 			if SSSonic.Speed < 122880  // AKA 0x1E000

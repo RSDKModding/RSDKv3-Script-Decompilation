@@ -6,6 +6,8 @@
 #alias Object.Value0 : Object.Timer
 #alias Object.Value5 : Object.TimeBonus
 #alias Object.Value6 : Object.RingBonus
+
+// This can be Coins bonus too, depending on the current mode
 #alias Object.Value7 : Object.Continues
 
 // All texts have their own X position values
@@ -25,7 +27,7 @@
 #alias 6 : STAGEFINISH_DISPLAYFINAL
 #alias 7 : STAGEFINISH_LOADNORMAL
 #alias 8 : STAGEFINISH_LOADTIMEATTACK
-#alias 9 : STAGEFINISH_LOADCREDITS
+#alias 9 : STAGEFINISH_LOADLEVELSELECT
 
 // Player Aliases
 #alias 0 : PLAYER_SONIC
@@ -55,6 +57,7 @@
 // Stage Aliases
 #alias 0 : STAGE_P_TITLESCREEN
 #alias 2 : STAGE_P_TIMEATTACK
+#alias 4 : STAGE_P_SOUNDTEST
 #alias 7 : STAGE_P_CREDITS
 
 
@@ -76,6 +79,10 @@ sub ObjectMain
 		Object.Alpha = 0
 		Object.InkEffect = 2
 		
+		// Some stuff for Origins, where we back up some cool values
+		BackupSpecialStageListPos = SpecialStage.ListPos
+		BackupTimeStones = SpecialStage.TimeStones
+		
 		if Object.PropertyValue > 0
 			// Setup the Time Bonus
 			Object.TimeBonus = HUD[4].Time.Seconds
@@ -84,27 +91,37 @@ sub ObjectMain
 			// Set the corresponding Time Stone bit for this stage
 			TempValue0 = Stage.ActNo
 			TempValue0--
-			SetBit(SpecialStage.TimeStones, TempValue0, true)
+			
+			// Origins changed it up a bit
+			SetBit(BackupTimeStones, TempValue0, true)
+			//SetBit(SpecialStage.TimeStones, TempValue0, true)
 		else
 			Object.TimeBonus = 0
 		end if
+		
+		// Backup the Player's Rings
+		StageStatsUsabilityParam5 = HUD[4].Rings
 		
 		// Setup the Ring Bonus
 		Object.RingBonus = HUD[4].Rings
 		Object.RingBonus *= 200
 		
-		Stage.ListPos = SpecialStage.NextZone
-		Stage.ActiveList = REGULAR_STAGE
+		// Origins removed this pair of lines, in favour of using the Backup values instead
+//		Stage.ListPos = SpecialStage.NextZone
+//		Stage.ActiveList = REGULAR_STAGE
 		
-		if SpecialStage.TimeStones < 127
+		if BackupTimeStones < 127
 			TempValue0 = false
 			while TempValue0 == false
-				SpecialStage.ListPos++
-				if SpecialStage.ListPos > 6
-					SpecialStage.ListPos = 0
+				BackupSpecialStageListPos++
+				if BackupSpecialStageListPos > 6
+					BackupSpecialStageListPos = 0
 				end if
 				
-				GetBit(TempValue1, SpecialStage.TimeStones, SpecialStage.ListPos)
+				// Carrying through...
+				GetBit(TempValue1, BackupTimeStones, BackupSpecialStageListPos)
+//				GetBit(TempValue1, SpecialStage.TimeStones, SpecialStage.ListPos)
+				
 				if TempValue1 == false
 					TempValue0 = true
 				end if
@@ -124,40 +141,30 @@ sub ObjectMain
 			end if
 		end if
 		
-		if Options.GameMode == 1
-			ArrayPos1 = Options.SaveSlot
-			ArrayPos1 <<= 3
-			SaveRAM[ArrayPos1] = Stage.PlayerListPos
-			ArrayPos1++
-			SaveRAM[ArrayPos1] = Player.Lives
-			ArrayPos1++
-			SaveRAM[ArrayPos1] = Player.Score
-			ArrayPos1++
-			SaveRAM[ArrayPos1] = Stage.ListPos
-			SaveRAM[ArrayPos1]++
-			ArrayPos1++
-			SaveRAM[ArrayPos1] = SpecialStage.TimeStones
-			ArrayPos1++
-			SaveRAM[ArrayPos1] = SpecialStage.ListPos
-			ArrayPos1++
-			SaveRAM[ArrayPos1] = Player.ScoreBonus
-			ArrayPos1++
-			
-			WriteSaveRAM()
-		end if
+		// There used to be duplicate saving here, but Origins actually optimised that! How nice of them
+		
+		// As a replacement for all that, let's just back up the Score instead
+		recScore = Player.Score
+		
 		break
 		
 	case STAGEFINISH_FADEOUT
 		if Object.Timer == 120
-			Object.State = STAGEFINISH_FADEIN
-			Object.Timer = 256
 			
-			if SpecialStage.TimeStones > 126
-				// If the player has all Stones, then turn this object into the "got 'em all" variant
-				Object.PropertyValue = 2
-			end if
+			// More Origins changes
+			// What's active is Origins, what's commented out is what was there before
+			Object.State = 10
 			
-			PlayMusic(1)
+//			
+//			Object.State = STAGEFINISH_FADEIN
+//			Object.Timer = 256
+//			
+//			if SpecialStage.TimeStones > 126
+//				// If the player has all Stones, then turn this object into the "got 'em all" variant
+//				Object.PropertyValue = 2
+//			end if
+//			
+//			PlayMusic(1)
 		else
 			Object.Timer++
 			Music.Volume--
@@ -186,8 +193,8 @@ sub ObjectMain
 				
 				// Lock the player from doing stuff too
 				Player.ControlMode = 0
-				KeyDown.Left  = false
-				KeyDown.Right = false
+				KeyDown[1].Left  = false
+				KeyDown[1].Right = false
 				Player.Direction = FACING_RIGHT
 				
 			end if
@@ -205,7 +212,12 @@ sub ObjectMain
 		Object.Timer -= 16
 		if Object.Timer == 0
 			Object.State = STAGEFINISH_SCROLLTEXT
+			
+			// These following two lines were introduced in Origins
+			Stage.ActiveList = REGULAR_STAGE
+			Stage.ListPos = SpecialStage.NextZone
 		end if
+		
 		SetScreenFade(208, 255, 224, Object.Timer)
 		
 		TempValue0 = Screen.CenterX
@@ -367,7 +379,15 @@ sub ObjectMain
 		
 		if Player.Score >= Player.ScoreBonus
 			Object.Continues++
-			Player.Lives++
+			
+			// In Origins, give either Coins or Lives based on the current mode
+			if game.coinMode == false
+				Player.Lives++
+			else
+				game.callbackParam0 = 1
+				EngineCallback(NOTIFY_ADD_COIN)
+			end if
+			
 			Player.ScoreBonus += 50000
 			
 			if Stage.PlayerListPos == PLAYER_SONIC
@@ -416,29 +436,44 @@ sub ObjectMain
 			SetScreenFade(208, 255, 224, Object.Timer)
 			if Object.Timer == 1024
 				if Options.GameMode == 1
-					// Saving the stage... but wasn't it done earlier by this object already?
-					// Why is it being done again..?
+					
+					// Save the Player's progress
+					// This used to be useless, because the Player's progress was already saved previously in the Object,
+					// but Origins removed that duplicate, and now this whole section actually serves a purpose now
 					
 					ArrayPos1 = Options.SaveSlot
 					ArrayPos1 <<= 3
+					
 					SaveRAM[ArrayPos1] = Stage.PlayerListPos
+					
 					ArrayPos1++
 					SaveRAM[ArrayPos1] = Player.Lives
+					
 					ArrayPos1++
 					SaveRAM[ArrayPos1] = Player.Score
+					
 					ArrayPos1++
 					SaveRAM[ArrayPos1] = Stage.ListPos
 					SaveRAM[ArrayPos1]++
+					
 					ArrayPos1++
 					SaveRAM[ArrayPos1] = SpecialStage.TimeStones
+					
 					ArrayPos1++
 					SaveRAM[ArrayPos1] = SpecialStage.ListPos
+					
 					ArrayPos1++
 					SaveRAM[ArrayPos1] = Player.ScoreBonus
+					
+					// This bump in particular, it doesn't do anything, does it?
 					ArrayPos1++
 					
 					WriteSaveRAM()
 				end if
+				
+				// A small Origins tweak - backup the Player's score (again)
+				// So I guess in return for one redundancy loss, we got another one in return...
+				recScore = Player.Score
 				
 				// Write the correct colours to Fade_Colour so that the maingame fades back in with the same white
 				Fade_Colour = 208
@@ -447,6 +482,13 @@ sub ObjectMain
 				TempValue0 <<= 8
 				Fade_Colour += TempValue0
 				Fade_Colour += 224
+				
+				// Now, let the game know how many Rings we got
+				game.callbackParam0 = StageStatsUsabilityParam5
+				EngineCallback(NOTIFY_STATS_RING)
+				
+				// Reset the variable for future use
+				StageStatsUsabilityParam5 = 0
 				
 				if Stage.ListPos < Stage.ListSize
 					LoadStage()
@@ -477,8 +519,11 @@ sub ObjectMain
 			TimeAttack.Result += Stage.MilliSeconds
 			
 			// Load the Time Attack Menu
-			Stage.ListPos = STAGE_P_TIMEATTACK
+			// This is an extremely minor change, but Origins changed this part to be more in line with
+			//  other stage setting code, where active list is set first and then list pos comes after
+			// Before that, this part had list pos and then active list, which was quite odd...
 			Stage.ActiveList = PRESENTATION_STAGE
+			Stage.ListPos = STAGE_P_TIMEATTACK
 			
 			LoadStage()
 		end if
@@ -486,7 +531,7 @@ sub ObjectMain
 		SetScreenFade(0, 0, 0, Object.Timer)
 		break
 		
-	case STAGEFINISH_LOADCREDITS
+	case STAGEFINISH_LOADLEVELSELECT
 		// Used when exiting the hidden Robotnik stage
 		
 		if Object.Timer < 480
@@ -496,13 +541,114 @@ sub ObjectMain
 			// Load the credits scene
 			
 			StopMusic()
-			Stage.ListPos = STAGE_P_CREDITS
+			
+			// Similarly to the above, this spot used to be out-of-order until Origins came and fixed it
+			// One strange thing through, it changed it from the Credits to be the Sound Test instead?
+			// I have no idea if that was an intentional change or not, but it's strange...
+			
 			Stage.ActiveList = PRESENTATION_STAGE
+			
+			// Origins  -I still have no idea, to be honest...
+			Stage.ListPos = STAGE_P_SOUNDTEST
+			
+			// Original - go to the credits
+//			Stage.ListPos = STAGE_P_CREDITS
 			
 			LoadStage()
 		end if
 		
 		SetScreenFade(0, 0, 0, Object.Timer)
+		break
+		
+		// the Origins folk left an extra break in here lol
+		// This code never hits anyways, so I guess it's fine?
+		break
+		
+	case 10
+		
+		// TODO: document these, once it's learned how origins callbacks exactly work
+		
+		game.callbackResult = -1
+		
+		if Object.PropertyValue == 0
+			game.callbackParam0 = 0
+		else
+			game.callbackParam0 = 1
+		end if
+		
+		game.callbackParam1 = BackupSpecialStageListPos
+		game.callbackParam2 = BackupTimeStones
+		EngineCallback(NOTIFY_SPECIAL_RETRY)
+		Object.State = 11
+		SetScreenFade(208, 255, 224, 255)
+		break
+		
+	case 11
+		if game.callbackResult >= false
+			SpecialStage.ListPos = BackupSpecialStageListPos
+			SpecialStage.TimeStones = BackupTimeStones
+			
+			if Options.GameMode == 1
+				ArrayPos1 = Options.SaveSlot
+				ArrayPos1 <<= 3
+				
+				SaveRAM[ArrayPos1] = Stage.PlayerListPos
+				
+				ArrayPos1++
+				SaveRAM[ArrayPos1] = Player.Lives
+				
+				ArrayPos1++
+				SaveRAM[ArrayPos1] = Player.Score
+				
+				ArrayPos1++
+				SaveRAM[ArrayPos1] = Stage.ListPos
+				SaveRAM[ArrayPos1]++
+				
+				ArrayPos1++
+				SaveRAM[ArrayPos1] = SpecialStage.TimeStones
+				
+				ArrayPos1++
+				SaveRAM[ArrayPos1] = SpecialStage.ListPos
+				
+				ArrayPos1++
+				SaveRAM[ArrayPos1] = Player.ScoreBonus
+				
+				ArrayPos1++
+				
+				WriteSaveRAM()
+			end if
+			
+			if Options.GameMode == 2
+				
+				// Save up the Time Attack results
+				
+				TimeAttack.Result = Stage.Seconds
+				TimeAttack.Result *= 100
+				
+				TempValue0 = Stage.Minutes
+				TempValue0 *= 6000
+				
+				TimeAttack.Result += TempValue0
+				TimeAttack.Result += Stage.MilliSeconds
+				
+				// Load the Time Attack menu
+				Stage.ActiveList = PRESENTATION_STAGE
+				Stage.ListPos = STAGE_P_TIMEATTACK
+				
+				LoadStage()
+			else
+				Object.State = 2
+				Object.Timer = 256
+				if SpecialStage.TimeStones > 126
+					Object.PropertyValue = 2
+					EngineCallback(NOTIFY_STATS_PARAM_2)
+				end if
+				
+				PlayMusic(1)
+			end if
+		end if
+		
+		SetScreenFade(208, 255, 224, 255)
 		break
 		
 	end switch
@@ -512,114 +658,202 @@ end sub
 
 sub ObjectDraw
 	
-	if Object.State > STAGEFINISH_FADEOUT
-		
-		// Draw the background
-		TempValue0 = 0
-		while TempValue0 < 240
-			TempValue1 = 0
-			while TempValue1 < 360
-				DrawSpriteScreenXY(0, TempValue1, TempValue0)
-				TempValue1 += 224
+	if Object.State != STAGEFINISH_LOADLEVELSELECT
+		if Object.State > STAGEFINISH_FADEOUT
+			
+			// Draw the Background
+			TempValue0 = 0
+			while TempValue0 < 240
+				TempValue1 = 0
+				while TempValue1 < 360
+					DrawSpriteScreenXY(0, TempValue1, TempValue0)
+					TempValue1 += 224
+				loop
+				
+				TempValue0 += 48
 			loop
-			TempValue0 += 48
-		loop
+			
+			// Draw all the Time Stones the player has so far
+			// - TempValue0 is the current Stone
+			// - TempValue1 is the starting Sprite Frame ID for the Stones
+			// - TempValue2 is the draw position for the Stones
+			// - TempValue3 is either true or false based if the current Time Stone is obtained
+			TempValue0 = 0
+			TempValue1 = 20
+			TempValue2 = Screen.CenterX
+			TempValue2 -= 79
+			
+			while TempValue0 < 7
+				
+				// See if the Player has the current Time Stone
+				GetBit(TempValue3, SpecialStage.TimeStones, TempValue0)
+				
+				// Bump up the index, for next loop around
+				TempValue0++
+				
+				// If the Player has the Time Stone, then draw it
+				if TempValue3 == true
+					DrawSpriteScreenFX(TempValue1, FX_INK, TempValue2, 81)
+				end if
+				
+				TempValue1++
+				
+				// Each Stone is drawn 24 px apart from each other's center
+				TempValue2 += 24
+			loop
+		end if
 		
-		// Draw all the Time Stones the player has so far
-		// - TempValue0 is the current Stone
-		// - TempValue1 is the starting Sprite Frame for the Stones
-		// - TempValue2 is the draw position for the Stones
-		TempValue0 = 0
-		TempValue1 = 20
-		TempValue2 = Screen.CenterX
-		TempValue2 -= 79
-		while TempValue0 < 7
-			GetBit(TempValue3, SpecialStage.TimeStones, TempValue0)
-			TempValue0++
-			if TempValue3 == true
-				// If the player has the target Stone, then draw it
-				DrawSpriteScreenFX(TempValue1, FX_INK, TempValue2, 81)
+		// Draw the main text, depending on what the current results type is
+		switch Object.PropertyValue
+		case 0
+			// "SPECIAL ZONE"
+			DrawSpriteScreenXY(1, Object.XPos, 50)
+			break
+			
+		case 1
+			// "TIME STONES"
+			DrawSpriteScreenXY(2, Object.XPos, 50)
+			break
+			
+		case 2
+			// "GOT THEM ALL!!"
+			DrawSpriteScreenXY(3, Object.XPos, 50)
+			break
+			
+		end switch
+		
+		// Draw the Score text
+		DrawSpriteScreenXY(4, Object.LineXPos1, 105)
+		
+		// Draw the Player's Score
+		TempValue0 = Object.LineXPos1
+		TempValue0 += 176
+		DrawNumbers(10, TempValue0, 105, Player.Score, 6, 8, false)
+		
+		// Then, the Ring Bonus line
+		
+		// First, draw the "RING" sprite
+		DrawSpriteScreenXY(5, Object.LineXPos2, 129)
+		
+		TempValue0 = Object.LineXPos2
+		TempValue0 += 40
+		
+		// Then, 40 pixels to the right of that, draw the "BONUS" sprite
+		DrawSpriteScreenXY(7, TempValue0, 129)
+		
+		// And at the end of the line, draw the Ring Bonus count
+		TempValue0 += 136
+		DrawNumbers(10, TempValue0, 129, Object.RingBonus, 5, 8, false)
+		
+		// Line 3, holds the Time Bonus text
+		
+		// First, the "TIME" sprite
+		DrawSpriteScreenXY(6, Object.LineXPos3, 153)
+		
+		TempValue0 = Object.LineXPos3
+		TempValue0 += 40
+		
+		// Then, 40 pixels to the right, the "BONUS" frame
+		DrawSpriteScreenXY(7, TempValue0, 153)
+		
+		// And at the end of this line too, draw the Time Bonus numbers
+		TempValue0 += 136
+		DrawNumbers(10, TempValue0, 153, Object.TimeBonus, 5, 8, false)
+		
+		// Line 4, holds either Continues or Coins based on the current mode
+		
+		if game.coinMode == false
+			
+			// Draw the "EXTRA LIVES" text
+			
+			// First, is "EXTRA"
+			DrawSpriteScreenXY(8, Object.LineXPos4, 177)
+			
+			TempValue0 = Object.LineXPos4
+			TempValue0 += 49
+			
+			// Then after than of course, comes "LIVES"
+			DrawSpriteScreenXY(9, TempValue0, 177)
+			
+		else
+			
+			// Draw the "COINS BONUS" text
+			
+			// First, comes "COINS"
+			DrawSpriteScreenXY(35, Object.LineXPos4, 177)
+			
+			TempValue0 = Object.LineXPos4
+			TempValue0 += 40
+			
+			// Then to the right of that, is "BONUS"
+			DrawSpriteScreenXY(7, TempValue0, 177)
+			
+			// And then bump up the position for the icons to be drawn at
+			TempValue0 += 9
+			
+		end if
+		
+		// Move to the end of the line
+		TempValue0 += 86
+		
+		// Animate the mini-character
+		Object.Frame++
+		Object.Frame &= 15
+		
+		// Get the base frame the mini-character should use
+		TempValue1 = Object.Frame
+		TempValue1 >>= 3
+		
+		// Bump it up to match its corresponding Sprite Frame ID
+		TempValue1 += 27
+		
+		// (The Coins and Continues bonus use the same variable, just labelled as Continues here)
+		TempValue2 = Object.Continues
+		
+		// Now, draw either Continues or coins
+		
+		if game.coinMode == false
+			
+			// Draw Continues
+			
+			while TempValue2 > 0
+				DrawSpriteScreenXY(TempValue1, TempValue0, 177)
+				TempValue2--
+				
+				TempValue0 += 24
+			loop
+			
+		else
+			
+			if TempValue2 > 0
+				TempValue0 += 12
+				
+				// This TempValue1, it isn't used anywhere, is it?
+				// It corresponds with the following Sprite Frame ID, perhaps it was used for that before...
+				TempValue1 = 29
+				
+				// Draw the Coins icon
+				DrawSpriteScreenXY(29, TempValue0, 177)
+				
+				// And then an x1 next to it
+				DrawSpriteScreenXY(30, TempValue0, 177)
+				
+				// And then make the Coin sparkle
+				TempValue1 = Object.Frame
+				TempValue1 >>= 2
+				
+				// From that sparkle frame, but it up by 31 to match the Sprite Frame IDs
+				TempValue1 += 31
+				
+				// And now, draw the sparkle on top of the Coin
+				DrawSpriteScreenXY(TempValue1, TempValue0, 177)
 			end if
-			TempValue1++
-			TempValue2 += 24
-		loop
-		
+			
+		end if
 	end if
 	
-	// Draw the main text depending on what type of results are playing
-	switch Object.PropertyValue
-	case 0
-		// "SPECIAL ZONE"
-		DrawSpriteScreenXY(1, Object.LineXPos0, 50)
-		break
-		
-	case 1
-		// "TIME STONES"
-		DrawSpriteScreenXY(2, Object.LineXPos0, 50)
-		break
-		
-	case 2
-		// "GOT THEM ALL!!"
-		DrawSpriteScreenXY(3, Object.LineXPos0, 50)
-		break
-		
-	end switch
-	
-	// Draw the Score Text
-	DrawSpriteScreenXY(4, Object.LineXPos1, 105)
-	
-	// Draw the actual Score numbers
-	TempValue0 = Object.LineXPos1
-	TempValue0 += 176
-	DrawNumbers(10, TempValue0, 105, Player.Score, 6, 8, 0)
-	
-	// Draw the Ring Text
-	DrawSpriteScreenXY(5, Object.LineXPos2, 129)
-	
-	// Draw the Bonus Text (to the right of "Ring")
-	TempValue0 = Object.LineXPos2
-	TempValue0 += 40
-	DrawSpriteScreenXY(7, TempValue0, 129)
-	
-	// Draw the Rings number
-	TempValue0 += 136
-	DrawNumbers(10, TempValue0, 129, Object.RingBonus, 5, 8, 0)
-	
-	// Draw the Time Text
-	DrawSpriteScreenXY(6, Object.LineXPos3, 153)
-	
-	// Draw the Bonus Text (to the right of "Time")
-	TempValue0 = Object.LineXPos3
-	TempValue0 += 40
-	DrawSpriteScreenXY(7, TempValue0, 153)
-	
-	// Draw the Time numbers
-	TempValue0 += 136
-	DrawNumbers(10, TempValue0, 153, Object.TimeBonus, 5, 8, 0)
-	
-	// Draw the Extra Text
-	DrawSpriteScreenXY(8, Object.LineXPos4, 177)
-	
-	// Draw the Lives Text
-	TempValue0 = Object.LineXPos4
-	TempValue0 += 49
-	DrawSpriteScreenXY(9, TempValue0, 177)
-	
-	// Draw the Continue Icons
-	TempValue0 += 86
-	Object.Frame++
-	Object.Frame &= 15
-	TempValue1 = Object.Frame
-	TempValue1 >>= 3
-	TempValue1 += 27
-	TempValue2 = Object.Continues
-	while TempValue2 > 0
-		DrawSpriteScreenXY(TempValue1, TempValue0, 177)
-		TempValue2--
-		TempValue0 += 24
-	loop
-	
 end sub
+
 
 
 sub ObjectStartup
@@ -710,6 +944,23 @@ sub ObjectStartup
 		SpriteFrame(0, 0, 16, 23, 156, 203)
 	end if
 	
+	// These below ones are new to Origins
+	
+	// 29 - Coins icon
+	SpriteFrame(0, -4, 18, 16, 204, 29)
+	
+	// 30 - "x1"
+	SpriteFrame(18, -4, 32, 16, 187, 1)
+	
+	// 31-34 - Sparkle Frames
+	SpriteFrame(-4, -8, 24, 24, 130, 125)
+	SpriteFrame(-4, -8, 24, 24, 155, 125)
+	SpriteFrame(-4, -8, 24, 24, 130, 150)
+	SpriteFrame(-4, -8, 24, 24, 155, 150)
+	
+	// 35 - "COIN" text, in the context of "Coin Bonus"
+	SpriteFrame(0, 0, 31, 11, 130, 175)
+	
 end sub
 
 
@@ -725,6 +976,7 @@ end sub
 sub RSDKLoad
 	LoadSpriteSheet("Special/ScoreScreen.gif")
 	SpriteFrame(0, 0, 184, 14, 1, 1)
-
+	
+	// Although used, it's not to be set from editor
 	SetVariableAlias(ALIAS_VAR_PROPVAL, "unused")
 end sub
