@@ -1,0 +1,60 @@
+//------------Sonic CD MissionAreaTR Script-------------//
+//--------Scripted by Christian Whitehead 'The Taxman'--------//
+//-------Unpacked By Rubberduckycooly's Script Unpacker-------//
+
+// Aliases
+#alias 58: TYPE_MISSIONAREATR
+
+
+sub ObjectMain
+	if Object.State == 0
+		Stage.NewXBoundary2=Object.XPos
+		Stage.NewXBoundary2 >>= 16
+		Stage.NewXBoundary2 += 16
+		Stage.NewYBoundary1=Object.YPos
+		Stage.NewYBoundary1 >>= 16
+		Object.State=1
+	end if
+	if Stage.State == STAGE_RUNNING
+		if Player.YPos<Object.YPos
+			Player.YVelocity=0
+			Player.Speed=0
+			Player.YPos=Object.YPos
+		end if
+		if Player.XPos>Object.XPos
+			Player.XVelocity=0
+			Player.Speed=0
+			Player.XPos=Object.XPos
+		end if
+	end if
+end sub
+
+
+sub ObjectStartup
+	ArrayPos0=32
+	while ArrayPos0<1056
+		if Object[ArrayPos0].Type == TypeName[MissionAreaTR]
+			Object[ArrayPos0].Priority=1
+		end if
+		ArrayPos0++
+	loop
+end sub
+
+
+// ========================
+// Editor Subs
+// ========================
+
+sub RSDKDraw
+	DrawSprite(0)
+end sub
+
+
+sub RSDKLoad
+	LoadSpriteSheet("Global/Display.gif")
+	SpriteFrame(-16, -16, 32, 32, 1, 143)		// #0 - "Script" Icon
+	
+	SetVariableAlias(ALIAS_VAR_PROPVAL, "unused")
+end sub
+
+

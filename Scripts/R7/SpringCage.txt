@@ -18,17 +18,17 @@
 
 
 sub ObjectMain
-
+	
 	if Object.State == SPRINGCAGE_FREE
 		if Object.PropertyValue == 0
 			// Spin around
 			Object.FullAngle++
 			Object.FullAngle %= 48
-
+			
 			Object.Angle = Object.FullAngle
 			Object.Angle /= 6
 		end if
-
+		
 		// Update the content spring to show the correct sprite as well
 		switch Object.Angle
 		case 0
@@ -64,44 +64,44 @@ sub ObjectMain
 					Player.State = PlayerObject_HandleAir
 					Player.Gravity = 1
 					Player.Timer = 0
-
+					
 					// Activate the spring
 					Object[+1].Timer = 1
-
+					
 					switch Object.Angle
 					case 0
 						Player.Speed = 1048576
 						Player.XVelocity = 1048576
 						Player.YVelocity = 0
 						break
-
+						
 					case 1
 					case 7
 						Player.Speed = 786432
 						Player.XVelocity = 786432
 						Player.YVelocity = -720896
 						break
-
+						
 					case 2
 					case 6
 						Player.Speed = 0
 						Player.XVelocity = 0
 						Player.YVelocity = -1048576
 						break
-
+						
 					case 3
 					case 5
 						Player.Speed = -786432
 						Player.XVelocity = -786432
 						Player.YVelocity = -720896
 						break
-
+						
 					case 4
 						Player.Speed = -1048576
 						Player.XVelocity = -1048576
 						Player.YVelocity = 0
 						break
-
+						
 					end switch
 				end if
 			else
@@ -113,19 +113,19 @@ sub ObjectMain
 			Object.LaunchTimer = 0
 		end if
 	end if
-
+	
 end sub
 
 
 sub ObjectPlayerInteraction
-
+	
 	if Object.State == SPRINGCAGE_FREE
-
+		
 		// See if the player's hopped in yet
 		PlayerObjectCollision(C_TOUCH, -28, -32, 28, 24)
 		if CheckResult == true
 			Object.State = SPRINGCAGE_OCCUPIED
-
+			
 			// Move the player into the cage and set them up to be launched
 			Player.XPos = Object.XPos
 			Player.YPos = Object.YPos
@@ -134,7 +134,7 @@ sub ObjectPlayerInteraction
 			Player.Speed = 0
 			Player.XVelocity = 0
 			Player.YVelocity = 0
-
+			
 			// Make minor positioning corrections based on the cage's current angle
 			switch Object.Angle
 			case 0
@@ -158,15 +158,15 @@ sub ObjectPlayerInteraction
 				Player.XPos -= 2097152 // 32 pixels up
 				break
 			end switch
-
+			
 		end if
 	end if
-
+	
 end sub
 
 
 sub ObjectDraw
-
+	
 	// Jump based on what angle the cage is currently
 	switch Object.Angle
 	case 0
@@ -175,7 +175,7 @@ sub ObjectDraw
 		Object.Direction = 2
 		DrawSpriteFX(1, FX_FLIP, Object.XPos, Object.YPos)
 		break
-
+		
 	case 1
 	case 7
 		// Facing up-right
@@ -183,7 +183,7 @@ sub ObjectDraw
 		Object.Direction = 3
 		DrawSpriteFX(3, FX_FLIP, Object.XPos, Object.YPos)
 		break
-
+		
 	case 2
 	case 6
 		// Facing up
@@ -191,7 +191,7 @@ sub ObjectDraw
 		Object.Direction = FACING_LEFT
 		DrawSpriteFX(4, FX_FLIP, Object.XPos, Object.YPos)
 		break
-
+		
 	case 3
 	case 5
 		// Facing up left
@@ -200,42 +200,43 @@ sub ObjectDraw
 		Object.Direction = 2
 		DrawSpriteFX(3, FX_FLIP, Object.XPos, Object.YPos)
 		break
-
+		
 	case 4
 		// Facing left
 		DrawSprite(5)
 		Object.Direction = 2
 		DrawSpriteFX(5, FX_FLIP, Object.XPos, Object.YPos)
 		break
-
+		
 	end switch
-
+	
 	DrawSprite(0)
+	
 end sub
 
 
 sub ObjectStartup
-
+	
 	LoadSpriteSheet("R7/Objects.gif")
-
+	
 	// Base Frame
 	SpriteFrame(-8, -8, 16, 16, 90, 52)
-
+	
 	// Top Horizontal Half
 	SpriteFrame(-8, -28, 64, 24, 34, 96)
-
+	
 	// Top Diagonal Half
 	SpriteFrame(-24, -56, 56, 56, 59, 121)
-
+	
 	// Bottom Diagonal Half
 	SpriteFrame(-56, -24, 56, 56, 59, 121)
-
+	
 	// Vertical Half
 	SpriteFrame(-28, -56, 24, 64, 34, 121)
-
+	
 	// Buttom Horizontal Half
 	SpriteFrame(-56, -28, 64, 24, 34, 96)
-
+	
 	ArrayPos0 = 32
 	while ArrayPos0 < 1056
 		if Object[ArrayPos0].Type == TypeName[SpringCage]
@@ -246,39 +247,39 @@ sub ObjectStartup
 				Object[ArrayPos0].Angle = 4
 				Object[ArrayPos1].PropertyValue = 2
 				break
-
+				
 			case 3
 				Object[ArrayPos0].Angle = 1
 				Object[ArrayPos1].PropertyValue = 1
 				break
-
+				
 			case 4
 				Object[ArrayPos0].Angle = 2
 				Object[ArrayPos1].PropertyValue = 4
 				break
-
+				
 			case 5
 				Object[ArrayPos0].Angle = 3
 				Object[ArrayPos1].PropertyValue = 5
 				break
-
+				
 			case 6
 				Object[ArrayPos0].Angle = 0
 				Object[ArrayPos1].PropertyValue = 2
 				break
-
+				
 			end switch
-
+			
 			Object[ArrayPos0].DrawOrder = 4
-
+			
 			// Move the spring to the cage
 			Object[ArrayPos1].XPos = Object[ArrayPos0].XPos
 			Object[ArrayPos1].YPos = Object[ArrayPos0].YPos
 		end if
-
+		
 		ArrayPos0++
 	loop
-
+	
 end sub
 
 
@@ -342,39 +343,39 @@ sub RSDKDraw
 		Object.Direction = 2
 		DrawSpriteFX(1, FX_FLIP, Object.XPos, Object.YPos)
 		break
-
+		
 	end switch
-
+	
 	DrawSprite(0)
-
+	
 	if Editor.ShowGizmos == true
 		GetObjectType(TempValue0, "R7 Spring")
-
+		
 		ArrayPos1 = Object.EntityNo
 		ArrayPos1++
 		if Object[ArrayPos1].type != TempValue0
 			// Uh oh! The next object should be an R7 Spring object, but it isn't...
 			// Draw a bunch of red to let the user know
-
+			
 			Editor.DrawingOverlay = true
-
+			
 			DrawArrow(Object.XPos, Object.YPos, Object[ArrayPos1].XPos, Object[ArrayPos1].YPos, 255, 0, 0)
-
+			
 			TempValue0 = Object[ArrayPos1].XPos
 			TempValue0 -= 0x100000
-
+			
 			TempValue1 = Object[ArrayPos1].YPos
 			TempValue1 -= 0x100000
-
+			
 			TempValue2 = Object[ArrayPos1].XPos
 			TempValue2 += 0x100000
-
+			
 			TempValue3 = Object[ArrayPos1].YPos
 			TempValue3 += 0x100000
-
+			
 			DrawLine(TempValue0, TempValue1, TempValue2, TempValue3, 255, 0, 0)
 			DrawLine(TempValue2, TempValue1, TempValue0, TempValue3, 255, 0, 0)
-
+			
 			Editor.DrawingOverlay = false
 		end if
 	end if

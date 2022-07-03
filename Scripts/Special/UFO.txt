@@ -4,6 +4,7 @@
 
 // Aliases
 #alias Object.YPos   : Object.ZPos
+
 #alias Object.Value0 : Object.TargetNode
 #alias Object.Value1 : Object.XVelocity
 #alias Object.Value2 : Object.ZVelocity
@@ -32,7 +33,7 @@
 
 
 sub ObjectMain
-
+	
 	// Update movement
 	if Object.Timer == 0
 		ArrayPos0 = Object.TargetNode
@@ -54,32 +55,34 @@ sub ObjectMain
 			Object.TargetNode++
 			ArrayPos0 = Object.TargetNode
 		end if
+		
 		Object.XVelocity = Object[ArrayPos0].XPos
 		Object.XVelocity -= Object.XPos
 		Object.XVelocity /= Object.Timer
+		
 		Object.ZVelocity = Object[ArrayPos0].ZPos
 		Object.ZVelocity -= Object.ZPos
 		Object.ZVelocity /= Object.Timer
 	else
 		// Following a node - just update movement for now
-
+		
 		Object.Timer--
 		Object.XPos += Object.XVelocity
 		Object.ZPos += Object.ZVelocity
 	end if
-
+	
 	// Check player interaction in this (rather lengthy) process
-
+	
 	// X difference
 	TempValue0 = Object.XPos
 	TempValue0 -= TileLayer[0].XPos
 	TempValue0 >>= 8
-
+	
 	// Z mutliplier
 	TempValue1 = Object.ZPos
 	TempValue1 -= TileLayer[0].ZPos
 	TempValue1 >>= 8
-
+	
 	// Calculating the X difference
 	Sin(TempValue2, TileLayer[0].Angle)
 	TempValue2 *= TempValue1
@@ -88,7 +91,7 @@ sub ObjectMain
 	Object.ScreenXPos = TempValue2
 	Object.ScreenXPos -= TempValue3
 	Object.ScreenXPos >>= 9
-
+	
 	// Calculating the Z difference
 	Cos(TempValue2, TileLayer[0].Angle)
 	TempValue2 *= TempValue1
@@ -97,13 +100,24 @@ sub ObjectMain
 	Object.ScreenDepth = TempValue2
 	Object.ScreenDepth += TempValue3
 	Object.ScreenDepth >>= 9
-
-	if Player.YPos > 3538944 // Has to be more than 54 pixels off the ground
-		if Player.YPos < 7995392 // But has to be lower than 122 pixels towards the sky
+	
+	// Long list of checks for the hitbox detection
+	
+	// The Player has to be more than 54 pixels off the ground, but lower than 122 pixels towards the sky
+	if Player.YPos > 3538944
+		if Player.YPos < 7995392
+			
+			// The UFO has to be between 20628 and 22728 away from the screen
+			// (I can't use any fancy units like pixels here, since there aren't really any applicate ones here...)
 			if Object.ScreenDepth < 22728
 				if Object.ScreenDepth > 20628
+					
+					// The UFO has to be between -0.125 and +0.125 pixels away from the screen centre
 					if Object.ScreenXPos > -8192
 						if Object.ScreenXPos < 8192
+							
+							// All those checks passed, let's destroy this UFO!
+							
 							TempValue0 = Object.ScreenXPos
 							TempValue0 *= 192
 							TempValue0 /= Object.ScreenDepth
@@ -117,15 +131,15 @@ sub ObjectMain
 							TempValue1 /= Object.ScreenDepth
 							TempValue1 += 128
 							TempValue1 <<= 16
-
+							
 							// Play the ring SFX
 							PlaySfx(SFX_RING, false)
-
+							
 #platform: Use_Haptics
 							// Do shake index 55 to really sell the impact of hitting a floating UFO
 							HapticEffect(55, 0, 0, 0)
 #endplatform
-
+							
 							switch Object.PropertyValue
 							case 0
 								// Rings UFO - decrease the UFO count and give some bonus rings
@@ -137,23 +151,23 @@ sub ObjectMain
 									HUD[4].Rings += 20
 								end if
 								break
-
+								
 							case 1
 								// Speed Shoes UFO - decrease the UFO count and give the player some new faster shoes
 								HUD[4].UFOsCount--
 								HUD[4].SpeedShoes = 600
 								break
-
+								
 							case 2
 								// Bonus time UFO - add some time to the clock
 								// (Not decreasing the UFO count because time UFOs don't count towards the whole)
 								HUD[4].Time.Seconds += 30
 								break
-
+								
 							end switch
-
+							
 							HUD[4].LastUFOType = Object.PropertyValue
-
+							
 							// Create the UFO powerup icon
 							CreateTempObject(TypeName[UFOPowerUp], Object.PropertyValue, TempValue0, TempValue1)
 							Rand(UFOPowerUp[TempObjectPos].ExplosionDir, 100)
@@ -166,87 +180,91 @@ sub ObjectMain
 							if HUD[4].UFOsCount == 0
 								UFOPowerUp[TempObjectPos].StartResults = true
 							end if
-
+							
 							// Blank this UFO object since it's been 
 							ResetObjectEntity(Object.EntityNo, TypeName[Blank Object], 0, 0, 0)
+							
+							// And now, close a whole lotta end if's...
+							
 						end if
 					end if
 				end if
 			end if
 		end if
 	end if
+	
 end sub
 
 
 sub ObjectDraw
 	
 	if Object.ScreenDepth > 256 // Don't draw if the UFO is too close to the screen
-
+		
 		// Do some maths to find the position & scale the UFO should be at
-
+		
 		Object.Scale = 12582912 // AKA 0xC00000
 		Object.Scale /= Object.ScreenDepth
-
+		
 		TempValue0 = 768
 		TempValue0 -= Object.Scale
 		TempValue0 /= 6
-
+		
 		TempValue1 = Object.ScreenDepth
 		TempValue1 >>= 12
-
+		
 		if TempValue0 > 0
 			Object.Scale += TempValue0
 			Object.Scale -= TempValue1
 		end if
-
+		
 		TempValue0 = Object.ScreenXPos
 		TempValue0 *= 192
 		TempValue0 /= Object.ScreenDepth
 		TempValue0 += Screen.CenterX
-
+		
 		TempValue1 = TileLayer[0].YPos
 		TempValue1 >>= 8
 		TempValue1 -= 24576
 		TempValue1 *= 96
 		TempValue1 /= Object.ScreenDepth
 		TempValue1 += 128
-
+		
 		// Draw the UFO now
 		DrawSpriteScreenFX(Object.PropertyValue, FX_SCALE, TempValue0, TempValue1)
-
+		
 		// Find the ground position
 		TempValue1 = TileLayer[0].YPos
 		TempValue1 >>= 8
 		TempValue1 *= 96
 		TempValue1 /= Object.ScreenDepth
 		TempValue1 += 128
-
+		
 		// Draw the shadow on the ground
 		DrawSpriteScreenFX(3, FX_SCALE, TempValue0, TempValue1)
-
+		
 	end if
-
+	
 end sub
 
 
 sub ObjectStartup
-
+	
 	LoadSpriteSheet("Special/Objects.gif")
-
+	
 	// UFO Frames
-
+	
 	// 0 - 10 Rings Variant
 	SpriteFrame(-40, -28, 80, 56, 1, 1)
 	
 	// 1 - Speed Shoes Variant
 	SpriteFrame(-40, -28, 80, 56, 82, 1)
-
+	
 	// 2 - Extra Time Variant
 	SpriteFrame(-40, -28, 80, 56, 163, 1)
-
+	
 	// 3 - UFO Shadow Frame
 	SpriteFrame(-40, -8, 80, 16, 1, 117)
-
+	
 	// Cycle through all UFO objects in the scene and set them up
 	ArrayPos0 = 32
 	while ArrayPos0 < 1056
@@ -254,25 +272,26 @@ sub ObjectStartup
 			
 			// Set the UFO to always be active
 			Object[ArrayPos0].Priority = 1
-
+			
 			if Object[ArrayPos0].PropertyValue < 2
-
+				
 				// Increase the UFO count
 				HUD[4].UFOsCount++
-
+				
 			else
-
+				
 				// Bonus UFO Spawn point, delete the UFO for right now and store its EntityPos into the HUD values
 				Object[ArrayPos0].Type = TypeName[Blank Object]
 				HUD[4].BonusUFOPos = ArrayPos0
-
+				
 			end if
 		end if
-
+		
 		ArrayPos0++
 	loop
-
+	
 end sub
+
 
 // ========================
 // Editor Subs
@@ -284,7 +303,7 @@ sub RSDKEdit
 		case EDIT_VAR_PROPVAL // Property Value
 			CheckResult = Object.PropertyValue
 			break
-		case 0 // contents
+		case 0 // Contents
 			CheckResult = Object.PropertyValue
 			break
 		end switch
@@ -293,7 +312,7 @@ sub RSDKEdit
 		case EDIT_VAR_PROPVAL // Property Value
 			Object.PropertyValue = Editor.VariableValue
 			break
-		case 0 // contents
+		case 0 // Contents
 			Object.PropertyValue = Editor.VariableValue
 			break
 		end switch
@@ -338,8 +357,8 @@ sub RSDKLoad
 	SpriteFrame(-40, -28, 80, 56, 82, 1)
 	SpriteFrame(-40, -28, 80, 56, 163, 1)
 
-	AddEditorVariable("contents")
-	SetActiveVariable("contents")
+	AddEditorVariable("Contents")
+	SetActiveVariable("Contents")
 	AddEnumVariable("10 Rings", 0)
 	AddEnumVariable("Speed Shoes", 1)
 	AddEnumVariable("Extra Time", 2)

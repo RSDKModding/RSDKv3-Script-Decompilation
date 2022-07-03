@@ -3,58 +3,52 @@
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
 // Aliases
-#alias Object.Value0			:	Object.PowerupPos
-#alias Object.Value1			:	Object.Timer
-
-// Power Up Aliases
-#alias Object[2].Priority		:	PowerUp.Priority
-#alias Object[2].DrawOrder		:	PowerUp.DrawOrder
-#alias Object[2].XPos			:	PowerUp.XPos
-#alias Object[2].YPos			:	PowerUp.YPos
-#alias Object[2].PropertyValue	:	PowerUp.PropertyValue
-#alias Object[2].InkEffect		:	PowerUp.InkEffect
-#alias Object[2].Alpha			:	PowerUp.Alpha
+#alias Object.Value0 : Object.PowerupPos
+#alias Object.Value1 : Object.Timer
 
 // Player Aliases
-#alias Player.Value0			:	Player.Rings
-#alias Player.Value3			:	Player.SpeedShoes
-#alias Player.Value4			:	Player.Invincible
-#alias Player.Value5			:	Player.BlinkTimer
+#alias Player.Value0 : Player.Rings
+#alias Player.Value3 : Player.SpeedShoes
+#alias Player.Value4 : Player.Invincible
+#alias Player.Value5 : Player.BlinkTimer
 
-// OST
-#alias 0						:	JP_OST
+#alias 0 : PLAYER_SONIC
+
+// Soundtrack Aliases
+#alias 0 : SOUNDTRACK_JP
 
 // Priorities
-#alias 0						:	PRIORITY_ACTIVE_BOUNDS
-#alias 1						:	PRIORITY_ACTIVE
+#alias 0 : PRIORITY_ACTIVE_BOUNDS
+#alias 1 : PRIORITY_ACTIVE
 
 // Ink Effects
-#alias 2						:	INK_ALPHA
+#alias 2 : INK_ALPHA
 
 // Panning
-#alias 0						:	PAN_RIGHT
-#alias 1						:	PAN_LEFT
+#alias 0 : PAN_RIGHT
+#alias 1 : PAN_LEFT
 
 // States
-#alias 0						:	BROKENMONITOR_SPAWN_POWERUP
-#alias 1						:	BROKENMONITOR_FADE_POWERUP
-#alias 2						:	BROKENMONITOR_BLANK
+#alias 0 : BROKENMONITOR_SPAWN_POWERUP
+#alias 1 : BROKENMONITOR_FADE_POWERUP
+#alias 2 : BROKENMONITOR_BLANK
 
 // Property Values
-#alias 1						:	RING_MONITOR
-#alias 2						:	SHIELD_MONITOR
-#alias 3						:	INVINCIBILITY_MONITOR
-#alias 4						:	POWER_SNEAKERS_MONITOR
-#alias 5						:	SONIC_MONITOR
-#alias 6						:	TIME_MONITOR
-#alias 7						:	TAILS_MONITOR
-#alias 8						:	S_MONITOR
+#alias 1 : MONITOR_RINGS
+#alias 2 : MONITOR_SHIELD
+#alias 3 : MONITOR_INVINCIBILITY
+#alias 4 : MONITOR_POWER_SNEAKERS
+#alias 5 : MONITOR_SONIC1UP
+#alias 6 : MONITOR_TIME
+#alias 7 : MONITOR_TAILS1UP
+#alias 8 : MONITOR_SUPER
 
 // GameModes
-#alias 2						:	GAMEMODE_TIMEATTACK
+#alias 2 : GAMEMODE_TIMEATTACK
 
 
 sub ObjectMain
+	
 	switch Object.State
 	case BROKENMONITOR_SPAWN_POWERUP
 		if Object.Timer < 0
@@ -63,12 +57,12 @@ sub ObjectMain
 		else
 			Object.Timer = 0
 		end if
-
+		
 		if Object.Timer == 0
 			Object.State = BROKENMONITOR_FADE_POWERUP
 			Object.InkEffect = INK_ALPHA
 			switch Object.PropertyValue
-			case RING_MONITOR
+			case MONITOR_RINGS
 				Player.Rings += 10
 				if Ring.Pan == PAN_RIGHT
 					SetSfxAttributes(1, -1, -100)
@@ -77,29 +71,41 @@ sub ObjectMain
 					SetSfxAttributes(2, -1, 100)
 					Ring.Pan = PAN_RIGHT
 				end if
-
+				
 				if Player.Rings > 999
 					Player.Rings = 999
 				end if
-
+				
 				if Player.Rings >= Ring.ExtraLife
 					if Options.GameMode != GAMEMODE_TIMEATTACK
-						Player.Lives++
-						if Stage.PlayerListPos == 0		// PlayerName[SONIC]
-							PlaySfx(20, 0)
+						
+						if game.coinMode == false
+							Player.Lives++
 						else
-							PlaySfx(21, 0)
+							
+							// With Coin Mode active, we of course use Coins rather than lives
+							// -> Needless to say, this is new to Origins of course
+							game.callbackParam0 = true
+							EngineCallback(NOTIFY_ADD_COIN)
+							
+						endif
+						
+						if Stage.PlayerListPos == PLAYER_SONIC
+							PlaySfx(20, false)
+						else
+							PlaySfx(21, false)
 						end if
+						
 					end if
-
+					
 					Ring.ExtraLife += 100
 					if Ring.ExtraLife > 300
 						Ring.ExtraLife = 1000
 					end if
-
+					
 					// King of the Rings Unlock Criteria
 					if Player.Rings >= 200
-						if Stage.PlayerListPos == 0		// PlayerName[SONIC]
+						if Stage.PlayerListPos == PLAYER_SONIC
 							if Stage.DebugMode == false
 								SetAchievement(4, 100)
 							end if
@@ -107,28 +113,28 @@ sub ObjectMain
 					end if
 				end if
 				break
-
-			case SHIELD_MONITOR
+				
+			case MONITOR_SHIELD
 				PlaySfx(10, 0)
-				PowerUp.PropertyValue = 1
+				Object[2].PropertyValue = 1
 				if Object[2].Type != TypeName[Invincibility]
 					Object[2].Type = TypeName[BlueShield]
-					PowerUp.Priority = PRIORITY_ACTIVE
-					PowerUp.DrawOrder = 4
-					PowerUp.InkEffect = INK_ALPHA
-					PowerUp.Alpha = 160
-					PowerUp.XPos = Player.XPos
-					PowerUp.YPos = Player.YPos
+					Object[2].Priority = PRIORITY_ACTIVE
+					Object[2].DrawOrder = 4
+					Object[2].InkEffect = INK_ALPHA
+					Object[2].Alpha = 160
+					Object[2].XPos = Player.XPos
+					Object[2].YPos = Player.YPos
 				end if
 				break
-
-			case INVINCIBILITY_MONITOR
+				
+			case MONITOR_INVINCIBILITY
 				Object[2].Type = TypeName[Invincibility]
-				PowerUp.Priority = PRIORITY_ACTIVE
-				PowerUp.DrawOrder = 4
-				PowerUp.XPos = Player.XPos
-				PowerUp.YPos = Player.YPos
-				if Options.Soundtrack == JP_OST
+				Object[2].Priority = PRIORITY_ACTIVE
+				Object[2].DrawOrder = 4
+				Object[2].XPos = Player.XPos
+				Object[2].YPos = Player.YPos
+				if Options.Soundtrack == SOUNDTRACK_JP
 					Player.Invincible = 1260
 				else
 					Player.Invincible = 1320
@@ -137,34 +143,44 @@ sub ObjectMain
 				Player.Visible = true
 				PlayMusic(2)
 				break
-
-			case POWER_SNEAKERS_MONITOR
+				
+			case MONITOR_POWER_SNEAKERS
 				PlayMusic(3)
 				Player.Acceleration = 6144		// 0x1800
 				Player.AirAcceleration = 12288	// 0x3000
 				Player.TopSpeed = 786432		// 0xC0000
 				Player.SpeedShoes = 1320
 				break
-
-			case SONIC_MONITOR
-				Player.Lives++
+				
+			case MONITOR_SONIC1UP
+				if game.coinMode == false
+					Player.Lives++
+				else
+					game.callbackParam0 = 1
+					EngineCallback(NOTIFY_ADD_COIN)
+				endif
 				PlaySfx(20, 0)
 				break
-
-			case TIME_MONITOR
+				
+			case MONITOR_TIME
 				break
-
-			case TAILS_MONITOR
-				Player.Lives++
+				
+			case MONITOR_TAILS1UP
+				if game.coinMode == false
+					Player.Lives++
+				else
+					game.callbackParam0 = 1
+					EngineCallback(NOTIFY_ADD_COIN)
+				endif
 				PlaySfx(21, 0)
 				break
-
-			case S_MONITOR
+				
+			case MONITOR_SUPER
 				Object[2].Type = TypeName[Invincibility]
-				PowerUp.Priority = PRIORITY_ACTIVE
-				PowerUp.DrawOrder = 4
-				PowerUp.XPos = Player.XPos
-				PowerUp.YPos = Player.YPos
+				Object[2].Priority = PRIORITY_ACTIVE
+				Object[2].DrawOrder = 4
+				Object[2].XPos = Player.XPos
+				Object[2].YPos = Player.YPos
 				Player.Invincible = 1320
 				Player.BlinkTimer = 0
 				Player.Visible = true
@@ -173,11 +189,11 @@ sub ObjectMain
 				Player.TopSpeed = 786432		// 0xC0000
 				Player.SpeedShoes = 1320
 				break
-
+				
 			end switch
 		end if
 		break
-
+		
 	case BROKENMONITOR_FADE_POWERUP
 		Object.Timer++
 		if Object.Timer == 30
@@ -191,10 +207,12 @@ sub ObjectMain
 			end if
 		end if
 		break
-
+		
 	case BROKENMONITOR_BLANK
 		break
+		
 	end switch
+	
 end sub
 
 
@@ -208,18 +226,32 @@ end sub
 
 
 sub ObjectStartup
-	LoadSpriteSheet("Global/Items.gif")
-
-	SpriteFrame(-16, 0, 32, 16, 51, 166)		// #0 - Broken Monitor
 	
-	// Icons
+	LoadSpriteSheet("Global/Items.gif")
+	
+	// 0 - Broken Monitor Frame
+	SpriteFrame(-16, 0, 32, 16, 51, 166)
+	
+	// 1-8 - Icons
 	SpriteFrame(-8, -8, 16, 16, 26, 7)			// #1 - Ring
 	SpriteFrame(-8, -8, 16, 16, 26, 40)			// #2 - Blue Shield
 	SpriteFrame(-8, -8, 16, 16, 26, 73)			// #3 - Invincibility
 	SpriteFrame(-8, -8, 16, 16, 26, 106)		// #4 - Power Sneakers
-	SpriteFrame(-8, -8, 16, 16, 26, 139)		// #5 - Sonic
+	
+	if game.coinMode == false
+		SpriteFrame(-8, -8, 16, 16, 26, 139)		// #5 - Sonic
+	else
+		SpriteFrame(-8, -8, 16, 16, 92, 206)		// #5 - Coins
+	endif
+	
 	SpriteFrame(-8, -8, 16, 16, 26, 172)		// #6 - Time
-	SpriteFrame(-8, -8, 16, 16, 59, 106)		// #7 - Tails
+	
+	if game.coinMode==0
+		SpriteFrame(-8, -8, 16, 16, 59, 106)		// #7 - Tails
+	else
+		SpriteFrame(-8, -8, 16, 16, 92, 206)		// #7 - Coins
+	endif
+	
 	SpriteFrame(-8, -8, 16, 16, 59, 139)		// #8 - S
 end sub
 
@@ -235,8 +267,7 @@ end sub
 
 sub RSDKLoad
 	LoadSpriteSheet("Global/Items.gif")
-
-	SpriteFrame(-16, 0, 32, 16, 51, 166)		// #0 - Broken Monitor
+	SpriteFrame(-16, 0, 32, 16, 51, 166) // Broken Monitor
 
 	// Not to be used in-editor
 	SetVariableAlias(ALIAS_VAR_PROPVAL, "unused")

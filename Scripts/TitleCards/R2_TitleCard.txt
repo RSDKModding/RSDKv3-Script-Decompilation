@@ -3,40 +3,60 @@
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
 // Aliases
-#alias 34: TYPE_TITLECARD
+#alias Object.Value0 : Object.BarPos
+#alias Object.Value1 : Object.TextPos
+#alias Object.Value2 : Object.TextSize
+#alias Object.Value3 : Object.Timer
+#alias Object.Value4 : Object.FadeR
+#alias Object.Value5 : Object.FadeG
+#alias Object.Value6 : Object.FadeB
+#alias Object.Value7 : Object.CharPos
 
-#alias Object.Value0:Object.BarPos
-#alias Object.Value1:Object.TextPos
-#alias Object.Value2:Object.TextSize
-#alias Object.Value3:Object.FadeA
-#alias Object.Value4:Object.FadeR
-#alias Object.Value5:Object.FadeG
-#alias Object.Value6:Object.FadeB
-#alias Object.Value7:Object.CharPos
+#alias 0 : TITLECARD_FADEIN
+#alias 1 : TITLECARD_SLIDEIN
+#alias 2 : TITLECARD_DISPLAY
+#alias 3 : TITLECARD_SLIDEOUT
 
-#alias Object.Value4:Player.Invincible
+// Player aliases
+#alias Object.Value4 : Player.Invincible
+
+#alias 0 : PLAYER_SONIC
+
+// ControlMode Aliases
+#alias -1 : CONTROLMODE_NONE
+#alias  0 : CONTROLMODE_NORMAL
+
 
 sub ObjectPlayerInteraction
+	// Lock the Player Timer at 0 while the TitleCard is active
 	Player.Timer = 0
 end sub
 
 
 sub ObjectDraw
+	
 	switch Object.State
 	case 0
-		Player.ControlMode = -1
-		Player.Up = 0
-		Player.Down = 0
-		Player.Left = 0
-		Player.Right = 0
-		Player.JumpPress = 0
-		Player.JumpHold = 0
+		
+		// Lock Player control
+		
+		Player.ControlMode = CONTROLMODE_NONE
+		
+		Player.Up 			= false
+		Player.Down 		= false
+		Player.Left 		= false
+		Player.Right 		= false
+		Player.JumpPress 	= false
+		Player.JumpHold 	= false
+		
 		if Warp.XPos < 1
 			Player.Speed = 0
 		end if
+		
 		if Object.FadeA > 0
 			if Object.FadeA == 256
 				PlayMusic(0)
+				
 				if Warp.XPos > 0
 					Player.XPos = Warp.XPos
 					Player.YPos = Warp.YPos
@@ -49,9 +69,11 @@ sub ObjectDraw
 					Stage.Minutes = Rec_Minutes
 					Player[0].Invincible = 8000
 				end if
+				
 				Warp.Timer = 0
 				Warp.Frame = 0
 			end if
+			
 			SetScreenFade(Object.FadeR, Object.FadeG, Object.FadeB, Object.FadeA)
 			Object.FadeA -= 8
 		else
@@ -134,7 +156,8 @@ sub ObjectStartup
 	else
 		LoadSpriteSheet("Global/Display_t.gif")
 	end if
-	SetMusicTrack("JP/DAGarden.ogg", 0, 1)
+	
+	SetMusicTrack("JP/DAGarden.ogg", 0, true)
 	Flower_TypeNo = TypeName[Flower]
 	Object[20].Type = TypeName[TitleCard]
 	if Warp.XPos > 0
@@ -193,6 +216,7 @@ sub ObjectStartup
 	SpriteFrame(62, 56, 9, 23, 88, 84)
 end sub
 
+
 // ========================
 // Editor Subs
 // ========================
@@ -200,6 +224,7 @@ end sub
 sub RSDKDraw
 	DrawSprite(0)
 end sub
+
 
 sub RSDKLoad
 	LoadSpriteSheet("Global/Display.gif")

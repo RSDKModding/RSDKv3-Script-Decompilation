@@ -635,131 +635,146 @@ sub ObjectPlayerInteraction
 			end if
 		
 		end if
+		// No break?
+		// Well, I suppose it's not too important...
 		
+	end switch
+	
+	// Don't do any of these further checks if the Hotaru's not even existent
+	if Object.State < HOTARU_OFFSCREEN
 		
-		// This check will always return true thanks to the switch-case, won't it..?
-		if Object.State < HOTARU_OFFSCREEN
+		// Backup the base object's position
+		TempValue6 = Object.XPos
+		TempValue7 = Object.YPos
+		
+		// Check collision for Hotaru 1
+		GetBit(TempValue1, Object.ActiveHotarus, 0)
+		if TempValue1 == true
+		
+			// Adjust the object's position to match that of Hotaru 1
+			Object.XPos += Object.Hotaru1X
+			Object.YPos -= Object.HotaruRadius
 			
-			// Backup the base object's position
-			TempValue6 = Object.XPos
-			TempValue7 = Object.YPos
-			
-			// Check collision for Hotaru 1
-			GetBit(TempValue1, Object.ActiveHotarus, 0)
-			if TempValue1 == true
-			
-				// Adjust the object's position to match that of Hotaru 1
-				Object.XPos += Object.Hotaru1X
-				Object.YPos -= Object.HotaruRadius
+			// Check if there was collision
+			PlayerObjectCollision(C_TOUCH, -8, -8, 8, 8)
+			if CheckResult == true
+				// Check if the Hotaru should be broken
 				
-				// Check if there was collision
-				PlayerObjectCollision(C_TOUCH, -8, -8, 8, 8)
-				if CheckResult == true
-					// Check if the Hotaru should be broken
-					
-					ArrayPos1 = Object.EntityNo
-					ArrayPos1++
-					CallFunction(Hotaru_HotaruBreak)
-					
-					if Object[+1].Type == Flower_TypeNo
-						// The Hotaru was destroyed, blank its according bit
-						SetBit(Object.ActiveHotarus, 0, false)
-					end if
-				end if
+				ArrayPos1 = Object.EntityNo
+				ArrayPos1++
+				CallFunction(Hotaru_HotaruBreak)
 				
-				// Restore the Object's position to what it was before
-				Object.XPos = TempValue6
-				Object.YPos = TempValue7
-			end if
-			
-			// Check collision for Hotaru 2
-			GetBit(TempValue1, Object.ActiveHotarus, 1)
-			if TempValue1 == true
-			
-				// Adjust the Object's Position to be where Hotaru 2 is
-				Object.XPos += Object.Hotaru2X
-				Object.YPos += Object.HotaruRadius
-				
-				// Check for collision and 
-				PlayerObjectCollision(C_TOUCH, -8, -8, 8, 8)
-				if CheckResult == true
-					// Check if the Hotaru should be destroyed or hurt the player
-					
-					ArrayPos1 = Object.EntityNo
-					ArrayPos1 += 2
-					CallFunction(Hotaru_HotaruBreak)
-					
-					if Object[+2].Type == Flower_TypeNo
-						// The Hotaru has been destroyed, so set its bit to zero
-						SetBit(Object.ActiveHotarus, 1, false)
-					end if
+				if Object[+1].Type == Flower_TypeNo
+					// The Hotaru was destroyed, blank its according bit
+					SetBit(Object.ActiveHotarus, 0, false)
 				end if
 			end if
 			
-			// This never hits...
-			if Object.State == HOTARU_FLASHING
-				if Object.EletricityActive == true
-					if Object.ActiveHotarus == 3
-					
-						// Check collision for the Sparks
-						// (This code is never even called though, thanks to the above checks, so this is all unused)
-						
-						// First, backup the object's position
-						Object.XPos = TempValue6
-						Object.YPos = TempValue7
-						
-						// Check collision for the middle Spark
-						PlayerObjectCollision(C_TOUCH, -12, -12, 12, 12)
-						if CheckResult == true
-							CallFunction(PlayerObject_Hit)
-						end if
-						
-						// Check collision for the left Spark
-						Object.XPos = TempValue6
-						Object.XPos >>= 1
-						TempValue1 = TempValue6
-						TempValue1 += Object.Hotaru1X
-						TempValue1 >>= 1
-						Object.XPos += TempValue1
-						Object.YPos = TempValue7
-						Object.YPos >>= 1
-						TempValue1 = TempValue7
-						TempValue1 -= Object.HotaruRadius
-						TempValue1 >>= 1
-						Object.YPos += TempValue1
-						PlayerObjectCollision(C_TOUCH, -12, -12, 12, 12)
-						if CheckResult == true
-							CallFunction(PlayerObject_Hit)
-						end if
-						
-						// Check collision for the right Spark
-						Object.XPos = TempValue6
-						Object.XPos >>= 1
-						TempValue1 = TempValue6
-						TempValue1 += Object.Hotaru2X
-						TempValue1 >>= 1
-						Object.XPos += TempValue1
-						Object.YPos = TempValue7
-						Object.YPos >>= 1
-						TempValue1 = TempValue7
-						TempValue1 += Object.HotaruRadius
-						TempValue1 >>= 1
-						Object.YPos += TempValue1
-						PlayerObjectCollision(C_TOUCH, -12, -12, 12, 12)
-						if CheckResult == true
-							CallFunction(PlayerObject_Hit)
-						end if
-					end if
-				end if
-			end if
-			
-			// Restore the base object's position to what it should be
+			// Restore the Object's position to what it was before
 			Object.XPos = TempValue6
 			Object.YPos = TempValue7
 		end if
-		break
 		
-	end switch
+		// Check collision for Hotaru 2
+		GetBit(TempValue1, Object.ActiveHotarus, 1)
+		if TempValue1 == true
+		
+			// Adjust the Object's Position to be where Hotaru 2 is
+			Object.XPos += Object.Hotaru2X
+			Object.YPos += Object.HotaruRadius
+			
+			// Check for collision against this Hotaru
+			PlayerObjectCollision(C_TOUCH, -8, -8, 8, 8)
+			if CheckResult == true
+				// Check if the Hotaru should be destroyed or hurt the player
+				
+				ArrayPos1 = Object.EntityNo
+				ArrayPos1 += 2
+				CallFunction(Hotaru_HotaruBreak)
+				
+				if Object[+2].Type == Flower_TypeNo
+					// The Hotaru has been destroyed, so set its bit to zero
+					SetBit(Object.ActiveHotarus, 1, false)
+				end if
+			end if
+		end if
+		
+		// If needed, check for the Sparks
+		if Object.State == HOTARU_FLASHING
+			if Object.EletricityActive == true
+				
+				// That is to say, are both Hotarus active? (3 is 0b11 in bits)
+				if Object.ActiveHotarus == 3
+				
+					// Check collision for the Sparks
+					
+					// First, backup the object's position
+					Object.XPos = TempValue6
+					Object.YPos = TempValue7
+					
+					// Check collision for the middle Spark
+					PlayerObjectCollision(C_TOUCH, -12, -12, 12, 12)
+					if CheckResult == true
+						CallFunction(PlayerObject_Hit)
+					end if
+					
+					// Check collision for the left Spark
+					
+					Object.XPos = TempValue6
+					Object.XPos >>= 1
+					
+					TempValue1 = TempValue6
+					TempValue1 += Object.Hotaru1X
+					TempValue1 >>= 1
+					
+					Object.XPos += TempValue1
+					Object.YPos = TempValue7
+					Object.YPos >>= 1
+					
+					TempValue1 = TempValue7
+					TempValue1 -= Object.HotaruRadius
+					TempValue1 >>= 1
+					
+					Object.YPos += TempValue1
+					
+					PlayerObjectCollision(C_TOUCH, -12, -12, 12, 12)
+					if CheckResult == true
+						CallFunction(PlayerObject_Hit)
+					end if
+					
+					// Check collision for the right Spark
+					
+					Object.XPos = TempValue6
+					Object.XPos >>= 1
+					
+					TempValue1 = TempValue6
+					TempValue1 += Object.Hotaru2X
+					TempValue1 >>= 1
+					
+					Object.XPos += TempValue1
+					Object.YPos = TempValue7
+					Object.YPos >>= 1
+					
+					TempValue1 = TempValue7
+					TempValue1 += Object.HotaruRadius
+					TempValue1 >>= 1
+					
+					Object.YPos += TempValue1
+					
+					PlayerObjectCollision(C_TOUCH, -12, -12, 12, 12)
+					if CheckResult == true
+						CallFunction(PlayerObject_Hit)
+					end if
+					
+				end if
+			end if
+		end if
+		
+		// Restore the base object's position to what it should be
+		Object.XPos = TempValue6
+		Object.YPos = TempValue7
+		
+	end if
 	
 end sub
 
@@ -943,36 +958,50 @@ sub ObjectDraw
 				DrawSprite(TempValue0)
 				
 				// Draw the Left Spark
+				
 				TempValue1 = Object.XPos
 				TempValue1 >>= 1
+				
 				TempValue3 = Object.XPos
 				TempValue3 += Object.Hotaru1X
 				TempValue3 >>= 1
+				
 				TempValue1 += TempValue3
+				
 				TempValue2 = Object.YPos
 				TempValue2 >>= 1
+				
 				TempValue3 = Object.YPos
 				TempValue3 -= Object.HotaruRadius
 				TempValue3 >>= 1
+				
 				TempValue2 += TempValue3
+				
 				DrawSpriteXY(TempValue0, TempValue1, TempValue2)
 				
 				// Draw the Right Spark
+				
 				TempValue1 = Object.XPos
 				TempValue1 >>= 1
+				
 				TempValue3 = Object.XPos
 				TempValue3 += Object.Hotaru2X
 				TempValue3 >>= 1
+				
 				TempValue1 += TempValue3
+				
 				TempValue2 = Object.YPos
 				TempValue2 >>= 1
+				
 				TempValue3 = Object.YPos
 				TempValue3 += Object.HotaruRadius
 				TempValue3 >>= 1
+				
 				TempValue2 += TempValue3
+				
 				DrawSpriteXY(TempValue0, TempValue1, TempValue2)
 				
-				// Animate the Object
+				// Animate the Sparks
 				Object.AnimationTimer++
 				Object.AnimationTimer %= 6
 				
@@ -1024,6 +1053,10 @@ sub ObjectStartup
 			// Setup the Hotarus' type and initial positions
 			switch Object[ArrayPos0].PropertyValue
 			case 0
+				// Properties of:
+				// Radius of 60 pixels
+				// Good variant, with a functioning Light
+				// Start the Hotarus 70 pixels apart (35 pixels from the base Pos)
 				Object[ArrayPos0].HotaruRadius = 3932160
 				Object[ArrayPos0].PropertyValue = BADNIK_GOOD
 				Object[ArrayPos0].Hotaru1X = -2293760
@@ -1031,6 +1064,10 @@ sub ObjectStartup
 				break
 				
 			case 1
+				// Properties of:
+				// Radius of 60 pixels
+				// Bad variant, with a broken Light
+				// Start the Hotarus 70 pixels apart (35 pixels from the base Pos)
 				Object[ArrayPos0].HotaruRadius = 3932160
 				Object[ArrayPos0].PropertyValue = BADNIK_BAD
 				Object[ArrayPos0].Hotaru1X = -2293760
@@ -1038,6 +1075,10 @@ sub ObjectStartup
 				break
 	
 			case 4
+				// Properties of:
+				// Radius of 68 pixels
+				// Good variant, with a functioning Light
+				// Start the Hotarus 100 pixels apart (50 pixels from the base Pos)
 				Object[ArrayPos0].HotaruRadius = 4456448
 				Object[ArrayPos0].PropertyValue = BADNIK_GOOD
 				Object[ArrayPos0].Hotaru1X = -3276800
@@ -1045,6 +1086,10 @@ sub ObjectStartup
 				break
 	
 			case 5
+				// Properties of:
+				// Radius of 68 pixels
+				// Bad variant, with a broken Light
+				// Start the Hotarus 100 pixels apart (50 pixels from the base Pos)
 				Object[ArrayPos0].HotaruRadius = 4456448
 				Object[ArrayPos0].PropertyValue = BADNIK_BAD
 				Object[ArrayPos0].Hotaru1X = -3276800
@@ -1052,6 +1097,10 @@ sub ObjectStartup
 				break
 	
 			case 8
+				// Properties of:
+				// Radius of 56 pixels
+				// Good variant, with a functioning Light
+				// Start the Hotarus 140 pixels apart (70 pixels from the base Pos)
 				Object[ArrayPos0].HotaruRadius = 3670016
 				Object[ArrayPos0].PropertyValue = BADNIK_GOOD
 				Object[ArrayPos0].Hotaru1X = -4587520
@@ -1059,6 +1108,10 @@ sub ObjectStartup
 				break
 	
 			case 9
+				// Properties of:
+				// Radius of 56 pixels
+				// Bad variant, with a broken Light
+				// Start the Hotarus 140 pixels apart (70 pixels from the base Pos)
 				Object[ArrayPos0].HotaruRadius = 3670016
 				Object[ArrayPos0].PropertyValue = BADNIK_BAD
 				Object[ArrayPos0].Hotaru1X = -4587520
@@ -1066,6 +1119,10 @@ sub ObjectStartup
 				break
 	
 			case 12
+				// Properties of:
+				// Radius of 18 pixels
+				// Good variant, with a functioning Light
+				// Start the Hotarus 192 pixels apart (96 pixels from the base Pos)
 				Object[ArrayPos0].HotaruRadius = 1179648
 				Object[ArrayPos0].PropertyValue = BADNIK_GOOD
 				Object[ArrayPos0].Hotaru1X = -6291456
@@ -1073,6 +1130,10 @@ sub ObjectStartup
 				break
 	
 			case 13
+				// Properties of:
+				// Radius of 18 pixels
+				// Bad variant, with a broken Light
+				// Start the Hotarus 192 pixels apart (96 pixels from the base Pos)
 				Object[ArrayPos0].HotaruRadius = 1179648
 				Object[ArrayPos0].PropertyValue = BADNIK_BAD
 				Object[ArrayPos0].Hotaru1X = -6291456
@@ -1081,7 +1142,7 @@ sub ObjectStartup
 	
 			end switch
 			
-			// Set both of the object's Hotarus to active
+			// Set both of the Object's Hotarus to active
 			SetBit(Object[ArrayPos0].ActiveHotarus, 0, true)
 			SetBit(Object[ArrayPos0].ActiveHotarus, 1, true)
 		end if
@@ -1106,7 +1167,7 @@ sub RSDKEdit
 			CheckResult = Object.PropertyValue
 			CheckResult &= 1
 			break
-		case 1 // earth day, only a day away! earth day, in a day!
+		case 1 // Formation
 			CheckResult = Object.PropertyValue
 			CheckResult &= 254
 			break
@@ -1120,7 +1181,7 @@ sub RSDKEdit
 			CheckNotEqual(Editor.VariableValue, false)
 			SetBit(Object.PropertyValue, 0, CheckResult)
 			break
-		case 1 // i am so happy about this information!
+		case 1 // Formation
 			Object.PropertyValue &= 1
 			Editor.VariableValue &= 254
 			Object.PropertyValue |= Editor.VariableValue
@@ -1185,8 +1246,8 @@ sub RSDKLoad
 	AddEnumVariable("Good", BADNIK_GOOD)
 	AddEnumVariable("Bad",  BADNIK_BAD)
 	
-	AddEditorVariable("Behaviour")
-	SetActiveVariable("Behaviour")
+	AddEditorVariable("Formation")
+	SetActiveVariable("Formation")
 	AddEnumVariable("Formation A", 0)
 	AddEnumVariable("Formation B", 4)
 	AddEnumVariable("Formation C", 8)

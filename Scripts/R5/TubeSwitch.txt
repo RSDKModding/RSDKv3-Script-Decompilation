@@ -12,8 +12,7 @@
 #alias Player.Value6 : Player.MinRollSpeed
 
 // Warp Star Aliases
-#alias Object.Value0    : WarpStar.Timer
-#alias Object.DrawOrder : WarpStar.DrawOrder
+#alias Object.Value0    : Object.Timer
 
 
 // 0 - standard (biased towards right)
@@ -106,21 +105,24 @@ sub ObjectPlayerInteraction
 		case 4
 			if ConveyorBelt_Flag == 3
 				if Player.YPos > Object.YPos
-#platform: Mobile
+					
+					// Hold the Player's Warp, if needed
+					// -> This section of code wasn't in the initial version of the game (Steam)
+					//    and is only present in updated versions (mobile & Origins)
 					if Warp.Destination > 0
 						if Warp.Timer == 0
 							Warp.Timer = 1
-
+							
 							ResetObjectEntity(3, TypeName[Warp Star], 0, Player.XPos, Player.YPos)
-							WarpStar[3].Timer = 7
-							WarpStar[3].DrawOrder = 4
+							Object[3].Timer = 7
+							Object[3].DrawOrder = 4
 						end if
 					end if
-#endplatform
 
 					if Player.State != PlayerObject_Blank
 						PlaySfx(7, 0)
 					end if
+					
 					Player.State = PlayerObject_Blank
 					if Player.Animation != ANI_JUMPING
 						Player.Animation = ANI_JUMPING

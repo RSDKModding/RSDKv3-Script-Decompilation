@@ -3,18 +3,27 @@
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
 // Aliases
-#alias Object.Value0	:	Object.Timer
+#alias Object.Value0 : Object.Timer
 
 // Property Values
-#alias 0				:	FADEMUSIC_FADE_TO_BOSS
-#alias 1				:	FADEMUSIC_FADE_TO_LEVEL
-#alias 2				:	FADEMUSIC_SSZEGGMAN
-#alias 3				:	FADEMUSIC_SSZAMY
+#alias 0 : FADEMUSIC_FADE_TO_BOSS
+#alias 1 : FADEMUSIC_FADE_TO_LEVEL
+#alias 2 : FADEMUSIC_SSZEGGMAN
+#alias 3 : FADEMUSIC_SSZAMY
 
 // Priority
-#alias 1				:	PRIORITY_ACTIVE
+#alias 1 : PRIORITY_ACTIVE
+
 
 sub ObjectMain
+	
+	// Take some values and print them?
+	// they left debug stuff in lol
+	game.callbackParam0 = 100
+	game.callbackParam1 = Object.PropertyValue
+	game.callbackParam2 = Object.Timer
+	EngineCallback(NOTIFY_DEBUGPRINT)
+	
 	switch Object.PropertyValue
 	case FADEMUSIC_FADE_TO_BOSS
 		if Object.Timer < 100
@@ -51,8 +60,12 @@ sub ObjectMain
 			Object.Timer++
 			Music.Volume--
 		else
-			PlayMusic(1)
+			if game.playMode != BOOT_PLAYMODE_BOSSRUSH
+				PlayMusic(1)
+			endif
+			
 			Object.Type = TypeName[Blank Object]
+			
 			Object[30].Type = TypeName[ActFinish]
 			Object[30].DrawOrder = 6
 			Object[30].Priority = PRIORITY_ACTIVE

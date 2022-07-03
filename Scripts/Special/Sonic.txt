@@ -96,6 +96,7 @@
 // HUD aliases
 #alias Object.Value0 : HUD.UFOsCount
 #alias Object.Value3 : HUD.Rings
+#alias Object.Value4 : HUD.LastUFOType
 #alias Object.Value5 : HUD.SpeedShoes
 
 // Ring aliases
@@ -166,19 +167,19 @@ function Sonic_ProcessPlayer
 					// Take the result and match it with the corresponding direction of the DPad
 					switch TempValue2
 					case 0
-						KeyDown.Right = true
+						KeyDown[1].Right = true
 						break
 					
 					case 1
-						KeyDown.Down = true
+						KeyDown[1].Down = true
 						break
 					
 					case 2
-						KeyDown.Left = true
+						KeyDown[1].Left = true
 						break
 					
 					case 3
-						KeyDown.Up = true
+						KeyDown[1].Up = true
 						break
 					
 					end switch
@@ -188,14 +189,14 @@ function Sonic_ProcessPlayer
 				CheckTouchRect(Screen.CenterX, 166, Screen.XSize, 240)
 				
 				if CheckResult > -1
-					KeyDown.ButtonA = true
+					KeyDown[1].ButtonA = true
 				end if
 				
 				// If the jump button wasn't held last frame, then that means the current touch is a new press
 				if Object[25].Value7 == false
-					KeyPress.ButtonA |= KeyDown.ButtonA
+					KeyPress[1].ButtonA |= KeyDown[1].ButtonA
 				end if
-				Object[25].Value7 = KeyDown.ButtonA
+				Object[25].Value7 = KeyDown[1].ButtonA
 				
 				// If the Pause Menu doesn't currently exist...
 				if Object[9].Type == TypeName[Blank Object]
@@ -237,7 +238,7 @@ function Sonic_ProcessPlayer
 						TileLayer[0].Type = 3
 						
 					end if
-
+					
 					// Check if game focus was lost
 					// (As in, did the player exit the app?)
 					if Engine.Message == 2
@@ -285,11 +286,11 @@ function Sonic_ProcessPlayer
 				if Object[9].Type == TypeName[Blank Object]
 					
 					// First check for the physical start button being pressed
-					if KeyPress.Start == true
+					if KeyPress[1].Start == true
 						
 						// Clear the Start button state
 						// (This is here just to make sure "double-pauses" don't occur, where the game gets paused twice or more from a single pause button press)
-						KeyPress.Start = false
+						KeyPress[1].Start = false
 						
 						// Pause the entire stage (including its objects)
 						Stage.State = STAGE_PAUSED
@@ -365,7 +366,7 @@ function Sonic_ProcessPlayer
 			end if 
 		end if 
 #endplatform
-
+		
 #platform: Standard
 		// Standard doesn't need nearly as much code as mobile to handle its inputs,
 		// thanks to the lack of a touchscreen and other mobile things
@@ -374,10 +375,10 @@ function Sonic_ProcessPlayer
 			
 			// Make sure no Pause Menu object exists already
 			if Object[9].Type == TypeName[Blank Object]
-				if KeyPress.Start == true
+				if KeyPress[1].Start == true
 					
 					// Clear the Start state in order to avoid "double-pauses" oddities
-					KeyPress.Start = false
+					KeyPress[1].Start = false
 					
 					// If the player was brought here from the Dev Menu, use the game-object version of the pause menu
 					if Options.DevMenuFlag == true
@@ -473,7 +474,7 @@ function Sonic_HandlePause
 					TileLayer[0].Type = 3
 					
 				end if
-
+				
 				// Check if focus was lost (as in, the player exiting the game)
 				if Engine.Message == 2
 					
@@ -505,16 +506,16 @@ function Sonic_HandlePause
 			end if
 		end if
 #endplatform
-
+		
 #platform: Standard
 		if SSSonic.ControlMode == CONTROLMODE_NORMAL
 			
 			// Make sure the game isn't already paused via checking if the Pause Menu object exists or not
 			if Object[9].Type == TypeName[Blank Object]
-				if KeyPress.Start == true
+				if KeyPress[1].Start == true
 					
 					// Disable start for this frame, this'll help with "double-pausing" cases
-					KeyPress.Start = false
+					KeyPress[1].Start = false
 					
 					// Give different pause menus depending on if the player was brought here from the Dev Menu
 					// (...but why?)
@@ -540,13 +541,13 @@ function Sonic_HandlePause
 						TileLayer[0].Type = 3
 						
 					else
-
+						
 						// Call the engine's built-in pause menu
 						EngineCallback(CALLBACK_PAUSE_REQUESTED)
-
+						
 						// It may be worth noting, though, that when using the fan decompilation of the game, the Pause Menu callback
 						// just becomes a roundabout way of calling the in-game Pause Menu Object anyways...
-
+						
 					end if
 				end if
 			end if
@@ -862,6 +863,11 @@ function Sonic_HandleTileInteractions
 				TempValue0 = 8
 			end if
 			
+			// If Sonic has 0 rings now, then reset the UFO streak
+			if HUD[4].Rings == 0
+				HUD[4].LastUFOType = -1
+			endif
+			
 			// Create all the dropped rings
 			while TempValue0 > 0
 				CreateTempObject(TypeName[Ring], 0, SSSonic.XPos, 0)
@@ -932,7 +938,7 @@ function Sonic_HandleTileInteractions
 		SSSonic.Frame     = ANI_FAN_START
 		SSSonic.FrameLoop = ANI_FAN_LOOP
 		SSSonic.FrameEnd  = ANI_FAN_END
-
+		
 		SSSonic.AnimationSpeed = 24
 		SSSonic.FrameTimer = 0
 		
@@ -1168,12 +1174,12 @@ end function
 
 
 sub ObjectMain
-
+	
 	// Update Speed Shoes, the value's stored within the HUD object for whatever reason
 	if HUD[4].SpeedShoes > 0
 		HUD[4].SpeedShoes--
 	end if
-
+	
 	switch SSSonic.State
 	case SSSONIC_INTROPOSE
 		CallFunction(Sonic_ProcessAnimation)
@@ -1181,25 +1187,25 @@ sub ObjectMain
 		if SSSonic.Timer == 120
 			// Stop posing and start turning around
 			SSSonic.Timer = 0
-
+			
 			SSSonic.State     = SSSONIC_INTROTURNAROUND
-
+			
 			SSSonic.Frame     = ANI_FACINGAHEAD_START
 			SSSonic.FrameLoop = ANI_FACINGAHEAD_LOOP
 			SSSonic.FrameEnd  = ANI_FACINGAHEAD_END
-
+			
 			SSSonic.FrameTimer = 0
 			SSSonic.AnimationSpeed = 20
 		end if
 		break
-
+		
 	case SSSONIC_INTROTURNAROUND
 		CallFunction(Sonic_ProcessAnimation)
 		SSSonic.Timer++
 		if SSSonic.Timer == 140
 			// Fully turned around now and ready to go!
 			SSSonic.Timer = 0
-
+			
 			// Start advancing ahead
 			SSSonic.State     = SSSONIC_WALKING
 			
@@ -1210,7 +1216,7 @@ sub ObjectMain
 			SSSonic.Speed = 0
 		end if
 		break
-
+		
 	case SSSONIC_WALKING
 		CallFunction(Sonic_ProcessPlayer)
 		if SSSonic.Speed < 327680
@@ -1218,15 +1224,15 @@ sub ObjectMain
 		else
 			SSSonic.Speed = 327680
 		end if
-
-		if KeyDown.Down == true
+		
+		if KeyDown[1].Down == true
 			SSSonic.Speed -= 3072
-
+			
 			if SSSonic.Speed < 122880
 				SSSonic.Speed = 122880
 			end if
 		end if
-
+		
 		// Sonic's animation speed is dependant on his actual speed
 		SSSonic.AnimationSpeed = SSSonic.Speed
 		SSSonic.AnimationSpeed *= 15
@@ -1265,8 +1271,9 @@ sub ObjectMain
 			SSSonic.Speed += 2048
 		end if
 		
-		if KeyDown.Down == true
+		if KeyDown[1].Down == true
 			SSSonic.Speed -= 3072
+			
 			if SSSonic.Speed < 122880
 				SSSonic.Speed = 122880
 			end if
@@ -1324,7 +1331,7 @@ sub ObjectMain
 			SSSonic.Speed += 2048
 		end if
 		
-		if KeyDown.Down == true
+		if KeyDown[1].Down == true
 			SSSonic.Speed -= 3072
 			
 			if SSSonic.Speed < 122880
@@ -1361,7 +1368,7 @@ sub ObjectMain
 				SSSonic.AnimationSpeed = 80
 				SSSonic.FrameTimer = 0
 			end if
-
+			
 		end if
 		
 		CallFunction(Sonic_HandleTileInteractions)
@@ -1381,7 +1388,7 @@ sub ObjectMain
 			PlaySfx(SFX_JUMP, false)
 		end if
 		break
-
+		
 	case SSSONIC_FAN
 		CallFunction(Sonic_ProcessPlayer)
 		
@@ -1464,7 +1471,7 @@ sub ObjectMain
 		else
 			if HUD[4].SpeedShoes == 0
 				SSSonic.State     = SSSONIC_WALKING
-
+				
 				SSSonic.Frame     = ANI_WALKING_START
 				SSSonic.FrameLoop = ANI_WALKING_LOOP
 				SSSonic.FrameEnd  = ANI_WALKING_END
@@ -1490,8 +1497,9 @@ sub ObjectMain
 			SSSonic.Speed += 4096
 		end if
 		
-		if KeyDown.Down == true
+		if KeyDown[1].Down == true
 			SSSonic.Speed -= 3072
+			
 			if SSSonic.Speed < 122880
 				SSSonic.Speed = 122880
 			end if
@@ -1521,7 +1529,7 @@ sub ObjectMain
 			SSSonic.YVelocity = 286720
 			PlaySfx(SFX_JUMP, false)
 		end if
-
+		
 		if HUD[4].SpeedShoes == 0
 			SSSonic.State     = SSSONIC_WALKING
 			
@@ -1580,7 +1588,7 @@ sub ObjectMain
 			SSSonic.Speed += 2048
 		end if
 		
-		if KeyDown.Down == true
+		if KeyDown[1].Down == true
 			SSSonic.Speed -= 3072 // Decelerate at a rate of 0xC00 per frame
 			
 			if SSSonic.Speed < 122880  // AKA 0x1E000
@@ -1697,7 +1705,7 @@ sub ObjectDraw
 		// Just draw Sonic's sprite, nothing special needed here
 		DrawSpriteScreenXY(SSSonic.Frame, Screen.CenterX, TempValue0)
 		break
-
+		
 	case SSSONIC_WALKING
 		// Bump Sonic's sprite based on how "tilted" he is in relation to the camera
 		
@@ -1841,7 +1849,7 @@ sub ObjectStartup
 	SpriteFrame(-20, -48, 40, 48, 206, 50)
 	
 	// 27-29 - Leaning Right Frames again..?
-	// Seems to be unused, perhaps these only exist to pad out the frame number
+	// Seems to be unused, perhaps these only exist to pad out the frame number?
 	SpriteFrame(-20, -48, 40, 48, 124, 50)
 	SpriteFrame(-20, -48, 40, 48, 165, 50)
 	SpriteFrame(-20, -48, 40, 48, 206, 50)
@@ -1888,7 +1896,7 @@ sub ObjectStartup
 	// 54-76 - Falling Down Animation
 	SpriteFrame(-28, -48, 56, 48, 92, 344)
 	SpriteFrame(-30, -32, 60, 32, 54, 475)
-
+	
 	// Most Frames in the animation varies between Sonic and Tails
 	if Stage.PlayerListPos == PLAYER_SONIC
 		SpriteFrame(-29, -32, 58, 32, 149, 344)
@@ -1950,7 +1958,7 @@ sub ObjectStartup
 	SpriteFrame(-16, -48, 32, 48, 116, 295)
 	SpriteFrame(-16, -48, 32, 48, 116, 295)
 	SpriteFrame(-16, -48, 32, 48, 149, 295)
-
+	
 end sub
 
 
@@ -1964,7 +1972,7 @@ sub RSDKEdit
 		case EDIT_VAR_PROPVAL // Property Value
 			CheckResult = Object.PropertyValue
 			break
-		case 0 // startDir
+		case 0 // StartDir
 			CheckResult = Object.PropertyValue
 			break
 		end switch
@@ -1973,7 +1981,7 @@ sub RSDKEdit
 		case EDIT_VAR_PROPVAL // Property Value
 			Object.PropertyValue = Editor.VariableValue
 			break
-		case 0 // startDir
+		case 0 // StartDir
 			Object.PropertyValue = Editor.VariableValue
 			break
 		end switch
@@ -1990,8 +1998,8 @@ sub RSDKLoad
 	LoadSpriteSheet("Special/Sonic.gif")
 	SpriteFrame(-20, -48, 40, 48, 1, 246)
 
-	AddEditorVariable("startDir")
-	SetActiveVariable("startDir")
+	AddEditorVariable("StartDir")
+	SetActiveVariable("StartDir")
 	AddEnumVariable("Up", 0)
 	AddEnumVariable("Right", 64)
 	AddEnumVariable("Down", 128)

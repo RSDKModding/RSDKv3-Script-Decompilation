@@ -1,0 +1,159 @@
+//------------Sonic CD CollisionM093 Script-------------//
+//--------Scripted by Christian Whitehead 'The Taxman'--------//
+//-------Unpacked By Rubberduckycooly's Script Unpacker-------//
+
+// Aliases
+#alias 77: TYPE_COLLISIONM093
+
+
+sub ObjectMain
+	
+	// wtf is this object
+	
+	ArrayPos0 = 32
+	while ArrayPos0 < 1056
+		CheckResult = false
+		switch Object[ArrayPos0].Type
+		case 53
+		case 54
+		case 57
+		case 76
+			CheckResult = true
+			break
+			
+		end switch
+		
+		if CheckResult == true
+			ArrayPos1 = 32
+			Object.XPos = Object[ArrayPos0].XPos
+			Object.XPos >>= 16
+			Object.YPos = Object[ArrayPos0].YPos
+			Object.YPos >>= 16
+		else
+			ArrayPos1 = 2000
+		end if
+		
+		while ArrayPos1<1056
+			if Object[ArrayPos1].Type == TypeName[MissionBlock]
+				if Object[ArrayPos1].PropertyValue <= 1
+					TempValue3=-16
+				else
+					TempValue3=-32
+					TempValue3 *= Object[ArrayPos1].PropertyValue
+					TempValue3 += 16
+				end if
+				TempValue4=16
+				TempValue0=Object[ArrayPos1].XPos
+				TempValue0 >>= 16
+				TempValue0 -= Object.XPos
+				CheckGreater(TempValue0,TempValue3)
+				TempValue1=CheckResult
+				CheckLower(TempValue0,TempValue4)
+				TempValue1&=CheckResult
+				if TempValue1 == 1
+					TempValue2=Object[ArrayPos1].YPos
+					TempValue2 >>= 16
+					TempValue1=Object.YPos
+					TempValue1 += 16
+					TempValue2 -= TempValue1
+					CheckGreater(TempValue2,-16)
+					TempValue1=CheckResult
+					CheckLower(TempValue2,15)
+					TempValue1&=CheckResult
+					if TempValue1 == 1
+						Object.YPos=Object[ArrayPos1].YPos
+						Object.YPos >>= 16
+						Object.YPos -= 32
+						Object[ArrayPos0].YPos=Object.YPos
+						Object[ArrayPos0].YPos <<= 16
+						TempValue2=16
+					end if
+					if TempValue2 == 16
+						switch Object[ArrayPos0].Type
+						case 53
+						case 54
+							Object[ArrayPos0].Value0=Object[ArrayPos0].Value2
+							switch Object[ArrayPos0].State
+							case 0
+								Object[ArrayPos0].State=1
+								break
+							case 1
+								TempValue5=TempValue3
+								TempValue5 += 4
+								if TempValue0>TempValue5
+									Object[ArrayPos0].Value0++
+									if Object[ArrayPos0].Value0!=320
+										Object[ArrayPos0].State=2
+										Object[ArrayPos0].Direction=FACING_LEFT
+									end if
+								end if
+								break
+							case 2
+								TempValue5=TempValue4
+								TempValue5 -= 4
+								if TempValue0<TempValue5
+									Object[ArrayPos0].Value0--
+									if Object[ArrayPos0].Value0!=-320
+										Object[ArrayPos0].State=1
+										Object[ArrayPos0].Direction=FACING_RIGHT
+									end if
+								end if
+								break
+							end switch
+							Object[ArrayPos0].Value2=Object[ArrayPos0].Value0
+							break
+						case 57
+						case 76
+							if Object[ArrayPos0].State == 0
+								if Object[ArrayPos0].Value1>0
+									Object[ArrayPos0].YPos += 524288
+									Object[ArrayPos0].Frame=0
+									Object[ArrayPos0].DrawOrder=3
+									if Object[ArrayPos0].PropertyValue == 0
+										Object[ArrayPos0].State=1
+									else
+										Object[ArrayPos0].State=2
+										Object[ArrayPos0].Direction=FACING_LEFT
+									end if
+								end if
+							end if
+							break
+						end switch
+					end if
+				end if
+			end if
+			ArrayPos1++
+		loop
+		ArrayPos0++
+	loop
+end sub
+
+
+sub ObjectStartup
+	ArrayPos0=32
+	while ArrayPos0<1056
+		if Object[ArrayPos0].Type == TypeName[CollisionM093]
+			Object[ArrayPos0].Priority=1
+		end if
+		ArrayPos0++
+	loop
+end sub
+
+
+// ========================
+// Editor Subs
+// ========================
+
+sub RSDKDraw
+	DrawSprite(0)
+end sub
+
+
+sub RSDKLoad
+	LoadSpriteSheet("Global/Display.gif")
+	SpriteFrame(-16, -16, 32, 32, 1, 143)		// #0 - "Script" Icon
+	
+	SetVariableAlias(ALIAS_VAR_PROPVAL, "unused")
+end sub
+
+

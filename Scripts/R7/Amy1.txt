@@ -12,6 +12,9 @@
 #alias 0 : AMY1_CAUGHT
 #alias 1 : AMY1_FALLING
 
+// SFX Aliases
+#alias 22 : SFX_EXPLOSION
+
 
 sub ObjectMain
 	
@@ -44,10 +47,13 @@ end sub
 sub ObjectPlayerInteraction
 	
 	if Object.State == AMY1_CAUGHT
-#platform: Mobile
-		// Due to how the engine works, there's a single frame upon landinig where this code is actually being run from an Amy 2 object, so check against that
+		
+		// Due to how the engine works, there's a single frame upon landinig where this code is actually
+		//   being run from an Amy 2 object, so check against that
+		// This check was only introduced in an update, so it's not in the Steam version or anything
+		
 		if Object.Type == TypeName[Amy 1]
-#endplatform
+			
 			// Check if Sonic's hit Amy
 			PlayerObjectCollision(C_TOUCH, -8, -16, 8, 16)
 			if CheckResult == true
@@ -57,16 +63,22 @@ sub ObjectPlayerInteraction
 				FlipSign(Player.YVelocity)
 				Player.YVelocity >>= 1
 				
+				// And start Amy's descent
 				Object.State = AMY1_FALLING
 				Object.Frame >>= 3
 				
+				// Create an Explosion for the rope (?) just broken
 				CreateTempObject(TypeName[Explosion], 0, Object.XPos, Object.YPos)
+				
+				// And that wraps up the stage!
 				Stage.TimeEnabled = false
 				
-				PlaySfx(22, 0)
-#platform: Mobile
-		end if // Object.Type == TypeName[Amy 1]
-#endplatform
+				PlaySfx(SFX_EXPLOSION, false)
+				
+			end if
+			
+		end if
+		
 	end if
 	
 end sub

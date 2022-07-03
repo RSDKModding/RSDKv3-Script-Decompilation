@@ -9,12 +9,13 @@
 #alias 1 : DUSTPUFF_CHILD
 
 // Player aliases
-#alias Player.XPos : SSSonic.XPos
-#alias Player.YPos : SSSonic.YPos
+#alias Player.XPos   : SSSonic.XPos
+#alias Player.YPos   : SSSonic.YPos
 #alias Object.Value0 : SSSonic.ZPos
 
 // SFX Aliases
 #alias 0 : SFX_GRITTYGROUND
+
 
 sub ObjectMain
 	
@@ -73,11 +74,13 @@ sub ObjectMain
 		end if
 		
 		if Player.Left == true
-			Object.XPos += 65536 // Move one pixel to the right (+0x10000)
+			// Move one pixel to the right
+			Object.XPos += 65536
 		end if
 		
 		if Player.Right == true
-			Object.XPos -= 65536 // Move one pixel to the left (-0x10000)
+			// Move one pixel to the left
+			Object.XPos -= 65536
 		end if
 	end if
 	
@@ -110,6 +113,7 @@ sub ObjectStartup
 	
 end sub
 
+
 // ========================
 // Editor Subs
 // ========================
@@ -122,6 +126,8 @@ end sub
 sub RSDKLoad
 	LoadSpriteSheet("Special/Objects.gif")
 	SpriteFrame(-5, -4, 10, 8, 27, 58)
-
+	
+	// Although it's used by the Object, it's not to be set from the editor
+	// (This Object shouldn't be placed into a scene directly at all, really...)
 	SetVariableAlias(ALIAS_VAR_PROPVAL, "unused")
 end sub

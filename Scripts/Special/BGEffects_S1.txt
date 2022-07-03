@@ -32,7 +32,7 @@ sub ObjectDraw
 			Copy16x16Tile(262, 426)
 			Copy16x16Tile(261, 427)
 			break
-
+			
 		case 1
 			Copy16x16Tile(260, 428)
 			Copy16x16Tile(259, 429)
@@ -43,7 +43,7 @@ sub ObjectDraw
 			Copy16x16Tile(262, 434)
 			Copy16x16Tile(261, 435)
 			break
-
+			
 		case 2
 			Copy16x16Tile(260, 436)
 			Copy16x16Tile(259, 437)
@@ -54,7 +54,7 @@ sub ObjectDraw
 			Copy16x16Tile(262, 442)
 			Copy16x16Tile(261, 443)
 			break
-
+			
 		end switch
 	end if
 	
@@ -73,31 +73,31 @@ sub ObjectDraw
 			Copy16x16Tile(101, 448)
 			Copy16x16Tile(100, 449)
 			break
-
+			
 		case 1
 			Copy16x16Tile(99, 446)
 			Copy16x16Tile(98, 447)
 			Copy16x16Tile(101, 450)
 			Copy16x16Tile(100, 451)
 			break
-
+			
 		case 2
 			Copy16x16Tile(99, 452)
 			Copy16x16Tile(98, 453)
 			Copy16x16Tile(101, 456)
 			Copy16x16Tile(100, 457)
 			break
-
+			
 		case 3
 			Copy16x16Tile(99, 454)
 			Copy16x16Tile(98, 455)
 			Copy16x16Tile(101, 458)
 			Copy16x16Tile(100, 459)
 			break
-
+			
 		end switch
 	end if
-
+	
 	// Find the difference between the current scroll and last scroll pos
 	TempValue1 = Object.PrevAngle
 	TempValue2 = TileLayer[0].Angle
@@ -112,7 +112,7 @@ sub ObjectDraw
 		TempValue3 = TempValue1
 		TempValue3 -= TempValue2
 		if TempValue3 > 256
-			// Account for looping
+			// Account for looping (but now the other way!)
 			TempValue2 += 512
 		end if
 	end if
@@ -124,58 +124,69 @@ sub ObjectDraw
 	Object.PrevAngle = TileLayer[0].Angle
 	
 	// Move all the other BG layers in accordance with the difference from last frame
-	TempValue1 = 8192   // AKA 0x2000, though this value doesn't seem to be used anyways. Is this meant to correspond with some BG layer..?
-	TempValue2 = 131072 // AKA 0x20000
-	TempValue3 = 65536  // AKA 0x10000
 	
-	TempValue1 *= TempValue0 // This stage only has two extra layers, and yet this still exists anyways...
+	TempValue1 = 8192   // An eight of a pixel
+						// Though this value doesn't seem to be used anyways, it corresponds to the first unused background layer
+	TempValue2 = 131072 // Two pixels
+	TempValue3 = 65536  // One pixel
+	
+	TempValue1 *= TempValue0 // See above
 	TempValue2 *= TempValue0
 	TempValue3 *= TempValue0
 	
+	// Presumably, there was one more of parallax multiplying here before, my best guess is that it'd be something like
+//	HParallax[1].ScrollPos += TempValue1
+	// That would update the background water in the scene, provided the layer is left enabled
+	
 	HParallax[2].ScrollPos += TempValue2
 	HParallax[3].ScrollPos += TempValue3
-
+	
 end sub
 
 
 sub ObjectStartup
-
+	
 	// Setup stage bounds
-	Stage.XBoundary1 = 58720256  // AKA 0x3800000
-	Stage.XBoundary2 = 209715200 // AKA 0xC800000
-	Stage.YBoundary1 = 58720256
-	Stage.YBoundary2 = 209715200
+	Stage.XBoundary1 = 58720256  // 896 pixels to the left
+	Stage.XBoundary2 = 209715200 // 3200 pixels to the right
+	Stage.YBoundary1 = 58720256  // 896 pixels upwards
+	Stage.YBoundary2 = 209715200 // 3200 pixels downwards
 	
 	// Set the initial BG position
-	HParallax[0].ScrollPos += 983040 // AKA 0xF0000
+	
+	// Move it 15 pixels to the right
+	// -> I don't believe this does anything, though, as it's shifting the unused BG layer which later gets disabled anyways...
+	HParallax[0].ScrollPos += 983040
 	
 #platform: HW_Rendering
 	// Load the stage map sprite if using the hardware render
+	
 	LoadSpriteSheet("Special/SSMap1.gif")
 #endplatform
-
+	
 	// Setup all BGEffect objects present in the level
 	ArrayPos0 = 32
 	while ArrayPos0 < 1056
 		if Object[ArrayPos0].Type == TypeName[BGEffects]
-
+			
 			// Set this object to always active
 			Object[ArrayPos0].Priority = 1
-
+			
 			// Make it be among the first things to be processed for drawing
 			Object[ArrayPos0].DrawOrder = 0
-
+			
 			// Starting angle, assuming that Sonic is starting facing left
 			Object[ArrayPos0].PrevAngle = 368
-
+			
 		end if
-
+		
 		ArrayPos0++
 	loop
 	
 	SetLayerDeformation(2, 128, 16, 0, 0, 0)
-
+	
 end sub
+
 
 // ========================
 // Editor Subs

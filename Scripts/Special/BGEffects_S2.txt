@@ -12,7 +12,7 @@
 
 
 sub ObjectDraw
-
+	
 	// Animate the Fans
 	Object.Fans.Timer++
 	if Object.Fans.Timer > 2
@@ -32,7 +32,7 @@ sub ObjectDraw
 			Copy16x16Tile(128, 434)
 			Copy16x16Tile(129, 435)
 			break
-
+			
 		case 1
 			Copy16x16Tile(122, 436)
 			Copy16x16Tile(123, 437)
@@ -43,7 +43,7 @@ sub ObjectDraw
 			Copy16x16Tile(128, 442)
 			Copy16x16Tile(129, 443)
 			break
-
+			
 		case 2
 			Copy16x16Tile(122, 444)
 			Copy16x16Tile(123, 445)
@@ -54,10 +54,10 @@ sub ObjectDraw
 			Copy16x16Tile(128, 450)
 			Copy16x16Tile(129, 451)
 			break
-
+			
 		end switch
 	end if
-
+	
 	// Animate the Crunchers
 	Object.Crunchers.Timer++
 	if Object.Crunchers.Timer > 5
@@ -71,31 +71,31 @@ sub ObjectDraw
 			Copy16x16Tile(159, 456)
 			Copy16x16Tile(160, 457)
 			break
-
+			
 		case 1
 			Copy16x16Tile(157, 454)
 			Copy16x16Tile(158, 455)
 			Copy16x16Tile(159, 458)
 			Copy16x16Tile(160, 459)
 			break
-
+			
 		case 2
 			Copy16x16Tile(157, 460)
 			Copy16x16Tile(158, 461)
 			Copy16x16Tile(159, 464)
 			Copy16x16Tile(160, 465)
 			break
-
+			
 		case 3
 			Copy16x16Tile(157, 462)
 			Copy16x16Tile(158, 463)
 			Copy16x16Tile(159, 466)
 			Copy16x16Tile(160, 467)
 			break
-
+			
 		end switch
 	end if
-
+	
 	// Find the difference between the current scroll and last scroll pos
 	TempValue1 = Object.PrevAngle
 	TempValue2 = TileLayer[0].Angle
@@ -114,56 +114,61 @@ sub ObjectDraw
 			TempValue2 += 512
 		end if
 	end if
-
+	
 	TempValue0 = TempValue1
 	TempValue0 -= TempValue2
-
+	
 	// Store the current angle for use next frame
 	Object.PrevAngle = TileLayer[0].Angle
-
+	
 	// Move all the other BG layers in accordance with the difference from last frame
-	TempValue1 = 131072 // AKA 0x20000
-	TempValue2 = 65536  // AKA 0x10000
+	TempValue1 = 131072 // 2 pixels
+	TempValue2 = 65536  // 1 pixel
+	
 	TempValue1 *= TempValue0
 	TempValue2 *= TempValue0
+	
 	HParallax[0].ScrollPos += TempValue1
 	HParallax[1].ScrollPos += TempValue2
-
+	
 end sub
 
 
 sub ObjectStartup
-
+	
 	// Set stage bounds
-	Stage.XBoundary1 = 58720256   // AKA 0x3800000
-	Stage.XBoundary2 = 209715200  // AKA 0xC800000
-	Stage.YBoundary1 = 58720256
-	Stage.YBoundary2 = 209715200
-
+	Stage.XBoundary1 = 58720256   // 896 pixels to the left
+	Stage.XBoundary2 = 209715200  // 3200 pixels to the right
+	Stage.YBoundary1 = 58720256   // 896 pixels upwards
+	Stage.YBoundary2 = 209715200  // 3200 downwards
+	
 #platform: HW_Rendering
 	// Load the stage map if using the hardware render
+	
 	LoadSpriteSheet("Special/SSMap2.gif")
 #endplatform
-
+	
 	// Setup all BGEffect objects present in the level
 	ArrayPos0 = 32
 	while ArrayPos0 < 1056
 		if Object[ArrayPos0].Type == TypeName[BGEffects]
-
+			
 			// Set the object to always be active
 			Object[ArrayPos0].Priority = 1
-
+			
 			// Place the object among the first to be drawn
 			Object[ArrayPos0].DrawOrder = 0
-
+			
 			// And set its starting angle, assuming that Sonic is facing left
 			Object[ArrayPos0].PrevAngle = 368
+			
 		end if
-
+		
 		ArrayPos0++
 	loop
-
+	
 end sub
+
 
 // ========================
 // Editor Subs

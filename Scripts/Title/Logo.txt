@@ -5,32 +5,45 @@
 // Aliases
 #alias Object.Value0: Object.Fade
 
-//-------States--------//
+// States
 #alias 0 : LOGO_WHITE_FADEIN
 #alias 1 : LOGO_SONIC_ANIMATE
 #alias 2 : LOGO_SONIC_RESET
 
-//--Callbacks & Engine States--//
+// Callbacks & Engine States
 #alias 7 : CALLBACK_EXIT_SELECTED
 
+
 sub ObjectDraw
+	
 	TempValue0 = Screen.CenterX
 	TempValue0 <<= 1
 	DrawSpriteScreenXY(16, 0, 100)
 	DrawSpriteScreenXY(17, TempValue0, 100)
+	
 	switch Object.State
 	case LOGO_WHITE_FADEIN
 		SetScreenFade(255, 255, 255, Object.Fade)
+		
+		// Draw boths halves of the Emblem
 		Object.Direction = FACING_RIGHT
 		DrawSpriteScreenFX(0, FX_FLIP, Screen.CenterX, 40)
+		
 		Object.Direction = FACING_LEFT
 		DrawSpriteScreenFX(0, FX_FLIP, Screen.CenterX, 40)
+		
+		// Draw Sonic
 		DrawSpriteScreenXY(2, Screen.CenterX, 120)
+		
+		// Draw the Ribbon
 		TempValue0 = Screen.CenterX
 		TempValue0 -= 110
 		DrawSpriteScreenXY(1, TempValue0, 135)
+		
+		// And draw his initial Arm frame too
 		TempValue0 += 121
 		DrawSpriteScreenXY(4, TempValue0, 110)
+		
 		if Object.Fade > 0
 			Object.Fade -= 8
 		else
@@ -40,11 +53,17 @@ sub ObjectDraw
 		break
 
 	case LOGO_SONIC_ANIMATE
+		
+		// Draw both ends of the Emblem
 		Object.Direction = FACING_RIGHT
 		DrawSpriteScreenFX(0, FX_FLIP, Screen.CenterX, 40)
 		Object.Direction = FACING_LEFT
 		DrawSpriteScreenFX(0, FX_FLIP, Screen.CenterX, 40)
+		
+		// Draw the main Sonic sprite
 		DrawSpriteScreenXY(2, Screen.CenterX, 120)
+		
+		// If needed, draw his blinking frame
 		if Object.Frame > 7
 			if Object.Frame < 13
 				TempValue0 = Screen.CenterX
@@ -52,11 +71,16 @@ sub ObjectDraw
 				DrawSpriteScreenXY(3, TempValue0, 48)
 			end if
 		end if
+		
+		// Draw the ribbon ontop of that
 		TempValue0 = Screen.CenterX
 		TempValue0 -= 110
 		DrawSpriteScreenXY(1, TempValue0, 135)
+		
+		// And afterwards, draw his arm
 		TempValue0 += 121
 		DrawSpriteScreenXY(Object.Frame, TempValue0, 110)
+		
 		Object.Fade++
 		if Object.Fade > 1
 			Object.Fade = 0
@@ -75,7 +99,9 @@ sub ObjectDraw
 		DrawSpriteScreenFX(0, FX_FLIP, Screen.CenterX, 40)
 		Object.Direction = FACING_LEFT
 		DrawSpriteScreenFX(0, FX_FLIP, Screen.CenterX, 40)
+		
 		DrawSpriteScreenXY(2, Screen.CenterX, 120)
+		
 		TempValue0 = Screen.CenterX
 		TempValue0 -= 110
 		DrawSpriteScreenXY(1, TempValue0, 135)
@@ -84,45 +110,60 @@ sub ObjectDraw
 		break
 
 	end switch
-
-#platform: Mobile
+	
+	// sure i guess?
 	if Engine.PlatformID == RETRO_WP7
-		if KeyPress.ButtonB == true
+		if KeyPress[0].ButtonB == true
 			EngineCallback(CALLBACK_EXIT_SELECTED)
 		end if
 	end if
-#endplatform
+	
 end sub
 
 
 sub ObjectStartup
+	
 	LoadSpriteSheet("Title/Title.gif")
-	SpriteFrame(-130, 0, 130, 152, 381, 73)	// #0  - Logo Ring
-	SpriteFrame(0, 0, 220, 80, 1, 122)		// #1  - Logo Ribbon
-	SpriteFrame(-47, -96, 104, 120, 1, 1)	// #2  - Sonic
-	SpriteFrame(0, 0, 56, 48, 106, 33)		// #3  - Sonic Eyes
-	SpriteFrame(0, -38, 45, 55, 210, 203)	// #4  - Sonic Arm Frame 1
-	SpriteFrame(0, -44, 32, 61, 223, 125)	// #5  - Sonic Arm Frame 2
-	SpriteFrame(-1, -44, 25, 61, 230, 63)	// #6  - Sonic Arm Frame 3
-	SpriteFrame(-10, -44, 30, 61, 225, 1)	// #7  - Sonic Arm Frame 4
-	SpriteFrame(-1, -44, 25, 61, 230, 63)	// #8  - Sonic Arm Frame 5
-	SpriteFrame(0, -44, 32, 61, 223, 125)	// #9  - Sonic Arm Frame 6
-	SpriteFrame(0, -38, 45, 55, 210, 203)	// #10 - Sonic Arm Frame 7
-	SpriteFrame(0, -44, 32, 61, 223, 125)	// #11 - Sonic Arm Frame 8
-	SpriteFrame(-1, -44, 25, 61, 230, 63)	// #12 - Sonic Arm Frame 9
-	SpriteFrame(-10, -44, 30, 61, 225, 1)	// #13 - Sonic Arm Frame 10
-	SpriteFrame(-1, -44, 25, 61, 230, 63)	// #14 - Sonic Arm Frame 11
-	SpriteFrame(0, -44, 32, 61, 223, 125)	// #15 - Sonic Arm Frame 12
-	SpriteFrame(0, 0, 176, 68, 256, 4)		// #16 - Left Mountain
-
-#platform: Standard
-	SpriteFrame(-124, 0, 124, 68, 256, 77)	// #17 - Right Mountain PC
-#endplatform
-
-#platform: Mobile
-	SpriteFrame(-174, 0, 174, 68, 246, 267)	// #17 - Right Mountain Mobile (Mobile Data Only)
-#endplatform
+	
+	// 0 - Logo Ring
+	SpriteFrame(-130, 0, 130, 152, 381, 73)
+	
+	// 1 - Logo Ribbon
+	SpriteFrame(0, 0, 220, 80, 1, 122)
+	
+	// 2 - The man himself, Sonic!
+	SpriteFrame(-47, -96, 104, 120, 1, 1)
+	
+	// 3 - Sonic's Eyes
+	SpriteFrame(0, 0, 56, 48, 106, 33)
+	
+	// 4-15 - Sonic Arm Frames
+	SpriteFrame(0, -38, 45, 55, 210, 203)
+	SpriteFrame(0, -44, 32, 61, 223, 125)
+	SpriteFrame(-1, -44, 25, 61, 230, 63)
+	SpriteFrame(-10, -44, 30, 61, 225, 1)
+	SpriteFrame(-1, -44, 25, 61, 230, 63)
+	SpriteFrame(0, -44, 32, 61, 223, 125)
+	SpriteFrame(0, -38, 45, 55, 210, 203)
+	SpriteFrame(0, -44, 32, 61, 223, 125)
+	SpriteFrame(-1, -44, 25, 61, 230, 63)
+	SpriteFrame(-10, -44, 30, 61, 225, 1)
+	SpriteFrame(-1, -44, 25, 61, 230, 63)
+	SpriteFrame(0, -44, 32, 61, 223, 125)
+	
+	// 16 - Left Mountain Frame
+	SpriteFrame(0, 0, 176, 68, 256, 4)
+	
+	// Do note that the following frame is different on different data files
+	// Uncomment as needed
+	
+	// 17 - Right Mountain
+	SpriteFrame(-144, 0, 144, 68, 257, 251)	// Latest - Origins
+//	SpriteFrame(-174, 0, 174, 68, 246, 267)	// Somewhat update - Mobile
+// 	SpriteFrame(-124, 0, 124, 68, 256, 77)	// Initial - Steam
+	
 end sub
+
 
 // ========================
 // Editor Subs

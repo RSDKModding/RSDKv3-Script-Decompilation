@@ -3,21 +3,34 @@
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
 // Aliases
-#alias Object.Value0	:	Object.Timer
+#alias Object.Value0 : Object.Timer
+
+// Player Aliases
+#alias 0 : PLAYER_SONIC
+
 
 sub ObjectMain
+	
+	// Match the Player's Draw Order
 	Object.DrawOrder = Object[-2].DrawOrder
+	
+	// If the Player's dead, then unload
+	
 	if Player.State == PlayerObject_Death
 		Object.Type = TypeName[Blank Object]
 	end if
+	
 	if Player.State == PlayerObject_Drown
 		Object.Type = TypeName[Blank Object]
 	end if
+	
 end sub
 
 
 sub ObjectDraw
+	
 	Object.Timer++
+	
 	if Object.Timer == 2
 		Object.Timer = 0
 		Object.Frame++
@@ -25,29 +38,36 @@ sub ObjectDraw
 			Object.Frame = 0
 		end if
 	end if
-
+	
 	if Warp.Timer == 0
 		if Player.Visible == true
 			DrawSpriteFX(Object.Frame, FX_INK, Player.XPos, Player.YPos)
 		end if
 	end if
+	
 end sub
 
 
 sub ObjectStartup
-	if Stage.PlayerListPos == 0		// PlayerName[SONIC]
+	
+	// Load the corresponding sheet for the current Player
+	if Stage.PlayerListPos == PLAYER_SONIC
 		LoadSpriteSheet("Global/Items2.gif")
 	else
 		LoadSpriteSheet("Global/Items2_t.gif")
 	end if
-
-	SpriteFrame(-24, -24, 48, 48, 109, 196)		// #0 - Blue Shield Frame 0
-	SpriteFrame(0, 0, 0, 0, 109, 196)			// #1 - Blue Shield Frame 1
-	SpriteFrame(-24, -24, 48, 48, 158, 196)		// #2 - Blue Shield Frame 2
-	SpriteFrame(0, 0, 0, 0, 109, 196)			// #3 - Blue Shield Frame 3
-	SpriteFrame(-24, -24, 48, 48, 207, 196)		// #4 - Blue Shield Frame 4
-	SpriteFrame(0, 0, 0, 0, 109, 196)			// #5 - Blue Shield Frame 5
+	
+	// 0-5 - Blue Shield Frames
+	// Every other frame is blank
+	SpriteFrame(-24, -24, 48, 48, 109, 196)
+	SpriteFrame(0, 0, 0, 0, 109, 196)
+	SpriteFrame(-24, -24, 48, 48, 158, 196)
+	SpriteFrame(0, 0, 0, 0, 109, 196)
+	SpriteFrame(-24, -24, 48, 48, 207, 196)
+	SpriteFrame(0, 0, 0, 0, 109, 196)
+	
 end sub
+
 
 // ========================
 // Editor Subs
@@ -59,7 +79,7 @@ end sub
 
 sub RSDKLoad
 	LoadSpriteSheet("Global/Items2.gif")
-	SpriteFrame(-24, -24, 48, 48, 109, 196)		// #0 - Blue Shield Frame 0
+	SpriteFrame(-24, -24, 48, 48, 109, 196) // Blue Shield, first frame
 
 	SetVariableAlias(ALIAS_VAR_PROPVAL, "unused")
 end sub

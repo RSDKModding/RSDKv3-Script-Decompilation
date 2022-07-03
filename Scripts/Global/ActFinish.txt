@@ -3,567 +3,932 @@
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
 // Aliases
-#alias Object.Value0	:	Object.Timer		// Also used for fading
-#alias Object.Value1	:	Object.MainTextXOffSet
-#alias Object.Value2	:	Object.ScoreXOffSet
-#alias Object.Value3	:	Object.RingsXOffSet
-#alias Object.Value4	:	Object.TimeXOffSet
-#alias Object.Value5	:	Object.TimeBonus
-#alias Object.Value6	:	Object.RingBonus
 
-#alias Player.Value0	:	Player.Rings
+// TODO: learn more about the Origins callbacks, most of the stuff said here is guessowkr
+
+#alias Object.Value0 : Object.Timer
+
+#alias Object.Value5 : Object.TimeBonus
+#alias Object.Value6 : Object.RingBonus
+
+// All textx have their own X Position values
+
+// Line 0 - normally "SONIC GOT"
+#alias Object.XPos   : Object.LineXPos0
+
+// Line 1 - normally "THROUGH Zone [X]"
+#alias Object.Value1 : Object.LineXPos1
+
+// Line 2 - Score line
+#alias Object.Value2 : Object.LineXPos2
+
+// Line 3 - Ring Bonus Line
+#alias Object.Value3 : Object.LineXPos3
+
+// Line 4 - Time Bonus line
+#alias Object.Value4 : Object.LineXPos4
+
+// New to Origins!
+// The Stage LIst Pos of the current stage's Present version
+#alias Object.Value7 : Object.StagePosP
 
 // States
-#alias 0	:	ACTFINISH_SETBONUS
-#alias 1	:	ACTFINISH_SCROLLTEXT
-#alias 2	:	ACTFINISH_TALLYDELAY
-#alias 3	:	ACTFINISH_SCORETALLY
-#alias 4	:	ACTFINISH_LOAD_DELAY
-#alias 5	:	ACTFINISH_LOAD_NEXT_LEVEL
+#alias 0 : ACTFINISH_INIT
+#alias 1 : ACTFINISH_SLIDEIN
+#alias 2 : ACTFINISH_DISPLAYTALLY
+#alias 3 : ACTFINISH_TALLYUP
+#alias 4 : ACTFINISH_DISPLAYFINAL
+#alias 5 : ACTFINISH_FADEOUT
 
-// Engine & Callbacks
-#alias 11	:	CALLBACK_TRIAL_ENDED
+// These last three states are new to Origins
+
+// Not really a complete state, this is just used to get rid of the Act Results
+#alias -1 : ACTFINISH_NULL
+
+// This one is for waiting to see if the Player wants to restart the level
+#alias 6 : ACTFINISH_HOLDOVERRESTART
+
+// And this one is used if they didn't say yes to that, where it goes to
+//  this state after fading out rather than going to the next level
+// In this state, we're just waiting for the Hedgehog Engine 2 side of things to do things, instead
+#alias 7 : ACTFINISH_WAITFORHE2
+
+
+// Player Aliases
+#alias Object.Type   : Player.Type
+#alias Object.Value0 : Player.Rings
+
+#alias 0 : PLAYER_SONIC
+
+// Time Period Aliases
+#alias 0 : PERIOD_PRESENT
+#alias 1 : PERIOD_PAST
+#alias 2 : PERIOD_FUTURE_G
+#alias 3 : PERIOD_FUTURE_B
+
+// SFX Aliases
+#alias 16 : SFX_SCOREADD
+#alias 17 : SFX_SCORETOTAL
+#alias 19 : SFX_SPECIALWARP
+
+// Soundtrack Aliases
+#alias 0 : SOUNDTRACK_JP
+
+// How long the Zone Complete jingle for each soundtrack is
+#alias 299 : JP_ZONECOMPLETE_LENGTH
+#alias 429 : US_ZONECOMPLETE_LENGTH
+
+// Callbacks Aliases
+#alias 11 : CALLBACK_TRIAL_ENDED
 
 // Game Modes
-#alias 1	:	GAMEMODE_MAINGAME
-#alias 2	:	GAMEMODE_TIMEATTACK
-#alias 3	:	GAMEMODE_TRIALGAME
+#alias 1 : GAMEMODE_MAINGAME
+#alias 2 : GAMEMODE_TIMEATTACK
+#alias 3 : GAMEMODE_TRIALGAME
+
+// Stage List Position Aliases
+
+// Presentation List Stages
+#alias 0  : STAGE_P_TITLE
+#alias 2  : STAGE_P_TIMEATTACK
+#alias 11 : STAGE_P_DOWNLOADSCREEN
+
 
 sub ObjectMain
+	
 	switch Object.State
-	case ACTFINISH_SETBONUS
-		Object.XPos = -799
-		Object.MainTextXOffSet = 1168
-		Object.ScoreXOffSet = 1255
-		Object.RingsXOffSet = 1319
-		Object.TimeXOffSet = 1402
-		Object.State = ACTFINISH_SCROLLTEXT
-
+	case ACTFINISH_INIT
+		
+		// Setup initial text positions
+		
+		// "SONIC GOT" is gonna come from the left, while all the other text slides in from the right
+		Object.LineXPos0 = -799
+		Object.LineXPos1 = 1168
+		Object.LineXPos2 = 1255
+		Object.LineXPos3 = 1319
+		Object.LineXPos4 = 1402
+		
+		// Calculate Time Bonus
 		switch Stage.Minutes
 		case 0
 			if Stage.Seconds < 30
+				// 0:00 - 0:29 - Wow that's fast, get a Mega Bonus!
 				Object.TimeBonus = 50000
 			else
 				if Stage.Seconds < 45
+					// 0:30 - 0:44
 					Object.TimeBonus = 10000
 				else
+					// 0:45 - 0:59
 					Object.TimeBonus = 5000
 				end if
 			end if
 			break
-
+			
 		case 1
 			if Stage.Seconds < 30
+				// 1:00 - 1:29
 				Object.TimeBonus = 4000
 			else
+				// 1:30 - 1:59
 				Object.TimeBonus = 3000
 			end if
 			break
 			
 		case 2
+			// 2:00 - 2:59
 			Object.TimeBonus = 2000
 			break
-
+			
 		case 3
+			// 3:00 - 3:59
 			Object.TimeBonus = 1000
 			break
-
+			
 		case 4
+			// 4:00 - 4:59
 			Object.TimeBonus = 500
 			break
-
+			
 		case 5
+			// 5:00 - 5:59
 			Object.TimeBonus = 100
 			break
-
+			
+		// Anything after that, you get nothing, you lose!
+		
 		end switch
-		Object.RingBonus = Player.Rings
+		
+		// If you Time Over'd, no Time Bonus either of course
+		if game.timeOver != 0
+			Object.TimeBonus = 0
+		end if
+		
+		// Ring Bonus calculation is far easier - just take the Player's ring count and multiply that by 100
+		Object.RingBonus = Player[0].Rings
 		Object.RingBonus *= 100
+		
+		// Find the Present version of the current stage
+		Object.StagePosP = Stage.ListPos
+		switch Object[24].PropertyValue
+		case PERIOD_PRESENT
+			break
+			
+		case PERIOD_PAST
+			Object.StagePosP--
+			break
+			
+		case PERIOD_FUTURE_G
+			Object.StagePosP -= 2
+			break
+			
+		case PERIOD_FUTURE_B
+			Object.StagePosP -= 3
+			break
+			
+		end switch
+		
+		if game.playMode == BOOT_PLAYMODE_MISSION
+			
+			// If in a Mission, we don't need Act Results
+			Object.State = ACTFINISH_NULL
+			
+			// Back it up a bit
+			Stage.ListPos = Object.StagePosP
+			
+		else
+			if game.playMode == BOOT_PLAYMODE_BOSSRUSH
+				
+				// In Boss Rush, we don't need Act Results either
+				Object.State = ACTFINISH_NULL
+				
+			else
+				
+				// We're in a normal mode, let's just show the Results normally
+				
+				Object.State = ACTFINISH_SLIDEIN
+				
+			end if
+		end if
+		
+		// Send to the Engine how many Enemies have been destroyed so far
+		game.callbackParam0 = StageStatsUsabilityParam1
+		game.callbackParam1 = StageStatsUsabilityParam2
+		game.callbackParam2 = 0
+		EngineCallback(NOTIFY_STATS_ENEMY)
+		
+		// Send to the Engine how many Rings the Player has as well
+		game.callbackParam0 = Player[0].Rings
+		EngineCallback(NOTIFY_STATS_RING)
+		
+		// One final Callback for now, signal to the Engine that the current level is over
+		EngineCallback(NOTIFY_ACT_FINISH)
+		
+		// Reset loads of stuff...
+		StageStatsUsabilityParam1 = 0
+		StageStatsUsabilityParam2 = 0
+		StageStatsUsabilityParam3 = 0
+		StageStatsUsabilityParam4 = 0
+		StatsUsabilityParam1 = 0
+		StatsUsabilityParam2 = 0
+		StatsUsabilityParam3 = 0
+		StatsUsabilityParam4 = 0
 		break
-
-	case ACTFINISH_SCROLLTEXT
+		
+	case ACTFINISH_SLIDEIN
+		
+		// Get a base Position of 60 pixels off centre screen
 		TempValue0 = Screen.CenterX
 		TempValue0 -= 68
-		if Object.XPos < TempValue0
-			Object.XPos += 16
-			if Object.XPos > TempValue0
-				Object.XPos = TempValue0
+		
+		// Update position of the "SONIC GOT" line
+		if Object.LineXPos0 < TempValue0
+			Object.LineXPos0 += 16
+			
+			if Object.LineXPos0 > TempValue0
+				
+				// Past the max, enforce it
+				Object.LineXPos0 = TempValue0
+				
 			end if
+			
 		else
-			Object.XPos = TempValue0
+			
+			// Just stay put for now
+			Object.LineXPos0 = TempValue0
+			
 		end if
-
+		
+		// Update Position of the "THROUGH Zone" line
 		TempValue0 -= 32
-		if Object.MainTextXOffSet > TempValue0
-			Object.MainTextXOffSet -= 16
-			if Object.MainTextXOffSet < TempValue0
-				Object.MainTextXOffSet = TempValue0
+		if Object.LineXPos1 > TempValue0
+			Object.LineXPos1 -= 16
+			
+			if Object.LineXPos1 < TempValue0
+				
+				// Enforce a minimum
+				Object.LineXPos1 = TempValue0
+				
 			end if
+			
 		else
-			Object.MainTextXOffSet = TempValue0
+			
+			// Hold!
+			Object.LineXPos1 = TempValue0
+			
 		end if
-
+		
+		// The Score, Ring, and Time bonuses are all around the same X Position
 		TempValue0 += 9
-		if Object.ScoreXOffSet > TempValue0
-			Object.ScoreXOffSet -= 16
-			if Object.ScoreXOffSet < TempValue0
-				Object.ScoreXOffSet = TempValue0
+		
+		// Score Line
+		if Object.LineXPos2 > TempValue0
+			Object.LineXPos2 -= 16
+			
+			if Object.LineXPos2 < TempValue0
+				Object.LineXPos2 = TempValue0
 			end if
 		else
-			Object.ScoreXOffSet = TempValue0
+			Object.LineXPos2 = TempValue0
 		end if
-
-		if Object.RingsXOffSet > TempValue0
-			Object.RingsXOffSet -= 16
-			if Object.RingsXOffSet < TempValue0
-				Object.RingsXOffSet = TempValue0
+		
+		// Ring Bonus Line
+		if Object.LineXPos3 > TempValue0
+			Object.LineXPos3 -= 16
+			
+			if Object.LineXPos3 < TempValue0
+				Object.LineXPos3 = TempValue0
 			end if
 		else
-			Object.RingsXOffSet = TempValue0
+			Object.LineXPos3 = TempValue0
 		end if
-
-		if Object.TimeXOffSet > TempValue0
-			Object.TimeXOffSet -= 16
-			if Object.TimeXOffSet < TempValue0
-				Object.TimeXOffSet = TempValue0
+		
+		// Time Bonus line
+		if Object.LineXPos4 > TempValue0
+			Object.LineXPos4 -= 16
+			
+			if Object.LineXPos4 < TempValue0
+				Object.LineXPos4 = TempValue0
 			end if
 		else
-			Object.TimeXOffSet = TempValue0
-			Object.State = ACTFINISH_TALLYDELAY
+			
+			Object.LineXPos4 = TempValue0
+			
+			// Proceed with the Act Results, now that everything's in position
+			Object.State = ACTFINISH_DISPLAYTALLY
 			Object.Timer = 0
+			
 		end if
 		break
-
-	case ACTFINISH_TALLYDELAY
+		
+	case ACTFINISH_DISPLAYTALLY
 		Object.Timer++
-		if Options.Soundtrack == 0
-			if Object.Timer > 299
+		
+		// The two soundtracks have different Zone Complete lengths
+		if Options.Soundtrack == SOUNDTRACK_JP
+			if Object.Timer > JP_ZONECOMPLETE_LENGTH
+				
+				// Proceed, now that the Jingle's over
+				
 				Object.Timer = 0
-				Object.State = ACTFINISH_SCORETALLY
-				// Paradise Found Unlock Criteria
-				if Stage.PlayerListPos == 0
-					if Object[24].PropertyValue == 2
-						if Stage.DebugMode == 0
+				
+				Object.State = ACTFINISH_TALLYUP
+				
+				// See if the Paradise Found achievement should be unlocked
+				if Stage.PlayerListPos == PLAYER_SONIC
+					if Object[24].PropertyValue == PERIOD_FUTURE_G
+						if Stage.DebugMode == false
 							SetAchievement(2, 100)
 						end if
 					end if
 				end if
+				
 			end if
 		else
-			if Object.Timer > 429
+			if Object.Timer > US_ZONECOMPLETE_LENGTH
+				
+				// It's now over, proceed with the Results
+				
 				Object.Timer = 0
-				Object.State = ACTFINISH_SCORETALLY
-				// Paradise Found Unlock Criteria
-				if Stage.PlayerListPos == 0
-					if Object[24].PropertyValue == 2
-						if Stage.DebugMode == 0
+				
+				Object.State = ACTFINISH_TALLYUP
+				
+				// See if the Paradise Found achievement should be unlocked
+				if Stage.PlayerListPos == PLAYER_SONIC
+					if Object[24].PropertyValue == PERIOD_FUTURE_G
+						if Stage.DebugMode == false
 							SetAchievement(2, 100)
 						end if
 					end if
 				end if
+				
 			end if
 		end if
 		break
-
-	case ACTFINISH_SCORETALLY
+		
+	case ACTFINISH_TALLYUP
+		
+		// Tally up the Ring Bonus and Time Bonus simultaneously
+		
 		if Object.RingBonus > 0
 			Object.RingBonus -= 100
 			Player.Score += 100
 		end if
-
+		
 		if Object.TimeBonus > 0
 			Object.TimeBonus -= 100
 			Player.Score += 100
 		end if
-
+		
+		// See if they're both over
+		
 		CheckGreater(Object.RingBonus, 0)
 		TempValue0 = CheckResult
 		CheckGreater(Object.TimeBonus, 0)
 		TempValue0 |= CheckResult
-		//Check if the tally ended
+		
 		if TempValue0 == true
+			
+			// If they're not done yet, then play the Tally SFX
+			
 			Object.Timer++
+			
 			if Object.Timer == 2
-				PlaySfx(16, 0)
+				PlaySfx(SFX_SCOREADD, false)
 				Object.Timer = 0
 			end if
+			
 		else
-			Object.State = ACTFINISH_LOAD_DELAY
+			
+			// They're both over now, go over now
+			
+			Object.State = ACTFINISH_DISPLAYFINAL
 			Object.Timer = 0
-			PlaySfx(17, 0)
+			
+			// Ka-ching!
+			PlaySfx(SFX_SCORETOTAL, false)
+			
 		end if
 		break
-
-	case ACTFINISH_LOAD_DELAY
+		
+	case ACTFINISH_DISPLAYFINAL
+		
+		// Pause for a moment, to let the Player see what they got
+		
 		Object.Timer++
+		
 		if Object.Timer == 160
-			Object.Timer = 0
-			Object.State = ACTFINISH_LOAD_NEXT_LEVEL
-			if Object[0].Type == TypeName[Blank Object]
-				PlaySfx(19, 0)
+			if game.oneStageFlag != 0
+				
+				// If needed, let the Player retry the stage
+				Object.StagePosP = Stage.ListPos
+				game.callbackResult = -1
+				game.callbackParam0 = 1
+				game.callbackParam1 = Object.StagePosP
+				game.callbackParam2 = 0
+				EngineCallback(NOTIFY_STAGE_RETRY)
+				
+				Object.Timer = 0
+				
+				// Go over to the holdover state and wait for the result
+				Object.State = ACTFINISH_HOLDOVERRESTART
+				
+			else
+				
+				// Nope, everything can be resumed normally from here
+				
+				Object.Timer = 0
+				Object.State = ACTFINISH_FADEOUT
+				
+			end if
+			
+			// If the Player's a Blank Object, then that means they entered a Special Ring
+			if Player[0].Type == TypeName[Blank Object]
+				PlaySfx(SFX_SPECIALWARP, false)
 			end if
 		end if
 		break
-	case 5
-		if Object[0].Type == TypeName[Blank Object]	// Check if the player entered the Special Ring
+		
+	case ACTFINISH_FADEOUT
+		if Player[0].Type == TypeName[Blank Object]
+			// Special Stage!
+			
 			Object.Timer += 8
+			
+			// Use kinda-white to fade out, rather than black
 			SetScreenFade(208, 255, 224, Object.Timer)
-			if Engine.TrialMode == true
-				if Object.Timer == 1016
-					EngineCallback(CALLBACK_TRIAL_ENDED)
-				end if
-			end if
+			
 			if Object.Timer == 1024
-#platform: Standard
-				if Stage.PlayerListPos == 0				// Set Leaderboard score (Steam)
-					TempValue0 = Stage.ListPos
-					TempValue0 %= 10
-					TempValue0 >>= 2
-
-					TempValue1 = Stage.ListPos
-					TempValue1 /= 10
-					TempValue1 *= 3
-
-					TempValue0 += TempValue1
-					TempValue0++
-
-					TempValue1 = Stage.Seconds
-					TempValue1 *= 100
-
-					TempValue2 = Stage.Minutes
-					TempValue2 *= 6000
-
-					TempValue1 += TempValue2
-					TempValue1 += Stage.MilliSeconds
-					SetLeaderboard(TempValue0, TempValue1)
-				end if
-#endplatform
+				
+				// Set Fade_Colour to be off-white (0xd0ffe0)
+				
 				Fade_Colour = 208
 				Fade_Colour <<= 16
-
 				TempValue0 = 255
 				TempValue0 <<= 8
 				Fade_Colour += TempValue0
 				Fade_Colour += 224
-
-				Player.Direction = FACING_RIGHT
+				
+				// Reset more stuff
+				
+				Player.Direction = 0
 				Object.Timer = 0
 				LampPost.Check = 0
 				Good_Future_Count += Good_Future
 				Good_Future = 0
 				Transporter_Destroyed = 0
 				MetalSonic_Destroyed = 0
-
+				
 				if Stage.ActNo == 2
 					if Good_Future_Count < 2
 						Stage.ListPos++
 					end if
 				end if
+				
 				if Stage.ActNo == 3
 					Good_Future_Count = 0
 				end if
+				
+				// Get the Stage List Pos of the next stage's Present version
 				switch Object[24].PropertyValue
-				case 0
-					Stage.ListPos += 4		// Present to Present
+				case PERIOD_PRESENT
+					Stage.ListPos += 4
 					break
-				case 1
-					Stage.ListPos += 3		// Past to Present
+					
+				case PERIOD_PAST
+					Stage.ListPos += 3
 					break
-				case 2
-					Stage.ListPos += 2		// Good Future to Present
+					
+				case PERIOD_FUTURE_G
+					Stage.ListPos += 2
 					break
-				case 3
-					Stage.ListPos++			// Bad Future to Present
+					
+				case PERIOD_FUTURE_B
+					Stage.ListPos++
 					break
+					
 				end switch
-
+				
 				if Options.GameMode == GAMEMODE_MAINGAME
+					// Save the game, if needed
+					
 					ArrayPos1 = Options.SaveSlot
 					ArrayPos1 <<= 3
 					SaveRAM[ArrayPos1] = Stage.PlayerListPos
+					
 					ArrayPos1++
 					SaveRAM[ArrayPos1] = Player.Lives
+					
 					ArrayPos1++
 					SaveRAM[ArrayPos1] = Player.Score
+					
 					ArrayPos1++
 					SaveRAM[ArrayPos1] = Stage.ListPos
-					SaveRAM[ArrayPos1] += 81	// This makes the save know you're in a special stage
+					
+					// Add 81 to the Stage List Pos to signify that it's a Special Stage save
+					SaveRAM[ArrayPos1] += 81
+					
 					ArrayPos1++
 					SaveRAM[ArrayPos1] = SpecialStage.TimeStones
+					
 					ArrayPos1++
 					SaveRAM[ArrayPos1] = SpecialStage.ListPos
+					
 					ArrayPos1++
 					SaveRAM[ArrayPos1] = Player.ScoreBonus
+					
 					ArrayPos1++
 					SaveRAM[ArrayPos1] = MetalSonic_List
 					SaveRAM[ArrayPos1] <<= 16
 					SaveRAM[ArrayPos1] += Good_Future_List
+					
 					WriteSaveRAM()
 				end if
-
+				
+				recScore = Player.Score
 				SpecialStage.NextZone = Stage.ListPos
-				Stage.ListPos = SpecialStage.ListPos
 				Stage.ActiveList = SPECIAL_STAGE
-				TempValue0 = Engine.TrialMode
-				if Stage.ListPos >= Stage.ListSize	// tldr; check if you are playing the trial
-					TempValue0 = true
-				end if
-				if TempValue0 == false
-					LoadStage()
+				Stage.ListPos = SpecialStage.ListPos
+				
+				if game.oneStageFlag != 0
+					
+					// Don't advance the stage if we're just, well, one stage
+					
+					Stage.ActiveList = REGULAR_STAGE
+					Stage.ListPos = Object.StagePosP
+					
+					Object.State = ACTFINISH_WAITFORHE2
+					
 				else
-					Stage.ActiveList = PRESENTATION_STAGE
-					Stage.ListPos = 1	// Menu
-					LoadStage()
+					TempValue0 = Engine.TrialMode
+					if Stage.ListPos >= Stage.ListSize
+						TempValue0 = true
+					end if
+					
+					if TempValue0 == false
+						
+						// We're in normal conditions, load the next stage
+						LoadStage()
+						
+					else
+						
+						// Just go back to the Title Screen, if on a trial version of the next stage doesn't exist
+						
+						Stage.ActiveList = PRESENTATION_STAGE
+						Stage.ListPos = STAGE_P_TITLE
+						Engine.State = 8
+						
+					end if
 				end if
 			end if
 		else
+			
+			// We didn't enter a Special Ring, we're staying in normal stages
+			
 			Object.Timer += 4
+			
+			// Use black for the screen fade
 			SetScreenFade(0, 0, 0, Object.Timer)
+			
 			if Engine.TrialMode == true
 				if Object.Timer == 380
 					EngineCallback(CALLBACK_TRIAL_ENDED)
 				end if
 			end if
+			
 			if Object.Timer == 384
-#platform: Standard
-				if Stage.PlayerListPos == 0		// PlayerName[SONIC]
-					TempValue0 = Stage.ListPos
-					TempValue0 %= 10
-					TempValue0 >>= 2
-					TempValue1 = Stage.ListPos
-					TempValue1 /= 10
-					TempValue1 *= 3
-					TempValue0 += TempValue1
-					TempValue0++
-					TempValue1 = Stage.Seconds
-					TempValue1 *= 100
-					TempValue2 = Stage.Minutes
-					TempValue2 *= 6000
-					TempValue1 += TempValue2
-					TempValue1 += Stage.MilliSeconds
-					SetLeaderboard(TempValue0, TempValue1)
-				end if
-#endplatform
+				
+				// Set Fade_Colour to be black as well
 				Fade_Colour = 0
+				
+				// Reset some cool values
 				Object.Timer = 0
 				LampPost.Check = 0
-				Player.Direction = FACING_RIGHT
+				Player.Direction = 0
 				Good_Future_Count += Good_Future
 				Good_Future = 0
 				Transporter_Destroyed = 0
 				MetalSonic_Destroyed = 0
-
+				
 				if Stage.ActNo == 2
 					if Good_Future_Count < 2
-						Stage.ListPos++		// Set next stage to good future 3
+						Stage.ListPos++
 					end if
 				end if
-
+				
 				if Stage.ActNo == 3
 					Good_Future_Count = 0
 				end if
-
+				
+				// Get the Stage ID of the next stage's starting version
 				switch Object[24].PropertyValue
-				case 0
-					Stage.ListPos += 4		// Present to Present
+				case PERIOD_PRESENT
+					Stage.ListPos += 4
 					break
-				case 1
-					Stage.ListPos += 3		// Past to Present
+					
+				case PERIOD_PAST
+					Stage.ListPos += 3
 					break
-				case 2
-					Stage.ListPos += 2		// Good Future to Present
+					
+				case PERIOD_FUTURE_G
+					Stage.ListPos += 2
 					break
-				case 3
-					Stage.ListPos++			// Bad Future to Present
+					
+				case PERIOD_FUTURE_B
+					Stage.ListPos++
 					break
+					
 				end switch
-
+				
 				if Options.GameMode == GAMEMODE_MAINGAME
+					// Save up everything
+					
 					ArrayPos1 = Options.SaveSlot
 					ArrayPos1 <<= 3
 					SaveRAM[ArrayPos1] = Stage.PlayerListPos
+					
 					ArrayPos1++
 					SaveRAM[ArrayPos1] = Player.Lives
+					
 					ArrayPos1++
 					SaveRAM[ArrayPos1] = Player.Score
+					
 					ArrayPos1++
 					SaveRAM[ArrayPos1] = Stage.ListPos
 					SaveRAM[ArrayPos1]++
+					
 					ArrayPos1++
 					SaveRAM[ArrayPos1] = SpecialStage.TimeStones
+					
 					ArrayPos1++
 					SaveRAM[ArrayPos1] = SpecialStage.ListPos
+					
 					ArrayPos1++
 					SaveRAM[ArrayPos1] = Player.ScoreBonus
+					
 					ArrayPos1++
 					SaveRAM[ArrayPos1] = MetalSonic_List
 					SaveRAM[ArrayPos1] <<= 16
 					SaveRAM[ArrayPos1] += Good_Future_List
+					
 					WriteSaveRAM()
 				end if
-
-#platform: Mobile
-				if Options.GameMode == GAMEMODE_TRIALGAME
-					// Set Trial Recoerds
-					TimeAttack.Result = Stage.Seconds
-					TimeAttack.Result *= 100
-					TempValue0 = Stage.Minutes
-					TempValue0 *= 6000
-					TimeAttack.Result += TempValue0
-					TimeAttack.Result += Stage.MilliSeconds
-					switch TimeAttack.Round
-					case 0
-						if TimeAttack.Result < SaveRAM[48]		// PPZ Record
-							SaveRAM[48] = TimeAttack.Result
-						end if
-						break
-					case 1
-						if TimeAttack.Result < SaveRAM[49]		// QQZ Record
-							SaveRAM[49] = TimeAttack.Result
-						end if
-						break
-					end switch
-					WriteSaveRAM()
-					Stage.ActiveList = PRESENTATION_STAGE
-					Stage.ListPos = 11	// Purchase Screen
-				end if
-#endplatform
-
-				if Options.GameMode == GAMEMODE_TIMEATTACK
-#platform: Mobile	// Set Leaderboards (WP7)
-					if Stage.PlayerListPos == 0				// PlayerName[SONIC]
-						TempValue0 = Stage.ListPos
-						TempValue0 %= 10
-						TempValue0 >>= 2
-						TempValue1 = Stage.ListPos
-						TempValue1 /= 10
-						TempValue1 *= 3
-						TempValue0 += TempValue1
-						TempValue0++
-						TempValue1 = Stage.Seconds
-						TempValue1 *= 100
-						TempValue2 = Stage.Minutes
-						TempValue2 *= 6000
-						TempValue1 += TempValue2
-						TempValue1 += Stage.MilliSeconds
-						SetLeaderboard(TempValue0, TempValue1)
-					end if								   
-#endplatform	  
-					TimeAttack.Result = Stage.Seconds
-					TimeAttack.Result *= 100
-					TempValue0 = Stage.Minutes
-					TempValue0 *= 6000
-					TimeAttack.Result += TempValue0
-					TimeAttack.Result += Stage.MilliSeconds
-					Stage.ActiveList = PRESENTATION_STAGE
-					Stage.ListPos = 2	// Time Attack
-					LoadStage()
+				
+				recScore = Player.Score
+				
+				if game.oneStageFlag != 0
+					
+					// If on a single stage, then don't progress
+					
+					Stage.ActiveList = REGULAR_STAGE
+					Stage.ListPos = Object.StagePosP
+					
+					Object.State = ACTFINISH_WAITFORHE2
+					
 				else
-#platform: Standard
-					TempValue0 = Engine.TrialMode
-#endplatform
-
-#platform: Mobile
-					if Options.GameMode < GAMEMODE_TRIALGAME
-						TempValue0 = Engine.TrialMode
-					else
-						TempValue0 = false
-					end if
-#endplatform
-
-					if Stage.ListPos >= Stage.ListSize	// tldr; check if you are playing the trial
-						TempValue0 = true
-					end if
-					if TempValue0 == false
-						LoadStage()
-					else
+					if Options.GameMode == GAMEMODE_TIMEATTACK
+						if Stage.PlayerListPos == PLAYER_SONIC
+							
+							// Get the act number
+							TempValue0 = Stage.ListPos
+							TempValue0 %= 10
+							TempValue0 >>= 2
+							
+							// Get the current Round
+							TempValue1 = Stage.ListPos
+							TempValue1 /= 10
+							TempValue1 *= 3
+							
+							// Add them together to get the stage ID
+							TempValue0 += TempValue1
+							TempValue0++
+							
+							// And now, tally up all the time
+							
+							TempValue1 = Stage.Seconds
+							TempValue1 *= 100
+							
+							TempValue2 = Stage.Minutes
+							TempValue2 *= 6000
+							
+							TempValue1 += TempValue2
+							TempValue1 += Stage.MilliSeconds
+							
+							// Enter all that data into the Leaderboard, make your mark on the world!
+							SetLeaderboard(TempValue0, TempValue1)
+						end if
+						
+						// Tally up all the results, into one single large number
+						
+						TimeAttack.Result = Stage.Seconds
+						TimeAttack.Result *= 100
+						
+						TempValue0 = Stage.Minutes
+						TempValue0 *= 6000
+						
+						TimeAttack.Result += TempValue0
+						TimeAttack.Result += Stage.MilliSeconds
+						
+						// Now, head over to the TA scene
+						
 						Stage.ActiveList = PRESENTATION_STAGE
-						Stage.ListPos = 1	// Menu
+						Stage.ListPos = STAGE_P_TIMEATTACK
+						
 						LoadStage()
+						
+					else
+						// Huh?
+						// TODO: something seems wrong here...
+						if Options.GameMode < GAMEMODE_TRIALGAME
+							TempValue0 = Engine.TrialMode
+						else
+							TempValue0 = false
+						end if
+						
+						if Stage.ListPos >= Stage.ListSize
+							TempValue0 = true
+						end if
+						
+						if TempValue0 == false
+							
+							// On a normal version, proceed as normal
+							LoadStage()
+							
+						else
+							if Engine.TrialMode == true
+								
+								// If on a trial version, then send the Player to the download screen now
+								
+								Stage.ActiveList = PRESENTATION_STAGE
+								Stage.ListPos = STAGE_P_DOWNLOADSCREEN
+								
+								LoadStage()
+								
+							else
+								Engine.State = 8
+							end if
+						end if
 					end if
 				end if
 			end if
 		end if
 		break
+		
+	case ACTFINISH_HOLDOVERRESTART
+		
+		// Wait and see, does the Player want to restart the stage?
+		if game.callbackResult >= 0
+			Object.Timer = 0
+			Object.State = ACTFINISH_FADEOUT
+		end if
+		break
+		
+	case ACTFINISH_WAITFORHE2
+		// Just have the screen be black for now, nothing fancy
+		SetScreenFade(0, 0, 0, 255)
+		break
+		
 	end switch
-end sub
+	
+endsub
 
 
 sub ObjectDraw
+	
+	// First two lines are dependant on if Sonic made a Good Future or not
+	// Regardless of the path taken here, TempValue0 afterwards should be where the "Zone" text is drawn,
+	//  in order for the following code to be done correctly as well
 	if Good_Future == false
-		// Character Got Through
-		DrawSpriteScreenXY(0, Object.XPos, 65)
-		DrawSpriteScreenXY(4, Object.MainTextXOffSet, 89)
-
-		TempValue0 = Object.MainTextXOffSet
+		
+		// No Good Future here, just do the normal results
+		
+		// First line - "Sonic GOT"
+		DrawSpriteScreenXY(0, Object.LineXPos0, 65)
+		
+		// Second line - "THROUGH"
+		DrawSpriteScreenXY(4, Object.LineXPos1, 89)
+		
+		// To the right of that, draw "Zone"
+		TempValue0 = Object.LineXPos1
 		TempValue0 += 128
 		DrawSpriteScreenXY(5, TempValue0, 89)
+		
 	else
-		// Character made a good future
-		DrawSpriteScreenXY(20, Object.XPos, 65)
-		DrawSpriteScreenXY(21, Object.MainTextXOffSet, 89)
-
-		TempValue0 = Object.MainTextXOffSet
+		
+		// We made a Good Future!
+		// Let's used the altered version of the text to let the Player know
+		
+		// Draw "SONIC MADE A GOOD" for the first line
+		DrawSpriteScreenXY(20, Object.LineXPos0, 65)
+		
+		// Then, comes "FUTURE IN"
+		DrawSpriteScreenXY(21, Object.LineXPos1, 89)
+		
+		// And to the right of that, draw the "Zone" text
+		TempValue0 = Object.LineXPos1
 		TempValue0 += 140
 		DrawSpriteScreenXY(5, TempValue0, 89)
+		
 	end if
+	
+	// From where the "Zone" text was drawn, draw the Act Number next to it
 	TempValue0 += 64
 	DrawSpriteScreenXY(Stage.ActNo, TempValue0, 89)
-
-	// Score
-	DrawSpriteScreenXY(6, Object.ScoreXOffSet, 121)
-	TempValue0 = Object.ScoreXOffSet
+	
+	// Draw the Score text
+	DrawSpriteScreenXY(6, Object.LineXPos2, 121)
+	
+	// And then to the right of that, draw the Score numbers
+	TempValue0 = Object.LineXPos2
 	TempValue0 += 163
 	DrawNumbers(10, TempValue0, 121, Player.Score, 6, 8, 0)
-
-	// Ring Bonus
-	DrawSpriteScreenXY(7, Object.RingsXOffSet, 145)
-	TempValue0 = Object.RingsXOffSet
+	
+	// The fourth line holds the Rings text
+	DrawSpriteScreenXY(7, Object.LineXPos3, 145)
+	
+	// Append "Bonus" to the end of that Rings text
+	TempValue0 = Object.LineXPos3
 	TempValue0 += 40
 	DrawSpriteScreenXY(9, TempValue0, 145)
+	
+	// And on the same line, draw the Ring Bonus
 	TempValue0 += 123
 	DrawNumbers(10, TempValue0, 145, Object.RingBonus, 5, 8, 0)
-
-	// Time Bonus
-	DrawSpriteScreenXY(8, Object.TimeXOffSet, 169)
-	TempValue0 = Object.TimeXOffSet
+	
+	// The fifth line holds the Time Bonus
+	
+	// So, draw the "Time" sprite first
+	DrawSpriteScreenXY(8, Object.LineXPos4, 169)
+	
+	// And then similarly, append "Bonus" to that
+	TempValue0 = Object.LineXPos4
 	TempValue0 += 40
 	DrawSpriteScreenXY(9, TempValue0, 169)
+	
+	//And now, draw the Time Bonus numbers at the end of the line
 	TempValue0 += 123
 	DrawNumbers(10, TempValue0, 169, Object.TimeBonus, 5, 8, 0)
-end sub
+	
+endsub
 
 
 sub ObjectStartup
-	if Stage.PlayerListPos == 0
+	
+	// Load the appropriate sheet based on the current character
+	if Stage.PlayerListPos == PLAYER_SONIC
 		LoadSpriteSheet("Global/Display.gif")
 	else
 		LoadSpriteSheet("Global/Display_t.gif")
 	end if
 	
-	SpriteFrame(0, 0, 136, 16, 0, 206)		// #0  - Character Got
-	SpriteFrame(0, 0, 8, 16, 194, 223)		// #1  - Act 1
-	SpriteFrame(0, 0, 16, 16, 203, 223)		// #2  - Act 2
-	SpriteFrame(0, 0, 16, 16, 220, 223)		// #3  - Act 3
-	SpriteFrame(0, 0, 113, 16, 137, 206)	// #4  - Through
-	SpriteFrame(0, 0, 56, 16, 137, 223)		// #5  - Zone
-	SpriteFrame(0, 0, 39, 11, 1, 1)			// #6  - Score
-	SpriteFrame(0, 0, 31, 11, 1, 33)		// #7  - Rings
-	SpriteFrame(0, 0, 31, 11, 1, 17)		// #8  - Time
-	SpriteFrame(0, 0, 41, 11, 1, 107)		// #9  - Bonus
-	SpriteFrame(0, 0, 8, 11, 1, 50)			// #10 - 0
-	SpriteFrame(0, 0, 8, 11, 10, 50)		// #11 - 1
-	SpriteFrame(0, 0, 8, 11, 19, 50)		// #12 - 2
-	SpriteFrame(0, 0, 8, 11, 28, 50)		// #13 - 3
-	SpriteFrame(0, 0, 8, 11, 1, 62)			// #14 - 4
-	SpriteFrame(0, 0, 8, 11, 10, 62)		// #15 - 5
-	SpriteFrame(0, 0, 8, 11, 19, 62)		// #16 - 6
-	SpriteFrame(0, 0, 8, 11, 28, 62)		// #17 - 7
-	SpriteFrame(0, 0, 8, 11, 1, 74)			// #18 - 8
-	SpriteFrame(0, 0, 8, 11, 10, 74)		// #19 - 9
-	SpriteFrame(-60, 0, 256, 16, 0, 240)	// #20 - Sonic Made a Good
-	SpriteFrame(-12, 0, 136, 16, 0, 223)	// #21 - Future In
-end sub
+	// Act Results Frames
+	
+	// 0 - "SONIC GOT"
+	SpriteFrame(0,   0,   136, 16, 0,   206)
+	
+	// 1-3 - Act Numbers
+	SpriteFrame(0,   0,   8,   16, 194, 223)
+	SpriteFrame(0,   0,   16,  16, 203, 223)
+	SpriteFrame(0,   0,   16,  16, 220, 223)
+	
+	// 4 - "THROUGH"
+	SpriteFrame(0,   0,   113, 16, 137, 206)
+	
+	// 5 - "Zone"
+	SpriteFrame(0,   0,   56,  16, 137, 223)
+	
+	// 6 - Score text, cropped from normal the HUD sprite
+	SpriteFrame(0,   0,   39,  11, 1,   1)
+	
+	// 7 - Rings text, also cropped from normal HUD sprite
+	SpriteFrame(0,   0,   31,  11, 1,   33)
+	
+	// 8 - Time text, cropped from normal HUD sprite as well
+	SpriteFrame(0,   0,   31,  11, 1,   17)
+	
+	// 9 - Bonus text
+	SpriteFrame(0,   0,   41,  11, 1,   107)
+	
+	// 10-19 - Numbers
+	SpriteFrame(0,   0,   8,   11, 1,   50)
+	SpriteFrame(0,   0,   8,   11, 10,  50)
+	SpriteFrame(0,   0,   8,   11, 19,  50)
+	SpriteFrame(0,   0,   8,   11, 28,  50)
+	SpriteFrame(0,   0,   8,   11, 1,   62)
+	SpriteFrame(0,   0,   8,   11, 10,  62)
+	SpriteFrame(0,   0,   8,   11, 19,  62)
+	SpriteFrame(0,   0,   8,   11, 28,  62)
+	SpriteFrame(0,   0,   8,   11, 1,   74)
+	SpriteFrame(0,   0,   8,   11, 10,  74)
+	
+	// 20 - "SONIC MADE A GOOD"
+	SpriteFrame(-60, 0, 256,   16, 0,   240)
+	
+	// 21 - "FUTURE IN"
+	SpriteFrame(-12, 0, 136,   16, 0,   223)
+	
+endsub
+
 
 // ========================
 // Editor Subs
@@ -575,7 +940,7 @@ end sub
 
 sub RSDKLoad
 	LoadSpriteSheet("Global/Display.gif")
-	SpriteFrame(-16, -16, 32, 32, 1, 143)		// #0 - "Script" Icon
+	SpriteFrame(0, 0, 113, 16, 137, 206)
 
 	SetVariableAlias(ALIAS_VAR_PROPVAL, "unused")
 end sub
