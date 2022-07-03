@@ -5,14 +5,18 @@
 // Aliases
 #alias 61: TYPE_AMYROSE
 
+#alias Object.Value0 : Object.Timer
+// Value1 is unused, likely just XVelocity
+#alias Object.Value2 : Object.YVelocity
 
 sub ObjectMain
+	
 	switch Object.State
 	case 0
-		Object.Frame = Object.Value0
+		Object.Frame = Object.Timer
 		Object.Frame >>= 2
-		Object.Value0++
-		Object.Value0 %= 24
+		Object.Timer++
+		Object.Timer %= 24
 		Object.XPos += 81920
 		ObjectTileGrip(0, 0, 19, 0)
 		TempValue0 = Object[-1].XPos
@@ -20,40 +24,45 @@ sub ObjectMain
 		if Object.XPos > TempValue0
 			Object.Frame = 6
 			Object.XPos = TempValue0
-			Object.Value2 = -196608
+			Object.YVelocity = -196608
 			Object.State++
 		end if
 		break
+		
 	case 1
-		Object.Value2 += 16384
-		Object.YPos += Object.Value2
+		Object.YVelocity += 16384
+		Object.YPos += Object.YVelocity
 		ObjectTileCollision(0, 0, 19, 0)
-		if Object.Value2 > 0
+		if Object.YVelocity > 0
 			Object.Frame = 7
 		end if
-		if CheckResult == 1
+		
+		if CheckResult == true
 			Object.Frame = 6
-			Object.Value2 = -196608
+			Object.YVelocity = -196608
 			Object.State++
 		end if
 		break
+		
 	case 2
-		Object.Value2 += 16384
-		Object.YPos += Object.Value2
+		Object.YVelocity += 16384
+		Object.YPos += Object.YVelocity
 		ObjectTileCollision(0, 0, 19, 0)
-		if Object.Value2 > 0
+		if Object.YVelocity > 0
 			Object.Frame = 7
 		end if
-		if CheckResult == 1
-			Object.Value2 = 0
+		
+		if CheckResult == true
+			Object.YVelocity = 0
 			Object.State++
 		end if
 		break
+		
 	case 3
-		Object.Frame = Object.Value0
+		Object.Frame = Object.Timer
 		Object.Frame >>= 2
-		Object.Value0++
-		Object.Value0 %= 24
+		Object.Timer++
+		Object.Timer %= 24
 		Object.XPos += 81920
 		ObjectTileGrip(0, 0, 19, 0)
 		TempValue0 = Object[-1].XPos
@@ -63,36 +72,52 @@ sub ObjectMain
 			Object.State++
 		end if
 		break
+		
 	case 4
-		Object.Frame = Object.Value0
+		Object.Frame = Object.Timer
 		Object.Frame >>= 2
-		Object.Value0++
-		Object.Value0 %= 24
+		Object.Timer++
+		Object.Timer %= 24
 		Object.XPos += 81920
 		ObjectTileGrip(0, 0, 19, 0)
 		break
+		
 	end switch
+	
 end sub
 
 
 sub ObjectDraw
+	
 	if Stage.PlayerListPos == 0
 		DrawSpriteFX(Object.Frame, FX_FLIP, Object.XPos, Object.YPos)
 	end if
+	
 end sub
 
 
 sub ObjectStartup
+	
 	LoadSpriteSheet("R8/Objects3.gif")
+	
+	// Amy Frames
+	
+	// 0-5 - Walking Frames
 	SpriteFrame(-16, -20, 32, 40, 124, 174)
 	SpriteFrame(-16, -20, 32, 40, 157, 174)
 	SpriteFrame(-16, -20, 32, 40, 190, 174)
 	SpriteFrame(-16, -20, 32, 40, 223, 174)
 	SpriteFrame(-16, -20, 32, 40, 138, 215)
 	SpriteFrame(-16, -20, 32, 40, 171, 215)
+	
+	// 6 - Airborne Frame
 	SpriteFrame(-13, -20, 26, 40, 204, 215)
+	
+	// 7 - Hugging Frame 
 	SpriteFrame(-12, -20, 24, 40, 231, 215)
+	
 end sub
+
 
 // ========================
 // Editor Subs

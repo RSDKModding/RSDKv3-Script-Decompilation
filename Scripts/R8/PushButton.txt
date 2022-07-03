@@ -5,25 +5,27 @@
 // Aliases
 #alias 52: TYPE_PUSHBUTTON
 
+#alias Object.PropertyValue : Object.Pressed
 
 sub ObjectPlayerInteraction
-	if Object.PropertyValue == 0
+	
+	if Object.Pressed == false
 		if Player.YVelocity >= 0
 			PlayerObjectCollision(C_BOX, -16, -8, 16, 8)
 			if CheckResult == 1
-				Object.PropertyValue = 1
+				Object.Pressed = true
 				Player.YPos += 524288
 				PlayStageSfx(2, 0)
 			else
-				Object.PropertyValue = 0
+				Object.Pressed = false
 			end if
 		else
-			Object.PropertyValue = 0
+			Object.Pressed = false
 		end if
 	else
 		PlayerObjectCollision(C_TOUCH, -16, -1, 16, 8)
 		if CheckResult == 1
-			Object.PropertyValue = 1
+			Object.Pressed = true
 			Player.Gravity = 0
 			Player.YVelocity = 0
 			Player.YPos = Player.CollisionBottom
@@ -31,7 +33,8 @@ sub ObjectPlayerInteraction
 			Player.YPos <<= 16
 			Player.YPos += Object.YPos
 		else
-			Object.PropertyValue = 0
+			Object.Pressed = false
+			
 			if Player.YVelocity > -1
 				Player.Gravity = 0
 				Player.YVelocity = 0
@@ -66,8 +69,8 @@ sub RSDKDraw
 end sub
 
 sub RSDKLoad
-	LoadSpriteSheet("Global/Display.gif")
-	SpriteFrame(-16, -16, 32, 32, 1, 143)		// #0 - "Script" Icon
+	LoadSpriteSheet("R8/Objects.gif")
+	SpriteFrame(-16, -8, 32, 16, 142, 98)
 
 	SetVariableAlias(ALIAS_VAR_PROPVAL, "unused")
 end sub
