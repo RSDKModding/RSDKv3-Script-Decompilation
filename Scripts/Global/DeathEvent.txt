@@ -2,50 +2,100 @@
 //--------Scripted by Christian Whitehead 'The Taxman'--------//
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
+// TODO: object not done yet, i don't have enough of an understanding with Origins's variable stuff to do this yet
+
 // Aliases
-#alias Object.Value1	:	Object.Text1XPos	// Game or Time
-#alias Object.Value2	:	Object.Text2XPos	// Over
-#alias Object.Value3	:	Object.Timer		// Also used for fading
+#alias Object.Value1 : Object.Text1Pos
+#alias Object.Value2 : Object.Text2Pos
+
+#alias Object.Value3 : Object.Timer
 
 // States
-#alias 0				:	DEATHEVENT_GAMEOVER
-#alias 1				:	DEATHEVENT_TIMEOVER
-#alias 2				:	DEATHEVENT_RESTART
-#alias 3				:	DEATHEVENT_TIMEATTACK
+#alias 0 : DEATHEVENT_GAMEOVER
+#alias 1 : DEATHEVENT_TIMEOVER
+#alias 2 : DEATHEVENT_FADEOUT
+#alias 3 : DEATHEVENT_TIMEATTACK
+#alias 4 : DEATHEVENT_HOLDOVERRESTART
+#alias 5 : DEATHEVENT_FADEOUTRESTART
 
-// GameMode
-#alias 1				:	GAMEMODE_MAINGAME
+// Player Aliases
+#alias 0 : PLAYER_SONIC
+
+// Gamemode Aliases
+#alias 1 : GAMEMODE_MAINGAME
+
 
 sub ObjectMain
+	
 	switch Object.State
-	case DEATHEVENT_GAMEOVER
-	case DEATHEVENT_TIMEOVER
+	case 0
+		if game.playMode == BOOT_PLAYMODE_CLASSIC
+			CheckEqual(Object.Value6, false)
+			TempValue0 = CheckResult
+			CheckEqual(Stage.Minutes, 9)
+			TempValue0 &= CheckResult
+			CheckEqual(Stage.Seconds, 59)
+			TempValue0 &= CheckResult
+			CheckEqual(Stage.MilliSeconds, 99)
+			TempValue0 &= CheckResult
+			
+			TempValue0 |= game.timeOver
+			
+			if TempValue0 != false
+				Object.Value6 = true
+			end if
+		end if
+		
+		// No break is here, so fall through
+		
+	case 1
+		Object.Value6 |= Object.State
+		
+		// In Boss Rush, you can't Game Over (thankfully..?)
+		if game.playMode == BOOT_PLAYMODE_BOSSRUSH
+			Object.Type = TypeName[BlankObject]
+		end if
+		
 		TempValue0 = Screen.CenterX
-		TempValue0 -= 72
-		if Object.Text1XPos < TempValue0
-			Object.Text1XPos += 16
-			if Object.Text1XPos > TempValue0
-				Object.Text1XPos = TempValue0
+		TempValue0 -= 40
+		if Object.Text1Pos < TempValue0
+			Object.Text1Pos += 16
+			if Object.Text1Pos > TempValue0
+				Object.Text1Pos = TempValue0
 			end if
 		end if
-
+		
 		TempValue0 += 80
-		if Object.Text2XPos > TempValue0
-			Object.Text2XPos -= 16
-			if Object.Text2XPos < TempValue0
-				Object.Text2XPos = TempValue0
+		if Object.Text2Pos > TempValue0
+			Object.Text2Pos -= 16
+			if Object.Text2Pos < TempValue0
+				Object.Text2Pos = TempValue0
 			end if
 		end if
-
+		
 		if Object.Timer < 288
 			Object.Timer += 4
 		else
-			if Object.State == DEATHEVENT_GAMEOVER
-				Stage.ActiveList = PRESENTATION_STAGE
-				Stage.ListPos = 0	// Title Screen
+			if Object.Value6 == true
+				if LampPost.Check > 0
+					Rec_Milliseconds = 99
+					Rec_Seconds = 59
+					Rec_Minutes = 9
+					game.timeOver = true
+				else
+					Rec_Milliseconds = 0
+					Rec_Seconds = 0
+					Rec_Minutes = 0
+				end if
+			end if
+			
+			if Object.State == 0
+				Stage.ActiveList=PRESENTATION_STAGE
+				Stage.ListPos = 0
 				LampPost.Check = 0
 				Transporter_Destroyed = 0
 				MetalSonic_Destroyed = 0
+				
 				if Options.GameMode == GAMEMODE_MAINGAME
 					ArrayPos1 = Options.SaveSlot
 					ArrayPos1 <<= 3
@@ -53,47 +103,100 @@ sub ObjectMain
 					if SaveRAM[ArrayPos1] < 3
 						SaveRAM[ArrayPos1] = 3
 					end if
+					
 					WriteSaveRAM()
 				end if
 			end if
-
-			if Object.State == DEATHEVENT_TIMEOVER
-				Rec_Milliseconds = 0
-				Rec_Seconds = 0
-				Rec_Minutes = 0
+			
+			if Object.State == 0
+				game.callbackParam0 = game.timeOver
+				EngineCallback(NOTIFY_TIME_OVER)
 			end if
-
+			
+			if Object.State == 1
+				Player.deadResetRings = true
+			end if
+			
 			LoadStage()
 		end if
-
+		
 		if Object.Timer > 0
 			Music.Volume -= 2
 			SetScreenFade(0, 0, 0, Object.Timer)
 		else
-			if KeyPress.ButtonA == true
+			
+			// Looking at index 1? What's that for?
+			
+			if KeyPress[1].ButtonA == true
 				Object.Timer = 0
 			end if
-			if KeyPress.ButtonB == true
+			
+			if KeyPress[1].ButtonB == true
 				Object.Timer = 0
 			end if
-			if KeyPress.ButtonC == true
+			
+			if KeyPress[1].ButtonC == true
 				Object.Timer = 0
 			end if
+			
 		end if
-
 		break
-
-	case DEATHEVENT_RESTART
-		if Object.Timer < 288
-			Music.Volume -= 2
-			Object.Timer += 4
+		
+	case 2
+		CheckNotEqual(game.playMode, BOOT_PLAYMODE_BOSSRUSH)
+		TempValue0 = CheckResult
+		CheckNotEqual(game.oneStageFlag, false)
+		CheckResult &= TempValue0
+		
+		if CheckResult != 0
+			LampPost.Check = 0
+			Object.Value5 = Stage.ListPos
+			game.callbackResult = -1
+			game.callbackParam0 = 0
+			game.callbackParam1 = Object.Value5
+			game.callbackParam2 = 0
+			EngineCallback(NOTIFY_STAGE_RETRY)
+			
+			Object.State = 4
 		else
-			LoadStage()
+			if Object.Timer < 288
+				Music.Volume -= 2
+				Object.Timer += 4
+			else
+				Object.Value5 = Stage.ListPos
+				
+				switch Object[24].PropertyValue
+				case 0
+					break
+					
+				case 1
+					Object.Value5--
+					break
+					
+				case 2
+					Object.Value5 -= 2
+					break
+					
+				case 3
+					Object.Value5 -= 3
+					break
+					
+				end switch
+				
+				if game.playMode != BOOT_PLAYMODE_MISSION
+					LoadStage()
+				else
+					Stage.ListPos = Object.Value5
+				end if
+			end if
+			
+			SetScreenFade(0, 0, 0, Object.Timer)
 		end if
-		SetScreenFade(0, 0, 0, Object.Timer)
+		
+		Player.deadResetRings = true
 		break
-
-	case DEATHEVENT_TIMEATTACK
+		
+	case 3
 		if Object.Timer < 288
 			Music.Volume -= 2
 			Object.Timer += 4
@@ -101,41 +204,113 @@ sub ObjectMain
 			TimeAttack.Result = 0
 			LampPost.Check = 0
 			Stage.ActiveList = PRESENTATION_STAGE
-			Stage.ListPos = 2	// Menu
+			Stage.ListPos = 2
 			LoadStage()
 		end if
+		
+		SetScreenFade(0, 0, 0, Object.Timer)
+		
+		game.callbackParam0 = StageStatsUsabilityParam1
+		game.callbackParam1 = StageStatsUsabilityParam2
+		game.callbackParam2 = 0
+		EngineCallback(NOTIFY_STATS_ENEMY)
+		
+		game.callbackParam0 = StageStatsUsabilityParam3
+		EngineCallback(NOTIFY_STATS_PARAM_1)
+		
+		game.callbackParam0 = StageStatsUsabilityParam4
+		EngineCallback(NOTIFY_STATS_CHARA_ACTION)
+		
+		StageStatsUsabilityParam1 = 0
+		StageStatsUsabilityParam2 = 0
+		StageStatsUsabilityParam3 = 0
+		StageStatsUsabilityParam4 = 0
+		StatsUsabilityParam1 = 0
+		StatsUsabilityParam2 = 0
+		StatsUsabilityParam3 = 0
+		StatsUsabilityParam4 = 0
+		break
+		
+	case 4
+		if game.callbackResult >= 0
+			Object.Timer = 0
+			Object.State++
+		end if
+		break
+		
+	case 5
+		if Object.Timer < 288
+			Music.Volume -= 2
+			Object.Timer += 4
+		else
+			if game.callbackResult == false
+				Engine.State = 8
+			else
+				LoadStage()
+			end if
+		end if
+		
 		SetScreenFade(0, 0, 0, Object.Timer)
 		break
-
+		
 	end switch
+	
 end sub
 
 
 sub ObjectDraw
+	
 	switch Object.State
-	case DEATHEVENT_GAMEOVER
-		DrawSpriteScreenXY(0, Object.Text1XPos, 96)
-		DrawSpriteScreenXY(2, Object.Text2XPos, 96)
+	case 0
+		
+		// In Mirror Mode, draw the sprites in reverse so that it'll look correct when mirrored
+		if game.playMode == BOOT_PLAYMODE_MIRRORING
+			Object.Direction = FACING_LEFT
+			DrawSpriteScreenFX(2, FX_FLIP, Object.Text1Pos, 96)
+			DrawSpriteScreenFX(0, FX_FLIP, Object.Text2Pos, 96)
+		else
+			DrawSpriteScreenXY(0, Object.Text1Pos, 96)
+			DrawSpriteScreenXY(2, Object.Text2Pos, 96)
+		end if
 		break
-	case DEATHEVENT_TIMEOVER
-		DrawSpriteScreenXY(1, Object.Text1XPos, 96)
-		DrawSpriteScreenXY(2, Object.Text2XPos, 96)
+		
+	case 1
+		
+		// Mirror Mode's gonna flip everything, so let's flip ourselves first!
+		if game.playMode == BOOT_PLAYMODE_MIRRORING
+			Object.Direction = FACING_LEFT
+			DrawSpriteScreenFX(2, FX_FLIP, Object.Text1Pos, 96)
+			DrawSpriteScreenFX(1, FX_FLIP, Object.Text2Pos, 96)
+		else
+			DrawSpriteScreenXY(1, Object.Text1Pos, 96)
+			DrawSpriteScreenXY(2, Object.Text2Pos, 96)
+		end if
 		break
+		
 	end switch
+	
 end sub
 
 
 sub ObjectStartup
-	if Stage.PlayerListPos == 0		// PlayerName[SONIC]
+	
+	if Stage.PlayerListPos == PLAYER_SONIC
 		LoadSpriteSheet("Global/Display.gif")
 	else
 		LoadSpriteSheet("Global/Display_t.gif")
 	end if
 	
-	SpriteFrame(0, 0, 64, 16, 0, 189)		// #0 - Game
-	SpriteFrame(0, 0, 56, 16, 65, 189)		// #1 - Time
-	SpriteFrame(0, 0, 64, 16, 122, 189)		// #2 - Over
+	// 0 - "Game"
+	SpriteFrame(-32, 0, 64, 16, 0, 189)
+	
+	// 1 - "Time"
+	SpriteFrame(-28, 0, 56, 16, 65, 189)
+	
+	// 2 - "Over"
+	SpriteFrame(-32, 0, 64, 16, 122, 189)
+	
 end sub
+
 
 // ========================
 // Editor Subs
