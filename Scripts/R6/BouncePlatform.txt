@@ -3,34 +3,44 @@
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
 // Aliases
-#alias 37: TYPE_BOUNCEPLATFORM
+#alias Object.Value1	:	Object.YOriginPos
+#alias Object.Value2	:	Object.YVelocity
+#alias Object.Value3	:	Object.FloorYPos
+#alias Object.Value4	:	Object.FallSpeed
+
+// R6 Setup alias
+#alias Object[19].Scale :	R6Setup.BounceFloorFlag
 
 
 sub ObjectMain
-	Object.Value1 = Object.YPos
-	Object.Value2 += Object.Value4
-	Object.YPos += Object.Value2
+	Object.YOriginPos = Object.YPos
+
+	Object.YVelocity += Object.FallSpeed
+	Object.YPos += Object.YVelocity
+
 	ObjectTileCollision(0, 0, 16, 0)
-	if CheckResult == 1
-		if Object.Value4 == 4096
+	if CheckResult == true
+		if Object.FallSpeed == 4096
 			PlayStageSfx(3, 0)
 		end if
-		if Object[19].Scale == 1
-			Object.Value2 = -393216
-			Object.Value4 = 4096
+		if R6Setup.BounceFloorFlag == true
+			Object.YVelocity = -393216
+			Object.FallSpeed = 4096
 		else
-			Object.Value2 = -131072
-			Object.Value4 = 5256
+			Object.YVelocity = -131072
+			Object.FallSpeed = 5256
 		end if
 	end if
-	Object.Value3 = Object.YPos
-	Object.Value3 -= Object.Value1
+
+	Object.FloorYPos = Object.YPos
+	Object.FloorYPos -= Object.YOriginPos
 end sub
 
 
 sub ObjectPlayerInteraction
 	TempValue0 = Object.YPos
-	Object.YPos = Object.Value1
+	Object.YPos = Object.YOriginPos
+
 	TempValue1 = Object.XPos
 	TempValue1 -= Player.XPos
 	if TempValue1 < 0
@@ -39,11 +49,13 @@ sub ObjectPlayerInteraction
 	if TempValue1 > 2621440
 		PlayerObjectCollision(C_BOX, -32, -16, 32, 16)
 	end if
+
 	PlayerObjectCollision(C_PLATFORM, -32, -18, 32, 16)
-	if CheckResult == 1
-		Player.YPos += Object.Value3
+	if CheckResult == true
+		Player.YPos += Object.FloorYPos
 		Player.YPos += 131072
 	end if
+
 	Object.YPos = TempValue0
 end sub
 
@@ -55,14 +67,16 @@ end sub
 
 sub ObjectStartup
 	LoadSpriteSheet("R6/Objects.gif")
+
+	SpriteFrame(-32, -16, 64, 32, 132, 43)	// #0 - Bounce Platform
+
 	ArrayPos0 = 32
 	while ArrayPos0 < 1056
 		if Object[ArrayPos0].Type == TypeName[BouncePlatform]
-			Object[ArrayPos0].Value4 = 4096
+			Object[ArrayPos0].FallSpeed = 4096
 		end if
 		ArrayPos0++
 	loop
-	SpriteFrame(-32, -16, 64, 32, 132, 43)
 end sub
 
 // ========================

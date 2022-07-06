@@ -3,56 +3,71 @@
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
 // Aliases
-#alias 56: TYPE_BOSSBARRIER
+#alias Object.Value0	:	Object.BarrierHeight
+
+// States
+#alias 0	:	BOSSBARRIER_IDLE
+#alias 1	:	BOSSBARRIER_SETUP_BOSS
+#alias 2	:	BOSSBARRIER_CLOSE_DOOR
+#alias 3	:	BOSSBARRIER_CLOSED
 
 
 sub ObjectMain
 	switch Object.State
-	case 0
+	case BOSSBARRIER_IDLE
 		TempValue0 = Player.XPos
 		TempValue0 -= Object.XPos
 		if TempValue0 > 6291456
-			Object.State = 1
+			Object.State = BOSSBARRIER_SETUP_BOSS
 		end if
 		break
-	case 1
-		if Object.Value0 < 4194304
-			Object.Value0 += 131072
+
+	case BOSSBARRIER_SETUP_BOSS
+		if Object.BarrierHeight < 4194304
+			Object.BarrierHeight += 131072
 			Object.YPos += 131072
 		end if
+
 		TempValue0 = Player.XPos
 		TempValue0 -= Object.XPos
 		if TempValue0 > 8388608
-			Object.State = 2
+			Object.State = BOSSBARRIER_CLOSE_DOOR
+			
 			CreateTempObject(TypeName[FadeMusic], 0, Object.XPos, Object.YPos)
 			Stage.NewXBoundary1 = Object.iXPos
 			Stage.NewXBoundary1 -= 16
+
 			Stage.NewXBoundary2 = Stage.NewXBoundary1
 			Stage.NewXBoundary2 += 448
+
 			Object[+1].Type = TypeName[BossCamera]
 			Object[+1].Priority = 1
 			Object[+1].Value0 = -1
+
 			Object[+7].State = 1
 			Object[+7].Priority = 1
+
 			Object[+8].Type = TypeName[FloorControl]
 			Object[+8].Priority = 1
 			Object[+8].Value6 = -1
 		end if
 		break
-	case 2
-		if Object.Value0 < 4194304
-			Object.Value0 += 131072
+
+	case BOSSBARRIER_CLOSE_DOOR
+		if Object.BarrierHeight < 4194304
+			Object.BarrierHeight += 131072
 			Object.YPos += 131072
 		else
-			Object.State = 3
+			Object.State = BOSSBARRIER_CLOSED
 		end if
 		break
+
 	end switch
 end sub
 
 
 sub ObjectPlayerInteraction
-	if Object.Value0 < 4194304
+	if Object.BarrierHeight < 4194304
 		PlayerObjectCollision(C_BOX, -16, -32, 16, 32)
 	else
 		PlayerObjectCollision(C_BOX, -16, -32, 16, 64)
@@ -69,9 +84,10 @@ end sub
 
 sub ObjectStartup
 	LoadSpriteSheet("R6/Objects2.gif")
-	SpriteFrame(-16, -32, 32, 32, 173, 223)
-	SpriteFrame(-16, 0, 32, 32, 173, 223)
-	SpriteFrame(16, -6, 16, 32, 239, 183)
+	
+	SpriteFrame(-16, -32, 32, 32, 173, 223)	// #0 - Barrier Top
+	SpriteFrame(-16, 0, 32, 32, 173, 223)	// #1 - Barrier Bottom
+	SpriteFrame(16, -6, 16, 32, 239, 183)	// #2 - Boss Electrode
 end sub
 
 // ========================

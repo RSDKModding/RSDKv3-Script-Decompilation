@@ -3,98 +3,123 @@
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
 // Aliases
-#alias 65: TYPE_EGGMANSTATUE
+#alias Object.Value0	:	Object.Timer
+
+// Statue Bomb Aliases
+#alias Object.XPos		:	Bomb.XPos
+#alias Object.YPos		:	Bomb.YPos
+#alias Object.Value2	:	Bomb.YLandingPos
+
+// States
+#alias 0	:	EGGMANSTATUE_INACTIVE
+#alias 1	:	EGGMANSTATUE_DESTROYED
+#alias 2	:	EGGMANSTATUE_BOMB_DROP
 
 // Function declarations
-#function EggmanStatue_Function54
+#function EggmanStatue_HandleBombDrop
 
-function EggmanStatue_Function54
+
+function EggmanStatue_HandleBombDrop
 	TempValue2 = Object.YPos
 	TempValue2 += 2490368
 	CreateTempObject(TypeName[StatueBomb], 0, Object.XPos, Object.YPos)
-	Object[TempObjectPos].XPos -= 1572864
-	Object[TempObjectPos].YPos -= 14680064
-	Object[TempObjectPos].Value2 = TempValue2
+	Bomb[TempObjectPos].XPos -= 1572864
+	Bomb[TempObjectPos].YPos -= 14680064
+	Bomb[TempObjectPos].YLandingPos = TempValue2
+
 	CreateTempObject(TypeName[StatueBomb], 0, Object.XPos, Object.YPos)
-	Object[TempObjectPos].XPos -= 524288
-	Object[TempObjectPos].YPos -= 6291456
-	Object[TempObjectPos].Value2 = TempValue2
+	Bomb[TempObjectPos].XPos -= 524288
+	Bomb[TempObjectPos].YPos -= 6291456
+	Bomb[TempObjectPos].YLandingPos = TempValue2
+
 	CreateTempObject(TypeName[StatueBomb], 0, Object.XPos, Object.YPos)
-	Object[TempObjectPos].XPos += 524288
-	Object[TempObjectPos].YPos -= 10485760
-	Object[TempObjectPos].Value2 = TempValue2
+	Bomb[TempObjectPos].XPos += 524288
+	Bomb[TempObjectPos].YPos -= 10485760
+	Bomb[TempObjectPos].YLandingPos = TempValue2
+
 	CreateTempObject(TypeName[StatueBomb], 0, Object.XPos, Object.YPos)
-	Object[TempObjectPos].XPos += 1572864
-	Object[TempObjectPos].YPos -= 18874368
-	Object[TempObjectPos].Value2 = TempValue2
+	Bomb[TempObjectPos].XPos += 1572864
+	Bomb[TempObjectPos].YPos -= 18874368
+	Bomb[TempObjectPos].YLandingPos = TempValue2
+
 	CreateTempObject(TypeName[StatueBomb], 0, Object.XPos, Object.YPos)
-	Object[TempObjectPos].XPos += 2621440
-	Object[TempObjectPos].YPos -= 18874368
-	Object[TempObjectPos].Value2 = TempValue2
+	Bomb[TempObjectPos].XPos += 2621440
+	Bomb[TempObjectPos].YPos -= 18874368
+	Bomb[TempObjectPos].YLandingPos = TempValue2
+
 	CreateTempObject(TypeName[StatueBomb], 0, Object.XPos, Object.YPos)
-	Object[TempObjectPos].XPos += 3670016
-	Object[TempObjectPos].YPos -= 6291456
-	Object[TempObjectPos].Value2 = TempValue2
+	Bomb[TempObjectPos].XPos += 3670016
+	Bomb[TempObjectPos].YPos -= 6291456
+	Bomb[TempObjectPos].YLandingPos = TempValue2
+
 	CreateTempObject(TypeName[StatueBomb], 0, Object.XPos, Object.YPos)
-	Object[TempObjectPos].XPos += 4718592
-	Object[TempObjectPos].YPos -= 6291456
-	Object[TempObjectPos].Value2 = TempValue2
+	Bomb[TempObjectPos].XPos += 4718592
+	Bomb[TempObjectPos].YPos -= 6291456
+	Bomb[TempObjectPos].YLandingPos = TempValue2
+
 	CreateTempObject(TypeName[StatueBomb], 0, Object.XPos, Object.YPos)
-	Object[TempObjectPos].XPos += 5767168
-	Object[TempObjectPos].YPos -= 18874368
-	Object[TempObjectPos].Value2 = TempValue2
+	Bomb[TempObjectPos].XPos += 5767168
+	Bomb[TempObjectPos].YPos -= 18874368
+	Bomb[TempObjectPos].YLandingPos = TempValue2
+
 	CreateTempObject(TypeName[StatueBomb], 0, Object.XPos, Object.YPos)
-	Object[TempObjectPos].XPos += 6815744
-	Object[TempObjectPos].YPos -= 6291456
-	Object[TempObjectPos].Value2 = TempValue2
+	Bomb[TempObjectPos].XPos += 6815744
+	Bomb[TempObjectPos].YPos -= 6291456
+	Bomb[TempObjectPos].YLandingPos = TempValue2
+
 	CreateTempObject(TypeName[StatueBomb], 0, Object.XPos, Object.YPos)
-	Object[TempObjectPos].XPos += 7864320
-	Object[TempObjectPos].YPos -= 14680064
-	Object[TempObjectPos].Value2 = TempValue2
+	Bomb[TempObjectPos].XPos += 7864320
+	Bomb[TempObjectPos].YPos -= 14680064
+	Bomb[TempObjectPos].YLandingPos = TempValue2
 end function
 
 
 sub ObjectMain
 	switch Object.State
-	case 1
-		TempValue0 = Object.Value0
+	case EGGMANSTATUE_DESTROYED
+		TempValue0 = Object.Timer
 		TempValue0 &= 3
 		if TempValue0 == 0
 			Rand(TempValue0, 32)
 			TempValue0 -= 16
 			TempValue0 <<= 16
 			TempValue0 += Object.XPos
+
 			Rand(TempValue1, 48)
 			TempValue1 -= 24
 			TempValue1 <<= 16
 			TempValue1 += Object.YPos
+			
 			CreateTempObject(TypeName[Explosion], 0, TempValue0, TempValue1)
 			PlaySfx(22, 0)
 		end if
-		Object.Value0++
-		if Object.Value0 == 40
-			Object.Value0 = 0
+		
+		Object.Timer++
+		if Object.Timer == 40
+			Object.Timer = 0
 			Object.State++
 		end if
 		break
-	case 2
-		Object.Value0++
-		if Object.Value0 == 60
-			Object.Value0 = 0
-			CallFunction(EggmanStatue_Function54)
+
+	case EGGMANSTATUE_BOMB_DROP
+		Object.Timer++
+		if Object.Timer == 60
+			Object.Timer = 0
+			CallFunction(EggmanStatue_HandleBombDrop)
 			Object.Type = TypeName[Blank Object]
 		end if
 		break
+
 	end switch
 end sub
 
 
 sub ObjectPlayerInteraction
-	if Object.State == 0
+	if Object.State == EGGMANSTATUE_INACTIVE
 		if Player.Animation == ANI_JUMPING
 			PlayerObjectCollision(C_TOUCH, -16, -24, 16, 24)
-			if CheckResult == 1
-				Object.State = 1
+			if CheckResult == true
+				Object.State = EGGMANSTATUE_DESTROYED
 			end if
 		end if
 	end if
@@ -102,7 +127,7 @@ end sub
 
 
 sub ObjectDraw
-	if Object.State < 2
+	if Object.State < EGGMANSTATUE_BOMB_DROP
 		DrawSprite(0)
 	end if
 end sub
@@ -110,7 +135,8 @@ end sub
 
 sub ObjectStartup
 	LoadSpriteSheet("R6/Objects3.gif")
-	SpriteFrame(-20, -28, 40, 56, 81, 181)
+
+	SpriteFrame(-20, -28, 40, 56, 81, 181)	// Eggman Statue
 end sub
 
 // ========================

@@ -3,28 +3,40 @@
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
 // Aliases
-#alias 64: TYPE_EGGMANESCAPE
+#alias Object.Value0	:	Object.Timer
+#alias Object.Value1	:	Object.XVelocity
+
+// Destroyed Egg Mobile Alias
+#alias Object[-1].XPos	:	DestroyedMobile.XPos
+
+// States
+#alias 0				:	EGG_ESCAPE_FADE_IN
+#alias 1				:	EGG_ESCAPE_FLEE
+
+// Priority
+#alias 1				:	PRIORITY_ACTIVE
 
 
 sub ObjectMain
 	switch Object.State
-	case 0
-		Player.XPos = Object[-1].XPos
+	case EGG_ESCAPE_FADE_IN
+		Player.XPos = DestroyedMobile.XPos
 		Player.Speed = 0
-		if Object.Value0 < 120
-			Object.Value0++
+		if Object.Timer < 120
+			Object.Timer++
 		else
 			Player.Score += 1000
-			Object.Value0 = 0
-			Object.Priority = 1
-			Object.Value1 = 32768
+			Object.Timer = 0
+			Object.Priority = PRIORITY_ACTIVE
+			Object.XVelocity = 32768
 			Object.State++
 		end if
 		break
-	case 1
-		Object.Value1 += 3072
-		Object.XPos += Object.Value1
-		if Object.OutOfBounds == 1
+		
+	case EGG_ESCAPE_FLEE
+		Object.XVelocity += 3072
+		Object.XPos += Object.XVelocity
+		if Object.OutOfBounds == true
 			ResetObjectEntity(Object.EntityNo, TypeName[Blank Object], 0, 0, 0)
 		end if
 		break
@@ -36,16 +48,20 @@ sub ObjectDraw
 	TempValue0 = Object.Frame
 	TempValue0 /= 6
 	DrawSprite(TempValue0)
+
 	Object.Frame++
 	Object.Frame %= 24
+
 	TempValue0 = Object.AnimationTimer
 	TempValue0 /= 6
 	TempValue0 += 4
+
 	TempValue1 = Object.AnimationTimer
 	TempValue1 %= 6
 	if TempValue1 < 3
 		DrawSprite(TempValue0)
 	end if
+
 	Object.AnimationTimer++
 	Object.AnimationTimer %= 12
 end sub
@@ -53,12 +69,14 @@ end sub
 
 sub ObjectStartup
 	LoadSpriteSheet("R6/Objects2.gif")
-	SpriteFrame(-32, -25, 64, 48, 1, 170)
-	SpriteFrame(-32, -23, 48, 56, 66, 131)
-	SpriteFrame(-32, -21, 56, 56, 66, 199)
-	SpriteFrame(-32, -23, 48, 56, 66, 131)
-	SpriteFrame(-32, -36, 16, 16, 237, 1)
-	SpriteFrame(-32, -36, 16, 16, 181, 207)
+
+	SpriteFrame(-32, -25, 64, 48, 1, 170)	// #0 - Eggman Running Frame 0
+	SpriteFrame(-32, -23, 48, 56, 66, 131)	// #1 - Eggman Running Frame 1
+	SpriteFrame(-32, -21, 56, 56, 66, 199)	// #2 - Eggman Running Frame 2
+	SpriteFrame(-32, -23, 48, 56, 66, 131)	// #3 - Eggman Running Frame 3
+
+	SpriteFrame(-32, -36, 16, 16, 237, 1)	// #4 - Sweat Frame 0
+	SpriteFrame(-32, -36, 16, 16, 181, 207)	// #5 - Sweat Frame 1
 end sub
 
 // ========================

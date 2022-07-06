@@ -2,18 +2,29 @@
 //--------Scripted by Christian Whitehead 'The Taxman'--------//
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
-// Aliases
-#alias 59: TYPE_TILESWAPPER
+// Property Values
+#alias 0	:	CATWALK_W_TUBESWITCH
+#alias 1	:	CATWALK_3_CHUNKS
+#alias 2	:	CATWALK_4_CHUNKS
+#alias 3	:	TUNNEL
+
+// States
+#alias 0	:	TILESWAPPER_OUTSIDE_CHUNK
+#alias 1	:	TILESWAPPER_INSIDE_CHUNK
+
+// Priority
+#alias 0	:	PRIORITY_ACTIVE_BOUNDS
+#alias 1	:	PRIORITY_ACTIVE
 
 
 sub ObjectPlayerInteraction
 	switch Object.PropertyValue
-	case 0
-		if Object.State == 0
+	case CATWALK_W_TUBESWITCH
+		if Object.State == TILESWAPPER_OUTSIDE_CHUNK
 			PlayerObjectCollision(C_TOUCH, 0, -64, 64, 64)
-			if CheckResult == 1
-				Object.State = 1
-				Object.Priority = 1
+			if CheckResult == true
+				Object.State = TILESWAPPER_INSIDE_CHUNK
+				Object.Priority = PRIORITY_ACTIVE
 				TempValue0 = Object.XPos
 				TempValue0 >>= 23
 				TempValue1 = Object.YPos
@@ -32,9 +43,9 @@ sub ObjectPlayerInteraction
 			end if
 		else
 			PlayerObjectCollision(C_TOUCH, 0, -64, 692, 64)
-			if CheckResult == 0
-				Object.State = 0
-				Object.Priority = 0
+			if CheckResult == false
+				Object.State = TILESWAPPER_OUTSIDE_CHUNK
+				Object.Priority = PRIORITY_ACTIVE_BOUNDS
 				TempValue0 = Object.XPos
 				TempValue0 >>= 23
 				TempValue1 = Object.YPos
@@ -53,12 +64,13 @@ sub ObjectPlayerInteraction
 			end if
 		end if
 		break
-	case 1
-		if Object.State == 0
+		
+	case CATWALK_3_CHUNKS
+		if Object.State == TILESWAPPER_OUTSIDE_CHUNK
 			PlayerObjectCollision(C_TOUCH, -48, -64, -8, 64)
-			if CheckResult == 1
-				Object.State = 1
-				Object.Priority = 1
+			if CheckResult == true
+				Object.State = TILESWAPPER_INSIDE_CHUNK
+				Object.Priority = PRIORITY_ACTIVE
 				TempValue0 = Object.XPos
 				TempValue0 >>= 23
 				TempValue1 = Object.YPos
@@ -71,9 +83,9 @@ sub ObjectPlayerInteraction
 			end if
 		else
 			PlayerObjectCollision(C_TOUCH, 0, -64, 384, 64)
-			if CheckResult == 0
-				Object.State = 0
-				Object.Priority = 0
+			if CheckResult == false
+				Object.State = TILESWAPPER_OUTSIDE_CHUNK
+				Object.Priority = PRIORITY_ACTIVE_BOUNDS
 				TempValue0 = Object.XPos
 				TempValue0 >>= 23
 				TempValue1 = Object.YPos
@@ -86,12 +98,13 @@ sub ObjectPlayerInteraction
 			end if
 		end if
 		break
-	case 2
-		if Object.State == 0
+
+	case CATWALK_4_CHUNKS
+		if Object.State == TILESWAPPER_OUTSIDE_CHUNK
 			PlayerObjectCollision(C_TOUCH, -48, -64, -8, 64)
-			if CheckResult == 1
-				Object.State = 1
-				Object.Priority = 1
+			if CheckResult == true
+				Object.State = TILESWAPPER_INSIDE_CHUNK
+				Object.Priority = PRIORITY_ACTIVE
 				TempValue0 = Object.XPos
 				TempValue0 >>= 23
 				TempValue1 = Object.YPos
@@ -108,9 +121,9 @@ sub ObjectPlayerInteraction
 			end if
 		else
 			PlayerObjectCollision(C_TOUCH, 0, -64, 544, 64)
-			if CheckResult == 0
-				Object.State = 0
-				Object.Priority = 0
+			if CheckResult == false
+				Object.State = TILESWAPPER_OUTSIDE_CHUNK
+				Object.Priority = PRIORITY_ACTIVE_BOUNDS
 				TempValue0 = Object.XPos
 				TempValue0 >>= 23
 				TempValue1 = Object.YPos
@@ -127,12 +140,13 @@ sub ObjectPlayerInteraction
 			end if
 		end if
 		break
-	case 3
-		if Object.State == 0
+
+	case TUNNEL
+		if Object.State == TILESWAPPER_OUTSIDE_CHUNK
 			PlayerObjectCollision(C_TOUCH, 0, -64, 64, 64)
-			if CheckResult == 1
-				Object.State = 1
-				Object.Priority = 1
+			if CheckResult == true
+				Object.State = TILESWAPPER_INSIDE_CHUNK
+				Object.Priority = PRIORITY_ACTIVE
 				TempValue0 = Object.XPos
 				TempValue0 >>= 23
 				TempValue1 = Object.YPos
@@ -143,9 +157,9 @@ sub ObjectPlayerInteraction
 			end if
 		else
 			PlayerObjectCollision(C_TOUCH, 0, -64, 672, 64)
-			if CheckResult == 0
-				Object.State = 0
-				Object.Priority = 0
+			if CheckResult == false
+				Object.State = TILESWAPPER_OUTSIDE_CHUNK
+				Object.Priority = PRIORITY_ACTIVE_BOUNDS
 				TempValue0 = Object.XPos
 				TempValue0 >>= 23
 				TempValue1 = Object.YPos
@@ -156,6 +170,7 @@ sub ObjectPlayerInteraction
 			end if
 		end if
 		break
+		
 	end switch
 end sub
 

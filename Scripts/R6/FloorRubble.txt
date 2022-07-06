@@ -3,44 +3,51 @@
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
 // Aliases
-#alias 70: TYPE_FLOORRUBBLE
+#alias Object.Value0	:	Object.RubbleType
+#alias Object.Value1	:	Object.XVelocity
+#alias Object.Value2	:	Object.YVelocity
+#alias Object.Value3	:	Object.FallSpeed
 
 
 sub ObjectMain
-	Object.XPos += Object.Value1
-	Object.Value2 += Object.Value3
-	Object.YPos += Object.Value2
+	Object.XPos += Object.XVelocity
+	Object.YVelocity += Object.FallSpeed
+	Object.YPos += Object.YVelocity
+
 	if Object.PropertyValue == 0
 		ObjectTileCollision(0, 0, 8, 0)
-		if CheckResult == 1
+		if CheckResult == true
 			Object.Type = TypeName[Blank Object]
 			CreateTempObject(TypeName[FloorRubble], 2, Object.XPos, Object.YPos)
 			Object[TempObjectPos].XPos -= 262144
 			Object[TempObjectPos].YPos -= 262144
-			Object[TempObjectPos].Value1 = -65536
-			Object[TempObjectPos].Value2 = -163840
-			Object[TempObjectPos].Value3 = 12288
+			Object[TempObjectPos].XVelocity = -65536
+			Object[TempObjectPos].YVelocity = -163840
+			Object[TempObjectPos].FallSpeed = 12288
+
 			CreateTempObject(TypeName[FloorRubble], 3, Object.XPos, Object.YPos)
 			Object[TempObjectPos].XPos += 262144
 			Object[TempObjectPos].YPos -= 262144
-			Object[TempObjectPos].Value1 = 65536
-			Object[TempObjectPos].Value2 = -163840
-			Object[TempObjectPos].Value3 = 12288
+			Object[TempObjectPos].XVelocity = 65536
+			Object[TempObjectPos].YVelocity = -163840
+			Object[TempObjectPos].FallSpeed = 12288
+
 			CreateTempObject(TypeName[FloorRubble], 4, Object.XPos, Object.YPos)
 			Object[TempObjectPos].XPos -= 262144
 			Object[TempObjectPos].YPos += 262144
-			Object[TempObjectPos].Value1 = -131072
-			Object[TempObjectPos].Value2 = -114688
-			Object[TempObjectPos].Value3 = 12288
+			Object[TempObjectPos].XVelocity = -131072
+			Object[TempObjectPos].YVelocity = -114688
+			Object[TempObjectPos].FallSpeed = 12288
+
 			CreateTempObject(TypeName[FloorRubble], 5, Object.XPos, Object.YPos)
 			Object[TempObjectPos].XPos += 262144
 			Object[TempObjectPos].YPos += 262144
-			Object[TempObjectPos].Value1 = 131072
-			Object[TempObjectPos].Value2 = -114688
-			Object[TempObjectPos].Value3 = 12288
+			Object[TempObjectPos].XVelocity = 131072
+			Object[TempObjectPos].YVelocity = -114688
+			Object[TempObjectPos].FallSpeed = 12288
 		end if
 	else
-		if Object.OutOfBounds == 1
+		if Object.OutOfBounds == true
 			Object.Type = TypeName[Blank Object]
 		end if
 	end if
@@ -49,11 +56,12 @@ end sub
 
 sub ObjectDraw
 	if Object.PropertyValue == 0
-		TempValue0 = Object.Value0
+		TempValue0 = Object.RubbleType
 		TempValue0 /= 10
 		DrawSprite(TempValue0)
-		Object.Value0++
-		Object.Value0 %= 20
+
+		Object.RubbleType++
+		Object.RubbleType %= 20
 	else
 		DrawSprite(Object.PropertyValue)
 	end if
@@ -62,12 +70,13 @@ end sub
 
 sub ObjectStartup
 	LoadSpriteSheet("R6/Objects2.gif")
-	SpriteFrame(-8, -8, 16, 16, 165, 191)
-	SpriteFrame(-8, -8, 16, 16, 181, 191)
-	SpriteFrame(-4, -4, 8, 8, 165, 191)
-	SpriteFrame(-4, -4, 8, 8, 173, 191)
-	SpriteFrame(-4, -4, 8, 8, 165, 199)
-	SpriteFrame(-4, -4, 8, 8, 173, 199)
+
+	SpriteFrame(-8, -8, 16, 16, 165, 191)	// #0 - Big rubble
+	SpriteFrame(-8, -8, 16, 16, 181, 191)	// #1 - Big rubble alt
+	SpriteFrame(-4, -4, 8, 8, 165, 191)		// #2 - Rubble chunk 1
+	SpriteFrame(-4, -4, 8, 8, 173, 191)		// #3 - Rubble chunk 2
+	SpriteFrame(-4, -4, 8, 8, 165, 199)		// #4 - Rubble chunk alt 1
+	SpriteFrame(-4, -4, 8, 8, 173, 199)		// #5 - Rubble chunk alt 2
 end sub
 
 // ========================

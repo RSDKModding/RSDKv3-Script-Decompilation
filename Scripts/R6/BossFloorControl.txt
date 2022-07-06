@@ -3,109 +3,161 @@
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
 // Aliases
-#alias 65: TYPE_FLOORCONTROL
+#alias Object.Value0	:	Object.Timer
+#alias Object.Value1	:	Object.XVelocity
+#alias Object.Value3	:	Object.RubbleTimer
+#alias Object.Value4	:	Object.RubbleYPos
+#alias Object.Value5	:	Object.TargetFloor
+#alias Object.Value6	:	Object.CurrentFloor
+#alias Object.Value7	:	Object.PlatformTimer
+#alias Object.Scale		:	Object.SpikeAmount
+
+#alias Object[-7].YPos	:	BossCamera.YPos
+#alias Object[-1].XPos	:	Boss.XPos
+#alias Object[-1].YPos	:	Boss.YPos
+
+#alias Object.YPos		:	BossPlat.YPos
+#alias Object.Value2	:	BossPlat.YVelocity
+#alias Object.Value3	:	BossPlat.FallSpeed
+#alias Object.Value5	:	BossPlat.FCEntityNo
+
+#alias Object.XPos		:	FloorRubble.XPos
+#alias Object.Value1	:	FloorRubble.XVelocity
+#alias Object.Value2	:	FloorRubble.YVelocity
+#alias Object.Value3	:	FloorRubble.FallSpeed
+
+// HUD aliases
+#alias Object[24].PropertyValue	:	HUD.TimePeriod
+
+// Time Periods
+#alias 2				:	GOOD_FUTURE
+
+// States
+#alias 0				:	FLOORCONTROL_INACTIVE
+#alias 1				:	FLOORCONTROL_SETUP_CRUMBLE
+#alias 2				:	FLOORCONTROL_SPAWN_FALL_OBJS
+#alias 3				:	FLOORCONTROL_ELEC_ARC
+#alias 4				:	FLOORCONTROL_TILE_SWAP
+#alias 5				:	FLOORCONTROL_COOLDOWN
+
 
 // Function declarations
-#function SteamCloud_Function56
-#function SteamCloud_Function57
-#function SteamCloud_Function58
-#function SteamCloud_Function59
-#function SteamCloud_Function60
+#function FloorControl_SpawnRubble
+#function FloorControl_SpawnPlatFarLeft
+#function FloorControl_SpawnPlatLeft
+#function FloorControl_SpawnPlatRight
+#function FloorControl_SpawnPlatFarRight
 
-function SteamCloud_Function56
-	CreateTempObject(TypeName[FloorRubble], 0, Object[-1].XPos, Object.Value4)
-	Rand(Object[TempObjectPos].XPos, 160)
-	Object[TempObjectPos].XPos -= 80
-	Object[TempObjectPos].XPos <<= 16
-	Object[TempObjectPos].XPos += Object[-1].XPos
-	Rand(Object[TempObjectPos].Value1, 1280)
-	TempValue0 = Object[TempObjectPos].Value1
-	Object[TempObjectPos].Value1 -= 640
-	Object[TempObjectPos].Value1 <<= 8
-	Object[TempObjectPos].Value2 = 65536
-	Object[TempObjectPos].Value3 = 2048
+
+function FloorControl_SpawnRubble
+	CreateTempObject(TypeName[FloorRubble], 0, Boss.XPos, Object.RubbleYPos)
+	Rand(FloorRubble[TempObjectPos].XPos, 160)
+	FloorRubble[TempObjectPos].XPos -= 80
+	FloorRubble[TempObjectPos].XPos <<= 16
+	FloorRubble[TempObjectPos].XPos += Boss.XPos
+
+	Rand(FloorRubble[TempObjectPos].XVelocity, 1280)
+	TempValue0 = FloorRubble[TempObjectPos].XVelocity
+	FloorRubble[TempObjectPos].XVelocity -= 640
+	FloorRubble[TempObjectPos].XVelocity <<= 8
+
+	FloorRubble[TempObjectPos].YVelocity = 65536
+	
+	FloorRubble[TempObjectPos].FallSpeed = 2048
 	TempValue0 &= 4095
-	Object[TempObjectPos].Value3 += TempValue0
+	FloorRubble[TempObjectPos].FallSpeed += TempValue0
 end function
 
 
-function SteamCloud_Function57
-	switch Object.Value5
+function FloorControl_SpawnPlatFarLeft
+	switch Object.TargetFloor
 	case 0
 		ArrayPos0 = 2
 		break
+
 	case 1
 		ArrayPos0 = 5
 		break
+
 	case 2
 		ArrayPos0 = 11
 		break
 	end switch
+	
 	Object[+ArrayPos0].Type = TypeName[BossPlatform]
-	Object[+ArrayPos0].YPos = Object.Value4
-	Object[+ArrayPos0].Value2 = 0
-	Object[+ArrayPos0].Value3 = 2816
-	Object[+ArrayPos0].Value5 = Object.EntityNo
+	BossPlat[+ArrayPos0].YPos = Object.RubbleYPos
+	BossPlat[+ArrayPos0].YVelocity = 0
+	BossPlat[+ArrayPos0].FallSpeed = 2816
+	BossPlat[+ArrayPos0].FCEntityNo = Object.EntityNo
 end function
 
 
-function SteamCloud_Function58
-	switch Object.Value5
+function FloorControl_SpawnPlatLeft
+	switch Object.TargetFloor
 	case 0
 		ArrayPos0 = 3
 		break
+
 	case 1
 		ArrayPos0 = 6
 		break
+
 	case 2
 		ArrayPos0 = 12
 		break
 	end switch
+
 	Object[+ArrayPos0].Type = TypeName[BossPlatform]
-	Object[+ArrayPos0].YPos = Object.Value4
-	Object[+ArrayPos0].Value2 = 0
-	Object[+ArrayPos0].Value3 = 2816
-	Object[+ArrayPos0].Value5 = Object.EntityNo
+	BossPlat[+ArrayPos0].YPos = Object.RubbleYPos
+	BossPlat[+ArrayPos0].YVelocity = 0
+	BossPlat[+ArrayPos0].FallSpeed = 2816
+	BossPlat[+ArrayPos0].FCEntityNo = Object.EntityNo
 end function
 
 
-function SteamCloud_Function59
-	switch Object.Value5
+function FloorControl_SpawnPlatRight
+	switch Object.TargetFloor
 	case 0
 		ArrayPos0 = 1
 		break
+
 	case 1
 		ArrayPos0 = 7
 		break
+
 	case 2
 		ArrayPos0 = 10
 		break
 	end switch
+
 	Object[+ArrayPos0].Type = TypeName[BossPlatform]
-	Object[+ArrayPos0].YPos = Object.Value4
-	Object[+ArrayPos0].Value2 = 0
-	Object[+ArrayPos0].Value3 = 2816
-	Object[+ArrayPos0].Value5 = Object.EntityNo
+	BossPlat[+ArrayPos0].YPos = Object.RubbleYPos
+	BossPlat[+ArrayPos0].YVelocity = 0
+	BossPlat[+ArrayPos0].FallSpeed = 2816
+	BossPlat[+ArrayPos0].FCEntityNo = Object.EntityNo
 end function
 
 
-function SteamCloud_Function60
-	switch Object.Value5
+function FloorControl_SpawnPlatFarRight
+	switch Object.TargetFloor
 	case 0
 		ArrayPos0 = 4
 		break
+
 	case 1
 		ArrayPos0 = 8
 		break
+		
 	case 2
 		ArrayPos0 = 9
 		break
 	end switch
+
 	Object[+ArrayPos0].Type = TypeName[BossPlatform]
-	Object[+ArrayPos0].YPos = Object.Value4
-	Object[+ArrayPos0].Value2 = 0
-	Object[+ArrayPos0].Value3 = 2816
-	Object[+ArrayPos0].Value5 = Object.EntityNo
+	BossPlat[+ArrayPos0].YPos = Object.RubbleYPos
+	BossPlat[+ArrayPos0].YVelocity = 0
+	BossPlat[+ArrayPos0].FallSpeed = 2816
+	BossPlat[+ArrayPos0].FCEntityNo = Object.EntityNo
 end function
 
 
@@ -115,159 +167,178 @@ sub ObjectMain
 			Player.Timer = 360
 		end if
 	end if
-	TempValue0 = Object[-7].YPos
+	TempValue0 = BossCamera.YPos
 	TempValue0 += 8388608
 	TempValue0 -= Player.YPos
 	TempValue0 >>= 25
-	if TempValue0 < Object.Value6
-		switch Object.Value5
+
+	if TempValue0 < Object.CurrentFloor
+		//Restore the chunks to their turned off versions
+		switch Object.TargetFloor
 		case 0
 			SetTileLayerEntry(500, 0, 20, 9)
 			SetTileLayerEntry(501, 0, 21, 9)
 			SetTileLayerEntry(506, 0, 22, 9)
+		case 1
 			SetTileLayerEntry(500, 0, 20, 5)
 			SetTileLayerEntry(501, 0, 21, 5)
 			SetTileLayerEntry(502, 0, 22, 5)
 			break
 		end switch
-		Object.Value6 = Object.Value5
-		end if
-		switch Object.State
-		case 1
-			if Object.Value0 < 90
-				Object.Value0++
-			else
-				Object.Value5 = Object[-7].YPos
-				Object.Value5 -= Object[-1].YPos
-				Object.Value5 >>= 25
-				switch Object.Value5
-				case 0
-					Object.Value4 = 93061120
-					Object.Scale = 0
-					break
-				case 1
-					Object.Value4 = 59506688
-					Object.Scale = 0
-					break
-				case 2
-					Object.Value4 = 25952256
-					Object.Scale = 6
-					if Player.XPos > Object[-1].XPos
-						Object.Value1 = 10485760
-					else
-						Object.Value1 = -10485760
-					end if
-					break
-				end switch
-				PlayStageSfx(12, 0)
-#platform: Use_Haptics
-				HapticEffect(77, 0, 0, 0)
-#endplatform
-				Object.Value0 = 0
-				Object.Value3 = 24
-				Object.Value7 = 0
-				Object.State++
-			end if
-			break
-		case 2
-			Object.Value7++
-			if Object.Value7 == 128
-				CallFunction(SteamCloud_Function57)
-			end if
-			if Object.Value7 == 148
-				CallFunction(SteamCloud_Function58)
-			end if
-			if Object.Value7 == 168
-				CallFunction(SteamCloud_Function59)
-			end if
-			if Object.Value7 == 188
-				CallFunction(SteamCloud_Function60)
-			end if
-			TempValue0 = Object.Value7
-			TempValue0 &= 3
-			if TempValue0 == 0
-				Screen.ShakeY = 2
-			end if
-			if Object.Scale > 0
-				TempValue0 = Object.Value7
-				TempValue0 %= 35
-				if TempValue0 == 0
-					Object.Scale--
-					CreateTempObject(TypeName[BossSpike], 0, 180355072, Object.Value4)
-					Object[TempObjectPos].XPos += Object.Value1
-					if Object.Value1 > 0
-						Object.Value1 -= 2097152
-					else
-						Object.Value1 += 2097152
-					end if
-				end if
-			end if
-			Object.Value0++
-			if Object.Value0 == 16
-				Object.Value0 = 0
-				CallFunction(SteamCloud_Function56)
-				if Object.Value3 > 0
-					Object.Value3--
-				else
-					Object.State++
-				end if
-			end if
-			break
-		case 3
-			if Object.Value0 == 30
-				PlayStageSfx(1, 0)
-				Object.Value5 = Object[-7].YPos
-				Object.Value5 -= Player.YPos
-				Object.Value5 >>= 25
-				if Object.Value6 < Object.Value5
-					Object.Value6 = Object.Value5
-					CreateTempObject(TypeName[ElectricArc], 0, Object[-1].XPos, Object[-6].YPos)
-					TempValue0 = Object.Value5
-					TempValue0 <<= 25
-					TempValue0 += 131072
-					Object[TempObjectPos].YPos -= TempValue0
-					Object[TempObjectPos].Direction = FACING_LEFT
-					Object[TempObjectPos].DrawOrder = 4
-				end if
-			end if
-			Object.Value0++
-			if Object.Value0 == 60
-				Object.Value0 = 0
-				Object.State++
-			end if
-			break
-		case 4
-			Object.Value0++
-			if Object.Value0 == 60
-				Object.Value0 = 0
-				Object.State++
-				if Object[24].PropertyValue == 2
-					Copy16x16Tile(739, 827)
-				else
-					Copy16x16Tile(810, 863)
-				end if
-			else
-				TempValue0 = Object.Value0
-				TempValue0 >>= 1
-				TempValue0 %= 5
-				if Object[24].PropertyValue == 2
-					TempValue0 += 826
-					Copy16x16Tile(739, TempValue0)
-				else
-					TempValue0 += 862
-					Copy16x16Tile(810, TempValue0)
-				end if
-			end if
-			break
-		case 5
-			Object.Value0++
-			if Object.Value0 == 420
-				Object.Value0 = 0
-				Object.State = 3
-			end if
-			break
-		end switch
+		Object.CurrentFloor = Object.TargetFloor
 	end if
+
+	switch Object.State
+	case 1
+		if Object.Timer < 90
+			Object.Timer++
+		else
+			Object.TargetFloor  = BossCamera.YPos
+			Object.TargetFloor -= Boss.YPos
+			Object.TargetFloor >>= 25
+
+			switch Object.TargetFloor
+			case 0
+				Object.RubbleYPos = 93061120
+				Object.SpikeAmount = 0
+				break
+			case 1
+				Object.RubbleYPos = 59506688
+				Object.SpikeAmount = 0
+				break
+			case 2
+				Object.RubbleYPos = 25952256
+				Object.SpikeAmount = 6
+				if Player.XPos > Object[-1].XPos
+					Object.XVelocity = 10485760
+				else
+					Object.XVelocity = -10485760
+				end if
+				break
+
+			end switch
+
+			PlayStageSfx(12, 0)
+#platform: Use_Haptics
+			HapticEffect(77, 0, 0, 0)
+#endplatform
+			Object.Timer = 0
+			Object.RubbleTimer = 24
+			Object.PlatformTimer = 0
+			
+			Object.State++
+		end if
+		break
+
+	case FLOORCONTROL_SPAWN_FALL_OBJS
+		Object.PlatformTimer++
+		if Object.PlatformTimer == 128
+			CallFunction(FloorControl_SpawnPlatFarLeft)
+		end if
+
+		if Object.PlatformTimer == 148
+			CallFunction(FloorControl_SpawnPlatLeft)
+		end if
+
+		if Object.PlatformTimer == 168
+			CallFunction(FloorControl_SpawnPlatRight)
+		end if
+
+		if Object.PlatformTimer == 188
+			CallFunction(FloorControl_SpawnPlatFarRight)
+		end if
+
+		TempValue0 = Object.PlatformTimer
+		TempValue0 &= 3
+		if TempValue0 == 0
+			Screen.ShakeY = 2
+		end if
+
+		if Object.SpikeAmount > 0
+			TempValue0 = Object.PlatformTimer
+			TempValue0 %= 35
+			if TempValue0 == 0
+				Object.SpikeAmount--
+				CreateTempObject(TypeName[BossSpike], 0, 180355072, Object.RubbleYPos)
+				Object[TempObjectPos].XPos += Object.XVelocity
+				if Object.XVelocity > 0
+					Object.XVelocity -= 2097152
+				else
+					Object.XVelocity += 2097152
+				end if
+			end if
+		end if
+
+		Object.Timer++
+		if Object.Timer == 16
+			Object.Timer = 0
+			CallFunction(FloorControl_SpawnRubble)
+			if Object.RubbleTimer > 0
+				Object.RubbleTimer--
+			else
+				Object.State++
+			end if
+		end if
+		break
+
+	case FLOORCONTROL_ELEC_ARC
+		if Object.Timer == 30
+			PlayStageSfx(1, 0)
+			Object.TargetFloor = BossCamera.YPos
+			Object.TargetFloor -= Player.YPos
+			Object.TargetFloor >>= 25
+			if Object.CurrentFloor < Object.TargetFloor
+				Object.CurrentFloor = Object.TargetFloor
+				CreateTempObject(TypeName[ElectricArc], 0, Object[-1].XPos, Object[-6].YPos)
+				TempValue0 = Object.TargetFloor
+				TempValue0 <<= 25
+				TempValue0 += 131072
+				Object[TempObjectPos].YPos -= TempValue0
+				Object[TempObjectPos].Direction = FACING_LEFT
+				Object[TempObjectPos].DrawOrder = 4
+			end if
+		end if
+
+		Object.Timer++
+		if Object.Timer == 60
+			Object.Timer = 0
+			Object.State++
+		end if
+		break
+
+	case FLOORCONTROL_TILE_SWAP
+		Object.Timer++
+		if Object.Timer == 60
+			Object.Timer = 0
+			Object.State++
+			if HUD.TimePeriod == GOOD_FUTURE
+				Copy16x16Tile(739, 827)
+			else
+				Copy16x16Tile(810, 863)
+			end if
+		else
+			TempValue0 = Object.Timer
+			TempValue0 >>= 1
+			TempValue0 %= 5
+			if HUD.TimePeriod == GOOD_FUTURE
+				TempValue0 += 826
+				Copy16x16Tile(739, TempValue0)
+			else
+				TempValue0 += 862
+				Copy16x16Tile(810, TempValue0)
+			end if
+		end if
+		break
+
+	case FLOORCONTROL_COOLDOWN
+		Object.Timer++
+		if Object.Timer == 420
+			Object.Timer = 0
+			Object.State = FLOORCONTROL_ELEC_ARC
+		end if
+		break
+
+	end switch
 end sub
 
 

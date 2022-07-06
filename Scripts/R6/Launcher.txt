@@ -3,75 +3,105 @@
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
 // Aliases
-#alias 48: TYPE_LAUNCHER
+#alias Object.Value0	:	Object.Timer
+#alias Object.Value1	:	Object.OriginXPos
+
+// States
+#alias 0				:	LAUNCHER_IDLE
+#alias 1				:	LAUNCHER_DASH
+#alias 2				:	LAUNCHER_EJECT_PLAYER
+#alias 3				:	LAUNCHER_RECOIL
+#alias 4				:	LAUNCHER_RESET
+
+// Priority
+#alias 0				:	PRIORITY_ACTIVE_BOUNDS
+#alias 1				:	PRIORITY_ACTIVE
+
+// Gravity
+#alias 1				:	GRAVITY_AIR
 
 
 sub ObjectMain
 	if Player.State != PlayerObject_Blank
-		Object.State = 0
-		Object.Value0 = 0
+		Object.State = LAUNCHER_IDLE
+		Object.Timer = 0
 	end if
+
 	switch Object.State
-	case 1
+	case LAUNCHER_DASH
 		Object.XPos += 786432
 		Player.XPos = Object.XPos
+
 		Player.iYPos = Player.CollisionBottom
 		FlipSign(Player.YPos)
 		Player.YPos -= 196608
 		Player.YPos += Object.YPos
+
 		ObjectTileGrip(0, 32, 4, 0)
-		if CheckResult == 0
+		if CheckResult == false
 			Object.State++
 		end if
 		break
-	case 2
+
+	case LAUNCHER_EJECT_PLAYER
 		Player.XPos += 786432
+
 		Player.iYPos = Player.CollisionBottom
 		FlipSign(Player.YPos)
 		Player.YPos -= 196608
 		Player.YPos += Object.YPos
 		Object.State++
 		break
-	case 3
-		if Object.Value0 == 0
+
+	case LAUNCHER_RECOIL
+		if Object.Timer == 0
 			Player.XPos += 786432
 		end if
+
 		Player.State = PlayerObject_HandleAir
+
 		Player.Animation = ANI_WALKING
+
 		Player.Speed = 794624
 		Player.XVelocity = 794624
+
 		Player.iYPos = Player.CollisionBottom
 		FlipSign(Player.YPos)
 		Player.YPos -= 196608
 		Player.YPos += Object.YPos
-		if Object.Value0 < 2
-			Object.Value0++
+
+		if Object.Timer < 2
+			Object.Timer++
 		else
 			Object.State++
 		end if
+
 		Object.XPos -= 262144
-		if Object.XPos < Object.Value1
-			Object.XPos = Object.Value1
-			Object.Priority = 0
-			Object.State = 0
+		if Object.XPos < Object.OriginXPos
+			Object.XPos = Object.OriginXPos
+			Object.Priority = PRIORITY_ACTIVE_BOUNDS
+			Object.State = LAUNCHER_IDLE
 		end if
-		if Object.OutOfBounds == 1
-			Object.XPos = Object.Value1
-			Object.Priority = 0
-			Object.State = 0
+
+		if Object.OutOfBounds == true
+			Object.XPos = Object.OriginXPos
+			Object.Priority = PRIORITY_ACTIVE_BOUNDS
+			Object.State = LAUNCHER_IDLE
 		end if
 		break
-	case 4
+
+	case LAUNCHER_RESET
 		Object.XPos -= 262144
-		if Object.XPos < Object.Value1
-			Object.XPos = Object.Value1
-			Object.Priority = 0
-			Object.State = 0
+		if Object.XPos < Object.OriginXPos
+			Object.XPos = Object.OriginXPos
+			Object.Priority = PRIORITY_ACTIVE_BOUNDS
+			Object.State = LAUNCHER_IDLE
 		end if
-		if Object.OutOfBounds == 1
-			Object.XPos = Object.Value1
-			Object.Priority = 0
-			Object.State = 0
+		
+		if Object.OutOfBounds == true
+			Object.XPos = Object.OriginXPos
+			Object.Priority = PRIORITY_ACTIVE_BOUNDS
+			Object.State = LAUNCHER_IDLE
 		end if
 		break
 	end switch
@@ -79,23 +109,27 @@ end sub
 
 
 sub ObjectPlayerInteraction
-	if Object.State == 0
+	if Object.State == LAUNCHER_IDLE
 		PlayerObjectCollision(C_BOX, -24, -26, -18, 4)
 		PlayerObjectCollision(C_TOUCH, -20, -16, 20, 4)
-		if CheckResult == 1
-			Object.State = 1
+		if CheckResult == true
+			Object.State = LAUNCHER_DASH
 			Player.State = PlayerObject_Blank
+
 			Player.Animation = ANI_LAUNCHER
 			Player.Direction = FACING_RIGHT
+
 			Player.XPos = Object.XPos
 			Player.iYPos = Player.CollisionBottom
 			FlipSign(Player.YPos)
 			Player.YPos -= 196608
 			Player.YPos += Object.YPos
+
 			Player.YVelocity = 0
-			Object.Priority = 1
-			Player.TrackScroll = 0
-			Player.Gravity = 1
+
+			Object.Priority = PRIORITY_ACTIVE
+			Player.TrackScroll = false
+			Player.Gravity = GRAVITY_AIR
 			PlayStageSfx(6, 0)
 #platform: Use_Haptics
 			HapticEffect(30, 0, 0, 0)
@@ -112,11 +146,13 @@ end sub
 
 sub ObjectStartup
 	LoadSpriteSheet("R6/Objects.gif")
-	SpriteFrame(-28, -28, 56, 32, 83, 1)
+	
+	SpriteFrame(-28, -28, 56, 32, 83, 1)	// #0 - Launcher
+
 	ArrayPos0 = 32
 	while ArrayPos0 < 1056
 		if Object[ArrayPos0].Type == TypeName[Launcher]
-			Object[ArrayPos0].Value1 = Object[ArrayPos0].XPos
+			Object[ArrayPos0].OriginXPos = Object[ArrayPos0].XPos
 			Object[ArrayPos0].DrawOrder = 4
 		end if
 		ArrayPos0++

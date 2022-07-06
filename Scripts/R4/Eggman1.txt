@@ -9,7 +9,7 @@
 #alias Object.Value3	:	Object.YOffset
 #alias Object.Value4	:	Object.FlameAnimation
 #alias Object.Value5	:	Object.Hits
-#alias Object.Value6	:	Object.AnimationTimer
+#alias Object.Value6	:	Object.FrameTimer
 #alias Object.Value7	:	Object.ExplosionTimer
 
 // Player Alias
@@ -403,7 +403,7 @@ end sub
 
 
 sub ObjectPlayerInteraction
-	if Object.AnimationTimer == 0
+	if Object.FrameTimer == 0
 		PlayerObjectCollision(C_TOUCH, -32, -24, 32, 24)
 		if CheckResult == true
 			CheckEqual(Player.Animation, ANI_JUMPING)
@@ -433,10 +433,10 @@ sub ObjectPlayerInteraction
 
 				Object.Hits++
 				if Object.Hits == 4
-					Object.AnimationTimer = 16
+					Object.FrameTimer = 16
 					Object.ExplosionTimer = 1
 				else
-					Object.AnimationTimer = 1
+					Object.FrameTimer = 1
 					PlayStageSfx(5, 0)
 					Object.Speed = 294912
 				end if
@@ -495,18 +495,18 @@ end sub
 
 
 sub ObjectDraw
-	if Object.AnimationTimer == 0
+	if Object.FrameTimer == 0
 		DrawSpriteFX(0, FX_FLIP, Object.XPos, Object.YPos)
 		DrawSpriteFX(2, FX_FLIP, Object.XPos, Object.YPos)
 	else
-		if Object.AnimationTimer < 16
-			TempValue0 = Object.AnimationTimer
+		if Object.FrameTimer < 16
+			TempValue0 = Object.FrameTimer
 			TempValue0 &= 1
 			DrawSpriteFX(TempValue0, FX_FLIP, Object.XPos, Object.YPos)
 			if TempValue0 == 0
 				DrawSpriteFX(3, FX_FLIP, Object.XPos, Object.YPos)
 			end if
-			TempValue0 = Object.AnimationTimer
+			TempValue0 = Object.FrameTimer
 			TempValue0 &= 15
 			TempValue0 >>= 2
 			TempValue0 += 8
@@ -519,22 +519,22 @@ sub ObjectDraw
 				DrawSpriteFX(0, FX_FLIP, Object.XPos, Object.YPos)
 				DrawSpriteFX(2, FX_FLIP, Object.XPos, Object.YPos)	// Normal face
 			end if
-			TempValue0 = Object.AnimationTimer
+			TempValue0 = Object.FrameTimer
 			TempValue0 &= 15
 			TempValue0 >>= 2
 			TempValue0 += 8
 			DrawSpriteFX(TempValue0, FX_FLIP, Object.XPos, Object.YPos)
 		end if
 
-		Object.AnimationTimer++
+		Object.FrameTimer++
 		if Object.Hits < 4
-			if Object.AnimationTimer == 80
-				Object.AnimationTimer = 0
+			if Object.FrameTimer == 80
+				Object.FrameTimer = 0
 				Object.Speed = 114688
 			end if
 		else
-			if Object.AnimationTimer == 32
-				Object.AnimationTimer = 16
+			if Object.FrameTimer == 32
+				Object.FrameTimer = 16
 			end if
 		end if
 	end if

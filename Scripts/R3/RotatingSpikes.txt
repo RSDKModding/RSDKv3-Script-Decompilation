@@ -3,27 +3,29 @@
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
 // Aliases
-#alias Object.Value0	:	Object.Oscillation
-#alias Object.Value1	:	Object.Increment
-#alias Object.Value2	:	Object.SpawnedSpikes
+#alias Object.Value0			:	Object.Angle
+#alias Object.Value1			:	Object.Increment
+#alias Object.Value2			:	Object.SpawnedSpikes
 
 // HUD Aliases
 #alias Object[24].PropertyValue	:	HUD.TimePeriod
 
-#alias 0	:	ROTATINGSPIKES_MAXSPIKES_R
-#alias 1	:	ROTATINGSPIKES_MAXSPIKES_L
-#alias 2	:	ROTATINGSPIKES_TWO_SPIKES_R
-#alias 3	:	ROTATINGSPIKES_TWO_SPIKES_L
+// Property Values
+#alias 0						:	ROTATINGSPIKES_MAXSPIKES_R
+#alias 1						:	ROTATINGSPIKES_MAXSPIKES_L
+#alias 2						:	ROTATINGSPIKES_TWO_SPIKES_R
+#alias 3						:	ROTATINGSPIKES_TWO_SPIKES_L
 
 // Time Periods
-#alias 1	:	PAST
+#alias 1						:	PAST
+
 
 sub ObjectMain
-	Object.Oscillation += Object.Increment
-	if Object.Oscillation < 0
-		Object.Oscillation += 512
+	Object.Angle += Object.Increment
+	if Object.Angle < 0
+		Object.Angle += 512
 	end if
-	Object.Oscillation &= 511
+	Object.Angle &= 511
 end sub
 
 
@@ -35,12 +37,12 @@ sub ObjectPlayerInteraction
 
 	while TempValue0 < Object.SpawnedSpikes
 	
-		Cos(Object.XPos, Object.Oscillation)
+		Cos(Object.XPos, Object.Angle)
 		Object.XPos *= TempValue1
 		Object.XPos <<= 7
 		Object.XPos += TempValue2
 
-		Sin(Object.YPos, Object.Oscillation)
+		Sin(Object.YPos, Object.Angle)
 		Object.YPos *= TempValue1
 		Object.YPos <<= 7
 		Object.YPos += TempValue3
@@ -64,12 +66,12 @@ sub ObjectDraw
 	TempValue1 = 16
 	while TempValue0 < Object.SpawnedSpikes
 
-		Cos(TempValue2, Object.Oscillation)
+		Cos(TempValue2, Object.Angle)
 		TempValue2 *= TempValue1
 		TempValue2 <<= 7
 		TempValue2 += Object.XPos
 		
-		Sin(TempValue3, Object.Oscillation)
+		Sin(TempValue3, Object.Angle)
 		TempValue3 *= TempValue1
 		TempValue3 <<= 7
 		TempValue3 += Object.YPos
@@ -92,30 +94,30 @@ sub ObjectStartup
 	while ArrayPos0 < 1056
 		if Object[ArrayPos0].Type == TypeName[RotatingSpikes]
 			switch Object[ArrayPos0].PropertyValue
-			case 0
+			case ROTATINGSPIKES_MAXSPIKES_R
 				Object[ArrayPos0].Increment = 2
-				if HUD.TimePeriod > PAST	// In the future is has 4 spikes
+				if HUD.TimePeriod > PAST	// In the future it has 4 spikes
 					Object[ArrayPos0].SpawnedSpikes = 4
 				else
 					Object[ArrayPos0].SpawnedSpikes = 3
 				end if
 				break
 
-			case 1
+			case ROTATINGSPIKES_MAXSPIKES_L
 				Object[ArrayPos0].Increment = -2
-				if HUD.TimePeriod > PAST	// In the future is has 4 spikes
+				if HUD.TimePeriod > PAST	// In the future it has 4 spikes
 					Object[ArrayPos0].SpawnedSpikes = 4
 				else
 					Object[ArrayPos0].SpawnedSpikes = 3
 				end if
 				break
 
-			case 2
+			case ROTATINGSPIKES_TWO_SPIKES_R
 				Object[ArrayPos0].Increment = 2
 				Object[ArrayPos0].SpawnedSpikes = 2
 				break
 
-			case 3
+			case ROTATINGSPIKES_TWO_SPIKES_L
 				Object[ArrayPos0].Increment = -2
 				Object[ArrayPos0].SpawnedSpikes = 2
 				break

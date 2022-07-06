@@ -3,14 +3,13 @@
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
 // Aliases
-#alias 55: TYPE_FLIPDOOR
-
+#alias Object.Value0	:	Object.Timer
 
 sub ObjectMain
 
 	if Object.Frame == 0
 #platform: Mobile
-		if Player.ObjectInteraction == 1
+		if Player.ObjectInteraction == true
 #endplatform
 			PlayerObjectCollision(C_BOX, -4, -32, 4, 32)
 #platform: Mobile
@@ -24,18 +23,18 @@ sub ObjectMain
 		case 0
 			Object.Frame = 0
 			PlayerObjectCollision(C_TOUCH, -48, -32, 0, 32)
-			if CheckResult == 1
+			if CheckResult == true
 				Object.State = 1
 				PlayStageSfx(9, 0)
 			end if
 			break
 
 		case 1
-			if Object.Value0 < 4
-				Object.Value0++
+			if Object.Timer < 4
+				Object.Timer++
 				Object.Frame = 1
 			else
-				Object.Value0 = 0
+				Object.Timer = 0
 				Object.State = 2
 			end if
 			break
@@ -43,17 +42,17 @@ sub ObjectMain
 		case 2
 			Object.Frame = 2
 			PlayerObjectCollision(C_TOUCH, -48, -32, 64, 64)
-			if CheckResult == 0
+			if CheckResult == false
 				Object.State = 3
 			end if
 			break
 
 		case 3
-			if Object.Value0 < 4
-				Object.Value0++
+			if Object.Timer < 4
+				Object.Timer++
 				Object.Frame = 1
 			else
-				Object.Value0 = 0
+				Object.Timer = 0
 				Object.State = 0
 			end if
 			break
@@ -64,33 +63,33 @@ sub ObjectMain
 		case 0
 			Object.Frame = 0
 			PlayerObjectCollision(C_TOUCH, 0, -32, 48, 32)
-			if CheckResult == 1
+			if CheckResult == true
 				Object.State = 1
 				PlayStageSfx(9, 0)
 			end if
 			break
 		case 1
-			if Object.Value0 < 4
-				Object.Value0++
+			if Object.Timer < 4
+				Object.Timer++
 				Object.Frame = 1
 			else
-				Object.Value0 = 0
+				Object.Timer = 0
 				Object.State = 2
 			end if
 			break
 		case 2
 			Object.Frame = 2
 			PlayerObjectCollision(C_TOUCH, -64, -32, 48, 64)
-			if CheckResult == 0
+			if CheckResult == false
 				Object.State = 3
 			end if
 			break
 		case 3
-			if Object.Value0 < 4
-				Object.Value0++
+			if Object.Timer < 4
+				Object.Timer++
 				Object.Frame = 1
 			else
-				Object.Value0 = 0
+				Object.Timer = 0
 				Object.State = 0
 			end if
 			break
@@ -108,9 +107,9 @@ sub ObjectStartup
 	LoadSpriteSheet("R6/Objects.gif")
 
 	// Sprite frames
-	SpriteFrame(-4, -32, 8, 64, 230, 1)
-	SpriteFrame(-4, -32, 48, 48, 83, 34)
-	SpriteFrame(-4, -32, 64, 8, 132, 34)
+	SpriteFrame(-4, -32, 8, 64, 230, 1)		// #0 - FlipDoor Closed
+	SpriteFrame(-4, -32, 48, 48, 83, 34)	// #1 - FlipDoor Half-Open
+	SpriteFrame(-4, -32, 64, 8, 132, 34)	// #2 - FlipDoor Open
 
 	// Setup all FlipDoor objects
 	ArrayPos0 = 32

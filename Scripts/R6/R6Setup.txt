@@ -3,139 +3,167 @@
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
 // Aliases
-#alias 36: TYPE_R6SETUP
-#alias Player.Value4:Player.Invincible
+#alias Object.Value0	:	Object.Timer
+#alias Object.Value1	:	Object.PaletteBank
+#alias Object.Value2	:	Object.AlarmTimer
+#alias Object.Value3	:	Object.AlarmTile
+#alias Object.Value4	:	Object.LightTile
+#alias Object.Value5	:	Object.ElectricTile
+#alias Object.Value6	:	Object.BounceFloorAnim
+#alias Object.Value7	:	Object.BounceFloorTile
+#alias Object.Scale		:	Object.BounceFloorFlag
+
+// Player Aliases
+#alias Player.Value4	:	Player.Invincible
+
+// Gravity
+#alias 1				:	GRAVITY_AIR
+
+// Priority
+#alias 1				:	PRIORITY_ACTIVE
+
+// States
+#alias 0				:	R6_SETUP_PREPARE_CHARGE
+#alias 1				:	R6_SETUP_WEB_CHARGE
+#alias 2				:	R6_SETUP_WEB_SHOCK
 
 
 sub ObjectMain
 	switch Object.State
-	case 0
-		if Object.Value0 < 480
-			Object.Value0++
+	case R6_SETUP_PREPARE_CHARGE
+		if Object.Timer < 480
+			Object.Timer++
 		else
 			PlayStageSfx(1, 0)
-			Object.Value0 = 0
-			Object.State = 1
+			Object.Timer = 0
+			Object.State = R6_SETUP_WEB_CHARGE
 		end if
 		break
-	case 1
-		if Object.Value0 < 90
-			Object.Value0++
+
+	case R6_SETUP_WEB_CHARGE
+		if Object.Timer < 90
+			Object.Timer++
 			Object.Frame++
 			Object.Frame &= 1
 		else
-			Object.Value0 = 0
+			Object.Timer = 0
 			Object.Frame = 2
-			Object.State = 2
+			Object.State = R6_SETUP_WEB_SHOCK
 		end if
 		break
-	case 2
-		if Object.Value0 < 120
-			Object.Value0++
+
+	case R6_SETUP_WEB_SHOCK
+		if Object.Timer < 120
+			Object.Timer++
 			Object.Frame++
 			if Object.Frame == 9
 				Object.Frame = 2
 			end if
 		else
-			Object.Value0 = 0
+			Object.Timer = 0
 			Object.Frame = 0
-			Object.State = 0
+			Object.State = R6_SETUP_PREPARE_CHARGE
 			Object.Direction++
 			Object.Direction %= 3
 		end if
 		break
 	end switch
-	switch Object.Value3
+
+	switch Object.AlarmTile
 	case 0
-		if Object.Value2 < 15
-			Object.Value2++
+		if Object.AlarmTimer < 15
+			Object.AlarmTimer++
 		else
 			Copy16x16Tile(578, 801)
 			Copy16x16Tile(677, 801)
-			Object.Value2 = 0
-			Object.Value3++
+			Object.AlarmTimer = 0
+			Object.AlarmTile++
 		end if
 		break
 	case 1
-		if Object.Value2 < 4
-			Object.Value2++
+		if Object.AlarmTimer < 4
+			Object.AlarmTimer++
 		else
 			Copy16x16Tile(578, 802)
 			Copy16x16Tile(677, 802)
-			Object.Value2 = 0
-			Object.Value3++
+			Object.AlarmTimer = 0
+			Object.AlarmTile++
 		end if
 		break
 	case 2
-		if Object.Value2 < 9
-			Object.Value2++
+		if Object.AlarmTimer < 9
+			Object.AlarmTimer++
 		else
 			Copy16x16Tile(578, 803)
 			Copy16x16Tile(677, 803)
-			Object.Value2 = 0
-			Object.Value3++
+			Object.AlarmTimer = 0
+			Object.AlarmTile++
 		end if
 		break
 	case 3
-		if Object.Value2 < 4
-			Object.Value2++
+		if Object.AlarmTimer < 4
+			Object.AlarmTimer++
 		else
 			Copy16x16Tile(578, 800)
 			Copy16x16Tile(677, 800)
-			Object.Value2 = 0
-			Object.Value3 = 0
+			Object.AlarmTimer = 0
+			Object.AlarmTile = 0
 		end if
 		break
 	end switch
-	TempValue0 = Object.Value4
+
+	TempValue0 = Object.LightTile
 	TempValue0 &= 1
 	if TempValue0 == 0
-		TempValue0 = Object.Value4
+		TempValue0 = Object.LightTile
 		TempValue0 >>= 1
 		TempValue0 += 804
 		Copy16x16Tile(579, TempValue0)
 	end if
-	Object.Value4++
-	Object.Value4 %= 24
-	TempValue0 = Object.Value5
+	Object.LightTile++
+	Object.LightTile %= 24
+
+	TempValue0 = Object.ElectricTile
 	TempValue0 %= 5
 	if TempValue0 == 0
-		TempValue0 = Object.Value5
+		TempValue0 = Object.ElectricTile
 		TempValue0 /= 5
 		TempValue0 += 816
 		Copy16x16Tile(580, TempValue0)
 		TempValue0 += 3
 		Copy16x16Tile(581, TempValue0)
 	end if
-	Object.Value5++
-	Object.Value5 %= 15
-	if Object.Value6 < 32
-		Object.Value6++
-		Object.Scale = 0
+	Object.ElectricTile++
+	Object.ElectricTile %= 15
+
+	if Object.ElectricTile < 32
+		Object.ElectricTile++
+		Object.BounceFloorFlag = false
 	else
-		if Object.Value6 < 212
-			TempValue0 = Object.Value6
+		if Object.ElectricTile < 212
+			TempValue0 = Object.ElectricTile
 			TempValue0 &= 1
 			if TempValue0 == 0
-				TempValue0 = Object.Value7
+				TempValue0 = Object.BounceFloorTile
 				TempValue0 += 822
-				Object.Value7++
-				Object.Value7 %= 6
+				Object.BounceFloorTile++
+				Object.BounceFloorTile %= 6
 				Copy16x16Tile(543, TempValue0)
 			end if
-			Object.Value6++
-			Object.Scale = 1
+			Object.ElectricTile++
+			Object.BounceFloorFlag = true
 		else
-			Object.Value6 = 0
-			Object.Scale = 0
+			Object.ElectricTile = 0
+			Object.BounceFloorFlag = false
 			Copy16x16Tile(543, 822)
 		end if
 	end if
-	TempValue0 = Object.Value1
+
+	TempValue0 = Object.PaletteBank
 	TempValue0 >>= 1
 	SetActivePalette(TempValue0, 0, 240)
-	Object.Value1++
-	Object.Value1 %= 6
+	Object.PaletteBank++
+	Object.PaletteBank %= 6
 end sub
 
 
@@ -148,16 +176,18 @@ sub ObjectPlayerInteraction
 	TempValue3 += Player.CollisionBottom
 	TempValue3 += 2
 	Get16x16TileInfo(TempValue0, TempValue2, TempValue3, 8)
+
 	TempValue2 = Player.XPos
 	TempValue2 >>= 16
 	TempValue2 += Player.CollisionLeft
 	Get16x16TileInfo(TempValue1, TempValue2, TempValue3, 8)
+	
 	TempValue0 |= TempValue1
 	if TempValue0 == 1
-		if Object.Scale == 1
+		if Object.BounceFloorFlag == true
 			if Player.YVelocity > -1
 				Player.Animation = ANI_JUMPING
-				Player.Gravity = 1
+				Player.Gravity = GRAVITY_AIR
 				Player.Timer = 0
 				Player.YVelocity = -1441792
 				Player.State = PlayerObject_HandleAir
@@ -238,6 +268,7 @@ sub ObjectPlayerInteraction
 		end if
 		break
 	end switch
+
 	TempValue3 -= 4
 	Get16x16TileInfo(TempValue0, TempValue2, TempValue3, 8)
 	switch TempValue0
@@ -306,6 +337,7 @@ sub ObjectPlayerInteraction
 		end if
 		break
 	end switch
+
 	TempValue3 += 4
 	TempValue3 += Player.CollisionTop
 	Get16x16TileInfo(TempValue0, TempValue2, TempValue3, 8)
@@ -330,7 +362,7 @@ end sub
 
 
 sub ObjectDraw
-	if Object.State == 2
+	if Object.State == R6_SETUP_WEB_SHOCK
 		switch Object.Frame
 		case 2
 			DrawRect(0, 0, Screen.XSize, Screen.YSize, 128, 0, 64, 64)
@@ -360,8 +392,9 @@ end sub
 
 sub ObjectStartup
 	Object[19].Type = TypeName[R6Setup]
-	Object[19].Priority = 1
+	Object[19].Priority = PRIORITY_ACTIVE
 	Object[19].DrawOrder = 2
+
 	TempValue0 = 1
 	while TempValue0 < 3
 		RotatePalette(161, 163, 0)

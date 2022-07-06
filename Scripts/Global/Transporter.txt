@@ -3,9 +3,11 @@
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
 // Aliases
-#alias Object.Value0	:	Object.AnimationTimer
+#alias Object.Value0	:	Object.FrameTimer
+#alias Object.Value1	:	Object.YOriginPos
 #alias Object.Value2	:	Object.Timer
 #alias Object.Value3	:	Object.Oscillation
+
 // States
 #alias 0	:	TRANSPORTER_HOVER_DOWN
 #alias 1	:	TRANSPORTER_HOVER_UP
@@ -21,8 +23,12 @@
 #alias 0	:	PRIORITY_ACTIVE_BOUNDS
 #alias 1	:	PRIORITY_ACTIVE
 
+// Directions
+#alias 2				:	FACING_UPWARDS
+
+
 sub ObjectMain
-	if Object.PropertyValue == 0
+	if Object.PropertyValue == OPERATIVE
 		switch Object.State
 		case TRANSPORTER_HOVER_DOWN
 			Object.Timer++
@@ -81,7 +87,7 @@ sub ObjectPlayerInteraction
 				PlayerObjectCollision(C_TOUCH, -38, -32, 38, 32)
 				if CheckResult == true
 					Object.State = TRANSPORTER_EXPLODE
-					Object.YPos = Object.Value1
+					Object.YPos = Object.YOriginPos
 					Transporter_Destroyed = true
 					Good_Future = true
 					Object.Priority = PRIORITY_ACTIVE
@@ -140,9 +146,9 @@ sub ObjectDraw
 			TempValue0 += 4
 			DrawSprite(TempValue0)
 
-			Object.AnimationTimer++
-			if Object.AnimationTimer > 3
-				Object.AnimationTimer = 0
+			Object.FrameTimer++
+			if Object.FrameTimer > 3
+				Object.FrameTimer = 0
 				Object.Frame++
 				if Object.Frame > 3
 					Object.Frame = 0
@@ -194,7 +200,7 @@ sub ObjectStartup
 	ArrayPos0 = 32
 	while ArrayPos0 < 1056
 		if Object[ArrayPos0].Type == TypeName[Transporter]
-			Object[ArrayPos0].Direction = 2
+			Object[ArrayPos0].Direction = FACING_UPWARDS
 			if Transporter_Destroyed == true
 				switch Object[ArrayPos0].PropertyValue
 				case OPERATIVE
@@ -208,8 +214,8 @@ sub ObjectStartup
 				if Object[ArrayPos0].PropertyValue == OPERATIVE
 					Object[ArrayPos0].iYPos -= 16
 				end if
-				Object[ArrayPos0].Value1 = Object[ArrayPos0].YPos
-				Object[ArrayPos0].Value3 = -8192	// -0x2000
+				Object[ArrayPos0].YOriginPos = Object[ArrayPos0].YPos
+				Object[ArrayPos0].Oscillation = -8192	// -0x2000
 			end if
 		end if
 		ArrayPos0++
@@ -222,7 +228,7 @@ end sub
 
 sub RSDKDraw		
 	// Machine	
-	Object.Direction = 2
+	Object.Direction = FACING_UPWARDS
 	DrawSprite(0)
 	DrawSpriteFX(0, FX_FLIP, Object.XPos, Object.YPos)
 

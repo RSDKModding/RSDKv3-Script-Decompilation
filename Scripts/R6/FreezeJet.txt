@@ -3,25 +3,33 @@
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
 // Aliases
-#alias 43: TYPE_FREEZEJET
-#alias Player.Value4:Player.Invincible
+#alias Object.Value0	:	Object.Timer
+#alias Object.Value1	:	Object.TimerResetFreq
+#alias Player.Value4	:	Player.Invincible
+
+// States
+#alias 0				:	FREEZEJET_STARTUP
+#alias 1				:	FREEZEJET_SHOT_BEAM
+#alias 2				:	FREEZEJET_STOPPING_BEAM
+#alias 3				:	FREEZEJET_COOLDOWN
 
 
 sub ObjectMain
 	switch Object.State
-	case 0
-		if Object.Value0 < 120
-			Object.Value0++
+	case FREEZEJET_STARTUP
+		if Object.Timer < 120
+			Object.Timer++
 			Object.Frame = 2
 		else
-			Object.Value0 = 0
+			Object.Timer = 0
 			Object.State++
 			Object.Frame = 1
 		end if
 		break
-	case 1
-		if Object.Value0 < 160
-			TempValue0 = Object.Value0
+
+	case FREEZEJET_SHOT_BEAM
+		if Object.Timer < 160
+			TempValue0 = Object.Timer
 			TempValue0 &= 1
 			if TempValue0 == 0
 				Object.Frame++
@@ -31,16 +39,17 @@ sub ObjectMain
 				Object.Direction++
 				Object.Direction &= FACING_LEFT
 			end if
-			Object.Value0++
+			Object.Timer++
 		else
-			Object.Value0 = 0
+			Object.Timer = 0
 			Object.State++
 			Object.Frame = 7
 		end if
 		break
-	case 2
-		if Object.Value0 < 24
-			TempValue0 = Object.Value0
+
+	case FREEZEJET_STOPPING_BEAM
+		if Object.Timer < 24
+			TempValue0 = Object.Timer
 			TempValue0 &= 3
 			if TempValue0 == 0
 				Object.Frame++
@@ -50,43 +59,45 @@ sub ObjectMain
 				Object.Direction++
 				Object.Direction &= FACING_LEFT
 			end if
-			Object.Value0++
+			Object.Timer++
 		else
-			Object.Value0 = 0
-			Object.Value1 = 7
+			Object.Timer = 0
+			Object.TimerResetFreq = 7
 			Object.State++
 		end if
 		break
-	case 3
-		if Object.Value0 < 120
-			TempValue0 = Object.Value0
-			TempValue0 &= Object.Value1
+
+	case FREEZEJET_COOLDOWN
+		if Object.Timer < 120
+			TempValue0 = Object.Timer
+			TempValue0 &= Object.TimerResetFreq
 			if TempValue0 == 0
 				Object.Frame++
-				Object.Value1++
-				Object.Value1 <<= 1
-				Object.Value1--
+				Object.TimerResetFreq++
+				Object.TimerResetFreq <<= 1
+				Object.TimerResetFreq--
 			end if
 			if Object.Frame > 12
 				Object.Frame = 7
 				Object.Direction++
 				Object.Direction &= FACING_LEFT
 			end if
-			Object.Value0++
+			Object.Timer++
 		else
-			Object.Value0 = 0
-			Object.State = 1
+			Object.Timer = 0
+			Object.State = FREEZEJET_SHOT_BEAM
 			Object.Frame = 1
 		end if
 		break
+
 	end switch
 end sub
 
 
 sub ObjectPlayerInteraction
-	if Object.State == 1
+	if Object.State == FREEZEJET_SHOT_BEAM
 		PlayerObjectCollision(C_TOUCH, -16, 0, 16, 60)
-		if CheckResult == 1
+		if CheckResult == true
 			if Player.Invincible == 0
 #platform: Mobile
 				if Warp.Destination > 0
@@ -99,11 +110,14 @@ sub ObjectPlayerInteraction
 				end if
 #endplatform
 				Player.State = PlayerObject_Blank
-				Player.Visible = 0
-				Player.ObjectInteraction = 0
+
+				Player.Visible = false
+				Player.ObjectInteraction = false
+
 				Player.Speed = 0
 				Player.XVelocity = 0
 				Player.YVelocity = 0
+
 				CreateTempObject(TypeName[IceBlock], 0, Player.XPos, Player.YPos)
 				Object[TempObjectPos].DrawOrder = 4
 			end if
@@ -120,19 +134,21 @@ end sub
 
 sub ObjectStartup
 	LoadSpriteSheet("R6/Objects.gif")
-	SpriteFrame(-32, -8, 64, 16, 1, 1)
-	SpriteFrame(-16, 0, 32, 36, 1, 46)
-	SpriteFrame(-16, 0, 0, 0, 1, 46)
-	SpriteFrame(-16, 0, 0, 0, 1, 46)
-	SpriteFrame(-16, 0, 32, 60, 1, 22)
-	SpriteFrame(-16, 0, 0, 0, 1, 46)
-	SpriteFrame(-16, 4, 32, 64, 1, 18)
-	SpriteFrame(-16, 0, 0, 0, 1, 46)
-	SpriteFrame(-16, 0, 0, 0, 1, 46)
-	SpriteFrame(-16, 0, 32, 60, 1, 22)
-	SpriteFrame(-16, 0, 0, 0, 1, 46)
-	SpriteFrame(-16, 0, 0, 0, 1, 46)
-	SpriteFrame(-16, 4, 32, 64, 1, 18)
+
+	SpriteFrame(-32, -8, 64, 16, 1, 1)	// #0  - Freeze Jet Machine
+
+	SpriteFrame(-16, 0, 32, 36, 1, 46)	// #1  - Freeze Beam frame 0
+	SpriteFrame(-16, 0, 0, 0, 1, 46)	// #2  - Freeze Beam frame 1
+	SpriteFrame(-16, 0, 0, 0, 1, 46)	// #3  - Freeze Beam frame 2
+	SpriteFrame(-16, 0, 32, 60, 1, 22)	// #4  - Freeze Beam frame 3
+	SpriteFrame(-16, 0, 0, 0, 1, 46)	// #5  - Freeze Beam frame 4
+	SpriteFrame(-16, 4, 32, 64, 1, 18)	// #6  - Freeze Beam frame 5
+	SpriteFrame(-16, 0, 0, 0, 1, 46)	// #7  - Freeze Beam frame 6
+	SpriteFrame(-16, 0, 0, 0, 1, 46)	// #8  - Freeze Beam frame 7
+	SpriteFrame(-16, 0, 32, 60, 1, 22)	// #9  - Freeze Beam frame 8
+	SpriteFrame(-16, 0, 0, 0, 1, 46)	// #10 - Freeze Beam frame 9
+	SpriteFrame(-16, 0, 0, 0, 1, 46)	// #11 - Freeze Beam frame 10
+	SpriteFrame(-16, 4, 32, 64, 1, 18)	// #12 - Freeze Beam frame 11
 end sub
 
 // ========================

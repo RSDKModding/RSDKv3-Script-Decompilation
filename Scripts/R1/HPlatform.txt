@@ -6,9 +6,9 @@
 #alias Object.Value0	:	Object.OnObject
 #alias Object.Value1	:	Object.Timer
 #alias Object.Value2	:	Object.XVelocity
-#alias Object.Value3	:	Object.OriginPos.X
+#alias Object.Value3	:	Object.OffSetXPos
 #alias Object.Value4	:	Object.YVelocity
-#alias Object.Value5	:	Object.Oscillation
+#alias Object.Value5	:	Object.Angle
 
 // Property Values
 #alias 0				:	HPLATFORM_START_LEFT
@@ -16,18 +16,18 @@
 
 
 sub ObjectMain
-	Object.Oscillation = Oscillation
-	Object.Oscillation <<= 1
+	Object.Angle = Oscillation
+	Object.Angle <<= 1
 
 	if Object.PropertyValue == HPLATFORM_START_RIGHT
-		Object.Oscillation += 256
+		Object.Angle += 256
 	end if
 	
-	Cos(Object.XVelocity, Object.Oscillation)
+	Cos(Object.XVelocity, Object.Angle)
 	Object.XVelocity *= 6144	// 0x1800
 	Object.XVelocity += Object.XPos
 	Object.XVelocity &= 4294901760	// -0x10000
-	Object.XVelocity -= Object.OriginPos.X
+	Object.XVelocity -= Object.OffSetXPos
 
 	if Object.OnObject == true
 		// Loss a bit of height when stepped
@@ -64,7 +64,7 @@ end sub
 
 sub ObjectPlayerInteraction
 	TempValue0 = Object.XPos
-	Object.XPos = Object.OriginPos.X
+	Object.XPos = Object.OffSetXPos
 
 	PlayerObjectCollision(C_PLATFORM, -32, -9, 32, 12)
 	if CheckResult == true
@@ -78,13 +78,13 @@ end sub
 
 
 sub ObjectDraw
-	Cos(Object.OriginPos.X, Object.Oscillation)
-	Object.OriginPos.X *= 6144		// 0x1800
-	Object.OriginPos.X += Object.XPos
-	Object.OriginPos.X &= 4294901760	// -0x10000
+	Cos(Object.OffSetXPos, Object.Angle)
+	Object.OffSetXPos *= 6144		// 0x1800
+	Object.OffSetXPos += Object.XPos
+	Object.OffSetXPos &= 4294901760	// -0x10000
 
 	Object.YPos += Object.YVelocity
-	DrawSpriteXY(0, Object.OriginPos.X, Object.YPos)
+	DrawSpriteXY(0, Object.OffSetXPos, Object.YPos)
 end sub
 
 

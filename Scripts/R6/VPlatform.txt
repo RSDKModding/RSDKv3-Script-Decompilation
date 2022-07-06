@@ -3,29 +3,37 @@
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
 // Aliases
-#alias 39: TYPE_VPLATFORM
+#alias Object.Value1	:	Object.OffSetYPos
+#alias Object.Value2	:	Object.YVelocity
+#alias Object.Value3	:	Object.Angle
+
+// Property Values
+#alias 0				:	START_UPWARDS_MOVEMENT
+#alias 1				:	START_DOWNWARDS_MOVEMENT
 
 
 sub ObjectMain
-	Object.Value3 = Oscillation
-	Object.Value3 <<= 1
-	if Object.PropertyValue == 0
-		Object.Value3 += 256
+	Object.Angle = Oscillation
+	Object.Angle <<= 1
+	if Object.PropertyValue == START_UPWARDS_MOVEMENT
+		Object.Angle += 256
 	end if
-	Sin(Object.Value2, Object.Value3)
-	Object.Value2 <<= 13
-	Object.Value2 += Object.YPos
-	Object.Value2 &= -65536
-	Object.Value2 -= Object.Value1
+
+	Sin(Object.YVelocity, Object.Angle)
+	Object.YVelocity <<= 13
+	Object.YVelocity += Object.YPos
+	Object.YVelocity &= -65536
+	Object.YVelocity -= Object.OffSetYPos
 end sub
 
 
 sub ObjectPlayerInteraction
 	TempValue0 = Object.YPos
-	Object.YPos = Object.Value1
+	Object.YPos = Object.OffSetYPos
+
 	PlayerObjectCollision(C_PLATFORM, -24, -12, 24, 8)
-	if CheckResult == 1
-		Player.YPos += Object.Value2
+	if CheckResult == true
+		Player.YPos += Object.YVelocity
 		if Player.State == PlayerObject_SpinningTop
 			Player.State = PlayerObject_HandleGround
 		end if
@@ -35,19 +43,21 @@ end sub
 
 
 sub ObjectDraw
-	Sin(Object.Value1, Object.Value3)
-	Object.Value1 <<= 13
-	Object.Value1 += Object.YPos
-	Object.Value1 &= -65536
-	DrawSpriteXY(0, Object.XPos, Object.Value1)
-	DrawSpriteXY(1, Object.XPos, Object.Value1)
+	Sin(Object.OffSetYPos, Object.Angle)
+	Object.OffSetYPos <<= 13
+	Object.OffSetYPos += Object.YPos
+	Object.OffSetYPos &= -65536
+
+	DrawSpriteXY(0, Object.XPos, Object.OffSetYPos)
+	DrawSpriteXY(1, Object.XPos, Object.OffSetYPos)
 end sub
 
 
 sub ObjectStartup
 	LoadSpriteSheet("R6/Objects.gif")
-	SpriteFrame(-24, -16, 48, 32, 1, 84)
-	SpriteFrame(-8, 16, 16, 16, 35, 117)
+	
+	SpriteFrame(-24, -16, 48, 32, 1, 84)	// #0 - Vertical Platform
+	SpriteFrame(-8, 16, 16, 16, 35, 117)	// #1 - Platform Light
 	ArrayPos0 = 32
 	while ArrayPos0 < 1056
 		if Object[ArrayPos0].Type == TypeName[VPlatform]

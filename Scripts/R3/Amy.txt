@@ -3,7 +3,7 @@
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
 // Aliases
-#alias Object.Value0		:	Object.AnimationTimer
+#alias Object.Value0		:	Object.FrameTimer
 #alias Object.Value1		:	Object.XVelocity
 #alias Object.Value2		:	Object.YVelocity
 #alias Object.Value3		:	Object.LeftLimit
@@ -54,14 +54,14 @@ sub ObjectMain
 
 	switch Object.State
 	case AMY_LOOKING_AROUND
-		TempValue0 = Object.AnimationTimer
+		TempValue0 = Object.FrameTimer
 		TempValue0 /= 10
 		TempValue0 += 11
 		Object.Frame = TempValue0
 
-		Object.AnimationTimer++
-		if Object.AnimationTimer > 139
-			Object.AnimationTimer = 0
+		Object.FrameTimer++
+		if Object.FrameTimer > 139
+			Object.FrameTimer = 0
 		end if
 
 		PlayerObjectCollision(C_TOUCH, -96, -360, 96, 360)
@@ -69,25 +69,25 @@ sub ObjectMain
 			Object.XVelocity = 0
 			Object.State = AMY_CHASE
 			Object.Frame = 4
-			Object.AnimationTimer = 0
+			Object.FrameTimer = 0
 		end if
 		break
 
 	case AMY_CHASE
-		Object.AnimationTimer++
+		Object.FrameTimer++
 		switch Object.Frame
 		case 4
 		case 6
-			if Object.AnimationTimer == 4
-				Object.AnimationTimer = 0
+			if Object.FrameTimer == 4
+				Object.FrameTimer = 0
 				Object.Frame++
 			end if
 			break
 
 		case 5
 		case 7
-			if Object.AnimationTimer == 3
-				Object.AnimationTimer = 0
+			if Object.FrameTimer == 3
+				Object.FrameTimer = 0
 				Object.Frame++
 			end if
 			break
@@ -110,7 +110,7 @@ sub ObjectMain
 				Object.XPos = Object.RightLimit
 				Object.State = AMY_AWAIT_RIGHT
 				Object.Frame = 0
-				Object.AnimationTimer = 0
+				Object.FrameTimer = 0
 			end if
 		else
 			if Object.XVelocity > -131072
@@ -124,15 +124,15 @@ sub ObjectMain
 				Object.XPos = Object.LeftLimit
 				Object.State = AMY_AWAIT_LEFT
 				Object.Frame = 0
-				Object.AnimationTimer = 0
+				Object.FrameTimer = 0
 			end if
 		end if
 		break
 
 	case AMY_AWAIT_RIGHT
-		Object.AnimationTimer++
-		if Object.AnimationTimer == 12
-			Object.AnimationTimer = 0
+		Object.FrameTimer++
+		if Object.FrameTimer == 12
+			Object.FrameTimer = 0
 			Object.Frame++
 		end if
 
@@ -152,9 +152,9 @@ sub ObjectMain
 		break
 
 	case AMY_AWAIT_LEFT
-		Object.AnimationTimer++
-		if Object.AnimationTimer == 12
-			Object.AnimationTimer = 0
+		Object.FrameTimer++
+		if Object.FrameTimer == 12
+			Object.FrameTimer = 0
 			Object.Frame++
 		end if
 
@@ -165,14 +165,14 @@ sub ObjectMain
 		if Object.Direction == FACING_RIGHT
 			Object.State = AMY_CHASE
 			Object.Frame = 4
-			Object.AnimationTimer = 0
+			Object.FrameTimer = 0
 		end if
 		break
 
 	case AMY_KIDNAP
-		Object.AnimationTimer++
-		if Object.AnimationTimer > 13
-			Object.AnimationTimer = 0
+		Object.FrameTimer++
+		if Object.FrameTimer > 13
+			Object.FrameTimer = 0
 			Object.Frame++
 			if Object.Frame > 9
 				Object.Frame = 8

@@ -11,7 +11,7 @@
 #alias Object.Value5		:	Object.Angle
 #alias Object.Value6		:	Object.BubbleOffset
 #alias Object.Value7		:	Object.Animation
-#alias Object.Frame			:	Object.AnimationTimer
+#alias Object.Frame			:	Object.FrameTimer
 
 // Boss Bubble aliases
 #alias Object.Value0		:	Bubble.Timer
@@ -627,7 +627,7 @@ sub ObjectMain
 
 			Object.State = R4_EGG_BUBBLE_FLEE
 			Object.Animation = EGGANI_ESCAPE
-			Object.AnimationTimer = 0
+			Object.FrameTimer = 0
 
 			Stage.NewWaterLevel = 134217728	// 0x8000000, Y - 2048 in map coords
 			CreateTempObject(TypeName[FadeMusic], 1, Object.XPos, Object.YPos)
@@ -730,16 +730,16 @@ sub ObjectDraw
 	case EGGANI_LAUGH
 		DrawSpriteFX(0, FX_FLIP, Object.XPos, Object.YPos)
 
-		TempValue0 = Object.AnimationTimer
+		TempValue0 = Object.FrameTimer
 		TempValue0 &= 15
 		TempValue0 >>= 3
 		TempValue0 += 3
 		DrawSpriteFX(TempValue0, FX_FLIP, Object.XPos, Object.YPos)
 
-		if Object.AnimationTimer < 112
-			Object.AnimationTimer++
+		if Object.FrameTimer < 112
+			Object.FrameTimer++
 		else
-			Object.AnimationTimer = 0
+			Object.FrameTimer = 0
 			Object.Animation = 0
 		end if
 		break
@@ -758,13 +758,13 @@ sub ObjectDraw
 		DrawSpriteFX(1, FX_FLIP, Object.XPos, Object.YPos)
 		DrawSpriteFX(6, FX_FLIP, Object.XPos, Object.YPos)
 
-		TempValue0 = Object.AnimationTimer
+		TempValue0 = Object.FrameTimer
 		TempValue0 >>= 2
 		TempValue0 += 7
 		DrawSpriteFX(TempValue0, FX_FLIP, Object.XPos, Object.YPos)
 
-		Object.AnimationTimer++
-		Object.AnimationTimer &= 15
+		Object.FrameTimer++
+		Object.FrameTimer &= 15
 		break
 	end switch
 end sub

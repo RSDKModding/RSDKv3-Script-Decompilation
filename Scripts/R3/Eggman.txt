@@ -3,7 +3,7 @@
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
 // Aliases
-#alias Object.Value0		:	Object.AnimationTimer
+#alias Object.Value0		:	Object.FrameTimer
 #alias Object.Value1		:	Object.Timer
 
 // Boss Body Aliases
@@ -22,8 +22,8 @@
 sub ObjectMain
 	switch Object.State
 	case EGGMAN_IDLE
-		Object.AnimationTimer++
-		Object.AnimationTimer %= 40
+		Object.FrameTimer++
+		Object.FrameTimer %= 40
 		break
 
 	case EGGMAN_HURT
@@ -31,7 +31,7 @@ sub ObjectMain
 			Object.Timer++
 		else
 			Object.Timer = 0
-			Object.AnimationTimer = 0
+			Object.FrameTimer = 0
 			if BossBody.State < BOSSBODY_DRAG_EGGMAN_2
 				Object.State = EGGMAN_IDLE
 			else
@@ -41,13 +41,13 @@ sub ObjectMain
 		break
 
 	case EGGMAN_NERVOUS
-		Object.AnimationTimer++
-		Object.AnimationTimer &= 31
+		Object.FrameTimer++
+		Object.FrameTimer &= 31
 		break
 
 	case EGGMAN_FLEE
-		Object.AnimationTimer++
-		Object.AnimationTimer &= 7
+		Object.FrameTimer++
+		Object.FrameTimer &= 7
 		break
 
 	end switch
@@ -59,7 +59,7 @@ sub ObjectDraw
 	case EGGMAN_IDLE
 		DrawSprite(4)
 
-		TempValue0 = Object.AnimationTimer
+		TempValue0 = Object.FrameTimer
 		TempValue0 /= 10
 		DrawSprite(TempValue0)
 		break
@@ -88,14 +88,14 @@ sub ObjectDraw
 		break
 
 	case EGGMAN_NERVOUS
-		TempValue0 = Object.AnimationTimer
+		TempValue0 = Object.FrameTimer
 		TempValue0 >>= 4
 		TempValue0 += 9
 		DrawSprite(TempValue0)
 		break
 
 	case EGGMAN_FLEE
-		TempValue0 = Object.AnimationTimer
+		TempValue0 = Object.FrameTimer
 		TempValue0 >>= 2
 		TempValue0 += 11
 		DrawSprite(TempValue0)

@@ -9,7 +9,7 @@
 #alias Object.Value3	:	Object.RightLimit
 #alias Object.Value4	:	Object.SonicHugged
 #alias Object.Value5	:	Object.Gravity
-#alias Object.Value6	:	Object.AnimationTimer
+#alias Object.Value6	:	Object.FrameTimer
 #alias Object.Value7	:	Object.HeartTimer
 
 // States
@@ -51,13 +51,13 @@ sub ObjectMain
 
 	switch Object.State
 	case AMY_LOOKING_AROUND
-		TempValue0 = Object.AnimationTimer
+		TempValue0 = Object.FrameTimer
 		TempValue0 /= 10
 		TempValue0 += 11
 		Object.Frame = TempValue0
-		Object.AnimationTimer++
-		if Object.AnimationTimer > 139
-			Object.AnimationTimer = 0
+		Object.FrameTimer++
+		if Object.FrameTimer > 139
+			Object.FrameTimer = 0
 		end if
 
 		PlayerObjectCollision(C_TOUCH, -96, -360, 96, 360)
@@ -65,25 +65,25 @@ sub ObjectMain
 			Object.XVelocity = 0
 			Object.State = AMY_CHASE
 			Object.Frame = 4
-			Object.AnimationTimer = 0
+			Object.FrameTimer = 0
 		end if
 		break
 
 	case AMY_CHASE
-		Object.AnimationTimer++
+		Object.FrameTimer++
 		switch Object.Frame
 		case 4
 		case 6
-			if Object.AnimationTimer == 4
-				Object.AnimationTimer = 0
+			if Object.FrameTimer == 4
+				Object.FrameTimer = 0
 				Object.Frame++
 			end if
 			break
 
 		case 5
 		case 7
-			if Object.AnimationTimer == 3
-				Object.AnimationTimer = 0
+			if Object.FrameTimer == 3
+				Object.FrameTimer = 0
 				Object.Frame++
 			end if
 			break
@@ -127,7 +127,7 @@ sub ObjectMain
 								Object.SonicHugged = 1
 								Object.State = AMY_HUG
 								Object.Frame = 8
-								Object.AnimationTimer = 0
+								Object.FrameTimer = 0
 								Player.State = PlayerObject_Hugged
 								PlayStageSfx(3, 0)
 #platform: Use_Haptics
@@ -141,14 +141,14 @@ sub ObjectMain
 						else
 							Object.State = AMY_HEART_STARE
 							Object.Frame = 0
-							Object.AnimationTimer = 0
+							Object.FrameTimer = 0
 							Object.XVelocity = 0
 						end if
 
 					else
 						Object.State = AMY_HEART_STARE
 						Object.Frame = 0
-						Object.AnimationTimer = 0
+						Object.FrameTimer = 0
 						Object.XVelocity = 0
 					end if
 
@@ -167,7 +167,7 @@ sub ObjectMain
 				else
 					Object.State = AMY_AWAIT_RIGHT
 					Object.Frame = 0
-					Object.AnimationTimer = 0
+					Object.FrameTimer = 0
 				end if
 
 			end if
@@ -205,7 +205,7 @@ sub ObjectMain
 								Object.SonicHugged = true
 								Object.State = AMY_HUG
 								Object.Frame = 8
-								Object.AnimationTimer = 0
+								Object.FrameTimer = 0
 								Player.State = PlayerObject_Hugged
 								PlayStageSfx(3, 0)
 #platform: Use_Haptics
@@ -220,13 +220,13 @@ sub ObjectMain
 						else
 							Object.State = AMY_HEART_STARE
 							Object.Frame = 0
-							Object.AnimationTimer = 0
+							Object.FrameTimer = 0
 							Object.XVelocity = 0
 						end if
 					else
 						Object.State = AMY_HEART_STARE
 						Object.Frame = 0
-						Object.AnimationTimer = 0
+						Object.FrameTimer = 0
 						Object.XVelocity = 0
 					end if
 
@@ -245,16 +245,16 @@ sub ObjectMain
 				else
 					Object.State = AMY_CHEER_LEFT
 					Object.Frame = 0
-					Object.AnimationTimer = 0
+					Object.FrameTimer = 0
 				end if
 			end if
 		end if
 		break
 
 	case AMY_AWAIT_RIGHT
-		Object.AnimationTimer++
-		if Object.AnimationTimer == 12
-			Object.AnimationTimer = 0
+		Object.FrameTimer++
+		if Object.FrameTimer == 12
+			Object.FrameTimer = 0
 			Object.Frame++
 		end if
 
@@ -265,15 +265,15 @@ sub ObjectMain
 		if Object.Direction == FACING_LEFT
 			Object.State = AMY_CHASE
 			Object.Frame = 4
-			Object.AnimationTimer = 0
+			Object.FrameTimer = 0
 		end if
 
 		break
 
 	case AMY_CHEER_LEFT
-		Object.AnimationTimer++
-		if Object.AnimationTimer == 12
-			Object.AnimationTimer = 0
+		Object.FrameTimer++
+		if Object.FrameTimer == 12
+			Object.FrameTimer = 0
 			Object.Frame++
 		end if
 
@@ -284,23 +284,23 @@ sub ObjectMain
 		if Object.Direction == FACING_RIGHT
 			Object.State = AMY_CHASE
 			Object.Frame = 4
-			Object.AnimationTimer = 0
+			Object.FrameTimer = 0
 		end if
 		break
 
 	case AMY_CHEER_RIGHT
-		if Object.AnimationTimer < 8
+		if Object.FrameTimer < 8
 			Object.Frame = 0
 		else
-			if Object.AnimationTimer > 47
+			if Object.FrameTimer > 47
 
 				if Object.Gravity == GRAVITY_GROUND
-					if Object.AnimationTimer < 120
+					if Object.FrameTimer < 120
 						Object.YVelocity = -262144
 						Object.Gravity = GRAVITY_AIR
 						Object.Frame = 9
 					else
-						Object.AnimationTimer = 0
+						Object.FrameTimer = 0
 					end if
 				else
 					if Object.YVelocity > 0
@@ -309,7 +309,7 @@ sub ObjectMain
 
 				end if
 			else
-				TempValue0 = Object.AnimationTimer
+				TempValue0 = Object.FrameTimer
 				TempValue0 -= 8
 				TempValue0 %= 20
 				TempValue0 /= 10
@@ -324,28 +324,28 @@ sub ObjectMain
 			if Object.Direction == FACING_LEFT
 				Object.State = AMY_CHASE
 				Object.Frame = 4
-				Object.AnimationTimer = 0
+				Object.FrameTimer = 0
 			end if
 
 		end if
 
-		Object.AnimationTimer++
+		Object.FrameTimer++
 		break
 
 	case AMY_AWAIT_LEFT
-		if Object.AnimationTimer < 8
+		if Object.FrameTimer < 8
 			Object.Frame = 0
 		else
-			if Object.AnimationTimer > 47
+			if Object.FrameTimer > 47
 
 				if Object.Gravity == GRAVITY_GROUND
 
-					if Object.AnimationTimer < 120
+					if Object.FrameTimer < 120
 						Object.YVelocity = -262144
 						Object.Gravity = GRAVITY_AIR
 						Object.Frame = 9
 					else
-						Object.AnimationTimer = 0
+						Object.FrameTimer = 0
 					end if
 				else
 					if Object.YVelocity > 0
@@ -355,7 +355,7 @@ sub ObjectMain
 				end if
 
 			else
-				TempValue0 = Object.AnimationTimer
+				TempValue0 = Object.FrameTimer
 				TempValue0 -= 8
 				TempValue0 %= 20
 				TempValue0 /= 10
@@ -370,17 +370,17 @@ sub ObjectMain
 			if Object.Direction == FACING_RIGHT
 				Object.State = AMY_CHASE
 				Object.Frame = 4
-				Object.AnimationTimer = 0
+				Object.FrameTimer = 0
 			end if
 
 		end if
-		Object.AnimationTimer++
+		Object.FrameTimer++
 		break
 
 	case AMY_HEART_STARE
-		Object.AnimationTimer++
-		if Object.AnimationTimer == 12
-			Object.AnimationTimer = 0
+		Object.FrameTimer++
+		if Object.FrameTimer == 12
+			Object.FrameTimer = 0
 			Object.Frame++
 		end if
 
@@ -394,13 +394,13 @@ sub ObjectMain
 			if Player.Gravity == GRAVITY_GROUND
 				Object.State = AMY_CHASE
 				Object.Frame = 4
-				Object.AnimationTimer = 0
+				Object.FrameTimer = 0
 			end if
 		else	// if you jump while she waits for you, she'll start chasing you again
 			if Player.Gravity == GRAVITY_AIR
 				Object.State = AMY_CHASE
 				Object.Frame = 4
-				Object.AnimationTimer = 0
+				Object.FrameTimer = 0
 			end if
 
 		end if
@@ -441,12 +441,12 @@ sub ObjectMain
 		Object.XPos += Object.XVelocity
 		if Object.Gravity == GRAVITY_GROUND
 
-			if Object.AnimationTimer == 16
+			if Object.FrameTimer == 16
 				Object.State = AMY_CHASE
 				Object.Frame = 4
-				Object.AnimationTimer = 0
+				Object.FrameTimer = 0
 			else
-				Object.AnimationTimer++
+				Object.FrameTimer++
 			end if
 
 		end if

@@ -3,19 +3,40 @@
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
 // Aliases
-#alias 60: TYPE_ROTATINGSPIKES
+#alias Object.Value0			:	Object.Angle
+#alias Object.Value1			:	Object.Increment
+#alias Object.Value2			:	Object.SpawnedSpikes
+
+#alias Object[-1].Rotation		:	MovingBlocks.Rotation
+
+// HUD Aliases
+#alias Object[24].PropertyValue	:	HUD.TimePeriod
+
+// Time Periods
+#alias 0						:	PRESENT
+#alias 1						:	PAST
+#alias 2						:	GOOD_FUTURE
+#alias 3						:	BAD_FUTURE
+
+// Property Values
+#alias 0						:	ROTATION_CLOCKWISE
+#alias 1						:	ROTATION_COUNTERCLOCKWISE
+#alias 2						:	ROTATION_LINK_MOVINGBLOCKS
+#alias 3						:	ROTATION_CCW_TWO_SPIKES
+#alias 4						:	ROTATION_CW_SIX_SPIKES
 
 
 sub ObjectMain
-	if Object.PropertyValue == 2
-		Object.Value0 = Object[-1].Rotation
+	if Object.PropertyValue == ROTATION_LINK_MOVINGBLOCKS
+		Object.Angle = MovingBlocks.Rotation
 	else
-		Object.Value0 += Object.Value1
+		Object.Angle += Object.Increment
 	end if
-	if Object.Value0 < 0
-		Object.Value0 += 512
+	
+	if Object.Angle < 0
+		Object.Angle += 512
 	end if
-	Object.Value0 &= 511
+	Object.Angle &= 511
 end sub
 
 
@@ -24,19 +45,24 @@ sub ObjectPlayerInteraction
 	TempValue1 = 16
 	TempValue2 = Object.XPos
 	TempValue3 = Object.YPos
-	while TempValue0 < Object.Value2
-		Cos(Object.XPos, Object.Value0)
+
+	while TempValue0 < Object.SpawnedSpikes
+	
+		Cos(Object.XPos, Object.Angle)
 		Object.XPos *= TempValue1
 		Object.XPos <<= 7
 		Object.XPos += TempValue2
-		Sin(Object.YPos, Object.Value0)
+
+		Sin(Object.YPos, Object.Angle)
 		Object.YPos *= TempValue1
 		Object.YPos <<= 7
 		Object.YPos += TempValue3
+
 		PlayerObjectCollision(C_TOUCH, -8, -8, 8, 8)
-		if CheckResult == 1
+		if CheckResult == true
 			CallFunction(PlayerObject_Hit)
 		end if
+
 		TempValue0++
 		TempValue1 += 16
 	loop
@@ -49,16 +75,20 @@ sub ObjectDraw
 	DrawSprite(0)
 	TempValue0 = 0
 	TempValue1 = 16
-	while TempValue0 < Object.Value2
-		Cos(TempValue2, Object.Value0)
+	while TempValue0 < Object.SpawnedSpikes
+
+		Cos(TempValue2, Object.Angle)
 		TempValue2 *= TempValue1
 		TempValue2 <<= 7
 		TempValue2 += Object.XPos
-		Sin(TempValue3, Object.Value0)
+
+		Sin(TempValue3, Object.Angle)
 		TempValue3 *= TempValue1
 		TempValue3 <<= 7
 		TempValue3 += Object.YPos
+
 		DrawSpriteXY(1, TempValue2, TempValue3)
+
 		TempValue0++
 		TempValue1 += 16
 	loop
@@ -67,70 +97,85 @@ end sub
 
 sub ObjectStartup
 	LoadSpriteSheet("R6/Objects.gif")
+
+	SpriteFrame(-8, -8, 16, 16, 133, 199)	// #0 - Rotating Spikes Center
+	SpriteFrame(-8, -8, 16, 16, 150, 199)	// #1 - Spikes
+
 	ArrayPos0 = 32
 	while ArrayPos0 < 1056
 		if Object[ArrayPos0].Type == TypeName[RotatingSpikes]
 			switch Object[ArrayPos0].PropertyValue
-			case 0
-				Object[ArrayPos0].Value1 = 2
-				switch Object[24].PropertyValue
-				case 0
-					Object[ArrayPos0].Value2 = 5
+			case ROTATION_CLOCKWISE
+				Object[ArrayPos0].Increment = 2
+				switch HUD.TimePeriod
+				case PRESENT
+					Object[ArrayPos0].SpawnedSpikes = 5
 					break
-				case 1
-					Object[ArrayPos0].Value2 = 4
+
+				case PAST
+					Object[ArrayPos0].SpawnedSpikes = 4
 					break
-				case 2
-				case 3
-					Object[ArrayPos0].Value2 = 6
+
+				case GOOD_FUTURE
+				case BAD_FUTURE
+					Object[ArrayPos0].SpawnedSpikes = 6
 					break
 				end switch
+
 				break
-			case 1
-				Object[ArrayPos0].Value1 = -2
-				switch Object[24].PropertyValue
-				case 0
-					Object[ArrayPos0].Value2 = 5
+
+			case ROTATION_COUNTERCLOCKWISE
+				Object[ArrayPos0].Increment = -2
+				switch HUD.TimePeriod
+				case PRESENT
+					Object[ArrayPos0].SpawnedSpikes = 5
 					break
-				case 1
-					Object[ArrayPos0].Value2 = 4
+
+				case PAST
+					Object[ArrayPos0].SpawnedSpikes = 4
 					break
-				case 2
-				case 3
-					Object[ArrayPos0].Value2 = 6
+
+				case GOOD_FUTURE
+				case BAD_FUTURE
+					Object[ArrayPos0].SpawnedSpikes = 6
 					break
 				end switch
+				
 				Object[ArrayPos0].Value0 = 384
 				break
-			case 2
-				Object[ArrayPos0].Value1 = -2
-				switch Object[24].PropertyValue
-				case 0
-					Object[ArrayPos0].Value2 = 5
+
+			case ROTATION_LINK_MOVINGBLOCKS
+				Object[ArrayPos0].Increment = -2
+				switch HUD.TimePeriod
+				case PRESENT
+					Object[ArrayPos0].SpawnedSpikes = 5
 					break
-				case 1
-					Object[ArrayPos0].Value2 = 4
+
+				case PAST
+					Object[ArrayPos0].SpawnedSpikes = 4
 					break
-				case 2
-				case 3
-					Object[ArrayPos0].Value2 = 6
+
+				case GOOD_FUTURE
+				case BAD_FUTURE
+					Object[ArrayPos0].SpawnedSpikes = 6
 					break
 				end switch
+
 				break
-			case 3
-				Object[ArrayPos0].Value1 = -2
-				Object[ArrayPos0].Value2 = 2
+
+			case ROTATION_CCW_TWO_SPIKES
+				Object[ArrayPos0].Increment = -2
+				Object[ArrayPos0].SpawnedSpikes = 2
 				break
-			case 4
-				Object[ArrayPos0].Value1 = 2
-				Object[ArrayPos0].Value2 = 6
+
+			case ROTATION_CW_SIX_SPIKES
+				Object[ArrayPos0].Increment = 2
+				Object[ArrayPos0].SpawnedSpikes = 6
 				break
 			end switch
 		end if
 		ArrayPos0++
 	loop
-	SpriteFrame(-8, -8, 16, 16, 133, 199)
-	SpriteFrame(-8, -8, 16, 16, 150, 199)
 end sub
 
 // ========================

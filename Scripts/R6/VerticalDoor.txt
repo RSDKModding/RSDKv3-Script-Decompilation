@@ -3,21 +3,29 @@
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
 // Aliases
-#alias 47: TYPE_VERTICALDOOR
+#alias Object.Value0			:	Object.DoorHeight
+
+// Push Button Aliases
+#alias Object[+1].PropertyValue	:	PushButton.Active
+
+// States
+#alias 0	:	VERTICALDOOR_CLOSED
+#alias 1	:	VERTICALDOOR_OPEN
 
 
 sub ObjectMain
-	if Object.State == 0
-		if Object[+1].PropertyValue == 1
-			Object.State = 1
+	if Object.State == VERTICALDOOR_CLOSED
+		if PushButton.Active == true
+			Object.State = VERTICALDOOR_OPEN
 		end if
-		if Object.Value0 > 0
-			Object.Value0 -= 262144
+
+		if Object.DoorHeight > 0
+			Object.DoorHeight -= 262144
 			Object.YPos += 262144
 		end if
 	else
-		if Object.Value0 < 4194304
-			Object.Value0 += 262144
+		if Object.DoorHeight < 4194304
+			Object.DoorHeight += 262144
 			Object.YPos -= 262144
 		end if
 	end if
@@ -26,21 +34,21 @@ end sub
 
 sub ObjectPlayerInteraction
 	if Object.PropertyValue == 0
-		if Object.State == 1
+		if Object.State == VERTICALDOOR_OPEN
 			PlayerObjectCollision(C_BOX, -8, -32, 8, 32)
 			PlayerObjectCollision(C_TOUCH, -64, -128, -32, 128)
-			if CheckResult == 1
-				Object.State = 0
+			if CheckResult == true
+				Object.State = VERTICALDOOR_CLOSED
 			end if
 		else
 			PlayerObjectCollision(C_BOX, -8, -32, 8, 64)
 		end if
 	else
-		if Object.State == 1
+		if Object.State == VERTICALDOOR_OPEN
 			PlayerObjectCollision(C_BOX, -8, -32, 8, 32)
 			PlayerObjectCollision(C_TOUCH, 32, -128, 64, 128)
-			if CheckResult == 1
-				Object.State = 0
+			if CheckResult == true
+				Object.State = VERTICALDOOR_CLOSED
 			end if
 		else
 			PlayerObjectCollision(C_BOX, -8, -32, 8, 64)
@@ -56,7 +64,8 @@ end sub
 
 sub ObjectStartup
 	LoadSpriteSheet("R6/Objects.gif")
-	SpriteFrame(-8, -32, 16, 64, 239, 1)
+
+	SpriteFrame(-8, -32, 16, 64, 239, 1)	// #0 - Vertical Door
 end sub
 
 // ========================

@@ -3,19 +3,21 @@
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
 // Aliases
-#alias 72: TYPE_BOSSSPIKE
+#alias Object.Value0	:	Object.Timer
 
+#alias 0	:	BOSSSPIKE_FALLING
+#alias 1	:	BOSSSPIKE_DESPAWN
 
 sub ObjectMain
-	if Object.State == 0
+	if Object.State == BOSSSPIKE_FALLING
 		Object.YPos += 229376
 		ObjectTileCollision(0, 0, 12, 0)
-		if CheckResult == 1
-			Object.State = 1
+		if CheckResult == true
+			Object.State = BOSSSPIKE_DESPAWN
 		end if
 	else
-		Object.Value0++
-		if Object.Value0 == 64
+		Object.Timer++
+		if Object.Timer == 64
 			Object.Type = TypeName[Blank Object]
 		end if
 	end if
@@ -23,9 +25,9 @@ end sub
 
 
 sub ObjectPlayerInteraction
-	if Object.State == 0
+	if Object.State == BOSSSPIKE_FALLING
 		PlayerObjectCollision(C_TOUCH, -4, -12, 4, 12)
-		if CheckResult == 1
+		if CheckResult == true
 			CallFunction(PlayerObject_Hit)
 		end if
 	end if
@@ -33,8 +35,9 @@ end sub
 
 
 sub ObjectDraw
-	TempValue0 = Object.Value0
+	TempValue0 = Object.Timer
 	TempValue0 &= 7
+	
 	if TempValue0 < 4
 		DrawSprite(0)
 	end if
@@ -43,7 +46,8 @@ end sub
 
 sub ObjectStartup
 	LoadSpriteSheet("R6/Objects2.gif")
-	SpriteFrame(-4, -12, 8, 24, 228, 1)
+
+	SpriteFrame(-4, -12, 8, 24, 228, 1)	// #0 - Boss Spike
 end sub
 
 // ========================
