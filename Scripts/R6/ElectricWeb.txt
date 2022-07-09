@@ -4,30 +4,34 @@
 
 // Aliases
 #alias 35: TYPE_ELECTRICWEB
+#alias Object[19].Value0	:	R6Setup.Timer
+#alias Object[19].State		:	R6Setup.State
+#alias Object[19].Frame		:	R6Setup.Frame
+#alias Object[19].Direction	:	R6Setup.Direction
 
 
 sub ObjectDraw
 	switch Object.PropertyValue
 	case 0
-		DrawSprite(Object[19].Frame)
+		DrawSprite(R6Setup.Frame)
 		TempValue0 = Object.XPos
 		TempValue1 = Object.YPos
 		TempValue1 -= 8388608
-		DrawSpriteXY(Object[19].Frame, TempValue0, TempValue1)
+		DrawSpriteXY(R6Setup.Frame, TempValue0, TempValue1)
 		TempValue1 += 16777216
-		DrawSpriteXY(Object[19].Frame, TempValue0, TempValue1)
-		if Object[19].State > 0
-			switch Object[19].Direction
+		DrawSpriteXY(R6Setup.Frame, TempValue0, TempValue1)
+		if R6Setup.State > 0
+			switch R6Setup.Direction
 			case 0
 				Object.Value2 = 9
-				Object.Value2 += Object[19].Frame
+				Object.Value2 += R6Setup.Frame
 				DrawSprite(Object.Value2)
 				Object.Direction = 2
 				DrawSpriteXY(Object.Value2, Object.XPos, TempValue1)
 				break
 			case 1
 				Object.Value1 = 18
-				Object.Value1 += Object[19].Frame
+				Object.Value1 += R6Setup.Frame
 				DrawSprite(Object.Value1)
 				Object.Direction = FACING_LEFT
 				TempValue0 += 8388608
@@ -36,7 +40,7 @@ sub ObjectDraw
 			case 2
 				TempValue0 += 8388608
 				Object.Value3 = 27
-				Object.Value3 += Object[19].Frame
+				Object.Value3 += R6Setup.Frame
 				Object.Direction = FACING_LEFT
 				TempValue2 = Object.XPos
 				TempValue2 -= 8388608
@@ -64,11 +68,11 @@ sub ObjectDraw
 		end if
 		break
 	case 1
-		DrawSprite(Object[19].Frame)
+		DrawSprite(R6Setup.Frame)
 		break
 	case 2
-		if Object[19].State == 0
-			Object[19].Value0 = 0
+		if R6Setup.State == 0
+			R6Setup.Timer = 0
 		end if
 		break
 	end switch
@@ -78,6 +82,7 @@ end sub
 
 sub ObjectStartup
 	LoadSpriteSheet("R6/Objects3.gif")
+	// Electric web frames
 	SpriteFrame(-24, -24, 48, 48, 73, 34)
 	SpriteFrame(-24, -24, 48, 48, 122, 34)
 	SpriteFrame(-24, -24, 48, 48, 73, 34)

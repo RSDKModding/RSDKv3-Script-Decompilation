@@ -79,9 +79,11 @@ sub ObjectMain
 		Object.Alpha = 0
 		Object.InkEffect = 2
 		
+#platform: Use_Origins
 		// Some stuff for Origins, where we back up some cool values
 		BackupSpecialStageListPos = SpecialStage.ListPos
 		BackupTimeStones = SpecialStage.TimeStones
+#endplatform
 		
 		if Object.PropertyValue > 0
 			// Setup the Time Bonus
@@ -92,13 +94,19 @@ sub ObjectMain
 			TempValue0 = Stage.ActNo
 			TempValue0--
 			
+#platform: Use_Origins
 			// Origins changed it up a bit
 			SetBit(BackupTimeStones, TempValue0, true)
-			//SetBit(SpecialStage.TimeStones, TempValue0, true)
+#endplatform
+
+#platform: Use_Standalone
+			SetBit(SpecialStage.TimeStones, TempValue0, true)
+#endplatform
 		else
 			Object.TimeBonus = 0
 		end if
 		
+#platform: Use_Origins
 		// Backup the Player's Rings
 		StageStatsUsabilityParam5 = HUD[4].Rings
 		
@@ -146,6 +154,37 @@ sub ObjectMain
 		// As a replacement for all that, let's just back up the Score instead
 		recScore = Player.Score
 		
+#endplatform
+
+#platform: Use_Standalone
+		if SpecialStage.TimeStones < 127
+			TempValue0 = false
+			while TempValue0 == false
+				SpecialStage.ListPos++
+				if SpecialStage.ListPos > 6
+					SpecialStage.ListPos = 0
+				end if
+				
+				GetBit(TempValue1, SpecialStage.TimeStones, SpecialStage.ListPos)
+				if TempValue1 == false
+					TempValue0 = true
+				end if
+			loop
+		else
+			TempValue0 = Stage.ListPos
+			TempValue0 %= 10
+			if TempValue0 == 9
+				Stage.ListPos--
+			end if
+			
+			Good_Future_Count = 2
+			
+			if Stage.PlayerListPos == PLAYER_SONIC
+				// If all Stones are collected, unlock the "Treasure Hunter" achievement
+				SetAchievement(8, 100)
+			end if
+		end if
+#endplatform
 		break
 		
 	case STAGEFINISH_FADEOUT
@@ -153,18 +192,20 @@ sub ObjectMain
 			
 			// More Origins changes
 			// What's active is Origins, what's commented out is what was there before
+#platform: Use_Origins
 			Object.State = 10
+#endplatform
+#platform: Use_Standalone
+			Object.State = STAGEFINISH_FADEIN
+			Object.Timer = 256
 			
-//			
-//			Object.State = STAGEFINISH_FADEIN
-//			Object.Timer = 256
-//			
-//			if SpecialStage.TimeStones > 126
-//				// If the player has all Stones, then turn this object into the "got 'em all" variant
-//				Object.PropertyValue = 2
-//			end if
-//			
-//			PlayMusic(1)
+			if SpecialStage.TimeStones > 126
+				// If the player has all Stones, then turn this object into the "got 'em all" variant
+				Object.PropertyValue = 2
+			end if
+			
+			PlayMusic(1)
+#endplatform
 		else
 			Object.Timer++
 			Music.Volume--
@@ -380,6 +421,7 @@ sub ObjectMain
 		if Player.Score >= Player.ScoreBonus
 			Object.Continues++
 			
+#platform: Use_Origins
 			// In Origins, give either Coins or Lives based on the current mode
 			if game.coinMode == false
 				Player.Lives++
@@ -387,7 +429,11 @@ sub ObjectMain
 				game.callbackParam0 = 1
 				EngineCallback(NOTIFY_ADD_COIN)
 			end if
-			
+#endplatform
+
+#platform: Use_Standalone
+			Player.Lives++
+#endplatform
 			Player.ScoreBonus += 50000
 			
 			if Stage.PlayerListPos == PLAYER_SONIC
@@ -473,7 +519,9 @@ sub ObjectMain
 				
 				// A small Origins tweak - backup the Player's score (again)
 				// So I guess in return for one redundancy loss, we got another one in return...
+#platform: Use_Origins
 				recScore = Player.Score
+#endplatform
 				
 				// Write the correct colours to Fade_Colour so that the maingame fades back in with the same white
 				Fade_Colour = 208
@@ -484,12 +532,13 @@ sub ObjectMain
 				Fade_Colour += 224
 				
 				// Now, let the game know how many Rings we got
+#platform: Use_Origins
 				game.callbackParam0 = StageStatsUsabilityParam5
 				EngineCallback(NOTIFY_STATS_RING)
 				
 				// Reset the variable for future use
 				StageStatsUsabilityParam5 = 0
-				
+#endplatform
 				if Stage.ListPos < Stage.ListSize
 					LoadStage()
 				else
@@ -548,18 +597,22 @@ sub ObjectMain
 			
 			Stage.ActiveList = PRESENTATION_STAGE
 			
+#platform: Use_Origins
 			// Origins  -I still have no idea, to be honest...
 			Stage.ListPos = STAGE_P_SOUNDTEST
-			
+#endplatform
+
+#platform: Use_Standalone
 			// Original - go to the credits
-//			Stage.ListPos = STAGE_P_CREDITS
-			
+			Stage.ListPos = STAGE_P_CREDITS
+#endplatform
 			LoadStage()
 		end if
 		
 		SetScreenFade(0, 0, 0, Object.Timer)
 		break
-		
+
+#platform: Use_Origins
 		// the Origins folk left an extra break in here lol
 		// This code never hits anyways, so I guess it's fine?
 		break
@@ -650,7 +703,7 @@ sub ObjectMain
 		
 		SetScreenFade(208, 255, 224, 255)
 		break
-		
+#endplatform
 	end switch
 	
 end sub
@@ -761,7 +814,7 @@ sub ObjectDraw
 		DrawNumbers(10, TempValue0, 153, Object.TimeBonus, 5, 8, false)
 		
 		// Line 4, holds either Continues or Coins based on the current mode
-		
+#platform: Use_Origins
 		if game.coinMode == false
 			
 			// Draw the "EXTRA LIVES" text
@@ -792,7 +845,21 @@ sub ObjectDraw
 			TempValue0 += 9
 			
 		end if
+#endplatform
+
+#platform: Use_Standalone
+		// Draw the "EXTRA LIVES" text
 		
+		// First, is "EXTRA"
+		DrawSpriteScreenXY(8, Object.LineXPos4, 177)
+		
+		TempValue0 = Object.LineXPos4
+		TempValue0 += 49
+		
+		// Then after than of course, comes "LIVES"
+		DrawSpriteScreenXY(9, TempValue0, 177)
+#endplatform
+
 		// Move to the end of the line
 		TempValue0 += 86
 		
@@ -811,7 +878,7 @@ sub ObjectDraw
 		TempValue2 = Object.Continues
 		
 		// Now, draw either Continues or coins
-		
+#platform: Use_Origins
 		if game.coinMode == false
 			
 			// Draw Continues
@@ -850,8 +917,17 @@ sub ObjectDraw
 			end if
 			
 		end if
+#endplatform
+
+#platform: Use_Standalone
+		while TempValue2 > 0
+			DrawSpriteScreenXY(TempValue1, TempValue0, 177)
+			TempValue2--
+			TempValue0 += 24
+		loop
+#endplatform
+
 	end if
-	
 end sub
 
 
@@ -943,7 +1019,7 @@ sub ObjectStartup
 		SpriteFrame(0, 0, 16, 23, 139, 203)
 		SpriteFrame(0, 0, 16, 23, 156, 203)
 	end if
-	
+
 	// These below ones are new to Origins
 	
 	// 29 - Coins icon

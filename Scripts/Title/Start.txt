@@ -3,71 +3,74 @@
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
 // Aliases
-#alias Object.Value0 : Object.Fade
-#alias Object.Value1 : Object.StageSelectCheatPos
-#alias Object.Value2 : Object.SoundTestCheatPos
-#alias Object.Value3 : Object.DemoTimer
+#alias Object.Value0	: Object.Fade
+#alias Object.Value1	: Object.StageSelectCheatPos
+#alias Object.Value2	: Object.SoundTestCheatPos
+#alias Object.Value3 	: Object.DemoTimer
 
 // States
-#alias 0 : START_SETUP
-#alias 1 : START_SELECT
+#alias 0				: START_SETUP
+#alias 1				: START_GOTO_MENU
 
 // These following three states go unused
-#alias 2 : START_GOTO_STAGESELECT
-#alias 3 : START_GOTO_SOUNDTEST
-#alias 4 : START_GOTO_DEMO
+#alias 2				: START_GOTO_STAGESELECT
+#alias 3				: START_GOTO_SOUNDTEST
+#alias 4				: START_GOTO_DEMO
 
 // Cheat Input Aliases
-#alias 0 : CHEATINPUT_NONE
-#alias 1 : CHEATINPUT_UP
-#alias 2 : CHEATINPUT_DOWN
-#alias 3 : CHEATINPUT_LEFT
-#alias 4 : CHEATINPUT_RIGHT
-#alias 5 : CHEATINPUT_BUTTONA
-#alias 6 : CHEATINPUT_BUTTONB
-#alias 7 : CHEATINPUT_BUTTONC
+#alias 0				: CHEATINPUT_NONE
+#alias 1				: CHEATINPUT_UP
+#alias 2				: CHEATINPUT_DOWN
+#alias 3				: CHEATINPUT_LEFT
+#alias 4				: CHEATINPUT_RIGHT
+#alias 5				: CHEATINPUT_BUTTONA
+#alias 6				: CHEATINPUT_BUTTONB
+#alias 7				: CHEATINPUT_BUTTONC
 
 // DemoNumber Aliases
-#alias 0 : DEMO_R11A
-#alias 1 : DEMO_SS1
-#alias 2 : DEMO_R43C
-#alias 3 : DEMO_SS6
-#alias 4 : DEMO_R82A
-#alias 5 : DEMO_MAX
+#alias 0				: DEMO_R11A
+#alias 1				: DEMO_SS1
+#alias 2				: DEMO_R43C
+#alias 3				: DEMO_SS6
+#alias 4				: DEMO_R82A
+#alias 5				: DEMO_MAX
 
 // Select Aliases
-#alias 0 : SELECT_INIT
+#alias 0				: SELECT_INIT
 
 // SFX Aliases
-#alias 1  : SFX_RING
+#alias 1				: SFX_RING
 
 // Callbacks & Engine States
-#alias 1  : CALLBACK_PRESS_START
-#alias 7  : CALLBACK_EXIT_SELECTED
-#alias 16 : CALLBACK_MOREGAMES
+#alias 1				: CALLBACK_PRESS_START
+#alias 7				: CALLBACK_EXIT_SELECTED
+#alias 16				: CALLBACK_MOREGAMES
 
 // Language Aliases
-#alias 0 : LANGUAGE_ENGLISH
-#alias 1 : LANGUAGE_FRENCH
-#alias 2 : LANGUAGE_ITALIAN
-#alias 3 : LANGUAGE_DEUTSCH
-#alias 4 : LANGUAGE_SPANISH
-#alias 5 : LANGUAGE_JAPANESE
+#alias 0				: LANGUAGE_ENGLISH
+#alias 1				: LANGUAGE_FRENCH
+#alias 2				: LANGUAGE_ITALIAN
+#alias 3				: LANGUAGE_DEUTSCH
+#alias 4				: LANGUAGE_SPANISH
+#alias 5				: LANGUAGE_JAPANESE
 
 // Stage List Position Aliases
 
 // Presentation List Stages
-#alias 3 : STAGE_P_STAGESELECT
-#alias 4 : STAGE_P_SOUNDTEST
+#alias 3				: STAGE_P_STAGESELECT
+#alias 4				: STAGE_P_SOUNDTEST
 
 // Regular List Aliases
-#alias 0  : STAGE_R_R11A
-#alias 18 : STAGE_R_R43C
-#alias 64 : STAGE_R_R82A
+#alias 0				: STAGE_R_R11A
+#alias 18 				: STAGE_R_R43C
+#alias 64				: STAGE_R_R82A
 
 // Special List Aliases
-#alias 0 : STAGE_S_SS1
-#alias 5 : STAGE_S_SS6
+#alias 0				: STAGE_S_SS1
+#alias 5				: STAGE_S_SS6
+
+// Device Type
+#alias 0				: RETRO_STANDARD
 
 // Entirely functional, yet unused
 // Perhaps it was removed because it would devalue unlocking things in Time Attack?
@@ -254,7 +257,7 @@ end function
 
 sub ObjectMain
 	
-#platform: Use_Originss
+#platform: Use_Origins
 	Menu.ExitFlag = true
 #endplatform
 	
@@ -263,12 +266,11 @@ sub ObjectMain
 		
 		CheckTouchRect(0, 0, Screen.XSize, 240)
 		
-#platform: Use_Originss
+#platform: Use_Origins
 		// On Origins, you can back out if you really want to
 		if KeyPress[0].ButtonB == true
 			EngineCallback(NOTIFY_BACK_TO_MAINMENU)
 		endif
-#endplatform
 		
 		// Along with tapping the screen, you can also press the Start button of course
 		if input.pressButton == true
@@ -285,7 +287,7 @@ sub ObjectMain
 		if CheckResult > -1
 			
 			// The Player's (reportedly) interacted with the game in some form, so start the Select sequence
-			Object.State = START_SELECT
+			Object.State = START_GOTO_MENU	// Select Menu
 			
 			Object[+1].Type = TypeName[Select]
 			Object[+1].iXPos = Screen.CenterX
@@ -308,11 +310,39 @@ sub ObjectMain
 				EngineCallback(CALLBACK_EXIT_SELECTED)
 			end if
 		end if
+#endplatform
+
+#platform:	Use_Standard
+
+		CheckTouchRect(0, 0, Screen.XSize, 240)
+		if KeyPress.Start == true
+			CheckResult = false
+		end if
+		CheckGreater(CheckResult, -1)
+		if CheckResult == true
+			Object.State = START_GOTO_MENU	// Main Menu
+			StopMusic()
+			PlaySfx(27, 0)	//Select SFX
+		else
+			Object.DemoTimer++
+			if Object.DemoTimer == 1550
+				Object.State = START_GOTO_DEMO
+			end if
+		end if
+#endplatform
 		break
 		
-	case START_SELECT
-		// This state was originally for fading out to the menu
-		// However, in Origins, this state does nothing and all the stuff in handled by the Select object instead
+	case START_GOTO_MENU
+		// In Origins, this state does nothing and all the stuff in handled by the Select object instead
+#platform:	Use_Standard
+		Object.Fade += 4
+		if Object.Fade == 384
+			Stage.ListPos = 1		//	Menu
+			LoadStage()
+		end if
+		SetScreenFade(0, 0, 0, Object.Fade)
+
+#endplatform
 		break
 		
 	case START_GOTO_STAGESELECT
@@ -365,7 +395,14 @@ sub ObjectMain
 			Good_Future = false
 			Options.GameMode = 0
 			Options.AttractMode = true
-			
+
+#platform: Mobile
+			if Engine.PlatformID == RETRO_ANDROID
+				if Engine.TrialMode == true
+					Options.DemoNumber = 0
+				end if
+			end if
+#endplatform			
 			switch Options.DemoNumber
 			case DEMO_R11A
 				// R11A - Palmtree Panic Act 1, Present
@@ -415,9 +452,9 @@ end sub
 
 
 sub ObjectDraw
-	
+#platform: Use_Origins
 	// Don't display the following if the Select menu is open
-	if Object.State != START_SELECT
+	if Object.State != START_GOTO_MENU
 		
 		// Update the Object's Animation Timer, looping around at 60
 		
@@ -457,13 +494,24 @@ sub ObjectDraw
 	
 	// Draw the Sega copyright sprite there
 	DrawSpriteScreenXY(3, TempValue0, TempValue1)
+#endplatform
+
+#platform: Use_Standalone
+	Object.AnimationTimer++
+	if Object.AnimationTimer > 59
+		Object.AnimationTimer = 0
+	end if
 	
+	if Object.AnimationTimer > 29
+		DrawSprite(0)
+	end if
+#endplatform
 end sub
 
 
 sub ObjectStartup
 	
-#platform: Use_Originss
+#platform: Use_Origins
 	// Some callbacks, to let the engine know what's happening
 	
 	game.callbackParam0 = 0
@@ -472,6 +520,53 @@ sub ObjectStartup
 	
 	LoadSpriteSheet("Title/Title.gif")
 	
+#platform: Use_Standalone
+	switch Engine.Language
+	case LANGUAGE_ENGLISH
+	case LANGUAGE_JAPANESE
+		if Engine.DeviceType == RETRO_STANDARD
+			SpriteFrame(-43, 0, 87, 11, 106, 103)	//	English Press Start
+		else
+			SpriteFrame(-56, 0, 117, 11, 106, 91)	//	English Touch to Start
+		end if
+		break
+
+	case LANGUAGE_FRENCH
+		if Engine.DeviceType == RETRO_STANDARD
+			SpriteFrame(-60, 0, 120, 11, 391, 387)	//	French Press Start
+		else
+			SpriteFrame(-94, 0, 189, 11, 322, 399)	//	French Touch to Start
+		end if
+		break
+
+	case LANGUAGE_ITALIAN
+		if Engine.DeviceType == RETRO_STANDARD
+			SpriteFrame(-44, 0, 88, 11, 270, 411)	//	Italian Press Start
+		else
+			SpriteFrame(-76, 0, 152, 11, 359, 411)	//	Italian Touch To Start
+		end if
+		break
+
+	case LANGUAGE_DEUTSCH
+		if Engine.DeviceType == RETRO_STANDARD
+			SpriteFrame(-52, -2, 106, 13, 405, 373)	//	Deutsch Press Start
+		else
+			SpriteFrame(-87, 0, 175, 11, 336, 423)	//	Deutsch Touch to Start
+		end if
+		break
+
+	case LANGUAGE_SPANISH
+		if Engine.DeviceType == RETRO_STANDARD
+			SpriteFrame(-43, 0, 87, 11, 274, 435)	//	Spanish Press Start
+		else
+			SpriteFrame(-74, 0, 149, 11, 362, 435)	//	Spanish Touch To Start
+		end if
+		break
+
+	end switch
+
+#endplatform
+
 	// The following Sprites differ between languages
 	
 	// They follow the order of 
@@ -481,7 +576,9 @@ sub ObjectStartup
 	// But of course in the language they correspond to
 	
 	// Do note, sprite 0 - the Press to Start one - is unused
-	
+
+#platform: Use_Origins
+
 	switch Engine.Language
 	case LANGUAGE_ENGLISH
 	case LANGUAGE_JAPANESE
@@ -530,13 +627,12 @@ sub ObjectStartup
 		break
 		
 	end switch
-	
 	// Press Button (Always English)
 	SpriteFrame(-48, 0, 97, 11, 414, 361)
 	
 	// Sega Copyright text
 	SpriteFrame(-88, -8, 88, 8, 423, 311)
-	
+#endplatform
 end sub
 
 

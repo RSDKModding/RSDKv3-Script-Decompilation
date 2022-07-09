@@ -38,7 +38,7 @@ sub ObjectMain
 		
 		// Some more initialisation code follows, varies between platforms
 		
-#platform: Use_Originss
+#platform: Use_Origins
 		if game.titleMode != 0
 			
 			// TODO: idk what this var even is lol this is the first script i'm looking at so come back to this later
@@ -63,18 +63,21 @@ sub ObjectMain
 				
 			end if
 		end if
+		Object.Timer = 480
 #endplatform
 		
-#platform: Use_Decomp
+#platform: Use_Standalone
 		// Origins has all these settings on the wrapper side of things,
 		// so this isn't needed there
-		if SaveRAM[32] == 1
+		if SaveRAM[32] == true
 			Engine.BGMVolume = SaveRAM[33]
 			Engine.SFXVolume = SaveRAM[34]
 		end if
+		Options.Soundtrack = SaveRAM[38]
+		Object.State = SEGA_FADEIN
+		Object.Timer = 384
 #endplatform
 		
-		Object.Timer = 480
 		Object.Alpha = 255
 		Object.InkEffect = INK_ALPHA
 		
@@ -84,8 +87,11 @@ sub ObjectMain
 		// And move the Object to the centre of the screen
 		Object.iXPos = Screen.CenterX
 
-#platform: Use_Originss
+#platform: Use_Origins
 		game.mainMenuMode = 0
+#endplatform
+#platform: Mobile
+		Engine.State=5
 #endplatform
 		break
 

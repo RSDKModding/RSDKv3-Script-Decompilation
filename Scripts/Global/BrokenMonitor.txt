@@ -78,7 +78,7 @@ sub ObjectMain
 				
 				if Player.Rings >= Ring.ExtraLife
 					if Options.GameMode != GAMEMODE_TIMEATTACK
-						
+#platform: Use_Origins
 						if game.coinMode == false
 							Player.Lives++
 						else
@@ -89,7 +89,10 @@ sub ObjectMain
 							EngineCallback(NOTIFY_ADD_COIN)
 							
 						endif
-						
+#endplatform
+#platform: Use_Standalone
+						Player.Lives++
+#endplatform
 						if Stage.PlayerListPos == PLAYER_SONIC
 							PlaySfx(20, false)
 						else
@@ -153,12 +156,18 @@ sub ObjectMain
 				break
 				
 			case MONITOR_SONIC1UP
+#platform: Use_Origins
 				if game.coinMode == false
 					Player.Lives++
 				else
 					game.callbackParam0 = 1
 					EngineCallback(NOTIFY_ADD_COIN)
 				endif
+#endplatform
+
+#platform: Use_Standalone
+				Player.Lives++
+#endplatform
 				PlaySfx(20, 0)
 				break
 				
@@ -166,12 +175,18 @@ sub ObjectMain
 				break
 				
 			case MONITOR_TAILS1UP
+#platform: Use_Origins
 				if game.coinMode == false
 					Player.Lives++
 				else
 					game.callbackParam0 = 1
 					EngineCallback(NOTIFY_ADD_COIN)
 				endif
+#endplatform
+
+#platform: Use_Standalone
+				Player.Lives++
+#endplatform
 				PlaySfx(21, 0)
 				break
 				
@@ -237,20 +252,32 @@ sub ObjectStartup
 	SpriteFrame(-8, -8, 16, 16, 26, 40)			// #2 - Blue Shield
 	SpriteFrame(-8, -8, 16, 16, 26, 73)			// #3 - Invincibility
 	SpriteFrame(-8, -8, 16, 16, 26, 106)		// #4 - Power Sneakers
-	
+
+#platform: Use_Origins
 	if game.coinMode == false
 		SpriteFrame(-8, -8, 16, 16, 26, 139)		// #5 - Sonic
 	else
 		SpriteFrame(-8, -8, 16, 16, 92, 206)		// #5 - Coins
 	endif
-	
+#endplatform
+
+#platform: Use_Standalone
+	SpriteFrame(-8, -8, 16, 16, 26, 139)		// #5 - Sonic
+#endplatform
+
 	SpriteFrame(-8, -8, 16, 16, 26, 172)		// #6 - Time
 	
-	if game.coinMode==0
+#platform: Use_Origins
+	if game.coinMode == false
 		SpriteFrame(-8, -8, 16, 16, 59, 106)		// #7 - Tails
 	else
 		SpriteFrame(-8, -8, 16, 16, 92, 206)		// #7 - Coins
 	endif
+#endplatform
+
+#platform: Use_Standalone
+	SpriteFrame(-8, -8, 16, 16, 59, 106)		// #7 - Tails
+#endplatform
 	
 	SpriteFrame(-8, -8, 16, 16, 59, 139)		// #8 - S
 end sub

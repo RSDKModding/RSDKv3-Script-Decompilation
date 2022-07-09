@@ -13,11 +13,13 @@
 // Player Aliases
 #alias Player.Value0 : Player.Rings
 
-#alias 0 : PLAYER_SONIC
+#alias 0	: PLAYER_SONIC
 
 // Warp Destination Aliases
-#alias 1 : WARPDEST_PAST
-#alias 2 : WARPDEST_FUTURE
+#alias 1	: WARPDEST_PAST
+#alias 2	: WARPDEST_FUTURE
+
+#alias 0	: RETRO_STANDARD
 
 // Function declarations
 #function HUD_DrawStandard
@@ -25,7 +27,7 @@
 
 
 function HUD_DrawStandard
-	
+#platform: Use_Origins
 	TempValue6 = game.coinMode
 	
 	if game.playMode == BOOT_PLAYMODE_MISSION
@@ -83,14 +85,10 @@ function HUD_DrawStandard
 			// Combine the previous two results into one
 			CheckResult |= TempValue5
 			
-			if CheckResult != false
-				
-				// We're beyond maximum time, display 9:59:99 instead
-				
+			if CheckResult != false		// If we exceeded the 10 minutes, display 9'59'99		
 				TempValue2 = 9
 				TempValue3 = 59
-				TempValue4 = 99
-				
+				TempValue4 = 99				
 			end if
 			
 			// If minutes are at 9, start flashing the Time text with its red variant
@@ -100,7 +98,7 @@ function HUD_DrawStandard
 				end if
 			end if
 			
-			// If the Player has 0 rings, then flash the Rings text with its red variant as well
+			// Flash the Rings text if the player doesn't have rings
 			if Player.Rings == 0
 				if Object.FlashTimer > 7
 					DrawSpriteScreenXY(12, 17, 45)
@@ -111,23 +109,13 @@ function HUD_DrawStandard
 			DrawSpriteScreenXY(13, 67, 29)
 			
 			// Now, draw all the numbers
+			DrawNumbers(0, 104, 13, Player.Score, 6, 8, false)	// Score
+
+			DrawNumbers(0, 104, 29, TempValue4, 2, 8, true)		// Milliseconds
+			DrawNumbers(0, 80, 29, TempValue3, 2, 8, true)		// Seconds
+			DrawNumbers(0, 56, 29, TempValue2, 1, 8, true)		// Minutes
 			
-			// First comes score, which is to be placed on the top row
-			DrawNumbers(0, 104, 13, Player.Score, 6, 8, false)
-			
-			// Then comes time, which is itself split into three components
-			
-			// First, there's milliseconds which is the last number
-			DrawNumbers(0, 104, 29, TempValue4, 2, 8, true)
-			
-			// Second comes Seconds, the middle number
-			DrawNumbers(0, 80, 29, TempValue3, 2, 8, true)
-			
-			// Finally minutes follow, being the first number
-			DrawNumbers(0, 56, 29, TempValue2, 1, 8, true)
-			
-			// And then the row below that, holding the Player's Rings
-			DrawNumbers(0, 80, 45, Player.Rings, 3, 8, false)
+			DrawNumbers(0, 80, 45, Player.Rings, 3, 8, false)	// Rings
 			
 			if Stage.DebugMode == true
 				
@@ -283,7 +271,119 @@ function HUD_DrawStandard
 		break
 		
 	end switch
-	
+#endplatform
+
+#platform: Use_Standard
+	// First, draw the Score/Time/Rings text
+	DrawSpriteScreenXY(10, 17, 13)
+
+	// If minutes are at 9, start flashing the Time text with its red variant
+	if Stage.Minutes == 9
+		if Object.FlashTimer > 7
+			DrawSpriteScreenXY(11, 17, 29)
+		end if
+	end if
+
+	// Flash the Rings text if the player doesn't have rings
+	if Player.Rings == 0
+		if Object.FlashTimer > 7
+			DrawSpriteScreenXY(12, 17, 45)
+		end if
+	end if
+
+	// Draw the timer's tick marks
+	DrawSpriteScreenXY(13, 67, 29)
+	DrawNumbers(0, 104, 13, Player.Score, 6, 8, 0)
+	DrawNumbers(0, 104, 29, Stage.MilliSeconds, 2, 8, 1)
+	DrawNumbers(0, 80, 29, Stage.Seconds, 2, 8, 1)
+	DrawNumbers(0, 56, 29, Stage.Minutes, 1, 8, 1)
+	DrawNumbers(0, 80, 45, Player.Rings, 3, 8, 0)
+
+	if Stage.DebugMode == true
+		// In Debug Mode, draw the position of the Player
+		
+		// First, get the truncated X Position of the Player
+		TempValue0 = Player.XPos
+		TempValue0 >>= 16
+
+		// Get the base X Position to draw the numbers at, 24 pixels short of a screen's worth of width
+		TempValue1 = Screen.XSize
+		TempValue1 -= 24
+
+		// (Normally there's something here to make sure the number being drawn is positive, but I guess they just didn't care this time...)
+				
+		// Now, draw the X Position numbers
+		DrawNumbers(0, TempValue1, 13, TempValue0, 5, 8, 1)
+		// After that, do the same thing for the Player's Y Position
+		TempValue0 = Player.YPos
+		TempValue0 >>= 16
+
+		if TempValue0 < 0
+					
+			// Unlike the X Position, YPos enforces that the number drawn will be positive
+			// I wonder why XPos doesn't get anything of the sort...
+			FlipSign(TempValue0)
+		end if
+
+		// Now, draw the Y Position numbers 16 pixels below the X Position numbers
+		DrawNumbers(0, TempValue1, 29, TempValue0, 5, 8, 1)
+
+		// X/Y Icons
+		TempValue1 -= 42
+		DrawSpriteScreenXY(14, TempValue1, 15)
+		DrawSpriteScreenXY(21, TempValue1, 31)
+	end if
+
+	// Get the current Time Period, then add it's equivalent sprite id
+	TempValue0 = Object.TimePeriod
+	TempValue0 += 17
+	// Now, draw the corresponding life icon for the time period
+	DrawSpriteScreenXY(TempValue0, 16, 212)
+	// Draw the X/times icon
+	DrawSpriteScreenXY(14, 32, 220)
+
+	// Only draw as many digits as the Lives has
+	if Player.Lives < 10
+		DrawNumbers(0, 40, 217, Player.Lives, 1, 8, 1)
+		TempValue1 = 52
+	else
+		DrawNumbers(0, 48, 217, Player.Lives, 2, 8, 1)
+		TempValue1 = 60
+	end if
+
+	switch Warp.Destination
+	case WARPDEST_PAST
+		if Warp.Timer < 100
+			// If the Player isn't currently warping, then just draw the Past sign constantly
+			DrawSpriteScreenXY(15, TempValue1, 214)
+		else
+			// Otherwise, make it flash
+			TempValue0 = Warp.Timer
+			TempValue0 &= 1
+			if TempValue0 == 0
+				DrawSpriteScreenXY(15, TempValue1, 214)
+			end if
+		end if
+		break
+
+	case WARPDEST_FUTURE
+		if Warp.Timer < 100
+			// If the Player isn't currently warping, then just draw the Past sign constantly
+			DrawSpriteScreenXY(16, TempValue1, 214)
+		else
+			// Otherwise, make it flash
+			TempValue0 = Warp.Timer
+			TempValue0 &= 1
+			if TempValue0 == 0
+				DrawSpriteScreenXY(16, TempValue1, 214)
+			end if
+		end if
+		break
+
+	end switch
+
+
+#endplatform
 end function
 
 
@@ -446,10 +546,12 @@ sub ObjectDraw
 			end if
 		end if
 	end if
-	
+
+#platform: Use_Origins
 	if game.timeOver != 0
 		Object.TimeOver = true
 	end if
+#endplatform
 	
 	// Call the corresponding drawing function for the HUD
 	CallFunction(Object.DrawFunction)
@@ -468,7 +570,7 @@ sub ObjectStartup
 	
 	// Standard Platforms and Mobile Platforms have different drawing routines
 	// In Origins, only the Standard version was updated and the Mobile version was left
-	if Engine.DeviceType == 0
+	if Engine.DeviceType == RETRO_STANDARD
 		Object[24].DrawFunction = HUD_DrawStandard
 	else
 		Object[24].DrawFunction = HUD_DrawMobile

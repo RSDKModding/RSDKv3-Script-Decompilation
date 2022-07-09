@@ -17,6 +17,12 @@
 #alias 1 : CSIDE_LWALL
 #alias 2 : CSIDE_RWALL
 
+//HUD alias
+#alias Object[24].PropertyValue : HUD.TimePeriod
+
+// Time Periods
+#alias 0 : PRESENT
+
 
 sub ObjectPlayerInteraction
 	
@@ -46,33 +52,32 @@ sub ObjectPlayerInteraction
 			end if
 			
 			// Record a bunch of values
-			
+#platform: Use_Origins
 			recStage = Stage.ListPos
 			recScore = Player.Score
 			recRing = Player.Rings
-			
-			Rec_Milliseconds = Stage.MilliSeconds
-			Rec_Seconds = Stage.Seconds
-			Rec_Minutes = Stage.Minutes
 			
 			StatsUsabilityParam1 = StageStatsUsabilityParam1
 			StatsUsabilityParam2 = StageStatsUsabilityParam2
 			StatsUsabilityParam3 = StageStatsUsabilityParam3
 			StatsUsabilityParam4 = StageStatsUsabilityParam4
 			StatsUsabilityParam5 = StageStatsUsabilityParam5
+#endplatform
+
+			Rec_Milliseconds = Stage.MilliSeconds
+			Rec_Seconds = Stage.Seconds
+			Rec_Minutes = Stage.Minutes
 			
 			Object.State = LAMPPOST_ROTATE
 			Object.Timer = 384
 			PlaySfx(9, 0)
-
-#platform: Use_Haptics
-			HapticEffect(20, 0, 0, 0)
-#endplatform
 			
+#platform: Use_Origins
 			// Let the Engine know if we've hit a checkpoint
 			if Options.AttractMode == false
 				EngineCallback(NOTIFY_TOUCH_CHECKPOINT)
 			end if
+#endplatform
 			
 		end if
 
@@ -132,17 +137,18 @@ sub ObjectStartup
 	SpriteFrame(-8, -8, 16, 16, 1, 236)		// #3 - Lamp Post Yellow Head
 	SpriteFrame(-8, -8, 16, 16, 18, 236)	// #4 - Lamp Post Red Head
 	
+#platform: Use_Origins
 	if game.playMode == BOOT_PLAYMODE_BOSSRUSH
 		if LampPost.Check > 31
 			ArrayPos0 = LampPost.Check
 			Player.XPos = Object[ArrayPos0].XPos
 			Player.XPos += LampPost.Side
 			Player.YPos = Object[ArrayPos0].YPos
-			Object[ArrayPos0].State = 2
+			Object[ArrayPos0].State = LAMPPOST_USED
 			Player.Score = recScore
-			if Player.deadResetRings == 1
+			if Player.deadResetRings == true
 				Player.Rings = 0
-				Player.deadResetRings = 0
+				Player.deadResetRings = false
 			else
 				Player.Rings = recRing
 			end if
@@ -161,17 +167,17 @@ sub ObjectStartup
 		end if
 	else
 		if Warp.XPos == 0
-			if Object[24].PropertyValue == 0
+			if HUD.TimePeriod == PRESENT
 				if LampPost.Check > 31
 					ArrayPos0 = LampPost.Check
 					Player.XPos = Object[ArrayPos0].XPos
 					Player.XPos += LampPost.Side
 					Player.YPos = Object[ArrayPos0].YPos
-					Object[ArrayPos0].State = 2
+					Object[ArrayPos0].State = LAMPPOST_USED
 					Player.Score = recScore
-					if Player.deadResetRings == 1
+					if Player.deadResetRings == true
 						Player.Rings = 0
-						Player.deadResetRings = 0
+						Player.deadResetRings = false
 					else
 						Player.Value0 = recRing
 					end if
@@ -203,7 +209,25 @@ sub ObjectStartup
 		StageStatsUsabilityParam5 = StatsUsabilityParam5
 	end if
 	StageStatsUsabilityParam5 = 0
-	
+#endplatform
+
+#platform: Use_Standalone
+	if Warp.XPos == 0
+		if HUD.TimePeriod == PRESENT
+			if LampPost.Check > 31
+				ArrayPos0 = LampPost.Check
+				Player.XPos = Object[ArrayPos0].XPos
+				Player.XPos += LampPost.Side
+				Player.YPos = Object[ArrayPos0].YPos
+				Object[ArrayPos0].State = LAMPPOST_USED
+				Stage.MilliSeconds = Rec_Milliseconds
+				Stage.Seconds = Rec_Seconds
+				Stage.Minutes = Rec_Minutes
+			end if
+		end if
+	end if
+
+#endplatform
 end sub
 
 // ========================

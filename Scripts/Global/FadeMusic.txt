@@ -17,13 +17,15 @@
 
 sub ObjectMain
 	
+#platform: Use_Origins
 	// Take some values and print them?
 	// they left debug stuff in lol
 	game.callbackParam0 = 100
 	game.callbackParam1 = Object.PropertyValue
 	game.callbackParam2 = Object.Timer
 	EngineCallback(NOTIFY_DEBUGPRINT)
-	
+#endplatform
+
 	switch Object.PropertyValue
 	case FADEMUSIC_FADE_TO_BOSS
 		if Object.Timer < 100
@@ -60,9 +62,15 @@ sub ObjectMain
 			Object.Timer++
 			Music.Volume--
 		else
+#platform: Use_Origins
 			if game.playMode != BOOT_PLAYMODE_BOSSRUSH
 				PlayMusic(1)
 			endif
+#endplatform
+
+#platform: Use_Standalone
+			PlayMusic(1)
+#endplatform
 			
 			Object.Type = TypeName[Blank Object]
 			

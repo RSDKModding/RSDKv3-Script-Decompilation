@@ -60,6 +60,9 @@
 
 #alias 0 : PLAYER_SONIC
 
+// Hud Aliases
+#alias Object[24].PropertyValue	: HUD.TimePeriod
+
 // Time Period Aliases
 #alias 0 : PERIOD_PRESENT
 #alias 1 : PERIOD_PAST
@@ -107,6 +110,9 @@ sub ObjectMain
 		Object.LineXPos2 = 1255
 		Object.LineXPos3 = 1319
 		Object.LineXPos4 = 1402
+#platform:	Use_Standalone
+		Object.State = ACTFINISH_SLIDEIN
+#endplatform
 		
 		// Calculate Time Bonus
 		switch Stage.Minutes
@@ -158,19 +164,20 @@ sub ObjectMain
 		// Anything after that, you get nothing, you lose!
 		
 		end switch
-		
+#platform: Use_Origins
 		// If you Time Over'd, no Time Bonus either of course
 		if game.timeOver != 0
 			Object.TimeBonus = 0
 		end if
+#endplatform
 		
 		// Ring Bonus calculation is far easier - just take the Player's ring count and multiply that by 100
 		Object.RingBonus = Player[0].Rings
 		Object.RingBonus *= 100
-		
+#platform: Use_Origins
 		// Find the Present version of the current stage
 		Object.StagePosP = Stage.ListPos
-		switch Object[24].PropertyValue
+		switch HUD.TimePeriod
 		case PERIOD_PRESENT
 			break
 			
@@ -233,6 +240,7 @@ sub ObjectMain
 		StatsUsabilityParam2 = 0
 		StatsUsabilityParam3 = 0
 		StatsUsabilityParam4 = 0
+#endplatform
 		break
 		
 	case ACTFINISH_SLIDEIN
@@ -244,38 +252,27 @@ sub ObjectMain
 		// Update position of the "SONIC GOT" line
 		if Object.LineXPos0 < TempValue0
 			Object.LineXPos0 += 16
-			
-			if Object.LineXPos0 > TempValue0
-				
+			if Object.LineXPos0 > TempValue0				
 				// Past the max, enforce it
 				Object.LineXPos0 = TempValue0
 				
 			end if
-			
 		else
-			
 			// Just stay put for now
-			Object.LineXPos0 = TempValue0
-			
+			Object.LineXPos0 = TempValue0			
 		end if
 		
 		// Update Position of the "THROUGH Zone" line
 		TempValue0 -= 32
 		if Object.LineXPos1 > TempValue0
 			Object.LineXPos1 -= 16
-			
 			if Object.LineXPos1 < TempValue0
-				
 				// Enforce a minimum
-				Object.LineXPos1 = TempValue0
-				
+				Object.LineXPos1 = TempValue0				
 			end if
-			
 		else
-			
 			// Hold!
-			Object.LineXPos1 = TempValue0
-			
+			Object.LineXPos1 = TempValue0			
 		end if
 		
 		// The Score, Ring, and Time bonuses are all around the same X Position
@@ -284,7 +281,6 @@ sub ObjectMain
 		// Score Line
 		if Object.LineXPos2 > TempValue0
 			Object.LineXPos2 -= 16
-			
 			if Object.LineXPos2 < TempValue0
 				Object.LineXPos2 = TempValue0
 			end if
@@ -295,7 +291,6 @@ sub ObjectMain
 		// Ring Bonus Line
 		if Object.LineXPos3 > TempValue0
 			Object.LineXPos3 -= 16
-			
 			if Object.LineXPos3 < TempValue0
 				Object.LineXPos3 = TempValue0
 			end if
@@ -306,14 +301,12 @@ sub ObjectMain
 		// Time Bonus line
 		if Object.LineXPos4 > TempValue0
 			Object.LineXPos4 -= 16
-			
 			if Object.LineXPos4 < TempValue0
 				Object.LineXPos4 = TempValue0
 			end if
 		else
-			
 			Object.LineXPos4 = TempValue0
-			
+
 			// Proceed with the Act Results, now that everything's in position
 			Object.State = ACTFINISH_DISPLAYTALLY
 			Object.Timer = 0
@@ -336,7 +329,7 @@ sub ObjectMain
 				
 				// See if the Paradise Found achievement should be unlocked
 				if Stage.PlayerListPos == PLAYER_SONIC
-					if Object[24].PropertyValue == PERIOD_FUTURE_G
+					if HUD.TimePeriod == PERIOD_FUTURE_G
 						if Stage.DebugMode == false
 							SetAchievement(2, 100)
 						end if
@@ -355,7 +348,7 @@ sub ObjectMain
 				
 				// See if the Paradise Found achievement should be unlocked
 				if Stage.PlayerListPos == PLAYER_SONIC
-					if Object[24].PropertyValue == PERIOD_FUTURE_G
+					if HUD.TimePeriod == PERIOD_FUTURE_G
 						if Stage.DebugMode == false
 							SetAchievement(2, 100)
 						end if
@@ -418,6 +411,7 @@ sub ObjectMain
 		Object.Timer++
 		
 		if Object.Timer == 160
+#platform: Use_Origins
 			if game.oneStageFlag != 0
 				
 				// If needed, let the Player retry the stage
@@ -441,7 +435,13 @@ sub ObjectMain
 				Object.State = ACTFINISH_FADEOUT
 				
 			end if
-			
+#endplatform
+
+#platform: Use_Standalone
+			Object.Timer = 0
+			Object.State = ACTFINISH_FADEOUT
+#endplatform
+
 			// If the Player's a Blank Object, then that means they entered a Special Ring
 			if Player[0].Type == TypeName[Blank Object]
 				PlaySfx(SFX_SPECIALWARP, false)
@@ -457,7 +457,15 @@ sub ObjectMain
 			
 			// Use kinda-white to fade out, rather than black
 			SetScreenFade(208, 255, 224, Object.Timer)
-			
+
+#platform: Use_Standalone
+			if Engine.TrialMode == true
+				if Object.Timer == 1016
+					EngineCallback(CALLBACK_TRIAL_ENDED)
+				end if
+			end if
+#endplatform
+
 			if Object.Timer == 1024
 				
 				// Set Fade_Colour to be off-white (0xd0ffe0)
@@ -490,7 +498,7 @@ sub ObjectMain
 				end if
 				
 				// Get the Stage List Pos of the next stage's Present version
-				switch Object[24].PropertyValue
+				switch HUD.TimePeriod
 				case PERIOD_PRESENT
 					Stage.ListPos += 4
 					break
@@ -544,7 +552,7 @@ sub ObjectMain
 					
 					WriteSaveRAM()
 				end if
-				
+#platform: Use_Origins
 				recScore = Player.Score
 				SpecialStage.NextZone = Stage.ListPos
 				Stage.ActiveList = SPECIAL_STAGE
@@ -580,6 +588,26 @@ sub ObjectMain
 						
 					end if
 				end if
+#endplatform
+
+#platform: Use_Standalone
+				SpecialStage.NextZone = Stage.ListPos
+				Stage.ListPos = SpecialStage.ListPos
+				Stage.ActiveList = SPECIAL_STAGE
+
+				TempValue0 = Engine.TrialMode
+				if Stage.ListPos >= Stage.ListSize	// tldr; check if you are playing the trial
+					TempValue0 = true
+				end if
+				if TempValue0 == false
+					LoadStage()
+				else
+					Stage.ActiveList = PRESENTATION_STAGE
+					Stage.ListPos = STAGE_P_TITLE
+					LoadStage()
+				end if
+#endplatform
+
 			end if
 		else
 			
@@ -621,7 +649,7 @@ sub ObjectMain
 				end if
 				
 				// Get the Stage ID of the next stage's starting version
-				switch Object[24].PropertyValue
+				switch Hud.TimePeriod
 				case PERIOD_PRESENT
 					Stage.ListPos += 4
 					break
@@ -673,7 +701,8 @@ sub ObjectMain
 					
 					WriteSaveRAM()
 				end if
-				
+
+#platform: Use_Origins
 				recScore = Player.Score
 				
 				if game.oneStageFlag != 0
@@ -770,10 +799,71 @@ sub ObjectMain
 						end if
 					end if
 				end if
+#endplatform
+#platform: Use_Standalone
+	#platform: Mobile
+				if Options.GameMode == GAMEMODE_TRIALGAME
+					// Set Trial Recoerds
+					TimeAttack.Result = Stage.Seconds
+					TimeAttack.Result *= 100
+
+					TempValue0 = Stage.Minutes
+					TempValue0 *= 6000
+					
+					TimeAttack.Result += TempValue0
+					TimeAttack.Result += Stage.MilliSeconds
+
+					switch TimeAttack.Round
+					case 0
+						if TimeAttack.Result < SaveRAM[48]		// PPZ Record
+							SaveRAM[48] = TimeAttack.Result
+						end if
+						break
+					case 1
+						if TimeAttack.Result < SaveRAM[49]		// QQZ Record
+							SaveRAM[49] = TimeAttack.Result
+						end if
+						break
+					end switch
+					WriteSaveRAM()
+					Stage.ActiveList = PRESENTATION_STAGE
+					Stage.ListPos = 11	// Purchase Screen
+				end if
+	#endplatform				
+				if Options.GameMode == GAMEMODE_TIMEATTACK
+					TimeAttack.Result = Stage.Seconds
+					TimeAttack.Result *= 100
+					TempValue0 = Stage.Minutes
+					TempValue0 *= 6000
+					TimeAttack.Result += TempValue0
+					TimeAttack.Result += Stage.MilliSeconds
+					Stage.ActiveList = PRESENTATION_STAGE
+					Stage.ListPos = 2	// Time Attack
+					LoadStage()
+				else
+#platform: Mobile
+					if Options.GameMode < GAMEMODE_TRIALGAME
+						TempValue0 = Engine.TrialMode
+					else
+						TempValue0 = false
+					end if
+#endplatform
+					if Stage.ListPos >= Stage.ListSize	// tldr; check if you are playing the trial
+						TempValue0 = true
+					end if
+					if TempValue0 == false
+						LoadStage()
+					else
+						Stage.ActiveList = PRESENTATION_STAGE
+						Stage.ListPos = 1	// Menu
+						LoadStage()
+					end if
+				end if
+#endplatform
 			end if
 		end if
 		break
-		
+#platform: Use_Origins
 	case ACTFINISH_HOLDOVERRESTART
 		
 		// Wait and see, does the Player want to restart the stage?
@@ -787,7 +877,7 @@ sub ObjectMain
 		// Just have the screen be black for now, nothing fancy
 		SetScreenFade(0, 0, 0, 255)
 		break
-		
+#endplatform
 	end switch
 	
 endsub

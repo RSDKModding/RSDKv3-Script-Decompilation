@@ -3,18 +3,39 @@
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
 // Aliases
-#alias 34: TYPE_TITLECARD
+#alias Object.Value0			:	Object.BarPos
+#alias Object.Value1			:	Object.TextPos
+#alias Object.Value2			:	Object.TextSize
+#alias Object.Value3			:	Object.FadeA
+#alias Object.Value4			:	Object.FadeR
+#alias Object.Value5			:	Object.FadeG
+#alias Object.Value6			:	Object.FadeB
+#alias Object.Value7			:	Object.CharPos
 
-#alias Object.Value0:Object.BarPos
-#alias Object.Value1:Object.TextPos
-#alias Object.Value2:Object.TextSize
-#alias Object.Value3:Object.FadeA
-#alias Object.Value4:Object.FadeR
-#alias Object.Value5:Object.FadeG
-#alias Object.Value6:Object.FadeB
-#alias Object.Value7:Object.CharPos
+// Player Alias
+#alias Object[0].Value4			:	Player.Invincible
 
-#alias Object[0].Value4:Player.Invincible
+// States
+#alias 0						:	TITLECARD_FADEIN
+#alias 1						:	TITLECARD_SLIDEIN
+#alias 2						:	TITLECARD_DISPLAY
+#alias 3						:	TITLECARD_SLIDEOUT
+
+// OST
+#alias 0						:	JP_OST
+
+// HUD aliases
+#alias Object[24].PropertyValue	:	HUD.TimePeriod
+
+// Time Periods
+#alias 0						:	PRESENT
+#alias 1						:	PAST
+#alias 2						:	GOOD_FUTURE
+#alias 3						:	BAD_FUTURE
+
+// Priority
+#alias 1						:	PRIORITY_ACTIVE
+
 
 sub ObjectPlayerInteraction
 	Player.Timer = 0
@@ -23,14 +44,14 @@ end sub
 
 sub ObjectDraw
 	switch Object.State
-	case 0
+	case TITLECARD_FADEIN
 		Player.ControlMode = -1
-		Player.Up = 0
-		Player.Down = 0
-		Player.Left = 0
-		Player.Right = 0
-		Player.JumpPress = 0
-		Player.JumpHold = 0
+		Player.Up = false
+		Player.Down = false
+		Player.Left = false
+		Player.Right = false
+		Player.JumpPress = false
+		Player.JumpHold = false
 		if Warp.XPos < 1
 			Player.Speed = 0
 		end if
@@ -60,50 +81,53 @@ sub ObjectDraw
 			TempValue0 = CheckResult
 			CheckLower(LampPost.Check, 32)
 			TempValue0 &= CheckResult
-			if TempValue0 == 1
-				Object.State = 1
+			if TempValue0 == true
+				Object.State = TITLECARD_SLIDEIN
 				Object.FadeA = 0
 			else
 				Player.ControlMode = 0
-				Stage.TimeEnabled = 1
+				Stage.TimeEnabled = true
 				ResetObjectEntity(20, TypeName[Blank Object], 0, 0, 0)
 				Warp.XPos = 0
 			end if
 		end if
 		break
-	case 1
+	case TITLECARD_SLIDEIN
 		TempValue0 = 144
 		TempValue0 += Object.CharPos
 		if Object.TextPos > TempValue0
 			Object.TextPos -= 8
 		else
 			if Object.BarPos == 0
-				Object.State = 2
+				Object.State = TITLECARD_DISPLAY
 			end if
 		end if
 		if Object.BarPos < 0
 			Object.BarPos += 8
 		end if
 		break
-	case 2
+
+	case TITLECARD_DISPLAY
 		if Object.FadeA == 90
-			Object.State = 3
+			Object.State = TITLECARD_SLIDEOUT
 		else
 			Object.FadeA++
 		end if
 		break
-	case 3
+
+	case TITLECARD_SLIDEOUT
 		if Object.TextPos < 408
 			Object.TextPos += 16
 			Object.BarPos -= 16
 		else
 			Player.ControlMode = 0
-			Stage.TimeEnabled = 1
+			Stage.TimeEnabled = true
 			ResetObjectEntity(20, TypeName[Blank Object], 0, 0, 0)
 			Warp.XPos = 0
 		end if
 		break
 	end switch
+
 	if Object.Type > TypeName[Blank Object]
 		TempValue0 = 136
 		TempValue0 += Object.CharPos
@@ -123,54 +147,61 @@ end sub
 
 
 sub ObjectStartup
-	if Stage.PlayerListPos == 0
+	if Stage.PlayerListPos == 0	// PlayerName[SONIC]
 		LoadSpriteSheet("Global/Display.gif")
 	else
 		LoadSpriteSheet("Global/Display_t.gif")
 	end if
-	if Options.Soundtrack == 0
-		switch Object[24].PropertyValue
-		case 0
+
+	if Options.Soundtrack == JP_OST
+		switch HUD.TimePeriod
+		case PRESENT
 			SetMusicTrack("JP/R3A.ogg", 0, 358725)
 			break
-		case 1
+		case PAST
 			SetMusicTrack("R3B.ogg", 0, 166278)
 			break
-		case 2
+		case GOOD_FUTURE
 			SetMusicTrack("JP/R3C.ogg", 0, 1)
 			break
-		case 3
+		case BAD_FUTURE
 			SetMusicTrack("JP/R3D.ogg", 0, 717648)
 			break
 		end switch
 	else
-		switch Object[24].PropertyValue
-		case 0
+		switch HUD.TimePeriod
+		case PRESENT
 			SetMusicTrack("US/R3A.ogg", 0, 1)
 			break
-		case 1
+		case PAST
 			SetMusicTrack("R3B.ogg", 0, 166278)
 			break
-		case 2
+		case GOOD_FUTURE
 			SetMusicTrack("US/R3C.ogg", 0, 173494)
 			break
-		case 3
+		case BAD_FUTURE
 			SetMusicTrack("US/R3D.ogg", 0, 1)
 			break
 		end switch
 	end if
+	
 	Flower_TypeNo = TypeName[Flower]
 	Object[20].Type = TypeName[TitleCard]
+
 	if Warp.XPos > 0
 		Object[20].FadeA = 256
 	else
 		Object[20].FadeA = 384
 	end if
+
 	if Stage.ActNo == 3
-		Player.RoofBarrier = 1
+		Player.RoofBarrier = true
 	end if
-	Object[20].Priority = 1
+
+	Object[20].Priority = PRIORITY_ACTIVE
+
 	Object[20].DrawOrder = 6
+
 	Object[20].BarPos = -216
 	Object[20].TextPos = 336
 	Object[20].CharPos = Screen.CenterX
@@ -190,33 +221,31 @@ sub ObjectStartup
 	Object[20].FadeG >>= 8
 	Object[20].FadeB = Fade_Colour
 	Object[20].FadeB &= 255
-	SpriteFrame(0, 0, 32, 200, 223, 1)
-	SpriteFrame(96, 96, 48, 48, 41, 1)
-	SpriteFrame(96, 96, 48, 48, 90, 1)
-	SpriteFrame(96, 96, 48, 48, 139, 1)
-	SpriteFrame(64, 97, 48, 16, 41, 67)
-#platform: Standard
-	SpriteFrame(64, 81, 160, 16, 41, 50)
-#endplatform
-#platform: Mobile
-	SpriteFrame(72, 81, 160, 16, 49, 50)
-#endplatform
-	SpriteFrame(16, 81, 160, 16, 41, 50)
-	SpriteFrame(100, 32, 24, 48, 188, 1)
-	SpriteFrame(0, 0, 16, 55, 66, 133)
-	SpriteFrame(16, 32, 11, 23, 199, 84)
-	SpriteFrame(28, 32, 9, 23, 159, 84)
-	SpriteFrame(37, 32, 9, 23, 159, 84)
-	SpriteFrame(46, 32, 6, 23, 169, 108)
-	SpriteFrame(53, 32, 10, 23, 70, 108)
-	SpriteFrame(64, 32, 6, 23, 169, 108)
-	SpriteFrame(71, 32, 11, 23, 199, 84)
-	SpriteFrame(83, 32, 11, 23, 187, 84)
-	SpriteFrame(0, 56, 16, 55, 66, 133)
-	SpriteFrame(16, 56, 11, 23, 119, 84)
-	SpriteFrame(28, 56, 11, 23, 43, 84)
-	SpriteFrame(40, 56, 11, 23, 199, 84)
-	SpriteFrame(52, 56, 10, 23, 70, 108)
+
+	SpriteFrame(0, 0, 32, 200, 223, 1)		// #0  - Bar
+	SpriteFrame(96, 96, 48, 48, 41, 1)		// #1  - Zone 1 Circle
+	SpriteFrame(96, 96, 48, 48, 90, 1)		// #2  - Zone 2 Circle
+	SpriteFrame(96, 96, 48, 48, 139, 1)		// #3  - Zone 3 Circle
+	SpriteFrame(64, 97, 48, 16, 41, 67)		// #4  - Zone Text
+	SpriteFrame(72, 81, 160, 16, 49, 50)	// #5  - Sonic The Hedgehog CD
+	SpriteFrame(16, 81, 160, 16, 41, 50)	// #6  - Sonic CD Bar Extension
+	SpriteFrame(100, 32, 24, 48, 188, 1)	// #7  - Three Lines
+	// Round Name
+	SpriteFrame(0, 0, 16, 55, 66, 133)		// #8  - C
+	SpriteFrame(16, 32, 11, 23, 199, 84)	// #9  - O
+	SpriteFrame(28, 32, 9, 23, 159, 84)		// #10 - L
+	SpriteFrame(37, 32, 9, 23, 159, 84)		// #11 - L
+	SpriteFrame(46, 32, 6, 23, 169, 108)	// #12 - I
+	SpriteFrame(53, 32, 10, 23, 70, 108)	// #13 - S
+	SpriteFrame(64, 32, 6, 23, 169, 108)	// #14 - I
+	SpriteFrame(71, 32, 11, 23, 199, 84)	// #15 - O
+	SpriteFrame(83, 32, 11, 23, 187, 84)	// #16 - N
+
+	SpriteFrame(0, 56, 16, 55, 66, 133)		// #17 - C
+	SpriteFrame(16, 56, 11, 23, 119, 84)	// #18 - H
+	SpriteFrame(28, 56, 11, 23, 43, 84)		// #19 - A
+	SpriteFrame(40, 56, 11, 23, 199, 84)	// #20 - O
+	SpriteFrame(52, 56, 10, 23, 70, 108)	// #21 - S
 end sub
 
 

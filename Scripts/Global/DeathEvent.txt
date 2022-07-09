@@ -9,10 +9,12 @@
 #alias Object.Value2 : Object.Text2Pos
 
 #alias Object.Value3 : Object.Timer
+#alias Object.Value5 : Object.StagePosP
+#alias Object.Value6 : Object.TimeOver
 
 // States
-#alias 0 : DEATHEVENT_GAMEOVER
-#alias 1 : DEATHEVENT_TIMEOVER
+#alias 0 : DEATHEVENT_TIMEOVER
+#alias 1 : DEATHEVENT_GAMEOVER
 #alias 2 : DEATHEVENT_FADEOUT
 #alias 3 : DEATHEVENT_TIMEATTACK
 #alias 4 : DEATHEVENT_HOLDOVERRESTART
@@ -24,13 +26,17 @@
 // Gamemode Aliases
 #alias 1 : GAMEMODE_MAINGAME
 
+// Callback & Engine States
+#alias 8 : ENGINE_WAIT
+
 
 sub ObjectMain
 	
 	switch Object.State
-	case 0
+	case DEATHEVENT_TIMEOVER
+#platform: Use_Origins
 		if game.playMode == BOOT_PLAYMODE_CLASSIC
-			CheckEqual(Object.Value6, false)
+			CheckEqual(Object.TimeOver, false)
 			TempValue0 = CheckResult
 			CheckEqual(Stage.Minutes, 9)
 			TempValue0 &= CheckResult
@@ -42,20 +48,24 @@ sub ObjectMain
 			TempValue0 |= game.timeOver
 			
 			if TempValue0 != false
-				Object.Value6 = true
+				Object.TimeOver = true
 			end if
 		end if
 		
 		// No break is here, so fall through
-		
-	case 1
-		Object.Value6 |= Object.State
+#endplatform
+
+	case DEATHEVENT_GAMEOVER
+
+#platform: Use_Origins
+		Object.TimeOver |= Object.State
 		
 		// In Boss Rush, you can't Game Over (thankfully..?)
 		if game.playMode == BOOT_PLAYMODE_BOSSRUSH
 			Object.Type = TypeName[BlankObject]
 		end if
-		
+#endplatform
+
 		TempValue0 = Screen.CenterX
 		TempValue0 -= 40
 		if Object.Text1Pos < TempValue0
@@ -76,7 +86,8 @@ sub ObjectMain
 		if Object.Timer < 288
 			Object.Timer += 4
 		else
-			if Object.Value6 == true
+#platform: Use_Origins
+			if Object.TimeOver == true
 				if LampPost.Check > 0
 					Rec_Milliseconds = 99
 					Rec_Seconds = 59
@@ -88,8 +99,8 @@ sub ObjectMain
 					Rec_Minutes = 0
 				end if
 			end if
-			
-			if Object.State == 0
+#endplatform
+			if Object.State == DEATHEVENT_TIMEOVER
 				Stage.ActiveList=PRESENTATION_STAGE
 				Stage.ListPos = 0
 				LampPost.Check = 0
@@ -107,16 +118,25 @@ sub ObjectMain
 					WriteSaveRAM()
 				end if
 			end if
-			
-			if Object.State == 0
+
+#platform: Use_Origins
+			if Object.State == DEATHEVENT_ORIGINS_TIMEOUT
 				game.callbackParam0 = game.timeOver
 				EngineCallback(NOTIFY_TIME_OVER)
 			end if
 			
-			if Object.State == 1
+			if Object.State == DEATHEVENT_GAMEOVER
 				Player.deadResetRings = true
 			end if
-			
+#endplatform
+
+#platform: Use_Standalone
+			if Object.State == DEATHEVENT_TIMEOVER
+				Rec_Milliseconds = 0
+				Rec_Seconds = 0
+				Rec_Minutes = 0
+			end if
+#endplatform
 			LoadStage()
 		end if
 		
@@ -142,7 +162,8 @@ sub ObjectMain
 		end if
 		break
 		
-	case 2
+	case DEATHEVENT_FADEOUT
+#platform: Use_Origins
 		CheckNotEqual(game.playMode, BOOT_PLAYMODE_BOSSRUSH)
 		TempValue0 = CheckResult
 		CheckNotEqual(game.oneStageFlag, false)
@@ -150,35 +171,35 @@ sub ObjectMain
 		
 		if CheckResult != 0
 			LampPost.Check = 0
-			Object.Value5 = Stage.ListPos
+			Object.StagePosP = Stage.ListPos
 			game.callbackResult = -1
 			game.callbackParam0 = 0
-			game.callbackParam1 = Object.Value5
+			game.callbackParam1 = Object.StagePosP
 			game.callbackParam2 = 0
 			EngineCallback(NOTIFY_STAGE_RETRY)
 			
-			Object.State = 4
+			Object.State = DEATHEVENT_HOLDOVERRESTART
 		else
 			if Object.Timer < 288
 				Music.Volume -= 2
 				Object.Timer += 4
 			else
-				Object.Value5 = Stage.ListPos
+				Object.StagePosP = Stage.ListPos
 				
-				switch Object[24].PropertyValue
-				case 0
+				switch HUD.TimePeriod
+				case PRESENT
 					break
 					
-				case 1
-					Object.Value5--
+				case PAST
+					Object.StagePosP--
 					break
 					
-				case 2
-					Object.Value5 -= 2
+				case GOOD_FUTURE
+					Object.StagePosP -= 2
 					break
 					
-				case 3
-					Object.Value5 -= 3
+				case BAD_FUTURE
+					Object.StagePosP -= 3
 					break
 					
 				end switch
@@ -186,7 +207,7 @@ sub ObjectMain
 				if game.playMode != BOOT_PLAYMODE_MISSION
 					LoadStage()
 				else
-					Stage.ListPos = Object.Value5
+					Stage.ListPos = Object.StagePosP
 				end if
 			end if
 			
@@ -194,9 +215,20 @@ sub ObjectMain
 		end if
 		
 		Player.deadResetRings = true
+#endplatform
+
+#platform: Use_Standalone
+		if Object.Timer < 288
+			Music.Volume -= 2
+			Object.Timer += 4
+		else
+			LoadStage()
+		end if
+		SetScreenFade(0, 0, 0, Object.Timer)
+#endplatform
 		break
 		
-	case 3
+	case DEATHEVENT_TIMEATTACK
 		if Object.Timer < 288
 			Music.Volume -= 2
 			Object.Timer += 4
@@ -209,7 +241,7 @@ sub ObjectMain
 		end if
 		
 		SetScreenFade(0, 0, 0, Object.Timer)
-		
+#platform: Use_Origins		
 		game.callbackParam0 = StageStatsUsabilityParam1
 		game.callbackParam1 = StageStatsUsabilityParam2
 		game.callbackParam2 = 0
@@ -229,22 +261,24 @@ sub ObjectMain
 		StatsUsabilityParam2 = 0
 		StatsUsabilityParam3 = 0
 		StatsUsabilityParam4 = 0
+#endplatform
 		break
 		
-	case 4
+#platform: Use_Origins		
+	case DEATHEVENT_HOLDOVERRESTART
 		if game.callbackResult >= 0
 			Object.Timer = 0
 			Object.State++
 		end if
 		break
 		
-	case 5
+	case DEATHEVENT_FADEOUTRESTART
 		if Object.Timer < 288
 			Music.Volume -= 2
 			Object.Timer += 4
 		else
 			if game.callbackResult == false
-				Engine.State = 8
+				Engine.State = ENGINE_WAIT
 			else
 				LoadStage()
 			end if
@@ -253,6 +287,7 @@ sub ObjectMain
 		SetScreenFade(0, 0, 0, Object.Timer)
 		break
 		
+#endplatform
 	end switch
 	
 end sub
@@ -262,7 +297,7 @@ sub ObjectDraw
 	
 	switch Object.State
 	case 0
-		
+#platform: Use_Origins
 		// In Mirror Mode, draw the sprites in reverse so that it'll look correct when mirrored
 		if game.playMode == BOOT_PLAYMODE_MIRRORING
 			Object.Direction = FACING_LEFT
@@ -272,10 +307,16 @@ sub ObjectDraw
 			DrawSpriteScreenXY(0, Object.Text1Pos, 96)
 			DrawSpriteScreenXY(2, Object.Text2Pos, 96)
 		end if
+#endplatform
+
+#platform: Use_Standalone
+		DrawSpriteScreenXY(0, Object.Text1Pos, 96)
+		DrawSpriteScreenXY(2, Object.Text2Pos, 96)
+#endplatform
 		break
 		
 	case 1
-		
+#platform: Use_Origins
 		// Mirror Mode's gonna flip everything, so let's flip ourselves first!
 		if game.playMode == BOOT_PLAYMODE_MIRRORING
 			Object.Direction = FACING_LEFT
@@ -285,6 +326,12 @@ sub ObjectDraw
 			DrawSpriteScreenXY(1, Object.Text1Pos, 96)
 			DrawSpriteScreenXY(2, Object.Text2Pos, 96)
 		end if
+#endplatform
+
+#platform: Use_Standalone
+		DrawSpriteScreenXY(1, Object.Text1Pos, 96)
+		DrawSpriteScreenXY(2, Object.Text2Pos, 96)
+#endplatform
 		break
 		
 	end switch

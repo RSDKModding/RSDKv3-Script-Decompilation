@@ -23,6 +23,7 @@ sub ObjectDraw
 	Sin(TempValue0, Object.LPlanetYOffset)
 	TempValue0 >>= 7
 	TempValue0 -= 16
+	
 	DrawSpriteScreenXY(2, 280, TempValue0)
 	Object.LPlanetYOffset++
 	Object.LPlanetYOffset &= 511
@@ -33,9 +34,9 @@ sub ObjectDraw
 	ArrayPos0 = 40
 	while TempValue0 < 39
 		Object[ArrayPos0].XPos += TempValue1
-		if Object[ArrayPos0].XPos > 33554432
+		if Object[ArrayPos0].XPos > 0x2000000
 			// Wrap the water 512 pixels back
-			Object[ArrayPos0].XPos -= 33554432
+			Object[ArrayPos0].XPos -= 0x2000000
 		end if
 
 		TempValue2 = Object[ArrayPos0].XPos
@@ -45,7 +46,7 @@ sub ObjectDraw
 		TempValue0++
 		DrawSpriteScreenXY(TempValue0, TempValue2, 0)
 		TempValue0++
-		TempValue1 += 8192
+		TempValue1 += 0x2000
 	loop
 
 	// Unknown use, this Value's never referenced anywhere else...
@@ -58,15 +59,24 @@ sub ObjectStartup
 	LoadSpriteSheet("Title/Title.gif")
 	
 	SpriteFrame(0, 0, 176, 68, 256, 4)		// #0 - Left Mountain
-	
-	SpriteFrame(-144, 0, 144, 68, 257, 251)	// #2 - Right Mountain
-	
-	// Do note that this Right Mountain frame is different on older versions of the game (ie Steam)
-	// where it would be like the following instead
-//	SpriteFrame(-124, 0, 124, 68, 256, 77)  // #2 - Right Mountain (Steam)
-//	SpriteFrame(-174, 0, 174, 68, 246, 267) // #2 - Right Mountain (Mobile)
 
-	SpriteFrame(0, 0, 120, 104, 257, 146)	// #3 - Little Planet
+#platform: Use_Origins
+	SpriteFrame(-144, 0, 144, 68, 257, 251)	// #1 - Right Mountain
+#endplatform
+
+#platform: Use_Standalone
+
+	#platform: Standard
+		SpriteFrame(-124,0,124,68,256,77)
+	#endplatform
+
+	#platform: Mobile
+		SpriteFrame(-174,0,174,68,246,267)
+	#endplatform
+	
+#endplatform
+
+	SpriteFrame(0, 0, 120, 104, 257, 146)	// #2 - Little Planet
 	
 	//#4 - #20 rows of water sprites, from back to front
 	TempValue0 = 447
