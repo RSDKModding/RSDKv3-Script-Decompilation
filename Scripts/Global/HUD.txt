@@ -273,7 +273,7 @@ function HUD_DrawStandard
 	end switch
 #endplatform
 
-#platform: Use_Standard
+#platform: Use_Standalone
 	// First, draw the Score/Time/Rings text
 	DrawSpriteScreenXY(10, 17, 13)
 
@@ -570,12 +570,24 @@ sub ObjectStartup
 	
 	// Standard Platforms and Mobile Platforms have different drawing routines
 	// In Origins, only the Standard version was updated and the Mobile version was left
+#platform: Use_Origins
 	if Engine.DeviceType == RETRO_STANDARD
 		Object[24].DrawFunction = HUD_DrawStandard
 	else
 		Object[24].DrawFunction = HUD_DrawMobile
 	end if
-	
+#endplatform
+	// Has to be this way to ensure 2011 cd will still work
+#platform: Use_Standalone
+	#platform: Mobile
+		Object[24].DrawFunction = HUD_DrawMobile
+	#endplatform
+
+	#platform: Standard
+		Object[24].DrawFunction = HUD_DrawStandard
+	#endplatform
+#endplatform
+
 	// 0-9 - Number Digits
 	SpriteFrame(0, 0, 8, 11, 1, 50)
 	SpriteFrame(0, 0, 8, 11, 10, 50)

@@ -30,6 +30,9 @@
 // Soundtrack Aliases
 #alias 0 : SOUNDTRACK_JP
 
+// HUD Alias
+#alias Object[24].TimePeriod : HUD.TimePeriod
+
 // Time Period Aliases
 #alias 0 : PERIOD_PRESENT
 #alias 1 : PERIOD_PAST
@@ -184,6 +187,13 @@ sub ObjectDraw
 		DrawSpriteScreenXY(4, Object.TextPos, 80)
 		DrawSpriteScreenXY(5, Object.TextPos, 80)
 		DrawSpriteScreenXY(6, Object.TextPos, 80)
+
+#platform: Use_Decomp	// Creates a black rectangle that fills the empty space on wider resolutions
+		Tempvalue0 = Object.TextPos
+		TempValue0 += 220
+		DrawRect(TempValue0,163,Screen.XSize,9,0,0,0,255)
+#endplatform
+
 		DrawSpriteScreenXY(7, Object.TextPos, 80)
 		
 		// After that, draw all the letters
@@ -208,7 +218,7 @@ sub ObjectStartup
 	
 	// Set the music for the Stage
 	if Options.Soundtrack == SOUNDTRACK_JP
-		switch Object[24].PropertyValue
+		switch HUD.TimePeriod
 		case PERIOD_PRESENT
 			SetMusicTrack("JP/R5A.ogg", 0, true)
 			break
@@ -227,7 +237,7 @@ sub ObjectStartup
 			
 		end switch
 	else
-		switch Object[24].PropertyValue
+		switch HUD.TimePeriod
 		case PERIOD_PRESENT
 			SetMusicTrack("US/R5A.ogg", 0, true)
 			break
@@ -315,9 +325,21 @@ sub ObjectStartup
 	SpriteFrame(64, 97, 48, 16, 41, 67)
 	
 	// 5 - "Sonic the Hedgehog CD" bar
-	// The sprite's positioned differently in updated Data files as opposed to initial (Steam) data files
-	SpriteFrame(72, 81, 160, 16, 49, 50) // Updated (Mobile, Origins)
-// 	SpriteFrame(64, 81, 160, 16, 41, 50) // Initial (Steam, console)
+	
+	// Workaround for steam datafile to show this sprite correctly
+#platform: Use_Origins
+	SpriteFrame(72, 81, 160, 16, 49, 50)	// #5  - Sonic The Hedgehog CD
+#endplatform
+
+#platform: Use_Standalone
+	#platform: Mobile
+		SpriteFrame(72, 81, 160, 16, 49, 50)	// #5  - Sonic The Hedgehog CD
+	#endplatform
+
+	#platform: Standard
+		SpriteFrame(64, 81, 160, 16, 41, 50)	// #5  - Sonic The Hedgehog CD
+	#endplatform
+#endplatform
 	
 	// 6 - Continuation of the Sonic CD bar
 	SpriteFrame(16, 81, 160, 16, 41, 50)

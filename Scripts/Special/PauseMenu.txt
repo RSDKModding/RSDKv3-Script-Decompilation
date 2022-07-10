@@ -181,10 +181,10 @@ sub ObjectMain
 			end if
 			
 		end if
-		
+#platform: Use_Origins
 		// On Origins, Physical Controls are enforced as the default
 		Options.PhysicalControls = true
-		
+#endplatform
 		Object.State++
 		break
 		
@@ -250,7 +250,22 @@ sub ObjectMain
 		break
 		
 	case PAUSEMENU_MAIN
-		if Options.PhysicalControls == true
+	// Some things never change
+#platform: Use_Origins
+		CheckEqual(Options.PhysicalControls, true)
+#endplatform
+
+#platform: Use_Standalone
+	#platform: Mobile
+		CheckEqual(Options.PhysicalControls, true)
+	#endplatform
+
+	#platform: Standard
+		CheckResult = true
+	#endplatform
+#endplatform
+
+		if CheckResult == true
 			// Update Physical Controls
 			// (Standard Platforms don't have any extra conditions before this because y'know... it's always physical controls there)
 			
@@ -345,13 +360,14 @@ sub ObjectMain
 				Object.Alpha = 248
 				Object.Timer = 0
 			end if
-			
+#platform: Mobile
 			// If the Player's touched the screen at all, then switch to Touch Controls
 			CheckTouchRect(0, 0, Screen.XSize, Screen.YSize)
 			if CheckResult > -1
 				Options.PhysicalControls = false
 				Object.CurrentSelection = SELECTION_NULL
 			end if
+#endplatform
 		else
 			
 			// If the Player's not even in the game, then reset the current selection
@@ -517,8 +533,9 @@ sub ObjectMain
 				end if
 				
 				// And set Physical Controls to active, now that the player's actually pressed something
+#platform: Mobile
 				Options.PhysicalControls = true
-				
+#endplatform
 			end if
 			
 			if KeyPress[0].Down == true
@@ -529,8 +546,9 @@ sub ObjectMain
 				Object.CurrentSelection = SELECTION_CONTINUE
 				
 				// And similarly, set Physical Controls to be active for the same reason as before
+#platform: Mobile
 				Options.PhysicalControls = true
-				
+#endplatform
 			end if
 		end if
 		

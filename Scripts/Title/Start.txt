@@ -277,7 +277,7 @@ sub ObjectMain
 			CheckResult = 0
 		end if
 		
-		CheckGreater(CheckResult, -1)
+		//CheckGreater(CheckResult, -1)
 		
 		// This is actually bugged again lol
 		// The above is meant to see if the player's tapped the screen or pressed the Start button
@@ -312,8 +312,7 @@ sub ObjectMain
 		end if
 #endplatform
 
-#platform:	Use_Standard
-
+#platform:	Use_Standalone
 		CheckTouchRect(0, 0, Screen.XSize, 240)
 		if KeyPress.Start == true
 			CheckResult = false
@@ -334,7 +333,7 @@ sub ObjectMain
 		
 	case START_GOTO_MENU
 		// In Origins, this state does nothing and all the stuff in handled by the Select object instead
-#platform:	Use_Standard
+#platform:	Use_Standalone
 		Object.Fade += 4
 		if Object.Fade == 384
 			Stage.ListPos = 1		//	Menu
@@ -466,7 +465,7 @@ sub ObjectDraw
 		
 		// If in the upper half of a second, then 
 		if Object.AnimationTimer > 29
-			if Engine.DeviceType == 0
+			if Engine.DeviceType == RETRO_STANDARD
 				
 				// On standard Platforms, display the "Press Button" text
 				
@@ -480,6 +479,7 @@ sub ObjectDraw
 				DrawSprite(1)
 				
 			end if
+
 		end if
 		
 	end if
@@ -503,7 +503,15 @@ sub ObjectDraw
 	end if
 	
 	if Object.AnimationTimer > 29
+
+	#platform: Standard
 		DrawSprite(0)
+	#endplatform
+
+	#platform: Mobile
+		DrawSprite(0)
+	#endplatform
+
 	end if
 #endplatform
 end sub
@@ -511,61 +519,13 @@ end sub
 
 sub ObjectStartup
 	
-#platform: Use_Origins
+
 	// Some callbacks, to let the engine know what's happening
-	
+#platform: Use_Origins
 	game.callbackParam0 = 0
 	EngineCallback(NOTIFY_LEVEL_SELECT_MENU)
 #endplatform
-	
 	LoadSpriteSheet("Title/Title.gif")
-	
-#platform: Use_Standalone
-	switch Engine.Language
-	case LANGUAGE_ENGLISH
-	case LANGUAGE_JAPANESE
-		if Engine.DeviceType == RETRO_STANDARD
-			SpriteFrame(-43, 0, 87, 11, 106, 103)	//	English Press Start
-		else
-			SpriteFrame(-56, 0, 117, 11, 106, 91)	//	English Touch to Start
-		end if
-		break
-
-	case LANGUAGE_FRENCH
-		if Engine.DeviceType == RETRO_STANDARD
-			SpriteFrame(-60, 0, 120, 11, 391, 387)	//	French Press Start
-		else
-			SpriteFrame(-94, 0, 189, 11, 322, 399)	//	French Touch to Start
-		end if
-		break
-
-	case LANGUAGE_ITALIAN
-		if Engine.DeviceType == RETRO_STANDARD
-			SpriteFrame(-44, 0, 88, 11, 270, 411)	//	Italian Press Start
-		else
-			SpriteFrame(-76, 0, 152, 11, 359, 411)	//	Italian Touch To Start
-		end if
-		break
-
-	case LANGUAGE_DEUTSCH
-		if Engine.DeviceType == RETRO_STANDARD
-			SpriteFrame(-52, -2, 106, 13, 405, 373)	//	Deutsch Press Start
-		else
-			SpriteFrame(-87, 0, 175, 11, 336, 423)	//	Deutsch Touch to Start
-		end if
-		break
-
-	case LANGUAGE_SPANISH
-		if Engine.DeviceType == RETRO_STANDARD
-			SpriteFrame(-43, 0, 87, 11, 274, 435)	//	Spanish Press Start
-		else
-			SpriteFrame(-74, 0, 149, 11, 362, 435)	//	Spanish Touch To Start
-		end if
-		break
-
-	end switch
-
-#endplatform
 
 	// The following Sprites differ between languages
 	
@@ -576,8 +536,7 @@ sub ObjectStartup
 	// But of course in the language they correspond to
 	
 	// Do note, sprite 0 - the Press to Start one - is unused
-
-#platform: Use_Origins
+	
 
 	switch Engine.Language
 	case LANGUAGE_ENGLISH
@@ -632,7 +591,6 @@ sub ObjectStartup
 	
 	// Sega Copyright text
 	SpriteFrame(-88, -8, 88, 8, 423, 311)
-#endplatform
 end sub
 
 

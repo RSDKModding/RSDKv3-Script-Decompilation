@@ -19,25 +19,28 @@ sub ObjectMain
 			if CheckResult == true
 				Object[0].Type = TypeName[Blank Object]
 				Object[1].Type = TypeName[Blank Object]
+
 				Player.ControlMode = -1
+
 				Player.Direction = FACING_RIGHT
+
 				ResetObjectEntity(2, TypeName[Blank Object], 0, 0, 0)
+
 				Object.DrawOrder = 4
+
 				Object.State = SPECIALRING_BLANK
-#platform: Standard
-				Object.Frame = 16
-#endplatform
-#platform: Mobile
+
 				Object.Frame = 32
+#platform: Use_Standalone
+	#platform: Standard	// Workaround to fix 2011 steam graphics
+				Object.Frame -= 16
+	#endplatform
+#endplatform
 				StopSfx(24)
 				StopSfx(25)
-#endplatform
 				PlaySfx(18, 0)
-				Player.Left = 0
-				Player.Right = 0
-#platform: Use_Haptics
-				HapticEffect(40, 0, 0, 0)
-#endplatform
+				Player.Left = false
+				Player.Right = false
 			end if
 		end if
 	end if
@@ -47,14 +50,17 @@ end sub
 sub ObjectDraw
 	switch Object.State
 	case SPECIALRING_IDLE
+
 		if Player.Rings > 49
 			TempValue0 = Object.Frame
-#platform: Standard
+
+#platform: Use_Standalone	// 2011 Scripts
+	#platform: Standard
 			TempValue0 >>= 3
 			DrawSprite(TempValue0)
-#endplatform
+	#endplatform
 
-#platform: Mobile
+	#platform: Mobile
 			TempValue0 >>= 2
 			if TempValue0 > 3
 				Object.Direction = FACING_LEFT
@@ -62,91 +68,115 @@ sub ObjectDraw
 				Object.Direction = FACING_RIGHT
 			end if
 			DrawSpriteFX(TempValue0, FX_FLIP, Object.XPos, Object.YPos)
+	#endplatform
+#endplatform
+
+#platform: Use_Origins	// New origins scripts, mostly the same as 2011 mobile
+			TempValue0   = Object.Frame
+			TempValue0 >>= 2
+
+			if TempValue0 > 3
+				Object.Direction = FACING_LEFT
+			else
+				Object.Direction = FACING_RIGHT
+			endif
+
+			DrawSpriteFX(TempValue0, FX_FLIP, Object.XPos, Object.YPos)
 #endplatform
 
 			Object.Frame++
 			if Object.Frame > 31
 				Object.Frame = 0
-			end if
+			endif
 		end if
 		break
+
 	case SPECIALRING_BLANK
-		TempValue0 = Object.Frame
+		TempValue0   = Object.Frame
 		TempValue0 >>= 2
 
-#platform: Mobile
+#platform: Use_Standalone	// 2011 Scripts
+
+	#platform: Mobile
 		if TempValue0 > 11
 			Object.Direction = FACING_LEFT
 		else
 			Object.Direction = FACING_RIGHT
 		end if
-#endplatform
+	#endplatform
 
 		DrawSpriteFX(TempValue0, FX_FLIP, Object.XPos, Object.YPos)
 
-#platform: Standard
-		Object.Frame++
-		CheckGreater(Object.Frame,31)
-		if CheckResult == true
-			Object.Direction = FACING_LEFT
-		end if
+	#platform: Standard
+			Object.Frame++
+			CheckGreater(Object.Frame,31)
+			if CheckResult == true
+				Object.Direction = FACING_LEFT
+			end if
+
+			if Object.Frame > 47
+				ResetObjectEntity(Object.EntityNo, TypeName[Blank Object], 0, 0, 0)
+			end if
+	#endplatform
+
+	#platform: Mobile
+			CheckEqual(TempValue0,11)
+			if CheckResult == true
+				Object.Direction = FACING_LEFT
+					DrawSpriteFX(TempValue0, FX_FLIP, Object.XPos, Object.YPos)
+			else
+				if TempValue0 == 15
+					Object.Direction = FACING_LEFT
+					DrawSpriteFX(TempValue0, FX_FLIP, Object.XPos, Object.YPos)
+				end if
+			end if
+
+			Object.Frame++
+			if Object.Frame > 63
+				ResetObjectEntity(Object.EntityNo, TypeName[Blank Object], 0, 0, 0)
+			end if
+	#endplatform
+
 #endplatform
 
-#platform: Mobile
-		CheckEqual(TempValue0,11)
-		if CheckResult == true
+#platform: Use_Origins	// New origins scripts, mostly the same as 2011 mobile
+
+		if TempValue0 > 11
 			Object.Direction = FACING_LEFT
-				DrawSpriteFX(TempValue0, FX_FLIP, Object.XPos, Object.YPos)
+		else
+			Object.Direction = FACING_RIGHT
+		endif
+
+		DrawSpriteFX(TempValue0, FX_FLIP, Object.XPos, Object.YPos)
+		if TempValue0 == 11
+			Object.Direction = FACING_LEFT
+			DrawSpriteFX(TempValue0, FX_FLIP, Object.XPos, Object.YPos)
 		else
 			if TempValue0 == 15
 				Object.Direction = FACING_LEFT
 				DrawSpriteFX(TempValue0, FX_FLIP, Object.XPos, Object.YPos)
-			end if
-		end if
-#endplatform
+			endif
+		endif
 
-#platform: Standard
-		CheckGreater(Object.Frame,47)
-#endplatform
-
-#platform: Mobile
 		Object.Frame++
-		CheckGreater(Object.Frame,63)
+		if Object.Frame > 63
+			ResetObjectEntity(Object.EntityNo, TypeName[BlankObject], 0, 0, 0)
+		endif
 #endplatform
-
-		if CheckResult == true
-			ResetObjectEntity(Object.EntityNo, TypeName[Blank Object], 0, 0, 0)
-		end if
 		break
-	end switch
+	endswitch
+
 end sub
 
 
 sub ObjectStartup
-	if Stage.PlayerListPos == 0
+	if Stage.PlayerListPos == 0	// PlayerName[SONIC]
 		LoadSpriteSheet("Global/Items2.gif")
 	else
 		LoadSpriteSheet("Global/Items2_t.gif")
 	end if
 
-#platform: Standard
-	// Special Ring Frames
-	SpriteFrame(-32, -32, 64, 64, 83, 1)	// #0  - Special Ring Frame 0
-	SpriteFrame(-24, -32, 48, 64, 148, 1)	// #1  - Special Ring Frame 1
-	SpriteFrame(-12, -32, 24, 64, 197, 1)	// #2  - Special Ring Frame 2
-	SpriteFrame(-24, -32, 48, 64, 101, 66)	// #3  - Special Ring Frame 3
-	// Vanishing Frames
-	SpriteFrame(0, -32, 32, 64, 222, 1)		// #4  - Ring Vanishing Frame 0
-	SpriteFrame(-16, -32, 48, 64, 150, 66)	// #5  - Ring Vanishing Frame 1
-	SpriteFrame(-24, -32, 56, 64, 199, 66)	// #6  - Ring Vanishing Frame 2
-	SpriteFrame(-32, -32, 64, 64, 191, 131)	// #7  - Ring Vanishing Frame 3
-	SpriteFrame(-24, -32, 56, 64, 199, 66)	// #8  - Ring Vanishing Frame 4
-	SpriteFrame(-16, -32, 48, 64, 150, 66)	// #9  - Ring Vanishing Frame 5
-	SpriteFrame(0, -32, 32, 64, 222, 1)		// #10 - Ring Vanishing Frame 6
-	SpriteFrame(-32, -32, 64, 64, 126, 131)	// #11 - Ring Vanishing Frame 7
-#endplatform
-
-#platform: Mobile
+#platform: Use_Origins
 	// Special Ring Frames
 	SpriteFrame(-32, -32, 64, 64, 83, 1)	// #0  - Special Ring Frame 0
 	SpriteFrame(-28, -32, 56, 64, 199, 131)	// #1  - Special Ring Frame 1
@@ -167,6 +197,47 @@ sub ObjectStartup
 	SpriteFrame(-32, -32, 64, 64, 124, 131)	// #15 - Ring Vanishing Frame 7
 #endplatform
 
+
+#platform: Use_Standalone
+	#platform: Standard	// Steam 2011
+		// Special Ring Frames
+		SpriteFrame(-32, -32, 64, 64, 83, 1)	// #0  - Special Ring Frame 0
+		SpriteFrame(-24, -32, 48, 64, 148, 1)	// #1  - Special Ring Frame 1
+		SpriteFrame(-12, -32, 24, 64, 197, 1)	// #2  - Special Ring Frame 2
+		SpriteFrame(-24, -32, 48, 64, 101, 66)	// #3  - Special Ring Frame 3
+		// Vanishing Frames
+		SpriteFrame(0, -32, 32, 64, 222, 1)		// #4  - Ring Vanishing Frame 0
+		SpriteFrame(-16, -32, 48, 64, 150, 66)	// #5  - Ring Vanishing Frame 1
+		SpriteFrame(-24, -32, 56, 64, 199, 66)	// #6  - Ring Vanishing Frame 2
+		SpriteFrame(-32, -32, 64, 64, 191, 131)	// #7  - Ring Vanishing Frame 3
+		SpriteFrame(-24, -32, 56, 64, 199, 66)	// #8  - Ring Vanishing Frame 4
+		SpriteFrame(-16, -32, 48, 64, 150, 66)	// #9  - Ring Vanishing Frame 5
+		SpriteFrame(0, -32, 32, 64, 222, 1)		// #10 - Ring Vanishing Frame 6
+		SpriteFrame(-32, -32, 64, 64, 126, 131)	// #11 - Ring Vanishing Frame 7
+	#endplatform
+
+	#platform: Mobile // Mobile 2011
+		// Special Ring Frames
+		SpriteFrame(-32, -32, 64, 64, 83, 1)	// #0  - Special Ring Frame 0
+		SpriteFrame(-28, -32, 56, 64, 199, 131)	// #1  - Special Ring Frame 1
+		SpriteFrame(-24, -32, 48, 64, 148, 1)	// #2  - Special Ring Frame 2
+		SpriteFrame(-16, -32, 32, 64, 223, 66)	// #3  - Special Ring Frame 3
+		SpriteFrame(-12, -32, 24, 64, 197, 1)	// #4  - Special Ring Frame 4
+		SpriteFrame(-16, -32, 32, 64, 223, 66)	// #5  - Special Ring Frame 5
+		SpriteFrame(-24, -32, 48, 64, 148, 1)	// #6  - Special Ring Frame 6
+		SpriteFrame(-28, -32, 56, 64, 199, 131)	// #7  - Special Ring Frame 7
+		// Vanishing Frames
+		SpriteFrame(0, -32, 32, 64, 222, 1)		// #8  - Ring Vanishing Frame 0
+		SpriteFrame(-16, -32, 48, 64, 101, 66)	// #9  - Ring Vanishing Frame 1
+		SpriteFrame(-24, -32, 56, 64, 150, 66)	// #10 - Ring Vanishing Frame 2
+		SpriteFrame(0, -32, 32, 64, 156, 131)	// #11 - Ring Vanishing Frame 3
+		SpriteFrame(-24, -32, 56, 64, 150, 66)	// #12 - Ring Vanishing Frame 4
+		SpriteFrame(-16, -32, 48, 64, 101, 66)	// #13 - Ring Vanishing Frame 5
+		SpriteFrame(0, -32, 32, 64, 222, 1)		// #14 - Ring Vanishing Frame 6
+		SpriteFrame(-32, -32, 64, 64, 124, 131)	// #15 - Ring Vanishing Frame 7
+	#endplatform
+#endplatform
+
 	if SpecialStage.TimeStones >= 127	// We don't need this if all time stones are collected
 		ArrayPos0 = 32
 		while ArrayPos0 < 1056
@@ -177,23 +248,55 @@ sub ObjectStartup
 		loop
 	end if
 
-#platform: Standard
-	CheckEqual(Options.GameMode, GAMEMODE_TIMEATTACK)
+#platform: Use_Standalone
+	#platform: Standard
+		if Options.GameMode == GAMEMODE_TIMEATTACK
+			ArrayPos0 = 32
+			while ArrayPos0 < 1056
+				if Object[ArrayPos0].Type == TypeName[SpecialRing]
+					ResetObjectEntity(ArrayPos0, TypeName[Blank Object], 0, 0, 0)
+				end if
+				ArrayPos0++
+			loop
+		end if
+	#endplatform
+
+	#platform: Mobile
+		if Options.GameMode > GAMEMODE_MAINGAME
+			ArrayPos0 = 32
+			while ArrayPos0 < 1056
+				if Object[ArrayPos0].Type == TypeName[SpecialRing]
+					ResetObjectEntity(ArrayPos0, TypeName[Blank Object], 0, 0, 0)
+				end if
+				ArrayPos0++
+			loop
+		end if
+	#endplatform
 #endplatform
 
-#platform: Mobile
-	CheckGreater(Options.GameMode, GAMEMODE_MAINGAME)
-#endplatform
+#platform: Use_Origins
 
-	if CheckResult==1
+	if Options.GameMode > GAMEMODE_MAINGAME
 		ArrayPos0 = 32
 		while ArrayPos0 < 1056
 			if Object[ArrayPos0].Type == TypeName[SpecialRing]
-				ResetObjectEntity(ArrayPos0, TypeName[Blank Object], 0, 0, 0)
-			end if
+				ResetObjectEntity(ArrayPos0, TypeName[BlankObject], 0, 0, 0)
+			endif
 			ArrayPos0++
 		loop
-	end if
+	endif
+
+	if Engine.TrialMode == true
+		ArrayPos0 = 32
+		while ArrayPos0 < 1056
+			if Object[ArrayPos0].Type == TypeName[SpecialRing]
+				ResetObjectEntity(ArrayPos0, TypeName[BlankObject], 0, 0, 0)
+			endif
+			ArrayPos0++
+		loop
+	endif
+
+#endplatform
 end sub
 
 // ========================
