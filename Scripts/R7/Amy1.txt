@@ -37,7 +37,19 @@ sub ObjectMain
 			// Set Amy's bounds to make sure she doesn't go too far
 			Object.Bounds.Left  = 1050935296 // Hardcoded left bounds  - 0x3EA40000 (or 16036 with the in-game debug position display)
 			Object.Bounds.Right = 1073741824 // Hardcoded right bounds - 0x40000000 (or 16384 with the in-game debug position display)
-		
+			
+#platform: Use_Origins
+			// Some additional stuff for Origins
+			
+			// Let the game know, we've beaten a boss!
+			game.callbackParam0 = true
+			EngineCallback(NOTIFY_BOSS_END)
+			
+			// If in Boss Rush, then stop the music now
+			if game.playMode == BOOT_PLAYMODE_BOSSRUSH
+				StopMusic()
+			end if
+#endplatform
 		end if
 	end if
 	

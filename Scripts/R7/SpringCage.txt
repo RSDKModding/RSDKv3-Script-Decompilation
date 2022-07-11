@@ -16,6 +16,10 @@
 // R7 Spring Aliases
 #alias Object.Value0 : Object.Timer
 
+// SFX Aliases
+#alias 0 : SFX_LARGEBOOSTER
+#alias 3 : SFX_LAUNCHER
+
 
 sub ObjectMain
 	
@@ -60,7 +64,16 @@ sub ObjectMain
 			if Player.State != PlayerObject_Death
 				Object.LaunchTimer++
 				if Object.LaunchTimer == 60
-					PlayStageSfx(0, 0)
+					
+					// Origins uses a fixed SFX, compared to the original's which was improper
+					// This sound ID is only valid on Origins data files though, which is why we gotta separate it
+#platform: Use_Origins
+					PlayStageSfx(SFX_LAUNCHER, false)
+#endplatform
+#platform: Use_Standalone
+					PlayStageSfx(SFX_LARGEBOOSTER, false)
+#endplatform
+					
 					Player.State = PlayerObject_HandleAir
 					Player.Gravity = 1
 					Player.Timer = 0
