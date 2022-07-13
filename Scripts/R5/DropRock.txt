@@ -161,7 +161,87 @@ sub ObjectPlayerInteraction
 			Object.State = DROPROCK_FALLING
 		end if
 		
-		// [Fallthrough]
+		// After then, now see if the Player has touched the Rock again
+		// (But with a slightly different hitbox)
+		PlayerObjectCollision(C_BOX, -16, -16, 12, 16)
+		
+		// Did the Player hit the bottom of the Rock?
+		if CheckResult == 4
+			// Kaboom! Explode the Rock!
+			
+			PlaySfx(SFX_EXPLOSION, false)
+			
+			Object.State = DROPROCK_WAITFORRESPAWN
+			
+			// Hurt the Player, since explosions are dangerous 'n all
+			CallFunction(PlayerObject_Hit)
+
+			// Create all the Rock Fragments now
+			
+			// The initial info for each Fragment is listed as needed, in the following format:
+			// X: X offset from the Rock's base position
+			// Y: Y offset from the Rock's base position
+			// XVel: Starting X Velocity of the Fragment
+			// YVel: Starting Y Velocity of the Fragment
+			
+			// Top left Fragment:
+			// - X: 8 pixels right
+			// - Y: 8 pixels down
+			// - XVel: 1 pixel per frame left
+			// - YVel: 4 pixels per frame up
+			CreateTempObject(TypeName[Drop Rock], 1, Object.XPos, Object.YPos)
+			Object[TempObjectPos].State = DROPROCK_FRAGMENT
+			Object[TempObjectPos].XPos -= 524288
+			Object[TempObjectPos].YPos -= 524288
+			Object[TempObjectPos].XVelocity = -65536
+			Object[TempObjectPos].YVelocity = -262144
+			Object[TempObjectPos].DrawOrder = 5
+			
+			// Top right Fragment:
+			// - X: 8 pixels right
+			// - Y: 8 pixels down
+			// - XVel: 1 pixel per frame right
+			// - YVel: 4 pixels per frame up
+			CreateTempObject(TypeName[Drop Rock], 2, Object.XPos, Object.YPos)
+			Object[TempObjectPos].State = DROPROCK_FRAGMENT
+			Object[TempObjectPos].XPos += 524288
+			Object[TempObjectPos].YPos -= 524288
+			Object[TempObjectPos].XVelocity = 65536
+			Object[TempObjectPos].YVelocity = -262144
+			Object[TempObjectPos].DrawOrder = 5
+			
+			// Bottom left Fragment:
+			// - X: 8 pixels right
+			// - Y: 8 pixels down
+			// - XVel: 2 pixels per frame left
+			// - YVel: 3 pixels per frame up
+			CreateTempObject(TypeName[Drop Rock], 3, Object.XPos, Object.YPos)
+			Object[TempObjectPos].State = DROPROCK_FRAGMENT
+			Object[TempObjectPos].XPos -= 524288
+			Object[TempObjectPos].YPos += 524288
+			Object[TempObjectPos].XVelocity = -131072
+			Object[TempObjectPos].YVelocity = -196608
+			Object[TempObjectPos].DrawOrder = 5
+			
+			// Bottom right Fragment:
+			// - X: 8 pixels right
+			// - Y: 8 pixels down
+			// - XVel: 2 pixels per frame right
+			// - YVel: 3 pixels per frame up
+			CreateTempObject(TypeName[Drop Rock], 4, Object.XPos, Object.YPos)
+			Object[TempObjectPos].State = DROPROCK_FRAGMENT
+			Object[TempObjectPos].XPos += 524288
+			Object[TempObjectPos].YPos += 524288
+			Object[TempObjectPos].XVelocity = 131072
+			Object[TempObjectPos].YVelocity = -196608
+			Object[TempObjectPos].DrawOrder = 5
+			
+			// And then create the actual Kaboom
+			CreateTempObject(TypeName[Explosion], 0, Object.XPos, Object.YPos)
+			Object[TempObjectPos].DrawOrder = 5
+		end if
+		break
+		
 	case DROPROCK_FALLING
 		
 		// Check Collision with Player
