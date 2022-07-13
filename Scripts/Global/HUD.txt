@@ -1,24 +1,25 @@
-//------------Sonic CD HUD Script-------------//
+//-------------------Sonic CD HUD Script----------------------//
 //--------Scripted by Christian Whitehead 'The Taxman'--------//
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
 // Aliases
-#alias Object.Value3 : Object.DrawFunction
-#alias Object.Value4 : Object.FlashTimer
-#alias Object.Value5 : Object.PrevTimePeriod
-#alias Object.Value6 : Object.TimeOver
+#alias Object.Value3		: Object.DrawFunction
+#alias Object.Value4		: Object.FlashTimer
+#alias Object.Value5		: Object.PrevTimePeriod
+#alias Object.Value6		: Object.TimeOver
 
 #alias Object.PropertyValue : Object.TimePeriod
 
 // Player Aliases
-#alias Player.Value0 : Player.Rings
+#alias Player.Value0		: Player.Rings
 
 #alias 0	: PLAYER_SONIC
 
-// Warp Destination Aliases
-#alias 1	: WARPDEST_PAST
-#alias 2	: WARPDEST_FUTURE
+// Warp Destination
+#alias 1	: WARP_PAST
+#alias 2	: WARP_FUTURE
 
+// Device Type
 #alias 0	: RETRO_STANDARD
 
 // Function declarations
@@ -200,7 +201,7 @@ function HUD_DrawStandard
 			Object.PrevTimePeriod = Object.TimePeriod
 			
 			// Signal the new period over to the engine
-			game.callbackParam0 = Object.TimePeriod
+			game.callbackParam0 = Object.TimePeriod	// game.callbackParam0 = new time period
 			EngineCallback(NOTIFY_FUTURE_PAST)
 			
 		end if
@@ -233,7 +234,7 @@ function HUD_DrawStandard
 	end if
 	
 	switch Warp.Destination
-	case WARPDEST_PAST
+	case WARP_PAST
 		if Warp.Timer < 100
 			
 			// If the Player isn't currently warping, then just draw the Past sign constantly
@@ -252,7 +253,7 @@ function HUD_DrawStandard
 		end if
 		break
 		
-	case WARPDEST_FUTURE
+	case WARP_FUTURE
 		if Warp.Timer < 100
 			
 			// If not warping, then draw the Future sign normally
@@ -352,7 +353,7 @@ function HUD_DrawStandard
 	end if
 
 	switch Warp.Destination
-	case WARPDEST_PAST
+	case WARP_PAST
 		if Warp.Timer < 100
 			// If the Player isn't currently warping, then just draw the Past sign constantly
 			DrawSpriteScreenXY(15, TempValue1, 214)
@@ -366,7 +367,7 @@ function HUD_DrawStandard
 		end if
 		break
 
-	case WARPDEST_FUTURE
+	case WARP_FUTURE
 		if Warp.Timer < 100
 			// If the Player isn't currently warping, then just draw the Past sign constantly
 			DrawSpriteScreenXY(16, TempValue1, 214)
@@ -498,7 +499,7 @@ function HUD_DrawMobile
 	
 	// Draw the Warping Destination, if there is any at the moment
 	switch Warp.Destination
-	case WARPDEST_PAST
+	case WARP_PAST
 		TempValue1 -= 79
 		if Warp.Timer < 100
 			DrawSpriteScreenXY(15, TempValue1, 8)
@@ -511,7 +512,7 @@ function HUD_DrawMobile
 		end if
 		break
 		
-	case WARPDEST_FUTURE
+	case WARP_FUTURE
 		TempValue1 -= 79
 		if Warp.Timer < 100
 			DrawSpriteScreenXY(16, TempValue1, 8)
@@ -530,7 +531,6 @@ end function
 
 
 sub ObjectDraw
-	
 	if Player.Rings == 0
 		Object.FlashTimer++
 		
@@ -560,7 +560,6 @@ end sub
 
 
 sub ObjectStartup
-	
 	// Load the appropriate sheet for the current character
 	if Stage.PlayerListPos == PLAYER_SONIC
 		LoadSpriteSheet("Global/Display.gif")

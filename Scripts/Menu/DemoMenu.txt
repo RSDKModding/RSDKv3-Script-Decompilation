@@ -4,38 +4,50 @@
 //---This Object is normally only used by Lite Data files-----//
 
 // Aliases
-#alias Object.Value0 : Object.Fade
-#alias Object.Value1 : Object.CurrentButton
-#alias Object.Value2 : Object.CurrentRecord
-#alias Object.Value3 : Object.BossUnlockRecord
+#alias Object.Value0				: Object.Fade
+#alias Object.Value1				: Object.CurrentButton
+#alias Object.Value2				: Object.CurrentRecord
+#alias Object.Value3				: Object.BossUnlockRecord
 
-//Object[33] is MenuHeading
-#alias Object[33].State				: Object.MHState
-#alias Object[33].PropertyValue		: Object.MHPropertyValue
+// MenuHeading Aliases
+#alias Object[33].State				: MenuHeading.State
+#alias Object[33].PropertyValue		: MenuHeading.Header
+
+// MenuHeading PropertyValues
+#alias 5							: PROPVAL_MAINMENU_HEADER
 
 //Object[-1] is MenuWindow
-#alias Object[-1].State				: Object.MWState
+#alias Object[-1].State				: MenuWindow.State
 
-#alias 3 : GAMEMODE_DEMOMODE
+// Menu Heading States
+#alias 1							: MENUHEADING_LEAVE_SCREEN
+#alias 2							: MENUHEADING_ENTER_SCREEN
+
+// MenuWindow States
+#alias 1 							: MENUWINDOW_SCALEDOWN
+
+// Gamemodes
+#alias 3							: GAMEMODE_DEMOMODE
 
 //SaveRAM Values
 // 48 : PPZ1DemoRecord
 // 49 : QQZ2DemoRecord
 
 //States
-#alias 0 : DEMOMENU_FADEIN
-#alias 1 : DEMOMENU_CONTROLS
-#alias 2 : DEMOMENU_LEVEL_SELECTED
-#alias 3 : DEMOMENU_BACK
-#alias 4 : DEMOMENU_LEVEL_LOAD
+#alias 0							: DEMOMENU_FADEIN
+#alias 1							: DEMOMENU_CONTROLS
+#alias 2							: DEMOMENU_LEVEL_SELECTED
+#alias 3 							: DEMOMENU_BACK
+#alias 4							: DEMOMENU_LEVEL_LOAD
+
 // Function declarations
 #function MenuHeading_CheckTouchBack
 #function DemoMenu_StageTimeRecord
 #function DemoMenu_StageTotalTimeRecord
 #function DemoMenu_StagePortraitMovement
 
+
 function DemoMenu_StageTimeRecord
-#platform: Mobile
 	TempValue4 = TempValue0
 	TempValue4 += 4
 	TempValue2 = TempValue1
@@ -79,12 +91,10 @@ function DemoMenu_StageTimeRecord
 	TempValue3 %= 10
 	TempValue3 += 11
 	DrawSpriteScreenFX(TempValue3, FX_INK, TempValue4, 136)
-#endplatform
 end function
 
 
 function DemoMenu_StageTotalTimeRecord
-#platform: Mobile
 	TempValue4 = TempValue0
 	TempValue2 = TempValue1
 	TempValue2 /= 6000
@@ -127,12 +137,10 @@ function DemoMenu_StageTotalTimeRecord
 	TempValue3 %= 10
 	TempValue3 += Object.Frame
 	DrawSpriteScreenFX(TempValue3, FX_INK, TempValue4, 155)
-#endplatform
 end function
 
 
 function DemoMenu_StagePortraitMovement
-#platform: Mobile
 	Cos(TempValue4, Object.Rotation)
 	TempValue4 >>= 4
 	TempValue4 += TempValue2
@@ -143,19 +151,18 @@ function DemoMenu_StagePortraitMovement
 	Object.Rotation += 128
 	Object.Rotation &= 511
 	EditFrame(10, 2, 2, 64, 58, TempValue4, TempValue5)
-#endplatform
 end function
 
 
 sub ObjectMain
-#platform: Mobile
 	switch Object.State
-	case 0
+	case DEMOMENU_FADEIN
 		if Options.PhysicalControls == true
 			Object.CurrentButton = -1
 		else
 			Object.CurrentButton = 0
 		end if
+
 		if Object.Fade == 0
 			Object.BossUnlockRecord = 9000
 			Object.CurrentRecord = SaveRAM[48]	// PPZ1DemoRecord
@@ -166,6 +173,7 @@ sub ObjectMain
 				Object.CurrentRecord = 120000
 			end if
 		end if
+
 		if Object.Fade < 256
 			Object.Alpha = Object.Fade
 			Object.Fade += 6
@@ -176,7 +184,7 @@ sub ObjectMain
 		end if
 		break
 
-	case 1
+	case DEMOMENU_CONTROLS
 		if Options.PhysicalControls == true
 
 			if KeyPress.Left == true
@@ -273,6 +281,7 @@ sub ObjectMain
 			end if
 
 		end if
+
 		CheckResult = false
 		if Object.CurrentButton > -1
 			if KeyPress.Start == true
@@ -284,6 +293,7 @@ sub ObjectMain
 					CheckResult = true
 				end if
 			end if
+
 			if KeyPress.ButtonA == true
 				if Object.CurrentButton == 2
 					if Object.CurrentRecord <= Object.BossUnlockRecord
@@ -294,11 +304,13 @@ sub ObjectMain
 				end if
 			end if
 		end if
+
 		if CheckResult == true
 			Object.State++
 			StopMusic()
 			PlaySfx(27, 0)	//Select SFX
 		end if
+
 		if KeyPress.ButtonB == true
 			Object.Fade = 248
 			Object.State = DEMOMENU_BACK
@@ -321,20 +333,20 @@ sub ObjectMain
 			Object.Fade -= 8
 		else
 			Object.Type = TypeName[Blank Object]
-			Object.MWState = 3
+			MenuWindow.State = 3
 			//All of this is MenuButton Objects
-			Object[34].State = 1
-			Object[35].State = 1
-			Object[36].State = 1
-			Object[37].State = 1
-			Object[38].State = 1
-			Object[39].State = 1
-			Object[40].State = 1
-			Object[41].State = 1
-			Object[42].State = 1
+			Object[34].State = MENUWINDOW_SCALEDOWN
+			Object[35].State = MENUWINDOW_SCALEDOWN
+			Object[36].State = MENUWINDOW_SCALEDOWN
+			Object[37].State = MENUWINDOW_SCALEDOWN
+			Object[38].State = MENUWINDOW_SCALEDOWN
+			Object[39].State = MENUWINDOW_SCALEDOWN
+			Object[40].State = MENUWINDOW_SCALEDOWN
+			Object[41].State = MENUWINDOW_SCALEDOWN
+			Object[42].State = MENUWINDOW_SCALEDOWN
 			//End
-			Object.MHState = 1
-			Object.MHPropertyValue = 5
+			MenuHeading.State = MENUHEADING_LEAVE_SCREEN
+			MenuHeading.Header = PROPVAL_MAINMENU_HEADER
 		end if
 		break
 
@@ -353,15 +365,15 @@ sub ObjectMain
 			switch Object.CurrentButton
 			case 0
 				Stage.ListPos = 0		//Palmtree Panic Zone 1 Present
-				Good_Future = 0
+				Good_Future = false
 				break
 			case 1
 				Stage.ListPos = 34		//Quartz Quadrant Zone 2 Present
-				Good_Future = 0
+				Good_Future = false
 				break
 			case 2
 				Stage.ListPos = 38		//Quartz Quadrant Zone 3 Good Future
-				Good_Future = 1
+				Good_Future = true
 				break
 			end switch
 			LoadStage()
@@ -370,44 +382,56 @@ sub ObjectMain
 		break
 
 	end switch
-#endplatform
 end sub
 
 
 sub ObjectDraw
-#platform: Mobile
 	TempValue0 = Screen.CenterX
 	TempValue0 -= 113
 	DrawSpriteScreenFX(0, FX_INK, TempValue0, 57)
+
 	TempValue2 = 33
 	TempValue3 = 267
 	CallFunction(DemoMenu_StagePortraitMovement)
+
 	DrawSpriteScreenFX(10, FX_INK, TempValue0, 57)
 	DrawSpriteScreenFX(6, FX_INK, TempValue0, 134)
+
 	TempValue1 = SaveRAM[48]	// PPZ1DemoRecord
 	CallFunction(DemoMenu_StageTimeRecord)
+
 	TempValue0 += 78
 	DrawSpriteScreenFX(1, FX_INK, TempValue0, 57)
+
 	TempValue2 = 33
 	TempValue3 = 396
 	CallFunction(DemoMenu_StagePortraitMovement)
+
 	DrawSpriteScreenFX(10, FX_INK, TempValue0, 57)
 	DrawSpriteScreenFX(6, FX_INK, TempValue0, 134)
+
 	TempValue1 = SaveRAM[49]	// QQZ2DemoRecord
 	CallFunction(DemoMenu_StageTimeRecord)
+
 	TempValue0 += 78
 	DrawSpriteScreenFX(2, FX_INK, TempValue0, 57)
+
 	TempValue2 = 321
 	TempValue3 = 399
 	CallFunction(DemoMenu_StagePortraitMovement)
+
 	DrawSpriteScreenFX(10, FX_INK, TempValue0, 57)
+
 	Object.Rotation += 129
 	Object.Rotation &= 511
+
 	TempValue0 = Screen.CenterX
+
 	TempValue1 = Object.AnimationTimer
 	TempValue1 &= 3
 	TempValue1 >>= 1
 	TempValue1 += 7
+
 	switch Object.CurrentButton
 	case 0
 		TempValue0 -= 113
@@ -425,20 +449,25 @@ sub ObjectDraw
 		break
 
 	end switch
+
 	if Object.CurrentRecord > Object.BossUnlockRecord
 		TempValue0 = Screen.CenterX
 		TempValue0 += 97
 		DrawSpriteScreenFX(9, FX_INK, TempValue0, 128)
+
 		TempValue0 = Screen.CenterX
 		TempValue0 -= 113
 		DrawSpriteScreenFX(3, FX_INK, TempValue0, 155)
 		DrawSpriteScreenFX(4, FX_INK, TempValue0, 155)
+
 		TempValue0 += 44
 		Object.Frame = 21
 		TempValue1 = Object.CurrentRecord
 		CallFunction(DemoMenu_StageTotalTimeRecord)
+
 		TempValue0 += 114
 		DrawSpriteScreenFX(5, FX_INK, TempValue0, 154)
+
 		TempValue0 += 11
 		Object.Frame = 31
 		TempValue1 = Object.BossUnlockRecord
@@ -448,39 +477,42 @@ sub ObjectDraw
 		TempValue0 -= 113
 		DrawSpriteScreenFX(3, FX_INK, TempValue0, 155)
 		DrawSpriteScreenFX(4, FX_INK, TempValue0, 155)
+
 		TempValue0 += 44
+
 		Object.Frame = 21
 		TempValue1 = Object.CurrentRecord
 		CallFunction(DemoMenu_StageTotalTimeRecord)
 	end if
-#endplatform
 end sub
 
 
 sub ObjectStartup
-#platform: Mobile
 	LoadSpriteSheet("Menu/MenuGfx1_EN.gif")
-	SpriteFrame(0, 0, 68, 90, 321, 1)		//#0 - Palmtree Panic Border
-	SpriteFrame(0, 0, 68, 90, 321, 92)		//#1 - Quartz Quadrant Border
-	SpriteFrame(0, 0, 68, 90, 321, 183)		//#2 - Boss Border
-	SpriteFrame(0, 0, 36, 13, 219, 440)		//#3 - Total
-	SpriteFrame(61, 0, 30, 5, 219, 434)		//#4 - ´	´´
-	SpriteFrame(0, 0, 66, 14, 211, 349)		//#5 - Locked
-	SpriteFrame(17, 0, 22, 4, 169, 435)		//#6 - Large	´	´´
-	SpriteFrame(-1, -1, 70, 92, 321, 274)	//#7 - Border
-	SpriteFrame(-1, -1, 0, 0, 325, 279)		//#8 - Empty
-	SpriteFrame(0, -10, 8, 13, 258, 418)	//#9 - Lock
+
+	SpriteFrame(0, 0, 68, 90, 321, 1)		//#0  - Palmtree Panic Border
+	SpriteFrame(0, 0, 68, 90, 321, 92)		//#1  - Quartz Quadrant Border
+	SpriteFrame(0, 0, 68, 90, 321, 183)		//#2  - Boss Border
+	SpriteFrame(0, 0, 36, 13, 219, 440)		//#3  - Total
+	SpriteFrame(61, 0, 30, 5, 219, 434)		//#4  - ´	´´
+	SpriteFrame(0, 0, 66, 14, 211, 349)		//#5  - Locked
+	SpriteFrame(17, 0, 22, 4, 169, 435)		//#6  - Large	´	´´
+	SpriteFrame(-1, -1, 70, 92, 321, 274)	//#7  - Border
+	SpriteFrame(-1, -1, 0, 0, 325, 279)		//#8  - Empty
+	SpriteFrame(0, -10, 8, 13, 258, 418)	//#9  - Lock
 	SpriteFrame(2, 2, 64, 58, 1, 1)			//#10 - Unknown
-	SpriteFrame(0, 0, 6, 8, 244, 400)		//#11 - Small 0
-	SpriteFrame(0, 0, 6, 8, 251, 400)		//#12 - Small 1
-	SpriteFrame(0, 0, 6, 8, 258, 400)		//#13 - Small 2
-	SpriteFrame(0, 0, 6, 8, 265, 400)		//#14 - Small 3
-	SpriteFrame(0, 0, 6, 8, 244, 409)		//#15 - Small 4
-	SpriteFrame(0, 0, 6, 8, 251, 409)		//#16 - Small 5
-	SpriteFrame(0, 0, 6, 8, 258, 409)		//#17 - Small 6
-	SpriteFrame(0, 0, 6, 8, 265, 409)		//#18 - Small 7
-	SpriteFrame(0, 0, 6, 8, 244, 418)		//#19 - Small 8
-	SpriteFrame(0, 0, 6, 8, 251, 418)		//#20 - Small 9
+	// Small Numbers
+	SpriteFrame(0, 0, 6, 8, 244, 400)		//#11 - 0
+	SpriteFrame(0, 0, 6, 8, 251, 400)		//#12 - 1
+	SpriteFrame(0, 0, 6, 8, 258, 400)		//#13 - 2
+	SpriteFrame(0, 0, 6, 8, 265, 400)		//#14 - 3
+	SpriteFrame(0, 0, 6, 8, 244, 409)		//#15 - 4
+	SpriteFrame(0, 0, 6, 8, 251, 409)		//#16 - 5
+	SpriteFrame(0, 0, 6, 8, 258, 409)		//#17 - 6
+	SpriteFrame(0, 0, 6, 8, 265, 409)		//#18 - 7
+	SpriteFrame(0, 0, 6, 8, 244, 418)		//#19 - 8
+	SpriteFrame(0, 0, 6, 8, 251, 418)		//#20 - 9
+	// White Numbers
 	SpriteFrame(0, 0, 8, 16, 154, 400)		//#21 - 0
 	SpriteFrame(0, 0, 8, 16, 163, 400)		//#22 - 1
 	SpriteFrame(0, 0, 8, 16, 172, 400)		//#23 - 2
@@ -491,7 +523,8 @@ sub ObjectStartup
 	SpriteFrame(0, 0, 8, 16, 217, 400)		//#28 - 7
 	SpriteFrame(0, 0, 8, 16, 226, 400)		//#29 - 8
 	SpriteFrame(0, 0, 8, 16, 235, 400)		//#30 - 9
-	SpriteFrame(0, 0, 8, 16, 154, 417)		//#31 - 0 Red
+	// Red Numbers
+	SpriteFrame(0, 0, 8, 16, 154, 417)		//#31 - 0 
 	SpriteFrame(0, 0, 8, 16, 163, 417)		//#32 - 1
 	SpriteFrame(0, 0, 8, 16, 172, 417)		//#33 - 2
 	SpriteFrame(0, 0, 8, 16, 181, 417)		//#34 - 3
@@ -501,7 +534,6 @@ sub ObjectStartup
 	SpriteFrame(0, 0, 8, 16, 217, 417)		//#38 - 7
 	SpriteFrame(0, 0, 8, 16, 226, 417)		//#39 - 8
 	SpriteFrame(0, 0, 8, 16, 235, 417)		//#40 - 9
-#endplatform
 end sub
 
 // ========================

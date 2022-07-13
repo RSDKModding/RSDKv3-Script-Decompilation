@@ -1,17 +1,16 @@
-//------------Sonic CD Red Spring Script-------------//
+//-----------------Sonic CD Red Spring Script-----------------//
 //--------Scripted by Christian Whitehead 'The Taxman'--------//
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
 // Aliases
-#alias Object.Value0	:	Object.ActiveSpring
+#alias Object.Value0	:	Object.ActiveSpringFrame
 #alias Object.Value7	:	Object.YFlipped	// Only flipped in functionality, not in the way it displays
+
+// Player Aliases
+#alias Player.Value7	:	Player.AnimationCheck
 
 // Directions
 #alias 2	:	FACING_UPWARDS
-
-// Player Aliases
-#alias Player.Value7:Player.AnimationCheck
-#alias 11	:	ANI_BOUNCING
 
 // Gravity
 #alias 0	:	GRAVITY_GROUND
@@ -22,19 +21,19 @@
 #alias 2	:	CMODE_ROOF
 
 // Property Values
-#alias 0	: SPRING_FACING_UP
-#alias 1	: SPRING_FACING_RIGHT
-#alias 2	: SPRING_FACING_LEFT
-#alias 3	: SPRING_FACING_DOWN
-#alias 4	: SPRING_FACING_DIAGONAL_UR
-#alias 5	: SPRING_FACING_DIAGONAL_UL
-#alias 6	: SPRING_FACING_DIAGONAL_DR	// Actually not facing down
-#alias 7	: SPRING_FACING_DIAGONAL_DL	// Actually not facing down
+#alias 0	: PROPVAL_FACING_UP
+#alias 1	: PROPVAL_FACING_RIGHT
+#alias 2	: PROPVAL_FACING_LEFT
+#alias 3	: PROPVAL_FACING_DOWN
+#alias 4	: PROPVAL_FACING_DIAGONAL_UR
+#alias 5	: PROPVAL_FACING_DIAGONAL_UL
+#alias 6	: PROPVAL_FACING_DIAGONAL_DR	// Actually not facing down
+#alias 7	: PROPVAL_FACING_DIAGONAL_DL	// Actually not facing down
 
 
 sub ObjectPlayerInteraction
 	switch Object.PropertyValue
-	case SPRING_FACING_UP
+	case PROPVAL_FACING_UP
 		TempValue0 = false
 		if Player.Gravity == GRAVITY_AIR
 			TempValue0 = true
@@ -47,7 +46,7 @@ sub ObjectPlayerInteraction
 
 		if TempValue0 == false
 			PlayerObjectCollision(C_BOX, -16, -8, 16, 8)
-			PlayerObjectCollision(C_TOUCH, -15, -10, 15, -6)
+			PlayerObjectCollision(C_TOUCH, -16, -10, 16, -6)	// Hey, they actually made this match
 			if CheckResult == true
 				Player.AnimationCheck = ANI_WALKING
 				if Player.Animation == ANI_RUNNING
@@ -57,10 +56,17 @@ sub ObjectPlayerInteraction
 					Player.AnimationCheck = ANI_PEELOUT
 				end if
 
-				Object.ActiveSpring = true
+				Object.ActiveSpringFrame = 1
+
+#platform: Use_Origins
+				Player.State = PlayerObject_ResetDropDash
+#endplatform
+
+#platform: Use_Standalone
 				Player.State = PlayerObject_HandleAir
+#endplatform
 				Player.Gravity = GRAVITY_AIR
-				Player.YVelocity = -1048576
+				Player.YVelocity = -0x100000
 				Player.Animation = ANI_BOUNCING
 				Player.Timer = 0
 				PlaySfx(11, 0)
@@ -68,7 +74,7 @@ sub ObjectPlayerInteraction
 		else
 			if Player.YVelocity >= 0
 				PlayerObjectCollision(C_PLATFORM, -16, -8, 16, 8)
-				PlayerObjectCollision(C_TOUCH, -15, -10, 15, -6)
+				PlayerObjectCollision(C_TOUCH, -16, -10, 16, -6)	// Hey, they actually made this match
 				if CheckResult == true
 					Player.AnimationCheck = ANI_WALKING
 					if Player.Animation == ANI_RUNNING
@@ -78,10 +84,17 @@ sub ObjectPlayerInteraction
 						Player.AnimationCheck = ANI_PEELOUT
 					end if
 					
-					Object.ActiveSpring = true
-					Player.State = PlayerObject_HandleAir
+					Object.ActiveSpringFrame = 1
+					
+#platform: Use_Origins
+				Player.State = PlayerObject_ResetDropDash
+#endplatform
+
+#platform: Use_Standalone
+				Player.State = PlayerObject_HandleAir
+#endplatform
 					Player.Gravity = GRAVITY_AIR
-					Player.YVelocity = -1048576	// -0x100000
+					Player.YVelocity = -0x100000
 					Player.Animation = ANI_BOUNCING
 					Player.Timer = 0
 					PlaySfx(11, 0)
@@ -90,14 +103,14 @@ sub ObjectPlayerInteraction
 		end if
 		break
 
-	case SPRING_FACING_RIGHT
+	case PROPVAL_FACING_RIGHT
 		PlayerObjectCollision(C_BOX, -8, -16, 8, 16)
 		if Player.Gravity == GRAVITY_GROUND
 			PlayerObjectCollision(C_TOUCH, 6, -15, 11, 15)
 			if CheckResult == true
-				Object.ActiveSpring = true
+				Object.ActiveSpringFrame = 1
 				Player.Angle = 0
-				Player.Speed = 1048576			// 0x100000
+				Player.Speed = 0x100000
 				Player.CollisionMode = CMODE_FLOOR
 				Player.Pushing = false
 				Player.Direction = FACING_RIGHT
@@ -108,9 +121,9 @@ sub ObjectPlayerInteraction
 			if Object.YFlipped == true
 				PlayerObjectCollision(C_TOUCH, 6, -15, 11, 15)
 				if CheckResult == true
-					Object.ActiveSpring = true
+					Object.ActiveSpringFrame = 1
 					Player.Angle = 0
-					Player.Speed = 1048576		// 0x100000
+					Player.Speed = 0x100000
 					Player.CollisionMode = CMODE_FLOOR
 					Player.Pushing = false
 					Player.Direction = FACING_RIGHT
@@ -121,13 +134,13 @@ sub ObjectPlayerInteraction
 		end if
 		break
 
-	case SPRING_FACING_LEFT
+	case PROPVAL_FACING_LEFT
 		PlayerObjectCollision(C_BOX, -8, -16, 8, 16)
 		if Player.Gravity == GRAVITY_GROUND
 			PlayerObjectCollision(C_TOUCH, -10, -15, -6, 15)
 			if CheckResult == true
-				Object.ActiveSpring = true
-				Player.Speed = -1048576			// -0x100000
+				Object.ActiveSpringFrame = 1
+				Player.Speed = -0x100000
 				Player.CollisionMode = CMODE_FLOOR
 				Player.Pushing = false
 				Player.Direction = FACING_LEFT
@@ -138,9 +151,9 @@ sub ObjectPlayerInteraction
 			if Object.YFlipped == true
 				PlayerObjectCollision(C_TOUCH, -10, -15, -6, 15)
 				if CheckResult == true
-					Object.ActiveSpring = true
-					Player.Speed = -1048576		// -0x100000
-					Player.YVelocity = 131072	// 0x20000
+					Object.ActiveSpringFrame = 1
+					Player.Speed = -0x100000
+					Player.YVelocity = 0x20000
 					Player.CollisionMode = CMODE_FLOOR
 					Player.Pushing = false
 					Player.Direction = FACING_LEFT
@@ -151,7 +164,7 @@ sub ObjectPlayerInteraction
 		end if
 		break
 
-	case SPRING_FACING_DOWN
+	case PROPVAL_FACING_DOWN
 		PlayerObjectCollision(C_BOX, -16, -8, 16, 8)
 		PlayerObjectCollision(C_TOUCH, -15, 6, 15, 10)
 		if CheckResult == true
@@ -159,25 +172,39 @@ sub ObjectPlayerInteraction
 				FlipSign(Player.Speed)
 				FlipSign(Player.XVelocity)
 			end if
-			Object.ActiveSpring = true
-			Player.State = PlayerObject_HandleAir
+			Object.ActiveSpringFrame = 1
+			
+#platform: Use_Origins
+				Player.State = PlayerObject_ResetDropDash
+#endplatform
+
+#platform: Use_Standalone
+				Player.State = PlayerObject_HandleAir
+#endplatform
 			Player.Gravity = GRAVITY_AIR
-			Player.YVelocity = 1048576		// 0x100000
+			Player.YVelocity = 0x100000
 			Player.Timer = 0
 			PlaySfx(11, 0)
 		end if
 		break
 
-	case SPRING_FACING_DIAGONAL_UR
+	case PROPVAL_FACING_DIAGONAL_UR
 		PlayerObjectCollision(C_TOUCH, -12, -16, 12, 12)
 		if Player.Gravity == GRAVITY_GROUND
 			if CheckResult == true
 				Player.Animation = ANI_WALKING
-				Object.ActiveSpring = true
+				Object.ActiveSpringFrame = 1
+				
+#platform: Use_Origins
+				Player.State = PlayerObject_ResetDropDash
+#endplatform
+
+#platform: Use_Standalone
 				Player.State = PlayerObject_HandleAir
+#endplatform
 				Player.Gravity = GRAVITY_AIR
-				Player.Speed = 737280		// 0xB4000
-				Player.YVelocity = -737280	// -0xB4000
+				Player.Speed = 0xB4000
+				Player.YVelocity = -0xB4000
 				Player.Direction = FACING_RIGHT
 				Player.Timer = 0
 				PlaySfx(11, 0)
@@ -186,11 +213,18 @@ sub ObjectPlayerInteraction
 		if Player.YVelocity >= 0
 			if CheckResult == true
 				Player.Animation = ANI_WALKING
-				Object.ActiveSpring = true
+				Object.ActiveSpringFrame = 1
+				
+#platform: Use_Origins
+				Player.State = PlayerObject_ResetDropDash
+#endplatform
+
+#platform: Use_Standalone
 				Player.State = PlayerObject_HandleAir
+#endplatform
 				Player.Gravity = GRAVITY_AIR
-				Player.Speed = 737280		// 0xB4000
-				Player.YVelocity = -737280	// -0xB4000
+				Player.Speed = 0xB4000
+				Player.YVelocity = -0xB4000
 				Player.Direction = FACING_RIGHT
 				Player.Timer = 0
 				PlaySfx(11, 0)
@@ -198,16 +232,23 @@ sub ObjectPlayerInteraction
 		end if
 		break
 
-	case SPRING_FACING_DIAGONAL_UL
+	case PROPVAL_FACING_DIAGONAL_UL
 		PlayerObjectCollision(C_TOUCH, -12, -16, 12, 12)
 		if Player.YVelocity >= 0
 			if CheckResult == true
 				Player.Animation = ANI_WALKING
-				Object.ActiveSpring = true
+				Object.ActiveSpringFrame = 1
+				
+#platform: Use_Origins
+				Player.State = PlayerObject_ResetDropDash
+#endplatform
+
+#platform: Use_Standalone
 				Player.State = PlayerObject_HandleAir
+#endplatform
 				Player.Gravity = GRAVITY_AIR
-				Player.Speed = -737280		// -0xB4000
-				Player.YVelocity = -737280	// -0xB4000
+				Player.Speed = -0xB4000
+				Player.YVelocity = -0xB4000
 				Player.Direction = FACING_LEFT
 				Player.Timer = 0
 				PlaySfx(11, 0)
@@ -216,11 +257,18 @@ sub ObjectPlayerInteraction
 		if Player.Gravity == GRAVITY_GROUND
 			if CheckResult == true
 				Player.Animation = ANI_WALKING
-				Object.ActiveSpring = true
+				Object.ActiveSpringFrame = 1
+				
+#platform: Use_Origins
+				Player.State = PlayerObject_ResetDropDash
+#endplatform
+
+#platform: Use_Standalone
 				Player.State = PlayerObject_HandleAir
+#endplatform
 				Player.Gravity = GRAVITY_AIR
-				Player.Speed = -737280		// -0xB4000
-				Player.YVelocity = -737280	// -0xB4000
+				Player.Speed = -0xB4000
+				Player.YVelocity = -0xB4000
 				Player.Direction = FACING_LEFT
 				Player.Timer = 0
 				PlaySfx(11, 0)
@@ -228,47 +276,55 @@ sub ObjectPlayerInteraction
 		end if
 		break
 
-	case SPRING_FACING_DIAGONAL_DR
+	case PROPVAL_FACING_DIAGONAL_DR
 		PlayerObjectCollision(C_TOUCH, -12, -12, 12, 12)
 		if CheckResult == true
-			Object.ActiveSpring = true
-			Player.State = PlayerObject_HandleAir
+			Object.ActiveSpringFrame = 1
+			
+#platform: Use_Origins
+				Player.State = PlayerObject_ResetDropDash
+#endplatform
+
+#platform: Use_Standalone
+				Player.State = PlayerObject_HandleAir
+#endplatform
 			Player.Gravity = GRAVITY_AIR
-			Player.Speed = 737280		// 0xB4000
-			Player.YVelocity = 737280	// 0xB4000
+			Player.Speed = 0xB4000
+			Player.YVelocity = 0xB4000
 			Player.Timer = 0
 			PlaySfx(11, 0)
 		end if
 		break
 
-	case SPRING_FACING_DIAGONAL_DL
+	case PROPVAL_FACING_DIAGONAL_DL
 		PlayerObjectCollision(C_TOUCH, -12, -12, 12, 12)
 		if CheckResult == true
-			Object.ActiveSpring = true
-			Player.State = PlayerObject_HandleAir
+			Object.ActiveSpringFrame = 1
+			
+#platform: Use_Origins
+				Player.State = PlayerObject_ResetDropDash
+#endplatform
+
+#platform: Use_Standalone
+				Player.State = PlayerObject_HandleAir
+#endplatform
 			Player.Gravity = GRAVITY_AIR
-			Player.Speed = -737280		// -0xB4000
-			Player.YVelocity = 737280	// 0xB4000
+			Player.Speed = -0xB4000
+			Player.YVelocity = 0xB4000
 			Player.Timer = 0
 			PlaySfx(11, 0)
 		end if
 		break
 	end switch
-
-#platform: Use_Haptics
-	if Object.ActiveSpring == true
-		HapticEffect(9, 0, 0, 0)
-	end if
-#endplatform
 end sub
 
 
 sub ObjectDraw
-	if Object.ActiveSpring == false
+	if Object.ActiveSpringFrame == 0
 		DrawSpriteFX(Object.PropertyValue, FX_FLIP, Object.XPos, Object.YPos)
 	else
-		Object.ActiveSpring++
-		TempValue0 = Object.ActiveSpring
+		Object.ActiveSpringFrame++
+		TempValue0 = Object.ActiveSpringFrame
 		TempValue0 >>= 1
 		switch TempValue0
 		case 0
@@ -293,8 +349,8 @@ sub ObjectDraw
 
 		end switch
 
-		if Object.ActiveSpring > 12
-			Object.ActiveSpring = false
+		if Object.ActiveSpringFrame > 12
+			Object.ActiveSpringFrame = 0
 		end if
 	end if
 end sub
@@ -306,11 +362,11 @@ sub ObjectStartup
 	ArrayPos0 = 32
 	while ArrayPos0 < 1056
 		if Object[ArrayPos0].Type == TypeName[RedSpring]
-			if Object[ArrayPos0].PropertyValue > SPRING_FACING_DIAGONAL_DL
+			if Object[ArrayPos0].PropertyValue > PROPVAL_FACING_DIAGONAL_DL
 				Object[ArrayPos0].PropertyValue -= 8
 				Object[ArrayPos0].YFlipped = true
 			end if
-			if Object[ArrayPos0].PropertyValue > SPRING_FACING_DIAGONAL_UL
+			if Object[ArrayPos0].PropertyValue > PROPVAL_FACING_DIAGONAL_UL
 				Object[ArrayPos0].Direction = FACING_UPWARDS
 			end if
 		end if
@@ -377,7 +433,7 @@ end sub
 
 sub RSDKDraw
 	Object.Direction = FACING_RIGHT
-	if Object.PropertyValue > SPRING_FACING_DIAGONAL_UL
+	if Object.PropertyValue > PROPVAL_FACING_DIAGONAL_UL
 		Object.Direction = FACING_UPWARDS
 	end if
 

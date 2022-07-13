@@ -1,4 +1,4 @@
-//------------Sonic CD TailsBiplane Script-------------//
+//---------------Sonic CD Tails Biplane Script----------------//
 //--------Scripted by Christian Whitehead 'The Taxman'--------//
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
@@ -13,9 +13,9 @@
 
 sub ObjectMain
 	if Object.Direction == FACING_RIGHT
-		Object.XPos += 65536
+		Object.XPos += 0x10000
 	else
-		Object.XPos -= 65536
+		Object.XPos -= 0x10000
 	end if
 
 	switch Object.State
@@ -25,12 +25,12 @@ sub ObjectMain
 		break
 
 	case TAILSBIPLANE_DESCEND
-		Object.YPos += 32768
+		Object.YPos += 0x8000
 		Object.Frame = 3		// Right Tilt
 		break
 
 	case TAILSBIPLANE_ASCEND
-		Object.YPos -= 32768
+		Object.YPos -= 0x8000
 		Object.Frame = 6		// Left Tilt
 		break
 
@@ -54,6 +54,7 @@ sub ObjectDraw
 	TempValue0 >>= 1
 	TempValue0 += Object.Frame
 	DrawSpriteFX(TempValue0, FX_FLIP, Object.XPos, Object.YPos)
+
 	Object.AnimationSpeed++
 	Object.AnimationSpeed %= 6
 end sub
@@ -61,6 +62,7 @@ end sub
 
 sub ObjectStartup
 	LoadSpriteSheet("DAGarden/Objects.gif")
+	
 	SpriteFrame(-24, -16, 48, 32, 365, 705)	// #0 - Tornado Frame 0
 	SpriteFrame(-24, -16, 48, 32, 414, 705)	// #1 - Tornado Frame 1
 	SpriteFrame(-24, -16, 48, 32, 463, 705)	// #2 - Tornado Frame 2

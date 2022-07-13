@@ -19,15 +19,21 @@ sub ObjectPlayerInteraction
 		if Player.Gravity == GRAVITY_AIR
 			if Player.YVelocity > 0
 			
+#platform: Use_Origins
+				Player.State = PlayerObject_ResetDropDash
+#endplatform
+
+#platform: Use_Standalone
 				Player.State = PlayerObject_HandleAir
+#endplatform
 				Player.Timer = 0
 				Player.Animation = ANI_JUMPING
 				FlipSign(Player.YVelocity)
-				Player.YVelocity -= 131072	// 0x20000
+				Player.YVelocity -= 0x20000
 
 				// Vertical velocity cap
-				if Player.YVelocity < -655360	// -0xA0000
-					Player.YVelocity = -655360	// -0xA0000
+				if Player.YVelocity < -0xA0000
+					Player.YVelocity = -0xA0000
 				end if
 
 				Object.Frame = 1	// Start bounce pole animation

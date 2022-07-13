@@ -1,4 +1,4 @@
-//------------Sonic CD ActFinish Script-------------//
+//-----------------Sonic CD ActFinish Script------------------//
 //--------Scripted by Christian Whitehead 'The Taxman'--------//
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
@@ -96,9 +96,11 @@
 #alias 2  : STAGE_P_TIMEATTACK
 #alias 11 : STAGE_P_DOWNLOADSCREEN
 
+// Engine States
+#alias 8  : ENGINE_WAIT
+
 
 sub ObjectMain
-	
 	switch Object.State
 	case ACTFINISH_INIT
 		
@@ -106,10 +108,10 @@ sub ObjectMain
 		
 		// "SONIC GOT" is gonna come from the left, while all the other text slides in from the right
 		Object.LineXPos0 = -799
-		Object.LineXPos1 = 1168
-		Object.LineXPos2 = 1255
-		Object.LineXPos3 = 1319
-		Object.LineXPos4 = 1402
+		Object.LineXPos1 = 0x490
+		Object.LineXPos2 = 0x4E7
+		Object.LineXPos3 = 0x527
+		Object.LineXPos4 = 0x57A
 #platform:	Use_Standalone
 		Object.State = ACTFINISH_SLIDEIN
 #endplatform
@@ -164,6 +166,7 @@ sub ObjectMain
 		// Anything after that, you get nothing, you lose!
 		
 		end switch
+		
 #platform: Use_Origins
 		// If you Time Over'd, no Time Bonus either of course
 		if game.timeOver != 0
@@ -174,6 +177,7 @@ sub ObjectMain
 		// Ring Bonus calculation is far easier - just take the Player's ring count and multiply that by 100
 		Object.RingBonus = Player[0].Rings
 		Object.RingBonus *= 100
+
 #platform: Use_Origins
 		// Find the Present version of the current stage
 		Object.StagePosP = Stage.ListPos
@@ -794,12 +798,13 @@ sub ObjectMain
 								LoadStage()
 								
 							else
-								Engine.State = 8
+								Engine.State = ENGINE_WAIT
 							end if
 						end if
 					end if
 				end if
 #endplatform
+
 #platform: Use_Standalone
 	#platform: Mobile
 				if Options.GameMode == GAMEMODE_TRIALGAME

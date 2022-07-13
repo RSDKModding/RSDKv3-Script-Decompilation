@@ -1,10 +1,12 @@
-//------------Sonic CD SignPost Script-------------//
+//-----------------Sonic CD Sign Post Script------------------//
 //--------Scripted by Christian Whitehead 'The Taxman'--------//
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
 // Aliases
 #alias Object.Value0		:	Object.Timer
 #alias Object.Value1		:	Object.FrameTimer
+// Player Aliases
+#alias Player.Value4		:	Player.Invincible
 
 // ActFinish Aliases
 #alias Object[30].DrawOrder	:	ActFinish.DrawOrder
@@ -21,12 +23,13 @@
 #alias 1	:	PRIORITY_ACTIVE
 #alias 3	:	PRIORITY_ACTIVE_XBOUNDS
 
+
 sub ObjectMain
 	switch Object.State
 	case SIGNPOST_IDLE
 		Object.Frame = 1
 		TempValue0 = Object.YPos
-		TempValue0 += 6291456	// 0x600000
+		TempValue0 += 0x600000
 		if Player.YPos < TempValue0	// Makes sure the player triggers the signpost no matter the height
 			Stage.NewXBoundary1 = Object.XPos
 			Stage.NewXBoundary1 >>= 16
@@ -41,14 +44,13 @@ sub ObjectMain
 				Stage.NewXBoundary1 = Object.XPos
 				Stage.NewXBoundary1 >>= 16
 				Stage.NewXBoundary1 -= Screen.CenterX
-
+#platform: Use_Origins
+				EngineCallback(NOTIFY_TOUCH_SIGNPOST)
+#endplatform
 				Stage.TimeEnabled = false
 				Object.State = SIGNPOST_FLIP
 				Object.Timer = 8
 				PlaySfx(15, false)
-#platform: Use_Haptics
-				HapticEffect(50, 0, 0, 0)
-#endplatform
 			end if
 		end if
 		break
@@ -65,11 +67,12 @@ sub ObjectMain
 				Rand(TempValue0, 48)
 				TempValue0 <<= 16
 				TempValue0 += Object.XPos
-				TempValue0 -= 1572864
+				TempValue0 -= 0x180000
+
 				Rand(TempValue1, 32)
 				TempValue1 <<= 16
 				TempValue1 += Object.YPos
-				TempValue1 -= 1835008
+				TempValue1 -= 0x1C0000
 				CreateTempObject(TypeName[RingSparkle], 0, TempValue0, TempValue1)
 
 				Object.Timer--
@@ -107,11 +110,12 @@ sub ObjectMain
 				Rand(TempValue0, 48)
 				TempValue0 <<= 16
 				TempValue0 += Object.XPos
-				TempValue0 -= 1572864
+				TempValue0 -= 0x180000
+				
 				Rand(TempValue1, 32)
 				TempValue1 <<= 16
 				TempValue1 += Object.YPos
-				TempValue1 -= 1835008
+				TempValue1 -= 0x1C0000
 				CreateTempObject(TypeName[RingSparkle], 0, TempValue0, TempValue1)
 				// Resets the animation cycle
 				Object.Frame = 1
@@ -186,6 +190,14 @@ sub ObjectMain
 	case SIGNPOST_BLANK
 		break
 	end switch
+
+#platform: Use_Origins
+	if game.playMode == BOOT_PLAYMODE_MISSION
+		if Object.State > SIGNPOST_IDLE
+			Player.Invincible = 80	// Origins for some reason gives the character invincibility after crossing the signpost
+		endif
+	endif
+#endplatform
 end sub
 
 
@@ -201,6 +213,7 @@ sub ObjectStartup
 	else
 		LoadSpriteSheet("Global/Items2_t.gif")
 	end if
+
 	SpriteFrame(-12, -12, 24, 24, 0, 150)		// #0 - Sign Post
 	SpriteFrame(-24, -44, 48, 32, 34, 99)		// #1 - Sign Post Head (Eggman)
 	SpriteFrame(-16, -44, 32, 32, 1, 183)		// #2 - Sign Post Head (Flip 1)

@@ -1,41 +1,45 @@
-//------------Sonic CD L Entry Script-------------//
+//--------------Sonic CD Leaderboards Entry Script------------//
 //--------Scripted by Christian Whitehead 'The Taxman'--------//
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
+//------------------Only exist in WP7 Versions----------------//
 
 // Aliases
 #alias Object.Value0	:	Object.HTimer
 #alias Object.Value3	:	Object.Index
 #alias Object.Value4	:	Object.VTimer
 #alias Object.Value5	:	Object.SavedXPos
-#alias Object[0].State	:	Object.MCState
+#alias Object[0].State	:	MenuControl.State
 
 // States
-#alias 0	: LENTRY_BLANK
-#alias 1	: LENTRY_MOVE_RIGHT
-#alias 2	: LENTRY_SCROLL_ENTRIES_R
-#alias 3	: LENTRY_STOP_SCROLL_R
-#alias 4	: LENTRY_MOVE_LEFT
-#alias 5	: LENTRY_SCROLL_ENTRIES_L
-#alias 6	: LENTRY_STOP_SCROLL_L
-#alias 7	: LENTRY_MOVE_DOWN
-#alias 8	: LENTRY_SCROLL_ENTRIES_D
-#alias 9	: LENTRY_STOP_SCROLL_D
-#alias 10	: LENTRY_MOVE_UP
-#alias 11	: LENTRY_SCROLL_ENTRIES_U
-#alias 12	: LENTRY_STOP_SCROLL_U
+#alias 0	:	LENTRY_BLANK
+#alias 1	:	LENTRY_MOVE_RIGHT
+#alias 2	:	LENTRY_SCROLL_ENTRIES_R
+#alias 3	:	LENTRY_STOP_SCROLL_R
+#alias 4	:	LENTRY_MOVE_LEFT
+#alias 5	:	LENTRY_SCROLL_ENTRIES_L
+#alias 6	:	LENTRY_STOP_SCROLL_L
+#alias 7	:	LENTRY_MOVE_DOWN
+#alias 8	:	LENTRY_SCROLL_ENTRIES_D
+#alias 9	:	LENTRY_STOP_SCROLL_D
+#alias 10	:	LENTRY_MOVE_UP
+#alias 11	:	LENTRY_SCROLL_ENTRIES_U
+#alias 12	:	LENTRY_STOP_SCROLL_U
 
 // Menu Control States
 #alias 2	:	MENUCONTROL_CONTROLS
 
+// Priority
+#alias 1	:	PRIORITY_ACTIVE
+
+
 sub ObjectMain
-#platform: Mobile
 	switch Object.State
 	case LENTRY_BLANK
 		break
 
 	case LENTRY_MOVE_RIGHT
 		Object.SavedXPos = Object.XPos
-		Object.Priority = 1
+		Object.Priority = PRIORITY_ACTIVE
 		Object.State++
 		break
 
@@ -67,14 +71,14 @@ sub ObjectMain
 			Object.XPos = Object.SavedXPos
 			Object.State = 0
 			if Object.PropertyValue == 4
-				Object.MCState = MENUCONTROL_CONTROLS
+				MenuControl.State = MENUCONTROL_CONTROLS
 			end if
 		end if
 		break
 
 	case LENTRY_MOVE_LEFT
 		Object.SavedXPos = Object.XPos
-		Object.Priority = 1
+		Object.Priority = PRIORITY_ACTIVE
 		Object.State++
 		break
 
@@ -108,7 +112,7 @@ sub ObjectMain
 			Object.XPos = Object.SavedXPos
 			Object.State = LENTRY_BLANK
 			if Object.PropertyValue == 4
-				Object.MCState = MENUCONTROL_CONTROLS
+				MenuControl.State = MENUCONTROL_CONTROLS
 			end if
 		end if
 		break
@@ -138,7 +142,7 @@ sub ObjectMain
 		else
 			Object.State = LENTRY_BLANK
 			if Object.PropertyValue == 4
-				Object.MCState = MENUCONTROL_CONTROLS
+				MenuControl.State = MENUCONTROL_CONTROLS
 			end if
 		end if
 		break
@@ -168,18 +172,16 @@ sub ObjectMain
 		else
 			Object.State = LENTRY_BLANK
 			if Object.PropertyValue == 4
-				Object.MCState = MENUCONTROL_CONTROLS
+				MenuControl.State = MENUCONTROL_CONTROLS
 			end if
 		end if
 		break
 
 	end switch
-#endplatform
 end sub
 
 
 sub ObjectDraw
-#platform: Mobile
 	DrawSprite(142)
 	Object.Index = Object.PropertyValue
 	Object.Index += Object.VTimer
@@ -275,17 +277,17 @@ sub ObjectDraw
 	if Object.State > 6
 		DrawSpriteFX(143, FX_INK, Object.XPos, Object.YPos)
 	end if
-#endplatform
 end sub
 
 
 sub ObjectStartup
-#platform: Mobile
 	LoadSpriteSheet("LBoards/Leaderboards.gif")
 	LoadTextFile(MENU_1, "Data/Game/LeaderboardText.txt", 0)
 	Leaderboard.ID = 0
 	LoadOnlineMenu(1)
+
 	SpriteFrame(0, 0, 8, 10, 118, 298)		// #0 - Blank Space
+
 	// (#1 - #70) - Alphabet
 	TempValue1 = 254
 	while TempValue1 < 308
@@ -296,7 +298,9 @@ sub ObjectStartup
 		loop
 		TempValue1 += 11
 	loop
+
 	SpriteFrame(0, 0, 8, 10, 118, 298)		// #72 - Blank Space
+
 	// (#73 - #141) Alphabet Highlight
 	TempValue1 = 254
 	while TempValue1 < 308
@@ -307,9 +311,9 @@ sub ObjectStartup
 		loop
 		TempValue1 += 11
 	loop
+
 	SpriteFrame(0, -10, 232, 21, 1, 309)	// #142 - Button
 	SpriteFrame(0, -10, 232, 21, 1, 232)	// #143 - Button Flash
-#endplatform
 end sub
 
 // ========================

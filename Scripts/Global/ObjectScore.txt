@@ -1,4 +1,4 @@
-//------------Sonic CD ObjectScore Script-------------//
+//----------------Sonic CD Object Score Script----------------//
 //--------Scripted by Christian Whitehead 'The Taxman'--------//
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
@@ -13,10 +13,23 @@
 // Priority
 #alias 1	:	PRIORITY_ACTIVE
 
+
 sub ObjectDraw
 	if Object.State == OBJECTSCORE_SPAWN
+#platform: Use_Origins
+		if game.playMode == BOOT_PLAYMODE_MIRRORING
+			Object.Direction = FACING_LEFT
+			DrawSpriteFX(Object.PropertyValue, FX_FLIP, Object.XPos, Object.YPos)
+		else
+			DrawSprite(Object.PropertyValue)
+		endif
+#endplatform
+
+#platform: Use_Standalone
 		DrawSprite(Object.PropertyValue)
-		Object.YPos -= 131072	// 0x20000
+#endplatform
+
+		Object.YPos -= 0x20000
 
 		Object.Timer++
 		if Object.Timer == 24
@@ -44,6 +57,7 @@ end sub
 
 sub ObjectStartup
 	LoadSpriteSheet("Global/Items3.gif")
+
 	SpriteFrame(-6, -4, 12, 8, 0, 246)		// #0 - 100
 	SpriteFrame(-7, -4, 13, 8, 20, 246)		// #1 - 200
 	SpriteFrame(-7, -4, 13, 8, 33, 246)		// #2 - 500

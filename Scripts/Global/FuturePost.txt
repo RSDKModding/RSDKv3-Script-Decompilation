@@ -19,7 +19,14 @@
 #alias 1				:	PRIORITY_ACTIVE
 
 // Warp Destination
-#alias 2				:	FUTURE
+#alias 2				:	WARP_FUTURE
+
+// Collision Plane
+#alias 1				:	COLLISION_PLANE_B
+
+// Property Values
+#alias 1				:	PROPVAL_PLANEB
+
 
 sub ObjectPlayerInteraction
 	if Object.State == FUTUREPOST_IDLE
@@ -28,14 +35,11 @@ sub ObjectPlayerInteraction
 
 			PlayerObjectCollision(C_TOUCH, -8, -24, 8, 32)
 			if CheckResult == true
-				Warp.Destination = FUTURE
+				Warp.Destination = WARP_FUTURE
 				Object.State = FUTUREPOST_ROTATE
 				Object.Priority = PRIORITY_ACTIVE
 				Object.Frame = 1
 				PlaySfx(12, 0)
-#platform: Use_Haptics
-				HapticEffect(20, 0, 0, 0)	
-#endplatform				
 			end if
 
 		end if
@@ -79,6 +83,7 @@ end sub
 
 sub ObjectStartup
 	LoadSpriteSheet("Global/Items.gif")
+
 	SpriteFrame(-8, -24, 16, 48, 35, 204)		// #0 - Post Body
 	// Future Post Head
 	SpriteFrame(-16, -40, 32, 16, 52, 239)		// #1 - Post Head
@@ -93,9 +98,9 @@ sub ObjectStartup
 	ArrayPos0 = 32
 	while ArrayPos0 < 1056
 		if Object[ArrayPos0].Type == TypeName[FuturePost]
-			if Object[ArrayPos0].PropertyValue == 1
+			if Object[ArrayPos0].PropertyValue == PROPVAL_PLANEB
 				Object[ArrayPos0].DrawOrder 	 = 1
-				Object[ArrayPos0].CollisionPlane = 1
+				Object[ArrayPos0].CollisionPlane = COLLISION_PLANE_B
 			end if
 
 			if Options.GameMode == GAMEMODE_TIMEATTACK

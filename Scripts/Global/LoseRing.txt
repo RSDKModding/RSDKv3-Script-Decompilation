@@ -1,14 +1,15 @@
-//------------Sonic CD LoseRing Script-------------//
+//----------------Sonic CD Lose Ring Script-------------------//
 //--------Scripted by Christian Whitehead 'The Taxman'--------//
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
 // Aliases
-#alias Object.Value0	:	Object.XVelocity
-#alias Object.Value1	:	Object.YVelocity
-#alias Object.Value2	:	Object.Timer
+#alias Object.Value0		: Object.XVelocity
+#alias Object.Value1		: Object.YVelocity
+#alias Object.Value2		: Object.Timer
+#alias Object.PropertyValue	: Object.CollisionPlane
 
 // Player Aliases
-#alias Player.Value0:Player.Rings
+#alias Player.Value0		: Player.Rings
 
 // Panning
 #alias 0				:	PAN_RIGHT
@@ -17,20 +18,26 @@
 // CSides
 #alias 0				:	CSIDE_FLOOR
 
+// Property Values
+#alias 0				:	PROPVAL_PLANEA
+#alias 1				:	PROPVAL_PLANEB
+
+
 sub ObjectMain
-	Object.YVelocity += 6144	// 0x1800
+	Object.YVelocity += 0x1800
 	Object.XPos += Object.XVelocity
 	Object.YPos += Object.YVelocity
+
 	if Object.YVelocity >= 0
 		ObjectTileCollision(CSIDE_FLOOR, 0, 8, 0)
 
 		if CheckResult == true
-			TempValue0 = Object.YVelocity
+			TempValue0   = Object.YVelocity
 			TempValue0 >>= 2
 			Object.YVelocity -= TempValue0
 			FlipSign(Object.YVelocity)
-			if Object.YVelocity > -65536		// -0x10000
-				Object.YVelocity = -65536		// -0x10000
+			if Object.YVelocity > -0x10000
+				Object.YVelocity = -0x10000
 			end if
 		end if
 	end if
@@ -62,19 +69,21 @@ end sub
 sub ObjectPlayerInteraction
 	if Player.State != PlayerObject_Knockback
 
-		if Player.CollisionPlane == Object.PropertyValue
+		if Player.CollisionPlane == Object.CollisionPlane
 
 			PlayerObjectCollision(C_TOUCH, -8, -8, 8, 8)
 			if CheckResult == true
 
 				Object.Type = TypeName[RingSparkle]
-				if Object.PropertyValue == 0
+				if Object.CollisionPlane == PROPVAL_PLANEA
 					Object.DrawOrder = 4
 				else
 					Object.DrawOrder = 2
 				end if
+
 				Object.XVelocity = 0
 				Object.YVelocity = 0
+
 				Object.Timer = 0
 				Object.Frame = 0
 
@@ -126,6 +135,7 @@ end sub
 
 sub ObjectStartup
 	LoadSpriteSheet("Global/Items.gif")
+
 	SpriteFrame(-8, -8, 16, 16, 1, 1)		// #0 - Ring Frame 0
 	SpriteFrame(-8, -8, 16, 16, 1, 18)		// #1 - Ring Frame 1
 	SpriteFrame(-8, -8, 16, 16, 1, 35)		// #2 - Ring Frame 2

@@ -11,12 +11,13 @@
 #alias Object.Value6	:	Object.HelperSprite
 #alias Object.Rotation	:	Object.CurrentSelection
 
-// Ink
+// Ink Effects
 #alias 2	:	INK_ALPHA
 
 // Priority
 #alias 1	:	PRIORITY_ACTIVE
 #alias 4	:	PRIORITY_ACTIVE_BOUNDS_REMOVE
+
 
 function DebugMode_ChangeItem
 	switch Object.CurrentSelection
@@ -66,58 +67,69 @@ end function
 sub ObjectMain
 #platform: Standard
 	TempValue0 = false
-	if KeyDown.Left == true
+	if KeyDown[1].Left == true
 		Player.XPos -= Player.YVelocity
 		TempValue0 = true
 	end if
 
-	if KeyDown.Right == true
+	if KeyDown[1].Right == true
 		Player.XPos += Player.YVelocity
 		TempValue0 = true
 	end if
 
-	if KeyDown.Up == true
+	if KeyDown[1].Up == true
 		Player.YPos -= Player.YVelocity
 		TempValue0 = true
 	end if
 
-	if KeyDown.Down == true
+	if KeyDown[1].Down == true
 		Player.YPos += Player.YVelocity
 		TempValue0 = true
 	end if
 
 	if TempValue0 == true
-		Player.YVelocity += 3072
-		if Player.YVelocity > 1048576
-			Player.YVelocity = 1048576
+		Player.YVelocity += 0xC00
+		if Player.YVelocity > 0x100000
+			Player.YVelocity = 0x100000
 		end if
 	else
 		Player.YVelocity = 0
 	end if
 
-	if KeyPress.ButtonB == true
+	if KeyPress[1].ButtonB == true
 		Object.HelperSprite = 0
 		Object.Type = TypeName[PlayerObject]
+		// THEY #FIXED HIM!!!
+		if Stage.PlayerListPos == 1	// PlayerName[TAILS]
+			Object[+1].Type=TypeName[TailsObject]
+		endif
 		Player.Speed = 0
 		Player.Rotation = 0
 		Player.XVelocity = 0
 		Player.YVelocity = 0
-		Player.State = PlayerObject_HandleAir
+		
+#platform: Use_Origins
+				Player.State = PlayerObject_ResetDropDash
+#endplatform
+
+#platform: Use_Standalone
+				Player.State = PlayerObject_HandleAir
+#endplatform
 		Player.Animation = ANI_WALKING
 		Player.AnimationSpeed = 0
 		Player.Frame = 0
 		Player.ControlMode = 0
 		Player.ObjectInteraction = true
 	else
-		if KeyPress.ButtonA == true
+		if KeyPress[0].ButtonA == true
 			Object.CurrentSelection++
 			if Object.CurrentSelection > 27
 				Object.CurrentSelection = 0
 			end if
 			CallFunction(DebugMode_ChangeItem)
 		end if
-		if KeyDown.ButtonA == true
-			if KeyPress.ButtonC == true
+		if KeyDown[0].ButtonA == true
+			if KeyPress[0].ButtonC == true
 				Object.CurrentSelection--
 				if Object.CurrentSelection < 0
 					Object.CurrentSelection = 27
@@ -125,7 +137,7 @@ sub ObjectMain
 				CallFunction(DebugMode_ChangeItem)
 			end if
 		else
-			if KeyPress.ButtonC == true
+			if KeyPress[0].ButtonC == true
 				switch Object.CurrentSelection
 				case 0
 					CreateTempObject(TypeName[Ring], 0, Player.XPos, Player.YPos)
@@ -299,10 +311,26 @@ sub ObjectStartup
 	SpriteFrame(-16, -16, 32, 32, 18, 34)		// #2  - Shield Monitor
 	SpriteFrame(-16, -16, 32, 32, 18, 67)		// #3  - Invincibility Monitor
 	SpriteFrame(-16, -16, 32, 32, 18, 100)		// #4  - Power Sneakers Monitor
+#platform: Use_Origins
+	if game.coinMode == false
+		SpriteFrame(-16, -16, 32, 32, 18, 133)	// #5  - Sonic Monitor
+		SpriteFrame(-16, -16, 32, 32, 18, 166)	// #6  - Time Monitor
+		SpriteFrame(-16, -16, 32, 32, 51, 100)	// #7  - Tails Monitor
+		SpriteFrame(-16, -16, 32, 32, 51, 133)	// #8  - S Monitor
+	else
+		SpriteFrame(-16, -16, 32, 32, 84, 200)	// #5  - Coin Monitor
+		SpriteFrame(-16, -16, 32, 32, 18, 166)	// #6  - Time Monitor
+		SpriteFrame(-16, -16, 32, 32, 84, 200)	// #7  - Coin Monitor
+		SpriteFrame(-16, -16, 32, 32, 51, 133)	// #8  - S Monitor
+	endif
+#endplatform
+
+#platform: Use_Standalone
 	SpriteFrame(-16, -16, 32, 32, 18, 133)		// #5  - Sonic Monitor
 	SpriteFrame(-16, -16, 32, 32, 18, 166)		// #6  - Time Monitor
 	SpriteFrame(-16, -16, 32, 32, 51, 100)		// #7  - Tails Monitor
 	SpriteFrame(-16, -16, 32, 32, 51, 133)		// #8  - S Monitor
+#endplatform
 
 	// Springs
 	SpriteFrame(-16, -8, 32, 16, 84, 1)			// #9  - Red Spring facing up

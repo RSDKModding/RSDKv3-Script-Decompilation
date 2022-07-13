@@ -6,18 +6,19 @@
 #alias Object.Value0	:	Object.Timer
 
 // States
-#alias 0				:	WHEELIESPRING_MOVING_RIGHT
-#alias 1				:	WHEELIESPRING_MOVING_LEFT
+#alias 0	:	WHEELIESPRING_MOVING_RIGHT
+#alias 1	:	WHEELIESPRING_MOVING_LEFT
 
 // Player Aliases
-#alias 11				:	ANI_BOUNCING
+#alias 11	:	ANI_BOUNCING
 
 // Gravity
-#alias 0				:	GRAVITY_GROUND
-#alias 1				:	GRAVITY_AIR
+#alias 0	:	GRAVITY_GROUND
+#alias 1	:	GRAVITY_AIR
 
 // CSides
 #alias 0	:	CSIDE_FLOOR
+
 
 sub ObjectMain
 	if Object.State == WHEELIESPRING_MOVING_RIGHT
@@ -25,7 +26,7 @@ sub ObjectMain
 		if Object.Timer < Object.PropertyValue
 			Object.Timer++
 
-			Object.XPos += 98304	// 0x18000
+			Object.XPos += 0x18000
 		else
 			Object.State = WHEELIESPRING_MOVING_LEFT
 
@@ -36,7 +37,7 @@ sub ObjectMain
 		if Object.Timer < Object.PropertyValue
 			Object.Timer++
 
-			Object.XPos -= 98304	// 0x18000
+			Object.XPos -= 0x18000
 		else
 			Object.State = WHEELIESPRING_MOVING_RIGHT
 
@@ -56,15 +57,19 @@ sub ObjectPlayerInteraction
 		if CheckResult == true
 
 			Object.Frame = 1
-			Player.State = PlayerObject_HandleAir
+	
+#platform: Use_Origins
+				Player.State = PlayerObject_ResetDropDash
+#endplatform
+
+#platform: Use_Standalone
+				Player.State = PlayerObject_HandleAir
+#endplatform
 			Player.Gravity = GRAVITY_AIR
-			Player.YVelocity = -1048576	// -0x100000
+			Player.YVelocity = -0x100000
 			Player.Animation = ANI_BOUNCING
 			Player.Timer = 0
 			PlaySfx(11, 0)
-#platform: Use_Haptics
-			HapticEffect(9, 0, 0, 0)
-#endplatform
 		end if
 	end if
 
@@ -74,15 +79,18 @@ sub ObjectPlayerInteraction
 		PlayerObjectCollision(C_TOUCH, -15, -18, 15, -12)
 		if CheckResult == true
 			Object.Frame = 1
-			Player.State = PlayerObject_HandleAir
+#platform: Use_Origins
+				Player.State = PlayerObject_ResetDropDash
+#endplatform
+
+#platform: Use_Standalone
+				Player.State = PlayerObject_HandleAir
+#endplatform
 			Player.Gravity = GRAVITY_AIR
-			Player.YVelocity = -1048576	// -0x100000
+			Player.YVelocity = -0x100000
 			Player.Animation = ANI_BOUNCING
 			Player.Timer = 0
 			PlaySfx(11, 0)
-#platform: Use_Haptics
-			HapticEffect(9, 0, 0, 0)
-#endplatform
 		end if
 
 	end if

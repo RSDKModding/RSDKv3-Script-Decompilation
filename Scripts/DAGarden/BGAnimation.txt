@@ -1,10 +1,11 @@
-//------------Sonic CD BG Animation Script-------------//
+//----------------Sonic CD BG Animation Script----------------//
 //--------Scripted by Christian Whitehead 'The Taxman'--------//
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
 // Aliases
 #alias Object.Value0		: Object.Timer
-#alias Object[+7].Value2	: Object.CSType	//Character Spawn Type
+#alias Object[+7].Value2	: CharacterSpawn.Type	//Character Spawn Type
+
 // States
 #alias 0	: BGANIMATION_DAY
 #alias 1	: BGANIMATION_DAY_TO_EVENING
@@ -19,6 +20,10 @@
 #alias 10	: BGANIMATION_MORNING
 #alias 11	: BGANIMATION_MORNING_TO_DAY
 
+// Ink Effect
+#alias 2	: INK_ALPHA
+
+
 sub ObjectDraw
 	if Object.DrawOrder == 3
 		// Pretty straightforward process, when the day time is set, a timer increases.
@@ -31,7 +36,7 @@ sub ObjectDraw
 			if Object.Timer > 480
 				Object.Timer = 0
 				Object.Alpha = 0
-				Object.InkEffect = 2 //INK_ALPHA
+				Object.InkEffect = INK_ALPHA
 				Object.State++
 			end if
 			break
@@ -67,7 +72,7 @@ sub ObjectDraw
 				Object.Alpha += 4
 			else
 				Object.Alpha = 255
-				Object.CSType = 1
+				CharacterSpawn.Type = 1
 				Object.State++
 			end if
 			DrawSpriteFX(4, FX_INK, Object.XPos, Object.YPos)
@@ -129,7 +134,7 @@ sub ObjectDraw
 			if Object.Timer > 512
 				Object.Timer = 0
 				Object.Alpha = 0
-				Object.CSType = 0
+				CharacterSpawn.Type = 0
 				Object.State++
 			end if
 			break
@@ -186,6 +191,7 @@ end sub
 
 sub ObjectStartup
 	LoadSpriteSheet("DAGarden/Objects.gif")
+
 	SpriteFrame(0, 0, 256, 192, 0, 0)			// #0  - Sky, Day Half 1
 	SpriteFrame(256, 0, 256, 192, 0, 0)			// #1  - Sky, Day Half 2
 	SpriteFrame(0, 0, 256, 192, 256, 0)			// #2  - Sky, Evening Half 1
@@ -198,9 +204,10 @@ sub ObjectStartup
 	SpriteFrame(256, 0, 256, 192, 0, 384)		// #9  - Sky, Midnight Half 2
 	SpriteFrame(0, 0, 256, 192, 256, 384)		// #10 - Sky, Morning Half 1
 	SpriteFrame(256, 0, 256, 192, 256, 384)		// #11 - Sky, Morning Half 2
+
 	Object[31].Type = TypeName[BGAnimation]
 	Object[31].XPos = 0
-	Object[31].YPos = 1572864
+	Object[31].YPos = 0x180000
 end sub
 
 // ========================

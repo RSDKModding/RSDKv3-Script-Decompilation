@@ -1,10 +1,11 @@
-//------------Sonic CD Menu Control Script-------------//
+//-----------------Sonic CD Menu Control Script---------------//
 //--------Scripted by Christian Whitehead 'The Taxman'--------//
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
+//------------------Only exist in WP7 Versions----------------//
 
 // Aliases
 #alias Object.Value0	:	Object.Timer	// Also used for fading
-#alias Object[32].State	:	Object.LEState
+#alias Object[32].State	:	LEntry.State
 
 // States
 #alias 0	:	MENUCONTROL_SETUP
@@ -14,16 +15,18 @@
 #alias 4	:	MENUCONTROL_EXIT
 
 // LEntry States
-#alias 1	: LENTRY_MOVE_RIGHT
-#alias 4	: LENTRY_MOVE_LEFT
-#alias 7	: LENTRY_MOVE_DOWN
-#alias 10	: LENTRY_MOVE_UP
+#alias 1	:	LENTRY_MOVE_RIGHT
+#alias 4	:	LENTRY_MOVE_LEFT
+#alias 7	:	LENTRY_MOVE_DOWN
+#alias 10	:	LENTRY_MOVE_UP
 
 // Engine & Callbacks
-#alias 3	: CALLBACK_TIMEATTACK_NOTIFY_EXIT
+#alias 3	:	CALLBACK_TIMEATTACK_NOTIFY_EXIT
+
+#alias 0	:	JP_OST
+
 
 sub ObjectMain
-#platform: Mobile
 	switch Object.State
 	case MENUCONTROL_SETUP
 		Object.State = MENUCONTROL_FADEIN
@@ -45,25 +48,25 @@ sub ObjectMain
 	case MENUCONTROL_CONTROLS
 		if KeyPress.Left == true
 			Object.State = MENUCONTROL_BLANK
-			Object.LEState = LENTRY_MOVE_LEFT
+			LEntry.State = LENTRY_MOVE_LEFT
 			PlaySfx(23, 0) 	//Menu Button SFX
 		end if
 
 		if KeyPress.Right == true
 			Object.State = MENUCONTROL_BLANK
-			Object.LEState = LENTRY_MOVE_RIGHT
+			LEntry.State = LENTRY_MOVE_RIGHT
 			PlaySfx(23, 0) 	//Menu Button SFX
 		end if
 
 		if KeyPress.Up == true
 			Object.State = MENUCONTROL_BLANK
-			Object.LEState = LENTRY_MOVE_UP
+			LEntry.State = LENTRY_MOVE_UP
 			PlaySfx(23, 0) 	//Menu Button SFX
 		end if
 
 		if KeyPress.Down == true
 			Object.State = MENUCONTROL_BLANK
-			Object.LEState = LENTRY_MOVE_DOWN
+			LEntry.State = LENTRY_MOVE_DOWN
 			PlaySfx(23, 0) 	//Menu Button SFX
 		end if
 
@@ -90,21 +93,18 @@ sub ObjectMain
 		break
 
 	end switch
-#endplatform
 end sub
 
 
 sub ObjectStartup
-#platform: Mobile
-	if Options.Soundtrack == 0
+	if Options.Soundtrack == JP_OST
 		SetMusicTrack("JP/TimeAttack.ogg", 0, 0x188A0)
 	else
 		SetMusicTrack("US/DAGarden.ogg", 0, 0x1CA86)
 	end if
 	Object[0].Type = TypeName[MenuControl]
 	Object[0].DrawOrder = 1
-	Options.PhysicalControls = 0
-#endplatform
+	Options.PhysicalControls = false
 end sub
 
 // ========================

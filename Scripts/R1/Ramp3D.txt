@@ -3,12 +3,12 @@
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
 // Aliases
-#alias Object.Value1		:	Player.OriginPos.X
-#alias Object[+3].Value0	:	StarBush1.OriginPos.X
+#alias Object.Value1		:	Player.XOriginPos
+#alias Object[+3].Value0	:	StarBush1.XOriginPos
 #alias Object[+3].XPos		:	StarBush1.XPos
-#alias Object[+4].Value0	:	StarBush2.OriginPos.X
+#alias Object[+4].Value0	:	StarBush2.XOriginPos
 #alias Object[+4].XPos		:	StarBush2.XPos
-#alias Object[+5].Value0	:	BoostSpinner.OriginPos.X
+#alias Object[+5].Value0	:	BoostSpinner.XOriginPos
 #alias Object[+5].XPos		:	BoostSpinner.XPos
 
 // States
@@ -47,7 +47,7 @@ sub ObjectPlayerInteraction
 
 					Player.Speed = 0
 					Player.XVelocity = 0
-					Player.YVelocity = -786432	// -0xC0000
+					Player.YVelocity = -0xC0000
 
 					Player.AnimationSpeed = 0
 				end if
@@ -58,13 +58,20 @@ sub ObjectPlayerInteraction
 	case RAMP3D_EXIT_UNUSED
 		PlayerObjectCollision(C_TOUCH, -16, -16, 16, 16)
 		if CheckResult == true
-			Player.State = PlayerObject_HandleAir
+			
+#platform: Use_Origins
+				Player.State = PlayerObject_ResetDropDash
+#endplatform
+
+#platform: Use_Standalone
+				Player.State = PlayerObject_HandleAir
+#endplatform
 			
 			Player.TileCollisions = true
 
-			Player.Speed = 524288	// 0x80000
-			Player.XVelocity = 524288	// 0x80000
-			Player.YVelocity = -917504	// -0xE0000
+			Player.Speed = 0x80000
+			Player.XVelocity = 0x80000
+			Player.YVelocity = -0xE0000
 
 			Player.Gravity = GRAVITY_AIR
 			
@@ -96,13 +103,20 @@ sub ObjectPlayerInteraction
 		if Player.State == PlayerObject_Blank
 			PlayerObjectCollision(C_TOUCH, -16, -16, 16, 16)
 			if CheckResult == true
+				
+#platform: Use_Origins
+				Player.State = PlayerObject_ResetDropDash
+#endplatform
+
+#platform: Use_Standalone
 				Player.State = PlayerObject_HandleAir
+#endplatform
 
 				Player.TileCollisions = true
 
-				Player.Speed = 262144	// 0x40000
-				Player.XVelocity = 262144	// 0x40000
-				Player.YVelocity = -786432	// 0xC0000
+				Player.Speed = 0x40000
+				Player.XVelocity = 0x40000
+				Player.YVelocity = -0xC0000
 
 				Player.Gravity = GRAVITY_AIR
 
@@ -156,28 +170,28 @@ sub ObjectPlayerInteraction
 				end if
 			end if
 
-			StarBush1.OriginPos.X  = Player.XPos
-			StarBush1.OriginPos.X -= Object.XPos
+			StarBush1.XOriginPos  = Player.XPos
+			StarBush1.XOriginPos -= Object.XPos
 
-			BoostSpinner.OriginPos.X  = StarBush1.OriginPos.X
-			BoostSpinner.OriginPos.X /= 3
+			BoostSpinner.XOriginPos  = StarBush1.XOriginPos
+			BoostSpinner.XOriginPos /= 3
 
-			StarBush1.OriginPos.X >>= 1
+			StarBush1.XOriginPos >>= 1
 
-			StarBush2.OriginPos.X  = StarBush1.OriginPos.X
+			StarBush2.XOriginPos  = StarBush1.XOriginPos
 
-			StarBush1.OriginPos.X += StarBush1.XPos
+			StarBush1.XOriginPos += StarBush1.XPos
 
-			StarBush2.OriginPos.X += StarBush2.XPos
+			StarBush2.XOriginPos += StarBush2.XPos
 
-			BoostSpinner.OriginPos.X += BoostSpinner.XPos
+			BoostSpinner.XOriginPos += BoostSpinner.XPos
 
 			TempValue0  = Object.YPos
 			TempValue0 -= Player.YPos
-			if TempValue0 < 14680064	// 0xE00000
+			if TempValue0 < 0xE00000
 			
 				TempValue0 = Player.XPos
-				TempValue0 -= Player.OriginPos.X
+				TempValue0 -= Player.XOriginPos
 				HParallax[0].ScrollPos += TempValue0
 
 				ArrayPos0 = 13
@@ -197,11 +211,11 @@ sub ObjectPlayerInteraction
 				HParallax[1].ScrollPos += TempValue0
 			end if
 		else
-			StarBush1.OriginPos.X = StarBush1.XPos
+			StarBush1.XOriginPos = StarBush1.XPos
 
-			StarBush2.OriginPos.X = StarBush2.XPos
+			StarBush2.XOriginPos = StarBush2.XPos
 			
-			BoostSpinner.OriginPos.X = BoostSpinner.XPos
+			BoostSpinner.XOriginPos = BoostSpinner.XPos
 
 			if Player.Gravity == GRAVITY_GROUND
 
@@ -212,7 +226,7 @@ sub ObjectPlayerInteraction
 			end if
 
 		end if
-		Player.OriginPos.X = Player.XPos
+		Player.XOriginPos = Player.XPos
 		break
 		
 	case RAMP3D_DROP
@@ -221,13 +235,13 @@ sub ObjectPlayerInteraction
 			PlayerObjectCollision(C_TOUCH, -16, -128, 16, 16)
 			if CheckResult == true
 				Player.Animation = ANI_DROPPING
-				Player.OriginPos.X = Player.XPos
+				Player.XOriginPos = Player.XPos
 			end if
 
 			if Player.Animation == ANI_DROPPING
 				Player.Speed = 0
 				Player.XVelocity = 0
-				Player.XPos = Player.OriginPos.X
+				Player.XPos = Player.XOriginPos
 			end if
 
 		end if
@@ -267,13 +281,19 @@ sub ObjectPlayerInteraction
 		if CheckResult == true
 			Player.Timer = 0
 
-			Player.State = PlayerObject_HandleAir
+#platform: Use_Origins
+				Player.State = PlayerObject_ResetDropDash
+#endplatform
+
+#platform: Use_Standalone
+				Player.State = PlayerObject_HandleAir
+#endplatform
 
 			Player.TileCollisions = true
 
-			Player.Speed = 524288	// 0x80000
-			Player.XVelocity = 524288	// 0x80000
-			Player.YVelocity = -917504	// -0xE0000
+			Player.Speed = 0x80000
+			Player.XVelocity = 0x80000
+			Player.YVelocity = -0xE0000
 
 			Player.Gravity = GRAVITY_AIR
 
@@ -316,14 +336,14 @@ end sub
 
 
 sub ObjectStartup
-	if Player.XPos > 131072000	// 0x7D00000
+	if Player.XPos > 0x7D00000
 		Stage.YBoundary2 = 1280
 		Object[15].Type = TypeName[BackgroundFX]
 		Object[15].Priority = PRIORITY_ACTIVE
 		Object[15].DrawOrder = 0
 	end if
 
-	if Player.XPos > 262144000	// 0xFA00000
+	if Player.XPos > 0xFA00000
 		Stage.YBoundary2 = 1024
 	end if
 end sub

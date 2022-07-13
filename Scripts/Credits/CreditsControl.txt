@@ -1,4 +1,4 @@
-//------------Sonic CD Credits Control Script-------------//
+//--------------Sonic CD Credits Control Script---------------//
 //--------Scripted by Christian Whitehead 'The Taxman'--------//
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
@@ -31,6 +31,9 @@
 
 // Stage Aliases
 #alias 1 : STAGE_P_MENU
+
+// Engine States
+#alias 8 : ENGINE_WAIT
 
 
 sub ObjectMain
@@ -81,11 +84,11 @@ sub ObjectMain
 		Object.Scroll++
 		
 		// Speed up the credits if the player wants
-		if KeyDown.ButtonA == true
+		if KeyDown[0].ButtonA == true
 			Object.Scroll++
 		end if
 		
-		if KeyDown.ButtonC == true
+		if KeyDown[0].ButtonC == true
 			Object.Scroll++
 		end if
 		
@@ -102,12 +105,12 @@ sub ObjectMain
 		
 		// And then, let the Player just skip the Credits if they want to
 		
-		if KeyPress.Start == true
+		if KeyPress[0].Start == true
 			Object.State = CREDITSCONTROL_FADEOUT
 			Object.Timer = 0
 		end if
 		
-		if KeyPress.ButtonB == true
+		if KeyPress[0].ButtonB == true
 			Object.State = CREDITSCONTROL_FADEOUT
 			Object.Timer = 0
 		end if
@@ -127,10 +130,17 @@ sub ObjectMain
 			StopMusic()
 			
 			// Go back to the menu now
-			
+#platform: Use_Origins	// Call Origins movie
+			Engine.State = ENGINE_WAIT
+			game.callbackParam0 = 1
+			EngineCallback(NOTIFY_STATS_MOVIE)
+#endplatform
+
+#platform: Use_Standalone
 			Stage.ActiveList = PRESENTATION_STAGE
 			Stage.ListPos = STAGE_P_MENU
 			LoadStage()
+#endplatform
 		end if
 		
 		// Have a maximum fade value of 255, since that's all that a byte can hold
@@ -199,10 +209,10 @@ sub ObjectStartup
 	TempValue0 = 0
 	
 	// X Position should be 256 pixels to the right
-	TempValue2 = 16777216
+	TempValue2 = 0x1000000
 	
 	// And starting Y Position should be 256 pixels as well
-	TempValue3 = 16777216
+	TempValue3 = 0x1000000
 	
 	// And now, let's enter the loop!
 	while TempValue0 < TempValue1
@@ -216,7 +226,7 @@ sub ObjectStartup
 		
 		if TempValue5 == 0
 			// This is a blank line, so don't put any text on the current line and instead create a new line 22 pixels tall
-			TempValue3 += 1441792
+			TempValue3 += 0x160000
 		else
 			if TempValue4 == 48 // '0' character
 				ResetObjectEntity(ArrayPos0, TypeName[TextFont1], 0, TempValue2, TempValue3)
@@ -224,7 +234,7 @@ sub ObjectStartup
 				ArrayPos0++
 				
 				// 22 pixels difference
-				TempValue3 += 1441792
+				TempValue3 += 0x160000
 			else
 				if TempValue4 == 49 // '1' character
 					ResetObjectEntity(ArrayPos0, TypeName[TextFont2], 0, TempValue2, TempValue3)
@@ -232,7 +242,7 @@ sub ObjectStartup
 					ArrayPos0++
 					
 					// 14 pixels difference
-					TempValue3 += 917504
+					TempValue3 += 0xE0000
 				else
 					if TempValue4 == 50 // '2' character
 						ResetObjectEntity(ArrayPos0, TypeName[TextFont3], 0, TempValue2, TempValue3)
@@ -240,7 +250,7 @@ sub ObjectStartup
 						ArrayPos0++
 						
 						// 14 pixels difference
-						TempValue3 += 917504
+						TempValue3 += 0xE0000
 					end if
 				end if
 			end if
@@ -249,7 +259,7 @@ sub ObjectStartup
 		TempValue0++
 	loop
 	
-	TempValue3 -= 917504 // 14 pixels
+	TempValue3 -= 0xE0000 // 14 pixels
 	Object[0].EndCredits = TempValue3
 	Object[0].EndCredits >>= 15
 	

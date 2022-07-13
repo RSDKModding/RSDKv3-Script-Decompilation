@@ -16,7 +16,9 @@
 #alias 9 : CALLBACK_TERMS_SELECTED
 #alias 10 : CALLBACK_PRIVACY_SELECTED
 
+
 #function MenuHeading_CheckTouchBack
+
 
 sub ObjectMain
 	Object.Alpha = Object.OptionsAlpha
@@ -32,6 +34,7 @@ sub ObjectMain
 					end if
 					PlaySfx(23, 0) 	//Menu Button SFX
 				end if
+
 				if KeyPress.Down == true
 					Object.ButtonSelected++
 					if Object.ButtonSelected > 1
@@ -39,9 +42,10 @@ sub ObjectMain
 					end if
 					PlaySfx(23, 0) 	//Menu Button SFX
 				end if
+
 				CheckTouchRect(0, 0, Screen.XSize, Screen.YSize)	//Touch input reset
 				if CheckResult > -1
-					Options.PhysicalControls = 0
+					Options.PhysicalControls = false
 					Object.ButtonSelected = -1
 				end if
 			else
@@ -142,8 +146,21 @@ sub ObjectMain
 
 		Object.AnimationTimer = 0
 		Object.State = ABOUTMENU_CONTROLS
-
 	end if
+#endplatform
+
+#platform: Use_Origins
+	if Object.Alpha > 254
+		if Options.PhysicalControls == false
+			CallFunction(MenuHeading_CheckTouchBack)
+		endif
+	else
+		if Options.PhysicalControls == false
+			Object.ButtonSelected = -1
+		endif
+		Object.AnimationTimer = 0
+		Object.State = ABOUTMENU_CONTROLS
+	endif
 #endplatform
 end sub
 
@@ -154,12 +171,6 @@ sub ObjectDraw
 	DrawSpriteScreenFX(0, FX_INK, TempValue0, 72)
 
 	TempValue0 = Screen.CenterX
-#platform: Standard
-	TempValue0 += 64
-	DrawSpriteScreenFX(1, FX_INK, TempValue0, 92)
-#endplatform
-
-#platform: Mobile
 	TempValue0 += 72
 	DrawSpriteScreenFX(1, FX_INK, TempValue0, 82)
 	
@@ -183,7 +194,6 @@ sub ObjectDraw
 	else
 		DrawSpriteScreenFX(47, FX_INK, TempValue0, 156)
 	end if
-#endplatform
 
 	ArrayPos0 = 0
 	GetTextInfo(TempValue1, MENU_1, 1, 0, 0)	//Gets version numbers
@@ -191,16 +201,8 @@ sub ObjectDraw
 	TempValue2 <<= 2
 	FlipSign(TempValue2)
 	TempValue2 += Screen.CenterX
-
-#platform: Standard
-	TempValue2 += 64
-	Object.DrawHeight = 112
-#endplatform
-
-#platform: Mobile
 	TempValue2 += 72
 	Object.DrawHeight = 102
-#endplatform
 
 	while TempValue1 > 0		//This handles the drawing of the game version
 		GetTextInfo(TempValue0, MENU_1, 0, 0, ArrayPos0)
@@ -268,7 +270,6 @@ sub ObjectStartup
 		TempValue1 += 17
 	loop
 
-#platform: Mobile
 	SpriteFrame(-32, 0, 64, 21, 195, 476)	//	#45 - Terms Highlight
 	SpriteFrame(-32, 0, 64, 21, 130, 476)	//	#46 - Terms
 	SpriteFrame(-32, 0, 64, 21, 195, 454)	//	#47 - Privacy Highlight
@@ -279,7 +280,6 @@ sub ObjectStartup
 	SpriteFrame(10, 0, 22, 21, 464, 417)	//	#52 - Facebook Log In Highlight
 	SpriteFrame(10, 0, 22, 21, 464, 439)	//	#53 - Facebook Log Out
 	SpriteFrame(10, 0, 22, 21, 464, 461)	//	#54 - Facebook Log Out Highlight
-#endplatform
 end sub
 
 // ========================

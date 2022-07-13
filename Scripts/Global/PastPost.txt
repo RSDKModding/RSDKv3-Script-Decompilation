@@ -1,4 +1,4 @@
-//------------Sonic CD PastPost Script-------------//
+//-----------------Sonic CD Past Post Script------------------//
 //--------Scripted by Christian Whitehead 'The Taxman'--------//
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
@@ -19,7 +19,13 @@
 #alias 1				:	PRIORITY_ACTIVE
 
 // Warp Destination
-#alias 1				:	PAST
+#alias 1				:	WARP_PAST
+
+// Collision Plane
+#alias 1				:	COLLISION_PLANE_B
+
+// Property Values
+#alias 1				:	PROPVAL_PLANEB
 
 
 sub ObjectPlayerInteraction
@@ -29,14 +35,11 @@ sub ObjectPlayerInteraction
 
 			PlayerObjectCollision(C_TOUCH, -8, -24, 8, 32)
 			if CheckResult == true
-				Warp.Destination = PAST
+				Warp.Destination = WARP_PAST
 				Object.State = PASTPOST_ROTATE
 				Object.Priority = PRIORITY_ACTIVE
 				Object.Frame = 1
 				PlaySfx(13, 0)
-#platform: Use_Haptics
-				HapticEffect(20, 0, 0, 0)
-#endplatform
 			end if
 
 		end if
@@ -80,6 +83,7 @@ end sub
 
 sub ObjectStartup
 	LoadSpriteSheet("Global/Items.gif")
+
 	SpriteFrame(-8, -24, 16, 48, 35, 204)		// #0 - Post Body
 	// Past Head
 	SpriteFrame(-16, -40, 32, 16, 118, 239)		// #2 - Post Head
@@ -94,9 +98,9 @@ sub ObjectStartup
 	ArrayPos0 = 32
 	while ArrayPos0 < 1056
 		if Object[ArrayPos0].Type == TypeName[PastPost]
-			if Object[ArrayPos0].PropertyValue == 1
+			if Object[ArrayPos0].PropertyValue == PROPVAL_PLANEB
 				Object[ArrayPos0].DrawOrder 	 = 1
-				Object[ArrayPos0].CollisionPlane = 1
+				Object[ArrayPos0].CollisionPlane = COLLISION_PLANE_B
 			end if
 
 			if Options.GameMode == GAMEMODE_TIMEATTACK

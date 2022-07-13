@@ -9,6 +9,13 @@
 #alias Object.Value3 : Object.FrontBGSonicXPos
 #alias Object.Value4 : Object.ZPos
 
+// Ink Effects
+#alias 1 : INK_BLEND
+
+// Priority
+#alias 1 : PRIORITY_ACTIVE
+
+
 sub ObjectDraw
 	Object.BGAngle++
 	Object.BGAngle &= 1023
@@ -33,93 +40,119 @@ end sub
 
 sub ObjectStartup
 	Stage[0].ActiveLayer = 9
+
 	LoadSpriteSheet("Menu/MenuGfx1_EN.gif")
-	SpriteFrame(-160, -104, 320, 224, 0, 0)	//Sonic Background
+
+	SpriteFrame(-160, -104, 320, 224, 0, 0)	//#0 - Sonic Background
+
 	ArrayPos0 = 32
 	while ArrayPos0 < 1056
 		if Object[ArrayPos0].Type == TypeName[BGAnimation]
-			Object[ArrayPos0].Priority = 1
+			Object[ArrayPos0].Priority = PRIORITY_ACTIVE
 			Object[ArrayPos0].DrawOrder = 2
-			Object[ArrayPos0].InkEffect = 1	//INK_BLEND
+			Object[ArrayPos0].InkEffect = INK_BLEND
 		end if
 		ArrayPos0++
 	loop
+
 	MatrixTranslateXYZ(MAT_WORLD, 0, 0, 0)
 	MatrixRotateXYZ(MAT_VIEW, 0, 0, 0)
+
 	3DScene.NoVertices = 12
 	3DScene.NoFaces = 3
-	VertexBuffer[0].x = -51200
-	VertexBuffer[0].y = 51200
+
+	VertexBuffer[0].x = -0xC800
+	VertexBuffer[0].y = 0xC800
 	VertexBuffer[0].z = 256
-	VertexBuffer[1].x = 3072
-	VertexBuffer[1].y = 51200
+
+	VertexBuffer[1].x = 0xC00
+	VertexBuffer[1].y = 0xC800
 	VertexBuffer[1].z = 256
-	VertexBuffer[2].x = -51200
-	VertexBuffer[2].y = 12288
+
+	VertexBuffer[2].x = -0xC800
+	VertexBuffer[2].y = 0x3000
 	VertexBuffer[2].z = 256
-	VertexBuffer[3].x = 3072
-	VertexBuffer[3].y = 12288
+
+	VertexBuffer[3].x = 0xC00
+	VertexBuffer[3].y = 0x3000
 	VertexBuffer[3].z = 256
+
 	FaceBuffer[0].a = 0
 	FaceBuffer[0].b = 1
 	FaceBuffer[0].c = 2
 	FaceBuffer[0].d = 3
+
 	FaceBuffer[0].Flag = 2
+
 	FaceBuffer[0].Color = 128
 	FaceBuffer[0].Color <<= 16
 	TempValue0 = 224
 	TempValue0 <<= 8
 	FaceBuffer[0].Color += TempValue0
 	FaceBuffer[0].Color += 64
-	FaceBuffer[0].Color += 2130706432
-	VertexBuffer[4].x = -51200
-	VertexBuffer[4].y = 12288
+	FaceBuffer[0].Color += 0x7F000000
+
+	VertexBuffer[4].x = -0xC800
+	VertexBuffer[4].y = 0x3000
 	VertexBuffer[4].z = 256
-	VertexBuffer[5].x = 3072
-	VertexBuffer[5].y = 12288
+
+	VertexBuffer[5].x = 0xC00
+	VertexBuffer[5].y = 0x3000
 	VertexBuffer[5].z = 256
-	VertexBuffer[6].x = -51200
-	VertexBuffer[6].y = -51200
+
+	VertexBuffer[6].x = -0xC800
+	VertexBuffer[6].y = -0xC800
 	VertexBuffer[6].z = 256
-	VertexBuffer[7].x = 3072
-	VertexBuffer[7].y = -51200
+
+	VertexBuffer[7].x = 0xC00
+	VertexBuffer[7].y = -0xC800
 	VertexBuffer[7].z = 256
+
 	FaceBuffer[1].a = 4
 	FaceBuffer[1].b = 5
 	FaceBuffer[1].c = 6
 	FaceBuffer[1].d = 7
+
 	FaceBuffer[1].Flag = 2
+
 	FaceBuffer[1].Color = 224
 	FaceBuffer[1].Color <<= 16
 	TempValue0 = 160
 	TempValue0 <<= 8
 	FaceBuffer[1].Color += TempValue0
 	FaceBuffer[1].Color += 96
-	FaceBuffer[1].Color += 2130706432
-	VertexBuffer[8].x = 2816
-	VertexBuffer[8].y = 51200
+	FaceBuffer[1].Color += 0x7F000000
+
+	VertexBuffer[8].x = 0xB00
+	VertexBuffer[8].y = 0xC800
 	VertexBuffer[8].z = 256
-	VertexBuffer[9].x = 51200
-	VertexBuffer[9].y = 51200
+
+	VertexBuffer[9].x = 0xC800
+	VertexBuffer[9].y = 0xC800
 	VertexBuffer[9].z = 256
-	VertexBuffer[10].x = 2816
-	VertexBuffer[10].y = -51200
+	
+	VertexBuffer[10].x = 0xB00
+	VertexBuffer[10].y = -0xC800
 	VertexBuffer[10].z = 256
-	VertexBuffer[11].x = 51200
-	VertexBuffer[11].y = -51200
+
+	VertexBuffer[11].x = 0xC800
+	VertexBuffer[11].y = -0xC800
 	VertexBuffer[11].z = 256
+
 	FaceBuffer[2].a = 8
 	FaceBuffer[2].b = 9
 	FaceBuffer[2].c = 10
 	FaceBuffer[2].d = 11
+
 	FaceBuffer[2].Flag = 2
+
 	FaceBuffer[2].Color = 128
 	FaceBuffer[2].Color <<= 16
 	TempValue0 = 128
 	TempValue0 <<= 8
 	FaceBuffer[2].Color += TempValue0
 	FaceBuffer[2].Color += 224
-	FaceBuffer[2].Color += 2130706432
+	FaceBuffer[2].Color += 0x7F000000
 end sub
 
 // ========================

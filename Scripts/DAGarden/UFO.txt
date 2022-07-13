@@ -1,4 +1,4 @@
-//------------Sonic CD UFO Script-------------//
+//------------------Sonic CD UFO Script-----------------------//
 //--------Scripted by Christian Whitehead 'The Taxman'--------//
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
@@ -31,14 +31,14 @@ sub ObjectMain
 		Object.Wobble &= 511
 		Sin(Object.YPos, Object.Wobble)
 		Object.YPos <<= 9
-		Object.YPos += Object.YOffSet
+		Object.YPos  += Object.YOffSet
 		break
 
 	case UFO_DESCEND
 		Object.YPos += Object.YVelocity
 		Object.Frame = 1
 		Object.YOffSet = Object.YPos
-		if Object.YPos > 13631488
+		if Object.YPos > 0xD00000
 			Object.State = UFO_ASCEND
 		end if
 		break
@@ -47,7 +47,7 @@ sub ObjectMain
 		Object.YPos -= Object.YVelocity
 		Object.Frame = 2
 		Object.YOffSet = Object.YPos
-		if Object.YPos < 2097152
+		if Object.YPos < 0x200000
 			Object.State = UFO_DESCEND
 		end if
 		break
@@ -75,7 +75,7 @@ end sub
 
 
 sub ObjectDraw
-	TempValue0 = Object.Frame
+	TempValue0  = Object.Frame
 	TempValue0 += Object.PropertyValue
 	DrawSprite(TempValue0)
 end sub
@@ -83,6 +83,7 @@ end sub
 
 sub ObjectStartup
 	LoadSpriteSheet("DAGarden/Objects.gif")
+
 	SpriteFrame(-12, -12, 24, 24, 354, 804)		// #0 - Yellow UFO Frame 0
 	SpriteFrame(-12, -12, 24, 24, 379, 804)		// #1 - Yellow UFO Frame 1
 	SpriteFrame(-12, -12, 24, 24, 404, 804)		// #2 - Yellow UFO Frame 2

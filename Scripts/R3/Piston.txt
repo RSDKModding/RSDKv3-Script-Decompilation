@@ -28,10 +28,10 @@
 #alias 2						:	INK_ALPHA
 
 // Time Periods
-#alias 0						:	PRESENT
-#alias 1						:	PAST
-#alias 2						:	GOOD_FUTURE
-#alias 3						:	BAD_FUTURE
+#alias 0						:	PROPVAL_PRESENT
+#alias 1						:	PROPVAL_PAST
+#alias 2						:	PROPVAL_GOOD_FUTURE
+#alias 3						:	PROPVAL_BAD_FUTURE
 
 
 sub ObjectMain
@@ -75,8 +75,8 @@ sub ObjectMain
 			if Object.Timer == 0
 
 				switch HUD.TimePeriod
-				case PRESENT
-				case BAD_FUTURE
+				case PROPVAL_PRESENT
+				case PROPVAL_BAD_FUTURE
 					CreateTempObject(TypeName[Fireball], 0, Object.XPos, Object.YPos)
 					Object[TempObjectPos].XPos -= 1572864
 					Object[TempObjectPos].YPos -= 1310720
@@ -136,7 +136,13 @@ sub ObjectPlayerInteraction
 				Player.Gravity = GRAVITY_AIR
 				Player.Animation = ANI_BOUNCING
 
+#platform: Use_Origins
+				Player.State = PlayerObject_ResetDropDash
+#endplatform
+
+#platform: Use_Standalone
 				Player.State = PlayerObject_HandleAir
+#endplatform
 			end if
 
 		end if
@@ -166,8 +172,8 @@ sub ObjectStartup
 	SpriteFrame(-16, -12, 32, 40, 1, 34)		// #1 - Piston 
 	
 	switch HUD.TimePeriod
-	case PRESENT
-	case BAD_FUTURE
+	case PROPVAL_PRESENT
+	case PROPVAL_BAD_FUTURE
 		SpriteFrame(-16, -12, 32, 40, 34, 34)	// #2  - Piston Emerge Frame 0
 		SpriteFrame(-16, -12, 32, 40, 1, 34)	// #3  - Piston Emerge Frame 1
 		SpriteFrame(-16, -12, 32, 40, 34, 34)	// #4  - Piston Emerge Frame 2
@@ -180,8 +186,8 @@ sub ObjectStartup
 		SpriteFrame(-16, -12, 32, 40, 1, 34)	// #11 - Piston Emerge Frame 9
 		break
 
-	case PAST
-	case GOOD_FUTURE
+	case PROPVAL_PAST
+	case PROPVAL_GOOD_FUTURE
 		SpriteFrame(-16, -12, 32, 40, 1, 34)	// #2  - Piston Emerge Frame 0
 		SpriteFrame(-16, -12, 32, 40, 1, 34)	// #3  - Piston Emerge Frame 1
 		SpriteFrame(-16, -12, 32, 40, 1, 34)	// #4  - Piston Emerge Frame 2

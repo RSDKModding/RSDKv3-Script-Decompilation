@@ -1,10 +1,13 @@
-//------------Sonic CD Rabbit Script-------------//
+//-------------------Sonic CD Rabbit Script-------------------//
 //--------Scripted by Christian Whitehead 'The Taxman'--------//
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
 // Aliases
 #alias Object.Value0 : Object.YVelocity
 #alias Object.Value1 : Object.Hops
+
+// HUD alias
+#alias Object[24].PropertyValue : HUD.TimePeriod
 
 // States
 #alias 0 : RABBIT_HOPRIGHT
@@ -16,27 +19,26 @@
 // Time Period Aliases
 #alias 2 : PERIOD_FUTURE_G
 
-
 sub ObjectMain
 	
 	Object.YPos += Object.YVelocity
 	
 	// Apply a Gravity of about 0.17px per frame
-	Object.YVelocity += 11264
+	Object.YVelocity += 0x2C00
 	
 	switch Object.State
 	case RABBIT_HOPRIGHT
 		
 		// Move the Rabbit right by a pixel
-		Object.XPos += 65536
+		Object.XPos += 0x10000
 		
 		// Only check for the floor if the Rabbit's falling at a rate faster than 4px per frame
-		if Object.YVelocity > 262144
+		if Object.YVelocity > 0x40000
 			ObjectTileCollision(CSIDE_FLOOR, 0, 8, 0)
 			
 			if CheckResult == true
 				// Bounce back up, at a rate of 5px upwards per frame
-				Object.YVelocity = -327680
+				Object.YVelocity = -0x50000
 				
 				Object.Hops++
 				
@@ -53,17 +55,17 @@ sub ObjectMain
 	case RABBIT_HOPLEFT
 		
 		// Move the Rabbit a pixel left
-		Object.XPos -= 65536
+		Object.XPos -= 0x10000
 		
 		// Only check for ground collision if falling faster than 4px a frame
-		if Object.YVelocity > 262144
+		if Object.YVelocity > 0x40000
 			ObjectTileCollision(CSIDE_FLOOR, 0, 8, 0)
 			
 			if CheckResult == true
 				// Bounce back up!
 				
 				// Starting YVel of 5px per frame
-				Object.YVelocity = -327680
+				Object.YVelocity = -0x50000
 				
 				// After hopping thrice, turn right around
 				Object.Hops++
@@ -90,7 +92,7 @@ sub ObjectDraw
 			DrawSpriteFX(1, FX_FLIP, Object.XPos, Object.YPos)
 		end if
 	else
-		if Object[24].PropertyValue == PERIOD_FUTURE_G
+		if HUD.TimePeriod == PERIOD_FUTURE_G
 			if Object.YVelocity < 0
 				DrawSpriteFX(0, FX_FLIP, Object.XPos, Object.YPos)
 			else
@@ -104,6 +106,9 @@ end sub
 
 sub ObjectStartup
 	LoadSpriteSheet("R3/Objects3.gif")
+
+	SpriteFrame(-8, -12, 16, 24, 149, 1)
+	SpriteFrame(-8, -12, 16, 24, 166, 1)
 	
 	// Loop through all Objects in the stage and setup all Rabbits
 	ArrayPos0 = 32
@@ -111,7 +116,7 @@ sub ObjectStartup
 		if Object[ArrayPos0].Type == TypeName[Rabbit]
 			
 			// Make the Rabbit start at a rising rate of 5px per frame
-			Object[ArrayPos0].YVelocity = -327680
+			Object[ArrayPos0].YVelocity = -0x50000
 			
 			// And start facing right, as well
 			Object[ArrayPos0].Direction = FACING_RIGHT
@@ -120,9 +125,6 @@ sub ObjectStartup
 		
 		ArrayPos0++
 	loop
-	
-	SpriteFrame(-8, -12, 16, 24, 149, 1)
-	SpriteFrame(-8, -12, 16, 24, 166, 1)
 	
 end sub
 
