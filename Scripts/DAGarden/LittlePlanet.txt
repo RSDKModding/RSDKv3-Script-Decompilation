@@ -1,4 +1,4 @@
-//------------Sonic CD Little Planet Script-------------//
+//---------------Sonic CD Little Planet Script----------------//
 //--------Scripted by Christian Whitehead 'The Taxman'--------//
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
@@ -20,28 +20,29 @@ sub ObjectMain
 		// Most of the things here are for physical controllers - touch input is handled in the Touch Buttons object
 
 		// Planet Movement
-		if KeyDown.Left == true
-			if Object.XPos > -1024
+		if KeyDown[0].Left == true
+			if Object.XPos > -0x400
 				Object.XPos--
 			end if
 		end if
 
-		if KeyDown.Right == true
-			if Object.XPos < 1024
+		if KeyDown[0].Right == true
+			if Object.XPos < 0x400
 				Object.XPos++
 			end if
 		end if
 
-		if KeyDown.Up == true
+		if KeyDown[0].Up == true
 			Object.YPos--
 		end if
 
-		if KeyDown.Down == true
+		if KeyDown[0].Down == true
 			Object.YPos++
 		end if
 
 		// Rotation
-		if KeyDown.ButtonB == true	// Increase rotation speed
+		// Note: this start inputs were previously ButtonB, Origins changed it
+		if KeyDown[0].Start == true	// Increase rotation speed
 			if Object.RotationDirection == FACING_LEFT
 				if Object.RotationSpeed < 256
 					Object.RotationSpeed += 2
@@ -53,14 +54,14 @@ sub ObjectMain
 			end if
 		end if
 
-		if KeyPress.ButtonB == true		// Flip Rotation
+		if KeyPress[0].Start == true		// Flip Rotation
 			Object.RotationDirection++
 			Object.RotationDirection &= 1
 			Object.RotationSpeed = 0
 		end if
 
 		// Zooming
-		if KeyDown.ButtonC == true		// Zoom In/Out
+		if KeyDown[0].ButtonC == true		// Zoom In/Out
 			if Object.ZoomIn == false
 				if Object.ZoomDepth < 16384
 					Object.ZoomDepth += 8
@@ -72,7 +73,7 @@ sub ObjectMain
 			end if
 		end if
 
-		if KeyPress.ButtonC == true		// Switch Zoom In / Zoom Out
+		if KeyPress[0].ButtonC == true		// Switch Zoom In / Zoom Out
 			Object.ZoomIn++
 			Object.ZoomIn &= 1
 		end if
@@ -126,9 +127,9 @@ sub ObjectMain
 
 	Object.RotationLimit += Object.RotationSpeed
 	if Object.RotationLimit < 0
-		Object.RotationLimit += 8192
+		Object.RotationLimit += 0x2000
 	end if
-	Object.RotationLimit &= 8191
+	Object.RotationLimit &= 0x1FFF
 
 	Object.Rotation = Object.RotationLimit
 	Object.Rotation >>= 4
@@ -151,7 +152,7 @@ sub ObjectDraw
 		TempValue1 /= Object.ZoomDepth
 		TempValue1 += 120
 
-		Object.Scale = 131072
+		Object.Scale = 0x20000
 		Object.Scale /= Object.ZoomDepth
 		DrawSpriteScreenFX(Object.Frame, FX_ROTOZOOM, TempValue0, TempValue1)
 
@@ -219,17 +220,6 @@ end sub
 sub ObjectStartup
 	LoadSpriteSheet("DAGarden/LittlePlanet.gif")
 
-	ArrayPos0 = 32
-	while ArrayPos0 < 1056
-		if Object[ArrayPos0].Type == TypeName[LittlePlanet]
-			Object[ArrayPos0].XPos = 0
-			Object[ArrayPos0].YPos = 0
-			Object[ArrayPos0].ZoomDepth = 384
-			Object[ArrayPos0].RotationSpeed = -8
-		end if
-		ArrayPos0++
-	loop
-
 	SpriteFrame(-126, -126, 252, 252, 0, 0)		// #0  - Little Planet
 	SpriteFrame(95, -70, 16, 16, 256, 257)		// #1  - Vulkan Smoke Frame 0
 	SpriteFrame(91, -75, 24, 24, 256, 274)		// #2  - Vulkan Smoke Frame 1
@@ -263,6 +253,17 @@ sub ObjectStartup
 	SpriteFrame(73, -104, 32, 32, 437, 299)		// #30 - BF Vulkan Smoke Frame 7
 	SpriteFrame(76, -107, 32, 32, 445, 332)		// #31 - BF Vulkan Smoke Frame 8
 	SpriteFrame(75, -110, 32, 32, 445, 365)		// #32 - BF Vulkan Smoke Frame 9
+
+	ArrayPos0 = 32
+	while ArrayPos0 < 1056
+		if Object[ArrayPos0].Type == TypeName[LittlePlanet]
+			Object[ArrayPos0].XPos = 0
+			Object[ArrayPos0].YPos = 0
+			Object[ArrayPos0].ZoomDepth = 384
+			Object[ArrayPos0].RotationSpeed = -8
+		end if
+		ArrayPos0++
+	loop
 end sub
 
 // ========================

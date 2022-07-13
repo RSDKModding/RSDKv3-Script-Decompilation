@@ -1,4 +1,4 @@
-//------------Sonic CD Monitor Script-------------//
+//-----------------Sonic CD Monitor Script--------------------//
 //--------Scripted by Christian Whitehead 'The Taxman'--------//
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
@@ -32,22 +32,25 @@
 #alias 2				:	GAMEMODE_TIMEATTACK
 
 // Property Values
-#alias 1				:	RING_MONITOR
-#alias 2				:	SHIELD_MONITOR
-#alias 3				:	INVINCIBILITY_MONITOR
-#alias 4				:	POWER_SNEAKERS_MONITOR
-#alias 5				:	SONIC_MONITOR
-#alias 6				:	TIME_MONITOR
-#alias 7				:	TAILS_MONITOR
-#alias 8				:	S_MONITOR
-#alias 9				:	STATIC_1
-#alias 10				:	STATIC_2
+#alias 1				:	PROPVAL_RING
+#alias 2				:	PROPVAL_SHIELD
+#alias 3				:	PROPVAL_INVINCIBILITY
+#alias 4				:	PROPVAL_POWER_SNEAKERS
+#alias 5				:	PROPVAL_SONIC
+#alias 6				:	PROPVAL_TIME
+#alias 7				:	PROPVAL_TAILS
+#alias 8				:	PROPVAL_S_MONITOR
+#alias 9				:	PROPVAL_STATIC_1
+#alias 10				:	PROPVAL_STATIC_2
+
+// Collision Plane
+#alias 1				:	COLLISION_PLANE_B
 
 
 sub ObjectMain
 	if Object.State == MONITOR_FALLING
 
-		Object.GravityStrength += 14336
+		Object.GravityStrength += 0x3800
 		Object.YPos += Object.GravityStrength
 		if Object.GravityStrength >= 0
 			ObjectTileCollision(CSIDE_FLOOR, 0, 16, 0)
@@ -63,39 +66,33 @@ end sub
 sub ObjectPlayerInteraction
 	if Player.CollisionPlane == Object.CollisionPlane
 
-#platform: Mobile
-		CheckResult = true
+		TempValue0 = false
 		if Player.Gravity == GRAVITY_AIR
 			if Player.YVelocity < 0
-				CheckResult = false
-			end if
-		end if
-#endplatform
-
-#platform: Standard	  
-		CheckGreater(Player.YVelocity,-1)
-#endplatform
-
-		if CheckResult == true
+				TempValue0 = true
+			endif
+		endif
+		if TempValue0 == false
 			if Player.Animation == ANI_JUMPING
 				PlayerObjectCollision(C_TOUCH, -16, -14, 16, 16)
 				if CheckResult == true
 					Object.State = MONITOR_IDLE
+
 					CreateTempObject(TypeName[SmokePuff], 0, Object.XPos, Object.YPos)
+
 					Object[TempObjectPos].DrawOrder = 4
+
 					FlipSign(Player.YVelocity)
-					if Player.YVelocity > -131072
-						Player.YVelocity = -131072
+					if Player.YVelocity > -0x20000
+						Player.YVelocity = -0x20000
 					end if
+
 					Object.Type = TypeName[BrokenMonitor]
 					BrokenMonitor.Priority = PRIORITY_ACTIVE
 					BrokenMonitor.Alpha = 255
 					BrokenMonitor.YVelocity = Object.YPos
-					BrokenMonitor.Timer = -196608
+					BrokenMonitor.Timer = -0x30000
 					PlaySfx(8, 0)
-#platform: Use_Haptics
-					HapticEffect(16, 0, 0, 0)
-#endplatform
 				end if
 			else
 				PlayerObjectCollision(C_BOX, -15, -14, 15, 16)
@@ -104,8 +101,8 @@ sub ObjectPlayerInteraction
 			PlayerObjectCollision(C_BOX, -15, -16, 15, 16)
 			if CheckResult == HIT_ROOF
 				Object.State = MONITOR_FALLING
-				Object.GravityStrength = -131072
-				Player.YVelocity = 131072
+				Object.GravityStrength = -0x20000
+				Player.YVelocity = 0x20000
 			end if
 		end if
 	end if
@@ -144,6 +141,7 @@ end sub
 
 sub ObjectStartup
 	LoadSpriteSheet("Global/Items.gif")
+
 	SpriteFrame(-16, -16, 32, 32, 51, 67)	// #0  - Monitor
 	
 	SpriteFrame(-16, -16, 32, 32, 18, 1)	// #1  - Ring Monitor
@@ -160,10 +158,10 @@ sub ObjectStartup
 	ArrayPos0 = 32
 	while ArrayPos0 < 1056
 		if Object[ArrayPos0].Type == TypeName[Monitor]
-			if Object[ArrayPos0].PropertyValue > STATIC_1
+			if Object[ArrayPos0].PropertyValue > PROPVAL_STATIC_1
 				Object[ArrayPos0].PropertyValue -= 10
 				Object[ArrayPos0].DrawOrder = 1
-				Object[ArrayPos0].CollisionPlane = 1
+				Object[ArrayPos0].CollisionPlane = COLLISION_PLANE_B
 			end if
 		end if
 		ArrayPos0++
@@ -173,8 +171,8 @@ sub ObjectStartup
 		ArrayPos0 = 32
 		while ArrayPos0 < 1056
 			if Object[ArrayPos0].Type == TypeName[Monitor]
-				if Object[ArrayPos0].PropertyValue == SONIC_MONITOR
-					Object[ArrayPos0].PropertyValue = TAILS_MONITOR
+				if Object[ArrayPos0].PropertyValue == PROPVAL_SONIC
+					Object[ArrayPos0].PropertyValue = PROPVAL_TAILS
 				end if
 			end if
 			ArrayPos0++
@@ -185,7 +183,7 @@ sub ObjectStartup
 		ArrayPos0 = 32
 		while ArrayPos0 < 1056
 			if Object[ArrayPos0].Type == TypeName[Monitor]
-				if Object[ArrayPos0].PropertyValue == SONIC_MONITOR
+				if Object[ArrayPos0].PropertyValue == PROPVAL_SONIC
 					Object[ArrayPos0].Type = TypeName[Blank Object]
 				end if
 			end if

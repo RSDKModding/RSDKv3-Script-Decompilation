@@ -13,10 +13,10 @@
 #alias Object[24].PropertyValue	:	Hud.TimePeriod
 
 // Time Periods
-#alias 0						:	PRESENT
-#alias 1						:	PAST
-#alias 2						:	GOOD_FUTURE
-#alias 3						:	BAD_FUTURE
+#alias 0						:	PROPVAL_PRESENT
+#alias 1						:	PROPVAL_PAST
+#alias 2						:	PROPVAL_GOOD_FUTURE
+#alias 3						:	PROPVAL_BAD_FUTURE
 
 sub ObjectMain
 	if Object.State == GRABPOLE_HANGING
@@ -40,7 +40,15 @@ sub ObjectMain
 			else
 				Object.Frame = 1
 				Object.State = GRABPOLE_BROKEN
+				
+
+#platform: Use_Origins
+				Player.State = PlayerObject_ResetDropDash
+#endplatform
+
+#platform: Use_Standalone
 				Player.State = PlayerObject_HandleAir
+#endplatform
 			end if
 		end if
 	end if
@@ -76,7 +84,15 @@ sub ObjectPlayerInteraction
 		if Player.JumpPress == true
 			Object.Frame = 1
 			Object.State = GRABPOLE_BROKEN
-			Player.State = PlayerObject_HandleAir
+			
+
+#platform: Use_Origins
+				Player.State = PlayerObject_ResetDropDash
+#endplatform
+
+#platform: Use_Standalone
+				Player.State = PlayerObject_HandleAir
+#endplatform
 		end if
 
 		PlayerObjectCollision(C_BOX, 0, -64, 32, -46)
@@ -93,7 +109,7 @@ end sub
 
 sub ObjectStartup
 	LoadSpriteSheet("R4/Objects3.gif")
-	if Hud.TimePeriod < BAD_FUTURE
+	if Hud.TimePeriod < PROPVAL_BAD_FUTURE
 		SpriteFrame(-4, -46, 8, 92, 134, 46)	// #0 - Pole
 		SpriteFrame(-4, -46, 16, 92, 117, 46)	// #1 - Broken Pole
 	else

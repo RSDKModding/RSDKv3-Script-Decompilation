@@ -1,11 +1,16 @@
-//------------Sonic CD L Button Script-------------//
+//--------------Sonic CD Leaderboards Button Script-----------//
 //--------Scripted by Christian Whitehead 'The Taxman'--------//
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
+//------------------Only exist in WP7 Versions----------------//
 
 // Aliases
 #alias Object.Value1	:	Object.ButtonPressed
-#alias Object[32].State	:	Object.LEState
-#alias Object[0].State	:	Object.MCState
+
+// LEntry Aliases
+#alias Object[32].State	:	LEntry.State
+
+// MenuControl Aliases
+#alias Object[0].State	:	MenuControl.State
 
 // LEntry States
 #alias 1	: LENTRY_MOVE_RIGHT
@@ -19,10 +24,10 @@
 #alias 4	:	MENUCONTROL_EXIT
 
 //Engine & CallBacks
-#alias 2 : MESSAGE_LOSTFOCUS
+#alias 2	: MESSAGE_LOSTFOCUS
+
 
 sub ObjectMain
-#platform: Mobile
 	if Engine.Message == MESSAGE_LOSTFOCUS
 		Object.ButtonPressed = 0
 	end if
@@ -70,7 +75,7 @@ sub ObjectMain
 		break
 
 	end switch
-	if Object.MCState == MENUCONTROL_CONTROLS
+	if MenuControl.State == MENUCONTROL_CONTROLS
 		CheckTouchRect(TempValue0, TempValue2, TempValue1, TempValue3)
 	else
 		CheckResult = -1
@@ -83,32 +88,32 @@ sub ObjectMain
 			if Object.ButtonPressed == 1
 				switch Object.PropertyValue
 				case 0
-					Object.MCState = MENUCONTROL_EXIT
+					MenuControl.State = MENUCONTROL_EXIT
 					StopMusic()
 					PlaySfx(27, 0)	//Select SFX
 					break
 
 				case 1
-					Object.MCState = MENUCONTROL_BLANK
-					Object.LEState = LENTRY_MOVE_UP
+					MenuControl.State = MENUCONTROL_BLANK
+					LEntry.State = LENTRY_MOVE_UP
 					PlaySfx(23, 0) 	//Menu Button SFX
 					break
 
 				case 2
-					Object.MCState = MENUCONTROL_BLANK
-					Object.LEState = LENTRY_MOVE_DOWN
+					MenuControl.State = MENUCONTROL_BLANK
+					LEntry.State = LENTRY_MOVE_DOWN
 					PlaySfx(23, 0) 	//Menu Button SFX
 					break
 
 				case 3
-					Object.MCState = MENUCONTROL_BLANK
-					Object.LEState = LENTRY_MOVE_LEFT
+					MenuControl.State = MENUCONTROL_BLANK
+					LEntry.State = LENTRY_MOVE_LEFT
 					PlaySfx(23, 0) 	//Menu Button SFX
 					break
 
 				case 4
-					Object.MCState = MENUCONTROL_BLANK
-					Object.LEState = LENTRY_MOVE_RIGHT
+					MenuControl.State = MENUCONTROL_BLANK
+					LEntry.State = LENTRY_MOVE_RIGHT
 					PlaySfx(23, 0) 	//Menu Button SFX
 					break
 
@@ -119,23 +124,20 @@ sub ObjectMain
 			Object.ButtonPressed = 0
 		end if
 	end if
-#endplatform
 end sub
 
 
 sub ObjectDraw
-#platform: Mobile
 	TempValue0 = Object.PropertyValue
 	TempValue0 <<= 1
 	TempValue0 += Object.ButtonPressed
 	DrawSprite(TempValue0)
-#endplatform
 end sub
 
 
 sub ObjectStartup
-#platform: Mobile
 	LoadSpriteSheet("LBoards/Leaderboards.gif")
+
 	SpriteFrame(0, 0, 64, 20, 135, 34)	// #0 - Exit
 	SpriteFrame(0, 0, 64, 20, 135, 55)	// #1 - Exit Highlight
 	SpriteFrame(0, 0, 48, 20, 200, 34)	// #2 - Up Arrow
@@ -146,7 +148,6 @@ sub ObjectStartup
 	SpriteFrame(0, 0, 24, 32, 248, 92)	// #7 - Left Arrow Highlight
 	SpriteFrame(0, 0, 24, 32, 273, 92)	// #8 - Right Arrow
 	SpriteFrame(0, 0, 24, 32, 298, 92)	// #9 - Right Arrow Highlight
-#endplatform
 end sub
 
 // ========================

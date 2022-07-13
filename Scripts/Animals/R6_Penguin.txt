@@ -1,4 +1,4 @@
-//------------Sonic CD Penguin Script-------------//
+//-----------------Sonic CD Penguin Script--------------------//
 //--------Scripted by Christian Whitehead 'The Taxman'--------//
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
@@ -6,6 +6,10 @@
 #alias Object.Value0 : Object.YVelocity
 #alias Object.Value1 : Object.Hops
 
+// HUD alias
+#alias Object[24].PropertyValue : HUD.TimePeriod
+
+// States
 #alias 0 : PENGUIN_HOPRIGHT
 #alias 1 : PENGUIN_HOPLEFT
 
@@ -18,22 +22,22 @@ sub ObjectMain
 	Object.YPos += Object.YVelocity
 	
 	// Apply a gravity of about 0.17 pixels per frame
-	Object.YVelocity += 11264
+	Object.YVelocity += 0x2C00
 	
 	switch Object.State
 	case PENGUIN_HOPRIGHT
 		
 		// Move the Penguin a pixel right
-		Object.XPos += 65536
+		Object.XPos += 0x10000
 		
 		// Collision is only to be checked when falling faster than 4px a frame
-		if Object.YVelocity > 262144
+		if Object.YVelocity > 0x40000
 			ObjectTileCollision(0, 0, 8, 0)
 			
 			if CheckResult == true
 				
 				// Bounce back up, at a starting rate of 5px per frame
-				Object.YVelocity = -327680
+				Object.YVelocity = -0x50000
 				
 				Object.Hops++
 				if Object.Hops == 2
@@ -50,15 +54,15 @@ sub ObjectMain
 	case PENGUIN_HOPLEFT
 		
 		// Move the Penguin a pixel to the left
-		Object.XPos -= 65536
+		Object.XPos -= 0x10000
 		
 		// Only check for colliison when falling, at a rate faster than 4px downwards
-		if Object.YVelocity > 262144
+		if Object.YVelocity > 0x40000
 			ObjectTileCollision(0, 0, 8, 0)
 			
 			if CheckResult == true
 				// Bounce right back up, 5px per frame is the starting rate
-				Object.YVelocity = -327680
+				Object.YVelocity = -0x50000
 				
 				Object.Hops++
 				if Object.Hops == 2
@@ -87,7 +91,7 @@ sub ObjectDraw
 		end if
 	else
 		
-		if Object[24].PropertyValue == PERIOD_FUTURE_G
+		if HUD.TimePeriod == PERIOD_FUTURE_G
 			if Object.YVelocity < 0
 				DrawSpriteFX(0, FX_FLIP, Object.XPos, Object.YPos)
 			else
@@ -103,12 +107,15 @@ end sub
 sub ObjectStartup
 	LoadSpriteSheet("R6/Objects.gif")
 	
+	SpriteFrame(-8, -12, 16, 24, 222, 66)
+	SpriteFrame(-8, -12, 16, 24, 239, 66)
+	
 	ArrayPos0 = 32
 	while ArrayPos0 < 1056
 		if Object[ArrayPos0].Type == TypeName[Penguin]
 		
 			// Start bouncing up, at a rate of 5px per frame
-			Object[ArrayPos0].YVelocity = -327680
+			Object[ArrayPos0].YVelocity = -0x50000
 			
 			// And start facing right, to correspond with the starting state of PENGUIN_HOPRIGHT, as well
 			Object[ArrayPos0].Direction = FACING_RIGHT
@@ -117,9 +124,6 @@ sub ObjectStartup
 		
 		ArrayPos0++
 	loop
-	
-	SpriteFrame(-8, -12, 16, 24, 222, 66)
-	SpriteFrame(-8, -12, 16, 24, 239, 66)
 	
 end sub
 

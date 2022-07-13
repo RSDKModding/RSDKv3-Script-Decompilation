@@ -1,10 +1,14 @@
-//------------Sonic CD Sheep Script-------------//
+//------------------Sonic CD Sheep Script---------------------//
 //--------Scripted by Christian Whitehead 'The Taxman'--------//
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
 // Aliases
 #alias Object.Value0 : Object.YVelocity
 
+// HUD alias
+#alias Object[24].PropertyValue : HUD.TimePeriod
+
+// States
 #alias 0 : SHEEP_HOPRIGHT
 #alias 1 : SHEEP_HOPLEFT
 
@@ -17,13 +21,13 @@ sub ObjectMain
 	Object.YPos += Object.YVelocity
 	
 	// Gravity of around 0.156px
-	Object.YVelocity += 10240
+	Object.YVelocity += 0x2800
 	
 	switch Object.State
 	case SHEEP_HOPRIGHT
 		
 		// Advance at a rate of 1px per frame
-		Object.XPos += 65536
+		Object.XPos += 0x10000
 		
 		// Only check for collision when going down
 		if Object.YVelocity > 0
@@ -35,7 +39,7 @@ sub ObjectMain
 				Object.Direction = FACING_LEFT
 				
 				// Bounce back up with a velocity of 5px per frame
-				Object.YVelocity = -327680
+				Object.YVelocity = -0x50000
 				
 				Object.State = SHEEP_HOPLEFT
 			end if
@@ -45,7 +49,7 @@ sub ObjectMain
 	case SHEEP_HOPLEFT
 		
 		// Go left at a rate of 1px per frame
-		Object.XPos -= 65536
+		Object.XPos -= 0x10000
 		
 		// Collision is only to be checked when falling
 		if Object.YVelocity > 0
@@ -57,7 +61,7 @@ sub ObjectMain
 				Object.Direction = FACING_RIGHT
 				
 				// Initial Y Velocity of 5px upwards again
-				Object.YVelocity = -327680
+				Object.YVelocity = -0x50000
 				
 				Object.State = SHEEP_HOPRIGHT
 			end if
@@ -79,7 +83,7 @@ sub ObjectDraw
 		end if
 	end if
 	
-	if Object[24].PropertyValue == PERIOD_FUTURE_G
+	if HUD.TimePeriod == PERIOD_FUTURE_G
 		if Object.YVelocity < 0
 			DrawSpriteFX(0, FX_FLIP, Object.XPos, Object.YPos)
 		else
@@ -93,21 +97,21 @@ end sub
 sub ObjectStartup
 	LoadSpriteSheet("R8/Objects2.gif")
 	
+	SpriteFrame(-10, -8, 24, 16, 160, 110)
+	SpriteFrame(-10, -8, 24, 16, 160, 127)
+	
 	// Setup all Sheep in the level
 	ArrayPos0 = 32
 	while ArrayPos0 < 1056
 		if Object[ArrayPos0].Type == TypeName[Sheep]
 			
 			// Start the Sheep going upwards at 5px per frame
-			Object[ArrayPos0].YVelocity = -327680
+			Object[ArrayPos0].YVelocity = -0x50000
 			
 		end if
 		
 		ArrayPos0++
 	loop
-	
-	SpriteFrame(-10, -8, 24, 16, 160, 110)
-	SpriteFrame(-10, -8, 24, 16, 160, 127)
 	
 end sub
 

@@ -1,4 +1,4 @@
-//------------Sonic CD Time Warp Fix Script-------------//
+//---------------Sonic CD Time Warp Fix Script----------------//
 //--------Scripted by Christian Whitehead 'The Taxman'--------//
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
@@ -14,16 +14,19 @@
 // Gravity
 #alias 1	:	GRAVITY_AIR
 
+// Warp Destination
+#alias 0	:	WARP_NONE
+
 
 sub ObjectMain
 	switch Object.PropertyValue
 	case TIMEWARPFIX_ERASE_TOUCH
 		PlayerObjectCollision(C_TOUCH, -16, -16, 16, 16)
 		if CheckResult == true
-			if Warp.Destination > 0
+			if Warp.Destination > WARP_NONE
 				if Warp.Timer > 99
 					if Warp.Timer < 220
-						Warp.Destination = 0
+						Warp.Destination = WARP_NONE
 					end if
 				end if
 				Warp.Timer = 0
@@ -33,7 +36,7 @@ sub ObjectMain
 
 	case TIMEWARPFIX_ERASE_AREA
 		if Player.XPos < Object.XPos
-			Warp.Destination = 0
+			Warp.Destination = WARP_NONE
 			Warp.Timer = 0
 		end if
 		break

@@ -36,9 +36,16 @@ sub ObjectPlayerInteraction
 		if Player.YVelocity >= 0
 			PlayerObjectCollision(C_BOX, -16, -16, 16, 16)
 			PlayerObjectCollision(C_TOUCH, -15, -18, 15, -12)
-			if CheckResult == 1
+			if CheckResult == true
 				Object.Frame = 1
+				
+#platform: Use_Origins
+				Player.State = PlayerObject_ResetDropDash
+#endplatform
+
+#platform: Use_Standalone
 				Player.State = PlayerObject_HandleAir
+#endplatform
 				Player.Gravity = 1
 				Player.YVelocity = -1048576
 				Player.AnimationCheck = ANI_WALKING
@@ -48,7 +55,7 @@ sub ObjectPlayerInteraction
 				if Player.Animation == ANI_PEELOUT
 					Player.AnimationCheck = ANI_PEELOUT
 				end if
-				Player.Animation = 11
+				Player.Animation = ANI_BOUNCING
 				Player.Timer = 0
 				PlaySfx(11, 0)
 			end if
@@ -56,12 +63,19 @@ sub ObjectPlayerInteraction
 		if Player.Gravity == 0
 			PlayerObjectCollision(C_BOX, -16, -20, 16, 16)
 			PlayerObjectCollision(C_TOUCH, -15, -18, 15, -12)
-			if CheckResult == 1
+			if CheckResult == true
 				Object.Frame = 1
+
+#platform: Use_Origins
+				Player.State = PlayerObject_ResetDropDash
+#endplatform
+
+#platform: Use_Standalone
 				Player.State = PlayerObject_HandleAir
+#endplatform
 				Player.Gravity = 1
 				Player.YVelocity = -1048576
-				Player.Animation = 11
+				Player.Animation = ANI_BOUNCING
 				Player.Timer = 0
 				PlaySfx(11, 0)
 			end if

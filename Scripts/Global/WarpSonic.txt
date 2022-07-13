@@ -1,4 +1,4 @@
-//------------Sonic CD WarpSonic Script-------------//
+//-----------------Sonic CD WarpSonic Script------------------//
 //--------Scripted by Christian Whitehead 'The Taxman'--------//
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
@@ -46,6 +46,7 @@
 // Ink
 #alias 2				:	INK_ALPHA
 
+
 sub ObjectMain
 	// tldr; gets the ypos for the afterimages
 	AfterImage3.YPos   = AfterImage3.Delay3
@@ -65,9 +66,9 @@ sub ObjectMain
 
 	switch Object.State
 	case WARPSONIC_REACH_CENTER
-		Object.YPos -= 524288		// 0x80000
-		if Object.YPos < 7864320	// 0x780000
-			Object.YPos = 7864320	// 0x780000
+		Object.YPos -= 0x80000
+		if Object.YPos < 0x780000
+			Object.YPos = 0x780000
 			Object.State = WARPSONIC_IDLE
 			Object.Timer = 0
 		end if
@@ -75,11 +76,6 @@ sub ObjectMain
 
 	case WARPSONIC_IDLE
 		Object.Timer++
-#platform: Use_Haptics
-		if Object.Timer == 60
-			HapticEffect(91, 0, 0, 0)
-		end if
-#endplatform
 		if Object.Timer == 120
 			Object.Timer = 0
 			Object.State = WARPSONIC_LEAVE
@@ -88,7 +84,7 @@ sub ObjectMain
 		break
 
 	case WARPSONIC_LEAVE
-		Object.YPos -= 524288		// 0x80000
+		Object.YPos -= 0x80000
 		if Object.OutOfBounds == true
 			Object.Type = TypeName[Blank Object]
 		end if
@@ -103,12 +99,15 @@ sub ObjectMain
 		TempValue0 -= 16
 		TempValue0 <<= 16
 		TempValue0 += Object.XPos
+
 		Rand(TempValue1, 32)
 		TempValue1 -= 16
 		TempValue1 <<= 16
 		TempValue1 += Object.YPos
+
 		CreateTempObject(TypeName[WarpStar], 0, TempValue0, TempValue1)
 		WarpStar[TempObjectPos].State = WARPSTAR_CUTSCENE
+
 		Rand(WarpStar[TempObjectPos].RandFadeTimer, 32)
 		WarpStar[TempObjectPos].RandFadeTimer += 16
 	end if
@@ -124,7 +123,7 @@ sub ObjectDraw
 	end if
 
 	// Afterimages
-	if Object.YPos < 17039360	// 0x1040000
+	if Object.YPos < 0x1040000
 		Object.InkEffect = INK_ALPHA
 		Object.Alpha = 160
 		DrawSpriteFX(TempValue0, FX_INK, Object.XPos, AfterImage1.YPos)
@@ -149,6 +148,7 @@ end sub
 sub ObjectStartup
 	if Stage.PlayerListPos == 0	// PlayerName[SONIC]
 		LoadSpriteSheet("Global/Items3.gif")
+
 		SpriteFrame(-14, -22, 29, 44, 116, 211)	// #0 - Bouncing Frame 0
 		SpriteFrame(-11, -22, 20, 44, 146, 211)	// #1 - Bouncing Frame 1
 		SpriteFrame(-11, -22, 25, 44, 167, 211)	// #2 - Bouncing Frame 2
@@ -156,6 +156,7 @@ sub ObjectStartup
 		SpriteFrame(-8, -22, 20, 44, 219, 211)	// #4 - Bouncing Frame 4
 	else
 		LoadSpriteSheet("Players/Tails2.gif")
+
 		SpriteFrame(-17, -22, 24, 48, 1, 1)		// #0 - Bouncing Frame 0
 		SpriteFrame(-11, -22, 24, 48, 26, 1)	// #1 - Bouncing Frame 1
 		SpriteFrame(-13, -22, 24, 48, 51, 1)	// #2 - Bouncing Frame 2

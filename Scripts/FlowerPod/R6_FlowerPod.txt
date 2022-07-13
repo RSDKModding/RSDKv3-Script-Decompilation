@@ -1,28 +1,51 @@
-//------------Sonic CD Flower Pod Script-------------//
+//---------------Sonic CD Flower Pod Script-------------------//
 //--------Scripted by Christian Whitehead 'The Taxman'--------//
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
 // Aliases
-#alias 68: TYPE_FLOWERPOD
+#alias Object.Value0		:	Object.Timer
+
+// PodSeed Aliases
+#alias Object.Value1 		: Object.ParentPod
+#alias Object.Value2 		: Object.XVelocity
+#alias Object.Value3 		: Object.YVelocity
+
+// States
+#alias 0	:	FLOWERPOD_IDLE
+#alias 1	:	FLOWERPOD_EXPLOSION
+#alias 2	:	FLOWERPOD_VANISH
+#alias 3	:	FLOWERPOD_TRIGGER_ACTFINISH
+#alias 4	:	FLOWERPOD_CONTROL_PLAYER
+
+// Ink Effects
+#alias 2	:	INK_ALPHA
+
+// Gravity
+#alias 0	:	GRAVITY_GROUND
+
+// Priority
+#alias 1	:	PRIORITY_ACTIVE
 
 
 sub ObjectMain
 	switch Object.State
-	case 0
+	case FLOWERPOD_IDLE
 		TempValue0 = Object.YPos
-		TempValue0 += 4194394
+		TempValue0 += 0x40005A
 		if Player.YPos < TempValue0
 			Stage.NewXBoundary1 = Object.XPos
 			Stage.NewXBoundary1 >>= 16
 			Stage.NewXBoundary1 -= Screen.CenterX
+
 			Stage.NewXBoundary2 = Object.XPos
 			Stage.NewXBoundary2 >>= 16
 			Stage.NewXBoundary2 += Screen.CenterX
 		end if
-		if Object.Value0 < 60
+
+		if Object.Timer < 60
 			Object.Frame = 1
 		else
-			TempValue0 = Object.Value0
+			TempValue0 = Object.Timer
 			TempValue0 -= 60
 			TempValue0 >>= 1
 			switch TempValue0
@@ -45,94 +68,110 @@ sub ObjectMain
 				break
 			end switch
 		end if
-		Object.Value0++
-		if Object.Value0 == 74
-			Object.Value0 = 0
+
+		Object.Timer++
+		if Object.Timer == 74
+			Object.Timer = 0
 		end if
 		break
-	case 1
-		if Object.Value0 < 120
-			Object.Value0++
-			TempValue0 = Object.Value0
+
+	case FLOWERPOD_EXPLOSION
+		if Object.Timer < 120
+			Object.Timer++
+
+			TempValue0 = Object.Timer
 			TempValue0 &= 3
 			if TempValue0 == 3
 				Rand(TempValue0, 64)
 				TempValue0 -= 32
 				TempValue0 <<= 16
 				TempValue0 += Object.XPos
+
 				Rand(TempValue1, 40)
 				TempValue1 -= 40
 				TempValue1 <<= 16
 				TempValue1 += Object.YPos
+
 				CreateTempObject(TypeName[Explosion], 0, TempValue0, TempValue1)
 				PlaySfx(22, 0)
 			end if
 		else
-			Object.State = 2
-			Object.Value0 = 256
-			Object.InkEffect = 2 //INK_ALPHA
+			Object.State = FLOWERPOD_VANISH
+			Object.Timer = 256
+			Object.InkEffect = INK_ALPHA
 			Object.Alpha = 255
+
 			TempValue0 = Object.XPos
-			TempValue0 -= 196608
+			TempValue0 -= 0x30000
 			TempValue1 = Object.YPos
-			TempValue1 -= 1572864
+			TempValue1 -= 0x180000
 			CreateTempObject(TypeName[PodSeed], 1, TempValue0, TempValue1)
-			Object[TempObjectPos].Value2 = -131072
-			Object[TempObjectPos].Value3 = -393216
-			Object[TempObjectPos].Value1 = Object.EntityNo
-			TempValue0 += 65536
+			Object[TempObjectPos].XVelocity = -0x20000
+			Object[TempObjectPos].YVelocity = -0x60000
+			Object[TempObjectPos].ParentPod = Object.EntityNo
+
+			TempValue0 += 0x10000
 			CreateTempObject(TypeName[PodSeed], 0, TempValue0, TempValue1)
-			Object[TempObjectPos].Value2 = -87380
-			Object[TempObjectPos].Value3 = -393216
-			TempValue0 += 65536
+			Object[TempObjectPos].XVelocity = -0x15554
+			Object[TempObjectPos].YVelocity = -0x60000
+
+			TempValue0 += 0x10000
 			CreateTempObject(TypeName[PodSeed], 0, TempValue0, TempValue1)
-			Object[TempObjectPos].Value2 = -43690
-			Object[TempObjectPos].Value3 = -393216
-			TempValue0 += 65536
+			Object[TempObjectPos].XVelocity = -0xAAAA
+			Object[TempObjectPos].YVelocity = -0x60000
+
+			TempValue0 += 0x10000
 			CreateTempObject(TypeName[PodSeed], 0, TempValue0, TempValue1)
-			Object[TempObjectPos].Value2 = 0
-			Object[TempObjectPos].Value3 = -393216
-			TempValue0 += 65536
+			Object[TempObjectPos].XVelocity = 0
+			Object[TempObjectPos].YVelocity = -0x60000
+
+			TempValue0 += 0x10000
 			CreateTempObject(TypeName[PodSeed], 0, TempValue0, TempValue1)
-			Object[TempObjectPos].Value2 = 43690
-			Object[TempObjectPos].Value3 = -393216
-			TempValue0 += 65536
+			Object[TempObjectPos].XVelocity = 0xAAAA
+			Object[TempObjectPos].YVelocity = -0x60000
+
+			TempValue0 += 0x10000
 			CreateTempObject(TypeName[PodSeed], 0, TempValue0, TempValue1)
-			Object[TempObjectPos].Value2 = 87380
-			Object[TempObjectPos].Value3 = -393216
-			TempValue0 += 65536
+			Object[TempObjectPos].XVelocity = 0x15554
+			Object[TempObjectPos].YVelocity = -0x60000
+
+			TempValue0 += 0x10000
 			CreateTempObject(TypeName[PodSeed], 0, TempValue0, TempValue1)
-			Object[TempObjectPos].Value2 = 131072
-			Object[TempObjectPos].Value3 = -393216
+			Object[TempObjectPos].XVelocity = 0x20000
+			Object[TempObjectPos].YVelocity = -0x60000
 		end if
 		break
-	case 2
-		if Object.Value0 > 0
-			Object.Value0 -= 16
-			Object.Alpha = Object.Value0
+
+	case FLOWERPOD_VANISH
+		if Object.Timer > 0
+			Object.Timer -= 16
+			Object.Alpha = Object.Timer
 		end if
 		break
-	case 3
+
+	case FLOWERPOD_TRIGGER_ACTFINISH
 		if Player.ControlMode == -1
-			Player.Left = 0
-			Player.Right = 1
-			Player.Up = 0
-			Player.Down = 0
-			Player.JumpHold = 0
+			Player.Left = false
+			Player.Right = true
+			Player.Up = false
+			Player.Down = false
+			Player.JumpHold = false
 		end if
+
 		TempValue0 = Object.XPos
-		TempValue0 += 10485760
+		TempValue0 += 0xA00000
 		if Player.XPos > TempValue0
 			PlayMusic(1)
-			Object.State = 4
+			Object.State = FLOWERPOD_CONTROL_PLAYER
 			Object[30].Type = TypeName[ActFinish]
 			Object[30].DrawOrder = 6
-			Object[30].Priority = 1
+			Object[30].Priority = PRIORITY_ACTIVE
 		end if
 		break
-	case 4
+
+	case FLOWERPOD_CONTROL_PLAYER
 		if Player.ControlMode == -1
-			Player.Right = 1
+			Player.Right = true
 		end if
 		break
 	end switch
@@ -140,18 +179,21 @@ end sub
 
 
 sub ObjectPlayerInteraction
-	if Object.State == 0
+	if Object.State == FLOWERPOD_IDLE
 		if Player.Animation == ANI_JUMPING
 			PlayerObjectCollision(C_TOUCH, -28, -46, 28, 6)
-			if CheckResult == 1
-				Stage.TimeEnabled = 0
-				Object.State = 1
+			if CheckResult == true
+				Stage.TimeEnabled = false
+
+				Object.State = FLOWERPOD_EXPLOSION
 				Object.Frame = 3
-				Object.Value0 = 0
+				Object.Timer = 0
+
 				Player.YVelocity >>= 1
 				FlipSign(Player.YVelocity)
-#platform: Use_Haptics
-				HapticEffect(55, 0, 0, 0)
+#platform: Use_Origins
+				game.callbackParam0 = 1
+				EngineCallback(NOTIFY_BOSS_END)
 #endplatform
 			end if
 		end if
@@ -159,13 +201,15 @@ sub ObjectPlayerInteraction
 	TempValue0 = Screen.CenterX
 	TempValue0 += 40
 	TempValue0 <<= 16
+
 	TempValue1 = Object.XPos
 	TempValue1 += TempValue0
+
 	if Player.XPos > TempValue1
 		Player.XPos = TempValue1
 		Player.Speed = 0
 		Player.XVelocity = 0
-		if Player.Gravity == 0
+		if Player.Gravity == GRAVITY_GROUND
 			Player.YVelocity = 0
 		end if
 	end if
@@ -173,7 +217,7 @@ end sub
 
 
 sub ObjectDraw
-	if Object.State < 2
+	if Object.State < FLOWERPOD_VANISH
 		DrawSprite(0)
 		DrawSprite(Object.Frame)
 	else
@@ -185,10 +229,12 @@ end sub
 
 sub ObjectStartup
 	LoadSpriteSheet("R6/Objects2.gif")
-	SpriteFrame(-32, 6, 64, 42, 1, 55)
-	SpriteFrame(-32, -48, 64, 54, 1, 1)
-	SpriteFrame(-32, -48, 64, 54, 1, 98)
-	SpriteFrame(-32, -10, 64, 16, 1, 153)
+
+	SpriteFrame(-32, 6, 64, 42, 1, 55)		// #0 - FlowerPod Stem
+	SpriteFrame(-32, -48, 64, 54, 1, 1)		// #1 - FlowerPod Bulb
+	SpriteFrame(-32, -48, 64, 54, 1, 98)	// #2 - FlowerPod Bulb Flash
+	SpriteFrame(-32, -10, 64, 16, 1, 153)	// #3 - FlowerPod Bulb Destroyed
+
 	ArrayPos0 = 32
 	while ArrayPos0 < 1056
 		if Object[ArrayPos0].Type == TypeName[FlowerPod]

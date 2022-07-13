@@ -1,4 +1,4 @@
-//------------Sonic CD TimeWarp Script-------------//
+//-----------------Sonic CD Time Warp Script------------------//
 //--------Scripted by Christian Whitehead 'The Taxman'--------//
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
@@ -10,9 +10,9 @@
 #alias Object[24].PropertyValue	:	HUD.TimePeriod
 
 // Player Aliases
-#alias Player.Value0:Player.Rings
-#alias Player.Value4:Player.Invincible
-#alias Player.Value6:Player.MinRollSpeed
+#alias Player.Value0	:	Player.Rings
+#alias Player.Value4	:	Player.Invincible
+#alias Player.Value6	:	Player.MinRollSpeed
 
 // States
 #alias 0	:	TIMEWARP_SETUP
@@ -22,11 +22,14 @@
 #alias 4	:	TIMEWARP_LEAVING
 #alias 5	:	TIMEWARP_TRAVEL
 
-// Time Periods
-#alias 0	:	PRESENT
-#alias 1	:	PAST
-#alias 2	:	GOOD_FUTURE
-#alias 3	:	BAD_FUTURE
+// Warp Destination
+#alias 1	:	WARP_PAST
+
+// Next Period
+#alias 0	:	PROPVAL_PRESENT
+#alias 1	:	PROPVAL_PAST
+#alias 2	:	PROPVAL_GOOD_FUTURE
+#alias 3	:	PROPVAL_BAD_FUTURE
 
 
 sub ObjectDraw
@@ -44,19 +47,20 @@ sub ObjectDraw
 
 				Warp.CollisionMode = Player.CollisionMode
 				Warp.Gravity = Player.Gravity
-				
-				// New
-				CheckEqual(Player.State, PlayerObject_Blank)
-				TempValue0 = CheckResult
-				CheckEqual(Player.State, PlayerObject_SpinningTop)
-				TempValue0 |= CheckResult
-				CheckEqual(Player.State, PlayerObject_DebugMode)
-				TempValue0 |= CheckResult
-				if CheckResult == true
-					Warp.State = PlayerObject_StartJump
+
+				if Player.State == PlayerObject_Blank
+					Warp.State = PlayerObject_HandleAir
 				else
-					Warp.State = Player.State
-				end if
+					if Player.State == PlayerObject_SpinningTop
+						Warp.State = PlayerObject_HandleAir
+					else
+						if Player.State == PlayerObject_DebugMode
+							Warp.State = PlayerObject_HandleAir
+						else
+							Warp.State = Player.State
+						endif
+					endif
+				endif
 
 				Warp.Animation = Player.Animation
 				Warp.Angle = Player.Angle
@@ -64,9 +68,7 @@ sub ObjectDraw
 
 				Player.Invincible = 1000
 				Player.ControlMode = -1
-#platform: Mobile
 				Player.Visible = false
-#endplatform
 			end if
 			Music.Volume -= 8
 			SetScreenFade(208, 255, 224, Object.Timer)
@@ -79,9 +81,6 @@ sub ObjectDraw
 				end if
 			end if
 
-#platform: Use_Haptics
-			HapticEffect(91, 0, 0, 0)
-#endplatform
 			StopSfx(24)
 			StopSfx(25)
 			Stage.State = STAGE_RUNNING
@@ -153,6 +152,10 @@ sub ObjectDraw
 			SetScreenFade(208, 255, 224, Object.Timer)
 			Object.Timer -= 10
 		else
+#platform: Use_Origins
+			game.callbackParam0=Object.PropertyValue
+			EngineCallback(NOTIFY_FUTURE_PAST)
+#endplatform
 			Object.State = TIMEWARP_BLANK
 		end if
 		break
@@ -166,9 +169,9 @@ sub ObjectDraw
 			Object.Frame = 0
 		end if
 
-		Object.YPos += 262144		// 0x40000
-		if Object.YPos >= 16777216	// 0x1000000
-			Object.YPos -= 18874368	// 0x1200000
+		Object.YPos += 0x40000
+		if Object.YPos >= 0x1000000
+			Object.YPos -= 0x1200000
 		end if
 		break
 
@@ -190,28 +193,41 @@ sub ObjectDraw
 		else
 			SetScreenFade(208, 255, 224, 255)
 			switch Object.CurrentPeriod
-			case PRESENT
-				if Warp.Destination == true
+			case PROPVAL_PRESENT
+				if Warp.Destination == WARP_PAST
 					Stage.ListPos++
+					Object.CurrentPeriod = PROPVAL_PAST
 				else
 					if Transporter_Destroyed == true
 						Stage.ListPos += 2
+						Object.CurrentPeriod = PROPVAL_GOOD_FUTURE
 					else
 						Stage.ListPos += 3
+						Object.CurrentPeriod = PROPVAL_BAD_FUTURE
 					end if
 				end if
 				break
 
-			case PAST
+			case PROPVAL_PAST
 				Stage.ListPos--
+				Object.CurrentPeriod = PROPVAL_PRESENT
 				break
 
-			case GOOD_FUTURE
+			case PROPVAL_GOOD_FUTURE
 				Stage.ListPos -= 2
+				Object.CurrentPeriod = PROPVAL_PRESENT
 				break
 
-			case BAD_FUTURE
+			case PROPVAL_BAD_FUTURE
 				Stage.ListPos -= 3
+#platform: Use_Origins
+				if game.playMode != BOOT_PLAYMODE_MISSION
+					Stage.ListPos -= 3
+				else
+					Stage.ListPos -= 2
+				endif
+#endplatform
+				Object.CurrentPeriod = PROPVAL_PRESENT
 				break
 
 			end switch
@@ -221,6 +237,12 @@ sub ObjectDraw
 			TempValue0 <<= 8
 			Fade_Colour += TempValue0
 			Fade_Colour += 224
+#platform: Use_Origins
+			game.callbackParam0 = 1
+			EngineCallback(NOTIFY_STATS_PARAM_1)
+			game.callbackParam0 = Object.CurrentPeriod
+			EngineCallback(NOTIFY_GOTO_FUTURE_PAST)
+#endplatform
 			LoadStage()
 		end if
 		break

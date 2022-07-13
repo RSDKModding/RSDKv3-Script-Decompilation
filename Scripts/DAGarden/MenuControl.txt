@@ -1,4 +1,4 @@
-//------------Sonic CD Menu Control Script-------------//
+//----------------Sonic CD Menu Control Script----------------//
 //--------Scripted by Christian Whitehead 'The Taxman'--------//
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
@@ -40,8 +40,15 @@
 #alias 11	: LPFRAME_GOODFUTURE
 #alias 22	: LPFRAME_BADFUTURE
 
+// Priority
+#alias 1	: PRIORITY_ACTIVE
+
+// Device Type
+#alias 1	: RETRO_MOBILE
+
 // Function Declarations
 #function MenuControl_ChangeTrack
+
 
 function MenuControl_ChangeTrack
 	switch Object.MSFrame
@@ -256,12 +263,13 @@ sub ObjectMain
 		break
 
 	case MENUCONTROL_IDLE
-		if KeyPress.Start == true
+		// Previously ButtonB, Origins changed it
+		if KeyPress[0].Start == true
 			StopMusic()
 			Object.State = MENUCONTROL_EXIT
 		end if
 
-		if KeyPress.ButtonA == true
+		if KeyPress[0].ButtonA == true
 			Object.State = MENUCONTROL_MUSIC_CONTROLS
 			Object.MSXPos = Screen.XSize
 			Object.MSXPos += 96
@@ -277,31 +285,33 @@ sub ObjectMain
 
 	case MENUCONTROL_MUSIC_CONTROLS
 		if Object.MSState == 0
-			if KeyPress.Left == true
+			if KeyPress[0].Left == true
 				Object.MSState = MUSICSELECTOR_MOVE_L
 			end if
 
-			if KeyPress.Right == true
+			if KeyPress[0].Right == true
 				Object.MSState = MUSICSELECTOR_MOVE_R
 			end if
 
-			if KeyPress.ButtonA == true
+			if KeyPress[0].ButtonA == true
 				Object.State = MENUCONTROL_SET_MUSIC
 				StopMusic()
 			end if
 
-			if KeyPress.ButtonB == true
+			// Previously ButtonB, Origins changed it
+			if KeyPress[0].Start == true
 				Object.State = MENUCONTROL_SET_MUSIC
 				StopMusic()
 			end if
 
-			if KeyPress.ButtonC == true
+			if KeyPress[0].ButtonC == true
 				Object.State = MENUCONTROL_SET_MUSIC
 				StopMusic()
 			end if
 		end if
 
-		if KeyPress.Start == true
+		// Previously Start, Origins changed it
+		if KeyPress[0].ButtonB == true
 			StopMusic()
 			Object.State = MENUCONTROL_EXIT
 		end if
@@ -354,38 +364,71 @@ sub ObjectStartup
 	SetMusicTrack("US/DAGarden.ogg", 1, 117382)
 	Object[0].Type = TypeName[MenuControl]
 	Object[0].DrawOrder = 1
-	Object[0].Priority = 1
+	Object[0].Priority = PRIORITY_ACTIVE
 
-#platform: Standard
-	// Standard platforms don't need Touch Buttons since actual physical buttons are available to the player
-	Object[34].Type = TypeName[Blank Object]
-	Object[35].Type = TypeName[Blank Object]
-	Object[36].Type = TypeName[Blank Object]
-	Object[37].Type = TypeName[Blank Object]
+#platform: Use_Origins
+	if Engine.DeviceType == RETRO_MOBILE
+		Object[34].DrawOrder = 5
+		Object[35].DrawOrder = 5
+		Object[36].DrawOrder = 5
+		Object[37].DrawOrder = 5
+
+		TempValue0   = Screen.XSize
+		TempValue0 >>= 2
+
+		TempValue1   = TempValue0
+		TempValue1 >>= 1
+		Object[34].iXPos = TempValue1
+
+		TempValue1 += TempValue0
+		Object[35].iXPos = TempValue1
+
+		TempValue1 += TempValue0
+		Object[36].iXPos = TempValue1
+
+		TempValue1 += TempValue0
+		Object[37].iXPos = TempValue1
+	else
+		Object[34].Type = TypeName[BlankObject]
+		Object[35].Type = TypeName[BlankObject]
+		Object[36].Type = TypeName[BlankObject]
+		Object[37].Type = TypeName[BlankObject]
+	endif
 #endplatform
 
-#platform: Mobile
-	// Setup all the Touch Buttons for the player to tap
-	Object[34].DrawOrder = 5
-	Object[35].DrawOrder = 5
-	Object[36].DrawOrder = 5
-	Object[37].DrawOrder = 5
+#platform: Use_Standalone
+	#platform: Mobile
+		// Setup all the Touch Buttons for the player to tap
+		Object[34].DrawOrder = 5
+		Object[35].DrawOrder = 5
+		Object[36].DrawOrder = 5
+		Object[37].DrawOrder = 5
 
-	TempValue0 = Screen.XSize
-	TempValue0 >>= 2
+		TempValue0 = Screen.XSize
+		TempValue0 >>= 2
 
-	TempValue1 = TempValue0
-	TempValue1 >>= 1
-	Object[34].iXPos = TempValue1
+		TempValue1 = TempValue0
+		TempValue1 >>= 1
+		Object[34].iXPos = TempValue1
 
-	TempValue1 += TempValue0
-	Object[35].iXPos = TempValue1
+		TempValue1 += TempValue0
+		Object[35].iXPos = TempValue1
 
-	TempValue1 += TempValue0
-	Object[36].iXPos = TempValue1
+		TempValue1 += TempValue0
+		Object[36].iXPos = TempValue1
 
-	TempValue1 += TempValue0
-	Object[37].iXPos = TempValue1
+		TempValue1 += TempValue0
+		Object[37].iXPos = TempValue1
+	#endplatform
+
+	#platform: Standard
+		// Standard platforms don't need Touch Buttons since actual physical buttons are available to the player
+		Object[34].Type = TypeName[BlankObject]
+		Object[35].Type = TypeName[BlankObject]
+		Object[36].Type = TypeName[BlankObject]
+		Object[37].Type = TypeName[BlankObject]
+	#endplatform
+
 #endplatform
 end sub
 

@@ -1,8 +1,6 @@
-//------------Sonic CD DeathEvent Script-------------//
+//----------------Sonic CD Death Event Script-----------------//
 //--------Scripted by Christian Whitehead 'The Taxman'--------//
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
-
-// TODO: object not done yet, i don't have enough of an understanding with Origins's variable stuff to do this yet
 
 // Aliases
 #alias Object.Value1 : Object.Text1Pos
@@ -12,8 +10,11 @@
 #alias Object.Value5 : Object.StagePosP
 #alias Object.Value6 : Object.TimeOver
 
+// HUD alias
+#alias Object[24].PropertyValue : HUD.TimePeriod
+
 // States
-#alias 0 : DEATHEVENT_TIMEOVER
+#alias 0 : DEATHEVENT_CLASSIC_TIMEOVER
 #alias 1 : DEATHEVENT_GAMEOVER
 #alias 2 : DEATHEVENT_FADEOUT
 #alias 3 : DEATHEVENT_TIMEATTACK
@@ -29,18 +30,16 @@
 // Callback & Engine States
 #alias 8 : ENGINE_WAIT
 
-#alias Object[24].PropertyValue : HUD.TimePeriod
-
-#alias 0 : PRESENT
-#alias 1 : PAST
-#alias 2 : GOOD_FUTURE
-#alias 3 : BAD_FUTURE
+// Time Periods
+#alias 0 : PROPVAL_PRESENT
+#alias 1 : PROPVAL_PAST
+#alias 2 : PROPVAL_GOOD_FUTURE
+#alias 3 : PROPVAL_BAD_FUTURE
 
 
 sub ObjectMain
-	
 	switch Object.State
-	case DEATHEVENT_TIMEOVER
+	case DEATHEVENT_CLASSIC_TIMEOVER
 #platform: Use_Origins
 		if game.playMode == BOOT_PLAYMODE_CLASSIC
 			CheckEqual(Object.TimeOver, false)
@@ -107,7 +106,7 @@ sub ObjectMain
 				end if
 			end if
 #endplatform
-			if Object.State == DEATHEVENT_TIMEOVER
+			if Object.State == DEATHEVENT_CLASSIC_TIMEOVER
 				Stage.ActiveList=PRESENTATION_STAGE
 				Stage.ListPos = 0
 				LampPost.Check = 0
@@ -127,7 +126,7 @@ sub ObjectMain
 			end if
 
 #platform: Use_Origins
-			if Object.State == DEATHEVENT_TIMEOVER
+			if Object.State == DEATHEVENT_CLASSIC_TIMEOVER
 				game.callbackParam0 = game.timeOver
 				EngineCallback(NOTIFY_TIME_OVER)
 			end if
@@ -138,7 +137,7 @@ sub ObjectMain
 #endplatform
 
 #platform: Use_Standalone
-			if Object.State == DEATHEVENT_TIMEOVER
+			if Object.State == DEATHEVENT_CLASSIC_TIMEOVER
 				Rec_Milliseconds = 0
 				Rec_Seconds = 0
 				Rec_Minutes = 0
@@ -194,18 +193,18 @@ sub ObjectMain
 				Object.StagePosP = Stage.ListPos
 				
 				switch HUD.TimePeriod
-				case PRESENT
+				case PROPVAL_PRESENT
 					break
 					
-				case PAST
+				case PROPVAL_PAST
 					Object.StagePosP--
 					break
 					
-				case GOOD_FUTURE
+				case PROPVAL_GOOD_FUTURE
 					Object.StagePosP -= 2
 					break
 					
-				case BAD_FUTURE
+				case PROPVAL_BAD_FUTURE
 					Object.StagePosP -= 3
 					break
 					

@@ -3,6 +3,7 @@
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
 // Aliases
+#alias Object.Value0			:	Object.DeformTimer
 #alias Object.Value2			:	Object.BumperOscillation
 #alias Object.Value3			:	Object.TurnDirection
 
@@ -10,7 +11,7 @@
 #alias Object[24].PropertyValue	:	HUD.TimePeriod
 
 // Time Periods
-#alias 1	:	PAST
+#alias 1	:	PROPVAL_PAST
 
 #alias 1	:	GRAVITY_AIR
 
@@ -29,7 +30,7 @@ sub ObjectMain
 		end if
 	end if
 
-	if HUD.TimePeriod != PAST
+	if HUD.TimePeriod != PROPVAL_PAST
 		RotatingDrum_Timer++
 		RotatingDrum_Timer %= 20
 	end if
@@ -96,16 +97,23 @@ sub ObjectPlayerInteraction
 		if Player.YVelocity >= 0
 			Player.Gravity = GRAVITY_AIR
 			PlayStageSfx(1, 0)
-#platform: Use_Haptics
-			HapticEffect(11, 0, 0, 0)
-#endplatform
+
 			if Player.State == PlayerObject_HandleTailsFlight
 				Player.YVelocity = -262144	// -0x40000
 			else
 				Player.YVelocity = -458752	// -0x70000
 			end if
+
 			if Player.State == PlayerObject_Knockback
+				
+
+#platform: Use_Origins
+				Player.State = PlayerObject_ResetDropDash
+#endplatform
+
+#platform: Use_Standalone
 				Player.State = PlayerObject_HandleAir
+#endplatform
 				Player.Timer = 0
 			end if
 		else
@@ -119,9 +127,7 @@ sub ObjectPlayerInteraction
 	case 2
 		if Player.Gravity == GRAVITY_AIR
 			PlayStageSfx(6, 0)
-#platform: Use_Haptics
-			HapticEffect(11, 0, 0, 0)
-#endplatform
+
 			if Player.YVelocity >= 0
 				Player.YVelocity = -262144	// -0x40000
 			else
@@ -133,9 +139,7 @@ sub ObjectPlayerInteraction
 	case 3
 		if Player.Gravity == GRAVITY_AIR
 			PlayStageSfx(1, 0)
-#platform: Use_Haptics
-			HapticEffect(11, 0, 0, 0)
-#endplatform
+
 			if Player.YVelocity >= 0
 				if Player.State == PlayerObject_HandleTailsFlight
 					Player.YVelocity = -262144	// -0x40000
@@ -145,6 +149,7 @@ sub ObjectPlayerInteraction
 			else
 				Player.YVelocity = 262144	// 0x40000
 			end if
+
 			if TempValue6 == 0
 				if Player.XVelocity > 0
 					FlipSign(Player.XVelocity)
@@ -246,9 +251,6 @@ sub ObjectPlayerInteraction
 		end if
 		Player.Speed = Player.XVelocity
 		PlayStageSfx(6, 0)
-#platform: Use_Haptics
-		HapticEffect(11, 0, 0, 0)
-#endplatform
 		break
 
 	end switch
@@ -256,11 +258,11 @@ end sub
 
 
 sub ObjectDraw
-	Object.Value0++
-	if Object.Value0 > 3
+	Object.DeformTimer++
+	if Object.DeformTimer > 3
 		TileLayer[0].DeformationOffsetW++
 		TileLayer[1].DeformationOffset++
-		Object.Value0 = 0
+		Object.DeformTimer = 0
 	end if
 end sub
 
@@ -272,7 +274,7 @@ sub ObjectStartup
 	SetLayerDeformation(2, 128, 6, 0, 0, 0)
 	SetLayerDeformation(1, 64, 4, 0, 0, 0)
 	Stage.WaterLevel = 1472
-	if HUD.TimePeriod == PAST
+	if HUD.TimePeriod == PROPVAL_PAST
 		RotatingDrum_Timer = 1
 	else
 		RotatingDrum_Timer = 0
