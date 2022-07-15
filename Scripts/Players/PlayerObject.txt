@@ -2794,9 +2794,18 @@ sub ObjectMain
 			end if
 		end if
 	else
-			// Handle Player
+		// Handle Player
 		CallFunction(PlayerObject_ProcessPlayer)
 		CallFunction(Player.State)
+#platform: Use_Origins
+		if Player.DropDashCharge >= 20
+			if Player.Animation == ANI_JUMPING
+				Player.Frame = 0
+				Player.AnimationTimer = 0
+				Player.AnimationSpeed = 1
+			endif
+		endif
+#endplatform
 		ProcessAnimation()
 
 		if Player.Animation == ANI_JUMPING
