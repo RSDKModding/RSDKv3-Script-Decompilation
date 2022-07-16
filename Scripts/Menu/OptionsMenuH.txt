@@ -861,6 +861,28 @@ sub ObjectMain
 		break
 
 	case OPTIONS_ABOUTMENU_CONTROLS
+#platform: Use_Standalone	// Mobile only
+		CheckTouchRect(0, 0, Screen.XSize, Screen.YSize)
+		TempValue3 = CheckResult
+		TempValue0 = Screen.XSize
+		TempValue0 -= 96
+		CheckTouchRect(TempValue0, 192, Screen.XSize, Screen.YSize)
+		if CheckResult > -1
+			Object[+4].Value1 = 9
+			Object.BackTouchPress = true
+		else
+			Object.BackTouchPress = false
+			if TempValue3 < 0
+				if Object[+4].Value1 == 9
+					KeyPress[0].ButtonB = 1
+				end if
+			else
+				if Object[+4].Value1 == 9
+					Object[+4].Value1 = -1
+				end if
+			end if
+		end if
+#endplatform
 		if KeyPress[0].ButtonB == true
 			Object.State = OPTIONS_EXIT_ABOUTMENU
 			Object.Timer = 248
@@ -1088,9 +1110,7 @@ sub ObjectStartup
 		SaveRAM[40] = true
 	end if
 	Options.OriginalControls = SaveRAM[35]
-#platform: Use_Haptics
 	Engine.HapticsEnabled = SaveRAM[40]
-#endplatform
 	SpriteFrame(4, 2, 32, 32, 479, 34)				// #0 - Gear
 	SpriteFrame(4, 2, 32, 32, 479, 34)				// #1 - Gear Again
 	SpriteFrame(4, 2, 32, 32, 479, 34)				// #2 - Why is this a Gear again
