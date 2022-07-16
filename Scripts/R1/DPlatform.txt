@@ -1,18 +1,18 @@
-//------------Sonic CD Diagonal Platform Script-------------//
+//--------------Sonic CD Diagonal Platform Script-------------//
 //--------Scripted by Christian Whitehead 'The Taxman'--------//
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
 // Aliases
-#alias Object.Value1	:	Object.OriginPos.X
-#alias Object.Value2	:	Object.PlayerFloor.X
-#alias Object.Value3	:	Object.OriginPos.Y
-#alias Object.Value4	:	Object.PlayerFloor.Y
+#alias Object.Value1	:	Object.XOriginPos
+#alias Object.Value2	:	Object.XPlayerFloor
+#alias Object.Value3	:	Object.YOriginPos
+#alias Object.Value4	:	Object.YPlayerFloor
 #alias Object.Value5	:	Object.Oscillation
 #alias Object.Value6	:	Object.Amplitude
 
 // Property Values
-#alias 0				:	DIAGONAL_UR_DL
-#alias 1				:	DIAGONAL_UL_DR	// in a map editor you will find this as property value 3
+#alias 0	:	DIAGONAL_UR_DL
+#alias 1	:	DIAGONAL_UL_DR	// in a map editor you will find this as property value 3
 
 
 sub ObjectMain
@@ -22,32 +22,32 @@ sub ObjectMain
 		Object.Oscillation += 256
 	end if
 
-	Cos(Object.PlayerFloor.X, Object.Oscillation)
-	Object.PlayerFloor.X *= 6144	// 0x1800
-	Object.PlayerFloor.X += Object.XPos
-	Object.PlayerFloor.X &= 4294901760
-	Object.PlayerFloor.X -= Object.OriginPos.X
+	Cos(Object.XPlayerFloor, Object.Oscillation)
+	Object.XPlayerFloor *= 0x1800	// 0x1800
+	Object.XPlayerFloor += Object.XPos
+	Object.XPlayerFloor &= 0xFFFF0000
+	Object.XPlayerFloor -= Object.XOriginPos
 
-	Cos(Object.PlayerFloor.Y, Object.Oscillation)
-	FlipSign(Object.PlayerFloor.Y)
-	Object.PlayerFloor.Y *= Object.Amplitude
-	Object.PlayerFloor.Y += Object.YPos
-	Object.PlayerFloor.Y &= 4294901760
-	Object.PlayerFloor.Y -= Object.OriginPos.Y
+	Cos(Object.YPlayerFloor, Object.Oscillation)
+	FlipSign(Object.YPlayerFloor)
+	Object.YPlayerFloor *= Object.Amplitude
+	Object.YPlayerFloor += Object.YPos
+	Object.YPlayerFloor &= 0xFFFF0000
+	Object.YPlayerFloor -= Object.YOriginPos
 end sub
 
 
 sub ObjectPlayerInteraction
 	TempValue0 = Object.XPos
-	Object.XPos = Object.OriginPos.X
+	Object.XPos = Object.XOriginPos
 
 	TempValue1 = Object.YPos
-	Object.YPos = Object.OriginPos.Y
+	Object.YPos = Object.YOriginPos
 
 	PlayerObjectCollision(C_PLATFORM, -32, -9, 32, 12)
 	if CheckResult == true
-		Player.XPos += Object.PlayerFloor.X
-		Player.YPos += Object.PlayerFloor.Y
+		Player.XPos += Object.XPlayerFloor
+		Player.YPos += Object.YPlayerFloor
 	end if
 
 	Object.XPos = TempValue0
@@ -56,18 +56,18 @@ end sub
 
 
 sub ObjectDraw
-	Cos(Object.OriginPos.X, Object.Oscillation)
-	Object.OriginPos.X *= 6144		// 0x1800
-	Object.OriginPos.X += Object.XPos
-	Object.OriginPos.X &= 4294901760
+	Cos(Object.XOriginPos, Object.Oscillation)
+	Object.XOriginPos *= 0x1800		// 0x1800
+	Object.XOriginPos += Object.XPos
+	Object.XOriginPos &= 0xFFFF0000
 
-	Cos(Object.OriginPos.Y, Object.Oscillation)
-	FlipSign(Object.OriginPos.Y)
-	Object.OriginPos.Y *= Object.Amplitude
-	Object.OriginPos.Y += Object.YPos
-	Object.OriginPos.Y &= 4294901760
+	Cos(Object.YOriginPos, Object.Oscillation)
+	FlipSign(Object.YOriginPos)
+	Object.YOriginPos *= Object.Amplitude
+	Object.YOriginPos += Object.YPos
+	Object.YOriginPos &= 0xFFFF0000
 	
-	DrawSpriteXY(0, Object.OriginPos.X, Object.OriginPos.Y)
+	DrawSpriteXY(0, Object.XOriginPos, Object.YOriginPos)
 end sub
 
 
@@ -80,10 +80,10 @@ sub ObjectStartup
 	while ArrayPos0 < 1056
 		if Object[ArrayPos0].Type == TypeName[DiagPlatform]
 			if Object[ArrayPos0].PropertyValue > 1
-				Object[ArrayPos0].Amplitude = -6144		// -0x1800
+				Object[ArrayPos0].Amplitude = -0x1800		// -0x1800
 				Object[ArrayPos0].PropertyValue -= 2
 			else
-				Object[ArrayPos0].Amplitude = 6144		// 0x1800
+				Object[ArrayPos0].Amplitude = 0x1800		// 0x1800
 			end if
 		end if
 		ArrayPos0++

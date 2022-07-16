@@ -12,34 +12,34 @@ sub ObjectMain
 		Object.XPos = Object.Value6
 		Object.YPos = Object.Value7
 		Object.Value1 = Object.Value6
-		Object.Value1 -= 4194304
+		Object.Value1 -= 0x400000
 		Object.Value2 = Object.Value7
 		Object.Value5 = 256
 	end if
 	switch Object.State
 	case 0
 		Cos(Object.Value3, Object.Value5)
-		Object.Value3 *= 8192
+		Object.Value3 *= 0x2000
 		Object.Value3 += Object.XPos
-		Object.Value3 &= -65536
+		Object.Value3 &= -0x10000
 		Object.Value3 -= Object.Value1
 		Sin(Object.Value4, Object.Value5)
-		Object.Value4 *= 8192
+		Object.Value4 *= 0x2000
 		Object.Value4 += Object.YPos
-		Object.Value4 &= -65536
+		Object.Value4 &= -0x10000
 		Object.Value4 -= Object.Value2
 		break
 	case 1
 		Object.Value5 += 4
 		Object.Value5 &= 511
 		Cos(Object.Value3, Object.Value5)
-		Object.Value3 *= 8192
+		Object.Value3 *= 0x2000
 		Object.Value3 += Object.XPos
-		Object.Value3 &= -65536
+		Object.Value3 &= -0x10000
 		Sin(Object.Value4, Object.Value5)
-		Object.Value4 *= 8192
+		Object.Value4 *= 0x2000
 		Object.Value4 += Object.YPos
-		Object.Value4 &= -65536
+		Object.Value4 &= -0x10000
 		TempValue0 = Object.XPos
 		TempValue1 = Object.YPos
 		Object.XPos = Object.Value3
@@ -53,9 +53,9 @@ sub ObjectMain
 			Object.Value5 += 252
 			Object.Value5 &= 511
 			Cos(TempValue0, Object.Value5)
-			TempValue0 *= 8192
+			TempValue0 *= 0x2000
 			TempValue0 += Object.XPos
-			TempValue0 &= -65536
+			TempValue0 &= -0x10000
 			TempValue0 -= Object.Value1
 			Object.XPos -= TempValue0
 			Object.State = 0
@@ -109,12 +109,12 @@ sub ObjectDraw
 		Object.Value1 *= TempValue1
 		Object.Value1 <<= 7
 		Object.Value1 += Object.XPos
-		Object.Value1 &= -65536
+		Object.Value1 &= -0x10000
 		Sin(Object.Value2, Object.Value5)
 		Object.Value2 *= TempValue1
 		Object.Value2 <<= 7
 		Object.Value2 += Object.YPos
-		Object.Value2 &= -65536
+		Object.Value2 &= -0x10000
 		DrawSpriteXY(0, Object.Value1, Object.Value2)
 		DrawSpriteXY(1, Object.Value1, Object.Value2)
 		DrawSprite(0)
@@ -126,12 +126,12 @@ sub ObjectDraw
 			TempValue2 *= TempValue1
 			TempValue2 <<= 7
 			TempValue2 += Object.XPos
-			TempValue2 &= -65536
+			TempValue2 &= -0x10000
 			Sin(TempValue3, Object.Value5)
 			TempValue3 *= TempValue1
 			TempValue3 <<= 7
 			TempValue3 += Object.YPos
-			TempValue3 &= -65536
+			TempValue3 &= -0x10000
 			DrawSpriteXY(1, TempValue2, TempValue3)
 			TempValue0++
 			TempValue1 += 8
@@ -148,7 +148,7 @@ sub ObjectStartup
 	while ArrayPos0 < 1056
 		if Object[ArrayPos0].Type == TypeName[TwinWalker]
 			Object[ArrayPos0].Value1 = Object[ArrayPos0].XPos
-			Object[ArrayPos0].XPos += 4194304
+			Object[ArrayPos0].XPos += 0x400000
 			Object[ArrayPos0].Value2 = Object[ArrayPos0].YPos
 			Object[ArrayPos0].Value5 = 256
 			Object[ArrayPos0].Value6 = Object[ArrayPos0].XPos

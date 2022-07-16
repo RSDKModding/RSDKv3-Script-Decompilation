@@ -6,8 +6,8 @@
 #alias Object.Value0		:	Object.Timer
 #alias Object.Value1		:	Object.FrameTimer
 #alias Object.Value2		:	Object.XVelocity
-#alias Object.Value3		:	Object.OriginPos.X
-#alias Object.Value4		:	Object.OriginPos.Y
+#alias Object.Value3		:	Object.XOriginPos
+#alias Object.Value4		:	Object.YOriginPos
 #alias Object.PropertyValue	:	Object.Quality
 
 // Blade Aliases
@@ -92,9 +92,9 @@ sub ObjectMain
 			Object.Timer = 0
 			Object.Frame = 0
 			if Object.Direction == FACING_RIGHT
-				Object.XVelocity = -65536
+				Object.XVelocity = -0x10000
 			else
-				Object.XVelocity = 65536
+				Object.XVelocity = 0x10000
 			end if
 			if Object.Quality > GOOD
 				Object.XVelocity >>= 1
@@ -142,8 +142,8 @@ sub ObjectMain
 		Object.FrameTimer = 0
 		Object.Frame = 0
 
-		Object.XPos = Object.OriginPos.X
-		Object.YPos = Object.OriginPos.Y
+		Object.XPos = Object.XOriginPos
+		Object.YPos = Object.YOriginPos
 	end if
 
 	CallFunction(StageSetup_CheckGoodFuture)	// Check if it should be a flower
@@ -290,8 +290,8 @@ sub ObjectStartup
 	ArrayPos0 = 32
 	while ArrayPos0 < 1056
 		if Object[ArrayPos0].Type == TypeName[KamaKama]
-			Object[ArrayPos0].OriginPos.X = Object[ArrayPos0].XPos
-			Object[ArrayPos0].OriginPos.Y = Object[ArrayPos0].YPos
+			Object[ArrayPos0].XOriginPos = Object[ArrayPos0].XPos
+			Object[ArrayPos0].YOriginPos = Object[ArrayPos0].YPos
 		end if
 		ArrayPos0++
 	loop

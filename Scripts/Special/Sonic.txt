@@ -691,7 +691,7 @@ function Sonic_HandleBumperInteraction
 	// Was any collision sensed?
 	if TempValue2 > 0
 		TempValue3 = SSSonic.Speed
-		TempValue3 += 65536 // AKA 0x10000, 1 px per frame
+		TempValue3 += 0x10000 // AKA 0x10000, 1 px per frame
 		
 		if SSSonic.Timer != 32
 			PlayStageSfx(SFX_BUMPER2, false)
@@ -800,14 +800,14 @@ function Sonic_HandleTileInteractions
 		Object[3].DrawOrder = 4
 		
 		if HUD[4].SpeedShoes == 0
-			if SSSonic.Speed > 163840
+			if SSSonic.Speed > 0x28000
 				// Max speed of 0x28000 while on dust without speed shoes
-				SSSonic.Speed = 163840
+				SSSonic.Speed = 0x28000
 			end if
 		else
-			if SSSonic.Speed > 327680
+			if SSSonic.Speed > 0x50000
 				// Max speed of 0x50000 while on dust with speed shoes
-				SSSonic.Speed = 327680
+				SSSonic.Speed = 0x50000
 			end if
 		end if
 		break
@@ -821,9 +821,9 @@ function Sonic_HandleTileInteractions
 		Object[3].ScreenDepth = 22526
 		
 		if HUD[4].SpeedShoes > 0
-			if SSSonic.Speed > 327680
+			if SSSonic.Speed > 0x50000
 				// Max speed of 0x50000 while on water with speed shoes
-				SSSonic.Speed = 327680
+				SSSonic.Speed = 0x50000
 			end if
 		end if
 		break
@@ -846,7 +846,7 @@ function Sonic_HandleTileInteractions
 		SSSonic.FrameTimer = 0
 		
 		// Go to a speed of 1px per frame
-		SSSonic.Speed = 65536
+		SSSonic.Speed = 0x10000
 		
 		if HUD[4].Rings > 0
 			PlaySfx(SFX_LOSERINGS, false)
@@ -943,7 +943,7 @@ function Sonic_HandleTileInteractions
 		SSSonic.FrameTimer = 0
 		
 		// Fans don't give that much upwards boost, only giving a starting velocity of 2.5 pixels per frame
-		SSSonic.YVelocity = 163840
+		SSSonic.YVelocity = 0x28000
 		
 		PlayStageSfx(SFX_FAN, false)
 		break
@@ -951,7 +951,7 @@ function Sonic_HandleTileInteractions
 	case 7
 		// Large arrow booster pad, facing left
 		SSSonic.Timer = 40
-		SSSonic.ScreenXPos = -786432
+		SSSonic.ScreenXPos = -0xC0000
 		SSSonic.ScreenYPos = 0
 		
 		// Get the tile's flip directions
@@ -983,7 +983,7 @@ function Sonic_HandleTileInteractions
 	case 8
 		// Large arrow booster pad, facing right
 		SSSonic.Timer = 40
-		SSSonic.ScreenXPos = 786432
+		SSSonic.ScreenXPos = 0xC0000
 		SSSonic.ScreenYPos = 0
 		
 		// Get the tile's flip directions
@@ -1016,7 +1016,7 @@ function Sonic_HandleTileInteractions
 		// Large arrow booster pad, facing up
 		SSSonic.Timer = 40
 		SSSonic.ScreenXPos = 0
-		SSSonic.ScreenYPos = -786432
+		SSSonic.ScreenYPos = -0xC0000
 		
 		// Get the tile's flip directions
 		Get16x16TileInfo(CheckResult, TempValue0, TempValue1, 1)
@@ -1048,7 +1048,7 @@ function Sonic_HandleTileInteractions
 		// Large arrow booster pad, facing down
 		SSSonic.Timer = 40
 		SSSonic.ScreenXPos = 0
-		SSSonic.ScreenYPos = 786432
+		SSSonic.ScreenYPos = 0xC0000
 		
 		// Get the tile's flip directions
 		Get16x16TileInfo(CheckResult, TempValue0, TempValue1, 1)
@@ -1083,7 +1083,7 @@ function Sonic_HandleTileInteractions
 		end if
 		
 		SSSonic.Timer = 16
-		SSSonic.ScreenXPos = -524288
+		SSSonic.ScreenXPos = -0x80000
 		SSSonic.ScreenYPos = 0
 		
 		// Get the tile's flip directions
@@ -1106,7 +1106,7 @@ function Sonic_HandleTileInteractions
 		end if
 		
 		SSSonic.Timer = 16
-		SSSonic.ScreenXPos = 524288
+		SSSonic.ScreenXPos = 0x80000
 		SSSonic.ScreenYPos = 0
 		
 		// Get the tile's flip directions
@@ -1130,7 +1130,7 @@ function Sonic_HandleTileInteractions
 		
 		SSSonic.Timer = 16
 		SSSonic.ScreenXPos = 0
-		SSSonic.ScreenYPos = -524288
+		SSSonic.ScreenYPos = -0x80000
 		
 		// Get the tile's flip directions
 		Get16x16TileInfo(CheckResult, TempValue0, TempValue1, 1)
@@ -1153,7 +1153,7 @@ function Sonic_HandleTileInteractions
 		
 		SSSonic.Timer = 16
 		SSSonic.ScreenXPos = 0
-		SSSonic.ScreenYPos = 524288
+		SSSonic.ScreenYPos = 0x80000
 		
 		// Get the tile's flip directions
 		Get16x16TileInfo(CheckResult, TempValue0, TempValue1, 1)
@@ -1219,10 +1219,10 @@ sub ObjectMain
 		
 	case SSSONIC_WALKING
 		CallFunction(Sonic_ProcessPlayer)
-		if SSSonic.Speed < 327680
+		if SSSonic.Speed < 0x50000
 			SSSonic.Speed += 2048
 		else
-			SSSonic.Speed = 327680
+			SSSonic.Speed = 0x50000
 		end if
 		
 		if KeyDown[1].Down == true
@@ -1267,7 +1267,7 @@ sub ObjectMain
 		
 	case SSSONIC_JUMPING
 		CallFunction(Sonic_ProcessPlayer)
-		if SSSonic.Speed < 327680
+		if SSSonic.Speed < 0x50000
 			SSSonic.Speed += 2048
 		end if
 		
@@ -1289,7 +1289,7 @@ sub ObjectMain
 		CallFunction(Sonic_ProcessAnimation)
 		
 		// Gravity of 0x2000 per frame
-		SSSonic.YVelocity -= 8192
+		SSSonic.YVelocity -= 0x2000
 		
 		SSSonic.YPos += SSSonic.YVelocity
 		
@@ -1327,7 +1327,7 @@ sub ObjectMain
 	case SSSONIC_SPEEDBOOSTER
 		CallFunction(Sonic_ProcessPlayer)
 		
-		if SSSonic.Speed < 327680
+		if SSSonic.Speed < 0x50000
 			SSSonic.Speed += 2048
 		end if
 		
@@ -1392,7 +1392,7 @@ sub ObjectMain
 	case SSSONIC_FAN
 		CallFunction(Sonic_ProcessPlayer)
 		
-		if SSSonic.Speed < 327680
+		if SSSonic.Speed < 0x50000
 			SSSonic.Speed += 2048
 		end if
 		
@@ -1494,7 +1494,7 @@ sub ObjectMain
 		CallFunction(Sonic_ProcessPlayer)
 		
 		if SSSonic.Speed < 458752
-			SSSonic.Speed += 4096
+			SSSonic.Speed += 0x1000
 		end if
 		
 		if KeyDown[1].Down == true
@@ -1584,7 +1584,7 @@ sub ObjectMain
 	case SSSONIC_SPRING
 		CallFunction(Sonic_ProcessPlayer)
 		
-		if SSSonic.Speed < 327680
+		if SSSonic.Speed < 0x50000
 			SSSonic.Speed += 2048
 		end if
 		
@@ -1600,7 +1600,7 @@ sub ObjectMain
 		CallFunction(Sonic_ProcessAnimation)
 		
 		// Update gravity with an eight of a pixel per frame as a gravity value
-		SSSonic.YVelocity -= 8192
+		SSSonic.YVelocity -= 0x2000
 		SSSonic.YPos += SSSonic.YVelocity
 		
 		if SSSonic.YPos < 0

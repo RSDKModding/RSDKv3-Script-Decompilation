@@ -1,31 +1,31 @@
-//------------Sonic CD Mosqui Script-------------//
+//-----------------Sonic CD Mosqui Script---------------------//
 //--------Scripted by Christian Whitehead 'The Taxman'--------//
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
 // Aliases
 #alias Object.Value0		:	Object.Timer
-#alias Object.Value1		:	Object.OriginPos.X
-#alias Object.Value2		:	Object.OriginPos.Y
+#alias Object.Value1		:	Object.XOriginPos
+#alias Object.Value2		:	Object.YOriginPos
 #alias Object.PropertyValue	:	Object.Quality
 
 // States
-#alias 0					:	MOSQUI_MOVE_LEFT
-#alias 1					:	MOSQUI_MOVE_RIGHT
-#alias 2					:	MOSQUI_TURN_DOWN
-#alias 3					:	MOSQUI_DART
-#alias 4					:	MOSQUI_BLANK
-#alias 5					:	MOSQUI_RESTORE
+#alias 0	:	MOSQUI_MOVE_LEFT
+#alias 1	:	MOSQUI_MOVE_RIGHT
+#alias 2	:	MOSQUI_TURN_DOWN
+#alias 3	:	MOSQUI_DART
+#alias 4	:	MOSQUI_BLANK
+#alias 5	:	MOSQUI_RESTORE
 
 // CSides
-#alias 0					:	CSIDE_FLOOR
+#alias 0	:	CSIDE_FLOOR
 
 // Badnik Quality / Property Values
-#alias 0					:	GOOD
-#alias 1					:	BAD
+#alias 0	:	GOOD
+#alias 1	:	BAD
 
 // Priority
-#alias 0					:	PRIORITY_ACTIVE_BOUNDS
-#alias 1					:	PRIORITY_ACTIVE
+#alias 0	:	PRIORITY_ACTIVE_BOUNDS
+#alias 1	:	PRIORITY_ACTIVE
 
 
 sub ObjectMain
@@ -36,7 +36,7 @@ sub ObjectMain
 			Object.Frame++
 			Object.Frame &= 3
 
-			Object.XPos -= 65536	// 0x10000
+			Object.XPos -= 0x10000	// 0x10000
 
 			Object.Timer--
 			if Object.Timer == -128
@@ -47,7 +47,7 @@ sub ObjectMain
 			if Player.YPos > Object.YPos	// Check that player is below Mosqui
 				TempValue0 = Player.YPos
 				TempValue0 -= Object.YPos
-				if TempValue0 < 8388608	// 0x800000
+				if TempValue0 < 0x800000	// 0x800000
 					if Player.XPos > Object.XPos	// Check that player is in attack range
 						TempValue0 = Player.XPos
 						TempValue0 -= Object.XPos
@@ -55,7 +55,7 @@ sub ObjectMain
 						TempValue0 = Object.XPos
 						TempValue0 -= Player.XPos
 					end if
-					if TempValue0 < 3145728	// 0x300000
+					if TempValue0 < 0x300000	// 0x300000
 						Object.Timer = 0
 						Object.Frame = 2
 						Object.State = MOSQUI_TURN_DOWN
@@ -67,7 +67,7 @@ sub ObjectMain
 		case MOSQUI_MOVE_RIGHT
 			Object.Frame++
 			Object.Frame &= 3
-			Object.XPos += 65536	// 0x10000
+			Object.XPos += 0x10000	// 0x10000
 			Object.Timer++
 			if Object.Timer == 128
 				Object.State = MOSQUI_MOVE_LEFT
@@ -76,7 +76,7 @@ sub ObjectMain
 			if Player.YPos > Object.YPos	// Check that player is below Mosqui
 				TempValue0 = Player.YPos
 				TempValue0 -= Object.YPos
-				if TempValue0 < 8388608	// 0x800000
+				if TempValue0 < 0x800000	// 0x800000
 					if Player.XPos > Object.XPos	// Check that player is in attack range
 						TempValue0 = Player.XPos
 						TempValue0 -= Object.XPos
@@ -84,7 +84,7 @@ sub ObjectMain
 						TempValue0 = Object.XPos
 						TempValue0 -= Player.XPos
 					end if
-					if TempValue0 < 3145728	// 0x300000
+					if TempValue0 < 0x300000	// 0x300000
 						Object.Timer = 0
 						Object.Frame = 2
 						Object.State = MOSQUI_TURN_DOWN
@@ -106,7 +106,7 @@ sub ObjectMain
 			break
 
 		case MOSQUI_DART
-			Object.YPos += 393216	// 0x60000
+			Object.YPos += 0x60000	// 0x60000
 			ObjectTileCollision(CSIDE_FLOOR, 0, 14, 0)
 			if CheckResult == true
 				Object.State = MOSQUI_BLANK
@@ -132,7 +132,7 @@ sub ObjectMain
 			Object.Priority = PRIORITY_ACTIVE
 			Object.Frame++
 			Object.Frame %= 10
-			Object.XPos -= 32768	// 0x8000
+			Object.XPos -= 0x8000	// 0x8000
 			Object.Timer--
 			if Object.Timer == -256
 				Object.State = MOSQUI_MOVE_RIGHT
@@ -141,7 +141,7 @@ sub ObjectMain
 			if Player.YPos > Object.YPos	// Check that player is below Mosqui
 				TempValue0 = Player.YPos
 				TempValue0 -= Object.YPos
-				if TempValue0 < 4194304	// 0x400000
+				if TempValue0 < 0x400000	// 0x400000
 					if Player.XPos > Object.XPos	// Check that player is in attack range
 						TempValue0 = Player.XPos
 						TempValue0 -= Object.XPos
@@ -149,7 +149,7 @@ sub ObjectMain
 						TempValue0 = Object.XPos
 						TempValue0 -= Player.XPos
 					end if
-					if TempValue0 < 3145728	// 0x300000
+					if TempValue0 < 0x300000	// 0x300000
 						Object.Timer = 0
 						Object.Frame = 7
 						Object.State = MOSQUI_TURN_DOWN
@@ -161,7 +161,7 @@ sub ObjectMain
 		case MOSQUI_MOVE_RIGHT
 			Object.Frame++
 			Object.Frame %= 10
-			Object.XPos += 32768	// 0x8000
+			Object.XPos += 0x8000	// 0x8000
 			Object.Timer++
 			if Object.Timer == 256
 				Object.State = MOSQUI_MOVE_LEFT
@@ -170,7 +170,7 @@ sub ObjectMain
 			if Player.YPos > Object.YPos	// Check that player is below Mosqui
 				TempValue0 = Player.YPos
 				TempValue0 -= Object.YPos
-				if TempValue0 < 4194304	// 0x400000
+				if TempValue0 < 0x400000	// 0x400000
 					if Player.XPos > Object.XPos	// Check that player is in attack range
 						TempValue0 = Player.XPos
 						TempValue0 -= Object.XPos
@@ -178,7 +178,7 @@ sub ObjectMain
 						TempValue0 = Object.XPos
 						TempValue0 -= Player.XPos
 					end if
-					if TempValue0 < 3145728	// 0x300000
+					if TempValue0 < 0x300000	// 0x300000
 						Object.Timer = 0
 						Object.Frame = 7
 						Object.State = MOSQUI_TURN_DOWN
@@ -200,7 +200,7 @@ sub ObjectMain
 			break
 			
 		case MOSQUI_DART
-			Object.YPos += 393216	// 0x60000
+			Object.YPos += 0x60000	// 0x60000
 			ObjectTileCollision(CSIDE_FLOOR, 0, 14, 0)
 			if CheckResult == true
 				Object.State = MOSQUI_BLANK
@@ -223,12 +223,12 @@ sub ObjectMain
 		TempValue0 = Object.XPos
 		TempValue1 = Object.YPos
 
-		Object.XPos = Object.OriginPos.X
-		Object.YPos = Object.OriginPos.Y
+		Object.XPos = Object.XOriginPos
+		Object.YPos = Object.YOriginPos
 
 		if Object.OutOfBounds == true
-			Object.XPos = Object.OriginPos.X
-			Object.YPos = Object.OriginPos.Y
+			Object.XPos = Object.XOriginPos
+			Object.YPos = Object.YOriginPos
 
 			Object.Direction = FACING_RIGHT
 			Object.Timer = 0
@@ -300,8 +300,8 @@ sub ObjectStartup
 	ArrayPos0 = 32
 	while ArrayPos0 < 1056
 		if Object[ArrayPos0].Type == TypeName[Mosqui]
-			Object[ArrayPos0].Value1 = Object[ArrayPos0].XPos
-			Object[ArrayPos0].Value2 = Object[ArrayPos0].YPos
+			Object[ArrayPos0].XOriginPos = Object[ArrayPos0].XPos
+			Object[ArrayPos0].YOriginPos = Object[ArrayPos0].YPos
 		end if
 		ArrayPos0++
 	loop

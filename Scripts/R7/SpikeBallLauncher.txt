@@ -37,7 +37,7 @@ sub ObjectMain
 		// Start by poking the Spike Ball out of the Launcher's face, half a pixel per frame at a time
 		if Object.Timer < 32
 			Object.Timer++
-			Object.SpikeBallPosition -= 32768
+			Object.SpikeBallPosition -= 0x8000
 		else
 			Object.Timer = 0
 			Object.State++
@@ -52,7 +52,7 @@ sub ObjectMain
 			Object.Timer = 0
 			
 			// Initial velocity of 6 pixels per frame
-			Object.SpikeBallVelocity = -393216
+			Object.SpikeBallVelocity = -0x60000
 
 			Object.State++
 		end if
@@ -61,7 +61,7 @@ sub ObjectMain
 	case SPIKELAUNCHER_THROWN
 		if Object.SpikeBallPosition < 0
 			// Apply a gravity of 0.25 pixels to the Spike Ball every frame
-			Object.SpikeBallVelocity += 16384
+			Object.SpikeBallVelocity += 0x4000
 			
 			// And then actually add the Velocity to the Spike Ball's position
 			Object.SpikeBallPosition += Object.SpikeBallVelocity
@@ -272,13 +272,13 @@ sub RSDKDraw
 		switch Object.PropertyValue
 		case 0
 		default
-			TempValue1 += 1048576; break;
+			TempValue1 += 0x100000; break;
 		case 1
-			TempValue1 -= 1048576; break;
+			TempValue1 -= 0x100000; break;
 		case 2
-			TempValue0 += 1048576; break;
+			TempValue0 += 0x100000; break;
 		case 3
-			TempValue0 -= 1048576; break;
+			TempValue0 -= 0x100000; break;
 		end switch
 
 		DrawArrow(Object.XPos, Object.YPos, TempValue0, TempValue1, 255, 255, 255)

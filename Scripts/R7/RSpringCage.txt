@@ -35,7 +35,7 @@ sub ObjectMain
 	case RSPRINGCAGE_LOCKINPLAYER
 		if Object.RightArmOffset > 0
 			// Close it in, 2 pixels per frame
-			Object.RightArmOffset -= 131072
+			Object.RightArmOffset -= 0x20000
 		else
 			PlayStageSfx(1, 0)
 			Object.State++
@@ -58,28 +58,28 @@ sub ObjectMain
 
 			switch Object.Angle
 			case 0
-				Player.XPos += 2097152 // Offset of 32 pixels right
+				Player.XPos += 0x200000 // Offset of 32 pixels right
 				break
 			case 1
 				Player.XPos += 1572864 // Offset of 24 pixels right
 				Player.YPos -= 1572864 // Offset of 24 pixels up
 				break
 			case 2
-				Player.YPos -= 2097152 // Offset of 32 pixels up
+				Player.YPos -= 0x200000 // Offset of 32 pixels up
 				break
 			case 3
 				Player.XPos -= 1572864 // Offset of 24 pixels left
 				Player.YPos -= 1572864 // Offset of 24 pixels up
 				break
 			case 4
-				Player.XPos -= 2097152 // Offset of 32 pixels left
+				Player.XPos -= 0x200000 // Offset of 32 pixels left
 				break
 			case 5
 				Player.XPos -= 1572864 // Offset of 24 pixels left
 				Player.YPos += 1572864 // Offset of 24 pixels down
 				break
 			case 6
-				Player.YPos += 2097152 // Offset of 32 pixels down
+				Player.YPos += 0x200000 // Offset of 32 pixels down
 				break
 			case 7
 				Player.XPos += 1572864 // Offset of 24 pixels right
@@ -106,43 +106,43 @@ sub ObjectMain
 				Object.State++
 				switch Object.Angle
 				case 0
-					Player.Speed = 1048576
-					Player.XVelocity = 1048576
+					Player.Speed = 0x100000
+					Player.XVelocity = 0x100000
 					Player.YVelocity = 0
 					break
 				case 1
-					Player.Speed = 786432
-					Player.XVelocity = 786432
+					Player.Speed = 0xC0000
+					Player.XVelocity = 0xC0000
 					Player.YVelocity = -720896
 					break
 				case 2
 					Player.Speed = 0
 					Player.XVelocity = 0
-					Player.YVelocity = -1048576
+					Player.YVelocity = -0x100000
 					break
 				case 3
-					Player.Speed = -786432
-					Player.XVelocity = -786432
+					Player.Speed = -0xC0000
+					Player.XVelocity = -0xC0000
 					Player.YVelocity = -720896
 					break
 				case 4
-					Player.Speed = -1048576
-					Player.XVelocity = -1048576
+					Player.Speed = -0x100000
+					Player.XVelocity = -0x100000
 					Player.YVelocity = 0
 					break
 				case 5
-					Player.Speed = -786432
-					Player.XVelocity = -786432
+					Player.Speed = -0xC0000
+					Player.XVelocity = -0xC0000
 					Player.YVelocity = 720896
 					break
 				case 6
 					Player.Speed = 0
 					Player.XVelocity = 0
-					Player.YVelocity = 1048576
+					Player.YVelocity = 0x100000
 					break
 				case 7
-					Player.Speed = 786432
-					Player.XVelocity = 786432
+					Player.Speed = 0xC0000
+					Player.XVelocity = 0xC0000
 					Player.YVelocity = 720896
 					break
 				end switch
@@ -154,9 +154,9 @@ sub ObjectMain
 
 	case RSPRINGCAGE_RESTORE
 		if Object[+1].Timer == 0
-			if Object.RightArmOffset < 3145728
+			if Object.RightArmOffset < 0x300000
 				// Opening it back up, 8 pixels per frame
-				Object.RightArmOffset += 524288
+				Object.RightArmOffset += 0x80000
 			else
 				Object.State = RSPRINGCAGE_IDLE
 			end if
@@ -224,28 +224,28 @@ sub ObjectPlayerInteraction
 			// 8 possible directions, 8 possible jump locations~
 			switch Object.Angle
 			case 0
-				Player.XPos += 2097152 // Offset of 32 pixels right
+				Player.XPos += 0x200000 // Offset of 32 pixels right
 				break
 			case 1
 				Player.XPos += 1572864 // Offset of 24 pixels right
 				Player.YPos -= 1572864 // Offset of 24 pixels up
 				break
 			case 2
-				Player.YPos -= 2097152 // Offset of 32 pixels up
+				Player.YPos -= 0x200000 // Offset of 32 pixels up
 				break
 			case 3
 				Player.XPos -= 1572864 // Offset of 24 pixels left
 				Player.YPos -= 1572864 // Offset of 24 pixels up
 				break
 			case 4
-				Player.XPos -= 2097152 // Offset of 32 pixels left
+				Player.XPos -= 0x200000 // Offset of 32 pixels left
 				break
 			case 5
 				Player.XPos -= 1572864 // Offset of 24 pixels left
 				Player.YPos += 1572864 // Offset of 24 pixels down
 				break
 			case 6
-				Player.YPos += 2097152 // Offset of 32 pixels down
+				Player.YPos += 0x200000 // Offset of 32 pixels down
 				break
 			case 7
 				Player.XPos += 1572864 // Offset of 24 pixels right
@@ -390,7 +390,7 @@ sub ObjectStartup
 			Object[ArrayPos0].DrawOrder = 4
 
 			// Set the right arm to start 48 pixels back
-			Object[ArrayPos0].RightArmOffset = 3145728
+			Object[ArrayPos0].RightArmOffset = 0x300000
 
 			// Move the spring to the Cage's position too
 			Object[ArrayPos1].XPos = Object[ArrayPos0].XPos
@@ -434,7 +434,7 @@ sub RSDKDraw
 	DrawSprite(4)
 	Object.Direction = FACING_LEFT
 	TempValue1 = Object.YPos
-	TempValue1 += 3145728
+	TempValue1 += 0x300000
 	DrawSpriteFX(4, FX_FLIP, Object.XPos, TempValue1)
 
 	if Editor.ShowGizmos == true

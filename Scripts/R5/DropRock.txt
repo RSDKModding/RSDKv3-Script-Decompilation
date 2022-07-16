@@ -26,14 +26,14 @@ sub ObjectMain
 	case DROPROCK_FALLING
 		
 		// If not yet falling at a speed of 8 px/frame, accelerate a rate of 0.25 per frame
-		if Object.YVelocity < 524288
-			Object.YVelocity += 16384
+		if Object.YVelocity < 0x80000
+			Object.YVelocity += 0x4000
 		end if
 		
 		Object.YPos += Object.YVelocity
 		
 		// Only check for Collision if the Object is falling at a rate faster than 2px per frame
-		if Object.YVelocity > 131072
+		if Object.YVelocity > 0x20000
 			ObjectTileCollision(0, 0, 12, 0)
 			if CheckResult == true
 				PlaySfx(SFX_EXPLOSION, false)
@@ -55,10 +55,10 @@ sub ObjectMain
 				// - YVel: 4 pixels per frame up
 				CreateTempObject(TypeName[Drop Rock], 1, Object.XPos, Object.YPos)
 				Object[TempObjectPos].State = DROPROCK_FRAGMENT
-				Object[TempObjectPos].XPos -= 524288
-				Object[TempObjectPos].YPos -= 524288
-				Object[TempObjectPos].XVelocity = -65536
-				Object[TempObjectPos].YVelocity = -262144
+				Object[TempObjectPos].XPos -= 0x80000
+				Object[TempObjectPos].YPos -= 0x80000
+				Object[TempObjectPos].XVelocity = -0x10000
+				Object[TempObjectPos].YVelocity = -0x40000
 				Object[TempObjectPos].DrawOrder = 5
 				
 				// Top right Fragment:
@@ -68,10 +68,10 @@ sub ObjectMain
 				// - YVel: 4 pixels per frame up
 				CreateTempObject(TypeName[Drop Rock], 2, Object.XPos, Object.YPos)
 				Object[TempObjectPos].State = DROPROCK_FRAGMENT
-				Object[TempObjectPos].XPos += 524288
-				Object[TempObjectPos].YPos -= 524288
-				Object[TempObjectPos].XVelocity =  65536
-				Object[TempObjectPos].YVelocity = -262144
+				Object[TempObjectPos].XPos += 0x80000
+				Object[TempObjectPos].YPos -= 0x80000
+				Object[TempObjectPos].XVelocity =  0x10000
+				Object[TempObjectPos].YVelocity = -0x40000
 				Object[TempObjectPos].DrawOrder = 5
 				
 				// Bottom left Fragment:
@@ -81,10 +81,10 @@ sub ObjectMain
 				// - YVel: 2 pixels per frame up
 				CreateTempObject(TypeName[Drop Rock], 3, Object.XPos, Object.YPos)
 				Object[TempObjectPos].State = DROPROCK_FRAGMENT
-				Object[TempObjectPos].XPos -= 524288
-				Object[TempObjectPos].YPos += 524288
-				Object[TempObjectPos].XVelocity = -131072
-				Object[TempObjectPos].YVelocity = -131072
+				Object[TempObjectPos].XPos -= 0x80000
+				Object[TempObjectPos].YPos += 0x80000
+				Object[TempObjectPos].XVelocity = -0x20000
+				Object[TempObjectPos].YVelocity = -0x20000
 				Object[TempObjectPos].DrawOrder = 5
 				
 				// Bottom right Fragment:
@@ -94,10 +94,10 @@ sub ObjectMain
 				// - YVel: 2 pixels per frame up
 				CreateTempObject(TypeName[Drop Rock], 4, Object.XPos, Object.YPos)
 				Object[TempObjectPos].State = DROPROCK_FRAGMENT
-				Object[TempObjectPos].XPos += 524288
-				Object[TempObjectPos].YPos += 524288
-				Object[TempObjectPos].XVelocity =  131072
-				Object[TempObjectPos].YVelocity = -131072
+				Object[TempObjectPos].XPos += 0x80000
+				Object[TempObjectPos].YPos += 0x80000
+				Object[TempObjectPos].XVelocity =  0x20000
+				Object[TempObjectPos].YVelocity = -0x20000
 				Object[TempObjectPos].DrawOrder = 5
 				
 				// And then carrying on from the Explosion SFX from a while ago, create an Explosion effect too now
@@ -126,7 +126,7 @@ sub ObjectMain
 		Object.XPos += Object.XVelocity
 		
 		// Make the Fragment accelerate vertically at a rate of 0.25px/frame
-		Object.YVelocity += 16384
+		Object.YVelocity += 0x4000
 		
 		// And then update vertical movements
 		Object.YPos += Object.YVelocity
@@ -191,10 +191,10 @@ sub ObjectPlayerInteraction
 			// - YVel: 4 pixels per frame up
 			CreateTempObject(TypeName[Drop Rock], 1, Object.XPos, Object.YPos)
 			Object[TempObjectPos].State = DROPROCK_FRAGMENT
-			Object[TempObjectPos].XPos -= 524288
-			Object[TempObjectPos].YPos -= 524288
-			Object[TempObjectPos].XVelocity = -65536
-			Object[TempObjectPos].YVelocity = -262144
+			Object[TempObjectPos].XPos -= 0x80000
+			Object[TempObjectPos].YPos -= 0x80000
+			Object[TempObjectPos].XVelocity = -0x10000
+			Object[TempObjectPos].YVelocity = -0x40000
 			Object[TempObjectPos].DrawOrder = 5
 			
 			// Top right Fragment:
@@ -204,10 +204,10 @@ sub ObjectPlayerInteraction
 			// - YVel: 4 pixels per frame up
 			CreateTempObject(TypeName[Drop Rock], 2, Object.XPos, Object.YPos)
 			Object[TempObjectPos].State = DROPROCK_FRAGMENT
-			Object[TempObjectPos].XPos += 524288
-			Object[TempObjectPos].YPos -= 524288
-			Object[TempObjectPos].XVelocity = 65536
-			Object[TempObjectPos].YVelocity = -262144
+			Object[TempObjectPos].XPos += 0x80000
+			Object[TempObjectPos].YPos -= 0x80000
+			Object[TempObjectPos].XVelocity = 0x10000
+			Object[TempObjectPos].YVelocity = -0x40000
 			Object[TempObjectPos].DrawOrder = 5
 			
 			// Bottom left Fragment:
@@ -217,10 +217,10 @@ sub ObjectPlayerInteraction
 			// - YVel: 3 pixels per frame up
 			CreateTempObject(TypeName[Drop Rock], 3, Object.XPos, Object.YPos)
 			Object[TempObjectPos].State = DROPROCK_FRAGMENT
-			Object[TempObjectPos].XPos -= 524288
-			Object[TempObjectPos].YPos += 524288
-			Object[TempObjectPos].XVelocity = -131072
-			Object[TempObjectPos].YVelocity = -196608
+			Object[TempObjectPos].XPos -= 0x80000
+			Object[TempObjectPos].YPos += 0x80000
+			Object[TempObjectPos].XVelocity = -0x20000
+			Object[TempObjectPos].YVelocity = -0x30000
 			Object[TempObjectPos].DrawOrder = 5
 			
 			// Bottom right Fragment:
@@ -230,10 +230,10 @@ sub ObjectPlayerInteraction
 			// - YVel: 3 pixels per frame up
 			CreateTempObject(TypeName[Drop Rock], 4, Object.XPos, Object.YPos)
 			Object[TempObjectPos].State = DROPROCK_FRAGMENT
-			Object[TempObjectPos].XPos += 524288
-			Object[TempObjectPos].YPos += 524288
-			Object[TempObjectPos].XVelocity = 131072
-			Object[TempObjectPos].YVelocity = -196608
+			Object[TempObjectPos].XPos += 0x80000
+			Object[TempObjectPos].YPos += 0x80000
+			Object[TempObjectPos].XVelocity = 0x20000
+			Object[TempObjectPos].YVelocity = -0x30000
 			Object[TempObjectPos].DrawOrder = 5
 			
 			// And then create the actual Kaboom
@@ -272,10 +272,10 @@ sub ObjectPlayerInteraction
 			// - YVel: 4 pixels per frame up
 			CreateTempObject(TypeName[Drop Rock], 1, Object.XPos, Object.YPos)
 			Object[TempObjectPos].State = DROPROCK_FRAGMENT
-			Object[TempObjectPos].XPos -= 524288
-			Object[TempObjectPos].YPos -= 524288
-			Object[TempObjectPos].XVelocity = -65536
-			Object[TempObjectPos].YVelocity = -262144
+			Object[TempObjectPos].XPos -= 0x80000
+			Object[TempObjectPos].YPos -= 0x80000
+			Object[TempObjectPos].XVelocity = -0x10000
+			Object[TempObjectPos].YVelocity = -0x40000
 			Object[TempObjectPos].DrawOrder = 5
 			
 			// Top right Fragment:
@@ -285,10 +285,10 @@ sub ObjectPlayerInteraction
 			// - YVel: 4 pixels per frame up
 			CreateTempObject(TypeName[Drop Rock], 2, Object.XPos, Object.YPos)
 			Object[TempObjectPos].State = DROPROCK_FRAGMENT
-			Object[TempObjectPos].XPos += 524288
-			Object[TempObjectPos].YPos -= 524288
-			Object[TempObjectPos].XVelocity = 65536
-			Object[TempObjectPos].YVelocity = -262144
+			Object[TempObjectPos].XPos += 0x80000
+			Object[TempObjectPos].YPos -= 0x80000
+			Object[TempObjectPos].XVelocity = 0x10000
+			Object[TempObjectPos].YVelocity = -0x40000
 			Object[TempObjectPos].DrawOrder = 5
 			
 			// Bottom left Fragment:
@@ -298,10 +298,10 @@ sub ObjectPlayerInteraction
 			// - YVel: 3 pixels per frame up
 			CreateTempObject(TypeName[Drop Rock], 3, Object.XPos, Object.YPos)
 			Object[TempObjectPos].State = DROPROCK_FRAGMENT
-			Object[TempObjectPos].XPos -= 524288
-			Object[TempObjectPos].YPos += 524288
-			Object[TempObjectPos].XVelocity = -131072
-			Object[TempObjectPos].YVelocity = -196608
+			Object[TempObjectPos].XPos -= 0x80000
+			Object[TempObjectPos].YPos += 0x80000
+			Object[TempObjectPos].XVelocity = -0x20000
+			Object[TempObjectPos].YVelocity = -0x30000
 			Object[TempObjectPos].DrawOrder = 5
 			
 			// Bottom right Fragment:
@@ -311,10 +311,10 @@ sub ObjectPlayerInteraction
 			// - YVel: 3 pixels per frame up
 			CreateTempObject(TypeName[Drop Rock], 4, Object.XPos, Object.YPos)
 			Object[TempObjectPos].State = DROPROCK_FRAGMENT
-			Object[TempObjectPos].XPos += 524288
-			Object[TempObjectPos].YPos += 524288
-			Object[TempObjectPos].XVelocity = 131072
-			Object[TempObjectPos].YVelocity = -196608
+			Object[TempObjectPos].XPos += 0x80000
+			Object[TempObjectPos].YPos += 0x80000
+			Object[TempObjectPos].XVelocity = 0x20000
+			Object[TempObjectPos].YVelocity = -0x30000
 			Object[TempObjectPos].DrawOrder = 5
 			CreateTempObject(TypeName[Explosion], 0, Object.XPos, Object.YPos)
 			Object[TempObjectPos].DrawOrder = 5
@@ -381,7 +381,7 @@ sub RSDKDraw
 		// Draw a downwards arrow to show that this Rock is of the falling variety
 		
 		TempValue0 = Object.YPos
-		TempValue0 += 3145728
+		TempValue0 += 0x300000
 		
 		Editor.DrawingOverlay = true
 		

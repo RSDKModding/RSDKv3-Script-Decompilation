@@ -1,16 +1,17 @@
-//------------Sonic CD Swing Platform Script-------------//
+//---------------Sonic CD Swing Platform Script---------------//
 //--------Scripted by Christian Whitehead 'The Taxman'--------//
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
 // Aliases
 #alias Object.Value0	:	Object.Angle
-#alias Object.Value1	:	Object.DrawPos.X
-#alias Object.Value2	:	Object.DrawPos.Y
+#alias Object.Value1	:	Object.XDrawPos
+#alias Object.Value2	:	Object.YDrawPos
 #alias Object.Value3	:	Object.XVelocity
 #alias Object.Value4	:	Object.YVelocity
 #alias Object.Value5	:	Object.SwingAngle
 
 #alias Object.PropertyValue	:	Object.ChainLength
+
 
 sub ObjectMain
 	Object.SwingAngle += 2
@@ -28,15 +29,15 @@ sub ObjectMain
 	Object.XVelocity *= TempValue1
 	Object.XVelocity <<= 7
 	Object.XVelocity += Object.XPos
-	Object.XVelocity &= 4294901760
-	Object.XVelocity -= Object.DrawPos.X
+	Object.XVelocity &= 0xFFFF0000
+	Object.XVelocity -= Object.XDrawPos
 
 	Sin(Object.YVelocity, Object.Angle)
 	Object.YVelocity *= TempValue1
 	Object.YVelocity <<= 7
 	Object.YVelocity += Object.YPos
-	Object.YVelocity &= 4294901760
-	Object.YVelocity -= Object.DrawPos.Y
+	Object.YVelocity &= 0xFFFF0000
+	Object.YVelocity -= Object.YDrawPos
 end sub
 
 
@@ -44,8 +45,8 @@ sub ObjectPlayerInteraction
 	TempValue0 = Object.XPos
 	TempValue1 = Object.YPos
 
-	Object.XPos = Object.DrawPos.X
-	Object.YPos = Object.DrawPos.Y
+	Object.XPos = Object.XDrawPos
+	Object.YPos = Object.YDrawPos
 
 	PlayerObjectCollision(C_PLATFORM, -24, -6, 24, 8)
 	if CheckResult == true
@@ -81,18 +82,18 @@ sub ObjectDraw
 	loop
 
 	Cos(Object.Value1, Object.Angle)
-	Object.DrawPos.X *= TempValue1
-	Object.DrawPos.X <<= 7
-	Object.DrawPos.X += Object.XPos
-	Object.DrawPos.X &= 4294901760
+	Object.XDrawPos *= TempValue1
+	Object.XDrawPos <<= 7
+	Object.XDrawPos += Object.XPos
+	Object.XDrawPos &= 0xFFFF0000
 
-	Sin(Object.DrawPos.Y, Object.Angle)
-	Object.DrawPos.Y *= TempValue1
-	Object.DrawPos.Y <<= 7
-	Object.DrawPos.Y += Object.YPos
-	Object.DrawPos.Y &= 4294901760
+	Sin(Object.YDrawPos, Object.Angle)
+	Object.YDrawPos *= TempValue1
+	Object.YDrawPos <<= 7
+	Object.YDrawPos += Object.YPos
+	Object.YDrawPos &= 0xFFFF0000
 
-	DrawSpriteXY(2, Object.DrawPos.X, Object.DrawPos.Y)
+	DrawSpriteXY(2, Object.XDrawPos, Object.YDrawPos)
 end sub
 
 
@@ -134,18 +135,18 @@ sub RSDKDraw
 	loop
 
 	Cos(Object.Value1, Object.Angle)
-	Object.DrawPos.X *= TempValue1
-	Object.DrawPos.X <<= 7
-	Object.DrawPos.X += Object.XPos
-	Object.DrawPos.X &= 4294901760
+	Object.XDrawPos *= TempValue1
+	Object.XDrawPos <<= 7
+	Object.XDrawPos += Object.XPos
+	Object.XDrawPos &= 0xFFFF0000
 
-	Sin(Object.DrawPos.Y, Object.Angle)
-	Object.DrawPos.Y *= TempValue1
-	Object.DrawPos.Y <<= 7
-	Object.DrawPos.Y += Object.YPos
-	Object.DrawPos.Y &= 4294901760
+	Sin(Object.YDrawPos, Object.Angle)
+	Object.YDrawPos *= TempValue1
+	Object.YDrawPos <<= 7
+	Object.YDrawPos += Object.YPos
+	Object.YDrawPos &= 0xFFFF0000
 
-	DrawSpriteXY(2, Object.DrawPos.X, Object.DrawPos.Y)
+	DrawSpriteXY(2, Object.XDrawPos, Object.YDrawPos)
 end sub
 
 sub RSDKLoad

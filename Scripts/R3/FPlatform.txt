@@ -5,8 +5,8 @@
 // Aliases
 #alias Object.Value0	:	Object.OnObject
 #alias Object.Value1	:	Object.Timer
-#alias Object.Value2	:	Object.PlayerFloor.Y
-#alias Object.Value3	:	Object.OriginPos.Y
+#alias Object.Value2	:	Object.YPlayerFloor
+#alias Object.Value3	:	Object.YOriginPos
 
 sub ObjectMain
 	if Object.OnObject == true
@@ -18,13 +18,13 @@ sub ObjectMain
 			TempValue0 &= 3
 
 			if TempValue0 == 3
-				Object.PlayerFloor.Y = 65536	// 0x10000
+				Object.YPlayerFloor = 0x10000	// 0x10000
 			else
-				Object.PlayerFloor.Y = 0
+				Object.YPlayerFloor = 0
 			end if
 
 		else
-			Object.PlayerFloor.Y = 0
+			Object.YPlayerFloor = 0
 		end if
 
 	else
@@ -36,13 +36,13 @@ sub ObjectMain
 			TempValue0 &= 3
 
 			if TempValue0 == 3
-				Object.PlayerFloor.Y = -65536	// -0x10000
+				Object.YPlayerFloor = -0x10000	// -0x10000
 			else
-				Object.PlayerFloor.Y = 0
+				Object.YPlayerFloor = 0
 			end if
 		else
-			Object.PlayerFloor.Y = 0
-			Object.YPos = Object.OriginPos.Y
+			Object.YPlayerFloor = 0
+			Object.YPos = Object.YOriginPos
 		end if
 
 	end if
@@ -54,14 +54,14 @@ sub ObjectPlayerInteraction
 	PlayerObjectCollision(C_PLATFORM, -32, -17, 32, 12)
 	if CheckResult == true
 		Object.OnObject = true
-		Player.YPos += Object.PlayerFloor.Y
-		Player.YPos += 65536
+		Player.YPos += Object.YPlayerFloor
+		Player.YPos += 0x10000
 	end if
 end sub
 
 
 sub ObjectDraw
-	Object.YPos += Object.PlayerFloor.Y
+	Object.YPos += Object.YPlayerFloor
 	DrawSprite(0)
 end sub
 
@@ -74,7 +74,7 @@ sub ObjectStartup
 	ArrayPos0 = 32
 	while ArrayPos0 < 1056
 		if Object[ArrayPos0].Type == TypeName[FPlatform]
-			Object[ArrayPos0].OriginPos.Y = Object[ArrayPos0].YPos
+			Object[ArrayPos0].YOriginPos = Object[ArrayPos0].YPos
 		end if
 		ArrayPos0++
 	loop

@@ -3,7 +3,7 @@
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
 // Aliases
-#alias Object.Value1	:	Object.CollisionOffset.Y
+#alias Object.Value1	:	Object.YCollisionOffset
 #alias Object.Value2	:	Object.YVelocity
 #alias Object.Value3	:	Object.Oscillation
 
@@ -25,14 +25,14 @@ sub ObjectMain
 	Sin(Object.YVelocity, Object.Oscillation)
 	Object.YVelocity *= 9984	// 0x2700
 	Object.YVelocity += Object.YPos
-	Object.YVelocity &= 4294901760
-	Object.YVelocity -= Object.CollisionOffset.Y
+	Object.YVelocity &= 0xFFFF0000
+	Object.YVelocity -= Object.YCollisionOffset
 end sub
 
 
 sub ObjectPlayerInteraction
 	TempValue0 = Object.YPos
-	Object.YPos = Object.CollisionOffset.Y
+	Object.YPos = Object.YCollisionOffset
 	PlayerObjectCollision(C_PLATFORM, -32, -16, 32, 12)
 	if CheckResult == FLOOR
 		Player.YPos += Object.YVelocity
@@ -42,11 +42,11 @@ end sub
 
 
 sub ObjectDraw
-	Sin(Object.CollisionOffset.Y, Object.Oscillation)
-	Object.CollisionOffset.Y *= 9984	// 0x2700
-	Object.CollisionOffset.Y += Object.YPos
-	Object.CollisionOffset.Y &= 4294901760
-	DrawSpriteXY(0, Object.XPos, Object.CollisionOffset.Y)
+	Sin(Object.YCollisionOffset, Object.Oscillation)
+	Object.YCollisionOffset *= 9984	// 0x2700
+	Object.YCollisionOffset += Object.YPos
+	Object.YCollisionOffset &= 0xFFFF0000
+	DrawSpriteXY(0, Object.XPos, Object.YCollisionOffset)
 end sub
 
 

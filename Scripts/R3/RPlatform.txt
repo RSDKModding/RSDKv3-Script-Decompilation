@@ -5,9 +5,9 @@
 // Aliases
 #alias Object.Value0	:	Object.Raising
 #alias Object.Value1	:	Object.Timer
-#alias Object.Value2	:	Object.PlayerFloor.Y
+#alias Object.Value2	:	Object.YPlayerFloor
 #alias Object.Value3	:	Object.YVelocity
-#alias Object.Value4	:	Object.OriginPos.Y
+#alias Object.Value4	:	Object.YOriginPos
 #alias Object.Value5	:	Object.RiseTimer
 
 // States
@@ -26,14 +26,14 @@
 
 sub ObjectMain
 	if Object.OutOfBounds == true
-		Object.YPos = Object.OriginPos.Y
+		Object.YPos = Object.YOriginPos
 		Object.State = RISEPLATFORM_RESET
 		Object.Timer = 0
 	end if
 
 	switch Object.State
 	case RISEPLATFORM_IDLE
-		Object.PlayerFloor.Y = 0
+		Object.YPlayerFloor = 0
 		if Object.Raising == true
 			Object.State = RISEPLATFORM_DELAY
 
@@ -45,7 +45,7 @@ sub ObjectMain
 		break
 
 	case RISEPLATFORM_DELAY
-		Object.PlayerFloor.Y = Object.YVelocity
+		Object.YPlayerFloor = Object.YVelocity
 		if Object.RiseTimer < 8
 			Object.RiseTimer++
 		else
@@ -55,13 +55,13 @@ sub ObjectMain
 		break
 
 	case RISEPLATFORM_ASCEND
-		if Object.YVelocity > -262144	// -0x40000
-			Object.YVelocity -= 4096	// 0x1000
+		if Object.YVelocity > -0x40000	// -0x40000
+			Object.YVelocity -= 0x1000	// 0x1000
 		else
 			Object.State++
 		end if
 
-		Object.PlayerFloor.Y = Object.YVelocity
+		Object.YPlayerFloor = Object.YVelocity
 		break
 
 	case RISEPLATFORM_DELAY_2
@@ -72,16 +72,16 @@ sub ObjectMain
 			Object.State++
 		end if
 		
-		Object.PlayerFloor.Y = Object.YVelocity
+		Object.YPlayerFloor = Object.YVelocity
 		break
 
 	case RISEPLATFORM_SLOW
 		if Object.YVelocity < 0
-			Object.YVelocity += 4096	// 0x1000
+			Object.YVelocity += 0x1000	// 0x1000
 		else
 			Object.State++
 		end if
-		Object.PlayerFloor.Y = Object.YVelocity
+		Object.YPlayerFloor = Object.YVelocity
 		break
 
 	case RISEPLATFORM_FLOAT
@@ -93,12 +93,12 @@ sub ObjectMain
 				TempValue0 &= 3
 
 				if TempValue0 == 3
-					Object.PlayerFloor.Y = 65536	// 0x10000
+					Object.YPlayerFloor = 0x10000	// 0x10000
 				else
-					Object.PlayerFloor.Y = 0
+					Object.YPlayerFloor = 0
 				end if
 			else
-				Object.PlayerFloor.Y = 0
+				Object.YPlayerFloor = 0
 			end if
 		else
 			if Object.Timer > 0
@@ -108,12 +108,12 @@ sub ObjectMain
 				TempValue0 &= 3
 
 				if TempValue0 == 3
-					Object.PlayerFloor.Y = -65536	// -0x10000
+					Object.YPlayerFloor = -0x10000	// -0x10000
 				else
-					Object.PlayerFloor.Y = 0
+					Object.YPlayerFloor = 0
 				end if
 			else
-				Object.PlayerFloor.Y = 0
+				Object.YPlayerFloor = 0
 			end if
 		end if
 		break
@@ -134,13 +134,13 @@ sub ObjectPlayerInteraction
 	PlayerObjectCollision(C_PLATFORM, -32, -16, 32, 12)
 	if CheckResult == true
 		Object.Raising = false
-		Player.YPos += Object.PlayerFloor.Y
+		Player.YPos += Object.YPlayerFloor
 	end if
 end sub
 
 
 sub ObjectDraw
-	Object.YPos += Object.PlayerFloor.Y
+	Object.YPos += Object.YPlayerFloor
 	DrawSprite(0)
 end sub
 

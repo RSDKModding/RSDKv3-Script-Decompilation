@@ -1,4 +1,4 @@
-//------------Sonic CD Crumble Ledge 5 Script-------------//
+//---------------Sonic CD Crumble Ledge 5 Script--------------//
 //--------Scripted by Christian Whitehead 'The Taxman'--------//
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
@@ -10,18 +10,18 @@
 #alias OBject.Value4	:	Object.YVelocity
 
 // States
-#alias 0				:	CLEDGE5_IDLE
-#alias 1				:	CLEDGE5_DELAY_FROM_RIGHT
-#alias 2				:	CLEDGE5_DELAY_FROM_LEFT
-#alias 3				:	CLEDGE5_COLLAPSE_RIGHT
-#alias 4				:	CLEDGE5_COLLAPSE_LEFT
-#alias 5				:	CLEDGE5_RESTORE	// Unused
+#alias 0	:	CLEDGE5_IDLE
+#alias 1	:	CLEDGE5_DELAY_FROM_RIGHT
+#alias 2	:	CLEDGE5_DELAY_FROM_LEFT
+#alias 3	:	CLEDGE5_COLLAPSE_RIGHT
+#alias 4	:	CLEDGE5_COLLAPSE_LEFT
+#alias 5	:	CLEDGE5_RESTORE	// Unused
 
-#alias 6				:	CLEDGE5_DEBRIS
+#alias 6	:	CLEDGE5_DEBRIS
 
 // Priority
-#alias 0				:	PRIORITY_ACTIVE_BOUNDS
-#alias 1				:	PRIORITY_ACTIVE
+#alias 0	:	PRIORITY_ACTIVE_BOUNDS
+#alias 1	:	PRIORITY_ACTIVE
 
 
 sub ObjectMain
@@ -122,7 +122,7 @@ sub ObjectMain
 		break
 
 	case CLEDGE5_DEBRIS
-		Object.YVelocity += 16384	// 0x4000
+		Object.YVelocity += 0x4000	// 0x4000
 		if Object.YVelocity > 0
 			Object.YPos += Object.YVelocity
 		end if
@@ -164,7 +164,7 @@ sub ObjectDraw
 		TempValue0 = 0
 		TempValue1 = Object.HitboxLeft
 		TempValue1 <<= 16
-		TempValue1 += 524288	// 0x80000
+		TempValue1 += 0x80000	// 0x80000
 		TempValue1 += Object.XPos
 		TempValue2 = Object.PropertyValue
 		TempValue2--
@@ -181,14 +181,14 @@ sub ObjectDraw
 				end if
 			end if
 			TempValue0++
-			TempValue1 += 1048576	// 0x100000
+			TempValue1 += 0x100000	// 0x100000
 		loop
 		break
 	case CLEDGE5_COLLAPSE_LEFT
 		TempValue0 = 0
 		TempValue1 = Object.HitboxRight
 		TempValue1 <<= 16
-		TempValue1 -= 524288	// 0x80000
+		TempValue1 -= 0x80000	// 0x80000
 		TempValue1 += Object.XPos
 		TempValue2 = Object.PropertyValue
 		TempValue2--
@@ -205,7 +205,7 @@ sub ObjectDraw
 				end if
 			end if
 			TempValue0++
-			TempValue1 -= 1048576	// 0x100000
+			TempValue1 -= 0x100000	// 0x100000
 		loop
 		break
 	case CLEDGE5_DEBRIS
@@ -219,7 +219,14 @@ end sub
 
 sub ObjectStartup
 	LoadSpriteSheet("R1/Objects2.gif")
+	
+	SpriteFrame(-8, -40, 16, 48, 163, 1)	// #0 - Ledge top
+	SpriteFrame(-8, 8, 16, 16, 190, 66)		// #1 - Ledge middle
+	SpriteFrame(-8, 24, 16, 16, 82, 49)		// #2 - Ledge bottom left
+	SpriteFrame(-8, 24, 16, 16, 98, 49)		// #3 - Ledge bottom middle
+	SpriteFrame(-8, 24, 16, 16, 130, 49)	// #4 - Ledge bottom right
 
+	// original code have this below LoadSpriteSheet, moved for consistency with the rest
 	ArrayPos0 = 32
 	while ArrayPos0 < 1056
 		if Object[ArrayPos0].Type == TypeName[CrumbleLedge5]
@@ -231,11 +238,6 @@ sub ObjectStartup
 		end if
 		ArrayPos0++
 	loop
-	SpriteFrame(-8, -40, 16, 48, 163, 1)	// #0 - Ledge top
-	SpriteFrame(-8, 8, 16, 16, 190, 66)		// #1 - Ledge middle
-	SpriteFrame(-8, 24, 16, 16, 82, 49)		// #2 - Ledge bottom left
-	SpriteFrame(-8, 24, 16, 16, 98, 49)		// #3 - Ledge bottom middle
-	SpriteFrame(-8, 24, 16, 16, 130, 49)	// #4 - Ledge bottom right
 end sub
 
 // ========================
@@ -252,7 +254,7 @@ sub RSDKDraw
 	TempValue0 = 0
 	TempValue1 = Object.HitboxLeft
 	TempValue1 <<= 16
-	TempValue1 += 524288	// 0x80000
+	TempValue1 += 0x80000	// 0x80000
 	TempValue1 += Object.XPos
 	TempValue2 = Object.PropertyValue
 	TempValue2--
@@ -269,7 +271,7 @@ sub RSDKDraw
 			end if
 		end if
 		TempValue0++
-		TempValue1 += 1048576	// 0x100000
+		TempValue1 += 0x100000	// 0x100000
 	loop
 end sub
 

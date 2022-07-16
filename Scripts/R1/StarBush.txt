@@ -1,18 +1,18 @@
-//------------Sonic CD Star Bush Script-------------//
+//----------------Sonic CD Star Bush Script-------------------//
 //--------Scripted by Christian Whitehead 'The Taxman'--------//
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
 // Aliases
-#alias Object.Value0	:	Object.OriginPos.X	// Set by Ramp3D
+#alias Object.Value0	:	Object.XOriginPos	// Set by Ramp3D
 
 // Property Values
-#alias 0				:	STARBUSH_FOREGROUND	// technically a lie since the draworder is bugged
-#alias 2				:	STARBUSH_BACKGROUND
+#alias 0	:	STARBUSH_FOREGROUND	// technically a lie since the draworder is bugged
+#alias 2	:	STARBUSH_BACKGROUND
 
 
 sub ObjectDraw
-	if Object.PropertyValue == 0
-		DrawSpriteXY(0, Object.OriginPos.X, Object.YPos)
+	if Object.PropertyValue == STARBUSH_FOREGROUND
+		DrawSpriteXY(0, Object.XOriginPos, Object.YPos)
 	else
 		DrawSprite(Object.PropertyValue)
 	end if
@@ -26,6 +26,7 @@ sub ObjectStartup
 	SpriteFrame(-12, -12, 24, 24, 1, 229)		// #1 - Small StarBush
 	SpriteFrame(-24, -20, 48, 40, 115, 131)		// #2 - Big StarBush (Background)
 
+	// Used to be below LoadSpriteSheet, moved down for consistency
 	ArrayPos0 = 32
 	while ArrayPos0 < 1056
 		if Object[ArrayPos0].Type == TypeName[StarBush]

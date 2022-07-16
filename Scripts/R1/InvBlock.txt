@@ -1,28 +1,29 @@
-//------------Sonic CD Invisible Block Script-------------//
+//---------------Sonic CD Invisible Block Script--------------//
 //--------Scripted by Christian Whitehead 'The Taxman'--------//
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
 // Aliases
 #alias Object.Value0			:	Object.OnObject
-#alias Object.Value2			:	Object.OriginPos.Y
-
-// State
-#alias 0						:	INVBLOCK_IDLE
-#alias 1						:	INVBLOCK_FALL
-#alias 2						:	INVBLOCK_RESTORE
-
-// Priority
-#alias 0						:	PRIORITY_ACTIVE_BOUNDS
-#alias 1						:	PRIORITY_ACTIVE
+#alias Object.Value2			:	Object.YOriginPos
 
 // HUD aliases
 #alias Object[24].PropertyValue	:	HUD.TimePeriod
 
+// State
+#alias 0	:	INVBLOCK_IDLE
+#alias 1	:	INVBLOCK_FALL
+#alias 2	:	INVBLOCK_RESTORE
+
+// Priority
+#alias 0	:	PRIORITY_ACTIVE_BOUNDS
+#alias 1	:	PRIORITY_ACTIVE
+
+
 // Time Periods
-#alias 0						:	PROPVAL_PRESENT
-#alias 1						:	PROPVAL_PAST
-#alias 2						:	PROPVAL_GOOD_FUTURE
-#alias 3						:	PROPVAL_BAD_FUTURE
+#alias 0	:	PROPVAL_PRESENT
+#alias 1	:	PROPVAL_PAST
+#alias 2	:	PROPVAL_GOOD_FUTURE
+#alias 3	:	PROPVAL_BAD_FUTURE
 
 
 sub ObjectPlayerInteraction
@@ -37,13 +38,13 @@ sub ObjectPlayerInteraction
 			if Object.OnObject == true
 				Object.State = INVBLOCK_FALL
 				Object.Priority = PRIORITY_ACTIVE
-				Player.YPos += 131072	// 0x20000
+				Player.YPos += 0x20000	// 0x20000
 			end if
 			break
 
 		case INVBLOCK_FALL
 			if Object.OnObject == true
-				Player.YPos += 131072	// 0x20000
+				Player.YPos += 0x20000	// 0x20000
 			end if
 			break
 		end switch
@@ -54,10 +55,10 @@ end sub
 sub ObjectDraw
 	switch Object.State
 	case INVBLOCK_FALL
-		Object.YPos += 131072	// 0x20000
+		Object.YPos += 0x20000	// 0x20000
 		if Object.OutOfBounds == true
 			Object.State = INVBLOCK_RESTORE
-			Object.YPos = Object.OriginPos.Y
+			Object.YPos = Object.YOriginPos
 		end if
 		break
 
@@ -101,15 +102,7 @@ end sub
 
 sub ObjectStartup
 	LoadSpriteSheet("R1/Objects.gif")
-
-	ArrayPos0 = 32
-	while ArrayPos0 < 1056
-		if Object[ArrayPos0].Type == TypeName[InvisibleBlock]
-			Object[ArrayPos0].OriginPos.Y = Object[ArrayPos0].YPos
-		end if
-		ArrayPos0++
-	loop
-
+	
 	SpriteFrame(0, 0, 4, 4, 68, 162)		// #0  - Cheat Sprite
 	SpriteFrame(-12, -12, 24, 24, 93, 142)	// #1  - Inv Block Appearing Frame 0
 	SpriteFrame(-12, -12, 24, 24, 93, 142)	// #2  - Inv Block Appearing Frame 1
@@ -135,6 +128,15 @@ sub ObjectStartup
 	SpriteFrame(-12, -12, 24, 24, 168, 142)	// #22 - Inv Block Appearing Frame 21
 	SpriteFrame(-12, -12, 24, 24, 168, 142)	// #23 - Inv Block Appearing Frame 22
 	SpriteFrame(-12, -12, 24, 24, 68, 142)	// #24 - Inv Block Appearing Frame 23 / Main Frame in the Present
+
+	ArrayPos0 = 32
+	while ArrayPos0 < 1056
+		if Object[ArrayPos0].Type == TypeName[InvisibleBlock]
+			Object[ArrayPos0].YOriginPos = Object[ArrayPos0].YPos
+		end if
+		ArrayPos0++
+	loop
+
 end sub
 
 // ========================

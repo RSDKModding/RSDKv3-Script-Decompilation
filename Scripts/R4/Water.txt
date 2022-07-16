@@ -50,9 +50,9 @@ function Water_CreateAirBubble
 
 			Object[TempObjectPos].YVelocity = -34816	// -0x8800
 			if Player.Direction == FACING_RIGHT
-				Object[TempObjectPos].XPos += 393216	//  0x60000
+				Object[TempObjectPos].XPos += 0x60000	//  0x60000
 			else
-				Object[TempObjectPos].XPos -= 393216	//  0x60000
+				Object[TempObjectPos].XPos -= 0x60000	//  0x60000
 				Object[TempObjectPos].Angle = 256
 			end if
 			Object[TempObjectPos].XVelocity = Object[TempObjectPos].XPos
@@ -73,9 +73,9 @@ function Water_CreateAirBubble
 
 		Object[TempObjectPos].YVelocity = -34816	// -0x8800
 		if Player.Direction == FACING_RIGHT
-			Object[TempObjectPos].XPos += 393216	//  0x60000
+			Object[TempObjectPos].XPos += 0x60000	//  0x60000
 		else
-			Object[TempObjectPos].XPos -= 393216	//  0x60000
+			Object[TempObjectPos].XPos -= 0x60000	//  0x60000
 			Object[TempObjectPos].Angle = 256
 		end if
 		Object[TempObjectPos].XVelocity = Object[TempObjectPos].XPos
@@ -89,9 +89,9 @@ function Water_CreateCountBubble
 
 	Object[TempObjectPos].YVelocity = -34816	// -0x8800
 	if Player.Direction == FACING_RIGHT
-		Object[TempObjectPos].XPos += 393216	//  0x60000
+		Object[TempObjectPos].XPos += 0x60000	//  0x60000
 	else
-		Object[TempObjectPos].XPos -= 393216	//  0x60000
+		Object[TempObjectPos].XPos -= 0x60000	//  0x60000
 		Object[TempObjectPos].Angle = 256
 	end if
 	Object[TempObjectPos].XVelocity = Object[TempObjectPos].XPos
@@ -101,10 +101,10 @@ end function
 sub ObjectMain
 	Player.WaterStream = 0
 	if Object.YPos < Stage.NewWaterLevel
-		Object.YPos += 65536	// 0x10000
+		Object.YPos += 0x10000	// 0x10000
 	end if
 	if Object.YPos > Stage.NewWaterLevel
-		Object.YPos -= 65536	// 0x10000
+		Object.YPos -= 0x10000	// 0x10000
 	end if
 
 	TempValue0 = Oscillation
@@ -114,12 +114,12 @@ sub ObjectMain
 	Stage.WaterLevel += Object.YPos
 
 	// If the player about to enter the water
-	if Player.GravityStrength == 14336	// 0x3800
+	if Player.GravityStrength == 0x3800	// 0x3800
 		if Player.YPos > Object.YPos
 			if Player.State != PlayerObject_Death
 				Player.YVelocity >>= 2
 				if Object.YPos < Stage.NewWaterLevel
-					Player.YVelocity += 65536	// 0x10000
+					Player.YVelocity += 0x10000	// 0x10000
 				end if
 				if Player.State == PlayerObject_HandleTailsFlight
 					StopSfx(24)
@@ -136,9 +136,9 @@ sub ObjectMain
 				Player.AirAcceleration >>= 1
 				Player.AirDeceleration >>= 1
 
-				Player.GravityStrength = 4096	//  0x1000
+				Player.GravityStrength = 0x1000	//  0x1000
 				Player.JumpStrength = 229376	//  0x38000
-				Player.JumpCap = -131072		// -0x20000
+				Player.JumpCap = -0x20000		// -0x20000
 
 				CreateTempObject(TypeName[WaterSplash], 0, Player.XPos, Stage.WaterLevel)
 				Object[TempObjectPos].DrawOrder = 4
@@ -298,7 +298,7 @@ sub ObjectMain
 					CreateTempObject(TypeName[AirBubble], TempValue1, Player.XPos, Player.YPos)
 					Object[TempObjectPos].DrawOrder = 5
 					Object[TempObjectPos].YVelocity = -34816	// -0x8800
-					Object[TempObjectPos].YPos -= 393216		//  0x60000
+					Object[TempObjectPos].YPos -= 0x60000		//  0x60000
 					Rand(Object[TempObjectPos].Angle, 256)
 					Object[TempObjectPos].XVelocity = Object[TempObjectPos].XPos
 					Object.RandBubbleTimer = 512
@@ -316,7 +316,7 @@ sub ObjectMain
 				CreateTempObject(TypeName[AirBubble], TempValue1, Player.XPos, Player.YPos)
 				Object[TempObjectPos].DrawOrder = 5
 				Object[TempObjectPos].YVelocity = -34816	// -0x8800
-				Object[TempObjectPos].YPos -= 393216		//  0x60000
+				Object[TempObjectPos].YPos -= 0x60000		//  0x60000
 				Rand(Object[TempObjectPos].Angle, 256)
 				Object[TempObjectPos].XVelocity = Object[TempObjectPos].XPos
 			end if
@@ -329,8 +329,8 @@ sub ObjectMain
 			if Player.State != PlayerObject_Death
 				Player.YVelocity <<= 1
 				// 0x100000
-				if Player.YVelocity < -1048576
-					Player.YVelocity = -1048576
+				if Player.YVelocity < -0x100000
+					Player.YVelocity = -0x100000
 				end if
 
 				if Player.State == PlayerObject_HandleTailsFlight
@@ -341,17 +341,17 @@ sub ObjectMain
 					end if
 				end if
 
-				Player.TopSpeed = 393216		//  0x60000
+				Player.TopSpeed = 0x60000		//  0x60000
 
 				Player.Acceleration = 3072		//	0xC00
 				Player.Deceleration = 3072		//	0xC00
 				
-				Player.AirAcceleration = 6144	//	0x1800
+				Player.AirAcceleration = 0x1800	//	0x1800
 				Player.AirDeceleration = 1536	//  0x600
 
-				Player.GravityStrength = 14336	//	0x3800
+				Player.GravityStrength = 0x3800	//	0x3800
 				Player.JumpStrength = 425984	//	0x68000
-				Player.JumpCap = -262144		// -0x40000
+				Player.JumpCap = -0x40000		// -0x40000
 
 				CreateTempObject(TypeName[WaterSplash], 0, Player.XPos, Stage.WaterLevel)
 				Object[TempObjectPos].DrawOrder = 4
@@ -434,7 +434,7 @@ sub ObjectStartup
 		case PROPVAL_GOOD_FUTURE
 		case PROPVAL_BAD_FUTURE
 			if Player.XPos > 78643200	// 0x4B00000
-				TempValue7 = 84934656	// 0x5340000
+				TempValue7 = 0x5100000	// 0x5340000
 			end if
 			if Player.XPos > 68157440	// 0x4100000
 				TempValue7 = 59768832	// 0x3900000
@@ -476,7 +476,7 @@ sub ObjectStartup
 				Player.AirAcceleration >>= 1
 				Player.AirDeceleration >>= 1
 
-				Player.GravityStrength = 4096	// 0x1000
+				Player.GravityStrength = 0x1000	// 0x1000
 				Player.JumpStrength = 229376	// 0x38000
 
 				Object.ConstBubbleTimer = 52

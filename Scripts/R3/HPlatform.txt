@@ -6,7 +6,7 @@
 #alias Object.Value0	:	Object.OnObject
 #alias Object.Value1	:	Object.Timer
 #alias Object.Value2	:	Object.YVelocity
-#alias Object.Value3	:	Object.CollisionOffset.X
+#alias Object.Value3	:	Object.XCollisionOffset
 #alias Object.Value4	:	Object.XVelocity
 #alias Object.Value5	:	Object.Oscillation
 
@@ -26,8 +26,8 @@ sub ObjectMain
 	Cos(Object.XVelocity, Object.Oscillation)
 	Object.XVelocity *= 9984	// 0x2700
 	Object.XVelocity += Object.XPos
-	Object.XVelocity &= 4294901760
-	Object.XVelocity -= Object.CollisionOffset.X
+	Object.XVelocity &= 0xFFFF0000
+	Object.XVelocity -= Object.XCollisionOffset
 
 	if Object.OnObject == true
 	
@@ -37,7 +37,7 @@ sub ObjectMain
 			TempValue0 &= 3
 
 			if TempValue0 == 3
-				Object.YVelocity = 65536	// 0x10000
+				Object.YVelocity = 0x10000	// 0x10000
 			else
 				Object.YVelocity = 0
 			end if
@@ -54,7 +54,7 @@ sub ObjectMain
 			TempValue0 = Object.Timer
 			TempValue0 &= 3
 			if TempValue0 == 3
-				Object.YVelocity = -65536	// -0x10000
+				Object.YVelocity = -0x10000	// -0x10000
 			else
 				Object.YVelocity = 0
 			end if
@@ -70,7 +70,7 @@ end sub
 
 sub ObjectPlayerInteraction
 	TempValue0 = Object.XPos
-	Object.XPos = Object.CollisionOffset.X
+	Object.XPos = Object.XCollisionOffset
 	PlayerObjectCollision(C_PLATFORM, -32, -16, 32, 12)
 	if CheckResult == true
 		Object.OnObject = true
@@ -82,13 +82,13 @@ end sub
 
 
 sub ObjectDraw
-	Cos(Object.CollisionOffset.X, Object.Oscillation)
-	Object.CollisionOffset.X *= 9984
-	Object.CollisionOffset.X += Object.XPos
-	Object.CollisionOffset.X &= 4294901760
+	Cos(Object.XCollisionOffset, Object.Oscillation)
+	Object.XCollisionOffset *= 9984
+	Object.XCollisionOffset += Object.XPos
+	Object.XCollisionOffset &= 0xFFFF0000
 
 	Object.YPos += Object.YVelocity
-	DrawSpriteXY(0, Object.CollisionOffset.X, Object.YPos)
+	DrawSpriteXY(0, Object.XCollisionOffset, Object.YPos)
 end sub
 
 

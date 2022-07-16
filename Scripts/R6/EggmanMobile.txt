@@ -83,7 +83,7 @@ end function
 
 function R6_EGG_MOVE
 	Object.YPos += Object.YVelocity
-	Object.YVelocity -= 4096
+	Object.YVelocity -= 0x1000
 	if Object.YPos <= Object.TargetYPos
 		Object.YPos = Object.TargetYPos
 		Object.YVelocity = 0
@@ -134,7 +134,7 @@ function R6_EGG_ROUTE_1ST_FLOOR
 			Object.YPos += Object.TargetYPos
 		else
 			Object.Timer = 0
-			Object.YVelocity = -65536
+			Object.YVelocity = -0x10000
 			
 			Object.ThrusterAnimation = 1
 			Object.FrameTimer = 0
@@ -181,7 +181,7 @@ function R6_EGG_ROUTE_2ST_FLOOR
 			Object.YPos += Object.TargetYPos
 		else
 			Object.Timer = 0
-			Object.YVelocity = -65536
+			Object.YVelocity = -0x10000
 
 			Object.ThrusterAnimation = 1
 			Object.FrameTimer = 0
@@ -216,7 +216,7 @@ function R6_EGG_STEAM
 	if Object.AnimationTimer < 12
 		CreateTempObject(TypeName[SteamCloud], 0, Object.XPos, Object.YPos)
 
-		SteamCloud[TempObjectPos].YPos -= 4718592
+		SteamCloud[TempObjectPos].YPos -= 0x480000
 
 		Rand(SteamCloud[TempObjectPos].XVelocity, 512)
 		SteamCloud[TempObjectPos].XVelocity -= 256
@@ -241,7 +241,7 @@ sub ObjectMain
 		Object.Timer++
 		if Object.Timer == 120
 			Object.Timer = 0
-			Object.YVelocity = 196608
+			Object.YVelocity = 0x30000
 			Object.TargetYPos = 102760448
 
 			Object.ThrusterAnimation = 1
@@ -290,9 +290,9 @@ sub ObjectMain
 
 	case R6_EGG_ROOF_DRILL
 		if Object.Timer == 0
-			Object.XPos += 131072
+			Object.XPos += 0x20000
 		else
-			Object.XPos -= 131072
+			Object.XPos -= 0x20000
 		end if
 		Object.Timer++
 		Object.Timer &= 1
@@ -300,13 +300,13 @@ sub ObjectMain
 
 	case R6_EGG_DESTROYED
 		Object.YPos += Object.YVelocity
-		Object.YVelocity += 4096
+		Object.YVelocity += 0x1000
 		Player.Speed = 0
 
 		if Object.Timer == 0
-			Object.XPos += 131072
+			Object.XPos += 0x20000
 		else
-			Object.XPos -= 131072
+			Object.XPos -= 0x20000
 		end if
 		Object.Timer++
 		Object.Timer &= 1
@@ -390,9 +390,6 @@ sub ObjectPlayerInteraction
 			TempValue0 |= CheckResult
 			if TempValue0 == true
 				if Player.Animation == ANI_JUMPING
-#platform: Use_Haptics
-					HapticEffect(75, 0, 0, 0)
-#endplatform
 					Object.FaceTimer = 120
 
 					FlipSign(Player.Speed)

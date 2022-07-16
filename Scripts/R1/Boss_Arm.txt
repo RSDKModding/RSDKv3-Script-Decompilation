@@ -1,4 +1,4 @@
-//------------Sonic CD BossArm Script-------------//
+//----------------Sonic CD Boss Arm Script--------------------//
 //--------Scripted by Christian Whitehead 'The Taxman'--------//
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
@@ -11,29 +11,30 @@
 #alias Object.Value6	:	Object.XVelocity
 #alias Object.Value7	:	Object.YVelocity
 
-// States
-#alias 0				:	BOSSARM_SETUP
-#alias 1				:	BOSSARM_IDLE
-#alias 2				:	BOSSARM_DESTROYED
-#alias 3				:	BOSSARM_MOVE_TO_FRONT
-#alias 4				:	BOSSARM_MOVE_TO_BACK
-#alias 5				:	BOSSARM_START_CHARGE
-
 // Arm Joint Aliases
 #alias Object.Xpos		:	ArmJoint.XPos
 #alias Object.YPos		:	ArmJoint.YPos
 
+// States
+#alias 0	:	BOSSARM_SETUP
+#alias 1	:	BOSSARM_IDLE
+#alias 2	:	BOSSARM_DESTROYED
+#alias 3	:	BOSSARM_MOVE_TO_FRONT
+#alias 4	:	BOSSARM_MOVE_TO_BACK
+#alias 5	:	BOSSARM_START_CHARGE
+
 // Priority
-#alias 0				:	PRIORITY_ACTIVE_BOUNDS
+#alias 0	:	PRIORITY_ACTIVE_BOUNDS
 
 // Function declarations
 #function BossArm_HandleArmMovement
+
 
 function BossArm_HandleArmMovement
 	ArrayPos0 = Object.ArmJointEntity
 
 	Object.XPos = ArmJoint[ArrayPos0].XPos
-	Object.XPos -= 2359296				// 0x240000
+	Object.XPos -= 0x240000
 	Object.XPos += Object.XVelocity
 
 	Object.YPos = ArmJoint[ArrayPos0].YPos
@@ -42,16 +43,16 @@ function BossArm_HandleArmMovement
 	
 	if TempValue0 == false	// if not, adjust the arms height to defend from the player
 		if Player.YPos < Object.YPos
-			if Object.YVelocity > -524288	// -0x80000
-				Object.YVelocity -= 65536	// 0x10000
+			if Object.YVelocity > -0x80000
+				Object.YVelocity -= 0x10000
 			end if
 			TempValue1 = 0
 		end if
 	end if
 
 	if TempValue1 == true	// if it's charging, then the arms height is set in stone
-		if Object.YVelocity < 524288		// 0x80000
-			Object.YVelocity += 65536		// 0x10000
+		if Object.YVelocity < 0x80000
+			Object.YVelocity += 0x10000
 		end if
 	end if
 	Object.YPos += Object.YVelocity
@@ -62,18 +63,16 @@ sub ObjectMain
 	switch Object.State
 	case BOSSARM_SETUP
 		Object.State = BOSSARM_IDLE
-		CallFunction(BossArm_HandleArmMovement)
-		break
-
+		// Fall Through
 	case BOSSARM_IDLE
 		CallFunction(BossArm_HandleArmMovement)
 		break
 
 	case BOSSARM_DESTROYED
-		Object.XOffSet -= 1568
+		Object.XOffSet -= 0x620
 		Object.XPos += Object.XOffSet
 
-		Object.YOffSet += 4640
+		Object.YOffSet += 0x1220
 		Object.YPos += Object.YOffSet
 
 		Object.Timer++
@@ -91,21 +90,21 @@ sub ObjectMain
 
 	case BOSSARM_MOVE_TO_FRONT
 		if Object.XVelocity > 0
-			Object.XVelocity -= 32768	// 0x8000
+			Object.XVelocity -= 0x8000
 		end if
 		CallFunction(BossArm_HandleArmMovement)
 		break
 
 	case BOSSARM_MOVE_TO_BACK
-		if Object.XVelocity < 1048576	// 0x100000
-			Object.XVelocity += 32768	// 0x8000
+		if Object.XVelocity < 0x100000
+			Object.XVelocity += 0x8000
 		end if
 		CallFunction(BossArm_HandleArmMovement)
 		break
 
 	case BOSSARM_START_CHARGE
-		if Object.XVelocity < 524288	// 0x80000
-			Object.XVelocity += 32768	// 0x8000
+		if Object.XVelocity < 0x80000
+			Object.XVelocity += 0x8000
 		else
 			// Set the arm to its retracted frame
 			// -> However, because of an oversight when drawing, this change can't be seen anyways so it's unused
@@ -115,11 +114,11 @@ sub ObjectMain
 		ArrayPos0 = Object.ArmJointEntity
 		
 		Object.XPos = ArmJoint[ArrayPos0].XPos
-		Object.XPos -= 2359296		// 0x240000
+		Object.XPos -= 0x240000
 		Object.XPos += Object.XVelocity
 
-		if Object.YVelocity < 524288	// 0x80000
-			Object.YVelocity += 65536	// 0x10000
+		if Object.YVelocity <0x80000
+			Object.YVelocity += 0x10000
 		end if
 		Object.YPos = ArmJoint[ArrayPos0].YPos
 		Object.YPos += Object.YVelocity
@@ -139,6 +138,7 @@ end sub
 
 sub ObjectStartup
 	LoadSpriteSheet("R1/Objects3.gif")
+
 	SpriteFrame(-15, -8, 32, 16, 141, 34)	// #0 - Arm Extend
 	SpriteFrame(-6, -8, 24, 16, 174, 34)	// #1 - Arm Retract Frame 0	(Unused by code mistake)
 	SpriteFrame(2, -8, 16, 16, 124, 51)		// #2 - Arm Retract Frame 1	(Unused)

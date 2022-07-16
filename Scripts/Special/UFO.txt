@@ -113,8 +113,8 @@ sub ObjectMain
 				if Object.ScreenDepth > 20628
 					
 					// The UFO has to be between -0.125 and +0.125 pixels away from the screen centre
-					if Object.ScreenXPos > -8192
-						if Object.ScreenXPos < 8192
+					if Object.ScreenXPos > -0x2000
+						if Object.ScreenXPos < 0x2000
 							
 							// All those checks passed, let's destroy this UFO!
 							
@@ -126,7 +126,7 @@ sub ObjectMain
 	
 							TempValue1 = TileLayer[0].YPos
 							TempValue1 >>= 8
-							TempValue1 -= 24576
+							TempValue1 -= 0x6000
 							TempValue1 *= 96
 							TempValue1 /= Object.ScreenDepth
 							TempValue1 += 128
@@ -134,11 +134,6 @@ sub ObjectMain
 							
 							// Play the ring SFX
 							PlaySfx(SFX_RING, false)
-							
-#platform: Use_Haptics
-							// Do shake index 55 to really sell the impact of hitting a floating UFO
-							HapticEffect(55, 0, 0, 0)
-#endplatform
 							
 							switch Object.PropertyValue
 							case 0
@@ -173,7 +168,7 @@ sub ObjectMain
 							Rand(UFOPowerUp[TempObjectPos].ExplosionDir, 100)
 							UFOPowerUp[TempObjectPos].ExplosionXVel = TempValue0
 							UFOPowerUp[TempObjectPos].ExplosionYVel = TempValue1
-							UFOPowerUp[TempObjectPos].YVelocity = -262144
+							UFOPowerUp[TempObjectPos].YVelocity = -0x40000
 							UFOPowerUp[TempObjectPos].ScreenDepth = 22728
 							
 							// If the last UFO was just destroyed, then signal that to the PowerUp object too
@@ -224,7 +219,7 @@ sub ObjectDraw
 		
 		TempValue1 = TileLayer[0].YPos
 		TempValue1 >>= 8
-		TempValue1 -= 24576
+		TempValue1 -= 0x6000
 		TempValue1 *= 96
 		TempValue1 /= Object.ScreenDepth
 		TempValue1 += 128

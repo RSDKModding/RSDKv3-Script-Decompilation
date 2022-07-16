@@ -1,4 +1,4 @@
-//------------Sonic CD Horz Platform Script-------------//
+//---------------Sonic CD Horz Platform Script----------------//
 //--------Scripted by Christian Whitehead 'The Taxman'--------//
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
@@ -11,8 +11,8 @@
 #alias Object.Value5	:	Object.Angle
 
 // Property Values
-#alias 0				:	HPLATFORM_START_LEFT
-#alias 1				:	HPLATFORM_START_RIGHT
+#alias 0	:	HPLATFORM_START_LEFT
+#alias 1	:	HPLATFORM_START_RIGHT
 
 
 sub ObjectMain
@@ -24,9 +24,9 @@ sub ObjectMain
 	end if
 	
 	Cos(Object.XVelocity, Object.Angle)
-	Object.XVelocity *= 6144	// 0x1800
+	Object.XVelocity *= 0x1800	// 0x1800
 	Object.XVelocity += Object.XPos
-	Object.XVelocity &= 4294901760	// -0x10000
+	Object.XVelocity &= 0xFFFF0000	// -0x10000
 	Object.XVelocity -= Object.OffSetXPos
 
 	if Object.OnObject == true
@@ -36,7 +36,7 @@ sub ObjectMain
 			TempValue0 = Object.Timer
 			TempValue0 &= 3
 			if TempValue0 == 3
-				Object.YVelocity = 65536	// 0x10000
+				Object.YVelocity = 0x10000	// 0x10000
 			else
 				Object.YVelocity = 0
 			end if
@@ -50,7 +50,7 @@ sub ObjectMain
 			TempValue0 = Object.Timer
 			TempValue0 &= 3
 			if TempValue0 == 3
-				Object.YVelocity = -65536	// -0x10000
+				Object.YVelocity = -0x10000	// -0x10000
 			else
 				Object.YVelocity = 0
 			end if
@@ -79,9 +79,9 @@ end sub
 
 sub ObjectDraw
 	Cos(Object.OffSetXPos, Object.Angle)
-	Object.OffSetXPos *= 6144		// 0x1800
+	Object.OffSetXPos *= 0x1800		// 0x1800
 	Object.OffSetXPos += Object.XPos
-	Object.OffSetXPos &= 4294901760	// -0x10000
+	Object.OffSetXPos &= 0xFFFF0000	// -0x10000
 
 	Object.YPos += Object.YVelocity
 	DrawSpriteXY(0, Object.OffSetXPos, Object.YPos)

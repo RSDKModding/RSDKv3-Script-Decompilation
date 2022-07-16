@@ -1,4 +1,4 @@
-//------------Sonic CD Amy Rose Script-------------//
+//-----------------Sonic CD Amy Rose Script-------------------//
 //--------Scripted by Christian Whitehead 'The Taxman'--------//
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
@@ -96,8 +96,8 @@ sub ObjectMain
 
 		if Object.Direction == FACING_RIGHT
 			// Right
-			if Object.XVelocity < 131072	// 0x20000
-				Object.XVelocity += 4096	// 0x1000
+			if Object.XVelocity < 0x20000
+				Object.XVelocity += 0x1000
 			end if
 
 			PlayerObjectCollision(C_TOUCH, -32, -360, 4, 360)
@@ -120,19 +120,17 @@ sub ObjectMain
 							if TempValue0 == true
 								Object.State = AMY_REJECTED
 								Object.Frame = 9
-								Object.YVelocity = -262144	// -0x40000
+								Object.YVelocity = -0x40000
 								Object.Gravity = GRAVITY_AIR
-								Object.XVelocity = -65536	// -0x10000
+								Object.XVelocity = -0x10000
 							else
-								Object.SonicHugged = 1
+								Object.SonicHugged = true
 								Object.State = AMY_HUG
 								Object.Frame = 8
 								Object.FrameTimer = 0
 								Player.State = PlayerObject_Hugged
 								PlayStageSfx(3, 0)
-#platform: Use_Haptics
-								HapticEffect(52, 0, 0, 0)
-#endplatform
+
 								// Just one hug is enough unlock criteria
 								if Stage.DebugMode == false
 									SetAchievement(1, 100)
@@ -174,8 +172,8 @@ sub ObjectMain
 			
 		else
 			// Left
-			if Object.XVelocity > -131072	// -0x20000
-				Object.XVelocity -= 4096	// 0x1000
+			if Object.XVelocity > -0x20000
+				Object.XVelocity -= 0x1000
 			end if
 
 			PlayerObjectCollision(C_TOUCH, -4, -360, 32, 360)
@@ -198,9 +196,9 @@ sub ObjectMain
 							if TempValue0 == true
 								Object.State = AMY_REJECTED
 								Object.Frame = 9
-								Object.YVelocity = -262144	// -0x40000
+								Object.YVelocity = -0x40000
 								Object.Gravity = GRAVITY_AIR
-								Object.XVelocity = 65536	// 0x10000
+								Object.XVelocity =  0x10000
 							else
 								Object.SonicHugged = true
 								Object.State = AMY_HUG
@@ -208,9 +206,6 @@ sub ObjectMain
 								Object.FrameTimer = 0
 								Player.State = PlayerObject_Hugged
 								PlayStageSfx(3, 0)
-#platform: Use_Haptics
-								HapticEffect(52, 0, 0, 0)
-#endplatform
 								// Just one hug is enough unlock criteria
 								if Stage.DebugMode == false
 									SetAchievement(1, 100)
@@ -296,7 +291,7 @@ sub ObjectMain
 
 				if Object.Gravity == GRAVITY_GROUND
 					if Object.FrameTimer < 120
-						Object.YVelocity = -262144
+						Object.YVelocity = -0x40000
 						Object.Gravity = GRAVITY_AIR
 						Object.Frame = 9
 					else
@@ -341,7 +336,7 @@ sub ObjectMain
 				if Object.Gravity == GRAVITY_GROUND
 
 					if Object.FrameTimer < 120
-						Object.YVelocity = -262144
+						Object.YVelocity = -0x40000
 						Object.Gravity = GRAVITY_AIR
 						Object.Frame = 9
 					else
@@ -414,12 +409,12 @@ sub ObjectMain
 
 			Object.State = AMY_REJECTED
 			Object.Frame = 9
-			Object.YVelocity = -262144	// 0x40000
+			Object.YVelocity = -0x40000
 			Object.Gravity = GRAVITY_AIR
 			if Object.Direction == FACING_RIGHT
-				Object.XVelocity = -65536	// -0x10000
+				Object.XVelocity = -0x10000
 			else
-				Object.XVelocity = 65536	// 0x10000
+				Object.XVelocity =  0x10000
 			end if
 
 		end if
@@ -431,11 +426,11 @@ sub ObjectMain
 		end if
 
 		if Object.XVelocity > 0
-			Object.XVelocity -= 2048
+			Object.XVelocity -= 0x800
 		end if
 
 		if Object.XVelocity < 0
-			Object.XVelocity += 2048
+			Object.XVelocity += 0x800
 		end if
 
 		Object.XPos += Object.XVelocity
@@ -484,7 +479,7 @@ sub ObjectMain
 	if Object.Gravity == GRAVITY_GROUND
 		ObjectTileGrip(CSIDE_FLOOR, 0, 19, 0)
 	else
-		Object.YVelocity += 16384
+		Object.YVelocity += 0x4000
 		Object.YPos += Object.YVelocity
 		ObjectTileCollision(CSIDE_FLOOR, 0, 19, 0)
 		if CheckResult == true
@@ -509,26 +504,6 @@ end sub
 
 sub ObjectStartup
 	LoadSpriteSheet("R1/Objects.gif")
-	
-	ArrayPos0 = 32
-	while ArrayPos0 < 1056
-		if Object[ArrayPos0].Type == TypeName[AmyRose]
-			if Stage.PlayerListPos == 1	// PlayerName[TAILS]
-				Object[ArrayPos0].Type = TypeName[Blank Object]
-			else
-				if Options.GameMode == GAMEMODE_TIMEATTACK
-					Object[ArrayPos0].Type = TypeName[Blank Object]
-				else
-					Object[ArrayPos0].LeftLimit   = Object[ArrayPos0].XPos
-					Object[ArrayPos0].LeftLimit  -= 20971520
-					Object[ArrayPos0].RightLimit  = Object[ArrayPos0].XPos
-					Object[ArrayPos0].RightLimit += 4194304
-					Object[ArrayPos0].DrawOrder = 4
-				end if
-			end if
-		end if
-		ArrayPos0++
-	loop
 
 	// Idle
 	SpriteFrame(-11, -20, 22, 40, 34, 208)		// #0  - Amy Idle Frame 0
@@ -548,6 +523,7 @@ sub ObjectStartup
 	// Jumping
 	SpriteFrame(-13, -20, 26, 40, 80, 208)		// #9  - Amy Jumping Frame 0
 	SpriteFrame(-12, -20, 24, 40, 107, 208)		// #10 - Amy Jumping Frame 1
+
 	// Looking for Sonic
 	// Amy Looking Frame "0"
 	SpriteFrame(-12, -20, 22, 40, 158, 208)		// #11
@@ -570,6 +546,28 @@ sub ObjectStartup
 	SpriteFrame(-14, -20, 25, 40, 132, 208)		// #22
 	SpriteFrame(-14, -20, 25, 40, 132, 208)		// #23
 	SpriteFrame(-14, -20, 25, 40, 132, 208)		// #24
+	
+	ArrayPos0 = 32
+	while ArrayPos0 < 1056
+		if Object[ArrayPos0].Type == TypeName[AmyRose]
+			if Stage.PlayerListPos == 1	// PlayerName[TAILS]
+				Object[ArrayPos0].Type = TypeName[Blank Object]
+			else
+				if Options.GameMode == GAMEMODE_TIMEATTACK
+					Object[ArrayPos0].Type = TypeName[Blank Object]
+				else
+					Object[ArrayPos0].LeftLimit   = Object[ArrayPos0].XPos
+					Object[ArrayPos0].LeftLimit  -= 0x1400000
+
+					Object[ArrayPos0].RightLimit  = Object[ArrayPos0].XPos
+					Object[ArrayPos0].RightLimit += 0x400000
+
+					Object[ArrayPos0].DrawOrder = 4
+				end if
+			end if
+		end if
+		ArrayPos0++
+	loop
 end sub
 
 // ========================

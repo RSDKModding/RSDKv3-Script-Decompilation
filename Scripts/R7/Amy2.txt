@@ -75,8 +75,8 @@ sub ObjectMain
 
 		if Object.Direction == FACING_RIGHT
 		
-			if Object.XVelocity < 131072
-				Object.XVelocity += 8192
+			if Object.XVelocity < 0x20000
+				Object.XVelocity += 0x2000
 			end if
 
 			PlayerObjectCollision(C_TOUCH, -32, -360, 4, 360)
@@ -89,9 +89,9 @@ sub ObjectMain
 								// Sonic's doing a spindash, throw Amy back (!)
 								Object.State = AMY2_RECOIL
 								Object.Frame = 9
-								Object.YVelocity = -262144
+								Object.YVelocity = -0x40000
 								Object.InAir = true
-								Object.XVelocity = -65536
+								Object.XVelocity = -0x10000
 							else
 								if Object.FallBackTimer < 600
 									Object.FallBackTimer = 601
@@ -103,9 +103,6 @@ sub ObjectMain
 									
 									CreateTempObject(TypeName[FadeMusic], 3, Object.XPos, Object.YPos)
 								end if
-#platform: Use_Haptics
-								HapticEffect(52, 0, 0, 0)
-#endplatform
 								Object.State = AMY2_HUGGING
 								Object.Frame = 8
 								Object.Timer = 0
@@ -142,8 +139,8 @@ sub ObjectMain
 			
 		else
 		
-			if Object.XVelocity > -131072
-				Object.XVelocity -= 8192
+			if Object.XVelocity > -0x20000
+				Object.XVelocity -= 0x2000
 			end if
 
 			PlayerObjectCollision(C_TOUCH, -4, -360, 32, 360)
@@ -156,9 +153,9 @@ sub ObjectMain
 								// Sonic's doing a spindash, hit Amy back (!)
 								Object.State = AMY2_RECOIL
 								Object.Frame = 9
-								Object.YVelocity = -262144
+								Object.YVelocity = -0x40000
 								Object.InAir = true
-								Object.XVelocity = 65536
+								Object.XVelocity = 0x10000
 							else
 								if Object.FallBackTimer < 600
 									Object.FallBackTimer = 601
@@ -181,9 +178,6 @@ sub ObjectMain
 								// Unlock the "One Hug Is Enough" achievement
 								// There's a small chance you missed it in PPZ, so now you have a second chance at it here!
 								SetAchievement(1, 100)
-#platform: Use_Haptics
-								HapticEffect(52, 0, 0, 0)
-#endplatform
 							end if
 						else
 							Object.State = AMY2_UNKNOWN
@@ -344,7 +338,7 @@ sub ObjectMain
 	else
 		// Got launched into the air by Sonic...
 		// Apply air movements & gravity
-		Object.YVelocity += 16384
+		Object.YVelocity += 0x4000
 		Object.YPos += Object.YVelocity
 		
 		// See if Amy's landed yet

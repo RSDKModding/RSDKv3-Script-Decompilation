@@ -12,23 +12,23 @@
 #alias Object[+5].XPos		:	BoostSpinner.XPos
 
 // States
-#alias 0					:	RAMP3D_RUN
-#alias 1					:	RAMP3D_EXIT_UNUSED	// a copy of Exit Boost
-#alias 2					:	RAMP3D_EXIT
-#alias 3					:	RAMP3D_SET_YBOUND	// this doesn't really have anything to do with this object
-#alias 4					:	RAMP3D_ENTER
-#alias 5					:	RAMP3D_DROP
-#alias 6					:	RAMP3D_SET_YBOUND2	// this doesn't really have anything to do with this object
-#alias 7					:	RAMP3D_RUN_FROM_TOP
-#alias 8					:	RAMP3D_EXIT_BOOST
+#alias 0	:	RAMP3D_RUN
+#alias 1	:	RAMP3D_EXIT_UNUSED	// a copy of Exit Boost
+#alias 2	:	RAMP3D_EXIT
+#alias 3	:	RAMP3D_SET_YBOUND	// this doesn't really have anything to do with this object
+#alias 4	:	RAMP3D_ENTER
+#alias 5	:	RAMP3D_DROP
+#alias 6	:	RAMP3D_SET_YBOUND2	// this doesn't really have anything to do with this object
+#alias 7	:	RAMP3D_RUN_FROM_TOP
+#alias 8	:	RAMP3D_EXIT_BOOST
 
 // Gravity
-#alias 0					:	GRAVITY_GROUND
-#alias 1					:	GRAVITY_AIR
+#alias 0	:	GRAVITY_GROUND
+#alias 1	:	GRAVITY_AIR
 
 // Priority
-#alias 0					:	PRIORITY_ACTIVE_BOUNDS
-#alias 1					:	PRIORITY_ACTIVE
+#alias 0	:	PRIORITY_ACTIVE_BOUNDS
+#alias 1	:	PRIORITY_ACTIVE
 
 
 sub ObjectPlayerInteraction
@@ -229,9 +229,20 @@ sub ObjectPlayerInteraction
 		Player.XOriginPos = Player.XPos
 		break
 		
-	case RAMP3D_DROP
-		if Player.State == PlayerObject_HandleAir
+	case RAMP3D_DROP		
+	#platform: Use_Origins
+		CheckEqual(Player.State, PlayerObject_ResetDropDash)
+		TempValue0  = CheckResult
+		CheckEqual(Player.State, PlayerObject_HandleAir)
+		TempValue0 |= CheckResult
+	#endplatform
 
+	#platform: Use_Standalone
+		CheckEqual(Player.State, PlayerObject_HandleAir)	// used to be a straight check, changed to be have a cleaner check with origins
+		TempValue0 = CheckResult
+	#endplatform
+
+		if TempValue0 != false
 			PlayerObjectCollision(C_TOUCH, -16, -128, 16, 16)
 			if CheckResult == true
 				Player.Animation = ANI_DROPPING

@@ -31,7 +31,7 @@ sub ObjectMain
 		Object.Value0 &= 31
 		break
 	case 1
-		Object.YPos += 262144
+		Object.YPos += 0x40000
 		ObjectTileCollision(0, 0, 8, 0)
 		if CheckResult == 1
 			Object.Value1 = Object.YPos
@@ -40,7 +40,7 @@ sub ObjectMain
 		break
 	case 2
 		if Object.Value0 < 4
-			Object.YPos += 262144
+			Object.YPos += 0x40000
 			Object.Value0++
 		else
 			Object.Type = TypeName[Blank Object]
@@ -55,22 +55,15 @@ sub ObjectPlayerInteraction
 		if Object.PropertyValue == Mini_PlayerFlag
 			if Player.State != PlayerObject_SizeChange
 				PlayerObjectCollision(C_TOUCH, -4, -8, 4, 8)
-				if CheckResult == 1
-#platform: Use_Haptics
-					if Object.PropertyValue == 0
-						HapticEffect(39, 0, 0, 0)
-					else
-						HapticEffect(33, 0, 0, 0)
-					end if
-#endplatform
+				if CheckResult == true
 					Player.State = PlayerObject_SizeChange
 					Player.Animation = ANI_SIZE_CHANGE
-					Player.YVelocity = -262144
+					Player.YVelocity = -0x40000
 					Player.Gravity = 1
 					if Player.XPos > Object.XPos
-						Player.Speed = 131072
+						Player.Speed = 0x20000
 					else
-						Player.Speed = -131072
+						Player.Speed = -0x20000
 					end if
 				end if
 			end if
