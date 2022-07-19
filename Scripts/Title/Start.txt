@@ -276,24 +276,35 @@ sub ObjectMain
 		if input.pressButton == true
 			CheckResult = 0
 		end if
-		
-		//CheckGreater(CheckResult, -1)
-		
-		// This is actually bugged again lol
-		// The above is meant to see if the player's tapped the screen or pressed the Start button
-		// However, that CheckGreater check? Well, that sets CheckResult again, to either 0 or 1
-		// You see what happened? Now it's always gonna be greater than -1, regardless if the player did anything or not
-		
-		if CheckResult > -1
+#endplatform
+
+#platform: Use_Standalone
+		if KeyPress.Start == true
+			CheckResult = false
+		end if
+#endplatform
+
+		if CheckResult > -1	// Check if you used the touch input, or if what's above is true
 			
 			// The Player's (reportedly) interacted with the game in some form, so start the Select sequence
 			Object.State = START_GOTO_MENU	// Select Menu
+		
+#platform: Use_Origins
 			
 			Object[+1].Type = TypeName[Select]
 			Object[+1].iXPos = Screen.CenterX
 			Object[+1].iYPos = 200
 			Object[+1].State = SELECT_INIT
+#endplatform
+
+#platform: Use_Standalone
+			StopMusic()
+			PlaySfx(27, 0)	//Select SFX
 			
+#endplatform
+#platform: Use_Haptics
+			HapticEffect(31, 0, 0, 0)
+#endplatform
 		else
 			// The game never really reaches here...
 			
@@ -310,29 +321,6 @@ sub ObjectMain
 				EngineCallback(CALLBACK_EXIT_SELECTED)
 			end if
 		end if
-#endplatform
-
-#platform:	Use_Standalone
-		CheckTouchRect(0, 0, Screen.XSize, 240)
-		if KeyPress.Start == true
-			CheckResult = false
-		end if
-		CheckGreater(CheckResult, -1)
-		if CheckResult == true
-			Object.State = START_GOTO_MENU	// Main Menu
-			StopMusic()
-			PlaySfx(27, 0)	//Select SFX
-				
-	#platform: Use_Haptics
-			HapticEffect(31, 0, 0, 0)
-	#endplatform
-		else
-			Object.DemoTimer++
-			if Object.DemoTimer == 1550
-				Object.State = START_GOTO_DEMO
-			end if
-		end if
-#endplatform
 		break
 		
 	case START_GOTO_MENU
@@ -399,13 +387,11 @@ sub ObjectMain
 			Options.GameMode = 0
 			Options.AttractMode = true
 
-#platform: Mobile
 			if Engine.PlatformID == RETRO_ANDROID
 				if Engine.TrialMode == true
 					Options.DemoNumber = 0
 				end if
 			end if
-#endplatform			
 			switch Options.DemoNumber
 			case DEMO_R11A
 				// R11A - Palmtree Panic Act 1, Present
@@ -505,7 +491,7 @@ sub ObjectDraw
 	if Object.AnimationTimer > 59
 		Object.AnimationTimer = 0
 	end if
-	
+
 	if Object.AnimationTimer > 29
 
 	#platform: Standard

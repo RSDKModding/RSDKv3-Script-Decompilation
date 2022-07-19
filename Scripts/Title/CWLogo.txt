@@ -1,29 +1,30 @@
-//------------Sonic CD CWLogo Script-------------//
+//----------------Sonic CD CW Logo Script---------------------//
 //--------Scripted by Christian Whitehead 'The Taxman'--------//
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
 // Aliases
-#alias Object.Value0 : Object.Timer
-#alias Object.Value1 : Object.RectAlpha
-#alias Object.Value2 : Object.BGScale
-#alias Object.Value3 : Object.Unused
+#alias Object.Value0	:	Object.Timer
+#alias Object.Value1	:	Object.RectAlpha
+#alias Object.Value2	:	Object.BGScale
+#alias Object.Value3	:	Object.Unused
 
 // States
-#alias 0 : CWLOGO_SETUP
-#alias 1 : CWLOGO_BGSCALE_INCREASE_1
-#alias 2 : CWLOGO_BGSCALE_INCREASE_2
-#alias 3 : CWLOGO_LOGO_FADEIN
-#alias 4 : CWLOGO_BGSCALE_DECREASE
-#alias 5 : CWLOGO_LOGO_FADEOUT
-
-// This value was originally 160, but updates changed it to 192 instead
-#alias 192 : CWLOGO_SCALE
+#alias 0	:	CWLOGO_SETUP
+#alias 1	:	CWLOGO_BGSCALE_INCREASE_1
+#alias 2	:	CWLOGO_BGSCALE_INCREASE_2
+#alias 3	:	CWLOGO_LOGO_FADEIN
+#alias 4	:	CWLOGO_BGSCALE_DECREASE
+#alias 5	:	CWLOGO_LOGO_FADEOUT
 
 // Callbacks & Engine States
-#alias 7 : CALLBACK_EXIT_SELECTED
+#alias 7	:	CALLBACK_EXIT_SELECTED
 
 // Ink Effects
-#alias 2 : INK_ALPHA
+#alias 2	:	INK_ALPHA
+
+// Engine & Callbacks
+#alias 5	:	ENGINE_ENTER_HIRESMODE
+#alias 6	:	ENGINE_EXIT_HIRESMODE
 
 
 sub ObjectMain
@@ -124,6 +125,10 @@ sub ObjectMain
 				Object.InkEffect = INK_ALPHA
 				Object.Alpha = 0
 				Object.Timer = 0
+#platform: Set_Standalone
+				Engine.State = ENGINE_EXIT_HIRESMODE
+				Object.RectAlpha = 256
+#endplatform
 			else
 				Object.Timer++
 			end if
@@ -161,7 +166,7 @@ sub ObjectDraw
 	case CWLOGO_BGSCALE_DECREASE
 		
 		// Draw the CW Logo at its own Scale
-		Object.Scale = CWLOGO_SCALE
+		Object.Scale = 192
 		
 		DrawSpriteFX(0, FX_SCALE, Object.XPos, Object.YPos)
 		
