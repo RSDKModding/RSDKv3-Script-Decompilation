@@ -3,16 +3,16 @@
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
 // Aliases
-#alias Object.Value0 : Object.Oscillation
-#alias Object.Value1 : Object.PlatformY
-#alias Object.Value2 : Object.ChangeY
-#alias Object.Value3 : Object.Angle
+#alias Object.Value0	:	Object.Oscillation
+#alias Object.Value1	:	Object.PlatformY
+#alias Object.Value2	:	Object.ChangeY
+#alias Object.Value3	:	Object.Angle
 
 // Time Period Aliases
-#alias 0 : PERIOD_PRESENT
-#alias 1 : PERIOD_PAST
-#alias 2 : PERIOD_FUTURE_G
-#alias 3 : PERIOD_FUTURE_B
+#alias 0	:	PERIOD_PRESENT
+#alias 1	:	PERIOD_PAST
+#alias 2	:	PERIOD_FUTURE_G
+#alias 3	:	PERIOD_FUTURE_B
 
 
 sub ObjectMain
@@ -41,38 +41,38 @@ sub ObjectMain
 	case 0
 	case 2
 		// Upwards moving platform
-		Object.ChangeY *= 6144
-		Object.ChangeY += 3145728
+		Object.ChangeY *= 0x1800
+		Object.ChangeY += 0x300000
 		Object.ChangeY += Object.YPos
-		Object.ChangeY &= 4294901760
+		Object.ChangeY &= 0xFFFF0000
 		Object.ChangeY -= Object.PlatformY
 		break
 		
 	case 3
 	case 5
 		// Downwards moving platform
-		Object.ChangeY *= -6144
-		Object.ChangeY -= 3145728
+		Object.ChangeY *= -0x1800
+		Object.ChangeY -= 0x300000
 		Object.ChangeY += Object.YPos
-		Object.ChangeY &= 4294901760
+		Object.ChangeY &= 0xFFFF0000
 		Object.ChangeY -= Object.PlatformY
 		break
 		
 	case 1
 		// Unused duplicate of upwards version
-		Object.ChangeY *= 6144
-		Object.ChangeY += 3145728
+		Object.ChangeY *= 0x1800
+		Object.ChangeY += 0x300000
 		Object.ChangeY += Object.YPos
-		Object.ChangeY &= 4294901760
+		Object.ChangeY &= 0xFFFF0000
 		Object.ChangeY -= Object.PlatformY
 		break
 		
 	case 4
 		// Unused duplicate of downwards version
-		Object.ChangeY *= -6144
-		Object.ChangeY -= 3145728
+		Object.ChangeY *= -0x1800
+		Object.ChangeY -= 0x300000
 		Object.ChangeY += Object.YPos
-		Object.ChangeY &= 4294901760
+		Object.ChangeY &= 0xFFFF0000
 		Object.ChangeY -= Object.PlatformY
 		break
 		
@@ -136,19 +136,19 @@ sub ObjectDraw
 	case 0
 	case 1
 		// Standard, upwards Platform
-		Object.PlatformY *= 6144
-		Object.PlatformY += 3145728
+		Object.PlatformY *= 0x1800
+		Object.PlatformY += 0x300000
 		Object.PlatformY += Object.YPos
-		Object.PlatformY &= 4294901760
+		Object.PlatformY &= 0xFFFF0000
 		DrawSpriteXY(0, Object.XPos, Object.PlatformY)
 		break
 
 	case 2
 		// Upwards Conveyor Platform
-		Object.PlatformY *= 6144
-		Object.PlatformY += 3145728
+		Object.PlatformY *= 0x1800
+		Object.PlatformY += 0x300000
 		Object.PlatformY += Object.YPos
-		Object.PlatformY &= 4294901760
+		Object.PlatformY &= 0xFFFF0000
 		DrawSpriteXY(0, Object.XPos, Object.PlatformY)
 		DrawSpriteXY(1, Object.XPos, Object.PlatformY)
 		break
@@ -156,19 +156,19 @@ sub ObjectDraw
 	case 3
 	case 4
 		// Standard, downwards Platform
-		Object.PlatformY *= -6144
-		Object.PlatformY -= 3145728
+		Object.PlatformY *= -0x1800
+		Object.PlatformY -= 0x300000
 		Object.PlatformY += Object.YPos
-		Object.PlatformY &= 4294901760
+		Object.PlatformY &= 0xFFFF0000
 		DrawSpriteXY(0, Object.XPos, Object.PlatformY)
 		break
 
 	case 5
 		// Downwards conveyor Platform
-		Object.PlatformY *= -6144
-		Object.PlatformY -= 3145728
+		Object.PlatformY *= -0x1800
+		Object.PlatformY -= 0x300000
 		Object.PlatformY += Object.YPos
-		Object.PlatformY &= 4294901760
+		Object.PlatformY &= 0xFFFF0000
 		DrawSpriteXY(0, Object.XPos, Object.PlatformY)
 		DrawSpriteXY(1, Object.XPos, Object.PlatformY)
 		break
@@ -289,21 +289,21 @@ sub RSDKDraw
 	case 2
 		TempValue2 = true
 	case 0
-		TempValue0 = 6144
-		TempValue1 = 3145728
+		TempValue0 = 0x1800
+		TempValue1 = 0x300000
 		break
 		
 	case 5
 		TempValue2 = true
 	case 3
-		TempValue0 = -6144
-		TempValue1 = -3145728
+		TempValue0 = -0x1800
+		TempValue1 = -0x300000
 		break
 		
 	end switch
 	
 	TempValue3 = Object.YPos
-	TempValue3 &= 4294901760
+	TempValue3 &= 0xFFFF0000
 	DrawSpriteXY(0, Object.XPos, TempValue3)
 	
 	if TempValue2 == true
@@ -318,7 +318,7 @@ sub RSDKDraw
 		TempValue4 *= TempValue0
 		TempValue4 += TempValue1
 		TempValue4 += Object.YPos
-		TempValue4 &= 4294901760
+		TempValue4 &= 0xFFFF0000
 		
 		Editor.DrawingOverlay = true
 		

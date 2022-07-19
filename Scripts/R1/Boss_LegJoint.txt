@@ -1,4 +1,4 @@
-//------------Sonic CD BossLegJoint Script-------------//
+//---------------Sonic CD Boss Leg Joint Script---------------//
 //--------Scripted by Christian Whitehead 'The Taxman'--------//
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
@@ -82,21 +82,25 @@
 #alias 3	:	BOSSFOOT_STEP_OPPOSITE
 #alias 4	:	BOSSFOOT_HANDLE_STEP_OPPOSITE
 
+// Priority
+#alias 0	:	PRIORITY_ACTIVE_BOUNDS
+
 // Function declarations
 #function BossLegJoint_JointRotation
 #function BossLegJoint_HandleMovement
 #function BossLegJoint_HandleLanding
 
+
 function BossLegJoint_JointRotation
 	ArrayPos0 = Object.BodyEntity
 	Object.XPos = Body[ArrayPos0].XPos
-	Object.XPos += 786432		// 0xC0000
+	Object.XPos += 0xC0000
 	Object.XPos += TempValue7
 	if Object.DrawOrder == 2
-		Object.XPos -= 655360	// 0xA0000
+		Object.XPos -= 0xA0000
 	end if
 	Object.YPos = Body[ArrayPos0].YPos
-	Object.YPos += 1310720		// 0x140000
+	Object.YPos += 0x140000
 	Object.YPos += TempValue6
 end function
 
@@ -350,7 +354,7 @@ sub ObjectMain
 		ArrayPos0 = Object.BodyEntity
 		ArrayPos1 = Body[ArrayPos0].LegJointREntity
 		Object.XPos = LegJointR[ArrayPos1].XPos
-		Object.XPos -= 655360	// 0xA0000
+		Object.XPos -= 0xA0000
 		Object.YPos = LegJointR[ArrayPos1].YPos
 		Object.XOffSet = LegJointR[ArrayPos1].XOffSet
 		break
@@ -428,18 +432,18 @@ sub ObjectMain
 	case BOSSLEGJOINT_DESTROYED
 		GetBit(TempValue0, Object.LegSide, 4)
 		if TempValue0 == false
-			Object.XOffSet -= 1536	// 0x600
+			Object.XOffSet -= 0x600
 		else
-			Object.XOffSet += 1536	// 0x600
+			Object.XOffSet += 0x600
 		end if
 		Object.XPos += Object.XOffSet
 
-		Object.YOffSet += 6240		// 0x1860
+		Object.YOffSet += 0x1860
 		Object.YPos += Object.YOffSet
 
 		if Object.OutOfBounds == true
 			Object.Type = TypeName[Blank Object]
-			Object.Priority = 0
+			Object.Priority = PRIORITY_ACTIVE_BOUNDS
 		end if
 		break
 
@@ -454,6 +458,7 @@ end sub
 
 sub ObjectStartup
 	LoadSpriteSheet("R1/Objects3.gif")
+
 	SpriteFrame(-8, -8, 16, 16, 74, 42)	// #0 - Leg Joint
 end sub
 

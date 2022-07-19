@@ -3,33 +3,33 @@
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
 // Aliases
-#alias Object.YPos   : Object.ZPos
+#alias Object.YPos  	:	Object.ZPos
 
-#alias Object.Value0 : Object.TargetNode
-#alias Object.Value1 : Object.XVelocity
-#alias Object.Value2 : Object.ZVelocity
-#alias Object.Value3 : Object.Timer
-#alias Object.Value4 : Object.ScreenXPos // Difference from the center of the camera (which is where Sonic is always located)
-#alias Object.Value5 : Object.ScreenDepth
+#alias Object.Value0	:	Object.TargetNode
+#alias Object.Value1	:	Object.XVelocity
+#alias Object.Value2	:	Object.ZVelocity
+#alias Object.Value3	:	Object.Timer
+#alias Object.Value4	:	Object.ScreenXPos // Difference from the center of the camera (which is where Sonic is always located)
+#alias Object.Value5	:	Object.ScreenDepth
 
 // HUD Aliases
-#alias Object.Value0 : HUD.UFOsCount     // Initially set via a loop in the UFO script
-#alias Object.Value1 : HUD.Time.Seconds  // Displayed time
-#alias Object.Value3 : HUD.Rings
-#alias Object.Value4 : HUD.LastUFOType   // Used by UFOs for ring streak bonus
-#alias Object.Value5 : HUD.SpeedShoes    // Used to transmit between player and UFO
-#alias Object.Value6 : HUD.BonusUFOPos   // "Pos" akin to entity pos, not as in X or Y Position
+#alias Object.Value0	:	HUD.UFOsCount     // Initially set via a loop in the UFO script
+#alias Object.Value1	:	HUD.Time.Seconds  // Displayed time
+#alias Object.Value3	:	HUD.Rings
+#alias Object.Value4	:	HUD.LastUFOType   // Used by UFOs for ring streak bonus
+#alias Object.Value5	:	HUD.SpeedShoes    // Used to transmit between player and UFO
+#alias Object.Value6	:	HUD.BonusUFOPos   // "Pos" akin to entity pos, not as in X or Y Position
 
 // UFOPowerUp Aliases
-#alias Object.Value0 : UFOPowerUp.ExplosionDir
-#alias Object.Value1 : UFOPowerUp.ExplosionXVel
-#alias Object.Value2 : UFOPowerUp.ExplosionYVel
-#alias Object.Value4 : UFOPowerUp.YVelocity
-#alias Object.Value5 : UFOPowerUp.ScreenDepth
-#alias Object.Value7 : UFOPowerUp.StartResults
+#alias Object.Value0	:	UFOPowerUp.ExplosionDir
+#alias Object.Value1	:	UFOPowerUp.ExplosionXVel
+#alias Object.Value2	:	UFOPowerUp.ExplosionYVel
+#alias Object.Value4	:	UFOPowerUp.YVelocity
+#alias Object.Value5	:	UFOPowerUp.ScreenDepth
+#alias Object.Value7	:	UFOPowerUp.StartResults
 
 // SFX Aliases
-#alias 1 : SFX_RING
+#alias 1	:	SFX_RING
 
 
 sub ObjectMain
@@ -113,8 +113,8 @@ sub ObjectMain
 				if Object.ScreenDepth > 20628
 					
 					// The UFO has to be between -0.125 and +0.125 pixels away from the screen centre
-					if Object.ScreenXPos > -8192
-						if Object.ScreenXPos < 8192
+					if Object.ScreenXPos > -0x2000
+						if Object.ScreenXPos < 0x2000
 							
 							// All those checks passed, let's destroy this UFO!
 							
@@ -126,7 +126,7 @@ sub ObjectMain
 	
 							TempValue1 = TileLayer[0].YPos
 							TempValue1 >>= 8
-							TempValue1 -= 24576
+							TempValue1 -= 0x6000
 							TempValue1 *= 96
 							TempValue1 /= Object.ScreenDepth
 							TempValue1 += 128
@@ -134,12 +134,12 @@ sub ObjectMain
 							
 							// Play the ring SFX
 							PlaySfx(SFX_RING, false)
-							
-#platform: Use_Haptics
+#platform: Use_Standalone
+	#platform: Use_Haptics
 							// Do shake index 55 to really sell the impact of hitting a floating UFO
 							HapticEffect(55, 0, 0, 0)
+	#endplatform
 #endplatform
-							
 							switch Object.PropertyValue
 							case 0
 								// Rings UFO - decrease the UFO count and give some bonus rings
@@ -173,7 +173,7 @@ sub ObjectMain
 							Rand(UFOPowerUp[TempObjectPos].ExplosionDir, 100)
 							UFOPowerUp[TempObjectPos].ExplosionXVel = TempValue0
 							UFOPowerUp[TempObjectPos].ExplosionYVel = TempValue1
-							UFOPowerUp[TempObjectPos].YVelocity = -262144
+							UFOPowerUp[TempObjectPos].YVelocity = -0x40000
 							UFOPowerUp[TempObjectPos].ScreenDepth = 22728
 							
 							// If the last UFO was just destroyed, then signal that to the PowerUp object too
@@ -224,7 +224,7 @@ sub ObjectDraw
 		
 		TempValue1 = TileLayer[0].YPos
 		TempValue1 >>= 8
-		TempValue1 -= 24576
+		TempValue1 -= 0x6000
 		TempValue1 *= 96
 		TempValue1 /= Object.ScreenDepth
 		TempValue1 += 128

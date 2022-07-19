@@ -1,4 +1,4 @@
-//------------Sonic CD BossArmJoint Script-------------//
+//----------------Sonic CD Boss Arm Joint Script--------------//
 //--------Scripted by Christian Whitehead 'The Taxman'--------//
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
@@ -8,6 +8,10 @@
 #alias Object.Value4	:	Object.Charging
 #alias Object.Value5	:	Object.YOffSet
 
+// Shoulder Aliases
+#alias Object.Xpos		:	Shoulder.XPos
+#alias Object.YPos		:	Shoulder.YPos
+
 // States
 #alias 0	:	BOSSARMJOINT_SETUP
 #alias 1	:	BOSSARMJOINT_REPOSITION_F
@@ -16,15 +20,12 @@
 #alias 4	:	BOSSARMJOINT_HANDLE_B_JOINT
 #alias 5	:	BOSSARMJOINT_DESTROYED
 
-// Shoulder Aliases
-#alias Object.Xpos		:	Shoulder.XPos
-#alias Object.YPos		:	Shoulder.YPos
-
 // Priotity
 #alias 0	:	PRIORITY_ACTIVE_BOUNDS
 
 // Function declarations
 #function BossArmJoint_HandleMovement
+
 
 function BossArmJoint_HandleMovement
 	TempValue0 = Object.XOffSet
@@ -44,7 +45,7 @@ function BossArmJoint_HandleMovement
 	Object.YPos = Shoulder[ArrayPos0].YPos
 	Object.YPos += TempValue6
 	if Object.DrawOrder == 2	// Right Arm Joint
-		Object.XPos -= 655360	// 0xA0000
+		Object.XPos -= 0xA0000
 	end if
 end function
 
@@ -56,17 +57,7 @@ sub ObjectMain
 			Object.XOffSet = 128		// Delays the left arm joint
 		end if
 		Object.State = BOSSARMJOINT_REPOSITION_B
-
-		Object.XOffSet -= 2
-		if Object.XOffSet <= 0
-			Object.State = BOSSARMJOINT_HANDLE_F_JOINT
-			Object.XOffSet = 0
-			SetBit(Object.Charging, 0, 1)
-		end if
-		
-		CallFunction(BossArmJoint_HandleMovement)
-		break
-		
+		// Fall Through
 	case BOSSARMJOINT_REPOSITION_F
 		Object.XOffSet -= 2
 		if Object.XOffSet <= 0
@@ -98,10 +89,10 @@ sub ObjectMain
 		break
 
 	case BOSSARMJOINT_DESTROYED
-		Object.XOffSet += 1536	// 0x600
+		Object.XOffSet += 0x600
 		Object.XPos += Object.XOffSet
 
-		Object.YOffSet += 7936	// 0x1F00
+		Object.YOffSet += 0x1F00
 		Object.YPos += Object.YOffSet
 		
 		if Object.OutOfBounds == true
@@ -120,6 +111,7 @@ end sub
 
 sub ObjectStartup
 	LoadSpriteSheet("R1/Objects3.gif")
+
 	SpriteFrame(-8, -8, 16, 16, 124, 34)	// #0 - Arm Joint
 end sub
 

@@ -3,24 +3,24 @@
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
 // Aliases
-#alias Object.Value0 : Object.Stood
-#alias Object.Value1 : Object.DipTimer
-#alias Object.Value2 : Object.MoveY
-#alias Object.Value3 : Object.Timer
-#alias Object.Value4 : Object.YVelocity
-#alias Object.Value5 : Object.StartPosY
+#alias Object.Value0	:	Object.Stood
+#alias Object.Value1	:	Object.DipTimer
+#alias Object.Value2	:	Object.MoveY
+#alias Object.Value3	:	Object.Timer
+#alias Object.Value4	:	Object.YVelocity
+#alias Object.Value5	:	Object.StartPosY
 
 // States
-#alias 0 : FALLPLATFORM_FLOAT
-#alias 1 : FALLPLATFORM_SUSPEND
-#alias 2 : FALLPLATFORM_FALLING
-#alias 3 : FALLPLATFORM_OFFSCREEN
+#alias 0	:	FALLPLATFORM_FLOAT
+#alias 1	:	FALLPLATFORM_SUSPEND
+#alias 2	:	FALLPLATFORM_FALLING
+#alias 3	:	FALLPLATFORM_OFFSCREEN
 
 // Time Period Aliases
-#alias 0 : PERIOD_PRESENT
-#alias 1 : PERIOD_PAST
-#alias 2 : PERIOD_FUTURE_G
-#alias 3 : PERIOD_FUTURE_B
+#alias 0	:	PERIOD_PRESENT
+#alias 1	:	PERIOD_PAST
+#alias 2	:	PERIOD_FUTURE_G
+#alias 3	:	PERIOD_FUTURE_B
 
 
 sub ObjectMain
@@ -42,7 +42,7 @@ sub ObjectMain
 			
 			if TempValue0 == 3
 				// Dip a pixel down
-				Object.MoveY = 65536
+				Object.MoveY = 0x10000
 			else
 				Object.MoveY = 0
 			end if
@@ -60,7 +60,7 @@ sub ObjectMain
 			
 			if TempValue0 == 3
 				// Recover a pixel upwards again
-				Object.MoveY = -65536
+				Object.MoveY = -0x10000
 			else
 				Object.MoveY = 0
 			end if
@@ -92,8 +92,8 @@ sub ObjectMain
 	case FALLPLATFORM_FALLING
 		// If the Object yet hasn't reached a Y Velocity of 4 pixels per frame,
 		// then accelerate at a rate of 0.125 pixels per frame
-		if Object.YVelocity < 262144
-			Object.YVelocity += 8192
+		if Object.YVelocity < 0x40000
+			Object.YVelocity += 0x2000
 		end if
 		
 		// Move the Platform
@@ -336,7 +336,7 @@ sub RSDKDraw
 		// Draw an arrow pointing down to show that this Platform is of the falling type
 		
 		TempValue0 = Object.YPos
-		TempValue0 += 3145728
+		TempValue0 += 0x300000
 		
 		DrawArrow(Object.XPos, Object.YPos, Object.XPos, TempValue0, 255, 255, 255)
 		

@@ -3,20 +3,20 @@
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
 // Aliases
-#alias Object.Value0 : Object.Angle
-#alias Object.Value1 : Object.PlatformX
-#alias Object.Value2 : Object.PlatformY
-#alias Object.Value3 : Object.ChangeX
-#alias Object.Value4 : Object.ChangeY
-#alias Object.Value5 : Object.SwingAngle
-#alias Object.Value6 : Object.ChainsNo
+#alias Object.Value0	:	Object.Angle
+#alias Object.Value1	:	Object.PlatformX
+#alias Object.Value2	:	Object.PlatformY
+#alias Object.Value3	:	Object.ChangeX
+#alias Object.Value4	:	Object.ChangeY
+#alias Object.Value5	:	Object.SwingAngle
+#alias Object.Value6	:	Object.ChainsNo
 
-#alias 0 : RPLATFORM_FULL_CW_SLOWAPEX
-#alias 1 : RPLATFORM_FULL_CW
-#alias 2 : RPLATFORM_FULL_CCW
-#alias 3 : RPLATFORM_TOP180
-#alias 4 : RPLATFORM_RIGHT180
-#alias 5 : RPLATFORM_BOTTOM180
+#alias 0	:	RPLATFORM_FULL_CW_SLOWAPEX
+#alias 1	:	RPLATFORM_FULL_CW
+#alias 2	:	RPLATFORM_FULL_CCW
+#alias 3	:	RPLATFORM_TOP180
+#alias 4	:	RPLATFORM_RIGHT180
+#alias 5	:	RPLATFORM_BOTTOM180
 
 
 sub ObjectMain
@@ -86,14 +86,14 @@ sub ObjectMain
 	Object.ChangeX *= TempValue1
 	Object.ChangeX <<= 7
 	Object.ChangeX += Object.XPos
-	Object.ChangeX &= 4294901760 // Truncating to the iXpos, the number is 0xFFFF0000
+	Object.ChangeX &= 0xFFFF0000 // Truncating to the iXpos, the number is 0xFFFF0000
 	Object.ChangeX -= Object.PlatformX
 
 	Sin(Object.ChangeY, Object.Angle)
 	Object.ChangeY *= TempValue1
 	Object.ChangeY <<= 7
 	Object.ChangeY += Object.YPos
-	Object.ChangeY &= 4294901760 // Same as above, this 0xFFFF0000 number is truncating the YPos
+	Object.ChangeY &= 0xFFFF0000 // Same as above, this 0xFFFF0000 number is truncating the YPos
 	Object.ChangeY -= Object.PlatformY
 
 end sub
@@ -133,7 +133,7 @@ sub ObjectPlayerInteraction
 					FlipSign(TempValue3)
 				end if
 
-				if TempValue3 < 393216
+				if TempValue3 < 0x60000
 					if Player.Gravity == 0
 						CallFunction(PlayerObject_Kill)
 					end if
@@ -162,7 +162,7 @@ sub ObjectPlayerInteraction
 				if TempValue3 < 0
 					FlipSign(TempValue3)
 				end if
-				if TempValue3 < 393216
+				if TempValue3 < 0x60000
 					if Player.Gravity == 0
 						CallFunction(PlayerObject_Kill)
 					end if
@@ -222,14 +222,14 @@ sub ObjectDraw
 	Object.PlatformX *= TempValue1
 	Object.PlatformX <<= 7
 	Object.PlatformX += Object.XPos
-	Object.PlatformX &= 4294901760 // Rounding to iXPos, getting rid of the subpixels inbetween
+	Object.PlatformX &= 0xFFFF0000 // Rounding to iXPos, getting rid of the subpixels inbetween
 
 	// And then find the Y
 	Sin(Object.PlatformY, Object.Angle)
 	Object.PlatformY *= TempValue1
 	Object.PlatformY <<= 7
 	Object.PlatformY += Object.YPos
-	Object.PlatformY &= 4294901760 // Same as above
+	Object.PlatformY &= 0xFFFF0000 // Same as above
 
 	DrawSpriteXY(2, Object.PlatformX, Object.PlatformY)
 	
@@ -393,13 +393,13 @@ sub RSDKDraw
 	TempValue0 *= TempValue1
 	TempValue0 <<= 7
 	TempValue0 += Object.XPos
-	TempValue0 &= 4294901760
+	TempValue0 &= 0xFFFF0000
 
 	Sin(TempValue2, Object.Angle)
 	TempValue2 *= TempValue1
 	TempValue2 <<= 7
 	TempValue2 += Object.YPos
-	TempValue2 &= 4294901760
+	TempValue2 &= 0xFFFF0000
 
 	DrawSpriteXY(2, TempValue0, TempValue2)
 end sub

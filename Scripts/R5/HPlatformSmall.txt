@@ -4,24 +4,24 @@
 
 // Aliases
 
-#alias Object.Value0 : Object.Pressed
+#alias Object.Value0	:	Object.Pressed
 
-#alias Object.Value1 : Object.PlatformY
-#alias Object.Value2 : Object.ChangeY
+#alias Object.Value1	:	Object.PlatformY
+#alias Object.Value2	:	Object.ChangeY
 
-#alias Object.Value3 : Object.PlatformX
-#alias Object.Value4 : Object.ChangeX
+#alias Object.Value3	:	Object.PlatformX
+#alias Object.Value4	:	Object.ChangeX
 
-#alias Object.Value5 : Object.Angle
-#alias Object.Value6 : Object.Oscillation
+#alias Object.Value5	:	Object.Angle
+#alias Object.Value6	:	Object.Oscillation
 
-#alias Object.Value7 : Object.Cooldown
+#alias Object.Value7	:	Object.Cooldown
 
 // Time Period Aliases
-#alias 0 : PERIOD_PRESENT
-#alias 1 : PERIOD_PAST
-#alias 2 : PERIOD_FUTURE_G
-#alias 3 : PERIOD_FUTURE_B
+#alias 0	:	PERIOD_PRESENT
+#alias 1	:	PERIOD_PAST
+#alias 2	:	PERIOD_FUTURE_G
+#alias 3	:	PERIOD_FUTURE_B
 
 
 sub ObjectMain
@@ -44,29 +44,29 @@ sub ObjectMain
 	case 0
 	case 2
 		// Going Right Platform
-		Object.ChangeX *= 6144
-		Object.ChangeX += 3145728
+		Object.ChangeX *= 0x1800
+		Object.ChangeX += 0x300000
 		Object.ChangeX += Object.XPos
-		Object.ChangeX &= 4294901760
+		Object.ChangeX &= 0xFFFF0000
 		Object.ChangeX -= Object.PlatformX
 		break
 		
 	case 3
 	case 5
 		// Going Left Platform
-		Object.ChangeX *= -6144
-		Object.ChangeX -= 3145728
+		Object.ChangeX *= -0x1800
+		Object.ChangeX -= 0x300000
 		Object.ChangeX += Object.XPos
-		Object.ChangeX &= 4294901760
+		Object.ChangeX &= 0xFFFF0000
 		Object.ChangeX -= Object.PlatformX
 		break
 		
 	case 1
 		// Going Right Platform, carrying an Object
-		Object.ChangeX *= 6144
-		Object.ChangeX += 3145728
+		Object.ChangeX *= 0x1800
+		Object.ChangeX += 0x300000
 		Object.ChangeX += Object.XPos
-		Object.ChangeX &= 4294901760
+		Object.ChangeX &= 0xFFFF0000
 		
 		// Move the following Object along with the Platform
 		Object[+1].XPos = Object.ChangeX
@@ -81,10 +81,10 @@ sub ObjectMain
 		
 	case 4
 		// Platform going Left, with a rider Object
-		Object.ChangeX *= -6144
-		Object.ChangeX -= 3145728
+		Object.ChangeX *= -0x1800
+		Object.ChangeX -= 0x300000
 		Object.ChangeX += Object.XPos
-		Object.ChangeX &= 4294901760
+		Object.ChangeX &= 0xFFFF0000
 		
 		// Move the riding Object to match this Platform
 		Object[+1].XPos = Object.ChangeX
@@ -107,7 +107,7 @@ sub ObjectMain
 			TempValue0 &= 3
 			if TempValue0 == 3
 				// Move down a pixel
-				Object.ChangeY = 65536
+				Object.ChangeY = 0x10000
 			else
 				Object.ChangeY = 0
 			end if
@@ -121,7 +121,7 @@ sub ObjectMain
 			TempValue0 &= 3
 			if TempValue0 == 3
 				// Recover back up a pixel
-				Object.ChangeY = -65536
+				Object.ChangeY = -0x10000
 			else
 				Object.ChangeY = 0
 			end if
@@ -229,20 +229,20 @@ sub ObjectDraw
 	case 1
 		// Right-moving Platform
 		Sin(Object.PlatformX, Object.Angle)
-		Object.PlatformX *= 6144
-		Object.PlatformX += 3145728
+		Object.PlatformX *= 0x1800
+		Object.PlatformX += 0x300000
 		Object.PlatformX += Object.XPos
-		Object.PlatformX &= 4294901760
+		Object.PlatformX &= 0xFFFF0000
 		DrawSpriteXY(0, Object.PlatformX, Object.YPos)
 		break
 		
 	case 2
 		// Right-moving Conveyor Platform
 		Sin(Object.PlatformX, Object.Angle)
-		Object.PlatformX *= 6144
-		Object.PlatformX += 3145728
+		Object.PlatformX *= 0x1800
+		Object.PlatformX += 0x300000
 		Object.PlatformX += Object.XPos
-		Object.PlatformX &= 4294901760
+		Object.PlatformX &= 0xFFFF0000
 		DrawSpriteXY(0, Object.PlatformX, Object.YPos)
 		DrawSpriteXY(1, Object.PlatformX, Object.YPos)
 		break
@@ -251,20 +251,20 @@ sub ObjectDraw
 	case 4
 		// Left-moving Platform
 		Sin(Object.PlatformX, Object.Angle)
-		Object.PlatformX *= -6144
-		Object.PlatformX -= 3145728
+		Object.PlatformX *= -0x1800
+		Object.PlatformX -= 0x300000
 		Object.PlatformX += Object.XPos
-		Object.PlatformX &= 4294901760
+		Object.PlatformX &= 0xFFFF0000
 		DrawSpriteXY(0, Object.PlatformX, Object.YPos)
 		break
 		
 	case 5
 		// Left-moving Conveyor Platform
 		Sin(Object.PlatformX, Object.Angle)
-		Object.PlatformX *= -6144
-		Object.PlatformX -= 3145728
+		Object.PlatformX *= -0x1800
+		Object.PlatformX -= 0x300000
 		Object.PlatformX += Object.XPos
-		Object.PlatformX &= 4294901760
+		Object.PlatformX &= 0xFFFF0000
 		DrawSpriteXY(0, Object.PlatformX, Object.YPos)
 		DrawSpriteXY(1, Object.PlatformX, Object.YPos)
 		break
@@ -345,22 +345,22 @@ sub RSDKDraw
 	default
 	case 0
 	case 1
-		TempValue0 = 6144
-		TempValue1 = 3145728
+		TempValue0 = 0x1800
+		TempValue1 = 0x300000
 		break
 		
 	case 5
 		TempValue2 = 1
 	case 3
 	case 4
-		TempValue0 = -6144
-		TempValue1 = -3145728
+		TempValue0 = -0x1800
+		TempValue1 = -0x300000
 		break
 		
 	end switch
 	
 	TempValue3 = Object.XPos
-	TempValue3 &= 4294901760
+	TempValue3 &= 0xFFFF0000
 	DrawSpriteXY(0, TempValue3, Object.YPos)
 	DrawSpriteXY(TempValue2, TempValue3, Object.YPos)
 	
@@ -371,7 +371,7 @@ sub RSDKDraw
 		TempValue4 *= TempValue0
 		TempValue4 += TempValue1
 		TempValue4 += Object.XPos
-		TempValue4 &= 4294901760
+		TempValue4 &= 0xFFFF0000
 		
 		Editor.DrawingOverlay = true
 		

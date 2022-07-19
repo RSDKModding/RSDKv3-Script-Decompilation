@@ -3,17 +3,17 @@
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
 // Aliases
-#alias Object.Value0 : Object.Angle
-#alias Object.Value1 : Object.PlatformX
-#alias Object.Value2 : Object.PlatformY
-#alias Object.Value3 : Object.ChangeX
-#alias Object.Value4 : Object.ChangeY
+#alias Object.Value0	:	Object.Angle
+#alias Object.Value1	:	Object.PlatformX
+#alias Object.Value2	:	Object.PlatformY
+#alias Object.Value3	:	Object.ChangeX
+#alias Object.Value4	:	Object.ChangeY
 
 // Time Period Aliases
-#alias 0 : PERIOD_PRESENT
-#alias 1 : PERIOD_PAST
-#alias 2 : PERIOD_FUTURE_G
-#alias 3 : PERIOD_FUTURE_B
+#alias 0	:	PERIOD_PRESENT
+#alias 1	:	PERIOD_PAST
+#alias 2	:	PERIOD_FUTURE_G
+#alias 3	:	PERIOD_FUTURE_B
 
 
 sub ObjectMain
@@ -23,9 +23,9 @@ sub ObjectMain
 	
 	if Object.Angle > 0
 		Object.ChangeX = Object.Angle
-		Object.ChangeX *= -16384
+		Object.ChangeX *= -0x4000
 		Object.ChangeX += Object.XPos
-		Object.ChangeX &= 4294901760
+		Object.ChangeX &= 0xFFFF0000
 		Object.ChangeX -= Object.PlatformX
 	else
 		Object.ChangeX = 0
@@ -34,7 +34,7 @@ sub ObjectMain
 	Cos(Object.ChangeY, Object.Angle)
 	Object.ChangeY *= 12288
 	Object.ChangeY += Object.YPos
-	Object.ChangeY &= 4294901760
+	Object.ChangeY &= 0xFFFF0000
 	Object.ChangeY -= Object.PlatformY
 	
 end sub
@@ -74,14 +74,14 @@ end sub
 sub ObjectDraw
 	
 	Object.PlatformX = Object.Angle
-	Object.PlatformX *= -16384
+	Object.PlatformX *= -0x4000
 	Object.PlatformX += Object.XPos
-	Object.PlatformX &= 4294901760
+	Object.PlatformX &= 0xFFFF0000
 	
 	Cos(Object.PlatformY, Object.Angle)
 	Object.PlatformY *= 12288
 	Object.PlatformY += Object.YPos
-	Object.PlatformY &= 4294901760
+	Object.PlatformY &= 0xFFFF0000
 	
 	DrawSpriteXY(0, Object.PlatformX, Object.PlatformY)
 	DrawSpriteXY(1, Object.PlatformX, Object.PlatformY)
@@ -125,11 +125,11 @@ end sub
 
 sub RSDKDraw
 	TempValue1 = Object.XPos
-	TempValue1 &= 4294901760
+	TempValue1 &= 0xFFFF0000
 	Cos(TempValue2, 0)
 	TempValue2 *= 12288
 	TempValue2 += Object.YPos
-	TempValue2 &= 4294901760
+	TempValue2 &= 0xFFFF0000
 	DrawSpriteXY(0, TempValue1, TempValue2)
 	DrawSpriteXY(1, TempValue1, TempValue2)
 end sub

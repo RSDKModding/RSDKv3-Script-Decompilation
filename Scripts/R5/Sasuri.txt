@@ -3,22 +3,22 @@
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
 // Aliases
-#alias Object.Value0 : Object.MoveTimer
-#alias Object.Value1 : Object.CannonTimer
+#alias Object.Value0	:	Object.MoveTimer
+#alias Object.Value1	:	Object.CannonTimer
 
-#alias 0 : SASURI_FINDGROUND
-#alias 1 : SASURI_CRAWLLEFT
-#alias 2 : SASURI_CRAWLRIGHT
-#alias 3 : SASURI_SPOTPLAYER
-#alias 4 : SASURI_SHOOT
-#alias 5 : SASURI_RETRACTCANNON
+#alias 0	:	SASURI_FINDGROUND
+#alias 1	:	SASURI_CRAWLLEFT
+#alias 2	:	SASURI_CRAWLRIGHT
+#alias 3	:	SASURI_SPOTPLAYER
+#alias 4	:	SASURI_SHOOT
+#alias 5	:	SASURI_RETRACTCANNON
 
 // Badnik Conditions (Property Values)
-#alias 0 : BADNIK_GOOD
-#alias 1 : BADNIK_BAD
+#alias 0	:	BADNIK_GOOD
+#alias 1	:	BADNIK_BAD
 
 // Sasuri Bullet (SBullet) Aliases
-#alias Object.Value1 : Object.XVelocity
+#alias Object.Value1	:	Object.XVelocity
 
 
 sub ObjectMain
@@ -39,14 +39,14 @@ sub ObjectMain
 				Object.State = SASURI_CRAWLLEFT
 			else
 				// If there isn't, then move a pixel down and try again next frame
-				Object.YPos += 65536
+				Object.YPos += 0x10000
 			end if
 			break
 			
 		case SASURI_CRAWLLEFT
 			
 			// Move the Sasuri left by one pixel
-			Object.XPos -= 65536
+			Object.XPos -= 0x10000
 			
 			// Increment its movement timer as well, and see if it's time to turn around now
 			Object.MoveTimer--
@@ -68,7 +68,7 @@ sub ObjectMain
 		case SASURI_CRAWLRIGHT
 			
 			// Move the Sasuri one pixel right
-			Object.XPos += 65536
+			Object.XPos += 0x10000
 			
 			// As with above, do timer stuff and see if the Sasuri should turn around now
 			Object.MoveTimer++
@@ -111,10 +111,10 @@ sub ObjectMain
 					// Move it 24 pixels in the Sasuri's direction, as well as giving it a velocity of 3px per frame in that very same direction too
 					if Object.Direction == FACING_RIGHT
 						Object[TempObjectPos].XPos -= 458752
-						Object[TempObjectPos].XVelocity = -196608
+						Object[TempObjectPos].XVelocity = -0x30000
 					else
 						Object[TempObjectPos].XPos += 458752
-						Object[TempObjectPos].XVelocity = 196608
+						Object[TempObjectPos].XVelocity = 0x30000
 					end if
 					
 					// Move the Sasuri up a Draw Order in order to make it drawn on top of the shot Bullet
@@ -164,14 +164,14 @@ sub ObjectMain
 				Object.State = SASURI_CRAWLLEFT
 			else
 				// If collision wasn't found, however, then move a pixel down and wait 'till next frame
-				Object.YPos += 65536
+				Object.YPos += 0x10000
 			end if
 			break
 			
 		case SASURI_CRAWLLEFT
 			
 			// Move at a rate of half a pixel left per frame
-			Object.XPos -= 32768
+			Object.XPos -= 0x8000
 			
 			// Allow the Sasuri to advance for 2 and two-thirds seconds before turning around
 			Object.MoveTimer--
@@ -192,7 +192,7 @@ sub ObjectMain
 		case SASURI_CRAWLRIGHT
 			
 			// Just like before, move the Sasuri at a 0.5px rate, but this time to the right
-			Object.XPos += 32768
+			Object.XPos += 0x8000
 			
 			// Same timing of 2 and two-thirds seconds, though do note that the Move Timer will likely be -160 when entering this state
 			// so the time is doubled

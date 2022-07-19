@@ -43,8 +43,11 @@ sub ObjectMain
 			PlayStageSfx(3, 0)
 			Object.FallSpeed = 0
 			Object.YVelocity = 0
-#platform: Use_Haptics
+
+#platform: Use_Standalone
+	#platform: Use_Haptics
 			HapticEffect(96, 0, 0, 0)
+	#endplatform
 #endplatform
 		end if
 	else
@@ -54,13 +57,16 @@ sub ObjectMain
 				PlayerObjectCollision(C_TOUCH, -16, -512, 16, 512)
 				if CheckResult == true
 					Object.FallSpeed = 3584
-#platform: Use_Haptics
+					
+#platform: Use_Standalone
+	#platform: Use_Haptics
 					HapticEffect(44, 0, 0, 0)
+	#endplatform
 #endplatform
 				else
 					Object.FallSpeed = 2816
 				end if
-				Object.YVelocity = -393216
+				Object.YVelocity = -0x60000
 			end if
 		end if
 
@@ -83,7 +89,7 @@ sub ObjectPlayerInteraction
 		PlayerObjectCollision(C_BOX, -16, -18, 16, 16)
 		if CheckResult == FLOOR
 			Player.YPos += Object.FloorYPos
-			Player.YPos += 131072
+			Player.YPos += 0x20000
 		else
 			if Object.FallSpeed > 0
 				if CheckResult == ROOF
@@ -96,7 +102,7 @@ sub ObjectPlayerInteraction
 
 			PlayerObjectCollision(C_TOUCH, -16, -32, 16, 16)
 			if CheckResult == true
-				if Player.YVelocity < -262144
+				if Player.YVelocity < -0x40000
 					if Player.JumpPress == true
 						TempValue1 = Object.YVelocity
 						TempValue1 >>= 1

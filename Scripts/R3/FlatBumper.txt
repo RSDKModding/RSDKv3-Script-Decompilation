@@ -37,9 +37,9 @@ sub ObjectMain
 
 			Object.Timer++
 			if Object.PropertyValue == FLATBUMPER_MOVE_H
-				Object.XPos += 65536	// 0x10000
+				Object.XPos += 0x10000	// 0x10000
 			else
-				Object.YPos += 65536	// 0x10000
+				Object.YPos += 0x10000	// 0x10000
 			end if
 
 		else
@@ -53,9 +53,9 @@ sub ObjectMain
 
 			Object.Timer--
 			if Object.PropertyValue == FLATBUMPER_MOVE_H
-				Object.XPos -= 65536	// 0x10000
+				Object.XPos -= 0x10000	// 0x10000
 			else
-				Object.YPos -= 65536	// 0x10000
+				Object.YPos -= 0x10000	// 0x10000
 			end if
 
 		else
@@ -78,7 +78,7 @@ sub ObjectPlayerInteraction
 	switch CheckResult
 	case FLOOR
 		if Player.State == PlayerObject_HandleTailsFlight
-			Player.YVelocity = -262144	// -0x40000
+			Player.YVelocity = -0x40000	// -0x40000
 		else
 			Player.YVelocity = -458752	// -0x70000
 			Player.Timer = 0
@@ -89,7 +89,7 @@ sub ObjectPlayerInteraction
 
 	case ROOF
 		if Player.State == PlayerObject_HandleTailsFlight
-			Player.YVelocity = 262144	// 0x40000
+			Player.YVelocity = 0x40000	// 0x40000
 		else
 			Player.YVelocity = 458752	// 0x70000
 			Player.Timer = 0
@@ -116,7 +116,7 @@ sub ObjectPlayerInteraction
 	PlayerObjectCollision(C_TOUCH, -16, -14, 16, 0)	// Check if you collided with the center from the top
 	if CheckResult == true
 		if Player.State == PlayerObject_HandleTailsFlight
-			Player.YVelocity = -262144	// -0x40000
+			Player.YVelocity = -0x40000	// -0x40000
 		else
 			Player.YVelocity = -458752	// -0x70000
 			Player.Timer = 0
@@ -128,7 +128,7 @@ sub ObjectPlayerInteraction
 	PlayerObjectCollision(C_TOUCH, -16, 0, 16, 14)	// Check if you collided with the center from the bottom
 	if CheckResult == true
 		if Player.State == PlayerObject_HandleTailsFlight
-			Player.YVelocity = 262144	// 0x40000
+			Player.YVelocity = 0x40000	// 0x40000
 		else
 			Player.YVelocity = 458752	// 0x70000
 			Player.Timer = 0
@@ -139,6 +139,12 @@ sub ObjectPlayerInteraction
 
 	if TempValue0 == true
 		PlayStageSfx(1, 0)
+				
+#platform: Use_Standalone
+	#platform: Use_Haptics
+		HapticEffect(10, 0, 0, 0)
+	#endplatform
+#endplatform
 	end if
 end sub
 

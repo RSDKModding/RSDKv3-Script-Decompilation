@@ -7,8 +7,8 @@
 #alias Object.Value1		:	Object.XVelocity
 #alias Object.Value2		:	Object.YVelocity
 #alias Object.Value3		:	Object.FrameTimer
-#alias Object.Value4		:	Object.OriginPos.X
-#alias Object.Value5		:	Object.OriginPos.Y
+#alias Object.Value4		:	Object.XOriginPos
+#alias Object.Value5		:	Object.YOriginPos
 #alias Object.PropertyValue	:	Object.Quality
 
 // States
@@ -40,8 +40,8 @@ sub ObjectMain
 			
 			Object.Priority = PRIORITY_ACTIVE
 
-			Object.OriginPos.X = Object.XPos
-			Object.OriginPos.Y = Object.YPos
+			Object.XOriginPos = Object.XPos
+			Object.YOriginPos = Object.YPos
 		end if
 		break
 
@@ -66,10 +66,10 @@ sub ObjectMain
 
 		else
 			if Object.XPos > Player.XPos
-				Object.XVelocity = -32768	// -0x8000
+				Object.XVelocity = -0x8000	// -0x8000
 				Object.Direction = FACING_RIGHT
 			else
-				Object.XVelocity = 32768	// 0x8000
+				Object.XVelocity = 0x8000	// 0x8000
 				Object.Direction = FACING_LEFT
 			end if
 
@@ -81,7 +81,7 @@ sub ObjectMain
 				Object.XVelocity >>= 1
 			end if
 
-			Object.YVelocity = 32768	// 0x8000
+			Object.YVelocity = 0x8000	// 0x8000
 		end if
 
 		if Object.OutOfBounds == true
@@ -89,8 +89,8 @@ sub ObjectMain
 
 			Object.Timer = 0
 
-			Object.XPos = Object.OriginPos.X
-			Object.YPos = Object.OriginPos.Y
+			Object.XPos = Object.XOriginPos
+			Object.YPos = Object.YOriginPos
 		end if
 		break
 
@@ -124,8 +124,8 @@ sub ObjectMain
 		if Object.OutOfBounds == true
 			Object.State = MOTH_RESPAWN
 			Object.Timer = 0
-			Object.XPos = Object.OriginPos.X
-			Object.YPos = Object.OriginPos.Y
+			Object.XPos = Object.XOriginPos
+			Object.YPos = Object.YOriginPos
 		end if
 		break
 

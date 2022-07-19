@@ -1,4 +1,4 @@
-//------------Sonic CD Player Object Script-------------//
+//----------------Sonic CD Player Object Script---------------//
 //--------Scripted by Christian Whitehead 'The Taxman'--------//
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
@@ -21,8 +21,8 @@
 #alias Player.Value15	:	Player.FlightGravity
 
 // Player List Pos Aliases
-#alias 0 : PLAYER_SONIC
-#alias 1 : PLAYER_TAILS
+#alias 0	:	PLAYER_SONIC
+#alias 1	:	PLAYER_TAILS
 
 // Flailing states, v4 names explains this much better
 #alias Player.Flailing[0]	:	Player.FloorSensorL
@@ -222,6 +222,13 @@ function PlayerObject_BadnikBreak
 			Player.Score += 1000
 			break
 		end switch
+				
+#platform: Use_Standalone
+	#platform: Use_Haptics
+		HapticEffect(10, 0, 0, 0)
+	#endplatform
+#endplatform
+
 #platform: Use_Origins
 		TempValue0 = 0
 		game.callbackParam0 = 0
@@ -290,6 +297,12 @@ function PlayerObject_Kill
 	Player.TileCollisions = false
 	Player.ObjectInteraction = false
 	Screen.CameraEnabled = false
+				
+#platform: Use_Standalone
+	#platform: Use_Haptics
+		HapticEffect(28, 0, 0, 0)
+	#endplatform
+#endplatform
 
 end function
 
@@ -1437,6 +1450,12 @@ function PlayerObject_StartSpindashS2
 	Object[TempObjectPos].Frame = 4
 	Object[TempObjectPos].DrawOrder = 4
 	Object[TempObjectPos].Direction = Player.Direction
+				
+#platform: Use_Standalone
+	#platform: Use_Haptics
+		HapticEffect(112, 0, 0, 0)
+	#endplatform
+#endplatform
 end function
 
 // Not so classic, but the actual spindash is set here, this only starts it
@@ -1446,6 +1465,12 @@ function PlayerObject_StartSpindashCD
 	Player.YPos += 0x50000
 	Player.AbilityTimer = 0
 	PlaySfx(6, 0)
+				
+#platform: Use_Standalone
+	#platform: Use_Haptics
+		HapticEffect(112, 0, 0, 0)
+	#endplatform
+#endplatform
 end function
 
 // um yesh, Sonic 2 Peel Out, this just starts it
@@ -1453,6 +1478,12 @@ function PlayerObject_StartPeeloutS2
 	Player.State = PlayerObject_HandlePeeloutS2
 	Player.AbilityTimer = 0
 	PlaySfx(6, 0)
+				
+#platform: Use_Standalone
+	#platform: Use_Haptics
+		HapticEffect(115, 0, 0, 0)
+	#endplatform
+#endplatform
 end function
 
 // A true classic, this just starts it tho
@@ -1460,6 +1491,12 @@ function PlayerObject_StartPeeloutCD
 	Player.State = PlayerObject_HandlePeeloutCD
 	Player.AbilityTimer = 0
 	PlaySfx(6, 0)
+				
+#platform: Use_Standalone
+	#platform: Use_Haptics
+		HapticEffect(115, 0, 0, 0)
+	#endplatform
+#endplatform
 end function
 
 // Starts flying state
@@ -1631,6 +1668,12 @@ function PlayerObject_HandleSpindashS2
 		PlaySfx(7, 0)
 
 		CallFunction(PlayerObject_ResetOnFloor)
+				
+#platform: Use_Standalone
+	#platform: Use_Haptics
+		HapticEffect(42, 0, 0, 0)
+	#endplatform
+#endplatform
 	end if
 end function
 
@@ -1682,6 +1725,12 @@ function PlayerObject_HandleSpindashCD
 			PlaySfx(7, 0)
 		end if
 		CallFunction(PlayerObject_ResetOnFloor)
+				
+#platform: Use_Standalone
+	#platform: Use_Haptics
+		HapticEffect(42, 0, 0, 0)
+	#endplatform
+#endplatform
 	end if
 end function
 
@@ -1743,6 +1792,12 @@ function PlayerObject_HandlePeeloutS2
 			PlaySfx(7, 0)
 		end if
 		CallFunction(PlayerObject_ResetOnFloor)
+				
+#platform: Use_Standalone
+	#platform: Use_Haptics
+		HapticEffect(42, 0, 0, 0)
+	#endplatform
+#endplatform
 	end if
 	Player.AnimationSpeed = TempValue0
 end function
@@ -1812,6 +1867,12 @@ function PlayerObject_HandlePeeloutCD
 			PlaySfx(7, 0)
 		end if
 		CallFunction(PlayerObject_ResetOnFloor)
+				
+#platform: Use_Standalone
+	#platform: Use_Haptics
+		HapticEffect(42, 0, 0, 0)
+	#endplatform
+#endplatform
 	end if
 	Player.AnimationSpeed = TempValue0
 end function
@@ -1919,6 +1980,13 @@ function PlayerObject_Hurt
 
 	switch TempValue0
 	case DAMAGE_SHIELDED
+				
+#platform: Use_Standalone
+	#platform: Use_Haptics
+		HapticEffect(16, 0, 0, 0)
+	#endplatform
+#endplatform
+
 		Player.State = PlayerObject_Knockback
 		Player.Animation = ANI_HURT
 		Player.YVelocity = -0x40000
@@ -1932,6 +2000,13 @@ function PlayerObject_Hurt
 		break
 
 	case DAMAGE_HURT
+				
+#platform: Use_Standalone
+	#platform: Use_Haptics
+		HapticEffect(16, 0, 0, 0)
+	#endplatform
+#endplatform
+
 		if Player.CollisionPlane == COLLISION_PLANEA
 			TempValue4 = 3
 		else
@@ -2018,6 +2093,13 @@ function PlayerObject_Hurt
 		break
 
 	case DAMAGE_DEATH
+				
+#platform: Use_Standalone
+	#platform: Use_Haptics
+		HapticEffect(28, 0, 0, 0)
+	#endplatform
+#endplatform
+
 		Object.DrawOrder = 5
 		Player.Speed = 0
 		Player.YVelocity = -0x70000
@@ -2794,9 +2876,18 @@ sub ObjectMain
 			end if
 		end if
 	else
-			// Handle Player
+		// Handle Player
 		CallFunction(PlayerObject_ProcessPlayer)
 		CallFunction(Player.State)
+#platform: Use_Origins
+		if Player.DropDashCharge >= 20
+			if Player.Animation == ANI_JUMPING
+				Player.Frame = 0
+				Player.AnimationTimer = 0
+				Player.AnimationSpeed = 1
+			endif
+		endif
+#endplatform
 		ProcessAnimation()
 
 		if Player.Animation == ANI_JUMPING

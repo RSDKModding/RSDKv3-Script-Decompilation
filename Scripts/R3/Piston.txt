@@ -62,8 +62,8 @@ sub ObjectMain
 		break
 
 	case PISTON_EMERGE
-		if Object.YOffSet < 2097152
-			Object.YOffSet += 524288
+		if Object.YOffSet < 0x200000
+			Object.YOffSet += 0x80000
 		else
 			Object.State = PISTON_FIRE
 		end if
@@ -79,18 +79,18 @@ sub ObjectMain
 				case PROPVAL_BAD_FUTURE
 					CreateTempObject(TypeName[Fireball], 0, Object.XPos, Object.YPos)
 					Object[TempObjectPos].XPos -= 1572864
-					Object[TempObjectPos].YPos -= 1310720
+					Object[TempObjectPos].YPos -= 0x140000
 					Object[TempObjectPos].Fade = 64
-					Object[TempObjectPos].XVelocity = -65536
+					Object[TempObjectPos].XVelocity = -0x10000
 					Object[TempObjectPos].InkEffect = INK_ALPHA
 					Object[TempObjectPos].Alpha = 255
 					Object[TempObjectPos].Frame = 0
 
 					CreateTempObject(TypeName[Fireball], 0, Object.XPos, Object.YPos)
 					Object[TempObjectPos].XPos += 1572864
-					Object[TempObjectPos].YPos -= 1310720
+					Object[TempObjectPos].YPos -= 0x140000
 					Object[TempObjectPos].Fade = 64
-					Object[TempObjectPos].XVelocity = 65536
+					Object[TempObjectPos].XVelocity = 0x10000
 					Object[TempObjectPos].InkEffect = INK_ALPHA
 					Object[TempObjectPos].Alpha = 255
 					Object[TempObjectPos].Frame = 1
@@ -107,7 +107,7 @@ sub ObjectMain
 
 	case PISTON_HIDE
 		if Object.YOffSet > 0
-			Object.YOffSet -= 262144
+			Object.YOffSet -= 0x40000
 		else
 			Object.State = PISTON_DETECT_PLAYER
 		end if
@@ -118,7 +118,7 @@ end sub
 
 
 sub ObjectPlayerInteraction
-	TempValue0 = -786432	// -0xC0000
+	TempValue0 = -0xC0000	// -0xC0000
 	TempValue0 -= Object.YOffSet
 	TempValue0 >>= 16
 	PlayerObjectCollision(C_BOX, -16, -12, 16, 16)
@@ -126,7 +126,7 @@ sub ObjectPlayerInteraction
 	// if the player is on top when the piston emerges, launch it to the sky
 	if CheckResult == true
 
-		if Object.YOffSet == 2097152		// 0x200000
+		if Object.YOffSet == 0x200000		// 0x200000
 
 			if Object.State == PISTON_EMERGE
 				Player.YVelocity = -458752	// -0x70000

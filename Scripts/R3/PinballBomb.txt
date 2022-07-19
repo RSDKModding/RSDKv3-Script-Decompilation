@@ -15,9 +15,9 @@
 
 
 sub ObjectMain
-	Object.YVelocity += 8192		// 0x2000
+	Object.YVelocity += 0x2000		// 0x2000
 	// if the bomb goes fast enough, get to the background, don't ask why
-	if Object.YVelocity > 262144	// 0x40000
+	if Object.YVelocity > 0x40000	// 0x40000
 		Object.DrawOrder = 3
 	end if
 	Object.XPos += Object.XVelocity
@@ -54,8 +54,10 @@ sub ObjectPlayerInteraction
 	PlayerObjectCollision(C_TOUCH, -8, -8, 8, 8)
 	if CheckResult == true
 		PlaySfx(22, 0)
-#platform: Use_Haptics
+#platform: Use_Standalone
+	#platform: Use_Haptics
 		HapticEffect(96, 0, 0, 0)
+	#endplatform
 #endplatform
 		ResetObjectEntity(Object.EntityNo, TypeName[Explosion], 0, Object.XPos, Object.YPos)
 		Object.Priority = 1

@@ -3,24 +3,24 @@
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
 // Aliases
-#alias Object.Value0 : Object.DrawPosY
+#alias Object.Value0	:	Object.DrawPosY
 
-#alias 0 : VERTICALDOOR_CLOSED
-#alias 1 : VERTICALDOOR_START_OPENING
-#alias 2 : VERTICALDOOR_END_CLOSING
-#alias 3 : VERTICALDOOR_END_OPENED
-#alias 4 : VERTICALDOOR_END_CLOSING_METAL
-#alias 5 : VERTICALDOOR_START_OPENED
-#alias 6 : VERTICALDOOR_END_CLOSED_SONIC
+#alias 0	:	VERTICALDOOR_CLOSED
+#alias 1	:	VERTICALDOOR_START_OPENING
+#alias 2	:	VERTICALDOOR_END_CLOSING
+#alias 3	:	VERTICALDOOR_END_OPENED
+#alias 4	:	VERTICALDOOR_END_CLOSING_METAL
+#alias 5	:	VERTICALDOOR_START_OPENED
+#alias 6	:	VERTICALDOOR_END_CLOSED_SONIC
 
 
 sub ObjectMain
 
 	switch Object.State
 	case VERTICALDOOR_START_OPENING
-		if Object.DrawPosY < 4194304
-			Object.DrawPosY += 131072
-			Object.YPos -= 131072
+		if Object.DrawPosY < 0x400000
+			Object.DrawPosY += 0x20000
+			Object.YPos -= 0x20000
 		else
 			Object.State = VERTICALDOOR_START_OPENED
 		end if
@@ -28,8 +28,8 @@ sub ObjectMain
 		
 	case VERTICALDOOR_END_CLOSING
 		if Object.DrawPosY > 0
-			Object.DrawPosY -= 131072
-			Object.YPos += 131072
+			Object.DrawPosY -= 0x20000
+			Object.YPos += 0x20000
 		else
 			Object.State = VERTICALDOOR_END_CLOSED_SONIC
 		end if
@@ -55,8 +55,8 @@ sub ObjectMain
 		
 	case VERTICALDOOR_END_CLOSING_METAL
 		if Object.DrawPosY > 0
-			Object.DrawPosY -= 131072
-			Object.YPos += 131072
+			Object.DrawPosY -= 0x20000
+			Object.YPos += 0x20000
 		end if
 		break
 		
@@ -126,7 +126,7 @@ sub ObjectPlayerInteraction
 		TempValue0 <<= 16
 		TempValue0 += Player.XPos
 		TempValue1 = Object.XPos
-		TempValue1 -= 1048576
+		TempValue1 -= 0x100000
 		if TempValue0 > TempValue1
 			Player.XVelocity = 0
 			Player.Speed = 0

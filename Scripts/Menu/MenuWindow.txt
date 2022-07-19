@@ -1,4 +1,4 @@
-//------------Sonic CD MenuWindow Script-------------//
+//-----------------Sonic CD Menu Window Script----------------//
 //--------Scripted by Christian Whitehead 'The Taxman'--------//
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
@@ -14,21 +14,28 @@
 #alias Object[1].Value4		: Object.BackTouchPress
 
 // States
-#alias 0 : MENUWINDOW_EXPAND
-#alias 1 : MENUWINDOW_SCALEDOWN
-#alias 2 : MENUWINDOW_BLANK
-#alias 3 : MENUWINDOW_SHRINK
-#alias 4 : MENUWINDOW_FIT_IN_BUTTON
-#alias 5 : MENUWINDOW_SOUNDTRACK_EXPAND
-#alias 6 : MENUWINDOW_SOUNDTRACK_SHRINK
+#alias 0	:	MENUWINDOW_EXPAND
+#alias 1	:	MENUWINDOW_SCALEDOWN
+#alias 2	:	MENUWINDOW_BLANK
+#alias 3	:	MENUWINDOW_SHRINK
+#alias 4	:	MENUWINDOW_FIT_IN_BUTTON
+#alias 5	:	MENUWINDOW_SOUNDTRACK_EXPAND
+#alias 6	:	MENUWINDOW_SOUNDTRACK_SHRINK
+
+// Menu Button States
+#alias 7	:	MENUBUTTON_RESET
 
 // Languages
-#alias 0 : ENGLISH
-#alias 1 : FRENCH
-#alias 2 : ITALIAN
-#alias 3 : DEUTSCH
-#alias 4 : SPANISH
-#alias 5 : JAPANESE
+#alias 0	:	ENGLISH
+#alias 1	:	FRENCH
+#alias 2	:	ITALIAN
+#alias 3	:	DEUTSCH
+#alias 4	:	SPANISH
+#alias 5	:	JAPANESE
+
+// Ink Effects
+#alias 2	:	INK_ALPHA
+
 
 sub ObjectMain
 	switch Object.State
@@ -81,22 +88,22 @@ sub ObjectMain
 			TempValue0 = Screen.CenterX
 			TempValue0 <<= 16
 			if Object.XPos > TempValue0
-				Object.XPos -= 65536
+				Object.XPos -= 0x10000
 			end if
 
 			if Object.XPos < TempValue0
-				Object.XPos += 65536
+				Object.XPos += 0x10000
 			end if
 			// YPos
 			TempValue0 = Screen.CenterY
 			TempValue0 -= 8
 			TempValue0 <<= 16
 			if Object.YPos > TempValue0
-				Object.YPos -= 65536
+				Object.YPos -= 0x10000
 			end if
 
 			if Object.YPos < TempValue0
-				Object.YPos += 65536
+				Object.YPos += 0x10000
 			end if
 		else
 			Object.Timer = 0
@@ -152,19 +159,19 @@ sub ObjectMain
 			Object.Height += TempValue0
 			// XPos
 			if Object.XPos > Object.XOffset
-				Object.XPos -= 65536
+				Object.XPos -= 0x10000
 			end if
 
 			if Object.XPos < Object.XOffset
-				Object.XPos += 65536
+				Object.XPos += 0x10000
 			end if
 			// YPos
 			if Object.YPos > Object.YOffset
-				Object.YPos -= 65536
+				Object.YPos -= 0x10000
 			end if
 
 			if Object.YPos < Object.YOffset
-				Object.YPos += 65536
+				Object.YPos += 0x10000
 			end if
 		else
 			Object.Timer++
@@ -175,7 +182,7 @@ sub ObjectMain
 
 			ArrayPos0 = Object.EntityPos
 			Object[ArrayPos0].Type = TypeName[MenuButton]
-			Object[ArrayPos0].State = 7		//MenuButton Reset State
+			Object[ArrayPos0].State = MENUBUTTON_RESET
 		end if
 		break
 
@@ -228,20 +235,20 @@ sub ObjectMain
 			TempValue0 = Screen.CenterX
 			TempValue0 <<= 16
 			if Object.XPos > TempValue0
-				Object.XPos -= 65536
+				Object.XPos -= 0x10000
 			end if
 			if Object.XPos < TempValue0
-				Object.XPos += 65536
+				Object.XPos += 0x10000
 			end if
 			// YPos
 			TempValue0 = Screen.CenterY
 			TempValue0 -= 8
 			TempValue0 <<= 16
 			if Object.YPos > TempValue0
-				Object.YPos -= 65536
+				Object.YPos -= 0x10000
 			end if
 			if Object.YPos < TempValue0
-				Object.YPos += 65536
+				Object.YPos += 0x10000
 			end if
 		else
 			Object.Timer = 0
@@ -256,10 +263,10 @@ end sub
 sub ObjectDraw
 	//Upper Left Border
 	TempValue0 = Object.Width
-	TempValue0 *= -32768
+	TempValue0 *= -0x8000
 	TempValue0 += Object.XPos
 	TempValue1 = Object.Height
-	TempValue1 *= -32768
+	TempValue1 *= -0x8000
 	TempValue1 += Object.YPos
 	DrawSpriteXY(0, TempValue0, TempValue1)
 
@@ -271,7 +278,7 @@ sub ObjectDraw
 
 	//Bottom Left Border
 	TempValue0 = Object.Width
-	TempValue0 *= -32768
+	TempValue0 *= -0x8000
 	TempValue0 += Object.XPos
 	TempValue1 = Object.Height
 	TempValue1 <<= 15
@@ -286,13 +293,13 @@ sub ObjectDraw
 
 	//Menu Filling
 	TempValue0 = Object.Width
-	TempValue0 *= -32768
+	TempValue0 *= -0x8000
 	TempValue0 += Object.XPos
 	TempValue0 >>= 16
 	TempValue1 = Object.Height
-	TempValue1 *= -32768
+	TempValue1 *= -0x8000
 	TempValue1 += Object.YPos
-	TempValue1 += 655360
+	TempValue1 += 0xA0000
 	TempValue1 >>= 16
 	TempValue2 = Object.Width
 	TempValue2 -= 2
@@ -304,12 +311,12 @@ sub ObjectDraw
 	TempValue0 = Object.Width
 	TempValue0 <<= 15
 	TempValue0 += Object.XPos
-	TempValue0 -= 131072
+	TempValue0 -= 0x20000
 	TempValue0 >>= 16
 	TempValue2 = 2
 	DrawRect(TempValue0, TempValue1, TempValue2, TempValue3, 0, 0, 0, 255)
 
-	Object.InkEffect = 2 //INK_ALPHA
+	Object.InkEffect = INK_ALPHA
 	switch Object.State
 	case MENUWINDOW_EXPAND
 	case MENUWINDOW_SCALEDOWN
@@ -333,23 +340,12 @@ sub ObjectDraw
 		
 	end switch
 	TempValue0 = Screen.XSize
-#platform: Standard
 	TempValue0 -= 48
 	if Object.BackTouchPress == true
 		DrawSpriteScreenFX(5, FX_INK, TempValue0, 225)
 	else
 		DrawSpriteScreenFX(4, FX_INK, TempValue0, 225)
 	end if
-#endplatform
-
-#platform: Mobile
-	TempValue0 -= 40
-	if Object.BackTouchPress == true
-		DrawSpriteScreenFX(5, FX_INK, TempValue0, 230)
-	else
-		DrawSpriteScreenFX(4, FX_INK, TempValue0, 230)
-	end if
-#endplatform
 end sub
 
 
@@ -374,6 +370,7 @@ sub ObjectStartup
 		LoadSpriteSheet("Menu/MenuGfx2_JP.gif")
 		break
 	end switch
+	
 	// (#0 - #3) - Borders for the Menu Window, Upper Left - Right - Bottom Left - Bottom Right
 	SpriteFrame(0, 0, 140, 10, 259, 246)
 	SpriteFrame(-140, 0, 140, 10, 263, 246)

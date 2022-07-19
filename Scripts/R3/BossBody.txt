@@ -4,12 +4,12 @@
 
 // Aliases
 #alias Object.Value0		:	Object.Timer
-#alias Object.Value1		:	Object.OriginPos.Y
+#alias Object.Value1		:	Object.YOriginPos
 #alias Object.Value2		:	Object.YVelocity
-#alias Object.Value3		:	Object.GearPos.Y
+#alias Object.Value3		:	Object.YGearPos
 #alias Object.Value4		:	Object.AttackTimer
 #alias Object.Value5		:	Object.DamageTimer
-#alias Object.Value6		:	Object.ControllerPos.Y
+#alias Object.Value6		:	Object.YControllerPos
 
 // Pinball Bomb Aliases
 #alias Object.Value1		:	Object.XVelocity
@@ -24,27 +24,28 @@
 #alias Object[+1].Value2	:	EPlatform.Length
 
 // States
-#alias 0					:	BOSSBODY_DESCEND
-#alias 1					:	BOSSBODY_DROP_BOMBS
-#alias 2					:	BOSSBODY_HIT_1
-#alias 3					:	BOSSBODY_DRAG_EGGMAN_1
-#alias 4					:	BOSSBODY_HIT_2
-#alias 5					:	BOSSBODY_DRAG_EGGMAN_2
-#alias 6					:	BOSSBODY_HIT_3
-#alias 7					:	BOSSBODY_DESTROYED
+#alias 0	:	BOSSBODY_DESCEND
+#alias 1	:	BOSSBODY_DROP_BOMBS
+#alias 2	:	BOSSBODY_HIT_1
+#alias 3	:	BOSSBODY_DRAG_EGGMAN_1
+#alias 4	:	BOSSBODY_HIT_2
+#alias 5	:	BOSSBODY_DRAG_EGGMAN_2
+#alias 6	:	BOSSBODY_HIT_3
+#alias 7	:	BOSSBODY_DESTROYED
 
 // Eggman States
-#alias 0					:	EGGMAN_IDLE
-#alias 1					:	EGGMAN_HURT
-#alias 2					:	EGGMAN_NERVOUS
-#alias 3					:	EGGMAN_FLEE
+#alias 0	:	EGGMAN_IDLE
+#alias 1	:	EGGMAN_HURT
+#alias 2	:	EGGMAN_NERVOUS
+#alias 3	:	EGGMAN_FLEE
 
 // Priority
-#alias 0					:	PRIORITY_ACTIVE_BOUNDS
-#alias 1					:	PRIORITY_ACTIVE
+#alias 0	:	PRIORITY_ACTIVE_BOUNDS
+#alias 1	:	PRIORITY_ACTIVE
 
 // Function declarations
 #function BossBody_LaunchBomb
+
 
 function BossBody_LaunchBomb
 	TempValue0 = Player.YPos
@@ -59,14 +60,14 @@ function BossBody_LaunchBomb
 
 		if Object.AttackTimer < 128
 			FlipSign(Object[TempObjectPos].XVelocity)
-			Object[TempObjectPos].XPos -= 524288
+			Object[TempObjectPos].XPos -= 0x80000
 		else
-			Object[TempObjectPos].XPos += 524288
+			Object[TempObjectPos].XPos += 0x80000
 		end if
 
 		Object[TempObjectPos].YPos += 1572864
 
-		Object[TempObjectPos].YVelocity = 196608
+		Object[TempObjectPos].YVelocity = 0x30000
 
 		Object[TempObjectPos].DrawOrder = 2
 	end if
@@ -77,10 +78,10 @@ sub ObjectMain
 	switch Object.State
 	case BOSSBODY_DESCEND
 		Object.YPos = Player.YPos
-		Object.YPos &= 4294901760
+		Object.YPos &= 0xFFFF0000
 		// Height Limit
-		if Object.YPos < Object.OriginPos.Y
-			Object.YPos = Object.OriginPos.Y
+		if Object.YPos < Object.YOriginPos
+			Object.YPos = Object.YOriginPos
 			Object.Frame = 0
 		end if
 
@@ -91,8 +92,8 @@ sub ObjectMain
 			Object.Priority = PRIORITY_ACTIVE
 		end if
 
-		if Object.YPos != Object.GearPos.Y
-			Object.GearPos.Y = Object.YPos
+		if Object.YPos != Object.YGearPos
+			Object.YGearPos = Object.YPos
 			Object.Frame++
 			Object.Frame %= 9
 		end if
@@ -132,7 +133,7 @@ sub ObjectMain
 
 	case BOSSBODY_HIT_1
 		if Object.YPos > Object.YVelocity
-			Object.YPos -= 163840
+			Object.YPos -= 0x28000
 			Object.Frame++
 			Object.Frame %= 9
 		else
@@ -166,7 +167,7 @@ sub ObjectMain
 
 	case BOSSBODY_HIT_2
 		if Object.YPos > Object.YVelocity
-			Object.YPos -= 163840
+			Object.YPos -= 0x28000
 			Object.Frame++
 			Object.Frame %= 9
 		else
@@ -200,7 +201,7 @@ sub ObjectMain
 
 	case BOSSBODY_HIT_3
 		if Object.YPos > Object.YVelocity
-			Object.YPos -= 163840
+			Object.YPos -= 0x28000
 			Object.Frame++
 			Object.Frame %= 9
 			Music.Volume--
@@ -210,8 +211,10 @@ sub ObjectMain
 			Object.State = BOSSBODY_DESTROYED
 			Object.Timer = 0
 			Object.Priority = PRIORITY_ACTIVE
-#platform: Use_Haptics
+#platform: Use_Standalone
+	#platform: Use_Haptics
 			HapticEffect(76, 0, 0, 0)
+	#endplatform
 #endplatform
 		end if
 
@@ -284,15 +287,17 @@ sub ObjectPlayerInteraction
 		PlayerObjectCollision(C_TOUCH, -64, -16, 64, 16)
 		if CheckResult == true
 			Player.YVelocity = 0
-			Object.YVelocity -= 4718592	// 0x480000
+			Object.YVelocity -= 0x480000	// 0x480000
 
 			Object.DamageTimer = 1
 			Object.State++
 
 			Eggman.State = EGGMAN_HURT
 			PlaySfx(22, 0)
-#platform: Use_Haptics
+#platform: Use_Standalone
+	#platform: Use_Haptics
 			HapticEffect(75, 0, 0, 0)
+	#endplatform
 #endplatform
 		end if
 		break
@@ -301,12 +306,14 @@ sub ObjectPlayerInteraction
 		PlayerObjectCollision(C_TOUCH, -64, -16, 64, 16)
 		if CheckResult == true
 			Player.YVelocity = 0
-			Object.YVelocity -= 8388608	// 0x800000
+			Object.YVelocity -= 0x800000	// 0x800000
 			Object.DamageTimer = 1
 			Object.State++
 			PlaySfx(22, 0)
-#platform: Use_Haptics
+#platform: Use_Standalone
+	#platform: Use_Haptics
 			HapticEffect(75, 0, 0, 0)
+	#endplatform
 #endplatform
 		end if
 		break
@@ -379,7 +386,7 @@ sub ObjectDraw
 
 	case BOSSBODY_DRAG_EGGMAN_2
 		TempValue1 = Object.YPos
-		TempValue1 += Object.ControllerPos.Y
+		TempValue1 += Object.YControllerPos
 
 		TempValue0 = Object.DamageTimer
 		TempValue0 &= 1
@@ -396,8 +403,8 @@ sub ObjectDraw
 		end if
 
 		if Eggman.State == EGGMAN_NERVOUS
-			if Object.ControllerPos.Y < 1048576
-				Object.ControllerPos.Y += 32768
+			if Object.YControllerPos < 0x100000
+				Object.YControllerPos += 0x8000
 			end if
 		end if
 
@@ -413,7 +420,7 @@ sub ObjectDraw
 
 	case BOSSBODY_HIT_3
 		TempValue0 = Object.YPos
-		TempValue0 -= 2097152
+		TempValue0 -= 0x200000
 
 		if TempValue0 < Object.YVelocity
 			DrawSprite(16)
@@ -421,7 +428,7 @@ sub ObjectDraw
 			DrawSprite(3)
 		else
 			TempValue1 = Object.YPos
-			TempValue1 += Object.ControllerPos.Y
+			TempValue1 += Object.YControllerPos
 
 			TempValue0 = Object.DamageTimer
 			TempValue0 &= 1
@@ -435,8 +442,8 @@ sub ObjectDraw
 				DrawSprite(15)
 			end if
 
-			if Object.ControllerPos.Y < 1048576
-				Object.ControllerPos.Y += 32768
+			if Object.YControllerPos < 0x100000
+				Object.YControllerPos += 0x8000
 			end if
 		end if
 
@@ -496,10 +503,10 @@ sub ObjectStartup
 	ArrayPos0 = 32
 	while ArrayPos0 < 1056
 		if Object[ArrayPos0].Type == TypeName[BossBody]
-			Object[ArrayPos0].OriginPos.Y = Object[ArrayPos0].YPos
-			Object[ArrayPos0].GearPos.Y = Object[ArrayPos0].YPos
-			Object[ArrayPos0].YVelocity = Object[ArrayPos0].YPos
-			Object[ArrayPos0].YVelocity += 14942208
+			Object[ArrayPos0].YOriginPos = Object[ArrayPos0].YPos
+			Object[ArrayPos0].YGearPos   = Object[ArrayPos0].YPos
+			Object[ArrayPos0].YVelocity  = Object[ArrayPos0].YPos
+			Object[ArrayPos0].YVelocity += 0xE40000
 		end if
 		ArrayPos0++
 	loop

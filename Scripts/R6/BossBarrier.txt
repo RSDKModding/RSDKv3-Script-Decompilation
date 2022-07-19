@@ -23,14 +23,14 @@ sub ObjectMain
 		break
 
 	case BOSSBARRIER_SETUP_BOSS
-		if Object.BarrierHeight < 4194304
-			Object.BarrierHeight += 131072
-			Object.YPos += 131072
+		if Object.BarrierHeight < 0x400000
+			Object.BarrierHeight += 0x20000
+			Object.YPos += 0x20000
 		end if
 
 		TempValue0 = Player.XPos
 		TempValue0 -= Object.XPos
-		if TempValue0 > 8388608
+		if TempValue0 > 0x800000
 			Object.State = BOSSBARRIER_CLOSE_DOOR
 			
 			CreateTempObject(TypeName[FadeMusic], 0, Object.XPos, Object.YPos)
@@ -54,9 +54,9 @@ sub ObjectMain
 		break
 
 	case BOSSBARRIER_CLOSE_DOOR
-		if Object.BarrierHeight < 4194304
-			Object.BarrierHeight += 131072
-			Object.YPos += 131072
+		if Object.BarrierHeight < 0x400000
+			Object.BarrierHeight += 0x20000
+			Object.YPos += 0x20000
 		else
 			Object.State = BOSSBARRIER_CLOSED
 		end if
@@ -67,7 +67,7 @@ end sub
 
 
 sub ObjectPlayerInteraction
-	if Object.BarrierHeight < 4194304
+	if Object.BarrierHeight < 0x400000
 		PlayerObjectCollision(C_BOX, -16, -32, 16, 32)
 	else
 		PlayerObjectCollision(C_BOX, -16, -32, 16, 64)

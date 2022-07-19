@@ -11,12 +11,15 @@ sub ObjectMain
 	case 0
 		if Object.Value0 < 8
 			Object.Value0++
-			Object.YPos -= 655360
+			Object.YPos -= 0xA0000
 		else
 			Object.Value0 = 0
 			Object.State++
-#platform: Use_Haptics
+			
+#platform: Use_Standalone
+	#platform: Use_Haptics
 			HapticEffect(100, 0, 0, 0)
+	#endplatform
 #endplatform
 		end if
 		break
@@ -31,7 +34,7 @@ sub ObjectMain
 	case 2
 		if Object.Value0 < 80
 			Object.Value0++
-			Object.YPos += 65536
+			Object.YPos += 0x10000
 		else
 			Object.Value0 = 0
 			Object.State++
@@ -51,11 +54,11 @@ end sub
 
 sub ObjectPlayerInteraction
 	PlayerObjectCollision(C_TOUCH, -33, -40, 33, 20)
-	if CheckResult == 1
+	if CheckResult == true
 		if Player.XPos < Object.XPos
 			TempValue0 = Object.XPos
 			TempValue0 -= Player.XPos
-			TempValue1 = 2359296
+			TempValue1 = 0x240000
 			TempValue1 -= Player.XVelocity
 			if TempValue0 > TempValue1
 				if Player.Speed > -1
@@ -74,7 +77,7 @@ sub ObjectPlayerInteraction
 			else
 				if Object.State < 2
 					if TempValue0 > 1572864
-						Player.XPos += 1310720
+						Player.XPos += 0x140000
 						Player.Speed = 0
 						Player.XVelocity = 0
 					end if
@@ -83,7 +86,7 @@ sub ObjectPlayerInteraction
 		else
 			TempValue0 = Player.XPos
 			TempValue0 -= Object.XPos
-			TempValue1 = 2359296
+			TempValue1 = 0x240000
 			TempValue1 += Player.XVelocity
 			if TempValue0 > TempValue1
 				if Player.Speed < 1
@@ -102,7 +105,7 @@ sub ObjectPlayerInteraction
 			else
 				if Object.State < 2
 					if TempValue0 > 1572864
-						Player.XPos -= 1310720
+						Player.XPos -= 0x140000
 						Player.Speed = 0
 						Player.XVelocity = 0
 					end if
@@ -137,7 +140,7 @@ sub ObjectPlayerInteraction
 	case 2
 		PlayerObjectCollision(C_PLATFORM, -30, -41, 30, -20)
 		if CheckResult == 1
-			Player.YPos += 65536
+			Player.YPos += 0x10000
 		end if
 		break
 	case 3

@@ -35,13 +35,13 @@
 
 sub ObjectMain
 	if Object.State == BLOCKROWSB_MOVE_RIGHT
-		Object.XVelocity += 32768	// 0x8000
+		Object.XVelocity += 0x8000	// 0x8000
 		if Object.XVelocity >= 12582912	// 0xC00000
 			Object.XVelocity = 12582912	// 0xC00000
 			Object.State = BLOCKROWSB_MOVE_LEFT
 		end if
 	else
-		Object.XVelocity -= 32768	// 0x8000
+		Object.XVelocity -= 0x8000	// 0x8000
 		if Object.XVelocity <= 0
 			Object.XVelocity = 0
 			Object.State = BLOCKROWSB_MOVE_RIGHT
@@ -61,15 +61,15 @@ sub ObjectPlayerInteraction
 	switch CheckResult
 	case FLOOR
 		if Object.State == BLOCKROWSB_MOVE_RIGHT
-			Player.XPos += 32768	// 0x8000
+			Player.XPos += 0x8000	// 0x8000
 		else
-			Player.XPos -= 32768	// -0x8000
+			Player.XPos -= 0x8000	// -0x8000
 		end if
 
 		if Player.Speed == 0
 			if Object.OnObject == false
-				Player.XPos &= 4294901760
-				Object.XVelocity &= 4294901760
+				Player.XPos &= 0xFFFF0000
+				Object.XVelocity &= 0xFFFF0000
 				Object.OnObject = true
 			end if
 		else
@@ -168,11 +168,11 @@ sub ObjectStartup
 			Object[ArrayPos0].Priority = PRIORITY_XBOUNDS
 			switch Object[ArrayPos0].PropertyValue
 			case 1
-				Object[ArrayPos0].XVelocity = 4194304	// 0x400000
+				Object[ArrayPos0].XVelocity = 0x400000	// 0x400000
 				break
 
 			case 2
-				Object[ArrayPos0].XVelocity = 8388608	// 0x800000
+				Object[ArrayPos0].XVelocity = 0x800000	// 0x800000
 				break
 
 			case 3
@@ -181,7 +181,7 @@ sub ObjectStartup
 				break
 				
 			case 4
-				Object[ArrayPos0].XVelocity = 8388608	// 0x800000
+				Object[ArrayPos0].XVelocity = 0x800000	// 0x800000
 				Object[ArrayPos0].State = BLOCKROWSB_MOVE_LEFT
 				break
 

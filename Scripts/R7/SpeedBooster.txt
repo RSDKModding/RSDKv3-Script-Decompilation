@@ -3,23 +3,23 @@
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
 // Aliases
-#alias Object.Value0 : Object.Timer
-#alias Object.Value1 : Object.DrawOffsetX
+#alias Object.Value0	:	Object.Timer
+#alias Object.Value1	:	Object.DrawOffsetX
 
 // Base State
-#alias 0 : SPEEDBOOSTER_IDLE
+#alias 0	:	SPEEDBOOSTER_IDLE
 
 // Pair of States for when the player is shot right
-#alias 1 : SPEEDBOOSTER_RECOIL_R
-#alias 2 : SPEEDBOOSTER_RECOVER_R
+#alias 1	:	SPEEDBOOSTER_RECOIL_R
+#alias 2	:	SPEEDBOOSTER_RECOVER_R
 
 // Pair of States for when the player is shot left
-#alias 3 : SPEEDBOOSTER_RECOIL_L
-#alias 4 : SPEEDBOOSTER_RECOVER_L
+#alias 3	:	SPEEDBOOSTER_RECOIL_L
+#alias 4	:	SPEEDBOOSTER_RECOVER_L
 
 // Booster Cartridge Aliases
-#alias Object.Value1 : Object.XVelocity
-#alias Object.Value2 : Object.YVelocity
+#alias Object.Value1	:	Object.XVelocity
+#alias Object.Value2	:	Object.YVelocity
 
 
 sub ObjectMain
@@ -27,7 +27,7 @@ sub ObjectMain
 	switch Object.State
 	case SPEEDBOOSTER_RECOIL_R
 		if Object.Timer < 6
-			Object.DrawOffsetX -= 524288
+			Object.DrawOffsetX -= 0x80000
 			Object.Timer++
 		else
 			Object.Timer = 0
@@ -37,7 +37,7 @@ sub ObjectMain
 
 	case SPEEDBOOSTER_RECOVER_R
 		if Object.Timer < 6
-			Object.DrawOffsetX += 524288
+			Object.DrawOffsetX += 0x80000
 			Object.Timer++
 		else
 			Object.Timer = 0
@@ -48,7 +48,7 @@ sub ObjectMain
 
 	case SPEEDBOOSTER_RECOIL_L
 		if Object.Timer < 6
-			Object.DrawOffsetX += 524288
+			Object.DrawOffsetX += 0x80000
 			Object.Timer++
 		else
 			Object.Timer = 0
@@ -58,7 +58,7 @@ sub ObjectMain
 
 	case SPEEDBOOSTER_RECOVER_L
 		if Object.Timer < 6
-			Object.DrawOffsetX -= 524288
+			Object.DrawOffsetX -= 0x80000
 			Object.Timer++
 		else
 			Object.Timer = 0
@@ -82,35 +82,38 @@ sub ObjectPlayerInteraction
 				Object.Priority = 1
 
 				PlayStageSfx(0, 0)
-#platform: Use_Haptics
+
+#platform: Use_Standalone
+	#platform: Use_Haptics
 				HapticEffect(30, 0, 0, 0)
+	#endplatform
 #endplatform
 
 				// Different actions for the different directions the player will be sent
 				if Player.Speed > 0
 					Object.State = SPEEDBOOSTER_RECOIL_R
-					Player.Speed = 1048576
+					Player.Speed = 0x100000
 					Player.Direction = FACING_RIGHT
 
 					CreateTempObject(TypeName[Fire Trail], 0, Object.XPos, Object.YPos)
 					Object[TempObjectPos].XPos -= 1572864
-					Object[TempObjectPos].YPos -= 393216
+					Object[TempObjectPos].YPos -= 0x60000
 
 					CreateTempObject(TypeName[BoosterCartridge], 0, Object.XPos, Object.YPos)
-					Object[TempObjectPos].XVelocity = -131072
+					Object[TempObjectPos].XVelocity = -0x20000
 					Object[TempObjectPos].YVelocity = -458752
 				else
 					Object.State = SPEEDBOOSTER_RECOIL_L
-					Player.Speed = -1048576
+					Player.Speed = -0x100000
 					Player.Direction = FACING_LEFT
 
 					CreateTempObject(TypeName[Fire Trail], 0, Object.XPos, Object.YPos)
 					Object[TempObjectPos].XPos += 1572864
-					Object[TempObjectPos].YPos -= 393216
+					Object[TempObjectPos].YPos -= 0x60000
 					Object[TempObjectPos].Direction = FACING_LEFT
 
 					CreateTempObject(TypeName[BoosterCartridge], 0, Object.XPos, Object.YPos)
-					Object[TempObjectPos].XVelocity = 131072
+					Object[TempObjectPos].XVelocity = 0x20000
 					Object[TempObjectPos].YVelocity = -458752
 					Object[TempObjectPos].Direction = FACING_LEFT
 				end if

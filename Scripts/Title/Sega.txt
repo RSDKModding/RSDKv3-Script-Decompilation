@@ -3,26 +3,27 @@
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
 // Aliases
-#alias Object.Value0 : Object.Timer
+#alias Object.Value0	:	Object.Timer
+#alias Object.Value3	:	Object.Unused
 
 // States
-#alias 0 : SEGA_SETUP
-#alias 1 : SEGA_FADEIN
-#alias 2 : SEGA_JINGLE
-#alias 3 : SEGA_FADEOUT
-#alias 4 : SEGA_END
+#alias 0	:	SEGA_SETUP
+#alias 1	:	SEGA_FADEIN
+#alias 2	:	SEGA_JINGLE
+#alias 3	:	SEGA_FADEOUT
+#alias 4	:	SEGA_END
 
 // Ink Effect Aliases
-#alias 2 : INK_ALPHA
+#alias 2	:	INK_ALPHA
 
 // SFX Aliaes
-#alias 0 : SFX_SEGA
+#alias 0	:	SFX_SEGA
 
 // Callbacks & Engine States
-#alias 0 : CALLBACK_DISPLAYLOGOS
-#alias 7 : CALLBACK_EXIT_SELECTED
+#alias 0	:	CALLBACK_DISPLAYLOGOS
+#alias 7	:	CALLBACK_EXIT_SELECTED
 
-#alias 5 : ENGINE_ENTER_HIRESMODE
+#alias 5	:	ENGINE_ENTER_HIRESMODE
 
 
 sub ObjectMain
@@ -76,6 +77,8 @@ sub ObjectMain
 		Options.Soundtrack = SaveRAM[38]
 		Object.State = SEGA_FADEIN
 		Object.Timer = 384
+
+		Engine.State = ENGINE_ENTER_HIRESMODE
 #endplatform
 		
 		Object.Alpha = 255
@@ -89,9 +92,6 @@ sub ObjectMain
 
 #platform: Use_Origins
 		game.mainMenuMode = 0
-#endplatform
-#platform: Mobile
-		Engine.State=5
 #endplatform
 		break
 
@@ -129,12 +129,21 @@ sub ObjectMain
 	case SEGA_FADEOUT
 		// Do note - this state is kinda messed up, they forget a break at the end so
 		// this state doesn't reallly fade out
+		if Object.Value1<256
+			Object.Value1+=8
+		endif
 		
 		if Object.Alpha > 7
 			Object.Alpha -= 8
 		else
 			if Object.Timer == 16
+#platform: Use_Standalone
+				ResetObjectEntity(Object.EntityNo, TypeName[CWLogo], 0, Object.XPos, Object.YPos)
+				Object.Unused = 96
+#endplatform
+#platform: Use_Origins
 				ResetObjectEntity(Object.EntityNo, TypeName[Sonic], 0, Object.XPos, Object.YPos)
+#endplatform
 				Object.InkEffect = INK_ALPHA
 				Object.Alpha = 0
 				Object.Timer = 0
@@ -142,6 +151,9 @@ sub ObjectMain
 				Object.Timer++
 			end if
 		end if
+#platform: Use_Standalone
+		break	// The break is needed if we want to see the good ol' CW Logo
+#endplatform
 		
 		// No break used here, so it falls through, meaning the Fade Out doesn't really happen...
 		

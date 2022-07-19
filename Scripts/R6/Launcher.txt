@@ -29,12 +29,12 @@ sub ObjectMain
 
 	switch Object.State
 	case LAUNCHER_DASH
-		Object.XPos += 786432
+		Object.XPos += 0xC0000
 		Player.XPos = Object.XPos
 
 		Player.iYPos = Player.CollisionBottom
 		FlipSign(Player.YPos)
-		Player.YPos -= 196608
+		Player.YPos -= 0x30000
 		Player.YPos += Object.YPos
 
 		ObjectTileGrip(0, 32, 4, 0)
@@ -44,18 +44,18 @@ sub ObjectMain
 		break
 
 	case LAUNCHER_EJECT_PLAYER
-		Player.XPos += 786432
+		Player.XPos += 0xC0000
 
 		Player.iYPos = Player.CollisionBottom
 		FlipSign(Player.YPos)
-		Player.YPos -= 196608
+		Player.YPos -= 0x30000
 		Player.YPos += Object.YPos
 		Object.State++
 		break
 
 	case LAUNCHER_RECOIL
 		if Object.Timer == 0
-			Player.XPos += 786432
+			Player.XPos += 0xC0000
 		end if
 
 #platform: Use_Origins
@@ -73,7 +73,7 @@ sub ObjectMain
 
 		Player.iYPos = Player.CollisionBottom
 		FlipSign(Player.YPos)
-		Player.YPos -= 196608
+		Player.YPos -= 0x30000
 		Player.YPos += Object.YPos
 
 		if Object.Timer < 2
@@ -82,7 +82,7 @@ sub ObjectMain
 			Object.State++
 		end if
 
-		Object.XPos -= 262144
+		Object.XPos -= 0x40000
 		if Object.XPos < Object.OriginXPos
 			Object.XPos = Object.OriginXPos
 			Object.Priority = PRIORITY_ACTIVE_BOUNDS
@@ -97,7 +97,7 @@ sub ObjectMain
 		break
 
 	case LAUNCHER_RESET
-		Object.XPos -= 262144
+		Object.XPos -= 0x40000
 		if Object.XPos < Object.OriginXPos
 			Object.XPos = Object.OriginXPos
 			Object.Priority = PRIORITY_ACTIVE_BOUNDS
@@ -128,7 +128,7 @@ sub ObjectPlayerInteraction
 			Player.XPos = Object.XPos
 			Player.iYPos = Player.CollisionBottom
 			FlipSign(Player.YPos)
-			Player.YPos -= 196608
+			Player.YPos -= 0x30000
 			Player.YPos += Object.YPos
 
 			Player.YVelocity = 0
@@ -137,8 +137,11 @@ sub ObjectPlayerInteraction
 			Player.TrackScroll = false
 			Player.Gravity = GRAVITY_AIR
 			PlayStageSfx(6, 0)
-#platform: Use_Haptics
+			
+#platform: Use_Standalone
+	#platform: Use_Haptics
 			HapticEffect(30, 0, 0, 0)
+	#endplatform
 #endplatform
 		end if
 	end if

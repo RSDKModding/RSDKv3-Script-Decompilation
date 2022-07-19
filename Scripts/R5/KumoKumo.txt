@@ -3,27 +3,27 @@
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
 // Aliases
-#alias Object.Value0 : Object.Timer
-#alias Object.Value1 : Object.YVelocity
+#alias Object.Value0	:	Object.Timer
+#alias Object.Value1	:	Object.YVelocity
 
-#alias 0 : KUMOKUMO_AIRBORNE
+#alias 0	:	KUMOKUMO_AIRBORNE
 
 // Different Ground States for the different conditions a Kumo Kumo can come in
-#alias 1 : KUMOKUMO_GOOD_GROUND
-#alias 2 : KUMOKUMO_BAD_GROUND
+#alias 1	:	KUMOKUMO_GOOD_GROUND
+#alias 2	:	KUMOKUMO_BAD_GROUND
 
 // State entered to start shooting a Kumo Kumo Web (aka KWeb)
-#alias 3 : KUMOKUMO_SHOOT
+#alias 3	:	KUMOKUMO_SHOOT
 
 // Badnik States (Property Values)
-#alias 0 : BADNIK_GOOD
-#alias 1 : BADNIK_BAD
+#alias 0	:	BADNIK_GOOD
+#alias 1	:	BADNIK_BAD
 
 // Kumo Kumo Web Aliases
-#alias Object.Value1 : Object.XVelocity
+#alias Object.Value1	:	Object.XVelocity
 
 // SFX Aliases
-#alias 2 : SFX_SHOT
+#alias 2	:	SFX_SHOT
 
 
 sub ObjectMain
@@ -33,7 +33,7 @@ sub ObjectMain
 		// This Airborne State isn't only for after jumping, but it's also what a Kumo Kumo spawns with to align it to the ground
 		
 		// Apply a Gravity of 0.25 pixels per frame
-		Object.YVelocity += 16384
+		Object.YVelocity += 0x4000
 		
 		Object.YPos += Object.YVelocity
 		
@@ -45,7 +45,7 @@ sub ObjectMain
 				// The Kumo Kumo has touched the ground, make it land
 			
 				// Move the Kumo Kumo 8 pixels down
-				Object.YPos += 524288
+				Object.YPos += 0x80000
 				
 				Object.Frame = 0
 				
@@ -74,15 +74,15 @@ sub ObjectMain
 			// Make the Kumo Kumo jump
 			
 			// Move the Kumo Kumo 8 pixels up
-			Object.YPos -= 524288
+			Object.YPos -= 0x80000
 			
 			Object.Timer = 0
 			
 			// The Kumo Kumo's Velocity will be 8 pixels upwards as well
-			Object.YVelocity = -524288
+			Object.YVelocity = -0x80000
 			
 			Object.YPos += Object.YVelocity
-			Object.YVelocity += 16384
+			Object.YVelocity += 0x4000
 			
 			Object.State = KUMOKUMO_AIRBORNE
 		end if
@@ -101,12 +101,12 @@ sub ObjectMain
 			// However, Bad Kumo Kumos jump lower than Good Kumo Kumos
 			
 			// Move the Kumo Kumo 8 pixels up
-			Object.YPos -= 524288
+			Object.YPos -= 0x80000
 			
 			Object.Timer = 0
 			
 			// Since this is a bad Kumo Kumo, it gets a velocity of 5 pixels per frame rather than the Good variant's 8
-			Object.YVelocity = -327680
+			Object.YVelocity = -0x50000
 			Object.YPos += Object.YVelocity
 			
 			Object.State = KUMOKUMO_AIRBORNE
@@ -129,26 +129,26 @@ sub ObjectMain
 			
 			// Set its starting movement properties
 			if Object.Direction == FACING_RIGHT
-				Object[TempObjectPos].XPos += 524288
-				Object[TempObjectPos].XVelocity = 196608
+				Object[TempObjectPos].XPos += 0x80000
+				Object[TempObjectPos].XVelocity = 0x30000
 			else
-				Object[TempObjectPos].XPos -= 524288
-				Object[TempObjectPos].XVelocity = -196608
+				Object[TempObjectPos].XPos -= 0x80000
+				Object[TempObjectPos].XVelocity = -0x30000
 			end if
 			
 			// And then make the Kumo Kumo jump
 			
 			// First, move it 8px up
-			Object.YPos -= 524288
+			Object.YPos -= 0x80000
 			
 			Object.Timer = 0
 			
 			// Its Velocity should be 8 pixels upwards per frame, as well
-			Object.YVelocity = -524288
+			Object.YVelocity = -0x80000
 			Object.YPos += Object.YVelocity
 			
 			// But apply a small starting Gravity of 0.25 pixels, too
-			Object.YVelocity += 16384
+			Object.YVelocity += 0x4000
 			
 			Object.State = KUMOKUMO_AIRBORNE
 			

@@ -1,4 +1,4 @@
-//------------Sonic CD BossBumper Script-------------//
+//----------------Sonic CD Boss Bumper Script-----------------//
 //--------Scripted by Christian Whitehead 'The Taxman'--------//
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
@@ -12,53 +12,37 @@
 #alias Object.XPos		:	Arm.XPos
 #alias Object.YPos		:	Arm.YPos
 // States
-#alias 0				:	BOSSBUMPER_SETUP
-#alias 1				:	BOSSBUMPER_IDLE
-#alias 2				:	BOSSBUMPER_DESTROYED
+#alias 0	:	BOSSBUMPER_SETUP
+#alias 1	:	BOSSBUMPER_IDLE
+#alias 2	:	BOSSBUMPER_DESTROYED
 
 // Priority
-#alias 0				:	PRIORITY_ACTIVE_BOUNDS
+#alias 0	:	PRIORITY_ACTIVE_BOUNDS
 
 sub ObjectMain
 	switch Object.State
 	case BOSSBUMPER_SETUP
-		Object.State = BOSSBUMPER_IDLE
-		// Same stuff that BossBumper_Idle, idk why it's here again
-		ArrayPos0 = Object.ArmEntity
-
-		Object.XPos = Arm[ArrayPos0].XPos
-		Object.XPos -= 1245184			// 0x130000
-
-		Object.YPos = Arm[ArrayPos0].YPos
-		if Arm[ArrayPos0].Frame != 0
-			if Arm[ArrayPos0].Frame == 1
-				Object.XPos += 524288	// 0x80000
-			else
-				Object.XPos += 1048576	// 0x100000
-			end if
-		end if
-		break
-
+		Object.State = BOSSBUMPER_IDLE	// here it used to be a duplicated of BOSSBUMPER_IDLE code, they noticed it in origins :)
 	case BOSSBUMPER_IDLE
 		ArrayPos0 = Object.ArmEntity
 		Object.XPos = Arm[ArrayPos0].XPos
-		Object.XPos -= 1245184			// 0x130000
+		Object.XPos -= 0x130000
 
 		Object.YPos = Arm[ArrayPos0].YPos
 		if Arm[ArrayPos0].Frame != 0
 			if Arm[ArrayPos0].Frame == 1
-				Object.XPos += 524288	// 0x80000
+				Object.XPos += 0x80000
 			else
-				Object.XPos += 1048576	// 0x100000
+				Object.XPos += 0x100000
 			end if
 		end if
 		break
 
 	case BOSSBUMPER_DESTROYED
-		Object.XOffSet -= 1280	// 0x500
+		Object.XOffSet -= 0x500
 		Object.XPos += Object.XOffSet
 
-		Object.YOffSet += 6144	// 0x1800
+		Object.YOffSet += 0x1800
 		Object.YPos += Object.YOffSet
 
 		if Object.OutOfBounds == true
@@ -72,36 +56,35 @@ end sub
 
 sub ObjectPlayerInteraction
 	if Object.State < BOSSBUMPER_DESTROYED
-
 		if Player.Animation != ANI_HURT
-
 			ArrayPos0 = Object.ArmEntity
-			if Arm[ArrayPos0].Frame == 0
 
+			if Arm[ArrayPos0].Frame == 0
 				PlayerObjectCollision(C_TOUCH, -10, -16, 14, 16)
 				if CheckResult == true
 
-					Player.Speed = -262144		// -0x40000
-					Player.XVelocity = -262144	// -0x40000
+					Player.Speed = -0x40000
+					Player.XVelocity = -0x40000
+
 					if Object.Frame == 0
 						PlaySfx(11, 0)
 					end if
 					Object.Frame = 2
-#platform: Use_Haptics
+#platform: Use_Standalone
+	#platform: Use_Haptics
 					HapticEffect(10, 0, 0, 0)
+	#endplatform
 #endplatform
 				end if
-
 			end if
-
 		end if
-
 	end if
 end sub
 
 
 sub ObjectDraw
 	DrawSprite(Object.Frame)
+
 	if Object.Frame > 0
 		Object.Frame--
 	end if
@@ -110,6 +93,7 @@ end sub
 
 sub ObjectStartup
 	LoadSpriteSheet("R1/Objects3.gif")
+
 	SpriteFrame(-14, -16, 24, 32, 99, 26)	// #0 - EGG-HVC-001 Bumper
 	SpriteFrame(-18, -16, 24, 32, 99, 26)	// #1 - EGG-HVC-001 Bumper (different offset)
 	SpriteFrame(-18, -16, 24, 32, 99, 26)	// #2 - EGG-HVC-001 Bumper (same offset as frame 1, here to pad out animation length)

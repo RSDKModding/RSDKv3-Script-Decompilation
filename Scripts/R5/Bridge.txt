@@ -3,22 +3,22 @@
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
 // Aliases
-#alias Object.PropertyValue : Object.Length
+#alias Object.PropertyValue	:	Object.Length
 
-#alias Object.Value0 : Object.WalkedOn
-#alias Object.Value1 : Object.Depress
-#alias Object.Value2 : Object.MidPoint
-#alias Object.Value3 : Object.MidHeight
-#alias Object.Value4 : Object.MidYPos
-#alias Object.Value5 : Object.PlayerNo
-#alias Object.Value6 : Object.Left
-#alias Object.Value7 : Object.Right
+#alias Object.Value0	:	Object.WalkedOn
+#alias Object.Value1	:	Object.Depress
+#alias Object.Value2	:	Object.MidPoint
+#alias Object.Value3	:	Object.MidHeight
+#alias Object.Value4	:	Object.MidYPos
+#alias Object.Value5	:	Object.PlayerNo
+#alias Object.Value6	:	Object.Left
+#alias Object.Value7	:	Object.Right
 
 // Time Period Aliases
-#alias 0 : PERIOD_PRESENT
-#alias 1 : PERIOD_PAST
-#alias 2 : PERIOD_FUTURE_G
-#alias 3 : PERIOD_FUTURE_B
+#alias 0	:	PERIOD_PRESENT
+#alias 1	:	PERIOD_PAST
+#alias 2	:	PERIOD_FUTURE_G
+#alias 3	:	PERIOD_FUTURE_B
 
 
 // Note: This Object supports multiple players, but CD's locked to 1 Player anyways so all that logic goes unused in a way
@@ -47,14 +47,14 @@ sub ObjectPlayerInteraction
 				Object.MidHeight *= TempValue1
 				
 				TempValue0 = Object.YPos
-				TempValue0 -= 3145728
+				TempValue0 -= 0x300000
 				if Player.YPos > TempValue0
 					if Player.YVelocity >= 0
 						TempValue2 = Player.CollisionBottom
 						FlipSign(TempValue2)
 						TempValue2 <<= 16
 						TempValue2 += Object.MidYPos
-						TempValue2 -= 524288
+						TempValue2 -= 0x80000
 
 						Object.WalkedOn++
 						Player.YPos = Object.YPos
@@ -94,9 +94,9 @@ sub ObjectPlayerInteraction
 					Sin(TempValue2, TempValue1)
 					TempValue2 *= Object.MidYPos
 					TempValue2 >>= 9
-					TempValue2 -= 524288
+					TempValue2 -= 0x80000
 
-					if Player.YVelocity < 32768
+					if Player.YVelocity < 0x8000
 						TempValue3 = TempValue2
 						TempValue3 >>= 16
 						TempValue4 = TempValue3
@@ -147,9 +147,9 @@ sub ObjectDraw
 
 	TempValue0 = 0
 	TempValue1 = Object.Left
-	TempValue1 += 524288
+	TempValue1 += 0x80000
 
-	TempValue4 = 524288
+	TempValue4 = 0x80000
 	
 	TempValue5 = Object.MidPoint
 	TempValue5 >>= 20
@@ -167,8 +167,8 @@ sub ObjectDraw
 		TempValue2 += Object.YPos
 	
 		DrawSpriteXY(0, TempValue1, TempValue2)
-		TempValue1 += 1048576
-		TempValue4 += 1048576
+		TempValue1 += 0x100000
+		TempValue4 += 0x100000
 		TempValue0++
 
 	loop
@@ -176,7 +176,7 @@ sub ObjectDraw
 	TempValue2 = Object.MidYPos
 	TempValue2 += Object.YPos
 	DrawSpriteXY(0, TempValue1, TempValue2)
-	TempValue1 += 1048576
+	TempValue1 += 0x100000
 	TempValue0++
 	
 	TempValue5 = Object.Right
@@ -184,9 +184,9 @@ sub ObjectDraw
 	TempValue5 -= Object.MidPoint
 	
 	TempValue1 = Object.Right
-	TempValue1 -= 524288
+	TempValue1 -= 0x80000
 	
-	TempValue4 = 524288
+	TempValue4 = 0x80000
 	
 	while TempValue0 < Object.Length
 
@@ -201,8 +201,8 @@ sub ObjectDraw
 		TempValue2 += Object.YPos
 		
 		DrawSpriteXY(0, TempValue1, TempValue2)
-		TempValue1 -= 1048576
-		TempValue4 += 1048576
+		TempValue1 -= 0x100000
+		TempValue4 += 0x100000
 		TempValue0++
 
 	loop

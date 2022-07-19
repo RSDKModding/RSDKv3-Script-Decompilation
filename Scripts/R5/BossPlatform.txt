@@ -21,67 +21,67 @@
 
 // Value0 servers two distinct purposes across this Object's different states
 // For clarity, they're just separately named
-#alias Object.Value0 : Object.Timer
+#alias Object.Value0	:	Object.Timer
 
-#alias Object.Value0 : Object.Bounces
+#alias Object.Value0	:	Object.Bounces
 
-#alias Object.Value1 : Object.BaseX
+#alias Object.Value1	:	Object.BaseX
 
-#alias Object.Value2 : Object.YVelocity
+#alias Object.Value2	:	Object.YVelocity
 
-#alias Object.Value5 : Object.Grind
+#alias Object.Value5	:	Object.Grind
 
-#alias Object.Value6 : Object.SparksTimer
+#alias Object.Value6	:	Object.SparksTimer
 
 // These set of Values are for the Conveyor Belt beneath the Boss
 // BeltFrame corresponds to one of the palette banks
-#alias Object.Value3 : Object.BeltSpeed
-#alias Object.Value4 : Object.BeltTimer
-#alias Object.Value7 : Object.BeltFrame
+#alias Object.Value3	:	Object.BeltSpeed
+#alias Object.Value4	:	Object.BeltTimer
+#alias Object.Value7	:	Object.BeltFrame
 
 // States
-#alias 0  : BOSSPLATFORM_IDLE
-#alias 1  : BOSSPLATFORM_SHAKE
-#alias 2  : BOSSPLATFORM_FALL_1
-#alias 3  : BOSSPLATFORM_FIGHT_1
-#alias 4  : BOSSPLATFORM_FALL_2
-#alias 5  : BOSSPLATFORM_FIGHT_2
-#alias 6  : BOSSPLATFORM_FALL_3
-#alias 7  : BOSSPLATFORM_FIGHT_3
-#alias 8  : BOSSPLATFORM_FALL_4
-#alias 9  : BOSSPLATFORM_FIGHT_4
-#alias 10 : BOSSPLATFORM_EGGFLEE
-#alias 11 : BOSSPLATFORM_EXPLODE
+#alias 0 	:	BOSSPLATFORM_IDLE
+#alias 1 	:	BOSSPLATFORM_SHAKE
+#alias 2 	:	BOSSPLATFORM_FALL_1
+#alias 3 	:	BOSSPLATFORM_FIGHT_1
+#alias 4 	:	BOSSPLATFORM_FALL_2
+#alias 5 	:	BOSSPLATFORM_FIGHT_2
+#alias 6 	:	BOSSPLATFORM_FALL_3
+#alias 7 	:	BOSSPLATFORM_FIGHT_3
+#alias 8 	:	BOSSPLATFORM_FALL_4
+#alias 9 	:	BOSSPLATFORM_FIGHT_4
+#alias 10	:	BOSSPLATFORM_EGGFLEE
+#alias 11	:	BOSSPLATFORM_EXPLODE
 
 // Bomb Carrier Aliases
-#alias 3 : BOMBCARRIER_SLIDERIGHT
+#alias 3	:	BOMBCARRIER_SLIDERIGHT
 
 // Boss Top Aliases
-#alias Object.Value1 : Object.BoundsR
-#alias Object.Value2 : Object.OldBoundsR
+#alias Object.Value1	:	Object.BoundsR
+#alias Object.Value2	:	Object.OldBoundsR
 
-#alias 1 : BOSSTOP_MOVEBOUNDS
+#alias 1	:	BOSSTOP_MOVEBOUNDS
 
 // Boss Spark Aliases
-#alias Object.Value1 : Object.XVelocity
+#alias Object.Value1	:	Object.XVelocity
 
-#alias 0 : BOSSSPARK_GRIND
-#alias 1 : BOSSSPARK_LAND
+#alias 0	:	BOSSSPARK_GRIND
+#alias 1	:	BOSSSPARK_LAND
 
 // Eggman Aliases
-#alias 0 : EGGMAN_IDLE
-#alias 2 : EGGMAN_DAMAGED
-#alias 3 : EGGMAN_PANICK_JUMP
-#alias 6 : EGGMAN_FLEE
+#alias 0	:	EGGMAN_IDLE
+#alias 2	:	EGGMAN_DAMAGED
+#alias 3	:	EGGMAN_PANICK_JUMP
+#alias 6	:	EGGMAN_FLEE
 
 // SFX Aliases
 
 // Global SFX
-#alias 22 : SFX_EXPLOSION
+#alias 22	:	SFX_EXPLOSION
 
 // Stage SFX
-#alias 3 : SFX_BOSSHIT
-#alias 4 : SFX_IMPACT1
+#alias 3	:	SFX_BOSSHIT
+#alias 4	:	SFX_IMPACT1
 
 
 // Function declarations
@@ -118,7 +118,7 @@ function BossPlatform_Conveyor_Update
 			end if
 			
 			// First, set TempValue0 to be the value of a speed of 2 pixels to the left per frame
-			TempValue0 = -131072
+			TempValue0 = -0x20000
 			
 			// Then, add the Belt's actual speed to it
 			TempValue0 += Object.BeltSpeed
@@ -218,7 +218,7 @@ function BossPlatform_Conveyor_Update
 		// Shake the boss either a pixel left or back to its neutral position - a 2-pixel movement range
 		if TempValue1 == 1
 			Object.XPos = Object.BaseX
-			Object.XPos -= 65536
+			Object.XPos -= 0x10000
 		else
 			Object.XPos = Object.BaseX
 		end if
@@ -243,10 +243,10 @@ function BossPlatform_Conveyor_Update
 		// From that result, move the Boss a pixel either left or right - a 3-pixel movement range
 		if TempValue1 == 1
 			Object.XPos = Object.BaseX
-			Object.XPos -= 65536
+			Object.XPos -= 0x10000
 		else
 			Object.XPos = Object.BaseX
-			Object.XPos += 65536
+			Object.XPos += 0x10000
 		end if
 		
 		// And yup, carry the Boss Back Panel along for the ride as well!
@@ -317,7 +317,7 @@ function BossPlatform_Conveyor_WindDown
 	// For the most part, this function is just a slimmed version of BossPlatform_Conveyor_Update
 	
 	// Slow down the Conveyor Belt, at a rate of 0.0625 pixels per frame
-	Object.BeltSpeed -= 4096
+	Object.BeltSpeed -= 0x1000
 	if Object.BeltSpeed < 0
 		// Nope, don't wanna step into the negatives!
 		Object.BeltSpeed = 0
@@ -327,7 +327,7 @@ function BossPlatform_Conveyor_WindDown
 		// The Player's on the Ground
 		
 		if Player.ObjectInteraction == true
-			TempValue0 = -131072
+			TempValue0 = -0x20000
 			TempValue0 += Object.BeltSpeed
 			
 			if TempValue0 > 0
@@ -417,56 +417,56 @@ function BossPlatform_SpawnLandingSparks
 	// - TempValue0 is set to the Y Offset for the Sparks
 	
 	CreateTempObject(TypeName[Boss Spark], BOSSSPARK_LAND, Object.XPos, Object.YPos)
-	Object[TempObjectPos].XPos -= 1048576
+	Object[TempObjectPos].XPos -= 0x100000
 	Object[TempObjectPos].YPos += TempValue0
-	Object[TempObjectPos].XVelocity = -65536
-	Object[TempObjectPos].YVelocity = -98304
+	Object[TempObjectPos].XVelocity = -0x10000
+	Object[TempObjectPos].YVelocity = -0x18000
 	
 	CreateTempObject(TypeName[Boss Spark], BOSSSPARK_LAND, Object.XPos, Object.YPos)
-	Object[TempObjectPos].XPos += 1048576
+	Object[TempObjectPos].XPos += 0x100000
 	Object[TempObjectPos].YPos += TempValue0
-	Object[TempObjectPos].XVelocity = -65536
-	Object[TempObjectPos].YVelocity = -98304
+	Object[TempObjectPos].XVelocity = -0x10000
+	Object[TempObjectPos].YVelocity = -0x18000
 	
-	TempValue0 += 524288
+	TempValue0 += 0x80000
 	
 	CreateTempObject(TypeName[Boss Spark], BOSSSPARK_LAND, Object.XPos, Object.YPos)
 	Object[TempObjectPos].XPos -= 1572864
 	Object[TempObjectPos].YPos += TempValue0
-	Object[TempObjectPos].XVelocity = -65536
-	Object[TempObjectPos].YVelocity = -98304
+	Object[TempObjectPos].XVelocity = -0x10000
+	Object[TempObjectPos].YVelocity = -0x18000
 	
 	CreateTempObject(TypeName[Boss Spark], BOSSSPARK_LAND, Object.XPos, Object.YPos)
-	Object[TempObjectPos].XPos -= 262144
+	Object[TempObjectPos].XPos -= 0x40000
 	Object[TempObjectPos].YPos += TempValue0
-	Object[TempObjectPos].XVelocity = -65536
-	Object[TempObjectPos].YVelocity = -98304
+	Object[TempObjectPos].XVelocity = -0x10000
+	Object[TempObjectPos].YVelocity = -0x18000
 	
 	CreateTempObject(TypeName[Boss Spark], BOSSSPARK_LAND, Object.XPos, Object.YPos)
 	Object[TempObjectPos].XPos += 1572864
 	Object[TempObjectPos].YPos += TempValue0
-	Object[TempObjectPos].XVelocity = -65536
-	Object[TempObjectPos].YVelocity = -98304
+	Object[TempObjectPos].XVelocity = -0x10000
+	Object[TempObjectPos].YVelocity = -0x18000
 	
 	CreateTempObject(TypeName[Boss Spark], BOSSSPARK_LAND, Object.XPos, Object.YPos)
-	Object[TempObjectPos].XPos += 262144
+	Object[TempObjectPos].XPos += 0x40000
 	Object[TempObjectPos].YPos += TempValue0
-	Object[TempObjectPos].XVelocity = -65536
-	Object[TempObjectPos].YVelocity = -98304
+	Object[TempObjectPos].XVelocity = -0x10000
+	Object[TempObjectPos].YVelocity = -0x18000
 	
-	TempValue0 += 524288
-	
-	CreateTempObject(TypeName[Boss Spark], BOSSSPARK_LAND, Object.XPos, Object.YPos)
-	Object[TempObjectPos].XPos -= 1048576
-	Object[TempObjectPos].YPos += TempValue0
-	Object[TempObjectPos].XVelocity = -65536
-	Object[TempObjectPos].YVelocity = -98304
+	TempValue0 += 0x80000
 	
 	CreateTempObject(TypeName[Boss Spark], BOSSSPARK_LAND, Object.XPos, Object.YPos)
-	Object[TempObjectPos].XPos += 1048576
+	Object[TempObjectPos].XPos -= 0x100000
 	Object[TempObjectPos].YPos += TempValue0
-	Object[TempObjectPos].XVelocity = -65536
-	Object[TempObjectPos].YVelocity = -98304
+	Object[TempObjectPos].XVelocity = -0x10000
+	Object[TempObjectPos].YVelocity = -0x18000
+	
+	CreateTempObject(TypeName[Boss Spark], BOSSSPARK_LAND, Object.XPos, Object.YPos)
+	Object[TempObjectPos].XPos += 0x100000
+	Object[TempObjectPos].YPos += TempValue0
+	Object[TempObjectPos].XVelocity = -0x10000
+	Object[TempObjectPos].YVelocity = -0x18000
 	
 end function
 
@@ -485,10 +485,10 @@ sub ObjectMain
 			// Shake a bit, direction depending on what that Bit is
 			if TempValue0 == 1
 				// Move a pixel down
-				Object.YPos += 131072
+				Object.YPos += 0x20000
 			else
 				// Move a pixel up
-				Object.YPos -= 131072
+				Object.YPos -= 0x20000
 			end if
 		else
 			// Start falling
@@ -522,7 +522,7 @@ sub ObjectMain
 	case BOSSPLATFORM_FALL_1
 		
 		// Accelerate the falling speed at a rate of about 0.09 pixels per frame
-		Object.YVelocity += 6144
+		Object.YVelocity += 0x1800
 		
 		// And then, y'know, do the actual falling
 		Object.YPos += Object.YVelocity
@@ -555,9 +555,11 @@ sub ObjectMain
 			// Spawn Sparks, with an offset of 19 pixels
 			TempValue0 = 1245184
 			CallFunction(BossPlatform_SpawnLandingSparks)
-			
-#platform: Use_Haptics
+
+#platform: Use_Standalone
+	#platform: Use_Haptics
 			HapticEffect(97, 0, 0, 0)
+	#endplatform
 #endplatform
 		end if
 		
@@ -594,14 +596,14 @@ sub ObjectMain
 			CreateTempObject(TypeName[Boss Spark], BOSSSPARK_GRIND, Object.XPos, Object.YPos)
 			Object[TempObjectPos].XPos += 1572864
 			Object[TempObjectPos].YPos += 1769472
-			Object[TempObjectPos].XVelocity = -65536
+			Object[TempObjectPos].XVelocity = -0x10000
 		end if
 		break
 		
 	case BOSSPLATFORM_FALL_2
 		
 		// Falling acceleration speed rate of about 0.09 pixels per frame
-		Object.YVelocity += 6144
+		Object.YVelocity += 0x1800
 		
 		Object.YPos += Object.YVelocity
 		
@@ -631,8 +633,10 @@ sub ObjectMain
 			TempValue0 = 720896
 			CallFunction(BossPlatform_SpawnLandingSparks)
 			
-#platform: Use_Haptics
+#platform: Use_Standalone
+	#platform: Use_Haptics
 			HapticEffect(97, 0, 0, 0)
+	#endplatform
 #endplatform
 		end if
 		
@@ -666,14 +670,14 @@ sub ObjectMain
 			CreateTempObject(TypeName[Boss Spark], BOSSSPARK_GRIND, Object.XPos, Object.YPos)
 			Object[TempObjectPos].XPos += 1572864
 			Object[TempObjectPos].YPos += 1245184
-			Object[TempObjectPos].XVelocity = -65536
+			Object[TempObjectPos].XVelocity = -0x10000
 		end if
 		break
 		
 	case BOSSPLATFORM_FALL_3
 		
 		// Fall with an acceleration speed of about 0.09 pixels per frame
-		Object.YVelocity += 6144
+		Object.YVelocity += 0x1800
 		
 		Object.YPos += Object.YVelocity
 		
@@ -698,11 +702,13 @@ sub ObjectMain
 			end if
 			
 			// Create landing Sparks, with an offset of 3 pixels this time
-			TempValue0 = 196608
+			TempValue0 = 0x30000
 			CallFunction(BossPlatform_SpawnLandingSparks)
 			
-#platform: Use_Haptics
+#platform: Use_Standalone
+	#platform: Use_Haptics
 			HapticEffect(97, 0, 0, 0)
+	#endplatform
 #endplatform
 		end if
 		
@@ -736,14 +742,14 @@ sub ObjectMain
 			CreateTempObject(TypeName[Boss Spark], BOSSSPARK_GRIND, Object.XPos, Object.YPos)
 			Object[TempObjectPos].XPos += 1572864
 			Object[TempObjectPos].YPos += 720896
-			Object[TempObjectPos].XVelocity = -65536
+			Object[TempObjectPos].XVelocity = -0x10000
 		end if
 		break
 		
 	case BOSSPLATFORM_FALL_4
 		
 		// Apply a falling acceleration of roughly 0.09 pixels per frame
-		Object.YVelocity += 6144
+		Object.YVelocity += 0x1800
 		
 		Object.YPos += Object.YVelocity
 		
@@ -769,11 +775,13 @@ sub ObjectMain
 			end if
 			
 			// Spawn some Landing Sparks, with an offset of 3 pixels up
-			TempValue0 = -196608
+			TempValue0 = -0x30000
 			CallFunction(BossPlatform_SpawnLandingSparks)
 			
-#platform: Use_Haptics
+#platform: Use_Standalone
+	#platform: Use_Haptics
 			HapticEffect(97, 0, 0, 0)
+	#endplatform
 #endplatform
 		end if
 		
@@ -819,15 +827,15 @@ sub ObjectMain
 			// - Velocity of 1 pixel left per frame
 			CreateTempObject(TypeName[Boss Spark], BOSSSPARK_GRIND, Object.XPos, Object.YPos)
 			Object[TempObjectPos].XPos += 1572864
-			Object[TempObjectPos].YPos += 196608
-			Object[TempObjectPos].XVelocity = -65536
+			Object[TempObjectPos].YPos += 0x30000
+			Object[TempObjectPos].XVelocity = -0x10000
 		end if
 		break
 		
 	case BOSSPLATFORM_EGGFLEE
 		if Object.Timer == 19
 			Object.Timer = 0
-			TempValue0 = -196608
+			TempValue0 = -0x30000
 			CallFunction(BossPlatform_SpawnLandingSparks)
 		end if
 		
@@ -855,8 +863,10 @@ sub ObjectMain
 			// And set the Boss Top to be INK_ALPHA as well, for the same purpose
 			Object[-3].InkEffect = 2
 			
-#platform: Use_Haptics
+#platform: Use_Standalone
+	#platform: Use_Haptics
 			HapticEffect(97, 0, 0, 0)
+	#endplatform
 #endplatform
 		end if
 		break
@@ -889,23 +899,23 @@ sub ObjectMain
 			// Create an Explosion, 32 pixels left and 16 pixels above this Object
 			
 			CreateTempObject(TypeName[Boss Explosion], 0, Object.XPos, Object.YPos)
-			Object[TempObjectPos].XPos -= 2097152
-			Object[TempObjectPos].YPos -= 1048576
+			Object[TempObjectPos].XPos -= 0x200000
+			Object[TempObjectPos].YPos -= 0x100000
 		end if
 		
 		if TempValue0 == 32
 			// Create an Explosion, now 16 pixels left from this object
 			
 			CreateTempObject(TypeName[Boss Explosion], 0, Object.XPos, Object.YPos)
-			Object[TempObjectPos].XPos -= 1048576
+			Object[TempObjectPos].XPos -= 0x100000
 		end if
 		
 		if TempValue0 == 64
 			// Create an Explosion, this one 32 pixels to the right and 16 pixels above this Object
 			
 			CreateTempObject(TypeName[Boss Explosion], 0, Object.XPos, Object.YPos)
-			Object[TempObjectPos].XPos += 2097152
-			Object[TempObjectPos].YPos -= 1048576
+			Object[TempObjectPos].XPos += 0x200000
+			Object[TempObjectPos].YPos -= 0x100000
 		end if
 		
 		TempValue0 = Object.Timer
@@ -984,8 +994,10 @@ sub ObjectPlayerInteraction
 			// Ka-thunk!
 			PlayStageSfx(SFX_BOSSHIT, false)
 			
-#platform: Use_Haptics
+#platform: Use_Standalone
+	#platform: Use_Haptics
 			HapticEffect(97, 0, 0, 0)
+	#endplatform
 #endplatform
 		end if
 	else

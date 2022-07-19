@@ -22,12 +22,15 @@ sub ObjectMain
 			else
 				ObjectTileCollision(0, 0, 16, 0)
 			end if
-			if CheckResult == 1
+			if CheckResult == true
 				Object.State = 3
 				Object.Value0 = 0
 				PlayStageSfx(8, 0)
-#platform: Use_Haptics
+
+#platform: Use_Standalone
+	#platform: Use_Haptics
 				HapticEffect(100, 0, 0, 0)
+	#endplatform
 #endplatform
 			else
 				Object.XPos += Object.Value1
@@ -93,21 +96,21 @@ sub ObjectPlayerInteraction
 		PlayerObjectCollision(C_TOUCH, -12, -12, 12, 12)
 		TempValue0 = CheckResult
 		Sin(Object.XPos, Object.Rotation)
-		Object.XPos *= -1048576
+		Object.XPos *= -0x100000
 		Object.XPos >>= 9
 		Object.XPos += TempValue1
 		Cos(Object.YPos, Object.Rotation)
-		Object.YPos *= 1048576
+		Object.YPos *= 0x100000
 		Object.YPos >>= 9
 		Object.YPos += TempValue2
 		PlayerObjectCollision(C_TOUCH, -10, -10, 10, 10)
 		TempValue0 |= CheckResult
 		Sin(Object.XPos, Object.Rotation)
-		Object.XPos *= 1048576
+		Object.XPos *= 0x100000
 		Object.XPos >>= 9
 		Object.XPos += TempValue1
 		Cos(Object.YPos, Object.Rotation)
-		Object.YPos *= -1048576
+		Object.YPos *= -0x100000
 		Object.YPos >>= 9
 		Object.YPos += TempValue2
 		PlayerObjectCollision(C_TOUCH, -15, -15, 15, 15)
@@ -129,10 +132,10 @@ sub ObjectDraw
 	TempValue6 = Object.XPos
 	TempValue7 = Object.YPos
 	if Object.Rotation == 256
-		TempValue6 -= 65536
+		TempValue6 -= 0x10000
 	end if
 	if Object.Rotation == 384
-		TempValue7 -= 65536
+		TempValue7 -= 0x10000
 	end if
 	switch Object.Frame
 	case 0
@@ -140,11 +143,11 @@ sub ObjectDraw
 	case 2
 		DrawSpriteFX(Object.Frame, FX_ROTATE, TempValue6, TempValue7)
 		Sin(Object.Value3, Object.Rotation)
-		Object.Value3 *= -2097152
+		Object.Value3 *= -0x200000
 		Object.Value3 >>= 9
 		Object.Value3 += Object.XPos
 		Cos(Object.Value4, Object.Rotation)
-		Object.Value4 *= 2097152
+		Object.Value4 *= 0x200000
 		Object.Value4 >>= 9
 		Object.Value4 += Object.YPos
 		DrawSpriteXY(3, Object.Value3, Object.Value4)

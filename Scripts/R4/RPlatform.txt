@@ -3,14 +3,14 @@
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
 // Aliases
-#alias Object.Value0 : Object.Angle
-#alias Object.Value1 : Object.PlatformX
-#alias Object.Value2 : Object.PlatformY
-#alias Object.Value3 : Object.ChangeX
-#alias Object.Value4 : Object.ChangeY
+#alias Object.Value0	:	Object.Angle
+#alias Object.Value1	:	Object.PlatformX
+#alias Object.Value2	:	Object.PlatformY
+#alias Object.Value3	:	Object.ChangeX
+#alias Object.Value4	:	Object.ChangeY
 
 // For the button mounted atop this Object, either true or false
-#alias Object.PropertyValue : Object.Pressed
+#alias Object.PropertyValue	:	Object.Pressed
 
 
 sub ObjectMain
@@ -24,14 +24,14 @@ sub ObjectMain
 	Object.ChangeX *= TempValue1
 	Object.ChangeX <<= 7
 	Object.ChangeX += Object.XPos
-	Object.ChangeX &= 4294901760
+	Object.ChangeX &= 0xFFFF0000
 	Object.ChangeX -= Object.PlatformX
 
 	Sin(Object.ChangeY, Object.Angle)
 	Object.ChangeY *= TempValue1
 	Object.ChangeY <<= 7
 	Object.ChangeY += Object.YPos
-	Object.ChangeY &= 4294901760
+	Object.ChangeY &= 0xFFFF0000
 	Object.ChangeY -= Object.PlatformY
 end sub
 
@@ -67,7 +67,7 @@ sub ObjectPlayerInteraction
 			Object.Pressed = true
 			
 			// Move the Player along with the Platform's movements
-			Player.YPos += 524288
+			Player.YPos += 0x80000
 			Player.XPos += Object.ChangeX
 			Player.YPos += Object.ChangeY
 		else
@@ -121,13 +121,13 @@ sub ObjectDraw
 	Object.PlatformX *= TempValue1
 	Object.PlatformX <<= 7
 	Object.PlatformX += Object.XPos
-	Object.PlatformX &= 4294901760
+	Object.PlatformX &= 0xFFFF0000
 	
 	Sin(Object.PlatformY, Object.Angle)
 	Object.PlatformY *= TempValue1
 	Object.PlatformY <<= 7
 	Object.PlatformY += Object.YPos
-	Object.PlatformY &= 4294901760
+	Object.PlatformY &= 0xFFFF0000
 	
 	// Finally, draw the Platform itself
 	DrawSpriteXY(4, Object.PlatformX, Object.PlatformY)
@@ -179,13 +179,13 @@ sub RSDKDraw
 	Object.PlatformX *= TempValue1
 	Object.PlatformX <<= 7
 	Object.PlatformX += Object.XPos
-	Object.PlatformX &= 4294901760
+	Object.PlatformX &= 0xFFFF0000
 	
 	Sin(Object.PlatformY, 128)
 	Object.PlatformY *= TempValue1
 	Object.PlatformY <<= 7
 	Object.PlatformY += Object.YPos
-	Object.PlatformY &= 4294901760
+	Object.PlatformY &= 0xFFFF0000
 
 	DrawSpriteXY(4, Object.PlatformX, Object.PlatformY)
 

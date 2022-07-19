@@ -25,37 +25,40 @@
 #alias Object[1].Value4				: Object.BackTouchPress
 
 // States
-#alias 0  : OPTIONS_SETUP
-#alias 1  : OPTIONS_CONTROLS
-#alias 2  : OPTIONS_SELECTED
-#alias 3  : OPTIONS_STAGE_LOAD
-#alias 4  : OPTIONS_SETTINGS_SETUP
-#alias 5  : OPTIONS_SETTINGS_POPIN
-#alias 6  : OPTIONS_SETTINGS_CONTROLS
-#alias 7  : OPTIONS_UNUSED
-#alias 8  : OPTIONS_UNUSED2
-#alias 9  : OPTIONS_EXIT_SETTINGS
-#alias 10 : OPTIONS_LEAVE_SUBMENU
-#alias 11 : OPTIONS_EXIT
-#alias 12 : OPTIONS_ENTER_ABOUT_MENU
-#alias 13 : OPTIONS_ENTER_ABOUTMENU
-#alias 14 : OPTIONS_ABOUTMENU_CONTROLS
-#alias 15 : OPTIONS_EXIT_ABOUTMENU
+#alias 0 	:	OPTIONS_SETUP
+#alias 1 	:	OPTIONS_CONTROLS
+#alias 2 	:	OPTIONS_SELECTED
+#alias 3 	:	OPTIONS_STAGE_LOAD
+#alias 4 	:	OPTIONS_SETTINGS_SETUP
+#alias 5 	:	OPTIONS_SETTINGS_POPIN
+#alias 6 	:	OPTIONS_SETTINGS_CONTROLS
+#alias 7 	:	OPTIONS_UNUSED
+#alias 8 	:	OPTIONS_UNUSED2
+#alias 9 	:	OPTIONS_EXIT_SETTINGS
+#alias 10	:	OPTIONS_LEAVE_SUBMENU
+#alias 11	:	OPTIONS_EXIT
+#alias 12	:	OPTIONS_ENTER_ABOUT_MENU
+#alias 13	:	OPTIONS_ENTER_ABOUTMENU
+#alias 14	:	OPTIONS_ABOUTMENU_CONTROLS
+#alias 15	:	OPTIONS_EXIT_ABOUTMENU
 
 // Languages
-#alias 0 : ENGLISH
-#alias 1 : FRENCH
-#alias 2 : ITALIAN
-#alias 3 : DEUTSCH
-#alias 4 : SPANISH
-#alias 5 : JAPANESE
+#alias 0	:	ENGLISH
+#alias 1	:	FRENCH
+#alias 2	:	ITALIAN
+#alias 3	:	DEUTSCH
+#alias 4	:	SPANISH
+#alias 5	:	JAPANESE
+
+// Device Type
+#alias 1	:	RETRO_MOBILE
 
 // SaveRAM Values
-// 32 : SavedSettings
-// 33 : BGM
-// 34 : SFX
-// 35 : Controls
-// 40 : Haptic
+// 32	:	SavedSettings
+// 33	:	BGM
+// 34	:	SFX
+// 35	:	Controls
+// 40	:	Haptic
 
 // Function declarations
 #function MenuHeading_CheckTouchBack
@@ -117,7 +120,7 @@ sub ObjectMain
 	case OPTIONS_CONTROLS
 
 		if Options.PhysicalControls == true
-			if KeyPress.Up == true
+			if KeyPress[0].Up == true
 				Object.CurrentSelection--
 				if Object.CurrentSelection < 0
 					Object.CurrentSelection = 3
@@ -125,7 +128,7 @@ sub ObjectMain
 				PlaySfx(23, 0) 	//Menu Button SFX
 			end if
 
-			if KeyPress.Down == true
+			if KeyPress[0].Down == true
 				Object.CurrentSelection++
 				if Object.CurrentSelection > 3
 					Object.CurrentSelection = 0
@@ -149,7 +152,7 @@ sub ObjectMain
 			else
 				if TempValue3 < 0
 					if Object.CurrentSelection == 0
-						KeyPress.Start = true
+						KeyPress[0].Start = true
 					end if
 				else
 					if Object.CurrentSelection == 0
@@ -165,7 +168,7 @@ sub ObjectMain
 			else
 				if TempValue3 < 0
 					if Object.CurrentSelection == 1
-						KeyPress.Start = true
+						KeyPress[0].Start = true
 					end if
 				else
 					if Object.CurrentSelection == 1
@@ -181,7 +184,7 @@ sub ObjectMain
 			else
 				if TempValue3 < 0
 					if Object.CurrentSelection == 2
-						KeyPress.Start = true
+						KeyPress[0].Start = true
 					end if
 				else
 					if Object.CurrentSelection == 2
@@ -197,7 +200,7 @@ sub ObjectMain
 			else
 				if TempValue3 < 0
 					if Object.CurrentSelection == 3
-						KeyPress.Start = true
+						KeyPress[0].Start = true
 					end if
 				else
 					if Object.CurrentSelection == 3
@@ -207,11 +210,11 @@ sub ObjectMain
 			end if
 			CallFunction(MenuHeading_CheckTouchBack)
 			
-			if KeyPress.Up == true
+			if KeyPress[0].Up == true
 				Object.CurrentSelection = 3
 				Options.PhysicalControls = true
 			end if
-			if KeyPress.Down == true
+			if KeyPress[0].Down == true
 				Object.CurrentSelection = 0
 				Options.PhysicalControls = true
 			end if
@@ -219,10 +222,10 @@ sub ObjectMain
 
 		CheckResult = false
 		if Object.CurrentSelection > -1
-			if KeyPress.Start == true
+			if KeyPress[0].Start == true
 				CheckResult = true
 			end if
-			if KeyPress.ButtonA == true
+			if KeyPress[0].ButtonA == true
 				CheckResult = true
 			end if
 		end if
@@ -248,7 +251,7 @@ sub ObjectMain
 			end if
 		end if
 
-		if KeyPress.ButtonB == true
+		if KeyPress[0].ButtonB == true
 			Object.Timer = 248
 			Object.State = OPTIONS_EXIT
 			PlayStageSfx(1, 0)
@@ -272,9 +275,7 @@ sub ObjectMain
 					SaveRAM[33] = 100
 					SaveRAM[34] = 100
 					SaveRAM[35] = 0
-#platform: Use_Haptics
-					SaveRAM[40] = true
-#endplatform
+					SaveRAM[40] = true	// Haptics
 				end if
 				Object.State = OPTIONS_SETTINGS_SETUP
 				Object.YPos = 40
@@ -304,7 +305,11 @@ sub ObjectMain
 				if Options.DevMenuFlag == true
 					Engine.State = RESET_GAME
 				else
-					Stage.ListPos = 6		//Help
+					if Engine.DeviceType == RETRO_MOBILE
+						Stage.ListPos = 6	//Help
+					else
+						EngineCallback(5)
+					endif
 					LoadStage()
 				end if
 				break
@@ -356,14 +361,14 @@ sub ObjectMain
 	case OPTIONS_SETTINGS_CONTROLS
 		ArrayPos0 = Object.CurrentSelection
 		if Options.PhysicalControls == true
-			if KeyPress.Up == true
+			if KeyPress[0].Up == true
 				Object[+4].Value1--
 				PlaySfx(23, 0) 	//Menu Button SFX
 				if Object[+4].Value1 < 0
 					Object[+4].Value1 = 3
 				end if
 			end if
-			if KeyPress.Down == true
+			if KeyPress[0].Down == true
 				Object[+4].Value1++
 				PlaySfx(23, 0) 	//Menu Button SFX
 				if Object[+4].Value1 > 3
@@ -372,7 +377,7 @@ sub ObjectMain
 			end if
 			switch Object[+4].Value1
 			case 0
-				if KeyPress.Left == true
+				if KeyPress[0].Left == true
 					Object.BGMDecreaseTimer = 10
 					SaveRAM[33] -= 10
 					if SaveRAM[33] < 0
@@ -383,7 +388,7 @@ sub ObjectMain
 						PlaySfx(23, 0) 	//Menu Button SFX
 					end if
 				end if
-				if KeyPress.Right == true
+				if KeyPress[0].Right == true
 					Object.BGMIncreaseTimer = 10
 					SaveRAM[33] += 10
 					if SaveRAM[33] > 100
@@ -396,7 +401,7 @@ sub ObjectMain
 				end if
 				break
 			case 1
-				if KeyPress.Left == true
+				if KeyPress[0].Left == true
 					Object.SFXDecreaseTimer = 10
 					SaveRAM[34] -= 10
 					if SaveRAM[34] < 0
@@ -407,7 +412,7 @@ sub ObjectMain
 						Engine.SFXVolume = SaveRAM[34]
 					end if
 				end if
-				if KeyPress.Right == true
+				if KeyPress[0].Right == true
 					Object.SFXIncreaseTimer = 10
 					SaveRAM[34] += 10
 					if SaveRAM[34] > 100
@@ -419,14 +424,14 @@ sub ObjectMain
 				end if
 				break
 			case 2
-				if KeyPress.Left == true
+				if KeyPress[0].Left == true
 					SaveRAM[35]--
 					if SaveRAM[35] < 0
 						SaveRAM[35] = 1
 					end if
 					PlaySfx(23, 0) 	//Menu Button SFX
 				end if
-				if KeyPress.Right == true
+				if KeyPress[0].Right == true
 					SaveRAM[35]++
 					if SaveRAM[35] > 1
 						SaveRAM[35] = 0
@@ -435,23 +440,21 @@ sub ObjectMain
 				end if
 				break
 			case 3
-#platform: Use_Haptics
-				if KeyPress.Left == true
+				if KeyPress[0].Left == true
 					SaveRAM[40]--
-					if SaveRAM[40] < 0
-						SaveRAM[40] = 1
+					if SaveRAM[40] < false
+						SaveRAM[40] = true
 						HapticEffect(30, 0, 0, 0)
 					end if
 					PlaySfx(23, 0) 	//Menu Button SFX
 				end if
-				if KeyPress.Right == true
+				if KeyPress[0].Right == true
 					SaveRAM[40]++
-					if SaveRAM[40] > 1
-						SaveRAM[40] = 0
+					if SaveRAM[40] > true
+						SaveRAM[40] = false
 					end if
 					PlaySfx(23, 0) 	//Menu Button SFX
 				end if
-#endplatform
 				break
 			end switch
 			CheckTouchRect(0, 0, Screen.XSize, Screen.YSize)
@@ -667,13 +670,11 @@ sub ObjectMain
 			else
 				if TempValue3 < 0
 					if Object[+4].Value1 == 9
-#platform: Use_Haptics
-						SaveRAM[40] = 1
-						Engine.HapticsEnabled = 1
+						SaveRAM[40] = true
+						Engine.HapticsEnabled = true
 						PlaySfx(23, 0) 	//Menu Button SFX
-						HapticEffect(30, 0, 0, 0)
-#endplatform
 						Object[+4].Value1 = -1
+						HapticEffect(30, 0, 0, 0)
 					end if
 				else
 					if Object[+4].Value1 == 9
@@ -692,11 +693,9 @@ sub ObjectMain
 			else
 				if TempValue3 < 0
 					if Object[+4].Value1 == 10
-#platform: Use_Haptics
-						SaveRAM[40] = 0
-						Engine.HapticsEnabled = 0
+						SaveRAM[40] = false
+						Engine.HapticsEnabled = false
 						PlaySfx(23, 0) 	//Menu Button SFX
-#endplatform
 						Object[+4].Value1 = -1
 					end if
 				else
@@ -716,7 +715,7 @@ sub ObjectMain
 				Object.BackTouchPress = false
 				if TempValue3 < 0
 					if Object[+4].Value1 == 11
-						KeyPress.ButtonB = 1
+						KeyPress[0].ButtonB = 1
 					end if
 				else
 					if Object[+4].Value1 == 11
@@ -725,23 +724,21 @@ sub ObjectMain
 				end if
 			end if
 
-			if KeyPress.Up == true
+			if KeyPress[0].Up == true
 				Object[+4].Value1 = 2
 				Options.PhysicalControls = true
 			end if
 			
-			if KeyPress.Down == true
+			if KeyPress[0].Down == true
 				Object[+4].Value1 = 0
 				Options.PhysicalControls = true
 			end if
 		end if
-		if KeyPress.ButtonB == true
+		if KeyPress[0].ButtonB == true
 			Object.State = 9
 			Object.Timer = 248
 			Options.OriginalControls = SaveRAM[35]
-#platform: Use_Haptics
 			Engine.HapticsEnabled = SaveRAM[40]
-#endplatform
 			SaveRAM[32] = 1
 			WriteSaveRAM()
 			PlayStageSfx(1, 0)
@@ -864,6 +861,7 @@ sub ObjectMain
 		break
 
 	case OPTIONS_ABOUTMENU_CONTROLS
+#platform: Use_Standalone	// Mobile only
 		CheckTouchRect(0, 0, Screen.XSize, Screen.YSize)
 		TempValue3 = CheckResult
 		TempValue0 = Screen.XSize
@@ -876,7 +874,7 @@ sub ObjectMain
 			Object.BackTouchPress = false
 			if TempValue3 < 0
 				if Object[+4].Value1 == 9
-					KeyPress.ButtonB = 1
+					KeyPress[0].ButtonB = 1
 				end if
 			else
 				if Object[+4].Value1 == 9
@@ -884,7 +882,8 @@ sub ObjectMain
 				end if
 			end if
 		end if
-		if KeyPress.ButtonB == true
+#endplatform
+		if KeyPress[0].ButtonB == true
 			Object.State = OPTIONS_EXIT_ABOUTMENU
 			Object.Timer = 248
 			PlayStageSfx(1, 0)
@@ -1108,14 +1107,10 @@ sub ObjectStartup
 		SaveRAM[33] = 100
 		SaveRAM[34] = 100
 		SaveRAM[35] = 0
-#platform: Use_Haptics
 		SaveRAM[40] = true
-#endplatform
 	end if
 	Options.OriginalControls = SaveRAM[35]
-#platform: Use_Haptics
 	Engine.HapticsEnabled = SaveRAM[40]
-#endplatform
 	SpriteFrame(4, 2, 32, 32, 479, 34)				// #0 - Gear
 	SpriteFrame(4, 2, 32, 32, 479, 34)				// #1 - Gear Again
 	SpriteFrame(4, 2, 32, 32, 479, 34)				// #2 - Why is this a Gear again

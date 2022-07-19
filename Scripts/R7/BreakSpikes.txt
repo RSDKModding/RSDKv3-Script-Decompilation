@@ -5,17 +5,17 @@
 // Aliases
 
 // Value aliases
-#alias Object.Value1 : Object.XVelocity
-#alias Object.Value2 : Object.YVelocity
+#alias Object.Value1	:	Object.XVelocity
+#alias Object.Value2	:	Object.YVelocity
 
-#alias Object.Value3 : Object.YAcceleration
+#alias Object.Value3	:	Object.YAcceleration
 
 // Property Value aliases
-#alias 0 : BREAKSPIKES_MAIN
+#alias 0	:	BREAKSPIKES_MAIN
 // All non-zero property values are for individual spike pieces
 
 // Player aliases
-#alias Player.Value4 : Player.Invincible
+#alias Player.Value4	:	Player.Invincible
 
 
 sub ObjectMain
@@ -26,7 +26,7 @@ sub ObjectMain
 		
 		// Take the spike position and subtract 20 pixels from it
 		TempValue0 = Object.XPos
-		TempValue0 -= 1310720
+		TempValue0 -= 0x140000
 		
 		ArrayPos0 = MetalSonic_EntityNo
 		
@@ -37,39 +37,41 @@ sub ObjectMain
 			// Play the Crumble SFX
 			PlayStageSfx(7, 0)
 			
-#platform: Use_Haptics
+			
+#platform: Use_Standalone
+	#platform: Use_Haptics
 			// Do a strong shake
 			HapticEffect(96, 0, 0, 0)
+	#endplatform
 #endplatform
-			
 			// Create a bunch of spike fragments
 			// Their property value is what frame they should use
 			
 			CreateTempObject(TypeName[Break Spikes], 1, Object.XPos, Object.YPos)
-			Object[TempObjectPos].XVelocity = 32768
-			Object[TempObjectPos].YVelocity = -131072
+			Object[TempObjectPos].XVelocity = 0x8000
+			Object[TempObjectPos].YVelocity = -0x20000
 			Object[TempObjectPos].YAcceleration = 12288
 			Object[TempObjectPos].InkEffect = 2 //INK_ALPHA
 			Object[TempObjectPos].Alpha = 254
 			
 			CreateTempObject(TypeName[Break Spikes], 2, Object.XPos, Object.YPos)
-			Object[TempObjectPos].XVelocity = 65536
-			Object[TempObjectPos].YVelocity = -262144
+			Object[TempObjectPos].XVelocity = 0x10000
+			Object[TempObjectPos].YVelocity = -0x40000
 			Object[TempObjectPos].YAcceleration = 12288
 			Object[TempObjectPos].InkEffect = 2 //INK_ALPHA
 			Object[TempObjectPos].Alpha = 254
 			
 			CreateTempObject(TypeName[Break Spikes], 3, Object.XPos, Object.YPos)
-			Object[TempObjectPos].XVelocity = 98304
-			Object[TempObjectPos].YVelocity = -131072
-			Object[TempObjectPos].YAcceleration = 8192
+			Object[TempObjectPos].XVelocity = 0x18000
+			Object[TempObjectPos].YVelocity = -0x20000
+			Object[TempObjectPos].YAcceleration = 0x2000
 			Object[TempObjectPos].InkEffect = 2 //INK_ALPHA
 			Object[TempObjectPos].Alpha = 254
 			
 			CreateTempObject(TypeName[Break Spikes], 4, Object.XPos, Object.YPos)
-			Object[TempObjectPos].XVelocity = 131072
-			Object[TempObjectPos].YVelocity = -262144
-			Object[TempObjectPos].YAcceleration = 16384
+			Object[TempObjectPos].XVelocity = 0x20000
+			Object[TempObjectPos].YVelocity = -0x40000
+			Object[TempObjectPos].YAcceleration = 0x4000
 			Object[TempObjectPos].InkEffect = 2 //INK_ALPHA
 			Object[TempObjectPos].Alpha = 254
 			
@@ -125,9 +127,9 @@ sub ObjectPlayerInteraction
 					
 					// Decide knockback direction based on if the player's behind or in front of this obejct
 					if Player.XPos > Object.XPos
-						Player.Speed = 131072
+						Player.Speed = 0x20000
 					else
-						Player.Speed = -131072
+						Player.Speed = -0x20000
 					end if
 					
 				end if

@@ -1,40 +1,40 @@
-//------------Sonic CD Rise Platform Script-------------//
+//---------------Sonic CD Rise Platform Script----------------//
 //--------Scripted by Christian Whitehead 'The Taxman'--------//
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
 // Aliases
 #alias Object.Value0	:	Object.Raising
 #alias Object.Value1	:	Object.Timer
-#alias Object.Value2	:	Object.PlayerFloor.Y
+#alias Object.Value2	:	Object.YPlayerFloor
 #alias Object.Value3	:	Object.RiseTimer
 #alias Object.Value4	:	Object.YVelocity
-#alias Object.Value5	:	Object.OriginPos.Y
+#alias Object.Value5	:	Object.YOriginPos
 
 // States
-#alias 0				:	RISEPLATFORM_IDLE
-#alias 1				:	RISEPLATFORM_CRUMBLE
-#alias 2				:	RISEPLATFORM_RISE
-#alias 3				:	RISEPLATFORM_FLOAT
+#alias 0	:	RISEPLATFORM_IDLE
+#alias 1	:	RISEPLATFORM_CRUMBLE
+#alias 2	:	RISEPLATFORM_RISE
+#alias 3	:	RISEPLATFORM_FLOAT
 
 // Priority
-#alias 0				:	PRIORITY_ACTIVE_BOUNDS
-#alias 1				:	PRIORITY_ACTIVE
+#alias 0	:	PRIORITY_ACTIVE_BOUNDS
+#alias 1	:	PRIORITY_ACTIVE
 
 
 sub ObjectMain
 	switch Object.State
 	case RISEPLATFORM_IDLE
-		Object.PlayerFloor.Y = 0
+		Object.YPlayerFloor = 0
 		if Object.Raising == true
 			Object.State = RISEPLATFORM_CRUMBLE
 			Object.Priority = PRIORITY_ACTIVE
-			Object.YVelocity = -262144		// -0x40000
+			Object.YVelocity = -0x40000		// -0x40000
 			Object.RiseTimer = 0
 		end if
 		break
 
 	case RISEPLATFORM_CRUMBLE
-		Object.PlayerFloor.Y = Object.YVelocity
+		Object.YPlayerFloor = Object.YVelocity
 		if Object.RiseTimer < 8
 			Object.RiseTimer++
 		else
@@ -42,7 +42,7 @@ sub ObjectMain
 			Object.State = RISEPLATFORM_RISE
 		end if
 		if Object.OutOfBounds == true
-			Object.YPos = Object.OriginPos.Y
+			Object.YPos = Object.YOriginPos
 			Object.State = 0
 			Object.Timer = 0
 		end if
@@ -50,13 +50,13 @@ sub ObjectMain
 
 	case RISEPLATFORM_RISE
 		if Object.YVelocity < 0
-			Object.YVelocity += 8192		// 0x2000
+			Object.YVelocity += 0x2000		// 0x2000
 		else
 			Object.State = RISEPLATFORM_FLOAT
 		end if
-		Object.PlayerFloor.Y = Object.YVelocity
+		Object.YPlayerFloor = Object.YVelocity
 		if Object.OutOfBounds == true
-			Object.YPos = Object.OriginPos.Y
+			Object.YPos = Object.YOriginPos
 			Object.State = 0
 			Object.Timer = 0
 		end if
@@ -70,13 +70,13 @@ sub ObjectMain
 				TempValue0 = Object.Timer
 				TempValue0 &= 3
 				if TempValue0 == 3
-					Object.PlayerFloor.Y = 65536	// 0x10000
+					Object.YPlayerFloor = 0x10000	// 0x10000
 				else
-					Object.PlayerFloor.Y = 0
+					Object.YPlayerFloor = 0
 				end if
 
 			else
-				Object.PlayerFloor.Y = 0
+				Object.YPlayerFloor = 0
 			end if
 
 		else
@@ -86,19 +86,19 @@ sub ObjectMain
 				TempValue0 = Object.Timer
 				TempValue0 &= 3
 				if TempValue0 == 3
-					Object.PlayerFloor.Y = -65536	// -0x10000
+					Object.YPlayerFloor = -0x10000	// -0x10000
 				else
-					Object.PlayerFloor.Y = 0
+					Object.YPlayerFloor = 0
 				end if
 
 			else
-				Object.PlayerFloor.Y = 0
+				Object.YPlayerFloor = 0
 			end if
 
 		end if
 
 		if Object.OutOfBounds == true
-			Object.YPos = Object.OriginPos.Y
+			Object.YPos = Object.YOriginPos
 			Object.State = 0
 			Object.Timer = 0
 		end if
@@ -113,13 +113,13 @@ sub ObjectPlayerInteraction
 	PlayerObjectCollision(C_PLATFORM, -32, -9, 32, 12)
 	if CheckResult == true
 		Object.Raising = true
-		Player.YPos += Object.PlayerFloor.Y
+		Player.YPos += Object.YPlayerFloor
 	end if
 end sub
 
 
 sub ObjectDraw
-	Object.YPos += Object.PlayerFloor.Y
+	Object.YPos += Object.YPlayerFloor
 	DrawSprite(0)
 end sub
 
@@ -132,7 +132,7 @@ sub ObjectStartup
 	ArrayPos0 = 32
 	while ArrayPos0 < 1056
 		if Object[ArrayPos0].Type == TypeName[RisePlatform]
-			Object[ArrayPos0].OriginPos.Y = Object[ArrayPos0].YPos
+			Object[ArrayPos0].YOriginPos = Object[ArrayPos0].YPos
 		end if
 		ArrayPos0++
 	loop

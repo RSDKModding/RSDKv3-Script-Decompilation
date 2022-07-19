@@ -3,43 +3,56 @@
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
 // Aliases
-#alias Object.PropertyValue : Object.Header
-#alias Object.Value0		: Object.Timer
-#alias Object.Value1		: Object.YOffset
-#alias Object.Value2		: Object.XOffset
-#alias Object.Value3		: Object.Angle
-#alias Object.Value4		: Object.GFX1
-#alias Object.Value5		: Object.GFX2
+#alias Object.PropertyValue	:	Object.Header
+#alias Object.Value0		:	Object.Timer
+#alias Object.Value1		:	Object.YOffset
+#alias Object.Value2		:	Object.XOffset
+#alias Object.Value3		:	Object.Angle
+#alias Object.Value4		:	Object.GFX1
+#alias Object.Value5		:	Object.GFX2
 
 // Object[1] is a blank object just to share values
-#alias Object[1].Value2		: Object.MaxButtonCount
+#alias Object[1].Value2		:	Object.MaxButtonCount
 
 //MenuHeading_CheckTouchBack Specific Values
-#alias Object.Value1		: Object.CMButtonPressed	//Current Menu Button Pressed
-#alias Object[1].Value4		: Object.BackTouchPress
+#alias Object.Value1		:	Object.CMButtonPressed	//Current Menu Button Pressed
+#alias Object[1].Value4		:	Object.BackTouchPress
 
 // States
-#alias 1 : MENUHEADING_LEAVE_SCREEN
-#alias 2 : MENUHEADING_ENTER_SCREEN
+#alias 1	:	MENUHEADING_LEAVE_SCREEN
+#alias 2	:	MENUHEADING_ENTER_SCREEN
+
+// Property Values
+#alias 5	:	PROPVAL_MAINMENU_HEADER
+#alias 6	:	PROPVAL_SAVESELECT_HEADER
+#alias 7	:	PROPVAL_HELP&OPTIONS_HEADER
+#alias 8	:	PROPVAL_EXTRAS_HEADER
+#alias 9	:	PROPVAL_SOUNDTRACK_HEADER
+#alias 10	:	PROPVAL_STAGESELECT_HEADER
+
+// Ink Effects
+#alias 2	:	INK_ALPHA
 
 // Languages
-#alias 0 : ENGLISH
-#alias 1 : FRENCH
-#alias 2 : ITALIAN
-#alias 3 : DEUTSCH
-#alias 4 : SPANISH
-#alias 5 : JAPANESE
+#alias 0	:	ENGLISH
+#alias 1	:	FRENCH
+#alias 2	:	ITALIAN
+#alias 3	:	DEUTSCH
+#alias 4	:	SPANISH
+#alias 5	:	JAPANESE
 
 //Engine & CallBacks
-#alias 2 : MESSAGE_LOSTFOCUS
+#alias 2	:	MESSAGE_LOSTFOCUS
 
 // Function declarations
 #function MenuHeading_CheckTouchBack
+
 
 function MenuHeading_CheckTouchBack	//This is used by other scripts to check if the back touch button is pressed
 	if Engine.Message == MESSAGE_LOSTFOCUS
 		Object.CMButtonPressed = -1
 	end if
+
 	TempValue0 = Screen.XSize
 	TempValue0 -= 76
 	CheckTouchRect(TempValue0, 192, Screen.XSize, Screen.YSize)
@@ -50,7 +63,7 @@ function MenuHeading_CheckTouchBack	//This is used by other scripts to check if 
 		Object.BackTouchPress = false
 		if TempValue3 < 0
 			if Object.CMButtonPressed == 5
-				KeyPress.ButtonB = true
+				KeyPress[0].ButtonB = true
 			end if
 		else
 			if Object.CMButtonPressed == 5
@@ -91,12 +104,12 @@ sub ObjectMain
 			Object.State = 0
 		end if
 
-		if Object.Header==5
-			if Object.Alpha==240
-				Object.Alpha=255
+		if Object.Header == PROPVAL_MAINMENU_HEADER
+			if Object.Alpha == 240
+				Object.Alpha = 255
 			else
-				if Object.Alpha<255
-					Object.Alpha+=16
+				if Object.Alpha < 255
+					Object.Alpha += 16
 				endif
 			endif
 		endif
@@ -114,6 +127,13 @@ sub ObjectDraw
 	DrawSpriteScreenXY(1, Screen.CenterX, Object.YOffset)
 	DrawSpriteScreenXY(2, Screen.CenterX, Object.YOffset)
 	DrawSpriteScreenXY(0, Screen.CenterX, 20)
+
+#platform: Use_Decomp	// Small decomp change to extend the SONIC THE HEDGEHOG CD bar for wider resolutions
+	TempValue0  = Screen.CenterX
+	TempValue0 += 200
+	DrawRect(TempValue0, 20, screen.XSize, 9, 0, 0, 0, 255)
+#endplatform
+
 	TempValue0 = Screen.CenterX
 	TempValue0 += 12
 	DrawRect(0, 212, TempValue0, 13, 0, 0, 0, 255)
@@ -151,12 +171,34 @@ sub ObjectStartup
 	ArrayPos0 = 32
 	while ArrayPos0 < 1056
 		if Object[ArrayPos0].Type == TypeName[MenuHeading]
+#platform: Use_Origins
+			if game.continueFlag == false	// they really duped the whole thing
+				Object[ArrayPos0].Frame = 5
+				Object[ArrayPos0].Alpha = 255
+				Object[ArrayPos0].Header = PROPVAL_MAINMENU_HEADER
+				Object[ArrayPos0].InkEffect = INK_ALPHA
+				Object[ArrayPos0].XOffset = -256
+				Object[ArrayPos0].State = MENUHEADING_ENTER_SCREEN
+			else
+				Object[ArrayPos0].Frame = 6
+				Object[ArrayPos0].Alpha = 255
+				Object[ArrayPos0].Header = PROPVAL_SAVESELECT_HEADER
+				Object[ArrayPos0].InkEffect = INK_ALPHA
+				Object[ArrayPos0].XOffset = -256
+				Object[ArrayPos0].State = MENUHEADING_ENTER_SCREEN
+			endif
+			
+#endplatform
+
+#platform: Use_Standalone
 			Object[ArrayPos0].Frame = 5
 			Object[ArrayPos0].Alpha = 255
-			Object[ArrayPos0].Header = 5
-			Object[ArrayPos0].InkEffect = 2 //INK_ALPHA
+			Object[ArrayPos0].Header = PROPVAL_MAINMENU_HEADER
+			Object[ArrayPos0].InkEffect = INK_ALPHA
 			Object[ArrayPos0].XOffset = -256
 			Object[ArrayPos0].State = MENUHEADING_ENTER_SCREEN
+#endplatform
+
 			LoadSpriteSheet("Menu/MenuGfx1_EN.gif")
 			Object[ArrayPos0].GFX1 = Object[ArrayPos0].SpriteSheet
 			switch Engine.Language
@@ -184,51 +226,59 @@ sub ObjectStartup
 		ArrayPos0++
 	loop
 	//MenuGfx1
-#platform: Standard
-	SpriteFrame(12, 0, 192, 9, 1, 225)		// #0 Sonic The Hedgehog CD Bar
-#endplatform
-#platform: Mobile
 	SpriteFrame(12, 0, 216, 9, 1, 225)		// #0 Sonic The Hedgehog CD Bar
-#endplatform
 
 	SpriteFrame(8, 0, 8, 240, 503, 1)		// #1 Vertical Line 1
 	SpriteFrame(8, 240, 8, 240, 503, 1)		// #2 Vertical Line 
-	
-#platform: Standard
-	SpriteFrame(-11, -36, 22, 72, 418, 366)		// #3 Up Arrow
-	SpriteFrame(-11, -36, 22, 72, 441, 366)		// #4 Down Arrow
+
+// Slight modification, in origins this was a normal "if Engine.DeviceType == false", written like this to help with compatibility
+#platform: Use_Origins
+	CheckEqual(Engine.DeviceType, false)
 #endplatform
 
-#platform: Mobile
-	switch Engine.Language
-	case ENGLISH
-	case JAPANESE
-		SpriteFrame(-11, -36, 22, 72, 418, 1)		// #3 Up Arrow
-		SpriteFrame(-11, -36, 22, 72, 441, 1)		// #4 Down Arrow
-		break
+#platform: Use_Standalone
+	#platform: Standard
+		CheckResult = true
+	#endplatform
 
-	case FRENCH
-		SpriteFrame(-11, -36, 22, 72, 418, 74)		// #3 Up Arrow
-		SpriteFrame(-11, -36, 22, 72, 441, 74)		// #4 Down Arrow
-		break
-
-	case ITALIAN
-		SpriteFrame(-11, -36, 22, 72, 418, 147)		// #3 Up Arrow
-		SpriteFrame(-11, -36, 22, 72, 441, 147)		// #4 Down Arrow
-		break
-
-	case DEUTSCH
-		SpriteFrame(-11, -36, 22, 72, 418, 220)		// #3 Up Arrow
-		SpriteFrame(-11, -36, 22, 72, 441, 220)		// #4 Down Arrow
-		break
-
-	case SPANISH
-		SpriteFrame(-11, -36, 22, 72, 418, 293)		// #3 Up Arrow
-		SpriteFrame(-11, -36, 22, 72, 441, 293)		// #4 Down Arrow
-		break
-
-	end switch
+	#platform: Mobile
+		CheckResult = false
+	#endplatform
 #endplatform
+
+	if CheckResult == true
+		SpriteFrame(-11, -36, 22, 72, 418, 366)		// #3 Up Arrow
+		SpriteFrame(-11, -36, 22, 72, 441, 366)		// #4 Down Arrow
+	else
+		switch Engine.Language
+		case ENGLISH
+		case JAPANESE
+			SpriteFrame(-11, -36, 22, 72, 418, 1)		// #3 Up Arrow
+			SpriteFrame(-11, -36, 22, 72, 441, 1)		// #4 Down Arrow
+			break
+
+		case FRENCH
+			SpriteFrame(-11, -36, 22, 72, 418, 74)		// #3 Up Arrow
+			SpriteFrame(-11, -36, 22, 72, 441, 74)		// #4 Down Arrow
+			break
+
+		case ITALIAN
+			SpriteFrame(-11, -36, 22, 72, 418, 147)		// #3 Up Arrow
+			SpriteFrame(-11, -36, 22, 72, 441, 147)		// #4 Down Arrow
+			break
+
+		case DEUTSCH
+			SpriteFrame(-11, -36, 22, 72, 418, 220)		// #3 Up Arrow
+			SpriteFrame(-11, -36, 22, 72, 441, 220)		// #4 Down Arrow
+			break
+
+		case SPANISH
+			SpriteFrame(-11, -36, 22, 72, 418, 293)		// #3 Up Arrow
+			SpriteFrame(-11, -36, 22, 72, 441, 293)		// #4 Down Arrow
+			break
+
+		end switch
+	end if
 	//MenuGfx2
 	switch Engine.Language
 	case ENGLISH
@@ -238,10 +288,7 @@ sub ObjectStartup
 		SpriteFrame(16, 0, 160, 30, 1, 677)			// #7 Help & Options
 		SpriteFrame(32, 0, 160, 30, 1, 708)			// #8 Extras
 		SpriteFrame(24, 0, 160, 30, 1, 739)			// #9 Soundtrack
-
-#platform: Mobile
-		SpriteFrame(24, 0, 160, 30, 1, 770)			// #10 Stage Select (Used in Trial versions)
-#endplatform
+		SpriteFrame(24, 0, 160, 30, 1, 770)			// #10 Stage Select (Used in Trial versions, this will be a blank sprite in steam, but we cannot see it there anyways)
 		break
 
 	case FRENCH
@@ -250,10 +297,7 @@ sub ObjectStartup
 		SpriteFrame(14, 0, 160, 30, 1, 677)			// #7 Help & Options
 		SpriteFrame(32, 0, 160, 30, 1, 708)			// #8 Extras
 		SpriteFrame(10, 0, 160, 30, 1, 739)			// #9 Soundtrack
-
-#platform: Mobile
-		SpriteFrame(24, 0, 160, 30, 1, 770)			// #10 Stage Select (Used in Trial versions)
-#endplatform
+		SpriteFrame(24, 0, 160, 30, 1, 770)			// #10 Stage Select (Used in Trial versions, this will be a blank sprite in steam, but we cannot see it there anyways)
 
 		break
 	case ITALIAN
@@ -262,10 +306,7 @@ sub ObjectStartup
 		SpriteFrame(14, 0, 160, 30, 1, 677)			// #7 Help & Options
 		SpriteFrame(32, 0, 160, 30, 1, 708)			// #8 Extras
 		SpriteFrame(8, 0, 160, 30, 1, 739)			// #9 Soundtrack
-
-#platform: Mobile
-		SpriteFrame(24, 0, 160, 30, 1, 770)			// #10 Stage Select (Used in Trial versions)
-#endplatform
+		SpriteFrame(24, 0, 160, 30, 1, 770)			// #10 Stage Select (Used in Trial versions, this will be a blank sprite in steam, but we cannot see it there anyways)
 
 		break
 	case DEUTSCH
@@ -274,10 +315,7 @@ sub ObjectStartup
 		SpriteFrame(6, 0, 160, 30, 1, 677)			// #7 Help & Options
 		SpriteFrame(32, 0, 160, 30, 1, 708)			// #8 Extras
 		SpriteFrame(24, 0, 160, 30, 1, 739)			// #9 Soundtrack
-
-#platform: Mobile
-		SpriteFrame(24, 0, 160, 30, 1, 770)			// #10 Stage Select (Used in Trial versions)
-#endplatform
+		SpriteFrame(24, 0, 160, 30, 1, 770)			// #10 Stage Select (Used in Trial versions, this will be a blank sprite in steam, but we cannot see it there anyways)
 
 		break
 	case SPANISH
@@ -286,9 +324,7 @@ sub ObjectStartup
 		SpriteFrame(8, 0, 160, 30, 1, 677)			// #7 Help & Options
 		SpriteFrame(32, 0, 160, 30, 1, 708)			// #8 Extras
 		SpriteFrame(6, 0, 160, 30, 1, 739)			// #9 Soundtrack
-#platform: Mobile
-		SpriteFrame(24, 0, 160, 30, 1, 770)			// #10 Stage Select (Used in Trial versions)
-#endplatform
+		SpriteFrame(24, 0, 160, 30, 1, 770)			// #10 Stage Select (Used in Trial versions, this will be a blank sprite in steam, but we cannot see it there anyways)
 
 		break
 	end switch

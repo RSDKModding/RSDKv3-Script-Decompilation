@@ -1,4 +1,4 @@
-//------------Sonic CD BossFoot Script-------------//
+//----------------Sonic CD Boss Foot Script-------------------//
 //--------Scripted by Christian Whitehead 'The Taxman'--------//
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
@@ -49,22 +49,22 @@
 
 
 // States
-#alias 0				:	BOSSFOOT_SETUP
-#alias 1				:	BOSSFOOT_STEP
-#alias 2				:	BOSSFOOT_HANDLE_STEP
-#alias 3				:	BOSSFOOT_STEP_OPPOSITE
-#alias 4				:	BOSSFOOT_HANDLE_STEP_OPPOSITE
-#alias 5				:	BOSSFOOT_LANDING
-#alias 6				:	BOSSFOOT_DESTROYED
+#alias 0	:	BOSSFOOT_SETUP
+#alias 1	:	BOSSFOOT_STEP
+#alias 2	:	BOSSFOOT_HANDLE_STEP
+#alias 3	:	BOSSFOOT_STEP_OPPOSITE
+#alias 4	:	BOSSFOOT_HANDLE_STEP_OPPOSITE
+#alias 5	:	BOSSFOOT_LANDING
+#alias 6	:	BOSSFOOT_DESTROYED
 
 // Eggman Animations
-#alias 1				:	ANI_LAUGH
+#alias 1	:	EGGANI_LAUGH
 
 // CSides
-#alias 0				:	CSIDE_FLOOR
+#alias 0	:	CSIDE_FLOOR
 
 // Priority
-#alias 0				:	PRIORITY_ACTIVE_BOUNDS
+#alias 0	:	PRIORITY_ACTIVE_BOUNDS
 
 #function BossFoot_HandleMovement
 #function BossFoot_StepEarthQuake
@@ -73,12 +73,13 @@
 
 function BossFoot_HandleMovement
 	ArrayPos0 = Object.LegsEntity
+
 	Object.XPos = Legs[ArrayPos0].XPos
-	Object.XPos -= 720896	// 0xB0000
+	Object.XPos -= 0xB0000
 	Object.XPos += Object.XVelocity
 
 	Object.YPos = Legs[ArrayPos0].YPos
-	Object.YPos += 917504	// 0xE0000
+	Object.YPos += 0xE0000
 	Object.YPos += Object.YVelocity
 end function
 
@@ -93,19 +94,25 @@ function BossFoot_StepEarthQuake
 	SetBit(LegJoint[ArrayPos1].LegJointSide, 4, 1)
 
 	Screen.ShakeY = 4
+
 	ArrayPos0 = Object.BodyEntity
 	ArrayPos0++
 	if LegJointR[ArrayPos0].YOffSet > 2
 		ArrayPos0--
-		Body[ArrayPos0].YPos -= 98304	// 0x18000
+		Body[ArrayPos0].YPos -= 0x18000
 
 		ArrayPos0--
-		Face[ArrayPos0].YPos -= 98304	// 0x18000
+		Face[ArrayPos0].YPos -= 0x18000
 	end if
+
 	PlayStageSfx(0, 0)
-#platform: Use_Haptics
-	HapticEffect(100, 0, 0, 0)
+				
+#platform: Use_Standalone
+	#platform: Use_Haptics
+		HapticEffect(100, 0, 0, 0)
+	#endplatform
 #endplatform
+
 end function
 
 
@@ -170,11 +177,11 @@ end function
 sub ObjectMain
 	switch Object.State
 	case BOSSFOOT_SETUP
-		Object.XOffSet = 16384		// 0x4000
-		Object.YOffSet = 32768		// 0x8000
+		Object.XOffSet = 0x4000
+		Object.YOffSet = 0x8000
 
-		Object.XVelocity = -524288	// -0x80000
-		Object.YVelocity = 1048576	// 0x100000
+		Object.XVelocity = -0x80000
+		Object.YVelocity =  0x100000
 
 		SetBit(Object.LegSide, 0, 1)
 		CallFunction(BossFoot_HandleMovement)
@@ -193,7 +200,7 @@ sub ObjectMain
 
 		if CheckResult == true
 
-			if Object.YVelocity >= 786432	// 0xC0000
+			if Object.YVelocity >= 0xC0000
 				SetBit(Object.LegSide, 0, 1)
 				Object.State = BOSSFOOT_HANDLE_STEP
 				TempValue1 = false
@@ -201,7 +208,7 @@ sub ObjectMain
 
 		else
 
-			if Object.YVelocity >= 1048576	// 0x100000
+			if Object.YVelocity >= 0x100000
 				SetBit(Object.LegSide, 0, 1)
 				Object.State = BOSSFOOT_HANDLE_STEP
 				TempValue1 = false
@@ -256,21 +263,21 @@ sub ObjectMain
 		ArrayPos0 = LegJointR[ArrayPos1].LegREntity
 		ArrayPos1 = LegR[ArrayPos0].FootREntity
 
-		Object.XPos = FootR[ArrayPos1].XPos
-		Object.XPos -= 655360	// 0xA0000
-		Object.YPos = FootR[ArrayPos1].YPos
+		Object.XPos  = FootR[ArrayPos1].XPos
+		Object.XPos -= 0xA0000
+		Object.YPos  = FootR[ArrayPos1].YPos
 		break
 
 	case BOSSFOOT_DESTROYED
 		GetBit(TempValue0, Object.LegSide, 4)
 		if TempValue0 == false
-			Object.XOffSet -= 1632	// 0x660
+			Object.XOffSet -= 0x660
 		else
-			Object.XOffSet += 1632	// 0x660
+			Object.XOffSet += 0x660
 		end if
 		Object.XPos += Object.XOffSet
 
-		Object.YOffSet += 5728		// 0x1660
+		Object.YOffSet += 0x1660
 		Object.YPos += Object.YOffSet
 		if Object.OutOfBounds == true
 			Object.Type = TypeName[Blank Object]
@@ -284,9 +291,7 @@ end sub
 
 sub ObjectPlayerInteraction
 	if Object.State < BOSSFOOT_DESTROYED
-
 		if Player.Invincible == 0
-
 			PlayerObjectCollision(C_TOUCH, -28, -20, 26, 20)
 			if CheckResult == true
 
@@ -295,13 +300,13 @@ sub ObjectPlayerInteraction
 				ArrayPos0 = LegJoint[ArrayPos1].BodyEntity
 				ArrayPos1 = Body[ArrayPos0].FaceEntity
 
-				Face[ArrayPos1].Animation = ANI_LAUGH
+				Face[ArrayPos1].Animation = EGGANI_LAUGH
 				Face[ArrayPos1].FaceTimer = 180
 				Player.State = PlayerObject_Hurt
 				if Player.XPos > Object.XPos
-					Player.Speed = 131072	// 0x20000
+					Player.Speed =  0x20000
 				else
-					Player.Speed = -131072	// -0x20000
+					Player.Speed = -0x20000
 				end if
 
 			end if
@@ -319,6 +324,7 @@ end sub
 
 sub ObjectStartup
 	LoadSpriteSheet("R1/Objects3.gif")
+
 	SpriteFrame(-32, -20, 58, 40, 1, 66)	// #0 - EGG-HVC-001 Foot
 end sub
 

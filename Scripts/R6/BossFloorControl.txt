@@ -61,7 +61,7 @@ function FloorControl_SpawnRubble
 	FloorRubble[TempObjectPos].XVelocity -= 640
 	FloorRubble[TempObjectPos].XVelocity <<= 8
 
-	FloorRubble[TempObjectPos].YVelocity = 65536
+	FloorRubble[TempObjectPos].YVelocity = 0x10000
 	
 	FloorRubble[TempObjectPos].FallSpeed = 2048
 	TempValue0 &= 4095
@@ -168,7 +168,7 @@ sub ObjectMain
 		end if
 	end if
 	TempValue0 = BossCamera.YPos
-	TempValue0 += 8388608
+	TempValue0 += 0x800000
 	TempValue0 -= Player.YPos
 	TempValue0 >>= 25
 
@@ -219,8 +219,11 @@ sub ObjectMain
 			end switch
 
 			PlayStageSfx(12, 0)
-#platform: Use_Haptics
+			
+#platform: Use_Standalone
+	#platform: Use_Haptics
 			HapticEffect(77, 0, 0, 0)
+	#endplatform
 #endplatform
 			Object.Timer = 0
 			Object.RubbleTimer = 24
@@ -262,9 +265,9 @@ sub ObjectMain
 				CreateTempObject(TypeName[BossSpike], 0, 180355072, Object.RubbleYPos)
 				Object[TempObjectPos].XPos += Object.XVelocity
 				if Object.XVelocity > 0
-					Object.XVelocity -= 2097152
+					Object.XVelocity -= 0x200000
 				else
-					Object.XVelocity += 2097152
+					Object.XVelocity += 0x200000
 				end if
 			end if
 		end if
@@ -292,7 +295,7 @@ sub ObjectMain
 				CreateTempObject(TypeName[ElectricArc], 0, Object[-1].XPos, Object[-6].YPos)
 				TempValue0 = Object.TargetFloor
 				TempValue0 <<= 25
-				TempValue0 += 131072
+				TempValue0 += 0x20000
 				Object[TempObjectPos].YPos -= TempValue0
 				Object[TempObjectPos].Direction = FACING_LEFT
 				Object[TempObjectPos].DrawOrder = 4

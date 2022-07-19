@@ -3,22 +3,22 @@
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
 // Aliases
-#alias Object.Value0 : Object.Timer
-#alias Object.Value1 : Object.XVelocity
-#alias Object.Value2 : Object.YVelocity
-#alias Object.Value3 : Object.Gravity
+#alias Object.Value0	:	Object.Timer
+#alias Object.Value1	:	Object.XVelocity
+#alias Object.Value2	:	Object.YVelocity
+#alias Object.Value3	:	Object.Gravity
 
 // States
-#alias 0 : BOSSBOMB_CARRIED
-#alias 1 : BOSSBOMB_ACTIVE
+#alias 0	:	BOSSBOMB_CARRIED
+#alias 1	:	BOSSBOMB_ACTIVE
 
 // SFX Aliases
 
 // Global SFX
-#alias 22 : SFX_EXPLOSION
+#alias 22	:	SFX_EXPLOSION
 
 // Stage SFX
-#alias 4 : SFX_IMPACT1
+#alias 4	:	SFX_IMPACT1
 
 
 sub ObjectMain
@@ -29,7 +29,7 @@ sub ObjectMain
 		if Object.State == BOSSBOMB_ACTIVE
 			
 			// Make the Bomb fall at a rate of 2px per frame
-			Object.YPos += 131072
+			Object.YPos += 0x20000
 			
 			// See if the Bomb's touched the ground yet
 			ObjectTileCollision(0, 0, 10, 0)
@@ -49,10 +49,10 @@ sub ObjectMain
 					// - YVelocity of 4px up per frame
 					// - Gravity acceleration of 0.1875px
 					CreateTempObject(TypeName[Boss Bomb], 1, Object.XPos, Object.YPos)
-					Object[TempObjectPos].XPos -= 262144
-					Object[TempObjectPos].YPos -= 262144
+					Object[TempObjectPos].XPos -= 0x40000
+					Object[TempObjectPos].YPos -= 0x40000
 					Object[TempObjectPos].XVelocity = -40960
-					Object[TempObjectPos].YVelocity = -262144
+					Object[TempObjectPos].YVelocity = -0x40000
 					Object[TempObjectPos].Gravity = 12288
 					
 					// And then the next Fragment, with initial values of:
@@ -61,10 +61,10 @@ sub ObjectMain
 					// - YVelocity of 4px up per frame
 					// - Gravity acceleration of 0.1875px
 					CreateTempObject(TypeName[Boss Bomb], 1, Object.XPos, Object.YPos)
-					Object[TempObjectPos].XPos += 262144
-					Object[TempObjectPos].YPos -= 262144
+					Object[TempObjectPos].XPos += 0x40000
+					Object[TempObjectPos].YPos -= 0x40000
 					Object[TempObjectPos].XVelocity = 40960
-					Object[TempObjectPos].YVelocity = -262144
+					Object[TempObjectPos].YVelocity = -0x40000
 					Object[TempObjectPos].Gravity = 12288
 					
 					// And another!
@@ -74,11 +74,11 @@ sub ObjectMain
 					// - YVelocity of 2.25px up per frame
 					// - Gravity acceleration of 0.09375px
 					CreateTempObject(TypeName[Boss Bomb], 1, Object.XPos, Object.YPos)
-					Object[TempObjectPos].XPos -= 262144
-					Object[TempObjectPos].YPos += 262144
+					Object[TempObjectPos].XPos -= 0x40000
+					Object[TempObjectPos].YPos += 0x40000
 					Object[TempObjectPos].XVelocity = -81920
 					Object[TempObjectPos].YVelocity = -147456
-					Object[TempObjectPos].Gravity = 6144
+					Object[TempObjectPos].Gravity = 0x1800
 					
 					// Last but certainly not least, give this final Fragment
 					// some pretty good starting values of:
@@ -87,11 +87,11 @@ sub ObjectMain
 					// - YVelocity of 2.25px up per frame
 					// - Gravity acceleration of 0.09375px
 					CreateTempObject(TypeName[Boss Bomb], 1, Object.XPos, Object.YPos)
-					Object[TempObjectPos].XPos += 262144
-					Object[TempObjectPos].YPos += 262144
+					Object[TempObjectPos].XPos += 0x40000
+					Object[TempObjectPos].YPos += 0x40000
 					Object[TempObjectPos].XVelocity = 81920
 					Object[TempObjectPos].YVelocity = -147456
-					Object[TempObjectPos].Gravity = 6144
+					Object[TempObjectPos].Gravity = 0x1800
 					
 					// This main Boss Bomb Object doesn't actually explode and unload - 
 					// instead, upon landing on the ground and exploding, it resets itself
@@ -103,9 +103,10 @@ sub ObjectMain
 					// Return back to the Boss Top's Position
 					Object.XPos = Object[+2].XPos
 					Object.YPos = Object[+2].YPos
-					
-#platform: Use_Haptics
+#platform: Use_Standalone
+	#platform: Use_Haptics
 					HapticEffect(77, 0, 0, 0)
+	#endplatform
 #endplatform
 				end if
 			end if

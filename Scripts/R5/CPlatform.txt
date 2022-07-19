@@ -3,22 +3,22 @@
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
 // Aliases
-#alias Object.Value0 : Object.LedgeLeft
-#alias Object.Value1 : Object.LedgeRight
-#alias Object.Value2 : Object.Timer
-#alias Object.Value3 : Object.NoBlocks
-#alias Object.Value4 : Object.YVelocity
+#alias Object.Value0	:	Object.LedgeLeft
+#alias Object.Value1	:	Object.LedgeRight
+#alias Object.Value2	:	Object.Timer
+#alias Object.Value3	:	Object.NoBlocks
+#alias Object.Value4	:	Object.YVelocity
 
-#alias 0 : CPLATFORM_ACTIVE
-#alias 1 : CPLATFORM_WAIT_R
-#alias 2 : CPLATFORM_WAIT_L
-#alias 3 : CPLATFORM_CRUMBLE_L
-#alias 4 : CPLATFORM_CRUMBLE_R
-#alias 5 : CPLATFORM_RESPAWNWAIT
-#alias 6 : CPLATFORM_FALLINGBLOCK
+#alias 0	:	CPLATFORM_ACTIVE
+#alias 1	:	CPLATFORM_WAIT_R
+#alias 2	:	CPLATFORM_WAIT_L
+#alias 3	:	CPLATFORM_CRUMBLE_L
+#alias 4	:	CPLATFORM_CRUMBLE_R
+#alias 5	:	CPLATFORM_RESPAWNWAIT
+#alias 6	:	CPLATFORM_FALLINGBLOCK
 
 // SFX Aliases
-#alias 0 : SFX_CRUMBLE
+#alias 0	:	SFX_CRUMBLE
 
 
 sub ObjectMain
@@ -66,16 +66,16 @@ sub ObjectMain
 				
 				// Then get the YPos, 8 pixels above this base object
 				TempValue1 = Object.YPos
-				TempValue1 -= 524288
+				TempValue1 -= 0x80000
 				
 				// Spawning of the First Fragment
 				CreateTempObject(TypeName[CPlatform], 0, TempValue0, TempValue1)
 				Object[TempObjectPos].State = CPLATFORM_FALLINGBLOCK
-				Object[TempObjectPos].YVelocity = -65536
+				Object[TempObjectPos].YVelocity = -0x10000
 				Object[TempObjectPos].PropertyValue = 1
 				
 				// Put the second piece 16 pixels down
-				TempValue1 += 1048576
+				TempValue1 += 0x100000
 
 				// Spawning of the Second Fragment
 				CreateTempObject(TypeName[CPlatform], 0, TempValue0, TempValue1)
@@ -105,16 +105,16 @@ sub ObjectMain
 				
 				// Then, make the target YPos 8 pixels above this base object
 				TempValue1 = Object.YPos
-				TempValue1 -= 524288
+				TempValue1 -= 0x80000
 				
 				// Create the first Fragment
 				CreateTempObject(TypeName[CPlatform], 0, TempValue0, TempValue1)
 				Object[TempObjectPos].State = CPLATFORM_FALLINGBLOCK
-				Object[TempObjectPos].YVelocity = -65536
+				Object[TempObjectPos].YVelocity = -0x10000
 				Object[TempObjectPos].PropertyValue = 1
 				
 				// Second piece should be 16 pixels down
-				TempValue1 += 1048576
+				TempValue1 += 0x100000
 				
 				// Create the second Fragment
 				CreateTempObject(TypeName[CPlatform], 0, TempValue0, TempValue1)
@@ -146,7 +146,7 @@ sub ObjectMain
 		
 	case CPLATFORM_FALLINGBLOCK
 		// Apply a gravity of 0.25 pixels per frame
-		Object.YVelocity += 16384
+		Object.YVelocity += 0x4000
 		if Object.YVelocity > 0
 			Object.YPos += Object.YVelocity
 		end if
@@ -195,12 +195,12 @@ sub ObjectDraw
 		TempValue0 = 0
 		TempValue1 = Object.LedgeLeft
 		TempValue1 <<= 16
-		TempValue1 += 524288
+		TempValue1 += 0x80000
 		TempValue1 += Object.XPos
 		while TempValue0 < Object.NoBlocks
 			DrawSpriteXY(0, TempValue1, Object.YPos)
 			TempValue0++
-			TempValue1 += 1048576
+			TempValue1 += 0x100000
 		loop
 		break
 		
@@ -209,12 +209,12 @@ sub ObjectDraw
 		TempValue0 = 0
 		TempValue1 = Object.LedgeRight
 		TempValue1 <<= 16
-		TempValue1 -= 524288
+		TempValue1 -= 0x80000
 		TempValue1 += Object.XPos
 		while TempValue0 < Object.NoBlocks
 			DrawSpriteXY(0, TempValue1, Object.YPos)
 			TempValue0++
-			TempValue1 -= 1048576
+			TempValue1 -= 0x100000
 		loop
 		break
 		

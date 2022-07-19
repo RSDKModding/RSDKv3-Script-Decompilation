@@ -1,24 +1,24 @@
-//------------Sonic CD Fall Platform Script-------------//
+//---------------Sonic CD Fall Platform Script----------------//
 //--------Scripted by Christian Whitehead 'The Taxman'--------//
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
 // Aliases
 #alias Object.Value0	:	Object.Falling
 #alias Object.Value1	:	Object.Timer
-#alias Object.Value2	:	Object.PlayerFloor.Y
+#alias Object.Value2	:	Object.YPlayerFloor
 #alias Object.Value3	:	Object.FallTimer
 #alias Object.Value4	:	Object.YVelocity
-#alias Object.Value5	:	Object.OriginPos.Y
+#alias Object.Value5	:	Object.YOriginPos
 
 // States
-#alias 0				:	FALLPLATFORM_IDLE
-#alias 1				:	FALLPLATFORM_CRUMBLE
-#alias 2				:	FALLPLATFORM_FALL
-#alias 3				:	FALLPLATFORM_RESTORE
+#alias 0	:	FALLPLATFORM_IDLE
+#alias 1	:	FALLPLATFORM_CRUMBLE
+#alias 2	:	FALLPLATFORM_FALL
+#alias 3	:	FALLPLATFORM_RESTORE
 
 // Priority
-#alias 0				:	PRIORITY_ACTIVE_BOUNDS
-#alias 1				:	PRIORITY_ACTIVE
+#alias 0	:	PRIORITY_ACTIVE_BOUNDS
+#alias 1	:	PRIORITY_ACTIVE
 
 
 sub ObjectMain
@@ -35,13 +35,13 @@ sub ObjectMain
 			TempValue0 &= 3
 
 			if TempValue0 == 3
-				Object.PlayerFloor.Y = 65536	// 0x10000
+				Object.YPlayerFloor = 0x10000	// 0x10000
 			else
-				Object.PlayerFloor.Y = 0
+				Object.YPlayerFloor = 0
 			end if
 
 		else
-			Object.PlayerFloor.Y = 0
+			Object.YPlayerFloor = 0
 		end if
 
 	else
@@ -52,13 +52,13 @@ sub ObjectMain
 			TempValue0 &= 3
 
 			if TempValue0 == 3
-				Object.PlayerFloor.Y = -65536	// -0x10000
+				Object.YPlayerFloor = -0x10000	// -0x10000
 			else
-				Object.PlayerFloor.Y = 0
+				Object.YPlayerFloor = 0
 			end if
 
 		else
-			Object.PlayerFloor.Y = 0
+			Object.YPlayerFloor = 0
 		end if
 
 	end if
@@ -78,12 +78,12 @@ sub ObjectMain
 			break
 
 		case FALLPLATFORM_FALL
-			if Object.YVelocity < 262144	// 0x40000
-				Object.YVelocity += 8192	// 0x2000
+			if Object.YVelocity < 0x40000	// 0x40000
+				Object.YVelocity += 0x2000	// 0x2000
 			end if
-			Object.PlayerFloor.Y += Object.YVelocity
+			Object.YPlayerFloor += Object.YVelocity
 			if Object.OutOfBounds == true
-				Object.YPos = Object.OriginPos.Y
+				Object.YPos = Object.YOriginPos
 				Object.State = FALLPLATFORM_RESTORE
 				Object.YVelocity = 0
 			end if
@@ -105,14 +105,14 @@ sub ObjectPlayerInteraction
 		PlayerObjectCollision(C_PLATFORM, -32, -9, 32, 12)
 		if CheckResult == true
 			Object.Falling = true
-			Player.YPos += Object.PlayerFloor.Y
+			Player.YPos += Object.YPlayerFloor
 		end if
 	end if
 end sub
 
 
 sub ObjectDraw
-	Object.YPos += Object.PlayerFloor.Y
+	Object.YPos += Object.YPlayerFloor
 	if Object.State < FALLPLATFORM_RESTORE
 		DrawSprite(0)
 	end if
@@ -127,7 +127,7 @@ sub ObjectStartup
 	ArrayPos0 = 32
 	while ArrayPos0 < 1056
 		if Object[ArrayPos0].Type == TypeName[FallPlatform]
-			Object[ArrayPos0].OriginPos.Y = Object[ArrayPos0].YPos
+			Object[ArrayPos0].YOriginPos = Object[ArrayPos0].YPos
 		end if
 		ArrayPos0++
 	loop
