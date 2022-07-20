@@ -19,6 +19,7 @@
 #alias Object[1].Value4		:	Object.BackTouchPress
 
 // States
+#alias 0	:	MENUHEADING_IDLE
 #alias 1	:	MENUHEADING_LEAVE_SCREEN
 #alias 2	:	MENUHEADING_ENTER_SCREEN
 
@@ -101,7 +102,7 @@ sub ObjectMain
 			Object.XOffset += 16
 		else
 			Object.Timer = 0
-			Object.State = 0
+			Object.State = MENUHEADING_IDLE
 		end if
 
 		if Object.Header == PROPVAL_MAINMENU_HEADER
@@ -123,7 +124,7 @@ sub ObjectDraw
 	//Draw BG Details
 	Object.YOffset--
 	Object.YOffset %= 240
-	Object.SpriteSheet = Object.Value4
+	Object.SpriteSheet = Object.GFX1
 	DrawSpriteScreenXY(1, Screen.CenterX, Object.YOffset)
 	DrawSpriteScreenXY(2, Screen.CenterX, Object.YOffset)
 	DrawSpriteScreenXY(0, Screen.CenterX, 20)
@@ -148,8 +149,10 @@ sub ObjectDraw
 
 	//Draw Detail Arrows (Standard) / Drag Arrows (Mobile)
 	Object.SpriteSheet = Object.GFX1
+
 	Object.Angle += 4
 	Object.Angle &= 511
+
 	TempValue0 = Screen.XSize
 	TempValue0 -= 40
 	//Check if the menu needs dragging to reach all the buttons
@@ -158,6 +161,7 @@ sub ObjectDraw
 		TempValue1 >>= 6
 		TempValue1 += 96
 		DrawSpriteScreenFX(3, FX_INK, TempValue0, TempValue1)
+
 		Sin(TempValue1, Object.Angle)
 		TempValue1 /= -64
 		TempValue1 += 144

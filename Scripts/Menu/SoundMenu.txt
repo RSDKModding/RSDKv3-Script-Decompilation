@@ -1,4 +1,4 @@
-//------------Sonic CD SoundtrackMenu Script-------------//
+//--------------Sonic CD Soundtrack Menu Script---------------//
 //--------Scripted by Christian Whitehead 'The Taxman'--------//
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
@@ -8,10 +8,10 @@
 #alias Object.Value2	:	Object.EggmanAnimTimer
 #alias Object.Value3	:	Object.NoteOscillation
 //Object[33] is MenuHeading
-#alias Object[33].State				: Object.MHState
-#alias Object[33].PropertyValue		: Object.MHPropertyValue
+#alias Object[33].State				: MenuHeading.State
+#alias Object[33].PropertyValue		: MenuHeading.Header
 //Object[-1] is MenuWindow
-#alias Object[-1].State				: Object.MWState
+#alias Object[-1].State				: MenuWindow.State
 
 // Soundtrack Options
 #alias -1	:	OST_NONE // Touching nothing on mobile
@@ -19,10 +19,24 @@
 #alias  1	:	OST_US
 
 // States
-#alias 0	:	STATE_INITIALIZE
-#alias 1	:	STATE_OST_SELECTION
-#alias 2	:	STATE_OST_SELECTED
-#alias 3	:	STATE_EXIT
+#alias 0	:	SOUNDMENU_INITIALIZE
+#alias 1	:	SOUNDMENU_OST_SELECTION
+#alias 2	:	SOUNDMENU_OST_SELECTED
+#alias 3	:	SOUNDMENU_BACK
+#alias 4	:	SOUNDMENU_EXIT
+#alias 5	:	SOUNDMENU_RETURN_TO_TITLE
+
+// Menu Heading States
+#alias 1	:	MENUHEADING_LEAVE_SCREEN
+// Menu Heading Property Values
+#alias 5	:	PROPVAL_MAINMENU_HEADER
+
+// Menu Window States
+#alias 3	:	MENUWINDOW_SHRINK
+
+// Menu Button States
+#alias 1	:	MENUBUTTON_BUTTONS_IN
+
 
 // Languages
 #alias 0	:	ENGLISH
@@ -32,9 +46,10 @@
 #alias 4	:	SPANISH
 #alias 5	:	JAPANESE
 
+
 sub ObjectMain
 	switch Object.State
-	case STATE_INITIALIZE
+	case SOUNDMENU_INITIALIZE
 #platform: Standard
 		Object.SelectedOption = Options.Soundtrack
 #endplatform
@@ -52,43 +67,52 @@ sub ObjectMain
 		else
 			Object.FadeValue = 0
 			Object.Alpha = 255
-			Object.State = STATE_OST_SELECTION
+			Object.State = SOUNDMENU_OST_SELECTION
 		end if
 		break
 		
-	case STATE_OST_SELECTION
+	case SOUNDMENU_OST_SELECTION
 
-#platform: Mobile
-		CheckEqual(Options.PhysicalControls,true)
+#platform: Use_Origins
+		CheckEqual(Options.PhysicalControls, true)
 #endplatform
 
-#platform: Standard
-		CheckResult = true
+#platform: Use_Standalone
+	#platform: Mobile
+			CheckEqual(Options.PhysicalControls, true)
+	#endplatform
+
+	#platform: Standard
+			CheckResult = true
+	#endplatform
 #endplatform
 
+		// Originally "if Options.PhysicalControls == true", changed to avoid syntax errors because of platform checks
 		if CheckResult == true
 			// Physical Controls
-			if KeyPress.Left == true
+			if KeyPress[0].Left == true
 				Object.SelectedOption--
 				if Object.SelectedOption < OST_JP
 					Object.SelectedOption = OST_US
 				end if
 				PlaySfx(23, 0) 	//Menu Button SFX
 			end if
-			if KeyPress.Right == true
+			if KeyPress[0].Right == true
 				Object.SelectedOption++
 				if Object.SelectedOption > OST_US
 					Object.SelectedOption = OST_JP
 				end if
 				PlaySfx(23, 0) 	//Menu Button SFX
 			end if
-		end if
-#platform: Mobile
-		if Options.PhysicalControls == true
 			// Enable touch controls if the screen is touched
 			CheckTouchRect(0, 0, Screen.XSize, Screen.YSize)
 			if CheckResult > -1
+#platform: Mobile
 				Options.PhysicalControls = false
+#endplatform
+#platform: Use_Origins
+				Options.PhysicalControls = false
+#endplatform
 				Object.SelectedOption = OST_NONE
 			end if
 		else
@@ -107,7 +131,7 @@ sub ObjectMain
 			else
 				if TempValue3 < 0
 					if Object.SelectedOption == OST_JP
-						KeyPress.Start = true
+						KeyPress[0].Start = true
 					end if
 				else
 					if Object.SelectedOption == OST_JP
@@ -127,7 +151,7 @@ sub ObjectMain
 			else
 				if TempValue3 < 0
 					if Object.SelectedOption == OST_US
-						KeyPress.Start = true
+						KeyPress[0].Start = true
 					end if
 				else
 					if Object.SelectedOption == OST_US
@@ -139,87 +163,107 @@ sub ObjectMain
 			CallFunction(MenuHeading_CheckTouchBack)
 			
 			// Enable physical controls if a button is pressed
-			if KeyPress.Left == true
+			if KeyPress[0].Left == true
 				Object.SelectedOption = OST_US
+#platform: Use_Origins
 				Options.PhysicalControls = true
+#endplatform
+#platform: Mobile
+				Options.PhysicalControls = true
+#endplatform
 			end if
-			if KeyPress.Right == true
+			if KeyPress[0].Right == true
 				Object.SelectedOption = OST_JP
+#platform: Use_Origins
 				Options.PhysicalControls = true
+#endplatform
+#platform: Mobile
+				Options.PhysicalControls = true
+#endplatform
 			end if
 		end if
-#endplatform
 
 		CheckResult = false
 
-#platform: Mobile				
 		if Object.SelectedOption > OST_NONE // If a button was touched
-			if KeyPress.Start == true
+			if KeyPress[0].Start == true
 				CheckResult = true
 			end if
-			if KeyPress.ButtonA == true
+			if KeyPress[0].ButtonA == true
 				CheckResult = true
 			end if
 		end if
-#endplatform
-
-#platform: Standard
-		if KeyPress.Start == true
-			CheckResult = true
-		end if
-		if KeyPress.ButtonA == true
-			CheckResult = true
-		end if
-#endplatform
 
 		if CheckResult == true
 			Options.Soundtrack = Object.SelectedOption
 			SaveRAM[38] = Options.Soundtrack
-			Object.State = STATE_OST_SELECTED
+			Object.State = SOUNDMENU_OST_SELECTED
 			StopMusic()
 			PlaySfx(27, 0)	//Select SFX
 			WriteSaveRAM()
+#platform: Use_Origins
+			game.callbackParam0 = Options.Soundtrack
+			EngineCallback(NOTIFY_SOUND_TRACK)
+#endplatform
 		end if
 		
-		if KeyPress.ButtonB == true
+		if KeyPress[0].ButtonB == true
 			Object.FadeValue = 248
-			Object.State = STATE_EXIT
+			Object.State = SOUNDMENU_BACK
 			PlayStageSfx(1, 0)
 		end if
 		break
 		
-	case STATE_OST_SELECTED
+	case SOUNDMENU_OST_SELECTED
 		if Object.AnimationTimer < 30
 			Object.AnimationTimer++
 		else
 			Object.AnimationTimer = 0
-			Object.State = STATE_EXIT
+			Object.State = SOUNDMENU_BACK
 			PlayMusic(Options.Soundtrack)
 		end if
 		break
 		
-	case STATE_EXIT
+	case SOUNDMENU_BACK
+#platform: Use_Origins
+		Object.FadeValue = 0
+		Object.State = SOUNDMENU_RETURN_TO_TITLE
+		break
+#endplatform
+		// Making a fallthrough here so standalone datafiles can return to the menus as usual
+	case SOUNDMENU_EXIT
 		if Object.FadeValue > 0
 			Object.Alpha = Object.FadeValue
 			Object.FadeValue -= 8
 		else
 			// Tell the other objects the menu is being exited
 			Object.Type = TypeName[Blank Object]
-			Object.MWState = 3
+			MenuWindow.State = MENUWINDOW_SHRINK
 			//All of this is MenuButton Objects
-			Object[34].State = 1
-			Object[35].State = 1
-			Object[36].State = 1
-			Object[37].State = 1
-			Object[38].State = 1
-			Object[39].State = 1
-			Object[40].State = 1
-			Object[41].State = 1
-			Object[42].State = 1
+			Object[34].State = MENUBUTTON_BUTTONS_IN
+			Object[35].State = MENUBUTTON_BUTTONS_IN
+			Object[36].State = MENUBUTTON_BUTTONS_IN
+			Object[37].State = MENUBUTTON_BUTTONS_IN
+			Object[38].State = MENUBUTTON_BUTTONS_IN
+			Object[39].State = MENUBUTTON_BUTTONS_IN
+			Object[40].State = MENUBUTTON_BUTTONS_IN
+			Object[41].State = MENUBUTTON_BUTTONS_IN
+			Object[42].State = MENUBUTTON_BUTTONS_IN
 			//End
-			Object.MHState = 1
-			Object.MHPropertyValue = 5 // Set the heading to "MAIN MENU"
+			MenuHeading.State = MENUHEADING_LEAVE_SCREEN
+			MenuHeading.Header = PROPVAL_MAINMENU_HEADER // Set the heading to "MAIN MENU"
 		end if
+		break
+		
+	case SOUNDMENU_RETURN_TO_TITLE	// Origins exclusive state
+		Object.FadeValue += 4
+		if Object.FadeValue == 384
+			Stage.ActiveList = PRESENTATION_STAGE
+			Stage.ListPos = 0
+			StopMusic()
+			LoadStage()
+		endif
+		SetScreenFade(0, 0, 0, Object.FadeValue)
 		break
 	end switch
 end sub
