@@ -1,4 +1,4 @@
-//------------Sonic CD PinballBomb Script-------------//
+//---------------Sonic CD Pinball Bomb Script-----------------//
 //--------Scripted by Christian Whitehead 'The Taxman'--------//
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
@@ -13,11 +13,17 @@
 #alias 1	:	CSIDE_LWALL
 #alias 2	:	CSIDE_RWALL
 
+// Gravity
+#alias 1	:	GRAVITY_AIR
+
+// Priority
+#alias 1	:	PRIORITY_ACTIVE
+
 
 sub ObjectMain
-	Object.YVelocity += 0x2000		// 0x2000
-	// if the bomb goes fast enough, get to the background, don't ask why
-	if Object.YVelocity > 0x40000	// 0x40000
+	Object.YVelocity += 0x2000
+	// if the bomb goes fast enough, get to the background
+	if Object.YVelocity > 0x40000
 		Object.DrawOrder = 3
 	end if
 	Object.XPos += Object.XVelocity
@@ -54,26 +60,31 @@ sub ObjectPlayerInteraction
 	PlayerObjectCollision(C_TOUCH, -8, -8, 8, 8)
 	if CheckResult == true
 		PlaySfx(22, 0)
-#platform: Use_Standalone
-	#platform: Use_Haptics
+
+#platform: Use_Haptics
 		HapticEffect(96, 0, 0, 0)
-	#endplatform
 #endplatform
+
 		ResetObjectEntity(Object.EntityNo, TypeName[Explosion], 0, Object.XPos, Object.YPos)
-		Object.Priority = 1
-		TempValue0 = Player.XPos
+		Object.Priority = PRIORITY_ACTIVE
+
+		TempValue0  = Player.XPos
 		TempValue0 -= Object.XPos
-		TempValue1 = Player.YPos
+
+		TempValue1  = Player.YPos
 		TempValue1 -= Object.YPos
 		ATan2(TempValue2, TempValue0, TempValue1)
+
 		Cos256(TempValue0, TempValue2)
 		Sin256(TempValue1, TempValue2)
 		TempValue0 *= 1792
 		TempValue1 *= 1792
+
 		Player.XVelocity = TempValue0
 		Player.YVelocity = TempValue1
 		Player.Speed = Player.XVelocity
-		Player.Gravity = 1
+
+		Player.Gravity = GRAVITY_AIR
 		Player.Timer = 0
 	end if
 end sub
@@ -90,6 +101,7 @@ end sub
 
 sub ObjectStartup
 	LoadSpriteSheet("R3/Objects2.gif")
+
 	SpriteFrame(-12, -12, 24, 24, 232, 0)	// #0 - Pinball Bomb Frame 0
 	SpriteFrame(-8, -8, 16, 16, 130, 67)	// #1 - Pinball Bomb Frame 1
 end sub

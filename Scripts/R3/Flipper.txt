@@ -1,4 +1,4 @@
-//------------Sonic CD Flipper Script-------------//
+//------------------Sonic CD Flipper Script-------------------//
 //--------Scripted by Christian Whitehead 'The Taxman'--------//
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
@@ -6,21 +6,21 @@
 #alias Object.Value0	:	Object.Timer
 
 // States
-#alias 0				:	FLIPPER_IDLE
-#alias 1				:	FLIPPER_ACTIVE
-#alias 2				:	FLIPPER_RETURN_POSITION
+#alias 0	:	FLIPPER_IDLE
+#alias 1	:	FLIPPER_ACTIVE
+#alias 2	:	FLIPPER_RETURN_POSITION
 
 // Collision
-#alias 1				:	FLOOR
+#alias 1	:	FLOOR
 
 // Collision Mode
-#alias 0				:	CMODE_FLOOR
+#alias 0	:	CMODE_FLOOR
 
 
 sub ObjectMain
 	switch Object.State
 	case FLIPPER_ACTIVE
-		Object.Frame = Object.Timer
+		Object.Frame   = Object.Timer
 		Object.Frame >>= 1
 
 		Object.Timer++
@@ -31,7 +31,7 @@ sub ObjectMain
 		break
 
 	case FLIPPER_RETURN_POSITION
-		Object.Frame = Object.Timer
+		Object.Frame  = Object.Timer
 		Object.Frame /= 3
 
 		Object.Timer++
@@ -50,59 +50,50 @@ sub ObjectPlayerInteraction
 	TempValue0 = 0
 	if Object.Direction == FACING_RIGHT
 		if Player.YPos > Object.YPos
-
 			if Player.YVelocity < 0
 				PlayerObjectCollision(C_BOX, -32, -12, 28, 12)
 			end if
-
 		end if
 		PlayerObjectCollision(C_PLATFORM, 20, -16, 32, 16)
 		TempValue0 = CheckResult
 
-		TempValue1 = Player.XPos
-		TempValue1 -= Object.XPos
+		TempValue1   = Player.XPos
+		TempValue1  -= Object.XPos
 		TempValue1 >>= 16
-		TempValue1 += 32
-		TempValue1 += Player.CollisionRight
+		TempValue1  += 32
+		TempValue1  += Player.CollisionRight
 
 		if TempValue1 >= 0
-
 			if TempValue1 < 54
-
 				TempValue2 = TempValue1
 				TempValue2 /= -2
 				TempValue2 += 10
 				PlayerObjectCollision(C_PLATFORM, -32, TempValue2, 32, 16)
 				TempValue0 |= CheckResult
-
 			end if
-
 		end if
 
 		if TempValue0 == FLOOR
-
 			Player.CollisionMode = CMODE_FLOOR
+
 			Player.YPos += 0x40000		// 0x40000
 			Player.XPos -= 0x10000		// 0x10000
-			if Player.Speed < 0x4000		// 0x4000
 
+			if Player.Speed < 0x4000		// 0x4000
 				if Player.Speed > -0x4000	// -0x4000
 					Player.Speed = -0x4000	// -0x4000
 				end if
-				
 			end if
-
 		else
 			PlayerObjectCollision(C_TOUCH, -32, -24, 32, 16)
 			if CheckResult == true
-
 				if Player.YVelocity < -0x40000	// -0x40000
-
 					if Player.JumpPress == true
 						Player.Speed = Player.XPos
 						Player.Speed -= Object.XPos
 						Player.Speed >>= 2
-						Player.YVelocity = -917504	// -0xE0000
+
+						Player.YVelocity = -0xE0000	// -0xE0000
 						TempValue2 = Player.Speed
 						TempValue2 >>= 2
 						if TempValue2 < 0
@@ -113,38 +104,31 @@ sub ObjectPlayerInteraction
 						Object.State = FLIPPER_ACTIVE
 						StopSfx(0)
 						PlayStageSfx(7, 0)
-#platform: Use_Standalone
-	#platform: Use_Haptics
+						
+#platform: Use_Haptics
 						HapticEffect(88, 0, 0, 0)
-	#endplatform
 #endplatform
 					end if
-
 				end if
-
 			end if
-
 		end if
 
 	else
 		if Player.YPos > Object.YPos
-
 			if Player.YVelocity < 0
 				PlayerObjectCollision(C_BOX, -28, -12, 32, 12)
 			end if
-
 		end if
 
 		PlayerObjectCollision(C_PLATFORM, -32, -16, -20, 16)
 		TempValue0 = CheckResult
 
-		TempValue1 = Player.XPos
-		TempValue1 -= Object.XPos
+		TempValue1   = Player.XPos
+		TempValue1  -= Object.XPos
 		TempValue1 >>= 16
-		TempValue1 += 32
-		TempValue1 += Player.CollisionLeft
+		TempValue1  += 32
+		TempValue1  += Player.CollisionLeft
 		if TempValue1 >= 12
-
 			if TempValue1 < 64
 				TempValue2 = TempValue1
 				TempValue2 /= 2
@@ -152,7 +136,6 @@ sub ObjectPlayerInteraction
 				PlayerObjectCollision(C_PLATFORM, -32, TempValue2, 32, 16)
 				TempValue0 |= CheckResult
 			end if
-
 		end if
 
 		if TempValue0 == FLOOR
@@ -169,15 +152,13 @@ sub ObjectPlayerInteraction
 		else
 			PlayerObjectCollision(C_TOUCH, -32, -24, 32, 16)
 			if CheckResult == true
-
 				if Player.YVelocity < -0x40000		// -0x40000
-
 					if Player.JumpPress == true
 						Player.Speed = Player.XPos
 						Player.Speed -= Object.XPos
 						Player.Speed >>= 2
 
-						Player.YVelocity = -917504	// -0xE0000
+						Player.YVelocity = -0xE0000	// -0xE0000
 
 						TempValue2 = Player.Speed
 						TempValue2 >>= 2
@@ -190,16 +171,11 @@ sub ObjectPlayerInteraction
 						Object.State = FLIPPER_ACTIVE
 
 						StopSfx(0)
-
 						PlayStageSfx(7, 0)
 					end if
-
 				end if
-
 			end if
-
 		end if
-
 	end if
 end sub
 
