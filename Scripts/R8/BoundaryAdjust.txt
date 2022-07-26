@@ -8,6 +8,52 @@
 
 sub ObjectMain
 	if Object.State == 0
+#platform: Use_Origins
+		if Object.PropertyValue == 0
+			if game.playMode == BOOT_PLAYMODE_BOSSRUSH
+				Object.Type = TypeName[BlankObject]
+			else
+				if Player.XPos > Object.XPos
+					TempValue0 = 0xC30
+					TempValue0 -= Screen.CenterX
+					Stage.NewXBoundary1 = TempValue0
+					TempValue0 += Screen.XSize
+					Stage.NewXBoundary2 = TempValue0
+					TempValue0 = Object.iYPos
+					TempValue0 -= Screen.YSize
+					Stage.NewYBoundary1 = TempValue0
+					Stage.YBoundary2 = Screen.YOffset
+					Stage.YBoundary2 += Screen.YSize
+					if Stage.YBoundary2 < Object.iYPos
+						Stage.YBoundary2 = Object.iYPos
+					end if
+					Object.State++
+				end if
+			end if
+		else
+			if game.playMode != BOOT_PLAYMODE_BOSSRUSH
+				Object.Type = TypeName[BlankObject]
+			else
+				if Player.XPos > Object.XPos
+					TempValue0 = 0xF00
+					TempValue0 -= Screen.CenterX
+					Stage.NewXBoundary1 = TempValue0
+					TempValue0 += Screen.XSize
+					Stage.NewXBoundary2 = TempValue0
+					Screen.XOffset = 0xCBC
+					TempValue0 = Object.iYPos
+					TempValue0 -= Screen.YSize
+					Stage.NewYBoundary1 = TempValue0
+					Stage.YBoundary2 = Screen.YOffset
+					Stage.YBoundary2 += Screen.YSize
+					Stage.YBoundary2 = Object.iYPos
+					Object.State++
+				end if
+			end if
+		end if
+#endplatform
+
+#platform: Use_Standalone
 		if Player.XPos > Object.XPos
 			TempValue0 = 3120
 			TempValue0 -= Screen.CenterX
@@ -24,6 +70,7 @@ sub ObjectMain
 			end if
 			Object.State++
 		end if
+#endplatform
 	else
 		Stage.YBoundary2 -= 3
 		if Stage.YBoundary2 <= Object.iYPos

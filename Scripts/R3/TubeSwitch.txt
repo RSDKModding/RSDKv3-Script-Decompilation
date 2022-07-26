@@ -182,9 +182,23 @@ sub ObjectPlayerInteraction
 					
 				end if
 			else
+
+#platform: Use_Origins
+				CheckEqual(Player.State, PlayerObject_ResetDropDash)
+				TempValue0  = CheckResult
+				CheckEqual(Player.State, PlayerObject_HandleAir)
+				TempValue0 |= CheckResult
+				if TempValue0 != false
+					Player.Animation = ANI_JUMPING
+				end if
+#endplatform
+
+#platform: Use_Standalone
 				if Player.State == PlayerObject_HandleAir
 					Player.Animation = ANI_JUMPING
 				end if
+#endplatform
+
 			end if
 			break
 
@@ -236,7 +250,7 @@ sub ObjectPlayerInteraction
 			break
 
 		case TUBESWITCH_V_GROUNDED_DW
-			if Object.OnObject == 0
+			if Object.OnObject == false
 				if Player.YVelocity > 0
 					Player.Gravity = 0
 					Player.State = PlayerObject_Tunnel

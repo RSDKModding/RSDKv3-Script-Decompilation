@@ -3,30 +3,30 @@
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
 // Aliases
-#alias Object.Scale 	: Object.OffSet
-#alias Object.Value0	: Object.Timer					// Also used for fading
-#alias Object.Value2	: Object.SelectedButton			// Only used for Mobile
-#alias Object.Value3	: Object.SavedRound				// This is used AFTER you play in time attack
-#alias Object.Value4 	: Object.SMYPos					// Also used for the XPos of the zone portrait
-#alias Object.Value5 	: Object.SMCurrentButton
-#alias Object.Value6	: Object.BeatedRecord
-#alias Object.Value7	: Object.SSUnlocked
+#alias Object.Scale 			: Object.OffSet
+#alias Object.Value0			: Object.Timer				// Also used for fading
+#alias Object.Value2			: Object.SelectedButton		// Only used for Mobile
+#alias Object.Value3			: Object.SavedRound			// This is used AFTER you play in time attack
+#alias Object.Value4 			: Object.SMYPos				// Also used for the XPos of the zone portrait
+#alias Object.Value5 			: Object.SMCurrentButton
+#alias Object.Value6			: Object.BeatedRecord
+#alias Object.Value7			: Object.SSUnlocked
 
 // Large Icon / Special Large Icon Aliases
 #alias Object[40].State			: Object.LIconState
 #alias Object[40].XPos			: Object.LIconXPos
 #alias Object[40].PropertyValue	: Object.LIconPortrait
 
+// Time Stuff
+#alias Object.Value1			: Object.Minutes
+#alias Object.Value2			: Object.Seconds
+#alias Object.Value3			: Object.Milliseconds
+#alias Object.Value4			: Object.ZoneLocked
+
+
 // Large Icon State
 #alias 1	: LARGEICON_ENTER_SCREEN
 #alias 2	: LARGEICON_LEAVE_SCREEN
-
-// Time Stuff
-#alias Object.Value1	: Object.Minutes
-#alias Object.Value2	: Object.Seconds
-#alias Object.Value3	: Object.Milliseconds
-#alias Object.Value4	: Object.ZoneLocked
-
 // States
 // *SM = SubMenu
 #alias 0	: MENUCONTROL_SETUP
@@ -57,7 +57,11 @@
 #alias 2	: CALLBACK_TATTACK_NOTIFY_ENTER
 #alias 3	: CALLBACK_TIMEATTACK_NOTIFY_EXIT
 
+// Engine Messages
 #alias 2	: MESSAGE_LOSTFOCUS
+
+// Device Type
+#alias 1	:	RETRO_MOBILE
 
 // SaveRAM[39] is how many zones are unlocked for Time Attack
 
@@ -145,6 +149,11 @@ end function
 
 
 function MenuControl_ZoneUnlockCheck
+#platform: Use_Origins
+	TempValue0 = TimeAttackUnlockCount	// No way optimizations??
+#endplatform
+
+#platform: Use_Standalone
 	TempValue0 = -1
 	ArrayPos0 = 3						// Save 0 Stage.ListPos
 	while ArrayPos0 < 40
@@ -169,6 +178,7 @@ function MenuControl_ZoneUnlockCheck
 		end if
 		ArrayPos0 += 8					// Jump to next save
 	loop
+#endplatform
 
 	if TempValue0 > SaveRAM[39]
 		SaveRAM[39] = TempValue0		// Set the new value if there are new unlocked zones
@@ -296,10 +306,18 @@ sub ObjectMain
 		Object.OffSet = 0x40000
 		SetScreenFade(0, 0, 0, 255)
 
-#platform: Mobile
+#platform: Use_Origins
 		Object.SavedRound = -1
 		Object.SelectedButton = -1
 		Object.SMCurrentButton = -1
+#endplatform
+
+#platform: Use_Standalone
+	#platform: Mobile
+		Object.SavedRound = -1
+		Object.SelectedButton = -1
+		Object.SMCurrentButton = -1
+	#endplatform
 #endplatform
 
 		CallFunction(MenuControl_ZoneUnlockCheck)
@@ -406,7 +424,7 @@ sub ObjectMain
 			ArrayPos0 += Object.SavedRound
 			CheckResult = false
 			if Object[ArrayPos0].State != 1
-				if KeyPress.Left == true
+				if KeyPress[0].Left == true
 					Object.SavedRound--
 					if Object.SavedRound < 0
 						Object.SavedRound = 7
@@ -414,7 +432,7 @@ sub ObjectMain
 					PlaySfx(23, 0) 	//Menu Button SFX
 				end if
 				
-				if KeyPress.Right == true
+				if KeyPress[0].Right == true
 					Object.SavedRound++
 					if Object.SavedRound > 7
 						Object.SavedRound = 0
@@ -422,7 +440,7 @@ sub ObjectMain
 					PlaySfx(23, 0) 	//Menu Button SFX
 				end if
 
-				if KeyPress.Up == true
+				if KeyPress[0].Up == true
 					Object.SavedRound -= 4
 					if Object.SavedRound < 0
 						Object.SavedRound += 8
@@ -433,7 +451,7 @@ sub ObjectMain
 					PlaySfx(23, 0) 	//Menu Button SFX
 				end if
 
-				if KeyPress.Down == true
+				if KeyPress[0].Down == true
 					Object.SavedRound += 4
 					if Object.SavedRound > 7
 						Object.SavedRound -= 8
@@ -448,7 +466,7 @@ sub ObjectMain
 					CheckResult = true
 				end if
 
-				if KeyPress.ButtonA == true
+				if KeyPress[0].ButtonA == true
 					CheckResult = true
 				end if
 			end if
@@ -513,25 +531,25 @@ sub ObjectMain
 				Object.SavedRound = -1
 			end if
 
-			if KeyPress.Left == true
+			if KeyPress[0].Left == true
 				Object.SavedRound = 7
 				Object.SelectedButton = -1
 				Options.PhysicalControls = true
 			end if
 
-			if KeyPress.Right == true
+			if KeyPress[0].Right == true
 				Object.SavedRound = 0
 				Object.SelectedButton = -1
 				Options.PhysicalControls = true
 			end if
 
-			if KeyPress.Up == true
+			if KeyPress[0].Up == true
 				Object.SavedRound = 7
 				Object.SelectedButton = -1
 				Options.PhysicalControls = true
 			end if
 
-			if KeyPress.Down == true
+			if KeyPress[0].Down == true
 				Object.SavedRound = 0
 				Object.SelectedButton = -1
 				Options.PhysicalControls = true
@@ -539,7 +557,7 @@ sub ObjectMain
 		end if
 #endplatform
 
-		if KeyPress.ButtonB == true
+		if KeyPress[0].ButtonB == true
 			Object.SavedRound = 7
 			ArrayPos0 = 32
 			ArrayPos0 += Object.SavedRound
@@ -559,7 +577,15 @@ sub ObjectMain
 			Object.Timer += 8
 			Object.OffSet += 0x1000
 		else
+#platform: Use_Origins
+			Stage.ListPos = 0		// Title
+			StopMusic()
+#endplatform
+
+#platform: Use_Standalone
 			Stage.ListPos = 1		// Menu
+#endplatform
+
 			LoadStage()
 		end if
 		SetScreenFade(0, 0, 0, Object.Timer)
@@ -621,36 +647,36 @@ sub ObjectMain
 
 		if CheckResult == true
 			if TimeAttack.MenuSection == 0
-				if KeyPress.Up == true
+				if KeyPress[0].Up == true
 					Object.State = MENUCONTROL_SM_SCROLL_UP
 				end if
 
-				if KeyPress.Down == true
+				if KeyPress[0].Down == true
 					Object.State = MENUCONTROL_SM_SCROLL_DOWN
 				end if
 
-				if KeyPress.Left == true
+				if KeyPress[0].Left == true
 					Object.SMCurrentButton--
 					if Object.SMCurrentButton < 0
 						Object.SMCurrentButton = 2
 					end if
 				end if
 
-				if KeyPress.Right == true
+				if KeyPress[0].Right == true
 					Object.SMCurrentButton++
 					if Object.SMCurrentButton > 2
 						Object.SMCurrentButton = 0
 					end if
 				end if
 			else
-				if KeyPress.Left == true
+				if KeyPress[0].Left == true
 					Object.SMCurrentButton -= 2
 					if Object.SMCurrentButton < 0
 						Object.SMCurrentButton = 2
 					end if
 				end if
 
-				if KeyPress.Right == true
+				if KeyPress[0].Right == true
 					Object.SMCurrentButton += 2
 					if Object.SMCurrentButton > 2
 						Object.SMCurrentButton = 0
@@ -662,11 +688,11 @@ sub ObjectMain
 				CheckResult = true
 			end if
 
-			if KeyPress.ButtonA == true
+			if KeyPress[0].ButtonA == true
 				CheckResult = true
 			end if
 
-			if KeyPress.ButtonB == true
+			if KeyPress[0].ButtonB == true
 				PlayStageSfx(0, 0)
 				Object.LIconState = LARGEICON_LEAVE_SCREEN
 				Object.State = MENUCONTROL_SM_COMFIRMED_LEAVE
@@ -748,7 +774,7 @@ sub ObjectMain
 					end if
 				end if
 			end if
-			if KeyPress.ButtonB == true
+			if KeyPress[0].ButtonB == true
 				PlayStageSfx(0, 0)
 				Object.LIconState = LARGEICON_LEAVE_SCREEN
 				Object.State = MENUCONTROL_SM_COMFIRMED_LEAVE
@@ -802,12 +828,12 @@ sub ObjectMain
 				end if
 			end if
 
-			if KeyPress.Left == true
+			if KeyPress[0].Left == true
 				Object.SMCurrentButton = 2
 				Options.PhysicalControls = true
 			end if
 
-			if KeyPress.Right == true
+			if KeyPress[0].Right == true
 				Object.SMCurrentButton = 0
 				Options.PhysicalControls = true
 			end if
@@ -1070,6 +1096,13 @@ end sub
 
 
 sub ObjectStartup
+#platform: Use_Origins
+	game.callbackParam0 = 1
+	EngineCallback(NOTIFY_LEVEL_SELECT_MENU)
+	game.callbackParam0 = 0
+	EngineCallback(NOTIFY_PLAYER_SET)
+#endplatform
+
 	if Options.Soundtrack == JP_OST
 		SetMusicTrack("JP/TimeAttack.ogg", 0, 100512)
 	else
@@ -1077,8 +1110,17 @@ sub ObjectStartup
 	end if
 	Object[0].Type = TypeName[MenuControl]
 	Object[0].DrawOrder = 1
-#platform: Mobile
-	Options.PhysicalControls = false
+
+#platform: Use_Origins
+	if Engine.DeviceType == RETRO_MOBILE
+		Options.PhysicalControls = true
+	end if
+#endplatform
+
+#platform: Use_Standalone
+	#platform: Mobile
+		Options.PhysicalControls = false
+	#endplatform
 #endplatform
 end sub
 

@@ -303,6 +303,14 @@ sub ObjectPlayerInteraction
 	case BOSSBODY_DRAG_EGGMAN_2
 		PlayerObjectCollision(C_TOUCH, -64, -16, 64, 16)
 		if CheckResult == true
+#platform: Use_Origins
+			EngineCallback(NOTIFY_KILL_BOSS)
+			game.callbackParam0 = 1
+			EngineCallback(NOTIFY_BOSS_END)
+			if game.playMode == BOOT_PLAYMODE_BOSSRUSH
+				StopMusic()
+			end if
+#endplatform
 			Player.YVelocity = 0
 			Object.YVelocity -= 0x800000	// 0x800000
 			Object.DamageTimer = 1

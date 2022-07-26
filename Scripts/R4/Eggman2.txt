@@ -278,7 +278,7 @@ sub ObjectMain
 			Object.State = R4_EGG_BUBBLE_INTRO
 
 			Helper.XPos = Object.XPos
-			Helper.XPos -= 6291456	// 0x600000
+			Helper.XPos -= 0x600000	// 0x600000
 
 			Helper.YPos = Object.YPos
 
@@ -524,7 +524,7 @@ sub ObjectMain
 		end if
 
 		TempValue0 = Helper.XPos
-		TempValue0 += 6291456	// 0x600000
+		TempValue0 += 0x600000	// 0x600000
 
 		if Object.XPos > TempValue0
 			Object.XPos = TempValue0
@@ -575,7 +575,7 @@ sub ObjectMain
 		end if
 
 		TempValue0 = Helper.XPos
-		TempValue0 -= 6291456	// 0x600000
+		TempValue0 -= 0x600000	// 0x600000
 
 		if Object.XPos < TempValue0
 			Object.XPos = TempValue0
@@ -672,6 +672,15 @@ sub ObjectPlayerInteraction
 				end if
 
 				if TempValue0 == true
+
+#platform: Use_Origins
+					EngineCallback(NOTIFY_KILL_BOSS)
+					game.callbackParam0 = 1
+					EngineCallback(NOTIFY_BOSS_END)
+					if game.playMode == BOOT_PLAYMODE_BOSSRUSH
+						StopMusic()
+					end if
+#endplatform
 					FlipSign(Player.XVelocity)
 					FlipSign(Player.Speed)
 					Player.XVelocity >>= 1
@@ -688,9 +697,9 @@ sub ObjectPlayerInteraction
 					if Player.Invincible == 0
 						Player.State = PlayerObject_Hurt
 						if Player.XPos > Object.XPos
-							Player.Speed = 0x20000	// 0x20000
+							Player.Speed =  0x20000
 						else
-							Player.Speed = -0x20000	// -0x20000
+							Player.Speed = -0x20000
 						end if
 					end if
 					Object.Animation = EGGANI_LAUGH

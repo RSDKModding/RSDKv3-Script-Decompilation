@@ -408,7 +408,17 @@ sub ObjectPlayerInteraction
 						Object.EggmanAnimation = EGG_ANI_HURT
 						Object.Frame = 0
 					else
-						Object.State = 10
+
+#platform: Use_Origins
+						EngineCallback(NOTIFY_KILL_BOSS)
+						game.callbackParam0 = 1
+						EngineCallback(NOTIFY_BOSS_END)
+						if game.playMode == BOOT_PLAYMODE_BOSSRUSH
+							StopMusic()
+						end if
+#endplatform
+
+						Object.State = R6_EGG_DESTROYED
 						Object.SpikesAnimation = 2
 						Object.AnimationTimer = 0
 						Object.EggmanAnimation = EGG_ANI_DEFEAT

@@ -34,12 +34,13 @@ sub ObjectPlayerInteraction
 		case 1
 
 #platform: Use_Origins
-				Player.State = PlayerObject_ResetDropDash
+			Player.State = PlayerObject_ResetDropDash
 #endplatform
 
 #platform: Use_Standalone
-				Player.State = PlayerObject_HandleAir
+			Player.State = PlayerObject_HandleAir
 #endplatform
+
 			Player.Animation = ANI_JUMPING
 			if Player.Gravity == 1
 				if Player.YVelocity < 0
@@ -187,11 +188,27 @@ sub ObjectPlayerInteraction
 
 		case 6
 			if Object.InTube == false
+
+#platform: Use_Origins
+				CheckEqual(Player.State, PlayerObject_ResetDropDash)
+				TempValue0 = CheckResult
+				CheckEqual(Player.State, PlayerObject_HandleAir)
+				TempValue0 |= CheckResult
+				if TempValue0 != false
+					Player.XPos = Object.XPos
+					Player.XVelocity = 0
+					Player.Speed = 0
+				end if
+#endplatform
+
+#platform: Use_Standalone
 				if Player.State == PlayerObject_HandleAir
 					Player.XPos = Object.XPos
 					Player.XVelocity = 0
 					Player.Speed = 0
 				end if
+#endplatform
+
 			end if
 			break
 

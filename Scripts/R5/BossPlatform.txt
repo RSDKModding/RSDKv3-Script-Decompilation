@@ -593,7 +593,7 @@ sub ObjectMain
 			// - Starting X Velocity of one pixel a frame to the left
 			CreateTempObject(TypeName[Boss Spark], BOSSSPARK_GRIND, Object.XPos, Object.YPos)
 			Object[TempObjectPos].XPos += 1572864
-			Object[TempObjectPos].YPos += 1769472
+			Object[TempObjectPos].YPos += 0x1B0000
 			Object[TempObjectPos].XVelocity = -0x10000
 		end if
 		break
@@ -842,7 +842,16 @@ sub ObjectMain
 			// -> The full restoring of those bounds is done right below, with the Boss Platform's OldBoundsR
 			Stage.XBoundary2 += 4
 		else
-			
+
+#platform: Use_Origins
+			EngineCallback(NOTIFY_KILL_BOSS)
+			game.callbackParam0 = 1
+			EngineCallback(NOTIFY_BOSS_END)
+			if game.playMode == BOOT_PLAYMODE_BOSSRUSH
+				StopMusic()
+			end if
+#endplatform
+
 			// Restore the Stage's Bounds to normal
 			Stage.NewXBoundary2 = Object[-3].OldBoundsR
 			

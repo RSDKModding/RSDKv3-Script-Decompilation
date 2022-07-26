@@ -93,7 +93,7 @@
 #alias 3	:	CMODE_RWALL
 
 // Collision Planes
-#alias 0	:	COLLISION_PLANEA
+#alias 0	:	COLLISION_PLANE_A
 
 // CSides
 #alias 0	:	CSIDE_FLOOR
@@ -1216,6 +1216,7 @@ function PlayerObject_ResetOnFloor
 end function
 
 // Debug movement
+// This is also used on Tidal Tempest to move the player inside water streams
 function PlayerObject_DebugMode
 	Player.Gravity = GRAVITY_AIR
 	if Player.Up == true
@@ -1986,7 +1987,7 @@ function PlayerObject_Hurt
 		HapticEffect(16, 0, 0, 0)
 #endplatform
 
-		if Player.CollisionPlane == COLLISION_PLANEA
+		if Player.CollisionPlane == COLLISION_PLANE_A
 			TempValue4 = 3
 		else
 			TempValue4 = 1
@@ -2812,8 +2813,11 @@ endfunction
 sub ObjectMain
 #platform: Standard
 	if Stage.DebugMode == true
-		if KeyPress.ButtonB == true	// Turn Debug Mode
+		if KeyPress[1].ButtonB == true	// Turn Debug Mode
 			Object.Type = TypeName[DebugMode]
+			if Stage.PlayerListPos == 1
+				Object[+1].Type = TypeName[Blank Object]
+			end if
 			Player.YVelocity = 0
 			Player.State = PlayerObject_Blank
 			Player.Frame = 0

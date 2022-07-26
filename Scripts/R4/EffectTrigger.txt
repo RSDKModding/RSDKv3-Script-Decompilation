@@ -25,7 +25,7 @@
 sub ObjectMain
 	switch Object.PropertyValue
 	case EFFECTRIGGER_SET_BG_LAYER
-		if Player.XPos < 41943040		// 0x2800000, X - 640 in map coords
+		if Player.XPos < 0x2800000		// X - 640 in map coords
 			Stage[0].ActiveLayer = 1	// why it does this instead of starting with this layer directly? no clue
 			
 			Object.Type 	= TypeName[Blank Object]
@@ -47,9 +47,9 @@ sub ObjectMain
 
 	case EFFECTRIGGER_WATER_HEIGHT
 		if Player.XPos > Object.XPos
-			Stage.NewWaterLevel = 40108032	// 0x2640000, Y - 612 in map coords
+			Stage.NewWaterLevel = 0x2640000	// Y - 612 in map coords
 		else
-			Stage.NewWaterLevel = 42205184	// 0x2840000, Y - 644 in map coords
+			Stage.NewWaterLevel = 0x2840000	// Y - 644 in map coords
 		end if
 		break
 
@@ -58,13 +58,12 @@ sub ObjectMain
 		if CheckResult == true
 			if Player.State != PlayerObject_Death
 				if Player.State != PlayerObject_Drown
-#platform: Mobile
 					Warp.Timer = 0
-#endplatform
+					
 					Player.State = PlayerObject_DebugMode
 					Player.Animation = ANI_FANROTATE
 
-					Player.XVelocity = 0
+					Player.XVelocity =  0
 					Player.YVelocity = -0x40000	//-0x40000
 
 					if Player.XPos < Object.XPos

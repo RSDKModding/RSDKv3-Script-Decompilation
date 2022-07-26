@@ -1,26 +1,31 @@
-//------------Sonic CD BBFireball Script-------------//
+//-------------Sonic CD Big Bomb Fireball Script--------------//
 //--------Scripted by Christian Whitehead 'The Taxman'--------//
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
 // Aliases
-#alias 63: TYPE_BBFIREBALL
+#alias Object.Value1	:	Object.XVelocity
+#alias Object.Value2	:	Object.YVelocity
+
+// Collision Plane
+#alias 0	:	COLLISION_PLANE_A
 
 
 sub ObjectMain
-	Object.XPos += Object.Value1
-	Object.YPos += Object.Value2
-	Object.Value2 += 0x2000
-	if Object.OutOfBounds == 1
+	Object.XPos += Object.XVelocity
+	Object.YPos += Object.YVelocity
+	Object.YVelocity += 0x2000
+
+	if Object.OutOfBounds == true
 		Object.Type = TypeName[Blank Object]
 	end if
 end sub
 
 
 sub ObjectPlayerInteraction
-	if Player.CollisionPlane == 0
+	if Player.CollisionPlane == COLLISION_PLANE_A
 		if Player.State != PlayerObject_Blank
 			PlayerObjectCollision(C_TOUCH, -8, -8, 8, 8)
-			if CheckResult == 1
+			if CheckResult == true
 				CallFunction(PlayerObject_Hit)
 			end if
 		end if
@@ -32,6 +37,7 @@ sub ObjectDraw
 	TempValue0 = Object.AnimationTimer
 	TempValue0 >>= 1
 	DrawSprite(TempValue0)
+
 	Object.AnimationTimer++
 	Object.AnimationTimer &= 3
 end sub
@@ -39,8 +45,9 @@ end sub
 
 sub ObjectStartup
 	LoadSpriteSheet("R8/Objects2.gif")
-	SpriteFrame(-8, -8, 16, 16, 109, 110)
-	SpriteFrame(-8, -8, 16, 16, 126, 110)
+
+	SpriteFrame(-8, -8, 16, 16, 109, 110) // #0 - Big Bomb Fireball yellow frame
+	SpriteFrame(-8, -8, 16, 16, 126, 110) // #1 - Big Bomb Fireball red frame
 end sub
 
 // ========================
