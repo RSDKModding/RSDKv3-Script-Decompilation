@@ -274,6 +274,28 @@ sub ObjectStartup
 	SpriteFrame(36, 56, 11, 23, 187, 84)	// #18 - N
 	SpriteFrame(48, 56, 5, 23, 131, 84)		// #19 - I
 	SpriteFrame(54, 56, 8, 23, 67, 84)		// #20 - C
+	
+#platform: Use_Origins
+	if game.playMode == BOOT_PLAYMODE_MISSION
+		TempValue0 = true
+	else
+		if game.playMode == BOOT_PLAYMODE_BOSSRUSH
+			TempValue0 = true
+		else
+			TempValue0 = false
+		end if
+	end if
+	
+	if TempValue0 != false
+		PlayMusic(0)
+		game.missionCondition = 0
+		game.missionEnd = false
+		Player.ControlMode = 0
+		Stage.TimeEnabled = true
+		ResetObjectEntity(20, TypeName[Blank Object], 0, 0, 0)
+		Warp.XPos = 0
+	end if
+#endplatform
 end sub
 
 

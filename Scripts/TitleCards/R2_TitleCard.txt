@@ -244,6 +244,30 @@ sub ObjectStartup
 	SpriteFrame(41, 56, 10, 23, 158, 108)	// #17 - Z
 	SpriteFrame(52, 56, 9, 23, 159, 84)		// #18 - L
 	SpriteFrame(62, 56, 9, 23, 88, 84)		// #19 - E
+	
+#platform: Use_Origins
+	// Despite this zone going unused, Sonic Team added the Mission/Boss Rush code here LOL
+	
+	if game.playMode == BOOT_PLAYMODE_MISSION
+		TempValue0 = true
+	else
+		if game.playMode == BOOT_PLAYMODE_BOSSRUSH
+			TempValue0 = true
+		else
+			TempValue0 = false
+		end if
+	end if
+	
+	if TempValue0 != false
+		PlayMusic(0)
+		game.missionCondition = 0
+		game.missionEnd = false
+		Player.ControlMode = 0
+		Stage.TimeEnabled = true
+		ResetObjectEntity(20, TypeName[Blank Object], 0, 0, 0)
+		Warp.XPos = 0
+	end if
+#endplatform
 end sub
 
 

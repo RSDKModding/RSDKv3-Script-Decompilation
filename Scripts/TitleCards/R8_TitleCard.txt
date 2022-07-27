@@ -275,8 +275,6 @@ sub ObjectStartup
 	SpriteFrame(74, 56, 10, 23, 70, 108)	// #22 - S
 	
 #platform: Use_Origins
-	// Some new stuff for Origins's extra modes, where it'll override normal stage processes
-	
 	if game.playMode == BOOT_PLAYMODE_MISSION
 		TempValue0 = true
 	else
@@ -287,23 +285,13 @@ sub ObjectStartup
 		end if
 	end if
 	
-	// If in Mission Mode or Boss Rush...
-	if TempValue0 != 0
-		
-		// Then start the game right away, rather than using a Title Card or anything
-		
+	if TempValue0 != false
 		PlayMusic(0)
-		
 		game.missionCondition = 0
-		game.missionEnd = 0
-		
-		Player.ControlMode = CONTROLMODE_NORMAL
-		
+		game.missionEnd = false
+		Player.ControlMode = 0
 		Stage.TimeEnabled = true
-		
-		// Object slot 20 is the Title Card slot
 		ResetObjectEntity(20, TypeName[Blank Object], 0, 0, 0)
-		
 		Warp.XPos = 0
 	end if
 #endplatform

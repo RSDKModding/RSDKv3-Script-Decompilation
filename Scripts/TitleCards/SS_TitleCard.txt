@@ -300,7 +300,7 @@ sub ObjectStartup
 	SpriteFrame(51, 56, 9, 23, 187, 180)	// E
 	
 #platform: Use_Origins
-	// Some new stuff for Origins's extra modes, where it'll override normal stage processes
+	// There aren't any Special Stage missions nor are any of them part of the Boss Rush, so god knows why this code is here
 	
 	if game.playMode == BOOT_PLAYMODE_MISSION
 		TempValue0 = true
@@ -312,21 +312,13 @@ sub ObjectStartup
 		end if
 	end if
 	
-	if TempValue0 != 0
-		
-		// Start the music right away
+	if TempValue0 != false
 		PlayMusic(0)
-		
 		game.missionCondition = 0
-		game.missionEnd = 0
-		
-		Player.ControlMode = CONTROLMODE_NORMAL
-		
+		game.missionEnd = false
+		Player.ControlMode = 0
 		Stage.TimeEnabled = true
-		
-		// Don't display any Title Card
 		ResetObjectEntity(20, TypeName[Blank Object], 0, 0, 0)
-		
 		Warp.XPos = 0
 	end if
 #endplatform
