@@ -1,26 +1,53 @@
-//------------Sonic CD BossArmJoint2 Script-------------//
+//--------------Sonic CD Boss Arm Joint 2 Script--------------//
 //--------Scripted by Christian Whitehead 'The Taxman'--------//
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
+//-----------Used during "Eggman: Speed Up" Mission-----------//
 
 // Aliases
-#alias 66: TYPE_BOSSARMJOINT2
+#alias Object.Value0	:	Object.ShoulderEntity
+#alias Object.Value2	:	Object.XOffSet
+#alias Object.Value4	:	Object.Charging
+#alias Object.Value5	:	Object.YOffSet
+#alias Object.Value6	:	Object.OffsetValue
+
+// Shoulder Aliases
+#alias Object.Xpos	:	Shoulder.XPos
+#alias Object.YPos	:	Shoulder.YPos
+
+// States
+#alias 0	:	BOSSARMJOINT_SETUP
+#alias 1	:	BOSSARMJOINT_REPOSITION_F
+#alias 2	:	BOSSARMJOINT_HANDLE_F_JOINT
+#alias 3	:	BOSSARMJOINT_REPOSITION_B
+#alias 4	:	BOSSARMJOINT_HANDLE_B_JOINT
+#alias 5	:	BOSSARMJOINT_DESTROYED
+
+// Priotity
+#alias 0	:	PRIORITY_ACTIVE_BOUNDS
 
 // Function declarations
-#function BossFoot2_Function72
+#function BossArmJoint_HandleMovement
 
-function BossFoot2_Function72
-	TempValue0=Object.Value2
+
+function BossArmJoint_HandleMovement
+	TempValue0 = Object.XOffSet
 	TempValue0 += 64
-	Sin256(TempValue6,TempValue0)
+
+	Sin256(TempValue6, TempValue0)
 	TempValue6 <<= 12
-	Cos256(TempValue7,TempValue0)
+
+	Cos256(TempValue7, TempValue0)
 	TempValue7 <<= 12
-	ArrayPos0=Object.Value0
-	Object.XPos=Object[ArrayPos0].XPos
+
+	ArrayPos0 = Object.ShoulderEntity
+
+	Object.XPos = Shoulder[ArrayPos0].XPos
 	Object.XPos += TempValue7
-	Object.YPos=Object[ArrayPos0].YPos
+
+	Object.YPos = Shoulder[ArrayPos0].YPos
 	Object.YPos += TempValue6
-	if Object.DrawOrder == 2
+
+	if Object.DrawOrder == 2	// Right Arm Joint
 		Object.XPos -= 0xA0000
 	end if
 endfunction
@@ -28,46 +55,54 @@ endfunction
 
 sub ObjectMain
 	switch Object.State
-	case 0
-		if Object.DrawOrder == 3
-			Object.Value2=128
+	case BOSSARMJOINT_SETUP
+		if Object.DrawOrder == 3	// Left Arm Joint
+			Object.XOffSet = 128	// Delays the left arm joint
 		end if
-		Object.State=3
-		Object.Value6=2
-		Object.Value6 *= Object.PropertyValue
-		Object.Value6 /= 10
-	case 1
-		Object.Value2 -= Object.Value6
-		if Object.Value2 <= 0
-			Object.State=2
-			Object.Value2=0
-			SetBit(Object.Value4,0,1)
+		Object.State = BOSSARMJOINT_REPOSITION_B
+
+		Object.OffsetValue  = 2
+		Object.OffsetValue *= Object.PropertyValue	// Set the XOffset value based on it's property value
+		Object.OffsetValue /= 10
+		// Fall Through
+	case BOSSARMJOINT_REPOSITION_F
+		Object.XOffSet -= Object.OffsetValue
+		if Object.XOffSet <= 0
+			Object.State = BOSSARMJOINT_HANDLE_F_JOINT
+			Object.XOffSet = 0
+			SetBit(Object.Charging, 0, 1)
 		end if
-		CallFunction(BossFoot2_Function72)
+		CallFunction(BossArmJoint_HandleMovement)
 		break
-	case 2
-		CallFunction(BossFoot2_Function72)
+
+	case BOSSARMJOINT_HANDLE_F_JOINT
+		CallFunction(BossArmJoint_HandleMovement)
 		break
-	case 3
-		Object.Value2 += Object.Value6
-		if Object.Value2 >= 48
-			Object.State=4
-			Object.Value2=48
-			SetBit(Object.Value4,0,1)
+
+	case BOSSARMJOINT_REPOSITION_B
+		Object.XOffSet += Object.OffsetValue
+		if Object.XOffSet >= 48
+			Object.State = BOSSARMJOINT_HANDLE_B_JOINT
+			Object.XOffSet = 48
+			SetBit(Object.Charging, 0, 1)
 		end if
-		CallFunction(BossFoot2_Function72)
+		CallFunction(BossArmJoint_HandleMovement)
 		break
-	case 4
-		CallFunction(BossFoot2_Function72)
+
+	case BOSSARMJOINT_HANDLE_B_JOINT
+		CallFunction(BossArmJoint_HandleMovement)
 		break
-	case 5
-		Object.Value2 += 1536
-		Object.Value5 += 7936
-		Object.XPos += Object.Value2
-		Object.YPos += Object.Value5
-		if Object.OutOfBounds == 1
-			Object.Type=TypeName[BlankObject]
-			Object.Priority=0
+
+	case BOSSARMJOINT_DESTROYED
+		Object.XOffSet += 0x600
+		Object.YOffSet += 0x1F00
+
+		Object.XPos += Object.XOffSet
+		Object.YPos += Object.YOffSet
+
+		if Object.OutOfBounds == true
+			Object.Type = TypeName[Blank Object]
+			Object.Priority = PRIORITY_ACTIVE_BOUNDS
 		end if
 		break
 	end switch
@@ -81,7 +116,8 @@ end sub
 
 sub ObjectStartup
 	LoadSpriteSheet("R1/Objects3.gif")
-	SpriteFrame(-8,-8,16,16,124,34)
+
+	SpriteFrame(-8, -8, 16, 16, 124, 34)	// #0 - Arm Joint
 end sub
 
 

@@ -145,17 +145,18 @@ sub ObjectMain
 	case PAUSEMENU_CONTROLS
 #platform: Use_Origins
 		Menu.ExitFlag = true
-		CheckEqual(Options.PhysicalControls,true)
+		CheckEqual(Options.PhysicalControls, true)
 #endplatform
 
-#platform: Mobile
-		CheckEqual(Options.PhysicalControls,true)
-#endplatform
+#platform: Use_Standalone
+	#platform: Mobile
+			CheckEqual(Options.PhysicalControls, true)
+	#endplatform
 
-#platform: Standard
-		CheckResult = true
+	#platform: Standard
+			CheckResult = true
+	#endplatform
 #endplatform
-
 		if CheckResult == true
 			if KeyPress[0].Up == true
 				PlaySfx(23, 0) 	//Menu Button SFX
@@ -236,9 +237,11 @@ sub ObjectMain
 #platform: Use_Origins
 				Options.PhysicalControls = false
 #endplatform
+
 #platform: Mobile
 				Options.PhysicalControls = false
 #endplatform
+
 				Object.SelectedButton = -1
 			end if
 		else

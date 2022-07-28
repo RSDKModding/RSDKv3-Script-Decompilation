@@ -526,9 +526,7 @@ function PlayerObject_ProcessPlayer
 
 	// Restore camera position after looking up / crounching
 	if Player.State != PlayerObject_LookingUp
-
 		if Player.State != PlayerObject_Crouching
-
 			if Player.LookPos > 0
 				Player.LookPos -= 2
 			end if
@@ -536,13 +534,10 @@ function PlayerObject_ProcessPlayer
 			if Player.LookPos < 0
 				Player.LookPos += 2
 			end if
-
 		end if
-
 	end if
 
 	if Warp.Timer > 0
-
 		Warp.Timer++
 		
 		if Warp.Timer == 204
@@ -550,7 +545,6 @@ function PlayerObject_ProcessPlayer
 			CreateTempObject(TypeName[TimeWarp], 0, 0, 0)
 			Object[TempObjectPos].DrawOrder = 6
 		end if
-
 	end if
 	
 	// Keeps the camera in place for a bit after releasing S2 Spin Dash
@@ -667,6 +661,7 @@ function PlayerObject_HandleGround
 							endif
 						endif
 #endplatform
+
 #platform: Use_Standalone
 						if Player.Timer == 10620	// I'm Outta Here!
 							Player.Timer = 0
@@ -2811,9 +2806,10 @@ endfunction
 
 
 sub ObjectMain
-#platform: Standard
 	if Stage.DebugMode == true
 		if KeyPress[1].ButtonB == true	// Turn Debug Mode
+			// Only PC had access to debug mode
+#platform: Standard
 			Object.Type = TypeName[DebugMode]
 			if Stage.PlayerListPos == 1
 				Object[+1].Type = TypeName[Blank Object]
@@ -2829,6 +2825,7 @@ sub ObjectMain
 			Player.MinRollSpeed = 0
 			Screen.CameraEnabled = true
 			Screen.CameraStyle = Options.OriginalControls
+#endplatform
 		else
 			// Handle Player
 			CallFunction(PlayerObject_ProcessPlayer)
@@ -2857,9 +2854,11 @@ sub ObjectMain
 			end if
 		end if
 	else
+		// Mobile version ObjectMain starts here, since there wasn't a debug mode
 		// Handle Player
 		CallFunction(PlayerObject_ProcessPlayer)
 		CallFunction(Player.State)
+
 #platform: Use_Origins
 		if Player.DropDashCharge >= 20
 			if Player.Animation == ANI_JUMPING
@@ -2869,6 +2868,7 @@ sub ObjectMain
 			endif
 		endif
 #endplatform
+
 		ProcessAnimation()
 
 		if Player.Animation == ANI_JUMPING
@@ -2894,38 +2894,7 @@ sub ObjectMain
 				end if
 			end if
 		end if
-
 	end if
-#endplatform
-
-#platform: Mobile	// No debug for mobile players!
-	CallFunction(PlayerObject_ProcessPlayer)
-	CallFunction(Player.State)
-	ProcessAnimation()
-	if Player.Animation == ANI_JUMPING
-		Screen.AdjustCameraY = Player.CameraOffset
-	else
-		if Screen.AdjustCameraY == Player.CameraOffset
-			Screen.AdjustCameraY = 0
-			Player.iYPos += Player.CameraOffset
-		end if
-	end if
-	
-	if Player.YVelocity > 0x100000
-		Player.YVelocity = 0x100000
-	end if
-	
-	PlayerTileCollision()
-	if CheckResult == true
-		if Player.Animation == ANI_JUMPING
-			if Player.Down == false
-				Player.Animation = ANI_WALKING
-				Screen.AdjustCameraY = 0
-				Player.iYPos += Player.CameraOffset
-			end if
-		end if
-	end if
-#endplatform
 end sub
 
 

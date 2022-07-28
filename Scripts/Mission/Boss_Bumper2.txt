@@ -1,82 +1,56 @@
-//------------Sonic CD BossBumper2 Script-------------//
+//----------------Sonic CD Boss Bumper 2 Script---------------//
 //--------Scripted by Christian Whitehead 'The Taxman'--------//
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
+//-----------Used during "Eggman: Speed Up" Mission-----------//
 
 // Aliases
-#alias 68: TYPE_BOSSBUMPER2
+#alias Object.Value0	:	Object.ArmEntity
+#alias Object.Value2	:	Object.XOffSet
+#alias Object.Value5	:	Object.YOffSet
 
-// Function declarations
-#function BossFoot2_Function72
-#function BossFoot2_Function73
+// Arm Aliases
+#alias Object.Frame		:	Arm.Frame
+#alias Object.XPos		:	Arm.XPos
+#alias Object.YPos		:	Arm.YPos
 
-function BossFoot2_Function72
-	TempValue0=Object.Value2
-	TempValue0 += 64
-	Sin256(TempValue6,TempValue0)
-	TempValue6 <<= 12
-	Cos256(TempValue7,TempValue0)
-	TempValue7 <<= 12
-	ArrayPos0=Object.Value0
-	Object.XPos=Object[ArrayPos0].XPos
-	Object.XPos += TempValue7
-	Object.YPos=Object[ArrayPos0].YPos
-	Object.YPos += TempValue6
-	if Object.DrawOrder == 2
-		Object.XPos -= 0xA0000
-	end if
-endfunction
+// States
+#alias 0	:	BOSSBUMPER_SETUP
+#alias 1	:	BOSSBUMPER_IDLE
+#alias 2	:	BOSSBUMPER_DESTROYED
 
-
-function BossFoot2_Function73
-	ArrayPos0=Object.Value0
-	Object.XPos=Object[ArrayPos0].XPos
-	Object.XPos -= 0x240000
-	Object.XPos += Object.Value6
-	Object.YPos=Object[ArrayPos0].YPos
-	TempValue1=1
-	GetBit(TempValue0,Object.Value4,7)
-	if TempValue0 == 0
-		if Player.YPos<Object.YPos
-			if Object.Value7>-0x80000
-				Object.Value7 -= 0x10000
-			end if
-			TempValue1=0
-		end if
-	end if
-	if TempValue1 == 1
-		if Object.Value7<0x80000
-			Object.Value7 += 0x10000
-		end if
-	end if
-	Object.YPos += Object.Value7
-endfunction
+// Priority
+#alias 0	:	PRIORITY_ACTIVE_BOUNDS
 
 
 sub ObjectMain
 	switch Object.State
-	case 0
-		Object.State=1
-	case 1
-		ArrayPos0=Object.Value0
-		Object.XPos=Object[ArrayPos0].XPos
-		Object.XPos -= 1245184
-		Object.YPos=Object[ArrayPos0].YPos
-		if Object[ArrayPos0].Frame!=0
-			if Object[ArrayPos0].Frame == 1
+	case BOSSBUMPER_SETUP
+		Object.State = BOSSBUMPER_IDLE
+		// Fall-Through
+	case BOSSBUMPER_IDLE
+		ArrayPos0 = Object.ArmEntity
+		Object.XPos  = Arm[ArrayPos0].XPos
+		Object.XPos -= 0x130000
+		Object.YPos  = Arm[ArrayPos0].YPos
+		if Arm[ArrayPos0].Frame != 0
+			if Arm[ArrayPos0].Frame == 1
 				Object.XPos += 0x80000
 			else
 				Object.XPos += 0x100000
 			end if
 		end if
 		break
-	case 2
-		Object.Value2 -= 1280
-		Object.Value5 += 0x1800
-		Object.XPos += Object.Value2
-		Object.YPos += Object.Value5
-		if Object.OutOfBounds == 1
-			Object.Type=TypeName[BlankObject]
-			Object.Priority=0
+
+	case BOSSBUMPER_DESTROYED
+		Object.XOffSet -= 0x500
+		Object.XPos += Object.XOffSet
+
+		Object.YOffSet += 0x1800
+		Object.YPos += Object.YOffSet
+
+		if Object.OutOfBounds == true
+			Object.Type = TypeName[Blank Object]
+			Object.Priority = PRIORITY_ACTIVE_BOUNDS
 		end if
 		break
 	end switch
@@ -84,18 +58,22 @@ end sub
 
 
 sub ObjectPlayerInteraction
-	if Object.State<2
-		if Player.Animation!=ANI_HURT
-			ArrayPos0=Object.Value0
-			if Object[ArrayPos0].Frame == 0
-				PlayerObjectCollision(C_TOUCH,-10,-16,14,16)
-				if CheckResult == 1
-					Player.Speed=-0x40000
-					Player.XVelocity=-0x40000
+	if Object.State < BOSSBUMPER_DESTROYED
+		if Player.Animation != ANI_HURT
+			ArrayPos0 = Object.ArmEntity
+
+			if Arm[ArrayPos0].Frame == 0
+				PlayerObjectCollision(C_TOUCH, -10, -16, 14, 16)
+				if CheckResult == true
+
+					Player.Speed	 = -0x40000
+					Player.XVelocity = -0x40000
+
 					if Object.Frame == 0
-						PlaySfx(11,0)
+						PlaySfx(11, 0)
 					end if
-					Object.Frame=2
+					Object.Frame = 2
+					
 				end if
 			end if
 		end if
@@ -105,7 +83,8 @@ end sub
 
 sub ObjectDraw
 	DrawSprite(Object.Frame)
-	if Object.Frame>0
+
+	if Object.Frame > 0
 		Object.Frame--
 	end if
 end sub
@@ -113,9 +92,10 @@ end sub
 
 sub ObjectStartup
 	LoadSpriteSheet("R1/Objects3.gif")
-	SpriteFrame(-14,-16,24,32,99,26)
-	SpriteFrame(-18,-16,24,32,99,26)
-	SpriteFrame(-18,-16,24,32,99,26)
+
+	SpriteFrame(-14, -16, 24, 32, 99, 26)	// #0 - EGG-HVC-001 Bumper
+	SpriteFrame(-18, -16, 24, 32, 99, 26)	// #1 - EGG-HVC-001 Bumper (different offset)
+	SpriteFrame(-18, -16, 24, 32, 99, 26)	// #2 - EGG-HVC-001 Bumper (same offset as frame 1, here to pad out animation length)
 end sub
 
 
