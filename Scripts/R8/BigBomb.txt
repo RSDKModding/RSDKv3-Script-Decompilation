@@ -6,6 +6,7 @@
 #alias Object.Value0	:	Object.Timer
 #alias Object.Value3	:	Object.LeftBound
 #alias Object.Value4	:	Object.RightBound
+#alias Object.Value5	:	Object.SavedYPos
 
 #alias Object.Value1	:	BBFireBall.XVelocity
 #alias Object.Value2	:	BBFireBall.YVelocity
@@ -14,6 +15,16 @@
 #alias 0	:	BIGBOMB_SETUP
 #alias 1	:	BIGBOMB_MOVE_LEFT
 #alias 2	:	BIGBOMB_MOVE_RIGHT
+#alias 3	:	BIGBOMB_WAIT_PLAYER
+#alias 4	:	BIGBOMB_PREPARE_FUSE
+#alias 5	:	BIGBOMB_START_FUSE
+#alias 6	:	BIGBOMB_EXPLODE
+
+// Animations
+#alias 0	:	BOMBANI_IDLE
+#alias 1	:	BOMBANI_WALKING
+#alias 2	:	BOMBANI_SPOTTED
+#alias 3	:	BOMBANI_EXPLOSION
 
 // Property Values
 #alias 0	:	PROPVAL_MOVING_BOMB
@@ -33,15 +44,19 @@ sub ObjectMain
 		ObjectTileCollision(0, 0, 27, 0)
 		if CheckResult == true
 			if Object.PropertyValue == PROPVAL_STATIC_BOMB
-				Object.State = 3
+				Object.State = BIGBOMB_WAIT_PLAYER
+
 				Object.Direction = FACING_LEFT
-				Object.Animation = 0
+
+				Object.Animation = BOMBANI_IDLE
 			else
-				Object.State = 1
-				Object.Animation = 1
-				Object.LeftBound = Object.XPos
+				Object.State = BIGBOMB_MOVE_LEFT
+				Object.Animation = BOMBANI_WALKING
+
+				Object.LeftBound  = Object.XPos
 				Object.LeftBound -= 0xC0000
-				Object.RightBound = Object.XPos
+
+				Object.RightBound  = Object.XPos
 				Object.RightBound += 0xC0000
 			end if
 		else
@@ -49,67 +64,69 @@ sub ObjectMain
 		end if
 		break
 
-	case 1
+	case BIGBOMB_MOVE_LEFT
 		Object.XPos -= 0xA000
 		if Object.XPos < Object.LeftBound
 			Object.Direction = FACING_LEFT
-			Object.State = 2
+			Object.State = BIGBOMB_MOVE_RIGHT
 		end if
+
 		ObjectTileGrip(0, 0, 27, 0)
 		PlayerObjectCollision(C_TOUCH, -96, -128, 96, 27)
 		if CheckResult == true
-			Object.State = 5
-			Object.Animation = 2
+			Object.State = BIGBOMB_START_FUSE
+			Object.Animation = BOMBANI_SPOTTED
 		end if
 		break
 
-	case 2
+	case BIGBOMB_MOVE_RIGHT
 		Object.XPos += 0xA000
 		if Object.XPos > Object.RightBound
 			Object.Direction = FACING_RIGHT
-			Object.State = 1
+			Object.State = BIGBOMB_MOVE_LEFT
 		end if
+
 		ObjectTileGrip(0, 0, 27, 0)
 		PlayerObjectCollision(C_TOUCH, -96, -128, 96, 27)
 		if CheckResult == true
-			Object.State = 5
-			Object.Animation = 2
+			Object.State = BIGBOMB_START_FUSE
+			Object.Animation = BOMBANI_SPOTTED
 		end if
 		break
 
-	case 3
+	case BIGBOMB_WAIT_PLAYER
 		PlayerObjectCollision(C_TOUCH, -96, -128, 96, 27)
 		if CheckResult == true
-			Object.Animation = 1
+			Object.Animation = BOMBANI_WALKING
 			Object.State++
 		end if
 		break
 
-	case 4
+	case BIGBOMB_PREPARE_FUSE
 		Object.XPos += 0x20000
 		ObjectTileGrip(0, 24, 27, 0)
 		if CheckResult == false
-			Object.State = 5
-			Object.Animation = 2
+			Object.State = BIGBOMB_START_FUSE
+			Object.Animation = BOMBANI_SPOTTED
 		end if
 		break
 
-	case 5
+	case BIGBOMB_START_FUSE
 		if Object.Timer < 30
 			Object.Timer++
 		else
 			Object.Timer = 0
-			Object.Animation = 3
+			Object.Animation = BOMBANI_EXPLOSION
 			Object.AnimationTimer = 0
-			Object.Value5 = Object.YPos
+			Object.SavedYPos = Object.YPos
 			Object.State++
 		end if
 		break
 
-	case 6
+	case BIGBOMB_EXPLODE
 		if Object.Timer < 120
 			Object.Timer++
-			Object.Value5 += 0x4000
+			Object.SavedYPos += 0x4000
 		else
 			CreateTempObject(TypeName[BBFireball], 0, Object.XPos, Object.YPos)
 			BBFireBall[TempObjectPos].XVelocity = -0x30000
@@ -166,13 +183,13 @@ end sub
 
 sub ObjectDraw
 	switch Object.Animation
-	case 0
+	case BOMBANI_IDLE
 		DrawSpriteFX(0, FX_FLIP, Object.XPos, Object.YPos)
 		DrawSpriteFX(1, FX_FLIP, Object.XPos, Object.YPos)
 		DrawSpriteFX(2, FX_FLIP, Object.XPos, Object.YPos)
 		break
 
-	case 1
+	case BOMBANI_WALKING
 		TempValue0 = Object.AnimationTimer
 		TempValue0 /= 20
 		TempValue0 *= 3
@@ -186,7 +203,7 @@ sub ObjectDraw
 		Object.AnimationTimer %= 80
 		break
 
-	case 2
+	case BOMBANI_SPOTTED
 		TempValue0 = Object.AnimationTimer
 		TempValue0 /= 20
 		TempValue0 *= 3
@@ -198,7 +215,7 @@ sub ObjectDraw
 		DrawSpriteFX(TempValue0, FX_FLIP, Object.XPos, Object.YPos)
 		break
 
-	case 3
+	case BOMBANI_EXPLOSION
 		TempValue0 = Object.AnimationTimer
 		TempValue0 /= 3
 		TempValue0 += 15
