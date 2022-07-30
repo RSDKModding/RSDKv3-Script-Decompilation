@@ -21,13 +21,13 @@
 #alias 8	:	DANGO_OFFSCREEN // Unused
 
 // Badnik States (Property Values)
-#alias 0	:	BADNIK_GOOD
-#alias 1	:	BADNIK_BAD
+#alias 0	:	PROPVAL_QUALITY_GOOD
+#alias 1	:	PROPVAL_QUALITY_BAD
 
 
 sub ObjectMain
 
-	if Object.PropertyValue == BADNIK_GOOD
+	if Object.PropertyValue == PROPVAL_QUALITY_GOOD
 		switch Object.State
 		case DANGO_WALK
 			Object.Priority = 1
@@ -383,7 +383,7 @@ sub ObjectMain
 			Object.Direction = FACING_RIGHT
 			Object.ChaseChain = 0
 			
-			if Object.PropertyValue == BADNIK_GOOD
+			if Object.PropertyValue == PROPVAL_QUALITY_GOOD
 				Object.XVelocity = -0x6000
 			else
 				Object.XVelocity = -0x1000
@@ -534,7 +534,7 @@ sub ObjectStartup
 			Object[ArrayPos0].OriginPosY = Object[ArrayPos0].YPos
 			
 			// Set its starting velocity as well, "Bad" Dangos go slower than "Good" ones since they're, y'know, "Bad"
-			if Object[ArrayPos0].PropertyValue == BADNIK_GOOD
+			if Object[ArrayPos0].PropertyValue == PROPVAL_QUALITY_GOOD
 				Object[ArrayPos0].XVelocity = -0x6000 // 0.375 pixels per frame
 			else
 				Object[ArrayPos0].XVelocity = -0x1000  // 0.0625 pixels per frame... that's hardly anything!
@@ -586,6 +586,6 @@ sub RSDKLoad
 
 	AddEditorVariable("Condition")
 	SetActiveVariable("Condition")
-	AddEnumVariable("Good", BADNIK_GOOD)
-	AddEnumVariable("Bad",  BADNIK_BAD)
+	AddEnumVariable("Good", PROPVAL_QUALITY_GOOD)
+	AddEnumVariable("Bad",  PROPVAL_QUALITY_BAD)
 end sub

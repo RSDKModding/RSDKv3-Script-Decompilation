@@ -20,12 +20,12 @@
 #alias 3		:	KAMAKAMA_CHARGE
 #alias 4		:	KAMAKAMA_SWITCH_DIRECTION
 
-// CSides
+// Collision Sides
 #alias 0		:	CSIDE_FLOOR
 
 // Property Values
-#alias 0		:	GOOD
-#alias 1		:	BAD
+#alias 0		:	PROPVAL_QUALITY_GOOD
+#alias 1		:	PROPVAL_QUALITY_BAD
 
 // Priority
 #alias 0		:	PRIORITY_ACTIVE_BOUNDS
@@ -48,7 +48,7 @@ sub ObjectMain
 		if CheckResult == true
 			Object.State = KAMAKAMA_LAUNCH_BLADE
 			Object.Priority = PRIORITY_ACTIVE
-			if Object.Quality == GOOD	// Only badniks in a good state still have blades to throw
+			if Object.Quality == PROPVAL_QUALITY_GOOD	// Only badniks in a good state still have blades to throw
 				CreateTempObject(TypeName[KamaKamaBlade], 24, Object.XPos, Object.YPos)
 				Object[TempObjectPos].Direction = Object.Direction
 				Object[TempObjectPos].iYPos -= 6
@@ -96,7 +96,7 @@ sub ObjectMain
 			else
 				Object.XVelocity = 0x10000
 			end if
-			if Object.Quality > GOOD
+			if Object.Quality > PROPVAL_QUALITY_GOOD
 				Object.XVelocity >>= 1
 			end if
 		end if
@@ -165,7 +165,7 @@ sub ObjectDraw
 		TempValue0 >>= 3
 		DrawSpriteFX(TempValue0, FX_FLIP, Object.XPos, Object.YPos)
 
-		if Object.Quality == GOOD
+		if Object.Quality == PROPVAL_QUALITY_GOOD
 			TempValue1 = TempValue0
 			TempValue1 += 4
 			DrawSpriteFX(TempValue1, FX_FLIP, Object.XPos, Object.YPos)
@@ -190,7 +190,7 @@ sub ObjectDraw
 		TempValue0 >>= 3
 		DrawSpriteFX(TempValue0, FX_FLIP, Object.XPos, Object.YPos)
 
-		if Object.Quality == GOOD
+		if Object.Quality == PROPVAL_QUALITY_GOOD
 			TempValue1 = TempValue0
 			TempValue1 += 4
 			DrawSpriteFX(TempValue1, FX_FLIP, Object.XPos, Object.YPos)
@@ -212,7 +212,7 @@ sub ObjectDraw
 		TempValue0 >>= 3
 		DrawSpriteFX(TempValue0, FX_FLIP, Object.XPos, Object.YPos)
 
-		if Object.Quality == GOOD
+		if Object.Quality == PROPVAL_QUALITY_GOOD
 			TempValue1 = TempValue0
 			TempValue1 += 4
 			DrawSpriteFX(TempValue1, FX_FLIP, Object.XPos, Object.YPos)
@@ -238,7 +238,7 @@ sub ObjectDraw
 		TempValue0 = Object.FrameTimer
 		TempValue0 >>= 3
 
-		if Object.Quality == GOOD
+		if Object.Quality == PROPVAL_QUALITY_GOOD
 			TempValue1 = TempValue0
 			TempValue1 += 4
 			DrawSpriteFX(TempValue1, FX_FLIP, Object.XPos, Object.YPos)

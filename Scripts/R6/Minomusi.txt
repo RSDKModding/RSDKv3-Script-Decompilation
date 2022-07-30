@@ -30,8 +30,8 @@
 #alias 4		:	MINOMUSI_BAD_RETIRE
 
 // Badnik Quality
-#alias 0		:	GOOD
-#alias 1		:	BAD
+#alias 0		:	PROPVAL_QUALITY_GOOD
+#alias 1		:	PROPVAL_QUALITY_BAD
 
 // Priority
 #alias 0		:	PRIORITY_ACTIVE_BOUNDS
@@ -47,7 +47,7 @@ sub ObjectMain
 		Object.Priority = PRIORITY_ACTIVE_BOUNDS
 	end if
 
-	if Object.Quality == GOOD
+	if Object.Quality == PROPVAL_QUALITY_GOOD
 		switch Object.State
 		case MINOMUSI_DETECT_PLAYER
 			Object.Frame = 0
@@ -218,7 +218,7 @@ sub ObjectPlayerInteraction
 		CallFunction(PlayerObject_BadnikBreak)
 	end if
 
-	if Object.Quality == GOOD
+	if Object.Quality == PROPVAL_QUALITY_GOOD
 		if Object.Type == TypeName[Minomusi]
 			if Object.Frame > 2
 				PlayerObjectCollision(C_TOUCH, -17, -4, 17, 20)
@@ -242,10 +242,10 @@ end sub
 
 
 sub ObjectDraw
-	TempValue0 = Object.YPos
-	TempValue0 -= Object.YOriginPos
+	TempValue0   = Object.YPos
+	TempValue0  -= Object.YOriginPos
 	TempValue0 >>= 19
-	TempValue0 += 5
+	TempValue0  += 5
 	DrawSpriteXY(TempValue0, Object.XPos, Object.YOriginPos)
 
 	DrawSprite(Object.Frame)

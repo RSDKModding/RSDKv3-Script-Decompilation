@@ -14,8 +14,8 @@
 #alias 5	:	SASURI_RETRACTCANNON
 
 // Badnik Conditions (Property Values)
-#alias 0	:	BADNIK_GOOD
-#alias 1	:	BADNIK_BAD
+#alias 0	:	PROPVAL_QUALITY_GOOD
+#alias 1	:	PROPVAL_QUALITY_BAD
 
 // Sasuri Bullet (SBullet) Aliases
 #alias Object.Value1	:	Object.XVelocity
@@ -27,7 +27,7 @@ sub ObjectMain
 	Object.Frame++
 	Object.Frame %= 60
 	
-	if Object.PropertyValue == BADNIK_GOOD
+	if Object.PropertyValue == PROPVAL_QUALITY_GOOD
 		switch Object.State
 		case SASURI_FINDGROUND
 			// See if there's any ground for the Sasuri to stand on
@@ -106,7 +106,7 @@ sub ObjectMain
 					CreateTempObject(TypeName[Sasuri Bullet], 0, Object.XPos, Object.YPos)
 					
 					// Move the Bullet 24 pixels up, to match where the Sasuri's cannon is drawn
-					Object[TempObjectPos].YPos -= 1572864
+					Object[TempObjectPos].YPos -= 0x180000
 					
 					// Move it 24 pixels in the Sasuri's direction, as well as giving it a velocity of 3px per frame in that very same direction too
 					if Object.Direction == FACING_RIGHT
@@ -291,7 +291,7 @@ end sub
 
 sub ObjectDraw
 	
-	if Object.PropertyValue == BADNIK_GOOD
+	if Object.PropertyValue == PROPVAL_QUALITY_GOOD
 		if Object.Frame < 30
 			// In this order, draw the:
 			// - back paw
@@ -420,7 +420,7 @@ end sub
 
 
 sub RSDKDraw
-	if Object.PropertyValue == BADNIK_GOOD
+	if Object.PropertyValue == PROPVAL_QUALITY_GOOD
 		DrawSpriteFX(2, FX_FLIP, Object.XPos, Object.YPos)
 		DrawSpriteFX(0, FX_FLIP, Object.XPos, Object.YPos)
 		DrawSpriteFX(3, FX_FLIP, Object.XPos, Object.YPos)
@@ -451,6 +451,6 @@ sub RSDKLoad
 
 	AddEditorVariable("Condition")
 	SetActiveVariable("Condition")
-	AddEnumVariable("Good", BADNIK_GOOD)
-	AddEnumVariable("Bad",  BADNIK_BAD)
+	AddEnumVariable("Good", PROPVAL_QUALITY_GOOD)
+	AddEnumVariable("Bad",  PROPVAL_QUALITY_BAD)
 end sub

@@ -22,10 +22,10 @@
 #alias 7	:	YAGO_BAD_DASH
 
 // Property Values
-#alias 0	:	GOOD
-#alias 1	:	BAD
+#alias 0	:	PROPVAL_QUALITY_GOOD
+#alias 1	:	PROPVAL_QUALITY_BAD
 
-// CSides
+// Collision Sides
 #alias 0	:	CSIDE_FLOOR
 #alias 1	:	CSIDE_LWALL
 #alias 2	:	CSIDE_RWALL
@@ -43,7 +43,7 @@ sub ObjectMain
 		ObjectTileCollision(CSIDE_FLOOR, 0, 17, 0)
 		if CheckResult == true
 			Object.Direction = FACING_RIGHT
-			Object.Speed = 5242880		//  0x500000
+			Object.Speed = 0x500000		//  0x500000
 			Object.XVelocity = -0x4000	// -04000
 			Object.Priority = PRIORITY_ACTIVE
 			Object.State++
@@ -73,7 +73,7 @@ sub ObjectMain
 					FlipSign(TempValue0)
 				end if
 
-				if TempValue0 < 5242880	// 0x500000
+				if TempValue0 < 0x500000	// 0x500000
 					Object.State = YAGO_DASH_CHARGE
 					Object.Timer = 6
 				end if
@@ -89,7 +89,7 @@ sub ObjectMain
 			Object.Timer--
 		else
 			Object.Timer = 30
-			Object.Speed = 5242880	// 0x500000
+			Object.Speed = 0x500000	// 0x500000
 
 			Object.Direction++
 			Object.Direction &= FACING_LEFT
@@ -121,7 +121,7 @@ sub ObjectMain
 		if Object.Timer > 0
 			Object.Timer--
 		else
-			if Object.Quality == GOOD
+			if Object.Quality == PROPVAL_QUALITY_GOOD
 				if Object.Direction == FACING_RIGHT
 					Object.Speed = -294912	// -0x48000
 				else
@@ -137,7 +137,7 @@ sub ObjectMain
 			end if
 
 			Object.YVelocity = -0x18000		// -0x18000
-			if Object.Quality == GOOD
+			if Object.Quality == PROPVAL_QUALITY_GOOD
 				Object.State++
 			else
 				Object.State = YAGO_BAD_DASH
@@ -179,7 +179,7 @@ sub ObjectMain
 			if Object.YVelocity > 0
 				ObjectTileCollision(CSIDE_FLOOR, 0, 17, 0)
 				if CheckResult == true
-					Object.Speed = 5242880	// 0x500000
+					Object.Speed = 0x500000	// 0x500000
 					Object.State = YAGO_ADVANCE
 				end if
 			end if
@@ -221,7 +221,7 @@ end sub
 sub ObjectDraw
 	TempValue0 = Object.AnimationTimer
 	TempValue0 /= 10
-	if Object.PropertyValue == BAD
+	if Object.PropertyValue == PROPVAL_QUALITY_BAD
 		TempValue0 += 2
 	end if
 	DrawSpriteFX(TempValue0, FX_FLIP, Object.XPos, Object.YPos)

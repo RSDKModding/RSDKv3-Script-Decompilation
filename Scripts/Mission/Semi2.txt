@@ -7,76 +7,80 @@
 
 
 sub ObjectMain
-	if Object.OutOfBounds == 1
-		Object.State=3
-		Object.Value0=0
-		Object.XPos=Object.Value3
-		Object.YPos=Object.Value4
+	if Object.OutOfBounds == true
+		Object.State = SEMI_RESET
+		Object.Timer = 0
+		Object.XPos = Object.XOriginPos
+		Object.YPos = Object.YOriginPos
 	end if
+	
 	switch Object.State
-	case 1
-		Object.Priority=1
-		Object.XPos += Object.Value1
-		Object.YPos += Object.Value2
-		if Object.Value0<48
-			Object.Value0++
+	case SEMI_START_FLY
+		Object.Priority = PRIORITY_ACTIVE
+		Object.XPos += Object.XVelocity
+		Object.YPos += Object.YVelocity
+		if Object.Timer < 48
+			Object.Timer++
 		else
-			Object.Value0=0
+			Object.Timer = 0
 			Object.State++
 		end if
 		break
-	case 2
-		Object.XPos += Object.Value1
-		if Object.PropertyValue == 0
-			if Object.Value0 == 0
-				Object.Value0=30
-				CreateTempObject(TypeName[SemiBomb2],0,Object.XPos,Object.YPos)
+	case SEMI_BOMB_THROW
+		Object.XPos += Object.XVelocity
+		if Object.Quality == PROPVAL_QUALITY_GOOD
+			if Object.Timer == 0
+				Object.Timer = 30
+				CreateTempObject(TypeName[SemiBomb2], 0, Object.XPos, Object.YPos)
 				Object[TempObjectPos].YPos += 0xC0000
 			else
-				Object.Value0--
+				Object.Timer--
 			end if
 		end if
 		break
-	case 3
-		if Object.OutOfBounds == 1
-			Object.State=0
-			Object.Priority=0
+
+	case SEMI_RESET
+		if Object.OutOfBounds == true
+			Object.State = SEMI_IDLE
+			Object.Priority = PRIORITY_ACTIVE_BOUNDS
 		end if
 		break
 	end switch
+	// Check if this badnik should be a flower
 	CallFunction(StageSetup_CheckGoodFuture)
 end sub
 
 
 sub ObjectPlayerInteraction
 	switch Object.State
-	case 0
-		PlayerObjectCollision(C_TOUCH,-96,-128,96,128)
-		if CheckResult == 1
-			Object.State=1
-			if Object.XPos>Player.XPos
-				if Object.PropertyValue == 0
-					Object.Value1=0x20000
-					Object.Value2=-0x10000
+	case SEMI_IDLE
+		PlayerObjectCollision(C_TOUCH, -96, -128, 96, 128)
+		if CheckResult == true
+			Object.State = SEMI_START_FLY
+			if Object.XPos > Player.XPos
+				if Object.Quality == PROPVAL_QUALITY_GOOD
+					Object.XVelocity =  0x20000
+					Object.YVelocity = -0x10000
 				else
-					Object.Value1=0x18000
-					Object.Value2=49152
+					Object.XVelocity = 0x18000
+					Object.YVelocity = 0xC000
 				end if
 			else
-				if Object.PropertyValue == 0
-					Object.Value1=-0x20000
-					Object.Value2=-0x10000
+				if Object.Quality == PROPVAL_QUALITY_GOOD
+					Object.XVelocity = -0x20000
+					Object.YVelocity = -0x10000
 				else
-					Object.Value1=-0x18000
-					Object.Value2=49152
+					Object.XVelocity = -0x18000
+					Object.YVelocity =  0xC000
 				end if
 			end if
 		end if
 		break
-	case 1
-	case 2
-		PlayerObjectCollision(C_TOUCH,-14,-12,14,12)
-		if CheckResult == 1
+
+	case SEMI_START_FLY
+	case SEMI_BOMB_THROW
+		PlayerObjectCollision(C_TOUCH, -14, -12, 14, 12)
+		if CheckResult == true
 			CallFunction(PlayerObject_BadnikBreak)
 		end if
 		break
@@ -86,26 +90,30 @@ end sub
 
 sub ObjectDraw
 	switch Object.State
-	case 0
-		DrawSprite(Object.PropertyValue)
+	case SEMI_IDLE
+		DrawSprite(Object.Quality)
 		break
-	case 1
-	case 2
-		TempValue0=Object.Frame
+
+	case SEMI_START_FLY
+	case SEMI_BOMB_THROW
+		TempValue0 = Object.Frame
 		TempValue0 >>= 2
-		if Object.PropertyValue == 0
+
+		if Object.Quality == PROPVAL_QUALITY_GOOD
 			TempValue0 += 2
 		else
 			TempValue0 += 6
 		end if
-		if Object.Frame>7
-			Object.Direction=FACING_LEFT
+
+		if Object.Frame > 7
+			Object.Direction = FACING_LEFT
 		else
-			Object.Direction=FACING_RIGHT
+			Object.Direction = FACING_RIGHT
 		end if
-		DrawSpriteFX(TempValue0,FX_FLIP,Object.XPos,Object.YPos)
+
+		DrawSpriteFX(TempValue0, FX_FLIP, Object.XPos, Object.YPos)
 		Object.Frame++
-		Object.Frame&=15
+		Object.Frame &= 15
 		break
 	end switch
 end sub
@@ -113,25 +121,30 @@ end sub
 
 sub ObjectStartup
 	LoadSpriteSheet("R6/Objects.gif")
-	SpriteFrame(-16,-16,32,32,1,224)
-	SpriteFrame(-16,-16,32,32,158,166)
-	SpriteFrame(-16,-16,32,32,34,224)
-	SpriteFrame(-20,-16,40,32,67,224)
-	SpriteFrame(-16,-16,32,32,34,224)
-	SpriteFrame(-20,-16,40,32,67,224)
-	SpriteFrame(-16,-16,32,32,108,224)
-	SpriteFrame(-20,-16,40,32,141,224)
-	SpriteFrame(-16,-16,32,32,108,224)
-	SpriteFrame(-20,-16,40,32,141,224)
+	// Good
+	SpriteFrame(-16, -16, 32, 32, 1, 224)	// #0 - Semi
+	// Bad
+	SpriteFrame(-16, -16, 32, 32, 158, 166)	// #1 - Semi
+	// Good
+	SpriteFrame(-16, -16, 32, 32, 34, 224)	// #2 - Semi Good 
+	SpriteFrame(-20, -16, 40, 32, 67, 224)
+	SpriteFrame(-16, -16, 32, 32, 34, 224)
+	SpriteFrame(-20, -16, 40, 32, 67, 224)
+	// Bad
+	SpriteFrame(-16, -16, 32, 32, 108, 224)
+	SpriteFrame(-20, -16, 40, 32, 141, 224)
+	SpriteFrame(-16, -16, 32, 32, 108, 224)
+	SpriteFrame(-20, -16, 40, 32, 141, 224)
+
 	ArrayPos0=32
-	while ArrayPos0<1056
+	while ArrayPos0 < 1056
 		if Object[ArrayPos0].Type == TypeName[Semi]
 			Object[ArrayPos0].Type=TypeName[Semi2]
 		end if
 		if Object[ArrayPos0].Type == TypeName[Semi2]
-			Object[ArrayPos0].Value3=Object[ArrayPos0].XPos
-			Object[ArrayPos0].Value4=Object[ArrayPos0].YPos
-			Object[ArrayPos0].DrawOrder=5
+			Object[ArrayPos0].XOriginPos = Object[ArrayPos0].XPos
+			Object[ArrayPos0].YOriginPos = Object[ArrayPos0].YPos
+			Object[ArrayPos0].DrawOrder = 5
 		end if
 		ArrayPos0++
 	loop
