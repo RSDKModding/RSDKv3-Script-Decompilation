@@ -9,322 +9,360 @@
 sub ObjectMain
 	if Object.PropertyValue == 0
 		switch Object.State
-		case 0
+		case DANGO_WALK
 			Object.Priority = 1
-			Object.Frame = Object.Value0
+			Object.Frame = Object.Timer
 			Object.Frame /= 10
-			Object.Value0++
-			Object.Value0 %= 20
-			Object.XPos += Object.Value3
+			Object.Timer++
+			Object.Timer %= 20
+			Object.XPos += Object.XVelocity
+
 			if Object.Direction == FACING_RIGHT
 				ObjectTileGrip(0, -5, 15, 0)
 			else
 				ObjectTileGrip(0, 5, 15, 0)
 			end if
-			if CheckResult == 0
-				FlipSign(Object.Value3)
+
+			if CheckResult == false
+				FlipSign(Object.XVelocity)
 				Object.Direction++
 				Object.Direction &= FACING_LEFT
-				Object.Value4 = 0
+				Object.ChaseChain = 0
 			else
-				if Object.Value3 > 0
+				if Object.XVelocity > 0
 					ObjectTileCollision(1, 16, 8, 0)
-					if CheckResult == 1
-						FlipSign(Object.Value3)
+					if CheckResult == true
+						FlipSign(Object.XVelocity)
 						Object.Direction++
 						Object.Direction &= FACING_LEFT
-						Object.Value4 = 0
+						Object.ChaseChain = 0
 					end if
 				else
 					ObjectTileCollision(2, -16, 8, 0)
-					if CheckResult == 1
-						FlipSign(Object.Value3)
+					if CheckResult == true
+						FlipSign(Object.XVelocity)
 						Object.Direction++
 						Object.Direction &= FACING_LEFT
-						Object.Value4 = 0
+						Object.ChaseChain = 0
 					end if
 				end if
 			end if
 			break
-		case 1
+		case DANGO_CURL1
 			Object.Frame = 4
-			if Object.Value0 < 8
-				Object.Value0++
+			if Object.Timer < 8
+				Object.Timer++
 			else
-				Object.Value0 = 0
+				Object.Timer = 0
 				Object.State++
 			end if
 			break
-		case 2
+
+		case DANGO_CURL2
 			Object.Frame = 5
-			if Object.Value0 < 6
-				Object.Value0++
+			if Object.Timer < 6
+				Object.Timer++
 			else
-				Object.Value0 = 0
+				Object.Timer = 0
 				Object.State++
 			end if
 			break
-		case 3
+			
+		case DANGO_CHARGEROLL
 			Object.Frame = Object.AnimationTimer
 			Object.Frame /= 5
 			Object.Frame += 6
 			Object.AnimationTimer++
 			Object.AnimationTimer %= 10
-			if Object.Value0 < 34
-				Object.Value0++
+			if Object.Timer < 34
+				Object.Timer++
 			else
-				Object.Value0 = 0
+				Object.Timer = 0
 				Object.State++
 				if Object.Direction == FACING_RIGHT
-					Object.Value3 = -0x40000
+					Object.XVelocity = -0x40000
 				else
-					Object.Value3 = 0x40000
+					Object.XVelocity = 0x40000
 				end if
 			end if
 			break
-		case 4
+
+		case DANGO_ROLLING
 			Object.Frame = Object.AnimationTimer
 			Object.Frame /= 5
 			Object.Frame += 6
 			Object.AnimationTimer++
 			Object.AnimationTimer %= 10
-			Object.XPos += Object.Value3
+			Object.XPos += Object.XVelocity
+			
 			if Object.Direction == FACING_RIGHT
 				ObjectTileGrip(0, -5, 15, 0)
 			else
 				ObjectTileGrip(0, 5, 15, 0)
 			end if
-			if CheckResult == 0
+
+			if CheckResult == false
 				Object.State++
-				Object.Value4++
+				Object.ChaseChain++
 			else
-				if Object.Value3 > 0
+				if Object.XVelocity > 0
 					ObjectTileCollision(1, 16, 8, 0)
-					if CheckResult == 1
+					if CheckResult == true
 						Object.State++
-						Object.Value4++
+						Object.ChaseChain++
 					end if
 				else
 					ObjectTileCollision(2, -16, 8, 0)
-					if CheckResult == 1
+					if CheckResult == true
 						Object.State++
-						Object.Value4++
+						Object.ChaseChain++
 					end if
 				end if
 			end if
 			break
-		case 5
+			
+		case DANGO_UNCURL1
 			Object.Frame = 5
-			if Object.Value0 < 6
-				Object.Value0++
+			if Object.Timer < 6
+				Object.Timer++
 			else
-				Object.Value0 = 0
+				Object.Timer = 0
 				Object.State++
 			end if
 			break
-		case 6
+
+		case DANGO_UNCURL2
 			Object.Frame = 4
-			if Object.Value0 < 8
-				Object.Value0++
+			if Object.Timer < 8
+				Object.Timer++
 			else
-				Object.Value0 = 0
+				Object.Timer = 0
 				Object.State++
 			end if
 			break
-		case 7
+
+
+		case DANGO_UNCURLED
 			Object.Frame = 0
-			if Object.Value0 < 16
-				Object.Value0++
+			if Object.Timer < 16
+				Object.Timer++
 			else
-				Object.Value0 = 0
-				Object.State = 0
-				if Object.Value4 > 7
+				Object.Timer = 0
+				Object.State = DANGO_WALK
+				if Object.ChaseChain > 7
+					// Tried going in the same direction 8 times now...
+					// Even if the player's the other way, go ahead and change directions
 					Object.Direction++
 					Object.Direction &= FACING_LEFT
-					Object.Value4 = 0
+					Object.ChaseChain = 0
 				end if
+
 				if Object.Direction == FACING_RIGHT
-					Object.Value3 = -0x6000
+					Object.XVelocity = -0x6000
 				else
-					Object.Value3 = 0x6000
+					Object.XVelocity = 0x6000
 				end if
 			end if
 			break
-		case 8
-			if Object.OutOfBounds == 1
-				Object.State = 0
+			
+		case DANGO_OFFSCREEN
+			// This state is unused, but it serves just about the same buffer purpose as it does with other badniks
+			if Object.OutOfBounds == true
+				Object.State = DANGO_WALK
 				Object.Priority = 0
 			end if
 			break
 		end switch
 	else
 		switch Object.State
-		case 0
+		case DANGO_WALK
 			Object.Priority = 1
-			Object.Frame = Object.Value0
+			Object.Frame = Object.Timer
 			Object.Frame /= 30
 			Object.Frame += 2
-			Object.Value0++
-			Object.Value0 %= 60
-			Object.XPos += Object.Value3
+			Object.Timer++
+			Object.Timer %= 60
+			Object.XPos += Object.XVelocity
+
 			if Object.Direction == FACING_RIGHT
 				ObjectTileGrip(0, -5, 15, 0)
 			else
 				ObjectTileGrip(0, 5, 15, 0)
 			end if
-			if CheckResult == 0
-				FlipSign(Object.Value3)
+
+			if CheckResult == false
+				FlipSign(Object.XVelocity)
 				Object.Direction++
 				Object.Direction &= FACING_LEFT
-				Object.Value4 = 0
+				Object.ChaseChain = 0
 			else
-				if Object.Value3 > 0
+				if Object.XVelocity > 0
 					ObjectTileCollision(1, 16, 8, 0)
-					if CheckResult == 1
-						FlipSign(Object.Value3)
+					if CheckResult == true
+						FlipSign(Object.XVelocity)
 						Object.Direction++
 						Object.Direction &= FACING_LEFT
-						Object.Value4 = 0
+						Object.ChaseChain = 0
 					end if
 				else
 					ObjectTileCollision(2, -16, 8, 0)
-					if CheckResult == 1
-						FlipSign(Object.Value3)
+					if CheckResult == true
+						FlipSign(Object.XVelocity)
 						Object.Direction++
 						Object.Direction &= FACING_LEFT
-						Object.Value4 = 0
+						Object.ChaseChain = 0
 					end if
 				end if
 			end if
 			break
-		case 1
+	
+		case DANGO_CURL1
 			Object.Frame = 4
-			if Object.Value0 < 20
-				Object.Value0++
+			if Object.Timer < 20
+				Object.Timer++
 			else
-				Object.Value0 = 0
+				Object.Timer = 0
 				Object.State++
 			end if
 			break
-		case 2
+		
+		case DANGO_CURL2
 			Object.Frame = 5
-			if Object.Value0 < 12
-				Object.Value0++
+			if Object.Timer < 12
+				Object.Timer++
 			else
-				Object.Value0 = 0
+				Object.Timer = 0
 				Object.State++
 			end if
 			break
-		case 3
+	
+		case DANGO_CHARGEROLL
 			Object.Frame = Object.AnimationTimer
 			Object.Frame /= 10
 			Object.Frame += 8
 			Object.AnimationTimer++
 			Object.AnimationTimer %= 20
-			if Object.Value0 < 96
-				Object.Value0++
+			if Object.Timer < 96
+				Object.Timer++
 			else
-				Object.Value0 = 0
+				Object.Timer = 0
 				Object.State++
 				if Object.Direction == FACING_RIGHT
-					Object.Value3 = -0x10000
+					Object.XVelocity = -0x10000
 				else
-					Object.Value3 = 0x10000
+					Object.XVelocity = 0x10000
 				end if
 			end if
 			break
-		case 4
+			
+
+		case DANGO_ROLLING
 			Object.Frame = Object.AnimationTimer
 			Object.Frame /= 10
 			Object.Frame += 8
 			Object.AnimationTimer++
 			Object.AnimationTimer %= 20
-			Object.XPos += Object.Value3
+			Object.XPos += Object.XVelocity
+
 			if Object.Direction == FACING_RIGHT
 				ObjectTileGrip(0, -5, 15, 0)
 			else
 				ObjectTileGrip(0, 5, 15, 0)
 			end if
-			if CheckResult == 0
+			
+			if CheckResult == false
 				Object.State++
-				Object.Value4++
+				Object.ChaseChain++
 			else
-				if Object.Value3 > 0
+				if Object.XVelocity > 0
 					ObjectTileCollision(1, 16, 8, 0)
-					if CheckResult == 1
+					if CheckResult == true
 						Object.State++
-						Object.Value4++
+						Object.ChaseChain++
 					end if
 				else
 					ObjectTileCollision(2, -16, 8, 0)
-					if CheckResult == 1
+					if CheckResult == true
 						Object.State++
-						Object.Value4++
+						Object.ChaseChain++
 					end if
 				end if
 			end if
 			break
-		case 5
+
+		case DANGO_UNCURL1
 			Object.Frame = 5
-			if Object.Value0 < 12
-				Object.Value0++
+			if Object.Timer < 12
+				Object.Timer++
 			else
-				Object.Value0 = 0
+				Object.Timer = 0
 				Object.State++
 			end if
 			break
-		case 6
+
+		case DANGO_UNCURL2
 			Object.Frame = 4
-			if Object.Value0 < 20
-				Object.Value0++
+			if Object.Timer < 20
+				Object.Timer++
 			else
-				Object.Value0 = 0
+				Object.Timer = 0
 				Object.State++
 			end if
 			break
-		case 7
+
+		case DANGO_UNCURLED
 			Object.Frame = 2
-			if Object.Value0 < 64
-				Object.Value0++
+			if Object.Timer < 64
+				Object.Timer++
 			else
-				Object.Value0 = 0
-				Object.State = 0
-				if Object.Value4 > 7
+				Object.Timer = 0
+				Object.State = DANGO_WALK
+				if Object.ChaseChain > 7
+					// Been going in the same direction for 8 cycles now...
+					// Even if it may be opposite of the player, go ahead and change direction because much isn't happening now anyways
 					Object.Direction++
 					Object.Direction &= FACING_LEFT
-					Object.Value4 = 0
+					Object.ChaseChain = 0
 				end if
+				
 				if Object.Direction == FACING_RIGHT
-					Object.Value3 = -0x1000
+					Object.XVelocity = -0x1000
 				else
-					Object.Value3 = 0x1000
+					Object.XVelocity = 0x1000
 				end if
 			end if
 			break
-		case 8
-			if Object.OutOfBounds == 1
-				Object.State = 0
+
+		case DANGO_OFFSCREEN
+			// This state is unused as Dango uses a simpler OOB process instead
+			if Object.OutOfBounds == true
+				Object.State = DANGO_WALK
 				Object.Priority = 0
 			end if
 			break
 		end switch
 	end if
+
 	CallFunction(StageSetup_CheckGoodFuture)
-	if Object.OutOfBounds == 1
+
+	// See if the Dango is out of bounds
+	if Object.OutOfBounds == true
 		TempValue0 = Object.XPos
 		TempValue1 = Object.YPos
-		Object.XPos = Object.Value1
-		Object.YPos = Object.Value2
-		if Object.OutOfBounds == 1
+		Object.XPos = Object.OriginPosX
+		Object.YPos = Object.OriginPosY
+		if Object.OutOfBounds == true
+			// It is, so in that case it's clear to restore the Dango to its original spot
 			Object.Priority = 0
-			Object.State = 0
-			Object.Value0 = 0
+			Object.State = DANGO_WALK
+			Object.Timer = 0
 			Object.Direction = FACING_RIGHT
-			Object.Value4 = 0
-			if Object.PropertyValue == 0
-				Object.Value3 = -0x6000
+			Object.ChaseChain = 0
+			
+			if Object.PropertyValue == PROPVAL_QUALITY_GOOD
+				Object.XVelocity = -0x6000
 			else
-				Object.Value3 = -0x1000
+				Object.XVelocity = -0x1000
 			end if
 		else
 			Object.XPos = TempValue0
@@ -335,76 +373,94 @@ end sub
 
 
 sub ObjectPlayerInteraction
-	if Object.State == 0
+	if Object.State == DANGO_WALK
+		// If the Dango's just wandering, then check to see if the player's stepped within activation range
+
 		if Object.Direction == FACING_RIGHT
 			PlayerObjectCollision(C_TOUCH, -112, -128, 0, 128)
 		else
 			PlayerObjectCollision(C_TOUCH, 0, -128, 112, 128)
 		end if
-		if CheckResult == 1
-			Object.State = 1
+
+		if CheckResult == true
+			// On the attack!
+			Object.State = DANGO_CURL1
 		end if
 	end if
+	
 	switch Object.State
-	case 0
-	case 1
-	case 2
-	case 5
-	case 6
-	case 7
+	case DANGO_WALK
+	case DANGO_CURL1
+	case DANGO_CURL2
+	case DANGO_UNCURL1
+	case DANGO_UNCURL2
+	case DANGO_UNCURLED
 		PlayerObjectCollision(C_TOUCH, -14, -10, 14, 10)
 		if CheckResult == 1
 			CallFunction(PlayerObject_BadnikBreak)
 		end if
 		break
-	case 3
+	case DANGO_CHARGEROLL
 		PlayerObjectCollision(C_TOUCH, -14, -10, 14, 10)
-		if CheckResult == 1
+		if CheckResult == true
 			CheckEqual(Player.Animation, ANI_JUMPING)
 			TempValue0 = CheckResult
 			CheckEqual(Player.Animation, ANI_SPINDASH)
 			TempValue0 |= CheckResult
-			if TempValue0 == 1
+			if TempValue0 == true
+				// The player's rolled towards the Dango, so bounce the player back
 				Player.Speed = Player.XPos
 				Player.Speed -= Object.XPos
 				Player.Speed >>= 2
 				Player.XVelocity = Player.Speed
+				
+				// Account for aerial bouncing too if needed
 				if Player.Gravity == 1
 					Player.YVelocity = Player.YPos
 					Player.YVelocity -= Object.YPos
 					Player.YVelocity >>= 2
 				end if
 			else
+				// Hurt the player
+				// (Note that there are edge cases with Tails where he may end up breaking the Dango with his tails, instead)
 				CallFunction(PlayerObject_BadnikBreak)
 			end if
 		end if
 		break
-	case 4
+
+	case DANGO_ROLLING
 		PlayerObjectCollision(C_TOUCH, -14, -10, 14, 10)
-		if CheckResult == 1
+		if CheckResult == true
 			CheckEqual(Player.Animation, ANI_JUMPING)
 			TempValue0 = CheckResult
 			CheckEqual(Player.Animation, ANI_SPINDASH)
 			TempValue0 |= CheckResult
-			if TempValue0 == 1
-				Object.Value3 = Player.XVelocity
+			if TempValue0 == true
+				// The player's rolled towards the Dango, so recoil the both of them
+				Object.XVelocity = Player.XVelocity
 				Player.Speed = Player.XPos
 				Player.Speed -= Object.XPos
 				Player.Speed >>= 2
 				Player.XVelocity = Player.Speed
+
 				if Player.Gravity == 1
+					// Account for Y recoil, too
 					Player.YVelocity = Player.YPos
 					Player.YVelocity -= Object.YPos
 					Player.YVelocity >>= 2
 				else
+					// The player is on the ground, make them bounce back rolling
 					Player.State = PlayerObject_HandleRolling
 					Player.Animation = ANI_JUMPING
 				end if
 			else
+				// Hurt the player
+				// (See above note about Tails's fluffy but dangerous parts)
 				CallFunction(PlayerObject_BadnikBreak)
 			end if
 		end if
 		break
+
 	end switch
 end sub
 
@@ -418,25 +474,37 @@ end sub
 
 sub ObjectStartup
 	LoadSpriteSheet("R8/Objects2.gif")
+
+	// Dango Frames
+
+	// 0-1 - Idle Animation, "Good" variant
 	SpriteFrame(-16, -7, 32, 24, 1, 84)
 	SpriteFrame(-16, -7, 32, 24, 1, 109)
+	
+	// 2-3 - Idle Animation, "Bad" variant (version with the cracked shell frames)
 	SpriteFrame(-16, -7, 32, 24, 34, 84)
 	SpriteFrame(-16, -7, 32, 24, 34, 109)
+	
+	// 4-5 - Curl
 	SpriteFrame(-16, -16, 32, 32, 34, 134)
 	SpriteFrame(-16, -16, 32, 32, 1, 167)
+	
+	// 6-9 - Rolling Frames
 	SpriteFrame(-16, -15, 32, 32, 34, 167)
 	SpriteFrame(-16, -15, 32, 32, 124, 223)
 	SpriteFrame(-16, -16, 32, 32, 1, 134)
 	SpriteFrame(-16, -15, 32, 32, 34, 167)
+
+	// Cycle through the level and find all Dango objects
 	ArrayPos0 = 32
 	while ArrayPos0 < 1056
 		if Object[ArrayPos0].Type == TypeName[Dango]
-			Object[ArrayPos0].Value1 = Object[ArrayPos0].XPos
-			Object[ArrayPos0].Value2 = Object[ArrayPos0].YPos
-			if Object[ArrayPos0].PropertyValue == 0
-				Object[ArrayPos0].Value3 = -0x6000
+			Object[ArrayPos0].OriginPosX = Object[ArrayPos0].XPos
+			Object[ArrayPos0].OriginPosY = Object[ArrayPos0].YPos
+			if Object[ArrayPos0].PropertyValue == PROPVAL_QUALITY_GOOD
+				Object[ArrayPos0].XVelocity = -0x6000
 			else
-				Object[ArrayPos0].Value3 = -0x1000
+				Object[ArrayPos0].XVelocity = -0x1000
 			end if
 		end if
 		ArrayPos0++
