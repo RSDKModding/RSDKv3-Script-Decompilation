@@ -57,17 +57,17 @@ sub ObjectMain
 		end switch
 	else
 		if Object.LaunchTimer < 90
-			if Player.State != PlayerObject_Death
+			if Player.State != Player_State_Death
 				Object.LaunchTimer++
 				if Object.LaunchTimer == 60
 #platform: Use_Origins
 					PlayStageSfx(3, 0)
-					Player.State = PlayerObject_ResetDropDash
+					Player.State = Player_State_Air_NoDropDash
 #endplatform
 
 #platform: Use_Standalone
 					PlayStageSfx(0, 0)
-					Player.State = PlayerObject_HandleAir
+					Player.State = Player_State_Air
 #endplatform
 					Player.Gravity = 1
 					Player.Timer = 0
@@ -136,7 +136,7 @@ sub ObjectPlayerInteraction
 			// Move the player into the cage and set them up to be launched
 			Player.XPos = Object.XPos
 			Player.YPos = Object.YPos
-			Player.State = PlayerObject_Blank
+			Player.State = Player_State_Static
 			Player.Animation = ANI_JUMPING
 			Player.Speed = 0
 			Player.XVelocity = 0

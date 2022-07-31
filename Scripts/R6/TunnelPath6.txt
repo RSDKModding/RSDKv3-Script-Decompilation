@@ -6,7 +6,7 @@
 #alias Object.Value0	:	Object.MoveSteps
 
 // Player Aliases
-#alias Player.Value4	:	Player.Invincible
+#alias Player.Value4	:	Player.InvincibleTimer
 #alias Player.Value5	:	Player.BlinkTimer
 
 // States
@@ -20,7 +20,7 @@
 
 sub ObjectMain
 	if Object.State == TUNNELPATH_6_ACTIVE
-		if Player.State == PlayerObject_Death
+		if Player.State == Player_State_Death
 			Object.State = TUNNELPATH_6_INACTIVE
 		end if
 		Object.MoveSteps++
@@ -887,11 +887,11 @@ sub ObjectMain
 			Player.YVelocity = 0
 
 #platform: Use_Origins
-				Player.State = PlayerObject_ResetDropDash
+				Player.State = Player_State_Air_NoDropDash
 #endplatform
 
 #platform: Use_Standalone
-				Player.State = PlayerObject_HandleAir
+				Player.State = Player_State_Air
 #endplatform
 			Player.Visible = true
 			break
@@ -908,14 +908,14 @@ end sub
 
 sub ObjectPlayerInteraction
 	if Object.PropertyValue == 0
-		if Player.State != PlayerObject_Blank
+		if Player.State != Player_State_Static
 			PlayerObjectCollision(C_TOUCH, -16, -16, 16, 16)
 			if CheckResult == true
-				Player.State = PlayerObject_Blank
+				Player.State = Player_State_Static
 				Player.ObjectInteraction = false
 				Player.Visible = false
 				if Player.BlinkTimer > 0
-					Player.Invincible = 0
+					Player.InvincibleTimer = 0
 					Player.BlinkTimer = 0
 				end if
 				Object.State = TUNNELPATH_6_ACTIVE

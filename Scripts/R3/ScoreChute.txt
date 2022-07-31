@@ -7,7 +7,7 @@
 #alias Object.Value1	:	Object.ScoreBonus
 
 // Player Aliases
-#alias Player.Value4:Player.Invincible
+#alias Player.Value4:Player.InvincibleTimer
 #alias Player.Value5:Player.BlinkTimer
 
 // States
@@ -42,10 +42,10 @@ sub ObjectMain
 			Player.XVelocity = 0
 			Player.Visible = false
 			if Player.BlinkTimer > 0
-				Player.Invincible = 0
+				Player.InvincibleTimer = 0
 				Player.BlinkTimer = 0
 			end if
-			Player.State = PlayerObject_Blank
+			Player.State = Player_State_Static
 		end if
 		break
 
@@ -69,7 +69,7 @@ sub ObjectMain
 			Object.Timer = 0
 		end if
 		// in case of time over 
-		if Player.State == PlayerObject_Death
+		if Player.State == Player_State_Death
 			Object.State = SCORECHUTE_COOLDOWN
 			Object.Timer = 0
 			Player.Visible = true
@@ -96,7 +96,7 @@ sub ObjectMain
 			Object.Timer = 0
 		end if
 		// in case of time over
-		if Player.State == PlayerObject_Death
+		if Player.State == Player_State_Death
 			Object.State = SCORECHUTE_COOLDOWN
 			Object.Timer = 0
 			Player.Visible = true
@@ -110,7 +110,7 @@ sub ObjectMain
 			Object.State = 6
 			Object.Timer = 0
 		end if
-		if Player.State == PlayerObject_Death	// in case of time over 
+		if Player.State == Player_State_Death	// in case of time over 
 			Object.State = SCORECHUTE_COOLDOWN
 			Object.Timer = 0
 			Player.Visible = true
@@ -125,11 +125,11 @@ sub ObjectMain
 			Object.Timer = 0
 
 #platform: Use_Origins
-				Player.State = PlayerObject_ResetDropDash
+				Player.State = Player_State_Air_NoDropDash
 #endplatform
 
 #platform: Use_Standalone
-				Player.State = PlayerObject_HandleAir
+				Player.State = Player_State_Air
 #endplatform
 
 			Player.Visible = true

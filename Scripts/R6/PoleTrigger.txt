@@ -16,10 +16,10 @@ sub ObjectPlayerInteraction
 	if Object.State == POLETRIGGER_IDLE
 		PlayerObjectCollision(C_TOUCH, -4, Object.CollisionTop, 4, Object.CollisionBottom)
 		if CheckResult == true
-			if Player.State != PlayerObject_Knockback
+			if Player.State != Player_State_Hurt
 				Object.State = POLETRIGGER_PLAYER_ROT
 				Object.JumpCheck = false
-				Player.State = PlayerObject_Blank
+				Player.State = Player_State_Static
 				Player.Animation = ANI_JUMPING
 				Player.XPos = Object.XPos
 				Player.XVelocity = 0
@@ -33,7 +33,7 @@ sub ObjectPlayerInteraction
 			end if
 		end if
 	else
-		if Player.State == PlayerObject_Blank
+		if Player.State == Player_State_Static
 			if Player.JumpPress == true
 				Object.JumpCheck = true
 			end if
@@ -70,11 +70,11 @@ sub ObjectPlayerInteraction
 					Player.DrawOrder = 4
 
 #platform: Use_Origins
-				Player.State = PlayerObject_ResetDropDash
+				Player.State = Player_State_Air_NoDropDash
 #endplatform
 
 #platform: Use_Standalone
-				Player.State = PlayerObject_HandleAir
+				Player.State = Player_State_Air
 #endplatform
 					Player.Speed = -0xC0000
 					Player.XVelocity = -0xC0000
@@ -84,11 +84,11 @@ sub ObjectPlayerInteraction
 					Player.DrawOrder = 4
 
 #platform: Use_Origins
-				Player.State = PlayerObject_ResetDropDash
+				Player.State = Player_State_Air_NoDropDash
 #endplatform
 
 #platform: Use_Standalone
-				Player.State = PlayerObject_HandleAir
+				Player.State = Player_State_Air
 #endplatform
 					Player.Speed = 0xC0000
 					Player.XVelocity = 0xC0000

@@ -15,11 +15,11 @@ sub ObjectPlayerInteraction
 			if Player.Speed > -1
 				Player.Direction = FACING_RIGHT
 				Player.Speed = 0xA0000
-				Player.State = PlayerObject_Tunnel
+				Player.State = Player_State_TubeRoll
 				Player.Animation = ANI_JUMPING
 				Player.MinRollSpeed = 0xA0000
 			else
-				Player.State = PlayerObject_HandleRolling
+				Player.State = Player_State_Roll
 				Player.Animation = ANI_JUMPING
 			end if
 			break
@@ -28,11 +28,11 @@ sub ObjectPlayerInteraction
 				if Player.Speed < 1
 					Player.Direction = FACING_LEFT
 					Player.Speed = -0xA0000
-					Player.State = PlayerObject_Tunnel
+					Player.State = Player_State_TubeRoll
 					Player.Animation = ANI_JUMPING
 					Player.MinRollSpeed = 0xA0000
 				else
-					Player.State = PlayerObject_HandleRolling
+					Player.State = Player_State_Roll
 					Player.Animation = ANI_JUMPING
 				end if
 			else
@@ -40,11 +40,11 @@ sub ObjectPlayerInteraction
 				FlipSign(Player.Speed)
 				Player.XVelocity = Player.Speed
 #platform: Use_Origins
-				Player.State = PlayerObject_ResetDropDash
+				Player.State = Player_State_Air_NoDropDash
 #endplatform
 
 #platform: Use_Standalone
-				Player.State = PlayerObject_HandleAir
+				Player.State = Player_State_Air
 #endplatform
 			end if
 			break
@@ -56,7 +56,7 @@ sub ObjectPlayerInteraction
 			break
 		case 3
 			if Player.YVelocity < 1
-				Player.State = PlayerObject_Tunnel
+				Player.State = Player_State_TubeRoll
 				Player.MinRollSpeed = 0xC0000
 				Player.Speed = -0xC0000
 				Player.Gravity = 0
@@ -65,18 +65,18 @@ sub ObjectPlayerInteraction
 				Player.Animation = ANI_JUMPING
 				Screen.AdjustCameraY = 0
 			else
-				if Player.State != PlayerObject_HandleTailsFlight
+				if Player.State != Player_State_Fly
 					Player.Animation = ANI_JUMPING
 				end if
 			end if
 			break
 		case 4
-			if Player.State == PlayerObject_Tunnel
-				Player.State = PlayerObject_HandleRolling
+			if Player.State == Player_State_TubeRoll
+				Player.State = Player_State_Roll
 			end if
 			break
 		case 5
-			if Player.State == PlayerObject_StartTTCtrlLock
+			if Player.State == Player_State_TubeAirRoll
 				if Player.JumpPress == 1
 					Object.Value1 = 1
 				else
@@ -89,11 +89,11 @@ sub ObjectPlayerInteraction
 					if CheckResult == true
 
 #platform: Use_Origins
-						Player.State = PlayerObject_ResetDropDash
+						Player.State = Player_State_Air_NoDropDash
 #endplatform
 
 #platform: Use_Standalone
-						Player.State = PlayerObject_HandleAir
+						Player.State = Player_State_Air
 #endplatform
 						Player.Gravity = 1
 						Player.XPos = Object.XPos
@@ -115,7 +115,7 @@ sub ObjectPlayerInteraction
 						Player.XVelocity = 0
 						Player.YVelocity = 0
 						Player.Speed = 0x80000
-						Player.State = PlayerObject_StartTTCtrlLock
+						Player.State = Player_State_TubeAirRoll
 						Player.Animation = ANI_JUMPING
 						Player.MinRollSpeed = 0x80000
 						Player.Angle = 224
@@ -129,7 +129,7 @@ sub ObjectPlayerInteraction
 			end if
 			break
 		case 6
-			if Player.State == PlayerObject_StartTTCtrlLock
+			if Player.State == Player_State_TubeAirRoll
 				if Player.JumpPress == 1
 					Object.Value1 = 1
 				else
@@ -141,11 +141,11 @@ sub ObjectPlayerInteraction
 					PlayerObjectCollision(C_TOUCH, -16, -16, 16, 16)
 					if CheckResult == true
 #platform: Use_Origins
-						Player.State = PlayerObject_ResetDropDash
+						Player.State = Player_State_Air_NoDropDash
 #endplatform
 
 #platform: Use_Standalone
-						Player.State = PlayerObject_HandleAir
+						Player.State = Player_State_Air
 #endplatform
 						Player.Gravity = 1
 						Player.XPos = Object.XPos
@@ -167,7 +167,7 @@ sub ObjectPlayerInteraction
 						Player.XVelocity = 0
 						Player.YVelocity = 0
 						Player.Speed = 0x80000
-						Player.State = PlayerObject_StartTTCtrlLock
+						Player.State = Player_State_TubeAirRoll
 						Player.Animation = ANI_JUMPING
 						Player.MinRollSpeed = 0x80000
 						Player.Angle = 36
@@ -182,7 +182,7 @@ sub ObjectPlayerInteraction
 			break
 		case 7
 			if Object.Value0 == 0
-				if Player.State == PlayerObject_StartTTCtrlLock
+				if Player.State == Player_State_TubeAirRoll
 					FlipSign(Player.Speed)
 					if Player.CollisionMode == 0
 						Player.CollisionMode = 2
@@ -195,7 +195,7 @@ sub ObjectPlayerInteraction
 			end if
 			break
 		case 8
-			if Player.State == PlayerObject_StartTTCtrlLock
+			if Player.State == Player_State_TubeAirRoll
 				if Player.JumpPress == 1
 					Object.Value1 = 1
 				else
@@ -207,11 +207,11 @@ sub ObjectPlayerInteraction
 					PlayerObjectCollision(C_TOUCH, -16, -16, 16, 16)
 					if CheckResult == 1
 #platform: Use_Origins
-						Player.State = PlayerObject_ResetDropDash
+						Player.State = Player_State_Air_NoDropDash
 #endplatform
 
 #platform: Use_Standalone
-						Player.State = PlayerObject_HandleAir
+						Player.State = Player_State_Air
 #endplatform
 						Player.Gravity = 1
 						Player.XPos = Object.XPos
@@ -233,7 +233,7 @@ sub ObjectPlayerInteraction
 						Player.YPos = Object.YPos
 						Player.XVelocity = 0
 						Player.YVelocity = 0
-						Player.State = PlayerObject_StartTTCtrlLock
+						Player.State = Player_State_TubeAirRoll
 						Player.Animation = ANI_JUMPING
 						Player.MinRollSpeed = 0x80000
 						Player.Angle = 172
@@ -248,7 +248,7 @@ sub ObjectPlayerInteraction
 			break
 		case 9
 			if Player.YVelocity < 1
-				Player.State = PlayerObject_Tunnel
+				Player.State = Player_State_TubeRoll
 				Player.MinRollSpeed = 0xC0000
 				Player.Speed = 0xC0000
 				Player.Gravity = 0
@@ -262,27 +262,27 @@ sub ObjectPlayerInteraction
 			break
 		case 10
 			if Object.Value0 == 0
-				if Player.State == PlayerObject_HandleRolling
+				if Player.State == Player_State_Roll
 					
 
 #platform: Use_Origins
-					Player.State = PlayerObject_ResetDropDash
+					Player.State = Player_State_Air_NoDropDash
 #endplatform
 
 #platform: Use_Standalone
-					Player.State = PlayerObject_HandleAir
+					Player.State = Player_State_Air
 #endplatform
 					Player.Gravity = 1
 					Player.Speed = 0
 					Player.XVelocity = 0
 				end if
-				if Player.State == PlayerObject_Tunnel
-					Player.State = PlayerObject_HandleRolling
+				if Player.State == Player_State_TubeRoll
+					Player.State = Player_State_Roll
 				end if
 			end if
 			break
 		case 11
-			if Player.State != PlayerObject_StartTTCtrlLock
+			if Player.State != Player_State_TubeAirRoll
 				if Object.Value0 == 0
 					Player.Gravity = 0
 					Player.XPos = Object.XPos
@@ -290,7 +290,7 @@ sub ObjectPlayerInteraction
 					Player.XVelocity = 0
 					Player.YVelocity = 0
 					Player.Speed = 0x80000
-					Player.State = PlayerObject_StartTTCtrlLock
+					Player.State = Player_State_TubeAirRoll
 					Player.Animation = ANI_JUMPING
 					Player.MinRollSpeed = 0x80000
 					Player.Angle = 224
@@ -301,7 +301,7 @@ sub ObjectPlayerInteraction
 			break
 		case 12
 			if Player.YVelocity > -1
-				Player.State = PlayerObject_Tunnel
+				Player.State = Player_State_TubeRoll
 				Player.MinRollSpeed = 0xC0000
 				Player.Speed = -0xC0000
 				Player.Gravity = 0
@@ -310,7 +310,7 @@ sub ObjectPlayerInteraction
 				Player.Animation = ANI_JUMPING
 				Screen.AdjustCameraY = 0
 			else
-				Player.State = PlayerObject_Tunnel
+				Player.State = Player_State_TubeRoll
 				Player.MinRollSpeed = 0xC0000
 				Player.Speed = Player.YVelocity
 				FlipSign(Player.Speed)

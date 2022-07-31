@@ -56,11 +56,11 @@ sub ObjectMain
 	case EFFECTRIGGER_PIPE_BOTTOM_ENTRY
 		PlayerObjectCollision(C_TOUCH, -10, -16, 10, 16)
 		if CheckResult == true
-			if Player.State != PlayerObject_Death
-				if Player.State != PlayerObject_Drown
+			if Player.State != Player_State_Death
+				if Player.State != Player_State_Drown
 					Warp.Timer = 0
 					
-					Player.State = PlayerObject_DebugMode
+					Player.State = Player_State_WaterCurrent
 					Player.Animation = ANI_FANROTATE
 
 					Player.XVelocity =  0
@@ -74,16 +74,16 @@ sub ObjectMain
 				end if
 			end if
 		else
-			if Player.State == PlayerObject_DebugMode
+			if Player.State == Player_State_WaterCurrent
 				PlayerObjectCollision(C_TOUCH, -64, -16, -32, 16)
 				if CheckResult == true
-					Player.State 	 = PlayerObject_HandleAir
+					Player.State 	 = Player_State_Air
 					Player.Animation = ANI_WALKING
 				end if
 
 				PlayerObjectCollision(C_TOUCH, 32, -16, 64, 16)
 				if CheckResult == true
-					Player.State 	 = PlayerObject_HandleAir
+					Player.State 	 = Player_State_Air
 					Player.Animation = ANI_WALKING
 				end if
 			end if
@@ -93,12 +93,12 @@ sub ObjectMain
 	case EFFECTRIGGER_PIPE_TOP_ENTRY
 		PlayerObjectCollision(C_TOUCH, -10, -16, 10, 16)
 		if CheckResult == true
-			if Player.State != PlayerObject_Death
-				if Player.State != PlayerObject_Drown
+			if Player.State != Player_State_Death
+				if Player.State != Player_State_Drown
 #platform: Mobile
 					Warp.Timer = 0
 #endplatform
-					Player.State 	 = PlayerObject_DebugMode
+					Player.State 	 = Player_State_WaterCurrent
 					Player.Animation = ANI_FANROTATE
 
 					Player.XVelocity = 0
@@ -112,16 +112,16 @@ sub ObjectMain
 				end if
 			end if
 		else
-			if Player.State == PlayerObject_DebugMode
+			if Player.State == Player_State_WaterCurrent
 				PlayerObjectCollision(C_TOUCH, -64, -16, -32, 16)
 				if CheckResult == true
-					Player.State 	 = PlayerObject_HandleGround
+					Player.State 	 = Player_State_Ground
 					Player.Animation = ANI_WALKING
 				end if
 				
 				PlayerObjectCollision(C_TOUCH, 32, -16, 64, 16)
 				if CheckResult == true
-					Player.State 	 = PlayerObject_HandleGround
+					Player.State 	 = Player_State_Ground
 					Player.Animation = ANI_WALKING
 				end if
 			end if
@@ -131,8 +131,8 @@ sub ObjectMain
 	case EFFECTRIGGER_PIPE_TURN_LEFT
 		PlayerObjectCollision(C_TOUCH, -16, -16, 16, 16)
 		if CheckResult == true
-			if Player.State != PlayerObject_Death
-				if Player.State != PlayerObject_Drown
+			if Player.State != Player_State_Death
+				if Player.State != Player_State_Drown
 					Player.XVelocity = -0x40000	// -0x40000
 					Player.Animation = ANI_FANROTATE
 				end if
@@ -143,8 +143,8 @@ sub ObjectMain
 	case EFFECTRIGGER_PIPE_TURN_RIGHT
 		PlayerObjectCollision(C_TOUCH, -16, -16, 16, 16)
 		if CheckResult == true
-			if Player.State != PlayerObject_Death
-				if Player.State != PlayerObject_Drown
+			if Player.State != Player_State_Death
+				if Player.State != Player_State_Drown
 					Player.XVelocity = 0x40000	//  0x40000
 					Player.Animation = ANI_FANROTATE
 				end if
@@ -155,8 +155,8 @@ sub ObjectMain
 	case EFFECTRIGGER_PIPE_TURN_UP
 		PlayerObjectCollision(C_TOUCH, -16, -16, 16, 16)
 		if CheckResult == true
-			if Player.State != PlayerObject_Death
-				if Player.State != PlayerObject_Drown
+			if Player.State != Player_State_Death
+				if Player.State != Player_State_Drown
 					Player.YVelocity = -0x40000	// -0x40000
 					Player.Animation = ANI_FANROTATE
 				end if
@@ -167,8 +167,8 @@ sub ObjectMain
 	case EFFECTRIGGER_PIPE_TURN_DOWN
 		PlayerObjectCollision(C_TOUCH, -16, -16, 16, 16)
 		if CheckResult == true
-			if Player.State != PlayerObject_Death
-				if Player.State != PlayerObject_Drown
+			if Player.State != Player_State_Death
+				if Player.State != Player_State_Drown
 					Player.YVelocity = 0x40000	//  0x40000
 					Player.Animation = ANI_FANROTATE
 				end if
@@ -179,8 +179,8 @@ sub ObjectMain
 	case EFFECTRIGGER_UNUSED
 		PlayerObjectCollision(C_TOUCH, -16, -16, 16, 16)
 		if CheckResult == true
-			if Player.State != PlayerObject_Death
-				if Player.State != PlayerObject_Drown
+			if Player.State != Player_State_Death
+				if Player.State != Player_State_Drown
 					Player.XVelocity = 0
 				end if
 			end if
@@ -190,8 +190,8 @@ sub ObjectMain
 	case EFFECTRIGGER_UNUSED_2
 		PlayerObjectCollision(C_TOUCH, -16, -16, 16, 16)
 		if CheckResult == true
-			if Player.State != PlayerObject_Death
-				if Player.State != PlayerObject_Drown
+			if Player.State != Player_State_Death
+				if Player.State != Player_State_Drown
 					Player.YVelocity = 0
 				end if
 			end if
@@ -201,18 +201,18 @@ sub ObjectMain
 	case EFFECTRIGGER_PIPE_EXIT_PIPE
 		PlayerObjectCollision(C_TOUCH, -16, -16, 16, 16)
 		if CheckResult == true
-			if Player.State != PlayerObject_Death
-				if Player.State != PlayerObject_Drown
+			if Player.State != Player_State_Death
+				if Player.State != Player_State_Drown
 					Player.YVelocity = 0x40000	//  0x40000
 					
 					
 
 #platform: Use_Origins
-				Player.State = PlayerObject_ResetDropDash
+				Player.State = Player_State_Air_NoDropDash
 #endplatform
 
 #platform: Use_Standalone
-				Player.State = PlayerObject_HandleAir
+				Player.State = Player_State_Air
 #endplatform
 					Player.Animation = ANI_WALKING
 				end if

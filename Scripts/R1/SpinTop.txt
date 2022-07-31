@@ -17,7 +17,7 @@ sub ObjectPlayerInteraction
 	TempValue1 = Object.Rotation	// This doesn't do anything...
 	if CheckResult == true
 
-		if Player.State != PlayerObject_SpinningTop
+		if Player.State != Player_State_SpinningTop
 			Player.Speed = 0
 			Object.OnObject = true
 			Player.MinRollSpeed = 0x1000
@@ -54,7 +54,7 @@ sub ObjectPlayerInteraction
 			end if
 		end if
 
-		Player.State = PlayerObject_SpinningTop
+		Player.State = Player_State_SpinningTop
 
 		Player.Animation = ANI_SPINNING_TOP
 
@@ -74,17 +74,17 @@ sub ObjectPlayerInteraction
 		end if
 
 		if Player.JumpPress == true
-			CallFunction(PlayerObject_StartJump)
+			CallFunction(Player_Action_Jump)
 			Player.Speed = Player.XPos
 			Player.Speed -= Object.XPos
 			Player.Speed >>= 2
 
 #platform: Use_Origins
-				Player.State = PlayerObject_ResetDropDash
+				Player.State = Player_State_Air_NoDropDash
 #endplatform
 
 #platform: Use_Standalone
-				Player.State = PlayerObject_HandleAir
+				Player.State = Player_State_Air
 #endplatform
 
 			Player.Timer = 0
@@ -93,10 +93,10 @@ sub ObjectPlayerInteraction
 	else
 		if Object.OnObject == true
 
-			if Player.State == PlayerObject_SpinningTop
+			if Player.State == Player_State_SpinningTop
 
 				if Player.Gravity == GRAVITY_GROUND
-					Player.State = PlayerObject_HandleGround
+					Player.State = Player_State_Ground
 					Object.OnObject = false
 					Player.Timer = 0
 				end if

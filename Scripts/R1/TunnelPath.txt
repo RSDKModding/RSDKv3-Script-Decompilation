@@ -4,7 +4,7 @@
 
 // Aliases
 #alias Object.Value0	:	Object.Timer
-#alias Player.Value4	:	Player.Invincible
+#alias Player.Value4	:	Player.InvincibleTimer
 #alias Player.Value5	:	Player.BlinkTimer
 
 // States
@@ -19,7 +19,7 @@
 sub ObjectMain
 	if Object.State == TUNNELPATH_ACTIVE
 
-		if Player.State == PlayerObject_Death
+		if Player.State == Player_State_Death
 			Object.State = TUNNELPATH_IDLE
 		end if
 
@@ -665,7 +665,7 @@ sub ObjectMain
 
 			Player.XVelocity = -0xC0000	// -0xC0000
 			Player.Speed = -0xC0000	// -0xC0000
-			Player.State = PlayerObject_HandleGround
+			Player.State = Player_State_Ground
 			Player.ObjectInteraction = true
 
 			if Object[+1].Type == TypeName[Blank Object]
@@ -685,12 +685,12 @@ end sub
 
 sub ObjectPlayerInteraction
 	if Object.PropertyValue == 0
-		if Player.State != PlayerObject_Blank
+		if Player.State != Player_State_Static
 			PlayerObjectCollision(C_TOUCH, -16, -16, 16, 16)
 			if CheckResult == true
-				Player.State = PlayerObject_Blank
+				Player.State = Player_State_Static
 				if Player.BlinkTimer > 0
-					Player.Invincible = 0
+					Player.InvincibleTimer = 0
 					Player.BlinkTimer = 0
 				end if
 				Player.TileCollisions = false

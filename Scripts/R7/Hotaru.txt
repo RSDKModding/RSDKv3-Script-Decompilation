@@ -29,7 +29,7 @@
 #alias Object.Value6	:	Object.EletricityActive
 
 // Player Aliases
-#alias Player.Value4	:	Player.Invincible
+#alias Player.Value4	:	Player.InvincibleTimer
 
 // Hotaru States
 #alias 0 	:	HOTARU_IDLE1
@@ -151,8 +151,8 @@ function Hotaru_HotaruBreak
 			end switch
 		else
 			if Object.State > HOTARU_LIGHTSOFF3
-				if Player.Invincible == 0
-					Player.State = PlayerObject_Hurt
+				if Player.InvincibleTimer == 0
+					Player.State = Player_State_GotHit
 					if Player.XPos > Object.XPos
 						Player.Speed = 0x20000
 					else
@@ -715,7 +715,7 @@ sub ObjectPlayerInteraction
 					// Check collision for the middle Spark
 					PlayerObjectCollision(C_TOUCH, -12, -12, 12, 12)
 					if CheckResult == true
-						CallFunction(PlayerObject_Hit)
+						CallFunction(Player_Hit)
 					end if
 					
 					// Check collision for the left Spark
@@ -739,7 +739,7 @@ sub ObjectPlayerInteraction
 					
 					PlayerObjectCollision(C_TOUCH, -12, -12, 12, 12)
 					if CheckResult == true
-						CallFunction(PlayerObject_Hit)
+						CallFunction(Player_Hit)
 					end if
 					
 					// Check collision for the right Spark
@@ -763,7 +763,7 @@ sub ObjectPlayerInteraction
 					
 					PlayerObjectCollision(C_TOUCH, -12, -12, 12, 12)
 					if CheckResult == true
-						CallFunction(PlayerObject_Hit)
+						CallFunction(Player_Hit)
 					end if
 					
 				end if

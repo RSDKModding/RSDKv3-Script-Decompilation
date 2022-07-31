@@ -11,7 +11,7 @@
 
 // Player Aliases
 #alias Player.Value0	:	Player.Rings
-#alias Player.Value4	:	Player.Invincible
+#alias Player.Value4	:	Player.InvincibleTimer
 #alias Player.Value6	:	Player.MinRollSpeed
 
 // States
@@ -48,14 +48,14 @@ sub ObjectDraw
 				Warp.CollisionMode = Player.CollisionMode
 				Warp.Gravity = Player.Gravity
 
-				if Player.State == PlayerObject_Blank
-					Warp.State = PlayerObject_HandleAir
+				if Player.State == Player_State_Static
+					Warp.State = Player_State_Air
 				else
-					if Player.State == PlayerObject_SpinningTop
-						Warp.State = PlayerObject_HandleAir
+					if Player.State == Player_State_SpinningTop
+						Warp.State = Player_State_Air
 					else
-						if Player.State == PlayerObject_DebugMode
-							Warp.State = PlayerObject_HandleAir
+						if Player.State == Player_State_WaterCurrent
+							Warp.State = Player_State_Air
 						else
 							Warp.State = Player.State
 						endif
@@ -66,7 +66,7 @@ sub ObjectDraw
 				Warp.Angle = Player.Angle
 				Warp.PlayerFrame = Player.Frame
 
-				Player.Invincible = 1000
+				Player.InvincibleTimer = 1000
 				Player.ControlMode = -1
 				Player.Visible = false
 			end if

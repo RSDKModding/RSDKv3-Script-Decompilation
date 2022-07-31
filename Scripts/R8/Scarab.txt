@@ -70,7 +70,7 @@ sub ObjectMain
 	end switch
 
 	if Object.LaunchDelay > 0
-		if Player.State == PlayerObject_Death
+		if Player.State == Player_State_Death
 			Object.LaunchDelay = 0
 		else
 			if Object.Direction == FACING_RIGHT
@@ -86,7 +86,7 @@ sub ObjectMain
 			end if
 			Object.LaunchDelay--
 			if Object.LaunchDelay == 0
-				Player.State = PlayerObject_HandleRolling
+				Player.State = Player_State_Roll
 				Player.Speed = Object.LaunchSpeed
 				Player.XVelocity = Player.Speed
 			end if
@@ -141,7 +141,7 @@ sub ObjectPlayerInteraction
 						Object.LaunchDelay = 120
 
 						Player.Animation = ANI_JUMPING
-						Player.State = PlayerObject_Blank
+						Player.State = Player_State_Static
 
 						Player.Speed = 0
 						Player.XVelocity = 0
@@ -170,7 +170,7 @@ sub ObjectPlayerInteraction
 					Object.OnObject = false
 					PlayerObjectCollision(C_TOUCH, -12, -12, 20, 12)
 					if CheckResult == true
-						CallFunction(PlayerObject_BadnikBreak)
+						CallFunction(Player_BadnikBreak)
 					end if
 				end if
 			else
@@ -180,7 +180,7 @@ sub ObjectPlayerInteraction
 						Object.LaunchDelay = 120
 
 						Player.Animation = ANI_JUMPING
-						Player.State = PlayerObject_Blank
+						Player.State = Player_State_Static
 
 						Player.Speed = 0
 						Player.XVelocity = 0
@@ -209,7 +209,7 @@ sub ObjectPlayerInteraction
 					Object.OnObject = false
 					PlayerObjectCollision(C_TOUCH, -20, -12, 12, 12)
 					if CheckResult == true
-						CallFunction(PlayerObject_BadnikBreak)
+						CallFunction(Player_BadnikBreak)
 					end if
 				end if
 			end if

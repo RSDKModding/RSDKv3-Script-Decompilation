@@ -36,12 +36,12 @@ sub ObjectPlayerInteraction
 		switch Object.PropertyValue
 		case TUBESWITCH_ENTER_H
 			if Player.Speed > 0
-				if Player.State != PlayerObject_Tunnel
+				if Player.State != Player_State_TubeRoll
 					PlaySfx(7, 0)
 				end if
 
 				Player.Direction = FACING_RIGHT
-				Player.State = PlayerObject_Tunnel
+				Player.State = Player_State_TubeRoll
 				Player.Animation = ANI_JUMPING
 				Player.MinRollSpeed = 0xA0000	// 0xA0000
 
@@ -56,17 +56,17 @@ sub ObjectPlayerInteraction
 					end if
 
 				end if
-				Player.State = PlayerObject_HandleRolling
+				Player.State = Player_State_Roll
 				Player.Animation = ANI_JUMPING
 			end if
 			break
 
 		case TUBESWITCH_ENTER_V
-			if Player.State != PlayerObject_Tunnel
+			if Player.State != Player_State_TubeRoll
 				PlaySfx(7, 0)
 			end if
 			Player.Gravity = GRAVITY_GROUND
-			Player.State = PlayerObject_Tunnel
+			Player.State = Player_State_TubeRoll
 			Player.Animation = ANI_JUMPING
 			Player.CollisionMode = CMODE_RWALL
 			Player.Angle = 64
@@ -88,7 +88,7 @@ sub ObjectPlayerInteraction
 					Player.YPos += 0x40000	// 0x40000
 				end if
 
-				Player.State = PlayerObject_Tunnel
+				Player.State = Player_State_TubeRoll
 				Player.Animation = ANI_JUMPING
 
 			end if
@@ -98,7 +98,7 @@ sub ObjectPlayerInteraction
 			if Player.YVelocity < 0
 
 				Player.Gravity = GRAVITY_GROUND
-				Player.State = PlayerObject_Tunnel
+				Player.State = Player_State_TubeRoll
 				Player.Animation = ANI_JUMPING
 				Player.CollisionMode = CMODE_LWALL
 				Player.Angle = 192
@@ -111,15 +111,15 @@ sub ObjectPlayerInteraction
 
 		case TUBESWITCH_EXIT_H
 			if Player.Speed < 0
-				if Player.State != PlayerObject_Tunnel
+				if Player.State != Player_State_TubeRoll
 					PlaySfx(7, 0)
 				end if
 
-				Player.State = PlayerObject_Tunnel
+				Player.State = Player_State_TubeRoll
 				Player.Animation = ANI_JUMPING
 				Player.MinRollSpeed = 0xA0000	// 0xA0000
 			else
-				Player.State = PlayerObject_HandleRolling
+				Player.State = Player_State_Roll
 				Player.Animation = ANI_JUMPING
 			end if
 			break
@@ -142,7 +142,7 @@ sub ObjectPlayerInteraction
 			break
 
 		case TUBESWITCH_LIMIT_SPEED
-			if Player.State == PlayerObject_Tunnel
+			if Player.State == Player_State_TubeRoll
 
 				if Player.YVelocity < -0x60000	// -0x60000
 					Player.YVelocity = -0x60000	// -0x60000
@@ -154,7 +154,7 @@ sub ObjectPlayerInteraction
 			break
 
 		case TUBESWITCH_EXIT_ANGLE
-			if Player.State == PlayerObject_Tunnel
+			if Player.State == Player_State_TubeRoll
 				Object.PropertyValue = TUBESWITCH_EXIT_BOOST
 			end if
 			break

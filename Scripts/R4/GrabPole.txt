@@ -20,10 +20,10 @@
 
 sub ObjectMain
 	if Object.State == GRABPOLE_HANGING
-		if Player.State == PlayerObject_Death
+		if Player.State == Player_State_Death
 			Object.State = GRABPOLE_IDLE
 		end if
-		if Player.State == PlayerObject_Drown
+		if Player.State == Player_State_Drown
 			Object.State = GRABPOLE_IDLE
 		end if
 
@@ -43,11 +43,11 @@ sub ObjectMain
 				
 
 #platform: Use_Origins
-				Player.State = PlayerObject_ResetDropDash
+				Player.State = Player_State_Air_NoDropDash
 #endplatform
 
 #platform: Use_Standalone
-				Player.State = PlayerObject_HandleAir
+				Player.State = Player_State_Air
 #endplatform
 			end if
 		end if
@@ -61,7 +61,7 @@ sub ObjectPlayerInteraction
 		PlayerObjectCollision(C_TOUCH, 16, -28, 32, 28)
 		if CheckResult == true
 			Object.State = GRABPOLE_HANGING
-			Player.State = PlayerObject_Blank
+			Player.State = Player_State_Static
 
 			Player.Animation = ANI_CLINGING
 			Player.Direction = FACING_RIGHT
@@ -87,11 +87,11 @@ sub ObjectPlayerInteraction
 			
 
 #platform: Use_Origins
-				Player.State = PlayerObject_ResetDropDash
+				Player.State = Player_State_Air_NoDropDash
 #endplatform
 
 #platform: Use_Standalone
-				Player.State = PlayerObject_HandleAir
+				Player.State = Player_State_Air
 #endplatform
 		end if
 

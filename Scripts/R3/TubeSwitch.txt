@@ -34,8 +34,8 @@
 #alias 12	:	TUBESWITCH_ROLL_MASK
 
 // Player Aliases
-#alias Player.Value2:Player.CustomAnimSpeed
-#alias Player.Value6:Player.MinRollSpeed
+#alias Player.Value2 : Player.RollAnimationSpeed
+#alias Player.Value6 : Player.MinRollSpeed
 
 
 sub ObjectPlayerInteraction
@@ -45,7 +45,7 @@ sub ObjectPlayerInteraction
 		case TUBESWITCH_H_L
 			if Player.Speed > 0
 				Player.Direction = FACING_RIGHT
-				Player.State = PlayerObject_Tunnel
+				Player.State = Player_State_TubeRoll
 				Player.Animation = ANI_JUMPING
 				Player.MinRollSpeed = 0xA0000	// 0xA0000
 
@@ -64,14 +64,14 @@ sub ObjectPlayerInteraction
 					end if
 				end if
 
-				Player.State = PlayerObject_HandleRolling
+				Player.State = Player_State_Roll
 				Player.Animation = ANI_JUMPING
 			end if
 			break
 
 		case TUBESWITCH_H_R
 			if Player.Speed < 0
-				Player.State = PlayerObject_Tunnel
+				Player.State = Player_State_TubeRoll
 				Player.Animation = ANI_JUMPING
 				Player.MinRollSpeed = 0xA0000	// 0xA0000
 
@@ -85,7 +85,7 @@ sub ObjectPlayerInteraction
 					end if
 				end if
 
-				Player.State = PlayerObject_HandleRolling
+				Player.State = Player_State_Roll
 				Player.Animation = ANI_JUMPING
 			end if
 			break
@@ -95,7 +95,7 @@ sub ObjectPlayerInteraction
 
 				if Player.Gravity == GRAVITY_AIR
 					Player.Gravity = GRAVITY_GROUND
-					Player.State = PlayerObject_Tunnel
+					Player.State = Player_State_TubeRoll
 					Player.Animation = ANI_JUMPING
 					Player.CollisionMode = CMODE_RWALL
 					Player.Angle = 64
@@ -104,7 +104,7 @@ sub ObjectPlayerInteraction
 				else
 					if Player.Speed > 0
 						Player.Gravity = GRAVITY_GROUND
-						Player.State = PlayerObject_Tunnel
+						Player.State = Player_State_TubeRoll
 						Player.Animation = ANI_JUMPING
 						Player.CollisionMode = CMODE_RWALL
 						Player.Angle = 64
@@ -126,7 +126,7 @@ sub ObjectPlayerInteraction
 			if Object.OnObject == false
 				if Player.Gravity == GRAVITY_AIR
 					Player.Gravity = GRAVITY_GROUND
-					Player.State = PlayerObject_Tunnel
+					Player.State = Player_State_TubeRoll
 					Player.Animation = ANI_JUMPING
 					Player.CollisionMode = CMODE_RWALL
 					Player.Angle = 64
@@ -136,7 +136,7 @@ sub ObjectPlayerInteraction
 				if Player.CollisionMode == CMODE_RWALL
 					if Player.Speed < 0
 						Player.Gravity = GRAVITY_GROUND
-						Player.State = PlayerObject_Tunnel
+						Player.State = Player_State_TubeRoll
 						Player.Animation = ANI_JUMPING
 						Player.CollisionMode = CMODE_RWALL
 						Player.Angle = 64
@@ -154,13 +154,13 @@ sub ObjectPlayerInteraction
 
 		case TUBESWITCH_ROLL_ALIGN
 			if Player.Gravity == GRAVITY_GROUND
-				Player.State = PlayerObject_HandleRolling
+				Player.State = Player_State_Roll
 			else
 				Player.XPos = Object.XPos
 			end if
 			if Player.Animation != ANI_JUMPING
 				Player.Animation = ANI_JUMPING
-				Player.CustomAnimSpeed = 240
+				Player.RollAnimationSpeed = 240
 			end if
 			break
 
@@ -169,7 +169,7 @@ sub ObjectPlayerInteraction
 				if Player.YVelocity > 0
 
 
-					Player.State = PlayerObject_Tunnel
+					Player.State = Player_State_TubeRoll
 					
 					Player.Animation = ANI_JUMPING
 
@@ -184,9 +184,9 @@ sub ObjectPlayerInteraction
 			else
 
 #platform: Use_Origins
-				CheckEqual(Player.State, PlayerObject_ResetDropDash)
+				CheckEqual(Player.State, Player_State_Air_NoDropDash)
 				TempValue0  = CheckResult
-				CheckEqual(Player.State, PlayerObject_HandleAir)
+				CheckEqual(Player.State, Player_State_Air)
 				TempValue0 |= CheckResult
 				if TempValue0 != false
 					Player.Animation = ANI_JUMPING
@@ -194,7 +194,7 @@ sub ObjectPlayerInteraction
 #endplatform
 
 #platform: Use_Standalone
-				if Player.State == PlayerObject_HandleAir
+				if Player.State == Player_State_Air
 					Player.Animation = ANI_JUMPING
 				end if
 #endplatform
@@ -207,7 +207,7 @@ sub ObjectPlayerInteraction
 
 				if Player.Gravity == GRAVITY_AIR
 					Player.Gravity = GRAVITY_GROUND
-					Player.State = PlayerObject_Tunnel
+					Player.State = Player_State_TubeRoll
 					Player.Animation = ANI_JUMPING
 					Player.CollisionMode = CMODE_RWALL
 					Player.Angle = 64
@@ -228,7 +228,7 @@ sub ObjectPlayerInteraction
 			if Object.OnObject == false
 				if Player.YVelocity > 0
 					Player.Gravity = GRAVITY_GROUND
-					Player.State = PlayerObject_Tunnel
+					Player.State = Player_State_TubeRoll
 					Player.Animation = ANI_JUMPING
 					Player.CollisionMode = CMODE_LWALL
 					Player.Angle = 192
@@ -241,9 +241,9 @@ sub ObjectPlayerInteraction
 			break
 
 		case TUBESWITCH_FORCE_ROLL
-			if Player.State != PlayerObject_HandleTailsFlight
+			if Player.State != Player_State_Fly
 				if Player.Gravity == 0
-					Player.State = PlayerObject_HandleRolling
+					Player.State = Player_State_Roll
 				end if
 				Player.Animation = ANI_JUMPING
 			end if
@@ -253,7 +253,7 @@ sub ObjectPlayerInteraction
 			if Object.OnObject == false
 				if Player.YVelocity > 0
 					Player.Gravity = 0
-					Player.State = PlayerObject_Tunnel
+					Player.State = Player_State_TubeRoll
 					Player.Animation = ANI_JUMPING
 					Player.CollisionMode = 3
 					Player.Angle = 64
@@ -297,10 +297,10 @@ sub ObjectPlayerInteraction
 			break
 
 		case TUBESWITCH_ROLL_MASK
-			if Player.State != PlayerObject_HandleTailsFlight
+			if Player.State != Player_State_Fly
 				if Player.XVelocity > 0x40000	// 0x40000
 					if Player.Gravity == GRAVITY_GROUND
-						Player.State = PlayerObject_HandleRolling
+						Player.State = Player_State_Roll
 					end if
 					Player.Animation = ANI_JUMPING
 				end if

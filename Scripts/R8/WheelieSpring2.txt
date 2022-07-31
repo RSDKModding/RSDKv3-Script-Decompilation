@@ -5,7 +5,7 @@
 // Aliases
 #alias Object.Value0	:	Object.Timer
 
-#alias Player.Value7	:	Player.AnimationCheck
+#alias Player.Value7	:	Player.AnimationReserve
 
 // States
 #alias 0	:	WHEELIESPRING2_MOVING_RIGHT
@@ -52,7 +52,7 @@ end sub
 
 
 sub ObjectPlayerInteraction
-	if Player.State != PlayerObject_Blank
+	if Player.State != Player_State_Static
 		if Player.YVelocity >= 0
 			PlayerObjectCollision(C_BOX, -16, -16, 16, 16)
 			PlayerObjectCollision(C_TOUCH, -15, -18, 15, -12)
@@ -61,20 +61,20 @@ sub ObjectPlayerInteraction
 				Object.Frame = 1
 		
 #platform: Use_Origins
-				Player.State = PlayerObject_ResetDropDash
+				Player.State = Player_State_Air_NoDropDash
 #endplatform
 
 #platform: Use_Standalone
-				Player.State = PlayerObject_HandleAir
+				Player.State = Player_State_Air
 #endplatform
 				Player.Gravity = GRAVITY_AIR
 				Player.YVelocity = -0x100000
-				Player.AnimationCheck = ANI_WALKING
+				Player.AnimationReserve = ANI_WALKING
 				if Player.Animation == ANI_RUNNING
-					Player.AnimationCheck = ANI_RUNNING
+					Player.AnimationReserve = ANI_RUNNING
 				end if
 				if Player.Animation == ANI_PEELOUT
-					Player.AnimationCheck = ANI_PEELOUT
+					Player.AnimationReserve = ANI_PEELOUT
 				end if
 				Player.Animation = ANI_BOUNCING
 				Player.Timer = 0
@@ -93,11 +93,11 @@ sub ObjectPlayerInteraction
 			if CheckResult == true
 				Object.Frame = 1
 #platform: Use_Origins
-				Player.State = PlayerObject_ResetDropDash
+				Player.State = Player_State_Air_NoDropDash
 #endplatform
 
 #platform: Use_Standalone
-				Player.State = PlayerObject_HandleAir
+				Player.State = Player_State_Air
 #endplatform
 				Player.Gravity = GRAVITY_AIR
 				Player.YVelocity = -0x100000

@@ -7,7 +7,7 @@
 #alias Object.Value1	:	Object.OffSet
 
 // Player Aliases
-#alias Player.Value4	:	Player.Invincible
+#alias Player.Value4	:	Player.InvincibleTimer
 
 // Gravity
 #alias 1	:	GRAVITY_AIR
@@ -76,16 +76,16 @@ sub ObjectPlayerInteraction
 	
 	switch Object.PropertyValue
 	case PROPVAL_FACING_UP
-		if Player.State != PlayerObject_Knockback
+		if Player.State != Player_State_Hurt
 			PlayerObjectCollision(C_BOX, -16, TempValue0, 16, TempValue1)
 		end if
 		
 		if Object.State != MOVINGSPIKES_HIDE
 			if Player.YVelocity > -1
-				if Player.Invincible == 0
+				if Player.InvincibleTimer == 0
 					PlayerObjectCollision(C_TOUCH, -15, -18, 15, -12)
 					if CheckResult == true
-						Player.State = PlayerObject_Hurt
+						Player.State = Player_State_GotHit
 
 						Player.Gravity = GRAVITY_AIR
 
@@ -106,10 +106,10 @@ sub ObjectPlayerInteraction
 		FlipSign(TempValue1)
 		PlayerObjectCollision(C_BOX, TempValue1, -16, TempValue0, 16)
 		if Object.State != MOVINGSPIKES_HIDE
-			if Player.Invincible == 0
+			if Player.InvincibleTimer == 0
 				PlayerObjectCollision(C_TOUCH, 8, -15, 18, 15)
 				if CheckResult == true
-					Player.State = PlayerObject_Hurt
+					Player.State = Player_State_GotHit
 
 					Player.Speed = 0x20000
 				end if
@@ -120,10 +120,10 @@ sub ObjectPlayerInteraction
 	case PROPVAL_FACING_LEFT
 		PlayerObjectCollision(C_BOX, TempValue0, -16, TempValue1, 16)
 		if Object.State != MOVINGSPIKES_HIDE
-			if Player.Invincible == 0
+			if Player.InvincibleTimer == 0
 				PlayerObjectCollision(C_TOUCH, -18, -15, -8, 15)
 				if CheckResult == true
-					Player.State = PlayerObject_Hurt
+					Player.State = Player_State_GotHit
 
 					Player.Speed = -0x20000
 				end if
@@ -137,10 +137,10 @@ sub ObjectPlayerInteraction
 		PlayerObjectCollision(C_BOX, -16, TempValue1, 16, TempValue0)
 		if Object.State != MOVINGSPIKES_HIDE
 			if Player.YVelocity < 1
-				if Player.Invincible == 0
+				if Player.InvincibleTimer == 0
 					PlayerObjectCollision(C_TOUCH, -14, 12, 14, 18)
 					if CheckResult == true
-						Player.State = PlayerObject_Hurt
+						Player.State = Player_State_GotHit
 						if Player.XPos > Object.XPos
 							Player.Speed =  0x20000
 						else

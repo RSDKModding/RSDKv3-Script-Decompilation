@@ -43,7 +43,7 @@ sub ObjectMain
 		break
 
 	case RSPRINGCAGE_SHOOTPLAYER
-		if Player.State != PlayerObject_Death
+		if Player.State != Player_State_Death
 			if Object.PropertyValue == 0
 				Object.FullAngle++
 				Object.FullAngle %= 48
@@ -91,11 +91,11 @@ sub ObjectMain
 				PlayStageSfx(0, 0)
 				
 #platform: Use_Origins
-				Player.State = PlayerObject_ResetDropDash
+				Player.State = Player_State_Air_NoDropDash
 #endplatform
 
 #platform: Use_Standalone
-				Player.State = PlayerObject_HandleAir
+				Player.State = Player_State_Air
 #endplatform
 				Player.Gravity = 1
 				Player.Timer = 0
@@ -215,7 +215,7 @@ sub ObjectPlayerInteraction
 			// Put the player inside the cage
 			Player.XPos = Object.XPos
 			Player.YPos = Object.YPos
-			Player.State = PlayerObject_Blank
+			Player.State = Player_State_Static
 			Player.Animation = ANI_JUMPING
 			Player.Speed = 0
 			Player.XVelocity = 0
