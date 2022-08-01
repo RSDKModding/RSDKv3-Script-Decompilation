@@ -349,37 +349,37 @@ function Player_ProcessUpdate
 					TempValue2 >>= 6
 					switch TempValue2
 					case 0
-						KeyDown.Right = true
+						KeyDown[1].Right = true
 						break
 					case 1
-						KeyDown.Down = true
+						KeyDown[1].Down = true
 						break
 					case 2
-						KeyDown.Left = true
+						KeyDown[1].Left = true
 						break
 					case 3
-						KeyDown.Up = true
+						KeyDown[1].Up = true
 						break
 					end switch
 				end if
 
 				CheckTouchRect(Screen.CenterX, 96, Screen.XSize, 240)
 				if CheckResult > -1
-					KeyDown.ButtonA = true
+					KeyDown[1].ButtonA = true
 				end if
 
 				if DebugMode.APress == false
-					KeyPress.ButtonA |= KeyDown.ButtonA
+					KeyPress[1].ButtonA |= KeyDown[1].ButtonA
 				end if
 
-				DebugMode.APress = KeyDown.ButtonA
+				DebugMode.APress = KeyDown[1].ButtonA
 				if Object[9].Type == TypeName[Blank Object]
 
 					CheckTouchRect(240, 0, Screen.XSize, 40)
 					if CheckResult > -1
 						Stage.State = STAGE_PAUSED
 						PauseMusic()
-						PlaySfx(27, 0)	//Select SFX
+						PlaySfx(27, false)	//Select SFX
 						StopSfx(24)
 						StopSfx(25)
 						Object[9].Type = TypeName[PauseMenu]
@@ -394,7 +394,7 @@ function Player_ProcessUpdate
 					if Engine.Message == MESSAGE_LOSTFOCUS
 						Stage.State = STAGE_PAUSED
 						PauseMusic()
-						PlaySfx(27, 0)	//Select SFX
+						PlaySfx(27, false)	//Select SFX
 						StopSfx(24)
 						StopSfx(25)
 						Object[9].Type = TypeName[PauseMenu]
@@ -403,11 +403,8 @@ function Player_ProcessUpdate
 						if Engine.FrameSkipTimer > -1
 							Engine.FrameSkipTimer = -1
 						end if
-
 					end if
-
 				end if
-
 			end if
 		else
 			if Player.ControlMode == CONTROL_ENABLED
@@ -426,11 +423,9 @@ function Player_ProcessUpdate
 						if Engine.FrameSkipTimer > -1
 							Engine.FrameSkipTimer = -1
 						end if
-
 					end if
 
 					if Engine.Message == MESSAGE_LOSTFOCUS
-
 						Stage.State = STAGE_PAUSED
 						PauseMusic()
 						PlaySfx(27, 0)	//Select SFX
