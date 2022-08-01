@@ -1,4 +1,4 @@
-//------------Sonic CD Bata Pyon Script-------------//
+//----------------Sonic CD Bata Pyon Script-------------------//
 //--------Scripted by Christian Whitehead 'The Taxman'--------//
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
@@ -13,22 +13,22 @@
 #alias Object.PropertyValue :	Object.Quality
 
 // States
-#alias 0					:	BATAPYON_JUMP
-#alias 1					:	BATAPYON_BOUNCE
-#alias 2					:	BATAPYON_BAD_RECOIL_1
-#alias 3					:	BATAPYON_BAD_RECOIL_2
-#alias 4					:	BATAPYON_BAD_RECOIL_3
-#alias 5					:	BATAPYON_BAD_RECOIL_4
-#alias 6					:	BATAPYON_BAD_BOUNCE
-#alias 7					:	BATAPYON_RESET
+#alias 0		:	BATAPYON_JUMP
+#alias 1		:	BATAPYON_BOUNCE
+#alias 2		:	BATAPYON_BAD_RECOIL_1
+#alias 3		:	BATAPYON_BAD_RECOIL_2
+#alias 4		:	BATAPYON_BAD_RECOIL_3
+#alias 5		:	BATAPYON_BAD_RECOIL_4
+#alias 6		:	BATAPYON_BAD_BOUNCE
+#alias 7		:	BATAPYON_RESET
 
 // Priority
-#alias 0					:	PRIORITY_ACTIVE_BOUNDS
-#alias 1					:	PRIORITY_ACTIVE
+#alias 0		:	PRIORITY_ACTIVE_BOUNDS
+#alias 1		:	PRIORITY_ACTIVE
 
 // Badnik Quality
-#alias 0					:	GOOD
-#alias 1					:	BAD
+#alias 0		:	PROPVAL_QUALITY_GOOD
+#alias 1		:	PROPVAL_QUALITY_BAD
 
 
 sub ObjectMain
@@ -37,7 +37,7 @@ sub ObjectMain
 		Object.Direction = FACING_RIGHT
 		Object.XPos = Object.XOriginPos
 		Object.YPos = Object.YOriginPos
-		Object.XVelocity = -40960	// -0xA000
+		Object.XVelocity = -0xA000	// -0xA000
 		Object.YVelocity = 0x80000	//  0x80000
 		Object.TurnTimer = 0
 	end if
@@ -57,7 +57,7 @@ sub ObjectMain
 		if Object.YVelocity > 0
 			ObjectTileCollision(0, 0, 20, 0)
 			if CheckResult == true
-				if Object.Quality == GOOD
+				if Object.Quality == PROPVAL_QUALITY_GOOD
 					Object.State = BATAPYON_BOUNCE
 					Object.Priority = PRIORITY_ACTIVE
 					Object.TurnTimer++
@@ -192,7 +192,7 @@ sub ObjectPlayerInteraction
 	if Object.State < BATAPYON_RESET
 		PlayerObjectCollision(C_TOUCH, -14, -12, 14, 12)
 		if CheckResult == true
-			CallFunction(PlayerObject_BadnikBreak)
+			CallFunction(Player_BadnikBreak)
 		end if
 	end if
 end sub
@@ -221,7 +221,7 @@ sub ObjectStartup
 			Object[ArrayPos0].XOriginPos = Object[ArrayPos0].XPos
 			Object[ArrayPos0].YOriginPos = Object[ArrayPos0].YPos
 
-			Object[ArrayPos0].XVelocity = -40960	// -0xA000
+			Object[ArrayPos0].XVelocity = -0xA000	// -0xA000
 			Object[ArrayPos0].YVelocity = 0x80000	//  0x80000
 		end if
 		ArrayPos0++

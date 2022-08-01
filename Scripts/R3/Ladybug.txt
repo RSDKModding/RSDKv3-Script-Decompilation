@@ -7,17 +7,19 @@
 #alias Object.Value1		:	Object.XVelocity
 #alias Object.Value2		:	Object.BombTimer
 #alias Object.PropertyValue	:	Object.Quality
+
 // States
-#alias 0					:	LADYBUG_GUARD
-#alias 1					:	LADYBUG_FLEE
-#alias 2					:	LADYBUG_FLY
+#alias 0		:	LADYBUG_GUARD
+#alias 1		:	LADYBUG_FLEE
+#alias 2		:	LADYBUG_FLY
 
 // Property Values
-#alias 0					:	GOOD
-#alias 1					:	BAD
+#alias 0		:	PROPVAL_QUALITY_GOOD
+#alias 1		:	PROPVAL_QUALITY_BAD
 
-// CSides
-#alias 0					:	CSIDE_FLOOR
+// Collision Sides
+#alias 0		:	CSIDE_FLOOR
+
 
 sub ObjectMain
 	switch Object.State
@@ -28,12 +30,12 @@ sub ObjectMain
 			Object.Direction = FACING_LEFT
 		end if
 
-		TempValue0 = Object.Oscillation
+		TempValue0   = Object.Oscillation
 		TempValue0 <<= 4
 
 		Sin(TempValue1, TempValue0)
 		TempValue1 >>= 8
-		TempValue1 += 24
+		TempValue1  += 24
 		ObjectTileGrip(CSIDE_FLOOR, 0, TempValue1, 0)
 
 		PlayerObjectCollision(C_TOUCH, -64, -256, 64, 256)
@@ -43,18 +45,18 @@ sub ObjectMain
 			Object.DrawOrder = 4
 
 			if Object.XPos > Player.XPos
-				Object.XVelocity = 0x10000	// 0x10000
-				Object.Direction = FACING_LEFT
+				Object.XVelocity =  0x10000
+				Object.Direction =  FACING_LEFT
 			else
-				Object.XVelocity = -0x10000	// -0x10000
-				Object.Direction = FACING_RIGHT
+				Object.XVelocity = -0x10000
+				Object.Direction =  FACING_RIGHT
 			end if
 
 		end if
 		break
 
 	case LADYBUG_FLEE
-		TempValue0 = Object.Oscillation
+		TempValue0  = Object.Oscillation
 		TempValue0 &= 3
 		if TempValue0 < 3
 			Object.XPos += Object.XVelocity
@@ -69,19 +71,19 @@ sub ObjectMain
 			Object.State = LADYBUG_FLY	// Once the ladybug runs out of floor, start flying up
 		end if
 
-		if Object.Quality == GOOD	// if the ladybug is new, set bombs while escaping
+		if Object.Quality == PROPVAL_QUALITY_GOOD	// if the ladybug is a good quality one, set bombs while escaping
 			if Object.BombTimer < 128
 				Object.BombTimer++
 			else
 				Object.BombTimer = 0
 				CreateTempObject(TypeName[LadybugBomb], 0, Object.XPos, Object.YPos)
-				Object[TempObjectPos].YPos += 0x140000	// 0x140000
+				Object[TempObjectPos].YPos += 0x140000
 			end if
 		end if
 		break
 
 	case LADYBUG_FLY
-		Object.YPos -= 0x8000	// 0x8000
+		Object.YPos -= 0x8000
 		break
 
 	end switch
@@ -97,15 +99,15 @@ end sub
 sub ObjectPlayerInteraction
 	PlayerObjectCollision(C_TOUCH, -16, -16, 16, 20)
 	if CheckResult == true
-		CallFunction(PlayerObject_BadnikBreak)
+		CallFunction(Player_BadnikBreak)
 	end if
 end sub
 
 
 sub ObjectDraw
-	TempValue0 = Object.Frame
+	TempValue0   = Object.Frame
 	TempValue0 >>= 2
-	if Object.Quality == BAD
+	if Object.Quality == PROPVAL_QUALITY_BAD
 		TempValue0 += 3
 	end if
 	DrawSpriteFX(TempValue0, FX_FLIP, Object.XPos, Object.YPos)

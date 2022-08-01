@@ -7,19 +7,19 @@
 #alias Object.PropertyValue	:	Object.Quality
 
 // States
-#alias 0					:	ANTON_MOVING_LEFT
-#alias 1					:	ANTON_MOVING_RIGHT
+#alias 0		:	ANTON_MOVING_LEFT
+#alias 1		:	ANTON_MOVING_RIGHT
 
-// CSides
-#alias 0					:	CSIDE_FLOOR
+// Collision Sides
+#alias 0		:	CSIDE_FLOOR
 
 // Badnik Quality / Property Value
-#alias 0					:	GOOD
-#alias 1					:	BAD
+#alias 0		:	PROPVAL_QUALITY_GOOD
+#alias 1		:	PROPVAL_QUALITY_BAD
 
 
 sub ObjectMain
-	if Object.Quality == GOOD
+	if Object.Quality == PROPVAL_QUALITY_GOOD
 
 		Object.Frame += 2
 		switch Object.State
@@ -109,7 +109,7 @@ end sub
 sub ObjectPlayerInteraction
 	PlayerObjectCollision(C_TOUCH, -12, -18, 12, 20)
 	if CheckResult == true
-		CallFunction(PlayerObject_BadnikBreak)
+		CallFunction(Player_BadnikBreak)
 	end if
 end sub
 
@@ -117,7 +117,7 @@ end sub
 sub ObjectDraw
 	TempValue0 = Object.Frame
 	TempValue0 >>= 3
-	if Object.Quality == GOOD
+	if Object.Quality == PROPVAL_QUALITY_GOOD
 		TempValue0 += 4
 		DrawSpriteFX(TempValue0, FX_FLIP, Object.XPos, Object.YPos)	// Wheel
 		TempValue0 -= 4

@@ -28,11 +28,13 @@
 #alias 9	:	WATER_DROWNING
 #alias 10	:	WATER_DROWNED
 
+#alias 2	:	INK_ALPHA
+
 // Time Periods
-#alias 0						:	PROPVAL_PRESENT
-#alias 1						:	PROPVAL_PAST
-#alias 2						:	PROPVAL_GOOD_FUTURE
-#alias 3						:	PROPVAL_BAD_FUTURE
+#alias 0			:	PROPVAL_PRESENT
+#alias 1			:	PROPVAL_PAST
+#alias 2			:	PROPVAL_GOOD_FUTURE
+#alias 3			:	PROPVAL_BAD_FUTURE
 
 
 // Function declarations
@@ -116,12 +118,12 @@ sub ObjectMain
 	// If the player about to enter the water
 	if Player.GravityStrength == 0x3800	// 0x3800
 		if Player.YPos > Object.YPos
-			if Player.State != PlayerObject_Death
+			if Player.State != Player_State_Death
 				Player.YVelocity >>= 2
 				if Object.YPos < Stage.NewWaterLevel
 					Player.YVelocity += 0x10000	// 0x10000
 				end if
-				if Player.State == PlayerObject_HandleTailsFlight
+				if Player.State == Player_State_Fly
 					StopSfx(24)
 					StopSfx(25)
 				end if
@@ -261,10 +263,10 @@ sub ObjectMain
 			CallFunction(Water_CreateAirBubble)
 			Player.AirTimer++
 			if Player.AirTimer == 1800
-				if Player.State != PlayerObject_Death
+				if Player.State != Player_State_Death
 					Stage.TimeEnabled = 0
 					Screen.CameraEnabled = 0
-					Player.State = PlayerObject_Drown
+					Player.State = Player_State_Drown
 					Player.Animation = ANI_DROWNING
 
 					Player.Speed = 0
@@ -326,14 +328,14 @@ sub ObjectMain
 
 		// Restore physics when exiting water
 		if Player.YPos < Object.YPos
-			if Player.State != PlayerObject_Death
+			if Player.State != Player_State_Death
 				Player.YVelocity <<= 1
 				// 0x100000
 				if Player.YVelocity < -0x100000
 					Player.YVelocity = -0x100000
 				end if
 
-				if Player.State == PlayerObject_HandleTailsFlight
+				if Player.State == Player_State_Fly
 					if Player.Timer < 480
 						PlaySfx(24, 1)
 					else
@@ -455,7 +457,7 @@ sub ObjectStartup
 		if Object[ArrayPos0].Type == TypeName[Water]
 			Object[ArrayPos0].Priority = 1
 			Object[ArrayPos0].DrawOrder = 5
-			Object[ArrayPos0].InkEffect = 2 //INK_ALPHA
+			Object[ArrayPos0].InkEffect = INK_ALPHA
 			Object[ArrayPos0].Alpha = 160
 			if TempValue7 == -1
 				Stage.NewWaterLevel = Object[ArrayPos0].YPos

@@ -9,33 +9,33 @@
 #alias Object.PropertyValue :	Object.Quality
 
 // States
-#alias 0					:	MINOMUSI_DETECT_PLAYER
-#alias 1					:	MINOMUSI_DROP
+#alias 0		:	MINOMUSI_DETECT_PLAYER
+#alias 1		:	MINOMUSI_DROP
 
 // Good Quality States
-#alias 2					:	MINOMUSI_GOOD_SPIKE_ANIM_1
-#alias 3					:	MINOMUSI_GOOD_SPIKE_ANIM_2
-#alias 4					:	MINOMUSI_GOOD_SPIKE_ANIM_3
-#alias 5					:	MINOMUSI_GOOD_SPIKE_ANIM_4
-#alias 6					:	MINOMUSI_GOOD_SPIKE_ANIM_5
-#alias 7					:	MINOMUSI_GOOD_SPIKE_ANIM_6
-#alias 8					:	MINOMUSI_GOOD_SPIKE_ANIM_7
-#alias 9					:	MINOMUSI_GOOD_SPIKE_ANIM_8
-#alias 10					:	MINOMUSI_GOOD_SPIKE_ANIM_9
-#alias 11					:	MINOMUSI_GOOD_RETIRE
+#alias 2		:	MINOMUSI_GOOD_SPIKE_ANIM_1
+#alias 3		:	MINOMUSI_GOOD_SPIKE_ANIM_2
+#alias 4		:	MINOMUSI_GOOD_SPIKE_ANIM_3
+#alias 5		:	MINOMUSI_GOOD_SPIKE_ANIM_4
+#alias 6		:	MINOMUSI_GOOD_SPIKE_ANIM_5
+#alias 7		:	MINOMUSI_GOOD_SPIKE_ANIM_6
+#alias 8		:	MINOMUSI_GOOD_SPIKE_ANIM_7
+#alias 9		:	MINOMUSI_GOOD_SPIKE_ANIM_8
+#alias 10		:	MINOMUSI_GOOD_SPIKE_ANIM_9
+#alias 11		:	MINOMUSI_GOOD_RETIRE
 
 // Bad Quality States
-#alias 2					:	MINOMUSI_BAD_FLIP
-#alias 3					:	MINOMUSI_BAD_FLIP_2
-#alias 4					:	MINOMUSI_BAD_RETIRE
+#alias 2		:	MINOMUSI_BAD_FLIP
+#alias 3		:	MINOMUSI_BAD_FLIP_2
+#alias 4		:	MINOMUSI_BAD_RETIRE
 
 // Badnik Quality
-#alias 0					:	GOOD
-#alias 1					:	BAD
+#alias 0		:	PROPVAL_QUALITY_GOOD
+#alias 1		:	PROPVAL_QUALITY_BAD
 
 // Priority
-#alias 0					:	PRIORITY_ACTIVE_BOUNDS
-#alias 1					:	PRIORITY_ACTIVE
+#alias 0		:	PRIORITY_ACTIVE_BOUNDS
+#alias 1		:	PRIORITY_ACTIVE
 
 
 sub ObjectMain
@@ -47,7 +47,7 @@ sub ObjectMain
 		Object.Priority = PRIORITY_ACTIVE_BOUNDS
 	end if
 
-	if Object.Quality == GOOD
+	if Object.Quality == PROPVAL_QUALITY_GOOD
 		switch Object.State
 		case MINOMUSI_DETECT_PLAYER
 			Object.Frame = 0
@@ -215,15 +215,15 @@ end sub
 sub ObjectPlayerInteraction
 	PlayerObjectCollision(C_TOUCH, -8, -6, 8, 22)
 	if CheckResult == true
-		CallFunction(PlayerObject_BadnikBreak)
+		CallFunction(Player_BadnikBreak)
 	end if
 
-	if Object.Quality == GOOD
+	if Object.Quality == PROPVAL_QUALITY_GOOD
 		if Object.Type == TypeName[Minomusi]
 			if Object.Frame > 2
 				PlayerObjectCollision(C_TOUCH, -17, -4, 17, 20)
 				if CheckResult == true
-					CallFunction(PlayerObject_Hit)
+					CallFunction(Player_Hit)
 				end if
 			end if
 		end if
@@ -242,10 +242,10 @@ end sub
 
 
 sub ObjectDraw
-	TempValue0 = Object.YPos
-	TempValue0 -= Object.YOriginPos
+	TempValue0   = Object.YPos
+	TempValue0  -= Object.YOriginPos
 	TempValue0 >>= 19
-	TempValue0 += 5
+	TempValue0  += 5
 	DrawSpriteXY(TempValue0, Object.XPos, Object.YOriginPos)
 
 	DrawSprite(Object.Frame)

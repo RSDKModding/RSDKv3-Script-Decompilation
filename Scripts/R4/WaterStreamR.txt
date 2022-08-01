@@ -12,11 +12,11 @@ sub ObjectPlayerInteraction
 		Object.PropertyValue = 1
 		PlayerObjectCollision(C_TOUCH, Object.HitboxLeft, -32, Object.HitboxRight, 32)
 		if CheckResult == true
-			if Player.State != PlayerObject_Knockback
-				if Player.State != PlayerObject_Death
-					if Player.State != PlayerObject_Drown
-						if Player.State != PlayerObject_Blank
-							Player.State = PlayerObject_DebugMode
+			if Player.State != Player_State_Hurt
+				if Player.State != Player_State_Death
+					if Player.State != Player_State_Drown
+						if Player.State != Player_State_Static
+							Player.State = Player_State_WaterCurrent
 							Player.Animation = ANI_FANROTATE
 							if Player.Up == false
 								if Player.Down == false
@@ -39,15 +39,15 @@ sub ObjectPlayerInteraction
 				end if
 			end if
 		else
-			if Player.State == PlayerObject_DebugMode
+			if Player.State == Player_State_WaterCurrent
 				if Player.WaterStream == false
 
 #platform: Use_Origins
-				Player.State = PlayerObject_ResetDropDash
+				Player.State = Player_State_Air_NoDropDash
 #endplatform
 
 #platform: Use_Standalone
-				Player.State = PlayerObject_HandleAir
+				Player.State = Player_State_Air
 #endplatform
 					Player.ControlMode = 0
 					Player.Animation = ANI_WALKING

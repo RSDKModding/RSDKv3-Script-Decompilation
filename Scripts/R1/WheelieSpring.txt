@@ -16,7 +16,7 @@
 #alias 0	:	GRAVITY_GROUND
 #alias 1	:	GRAVITY_AIR
 
-// CSides
+// Collision Sides
 #alias 0	:	CSIDE_FLOOR
 
 
@@ -51,19 +51,17 @@ end sub
 
 sub ObjectPlayerInteraction
 	if Player.YVelocity >= 0
-
 		PlayerObjectCollision(C_BOX, -16, -16, 16, 16)
 		PlayerObjectCollision(C_TOUCH, -15, -18, 15, -12)
 		if CheckResult == true
-
 			Object.Frame = 1
 	
 #platform: Use_Origins
-				Player.State = PlayerObject_ResetDropDash
+			Player.State = Player_State_Air_NoDropDash
 #endplatform
 
 #platform: Use_Standalone
-				Player.State = PlayerObject_HandleAir
+			Player.State = Player_State_Air
 #endplatform
 			Player.Gravity = GRAVITY_AIR
 			Player.YVelocity = -0x100000
@@ -71,27 +69,25 @@ sub ObjectPlayerInteraction
 			Player.Timer = 0
 			PlaySfx(11, 0)
 				
-#platform: Use_Standalone
-	#platform: Use_Haptics
+#platform: Use_Haptics
 			HapticEffect(9, 0, 0, 0)
-	#endplatform
 #endplatform
 
 		end if
 	end if
 
 	if Player.Gravity == GRAVITY_GROUND
-
 		PlayerObjectCollision(C_BOX, -16, -20, 16, 16)
 		PlayerObjectCollision(C_TOUCH, -15, -18, 15, -12)
 		if CheckResult == true
 			Object.Frame = 1
+
 #platform: Use_Origins
-				Player.State = PlayerObject_ResetDropDash
+			Player.State = Player_State_Air_NoDropDash
 #endplatform
 
 #platform: Use_Standalone
-				Player.State = PlayerObject_HandleAir
+			Player.State = Player_State_Air
 #endplatform
 			Player.Gravity = GRAVITY_AIR
 			Player.YVelocity = -0x100000
@@ -99,13 +95,11 @@ sub ObjectPlayerInteraction
 			Player.Timer = 0
 			PlaySfx(11, 0)
 				
-#platform: Use_Standalone
-	#platform: Use_Haptics
+#platform: Use_Haptics
 			HapticEffect(9, 0, 0, 0)
-	#endplatform
 #endplatform
-		end if
 
+		end if
 	end if
 end sub
 

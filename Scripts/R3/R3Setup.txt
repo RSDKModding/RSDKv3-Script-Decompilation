@@ -98,26 +98,25 @@ sub ObjectPlayerInteraction
 			Player.Gravity = GRAVITY_AIR
 			PlayStageSfx(1, 0)
 				
-#platform: Use_Standalone
-	#platform: Use_Haptics
+				
+#platform: Use_Haptics
 			HapticEffect(11, 0, 0, 0)
-	#endplatform
 #endplatform
 
-			if Player.State == PlayerObject_HandleTailsFlight
+			if Player.State == Player_State_Fly
 				Player.YVelocity = -0x40000	// -0x40000
 			else
-				Player.YVelocity = -458752	// -0x70000
+				Player.YVelocity = -0x70000	// -0x70000
 			end if
 
-			if Player.State == PlayerObject_Knockback
+			if Player.State == Player_State_Hurt
 				
 #platform: Use_Origins
-				Player.State = PlayerObject_ResetDropDash
+				Player.State = Player_State_Air_NoDropDash
 #endplatform
 
 #platform: Use_Standalone
-				Player.State = PlayerObject_HandleAir
+				Player.State = Player_State_Air
 #endplatform
 				Player.Timer = 0
 			end if
@@ -133,10 +132,8 @@ sub ObjectPlayerInteraction
 		if Player.Gravity == GRAVITY_AIR
 			PlayStageSfx(6, 0)
 				
-#platform: Use_Standalone
-	#platform: Use_Haptics
+#platform: Use_Haptics
 			HapticEffect(11, 0, 0, 0)
-	#endplatform
 #endplatform
 
 			if Player.YVelocity >= 0
@@ -151,17 +148,15 @@ sub ObjectPlayerInteraction
 		if Player.Gravity == GRAVITY_AIR
 			PlayStageSfx(1, 0)
 				
-#platform: Use_Standalone
-	#platform: Use_Haptics
+#platform: Use_Haptics
 			HapticEffect(11, 0, 0, 0)
-	#endplatform
 #endplatform
 
 			if Player.YVelocity >= 0
-				if Player.State == PlayerObject_HandleTailsFlight
+				if Player.State == Player_State_Fly
 					Player.YVelocity = -0x40000	// -0x40000
 				else
-					Player.YVelocity = -458752	// -0x70000
+					Player.YVelocity = -0x70000	// -0x70000
 				end if
 			else
 				Player.YVelocity = 0x40000	// 0x40000
@@ -197,8 +192,8 @@ sub ObjectPlayerInteraction
 			Player.Speed = Player.XVelocity
 		end if
 		break
-
 	end switch
+
 	TempValue3 = Player.YPos
 	TempValue3 >>= 16
 
@@ -269,10 +264,8 @@ sub ObjectPlayerInteraction
 		Player.Speed = Player.XVelocity
 		PlayStageSfx(6, 0)
 				
-#platform: Use_Standalone
-	#platform: Use_Haptics
+#platform: Use_Haptics
 		HapticEffect(11, 0, 0, 0)
-	#endplatform
 #endplatform
 		break
 

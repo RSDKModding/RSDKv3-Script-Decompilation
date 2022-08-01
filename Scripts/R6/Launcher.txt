@@ -7,22 +7,22 @@
 #alias Object.Value1	:	Object.OriginXPos
 
 // States
-#alias 0				:	LAUNCHER_IDLE
-#alias 1				:	LAUNCHER_DASH
-#alias 2				:	LAUNCHER_EJECT_PLAYER
-#alias 3				:	LAUNCHER_RECOIL
-#alias 4				:	LAUNCHER_RESET
+#alias 0	:	LAUNCHER_IDLE
+#alias 1	:	LAUNCHER_DASH
+#alias 2	:	LAUNCHER_EJECT_PLAYER
+#alias 3	:	LAUNCHER_RECOIL
+#alias 4	:	LAUNCHER_RESET
 
 // Priority
-#alias 0				:	PRIORITY_ACTIVE_BOUNDS
-#alias 1				:	PRIORITY_ACTIVE
+#alias 0	:	PRIORITY_ACTIVE_BOUNDS
+#alias 1	:	PRIORITY_ACTIVE
 
 // Gravity
-#alias 1				:	GRAVITY_AIR
+#alias 1	:	GRAVITY_AIR
 
 
 sub ObjectMain
-	if Player.State != PlayerObject_Blank
+	if Player.State != Player_State_Static
 		Object.State = LAUNCHER_IDLE
 		Object.Timer = 0
 	end if
@@ -59,11 +59,11 @@ sub ObjectMain
 		end if
 
 #platform: Use_Origins
-				Player.State = PlayerObject_ResetDropDash
+				Player.State = Player_State_Air_NoDropDash
 #endplatform
 
 #platform: Use_Standalone
-				Player.State = PlayerObject_HandleAir
+				Player.State = Player_State_Air
 #endplatform
 
 		Player.Animation = ANI_WALKING
@@ -120,7 +120,7 @@ sub ObjectPlayerInteraction
 		PlayerObjectCollision(C_TOUCH, -20, -16, 20, 4)
 		if CheckResult == true
 			Object.State = LAUNCHER_DASH
-			Player.State = PlayerObject_Blank
+			Player.State = Player_State_Static
 
 			Player.Animation = ANI_LAUNCHER
 			Player.Direction = FACING_RIGHT
@@ -138,11 +138,10 @@ sub ObjectPlayerInteraction
 			Player.Gravity = GRAVITY_AIR
 			PlayStageSfx(6, 0)
 			
-#platform: Use_Standalone
-	#platform: Use_Haptics
+#platform: Use_Haptics
 			HapticEffect(30, 0, 0, 0)
-	#endplatform
 #endplatform
+
 		end if
 	end if
 end sub

@@ -38,20 +38,20 @@
 
 sub ObjectMain
 	switch Object.PropertyValue
-	case BUMPER_RIGHT_TO_LEFT
-		Object.XPos = Object.XOriginPos
+	case BUMPER_RIGHT_TO_LEFT_G
+		Object.XPos  = Object.XOriginPos
 		Object.XPos += R3Setup.BumperOscillation
 		break
 		
-	case BUMPER_LEFT_TO_RIGHT
-		Object.XPos = Object.XOriginPos
+	case BUMPER_LEFT_TO_RIGHT_G
+		Object.XPos  = Object.XOriginPos
 		Object.XPos -= R3Setup.BumperOscillation
 		break
 
 	case BUMPER_TOP_TO_BOTTOM
 		if Object.TurnDirection == false
 
-			if Object.Oscillation < 3670016		// 0x380000
+			if Object.Oscillation < 0x380000		// 0x380000
 				Object.Oscillation += 0x10000		// 0x10000
 			else
 				Object.TurnDirection = true
@@ -59,7 +59,7 @@ sub ObjectMain
 
 		else
 
-			if Object.Oscillation > -3670016	// -0x380000
+			if Object.Oscillation > -0x380000	// -0x380000
 				Object.Oscillation -= 0x10000		// 0x10000
 			else
 				Object.TurnDirection = false
@@ -73,7 +73,7 @@ sub ObjectMain
 	case BUMPER_BOTTOM_TO_TOP
 		if Object.TurnDirection == false
 
-			if Object.Oscillation < 3670016		// 0x380000
+			if Object.Oscillation < 0x380000		// 0x380000
 				Object.Oscillation += 0x10000		// 0x10000
 			else
 				Object.TurnDirection = true
@@ -81,7 +81,7 @@ sub ObjectMain
 
 		else
 
-			if Object.Oscillation > -3670016	// -0x380000
+			if Object.Oscillation > -0x380000	// -0x380000
 				Object.Oscillation -= 0x10000		// 0x10000
 			else
 				Object.TurnDirection = false
@@ -133,11 +133,11 @@ sub ObjectPlayerInteraction
 
 			if Object.State == BUMPER_IDLE
 				PlayStageSfx(0, 0)
-#platform: Use_Standalone
-	#platform: Use_Haptics
+
+#platform: Use_Haptics
 				HapticEffect(9, 0, 0, 0)
-	#endplatform
 #endplatform
+
 				if Object.BonusScore < 5
 					CreateTempObject(TypeName[ObjectScore], 0, Object.XPos, Object.YPos)
 					Player.Score += 100
@@ -164,7 +164,7 @@ sub ObjectPlayerInteraction
 			Cos256(TempValue0, TempValue2)
 			Sin256(TempValue1, TempValue2)
 
-			if Player.State == PlayerObject_HandleTailsFlight
+			if Player.State == Player_State_Fly
 				TempValue0 <<= 10
 				TempValue1 <<= 10
 			else

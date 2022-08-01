@@ -7,180 +7,199 @@
 
 
 sub ObjectMain
-	if Object.OutOfBounds == 1
-		Object.State=0
-		Object.Value0=0
-		Object.Value2=0
-		Object.YPos=Object.Value1
-		Object.Priority=0
+
+	if Object.OutOfBounds == true
+		Object.State = MINOMUSI_DETECT_PLAYER
+		Object.Timer = 0
+		Object.SpikeTimer = 0
+		Object.YPos = Object.YOriginPos
+		Object.Priority = PRIORITY_ACTIVE_BOUNDS
 	end if
-	if Object.PropertyValue == 0
+
+	if Object.Quality == PROPVAL_QUALITY_GOOD
 		switch Object.State
-		case 0
-			Object.Frame=0
-			if Object.Value0>0
-				Object.Value0--
+		case MINOMUSI_DETECT_PLAYER
+			Object.Frame = 0
+			if Object.Timer > 0
+				Object.Timer--
 			end if
 			break
-		case 1
-			if Object.Value0<6
+
+		case MINOMUSI_DROP
+			if Object.Timer < 6
 				Object.YPos += 0x100000
-				Object.Value0++
+				Object.Timer++
 			else
-				Object.Value0=0
+				Object.Timer = 0
 				Object.State++
 			end if
 			break
-		case 2
-			if Object.Value2<15
-				Object.Value2++
+
+		case MINOMUSI_GOOD_SPIKE_ANIM_1
+			if Object.SpikeTimer < 15
+				Object.SpikeTimer++
 			else
-				Object.Value2=0
+				Object.SpikeTimer = 0
 				Object.State++
-				Object.Frame=3
+				Object.Frame = 3
 			end if
 			break
-		case 3
+
+		case MINOMUSI_GOOD_SPIKE_ANIM_2
 			Object.State++
-			Object.Frame=4
-			PlayStageSfx(8,0)
+			Object.Frame = 4
+			PlayStageSfx(8, 0)
 			break
-		case 4
-			if Object.Value2<2
-				Object.Value2++
+
+		case MINOMUSI_GOOD_SPIKE_ANIM_3
+			if Object.SpikeTimer < 2
+				Object.SpikeTimer++
 			else
-				Object.Value2=0
+				Object.SpikeTimer = 0
 				Object.State++
-				Object.Frame=3
+				Object.Frame = 3
 			end if
 			break
-		case 5
+
+		case MINOMUSI_GOOD_SPIKE_ANIM_4
 			Object.State++
-			Object.Frame=0
+			Object.Frame = 0
 			break
-		case 6
+
+		case MINOMUSI_GOOD_SPIKE_ANIM_5
 			Object.State++
-			Object.Frame=3
+			Object.Frame = 3
 			break
-		case 7
+
+		case MINOMUSI_GOOD_SPIKE_ANIM_6
 			Object.State++
-			Object.Frame=4
+			Object.Frame = 4
 			break
-		case 8
-			if Object.Value2<15
-				Object.Value2++
+
+		case MINOMUSI_GOOD_SPIKE_ANIM_7
+			if Object.SpikeTimer < 15
+				Object.SpikeTimer++
 			else
-				Object.Value2=0
+				Object.SpikeTimer = 0
 				Object.State++
-				Object.Frame=3
+				Object.Frame = 3
 			end if
 			break
-		case 9
-			Object.Frame=0
-			if Object.Value0<1
-				Object.State=2
-				Object.Value0++
+
+		case MINOMUSI_GOOD_SPIKE_ANIM_8
+			Object.Frame = 0
+			if Object.Timer < 1
+				Object.State=MINOMUSI_GOOD_SPIKE_ANIM_1
+				Object.Timer++
 			else
 				Object.State++
-				Object.Value0=0
+				Object.Timer = 0
 			end if
 			break
-		case 10
-			if Object.Value0<10
-				Object.Value0++
+
+		case MINOMUSI_GOOD_SPIKE_ANIM_9
+			if Object.Timer < 10
+				Object.Timer++
 			else
-				Object.Value0=0
+				Object.Timer = 0
 				Object.State++
 			end if
 			break
-		case 11
-			if Object.Value0<6
+
+		case MINOMUSI_GOOD_RETIRE
+			if Object.Timer < 6
 				Object.YPos -= 0x100000
-				Object.Value0++
+				Object.Timer++
 			else
-				Object.Value0=60
-				Object.State=0
+				Object.Timer = 60
+				Object.State = MINOMUSI_DETECT_PLAYER
 			end if
 			break
 		end switch
 	else
 		switch Object.State
-		case 0
-			Object.Frame=1
-			if Object.Value0>0
-				Object.Value0--
+		case MINOMUSI_DETECT_PLAYER
+			Object.Frame = 1
+			if Object.Timer > 0
+				Object.Timer--
 			end if
 			break
-		case 1
-			Object.Frame=1
-			if Object.Value0<6
+
+		case MINOMUSI_DROP
+			Object.Frame = 1
+			if Object.Timer < 6
 				Object.YPos += 0x100000
-				Object.Value0++
+				Object.Timer++
 			else
-				Object.Value0=0
+				Object.Timer = 0
 				Object.State++
 			end if
 			break
-		case 2
-			if Object.Value2<5
-				Object.Value2++
+
+		case MINOMUSI_BAD_FLIP
+			if Object.SpikeTimer < 5
+				Object.SpikeTimer++
 			else
-				Object.Value2=0
+				Object.SpikeTimer = 0
 				Object.State++
-				Object.Frame=2
+				Object.Frame = 2
 			end if
 			break
-		case 3
-			if Object.Value2<5
-				Object.Value2++
+
+		case MINOMUSI_BAD_FLIP_2
+			if Object.SpikeTimer < 5
+				Object.SpikeTimer++
 			else
-				Object.Value2=0
-				Object.Frame=1
-				Object.Value0++
-				if Object.Value0 == 2
-					Object.Value0=0
+				Object.SpikeTimer = 0
+				Object.Frame = 1
+				Object.Timer++
+				if Object.Timer == 2
+					Object.Timer = 0
 					Object.State++
 				else
-					Object.State=2
+					Object.State = MINOMUSI_BAD_FLIP
 				end if
 			end if
 			break
-		case 4
-			if Object.Value0<24
+
+		case MINOMUSI_BAD_RETIRE
+			if Object.Timer < 24
 				Object.YPos -= 0x40000
-				Object.Value0++
+				Object.Timer++
 			else
-				Object.Value0=60
-				Object.State=0
+				Object.Timer = 60
+				Object.State = MINOMUSI_DETECT_PLAYER
 			end if
 			break
 		end switch
 	end if
-	CallFunction(StageSetup_Function47)
+
+	CallFunction(StageSetup_CheckGoodFuture)
 end sub
 
 
 sub ObjectPlayerInteraction
-	PlayerObjectCollision(C_TOUCH,-8,-6,8,22)
-	if CheckResult == 1
-		CallFunction(PlayerObject_Function40)
+	PlayerObjectCollision(C_TOUCH, -8, -6, 8, 22)
+	if CheckResult == true
+		CallFunction(Player_BadnikBreak)
 	end if
-	if Object.PropertyValue == 0
-		if Object.Type == TypeName[Minomusi]
-			if Object.Frame>2
-				PlayerObjectCollision(C_TOUCH,-17,-4,17,20)
-				if CheckResult == 1
-					CallFunction(PlayerObject_Function41)
+	
+	if Object.Quality == PROPVAL_QUALITY_GOOD
+		if Object.Type == TypeName[Minomusi]	// uh, you mean MinoMusi2?
+			if Object.Frame > 2
+				PlayerObjectCollision(C_TOUCH, -17, -4, 17, 20)
+				if CheckResult == true
+					CallFunction(Player_Hit)
 				end if
 			end if
 		end if
 	end if
-	if Object.State == 0
-		if Object.Value0 == 0
-			PlayerObjectCollision(C_TOUCH,-64,0,64,128)
-			if CheckResult == 1
-				Object.State=1
-				Object.Priority=1
+	if Object.State == MINOMUSI_DETECT_PLAYER
+		if Object.Timer == 0
+			PlayerObjectCollision(C_TOUCH, -64, 0, 64, 128)
+			if CheckResult == true
+				Object.State = MINOMUSI_DROP
+				Object.Priority = PRIORITY_ACTIVE
 			end if
 		end if
 	end if
@@ -188,42 +207,48 @@ end sub
 
 
 sub ObjectDraw
-	TempValue0=Object.YPos
-	TempValue0 -= Object.Value1
+	TempValue0   = Object.YPos
+	TempValue0  -= Object.YOriginPos
 	TempValue0 >>= 19
-	TempValue0 += 5
-	DrawSpriteXY(TempValue0,Object.XPos,Object.Value1)
+	TempValue0  += 5
+	DrawSpriteXY(TempValue0, Object.XPos, Object.YOriginPos)
+
 	DrawSprite(Object.Frame)
 end sub
 
 
 sub ObjectStartup
 	LoadSpriteSheet("R6/Objects.gif")
-	SpriteFrame(-8,-8,16,32,82,134)
-	SpriteFrame(-8,-8,16,32,17,184)
-	SpriteFrame(-8,-8,16,32,1,184)
-	SpriteFrame(-12,-8,24,32,133,166)
-	SpriteFrame(-16,-8,32,32,1,151)
-	SpriteFrame(-4,16,8,0,246,91)
-	SpriteFrame(-4,16,8,8,246,91)
-	SpriteFrame(-4,16,8,16,246,91)
-	SpriteFrame(-4,16,8,24,246,91)
-	SpriteFrame(-4,16,8,32,246,91)
-	SpriteFrame(-4,16,8,40,246,91)
-	SpriteFrame(-4,16,8,48,246,91)
-	SpriteFrame(-4,16,8,56,246,91)
-	SpriteFrame(-4,16,8,64,246,91)
-	SpriteFrame(-4,16,8,72,246,91)
-	SpriteFrame(-4,16,8,72,246,91)
-	SpriteFrame(-4,16,8,72,246,91)
-	SpriteFrame(-4,16,8,72,246,91)
-	ArrayPos0=32
-	while ArrayPos0<1056
+	// Good
+	SpriteFrame(-8, -8, 16, 32, 82, 134)	// #0  - Minomusi
+	// Bad
+	SpriteFrame(-8, -8, 16, 32, 17, 184)	// #1  - Minomusi frame 0
+	SpriteFrame(-8, -8, 16, 32, 1, 184)		// #2  - Minomusi frame 1
+	// Spike Attack
+	SpriteFrame(-12, -8, 24, 32, 133, 166)	// #3  - Minomusi Spiked frame 0
+	SpriteFrame(-16, -8, 32, 32, 1, 151)	// #4  - Minomusi Spiked frame 1
+	// String
+	SpriteFrame(-4, 16, 8, 0, 246, 91)		// #5  - Minomusi String frame 0
+	SpriteFrame(-4, 16, 8, 8, 246, 91)		// #6  - Minomusi String frame 1
+	SpriteFrame(-4, 16, 8, 16, 246, 91)		// #7  - Minomusi String frame 2
+	SpriteFrame(-4, 16, 8, 24, 246, 91)		// #8  - Minomusi String frame 3
+	SpriteFrame(-4, 16, 8, 32, 246, 91)		// #9  - Minomusi String frame 4
+	SpriteFrame(-4, 16, 8, 40, 246, 91)		// #10 - Minomusi String frame 5
+	SpriteFrame(-4, 16, 8, 48, 246, 91)		// #11 - Minomusi String frame 6
+	SpriteFrame(-4, 16, 8, 56, 246, 91)		// #12 - Minomusi String frame 7
+	SpriteFrame(-4, 16, 8, 64, 246, 91)		// #13 - Minomusi String frame 8
+	SpriteFrame(-4, 16, 8, 72, 246, 91)		// #14 - Minomusi String frame 9
+	SpriteFrame(-4, 16, 8, 72, 246, 91)		// #15 - Minomusi String frame 10
+	SpriteFrame(-4, 16, 8, 72, 246, 91)		// #16 - Minomusi String frame 11
+	SpriteFrame(-4, 16, 8, 72, 246, 91)		// #17 - Minomusi String frame 12
+
+	ArrayPos0 = 32
+	while ArrayPos0 < 1056
 		if Object[ArrayPos0].Type == TypeName[Minomusi]
-			Object[ArrayPos0].Type=TypeName[Minomusi2]
+			Object[ArrayPos0].Type = TypeName[Minomusi2]
 		end if
 		if Object[ArrayPos0].Type == TypeName[Minomusi2]
-			Object[ArrayPos0].Value1=Object[ArrayPos0].YPos
+			Object[ArrayPos0].YOriginPos = Object[ArrayPos0].YPos
 		end if
 		ArrayPos0++
 	loop

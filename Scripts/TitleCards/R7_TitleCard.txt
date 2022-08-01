@@ -13,7 +13,7 @@
 #alias Object.Value7	:	Object.CharPos
 
 // Player aliases
-#alias Object.Value4	:	Player.Invincible
+#alias Object.Value4	:	Player.InvincibleTimer
 
 // States
 #alias 0	:	TITLECARD_FADEIN
@@ -35,10 +35,10 @@
 #alias Object[24].PropertyValue	:	HUD.TimePeriod
 
 // Time Periods
-#alias 0						:	PROPVAL_PRESENT
-#alias 1						:	PROPVAL_PAST
-#alias 2						:	PROPVAL_GOOD_FUTURE
-#alias 3						:	PROPVAL_BAD_FUTURE
+#alias 0			:	PROPVAL_PRESENT
+#alias 1			:	PROPVAL_PAST
+#alias 2			:	PROPVAL_GOOD_FUTURE
+#alias 3			:	PROPVAL_BAD_FUTURE
 
 
 sub ObjectPlayerInteraction
@@ -79,7 +79,7 @@ sub ObjectDraw
 					Stage.MilliSeconds = Rec_Milliseconds
 					Stage.Seconds = Rec_Seconds
 					Stage.Minutes = Rec_Minutes
-					Player[0].Invincible = 8000
+					Player[0].InvincibleTimer = 8000
 				end if
 				
 				Warp.Timer = 0
@@ -266,12 +266,12 @@ sub ObjectStartup
 #endplatform
 
 #platform: Use_Standalone
-	#platform: Mobile
-		SpriteFrame(72, 81, 160, 16, 49, 50)	// #5  - Sonic The Hedgehog CD
-	#endplatform
-
 	#platform: Standard
 		SpriteFrame(64, 81, 160, 16, 41, 50)	// #5  - Sonic The Hedgehog CD
+	#endplatform
+
+	#platform: Mobile
+		SpriteFrame(72, 81, 160, 16, 49, 50)	// #5  - Sonic The Hedgehog CD
 	#endplatform
 #endplatform
 
@@ -293,6 +293,28 @@ sub ObjectStartup
 	SpriteFrame(55, 56, 17, 23, 116, 108)
 	SpriteFrame(73, 56, 11, 23, 43, 84)
 	SpriteFrame(84, 56, 11, 23, 146, 108)
+	
+#platform: Use_Origins
+	if game.playMode == BOOT_PLAYMODE_MISSION
+		TempValue0 = true
+	else
+		if game.playMode == BOOT_PLAYMODE_BOSSRUSH
+			TempValue0 = true
+		else
+			TempValue0 = false
+		end if
+	end if
+	
+	if TempValue0 != false
+		PlayMusic(0)
+		game.missionCondition = 0
+		game.missionEnd = false
+		Player.ControlMode = 0
+		Stage.TimeEnabled = true
+		ResetObjectEntity(20, TypeName[Blank Object], 0, 0, 0)
+		Warp.XPos = 0
+	end if
+#endplatform
 end sub
 
 

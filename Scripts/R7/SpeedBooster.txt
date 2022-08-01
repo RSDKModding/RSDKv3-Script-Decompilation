@@ -74,7 +74,7 @@ end sub
 sub ObjectPlayerInteraction
 
 	if Object.State == SPEEDBOOSTER_IDLE
-		if Player.State != PlayerObject_HandleAir
+		if Player.State != Player_State_Air
 			PlayerObjectCollision(C_TOUCH, -32, -12, 32, 4)
 			if CheckResult == true
 				
@@ -83,10 +83,8 @@ sub ObjectPlayerInteraction
 
 				PlayStageSfx(0, 0)
 
-#platform: Use_Standalone
-	#platform: Use_Haptics
+#platform: Use_Haptics
 				HapticEffect(30, 0, 0, 0)
-	#endplatform
 #endplatform
 
 				// Different actions for the different directions the player will be sent
@@ -96,25 +94,25 @@ sub ObjectPlayerInteraction
 					Player.Direction = FACING_RIGHT
 
 					CreateTempObject(TypeName[Fire Trail], 0, Object.XPos, Object.YPos)
-					Object[TempObjectPos].XPos -= 1572864
+					Object[TempObjectPos].XPos -= 0x180000
 					Object[TempObjectPos].YPos -= 0x60000
 
 					CreateTempObject(TypeName[BoosterCartridge], 0, Object.XPos, Object.YPos)
 					Object[TempObjectPos].XVelocity = -0x20000
-					Object[TempObjectPos].YVelocity = -458752
+					Object[TempObjectPos].YVelocity = -0x70000
 				else
 					Object.State = SPEEDBOOSTER_RECOIL_L
 					Player.Speed = -0x100000
 					Player.Direction = FACING_LEFT
 
 					CreateTempObject(TypeName[Fire Trail], 0, Object.XPos, Object.YPos)
-					Object[TempObjectPos].XPos += 1572864
+					Object[TempObjectPos].XPos += 0x180000
 					Object[TempObjectPos].YPos -= 0x60000
 					Object[TempObjectPos].Direction = FACING_LEFT
 
 					CreateTempObject(TypeName[BoosterCartridge], 0, Object.XPos, Object.YPos)
 					Object[TempObjectPos].XVelocity = 0x20000
-					Object[TempObjectPos].YVelocity = -458752
+					Object[TempObjectPos].YVelocity = -0x70000
 					Object[TempObjectPos].Direction = FACING_LEFT
 				end if
 			end if

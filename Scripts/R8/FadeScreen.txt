@@ -5,6 +5,9 @@
 // Aliases
 #alias 62: TYPE_FADESCREEN
 
+// Game modes
+#alias 2	:	GAMEMODE_TIMEATTACK
+
 
 sub ObjectMain
 	switch Object.State
@@ -33,38 +36,34 @@ sub ObjectMain
 			Object.Value0 -= 16
 		else
 			StopMusic()
-			if Options.GameMode == 2
-				TimeAttack.Result = Stage.Seconds
-				TimeAttack.Result *= 100
-				TempValue0 = Stage.Minutes
-				TempValue0 *= 6000
-				TimeAttack.Result += TempValue0
-				TimeAttack.Result += Stage.MilliSeconds
-				TempValue0 = Stage.ListPos
-				TempValue0 %= 10
-				TempValue0 >>= 2
-				TempValue1 = Stage.ListPos
-				TempValue1 /= 10
-				TempValue1 *= 3
-				TempValue0 += TempValue1
-				TempValue0++
-				TempValue1 = Stage.Seconds
-				TempValue1 *= 100
-				TempValue2 = Stage.Minutes
-				TempValue2 *= 6000
-				TempValue1 += TempValue2
-				TempValue1 += Stage.MilliSeconds
-				SetLeaderboard(TempValue0, TempValue1)
-				Stage.ListPos = 2
+#platform: Use_Origins			
+			EngineCallback(NOTIFY_BOSS_END)
+			TempValue0 = 0
+			if game.playMode == BOOT_PLAYMODE_BOSSRUSH
+				TempValue0 = 1
 			else
-				if Stage.PlayerListPos == 0
-#platform: Mobile
-					EngineCallback(4)
+				if game.oneStageFlag != 0
+					TempValue0 = 1
+					EngineCallback(NOTIFY_ACT_FINISH)
+					game.callbackResult = -1
+					game.callbackParam0 = 1
+					game.callbackParam1 = Stage.ListPos
+					game.callbackParam2 = 0
+					EngineCallback(NOTIFY_STAGE_RETRY)
+				end if
+			end if
 #endplatform
-#platform: Standard
-					if Stage.DebugMode == 0
-						SetAchievement(7, 100)
-					end if
+
+			if TempValue0 != 0
+				Object.State = 4
+			else
+				if Options.GameMode == GAMEMODE_TIMEATTACK
+					TimeAttack.Result = Stage.Seconds
+					TimeAttack.Result *= 100
+					TempValue0 = Stage.Minutes
+					TempValue0 *= 0x1770
+					TimeAttack.Result += TempValue0
+					TimeAttack.Result += Stage.MilliSeconds
 					TempValue0 = Stage.ListPos
 					TempValue0 %= 10
 					TempValue0 >>= 2
@@ -76,24 +75,50 @@ sub ObjectMain
 					TempValue1 = Stage.Seconds
 					TempValue1 *= 100
 					TempValue2 = Stage.Minutes
-					TempValue2 *= 6000
+					TempValue2 *= 0x1770
 					TempValue1 += TempValue2
 					TempValue1 += Stage.MilliSeconds
 					SetLeaderboard(TempValue0, TempValue1)
-#endplatform
+					Stage.ListPos = 2
+				else
+					EngineCallback(4)
 					if Player.Score > 0
-#platform: Mobile
 						if Options.GameMode == 1
 							if Stage.DebugMode == 0
-#endplatform
 								SetLeaderboard(0, Player.Score)
-#platform: Mobile
 							end if
 						end if
-#endplatform
 					end if
-#platform: Standard
-					EngineCallback(4)
+#platform: Use_Origins
+					game.callbackParam0 = StageStatsUsabilityParam1
+					game.callbackParam1 = StageStatsUsabilityParam2
+					game.callbackParam2 = 0
+					EngineCallback(NOTIFY_STATS_ENEMY)
+					game.callbackParam0 = Object[0].Value0
+					EngineCallback(NOTIFY_STATS_RING)
+					game.callbackParam0 = StageStatsUsabilityParam5
+					EngineCallback(NOTIFY_STATS_PARAM_1)
+					game.callbackParam0 = 0
+					game.callbackParam1 = StageStatsUsabilityParam4
+					game.callbackParam2 = 0
+					EngineCallback(NOTIFY_STATS_CHARA_ACTION)
+					EngineCallback(NOTIFY_ACT_FINISH)
+					StageStatsUsabilityParam1 = 0
+					StageStatsUsabilityParam2 = 0
+					StageStatsUsabilityParam3 = 0
+					StageStatsUsabilityParam4 = 0
+					StatsUsabilityParam1 = 0
+					StatsUsabilityParam2 = 0
+					StatsUsabilityParam3 = 0
+					StatsUsabilityParam4 = 0
+
+					if SpecialStage.TimeStones > 126
+						EngineCallback(NOTIFY_GOOD_ENDING)
+					else
+						if Good_Future_List > 0x3FFE
+							EngineCallback(NOTIFY_GOOD_ENDING)
+						end if
+					end if
 #endplatform
 					if SpecialStage.TimeStones > 126
 #platform: Standard
@@ -111,6 +136,7 @@ sub ObjectMain
 #platform: Standard
 							LoadVideo("Good_Ending")
 #endplatform
+
 #platform: Mobile
 							if Options.Soundtrack == 0
 								LoadVideo("Good_Ending")
@@ -122,6 +148,7 @@ sub ObjectMain
 #platform: Standard
 							LoadVideo("Bad_Ending")
 #endplatform
+
 #platform: Mobile
 							if Options.Soundtrack == 0
 								LoadVideo("Bad_Ending")
@@ -131,19 +158,45 @@ sub ObjectMain
 #endplatform
 						end if
 					end if
+					
 					if SaveRAM[36] == 0
+#platform: Use_Origins
+						if game.playMode == BOOT_PLAYMODE_CLASSIC
+							Stage.ListPos = 0
+							Engine.State = 8
+						else
+							SaveRAM[36] = 1
+							WriteSaveRAM()
+							Stage.ListPos = 8
+						end if
+#endplatform
+
+#platform: Use_Standalone
 						SaveRAM[36] = 1
 						WriteSaveRAM()
 						Stage.ListPos = 8
+#endplatform
 					else
-						Stage.ListPos = 1
+						Stage.ListPos = 0
+						Engine.State = 8
 					end if
-				else
-					Stage.ListPos = 7
+#platform: Use_Origins
+					game.callbackParam0 = 1
+					EngineCallback(NOTIFY_STATS_MOVIE)
+#endplatform
+
+#platform: Use_Standalone
+					// Originally the game checked if the player was using sonic or tails
+					// This got removed on origins, but since it covers this whole thing, this workaround should do
+					if Stage.PlayerListPos == 1
+						Stage.ListPos = 7
+					end if
+#endplatform
 				end if
+				Stage.ActiveList = PRESENTATION_STAGE
+				LoadStage()
 			end if
-			Stage.ActiveList = PRESENTATION_STAGE
-			LoadStage()
+
 		end if
 		SetScreenFade(Object.Value0, Object.Value0, Object.Value0, 255)
 		break
@@ -156,6 +209,11 @@ sub ObjectMain
 			Stage.ListPos += 2
 			LoadStage()
 		end if
+		break
+	case 3
+		break
+	case 4
+		SetScreenFade(255, 255, 255, 255)
 		break
 	end switch
 end sub

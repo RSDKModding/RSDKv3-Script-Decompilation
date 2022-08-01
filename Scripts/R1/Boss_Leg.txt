@@ -3,42 +3,42 @@
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
 // Aliases
-#alias Object.Value0			:	Object.LegJointEntity
-#alias Object.Value1			:	Object.FootEntity
-#alias Object.Value2			:	Object.XOffSet
-#alias Object.Value4			:	Object.LegSide
-#alias Object.Value5			:	Object.YOffSet
-#alias Object.Value6			:	Object.XVelocity
-#alias Object.Value7			:	Object.YVelocity
+#alias Object.Value0		:	Object.LegJointEntity
+#alias Object.Value1		:	Object.FootEntity
+#alias Object.Value2		:	Object.XOffSet
+#alias Object.Value4		:	Object.LegSide
+#alias Object.Value5		:	Object.YOffSet
+#alias Object.Value6		:	Object.XVelocity
+#alias Object.Value7		:	Object.YVelocity
 
 // Foot Aliases
-#alias Object.Value4			:	Foot.LegSide
+#alias Object.Value4		:	Foot.LegSide
 
 // Leg Joint Aliases
-#alias Object.XPos				:	LegJoint.XPos
-#alias Object.YPos				:	LegJoint.YPos
-#alias Object.Value0			:	LegJoint.BodyEntity
+#alias Object.XPos			:	LegJoint.XPos
+#alias Object.YPos			:	LegJoint.YPos
+#alias Object.Value0		:	LegJoint.BodyEntity
 
-#alias Object.Value1			:	LegJointR.LegREntity
+#alias Object.Value1		:	LegJointR.LegREntity
 
 // Leg Aliases
-#alias Object.XPos				:	LegR.XPos
-#alias Object.YPos				:	LegR.YPos
+#alias Object.XPos			:	LegR.XPos
+#alias Object.YPos			:	LegR.YPos
 
 // Body Aliases
-#alias Object.Value0			:	Body.FaceEntity
-#alias Object.Value1			:	Body.LegJointREntity
-#alias Object.XPos				:	Body.XPos
-#alias Object.YPos				:	Body.YPos
+#alias Object.Value0		:	Body.FaceEntity
+#alias Object.Value1		:	Body.LegJointREntity
+#alias Object.XPos			:	Body.XPos
+#alias Object.YPos			:	Body.YPos
 
 // Face Aliases
-#alias Object.XPos				:	Face.XPos
-#alias Object.YPos				:	Face.YPos
-#alias Object.Animation			:	Face.Animation
-#alias Object.Direction			:	Face.FaceTimer
+#alias Object.XPos			:	Face.XPos
+#alias Object.YPos			:	Face.YPos
+#alias Object.Animation		:	Face.Animation
+#alias Object.Direction		:	Face.FaceTimer
 
 // Player Aliases
-#alias Player.Value4			:	Player.Invincible
+#alias Player.Value4			:	Player.InvincibleTimer
 
 // States
 #alias 0	:	BOSSLEG_SETUP
@@ -192,7 +192,7 @@ sub ObjectMain
 		else
 			TempValue1 = 0
 		end if
-		if Object.YVelocity < -0x40000
+		if Object.YVelocity < 0x40000
 			TempValue2 = Object.YOffSet
 			Object.YVelocity += TempValue2
 		else
@@ -231,11 +231,11 @@ end sub
 
 sub ObjectPlayerInteraction
 	if Object.State < BOSSLEG_DESTROYED
-		if Player.Invincible == 0
+		if Player.InvincibleTimer == 0
 			PlayerObjectCollision(C_TOUCH, -12, -20, 12, -20)
 			if CheckResult == true
 
-				Player.State = PlayerObject_Hurt
+				Player.State = Player_State_GotHit
 
 				ArrayPos0 = Object.LegJointEntity
 				ArrayPos1 = LegJoint[ArrayPos0].BodyEntity

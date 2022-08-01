@@ -31,7 +31,7 @@
 #alias Object.Value5		:	Bullet.BossEntity
 
 // Player alias
-#alias Player.Value4		:	Player.Invincible
+#alias Player.Value4		:	Player.InvincibleTimer
 
 // Object +17 is a helper object for the boss movement
 #alias Object[+17].XPos		:	Helper.XPos
@@ -278,7 +278,7 @@ sub ObjectMain
 			Object.State = R4_EGG_BUBBLE_INTRO
 
 			Helper.XPos = Object.XPos
-			Helper.XPos -= 6291456	// 0x600000
+			Helper.XPos -= 0x600000	// 0x600000
 
 			Helper.YPos = Object.YPos
 
@@ -370,7 +370,7 @@ sub ObjectMain
 		Object.Angle += 8
 		Object.Angle &= 511
 
-		if Object.BubbleRadius < 12288	// 0x3000
+		if Object.BubbleRadius < 0x3000	// 0x3000
 			Object.BubbleRadius += 96	// 0x60
 		else
 			Object.State = R4_EGG_BUBBLE_START_BATTLE
@@ -395,7 +395,7 @@ sub ObjectMain
 
 	case R4_EGG_BUBBLE_ATTACK_R_TO_L
 		Cos(Object.XPos, Helper.Angle)
-		Object.XPos *= 12288	// 0x3000
+		Object.XPos *= 0x3000	// 0x3000
 		Object.XPos += Helper.XPos
 
 		Sin(Object.YPos, Helper.Angle)
@@ -443,7 +443,7 @@ sub ObjectMain
 
 	case R4_EGG_BUBBLE_ATTACK_L_TO_R
 		Cos(Object.XPos, Helper.Angle)
-		Object.XPos *= 12288	// 0x3000
+		Object.XPos *= 0x3000	// 0x3000
 		Object.XPos += Helper.XPos
 
 		Sin(Object.YPos, Helper.Angle)
@@ -516,7 +516,7 @@ sub ObjectMain
 	case R4_EGG_BUBBLE_MOVE_TO_R
 		Object.XPos += 0x10000			// 0x10000
 
-		if Object.BubbleRadius < 12288	// 0x3000
+		if Object.BubbleRadius < 0x3000	// 0x3000
 			Object.BubbleRadius += 96	// 0x60
 			Object.Angle += 8
 		else
@@ -524,7 +524,7 @@ sub ObjectMain
 		end if
 
 		TempValue0 = Helper.XPos
-		TempValue0 += 6291456	// 0x600000
+		TempValue0 += 0x600000	// 0x600000
 
 		if Object.XPos > TempValue0
 			Object.XPos = TempValue0
@@ -567,7 +567,7 @@ sub ObjectMain
 	case R4_EGG_BUBBLE_MOVE_TO_L
 		Object.XPos -= 0x10000			// 0x10000
 		
-		if Object.BubbleRadius < 12288	// 0x3000
+		if Object.BubbleRadius < 0x3000	// 0x3000
 			Object.BubbleRadius += 96
 			Object.Angle += 8
 		else
@@ -575,7 +575,7 @@ sub ObjectMain
 		end if
 
 		TempValue0 = Helper.XPos
-		TempValue0 -= 6291456	// 0x600000
+		TempValue0 -= 0x600000	// 0x600000
 
 		if Object.XPos < TempValue0
 			Object.XPos = TempValue0
@@ -672,6 +672,15 @@ sub ObjectPlayerInteraction
 				end if
 
 				if TempValue0 == true
+
+#platform: Use_Origins
+					EngineCallback(NOTIFY_KILL_BOSS)
+					game.callbackParam0 = 1
+					EngineCallback(NOTIFY_BOSS_END)
+					if game.playMode == BOOT_PLAYMODE_BOSSRUSH
+						StopMusic()
+					end if
+#endplatform
 					FlipSign(Player.XVelocity)
 					FlipSign(Player.Speed)
 					Player.XVelocity >>= 1
@@ -685,12 +694,12 @@ sub ObjectPlayerInteraction
 					Object.Animation = EGGANI_HURT
 					Object.Timer = 0
 				else
-					if Player.Invincible == 0
-						Player.State = PlayerObject_Hurt
+					if Player.InvincibleTimer == 0
+						Player.State = Player_State_GotHit
 						if Player.XPos > Object.XPos
-							Player.Speed = 0x20000	// 0x20000
+							Player.Speed =  0x20000
 						else
-							Player.Speed = -0x20000	// -0x20000
+							Player.Speed = -0x20000
 						end if
 					end if
 					Object.Animation = EGGANI_LAUGH

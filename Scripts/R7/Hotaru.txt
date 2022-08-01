@@ -28,6 +28,9 @@
 
 #alias Object.Value6	:	Object.EletricityActive
 
+// Player Aliases
+#alias Player.Value4	:	Player.InvincibleTimer
+
 // Hotaru States
 #alias 0 	:	HOTARU_IDLE1
 #alias 1 	:	HOTARU_IDLE2
@@ -44,11 +47,8 @@
 #alias 12	:	HOTARU_OFFSCREEN
 
 // Badnik Condition States
-#alias 0	:	BADNIK_GOOD
-#alias 1	:	BADNIK_BAD
-
-// Player Aliases
-#alias Player.Value4	:	Player.Invincible
+#alias 0	:	PROPVAL_QUALITY_GOOD
+#alias 1	:	PROPVAL_QUALITY_BAD
 
 
 // Function declarations
@@ -89,7 +89,7 @@ function Hotaru_HotaruBreak
 		if Player.YVelocity > 0
 			FlipSign(Player.YVelocity)
 		else
-			Player.YVelocity += 49152
+			Player.YVelocity += 0xC000
 		end if
 		
 		// Grant the player some score
@@ -151,8 +151,8 @@ function Hotaru_HotaruBreak
 			end switch
 		else
 			if Object.State > HOTARU_LIGHTSOFF3
-				if Player.Invincible == 0
-					Player.State = PlayerObject_Hurt
+				if Player.InvincibleTimer == 0
+					Player.State = Player_State_GotHit
 					if Player.XPos > Object.XPos
 						Player.Speed = 0x20000
 					else
@@ -186,7 +186,7 @@ sub ObjectMain
 	end if
 	
 	// Even if there are really only small differences between the two's behaviours, the GOOD and BAD badnik types just have entirely different
-	if Object.PropertyValue == BADNIK_GOOD
+	if Object.PropertyValue == PROPVAL_QUALITY_GOOD
 		switch Object.State
 		case HOTARU_IDLE1
 			Object.Priority = 1
@@ -610,7 +610,7 @@ sub ObjectPlayerInteraction
 	case HOTARU_LIGHTSON3
 	case HOTARU_LIGHTSOFF3
 //	case HOTARU_FLASHING // There's good reason to imagine this was here, as this case provides all the necesary Spark collision checks...
-		if Object.PropertyValue == BADNIK_GOOD
+		if Object.PropertyValue == PROPVAL_QUALITY_GOOD
 			// Broken Hotarus don't have functional lights...
 			
 			if Object.Hotaru1X < 0
@@ -715,7 +715,7 @@ sub ObjectPlayerInteraction
 					// Check collision for the middle Spark
 					PlayerObjectCollision(C_TOUCH, -12, -12, 12, 12)
 					if CheckResult == true
-						CallFunction(PlayerObject_Hit)
+						CallFunction(Player_Hit)
 					end if
 					
 					// Check collision for the left Spark
@@ -739,7 +739,7 @@ sub ObjectPlayerInteraction
 					
 					PlayerObjectCollision(C_TOUCH, -12, -12, 12, 12)
 					if CheckResult == true
-						CallFunction(PlayerObject_Hit)
+						CallFunction(Player_Hit)
 					end if
 					
 					// Check collision for the right Spark
@@ -763,7 +763,7 @@ sub ObjectPlayerInteraction
 					
 					PlayerObjectCollision(C_TOUCH, -12, -12, 12, 12)
 					if CheckResult == true
-						CallFunction(PlayerObject_Hit)
+						CallFunction(Player_Hit)
 					end if
 					
 				end if
@@ -1058,7 +1058,7 @@ sub ObjectStartup
 				// Good variant, with a functioning Light
 				// Start the Hotarus 70 pixels apart (35 pixels from the base Pos)
 				Object[ArrayPos0].HotaruRadius = 3932160
-				Object[ArrayPos0].PropertyValue = BADNIK_GOOD
+				Object[ArrayPos0].PropertyValue = PROPVAL_QUALITY_GOOD
 				Object[ArrayPos0].Hotaru1X = -2293760
 				Object[ArrayPos0].Hotaru2X = 2293760
 				break
@@ -1069,7 +1069,7 @@ sub ObjectStartup
 				// Bad variant, with a broken Light
 				// Start the Hotarus 70 pixels apart (35 pixels from the base Pos)
 				Object[ArrayPos0].HotaruRadius = 3932160
-				Object[ArrayPos0].PropertyValue = BADNIK_BAD
+				Object[ArrayPos0].PropertyValue = PROPVAL_QUALITY_BAD
 				Object[ArrayPos0].Hotaru1X = -2293760
 				Object[ArrayPos0].Hotaru2X = 2293760
 				break
@@ -1080,7 +1080,7 @@ sub ObjectStartup
 				// Good variant, with a functioning Light
 				// Start the Hotarus 100 pixels apart (50 pixels from the base Pos)
 				Object[ArrayPos0].HotaruRadius = 4456448
-				Object[ArrayPos0].PropertyValue = BADNIK_GOOD
+				Object[ArrayPos0].PropertyValue = PROPVAL_QUALITY_GOOD
 				Object[ArrayPos0].Hotaru1X = -3276800
 				Object[ArrayPos0].Hotaru2X = 3276800
 				break
@@ -1091,7 +1091,7 @@ sub ObjectStartup
 				// Bad variant, with a broken Light
 				// Start the Hotarus 100 pixels apart (50 pixels from the base Pos)
 				Object[ArrayPos0].HotaruRadius = 4456448
-				Object[ArrayPos0].PropertyValue = BADNIK_BAD
+				Object[ArrayPos0].PropertyValue = PROPVAL_QUALITY_BAD
 				Object[ArrayPos0].Hotaru1X = -3276800
 				Object[ArrayPos0].Hotaru2X = 3276800
 				break
@@ -1101,8 +1101,8 @@ sub ObjectStartup
 				// Radius of 56 pixels
 				// Good variant, with a functioning Light
 				// Start the Hotarus 140 pixels apart (70 pixels from the base Pos)
-				Object[ArrayPos0].HotaruRadius = 3670016
-				Object[ArrayPos0].PropertyValue = BADNIK_GOOD
+				Object[ArrayPos0].HotaruRadius = 0x380000
+				Object[ArrayPos0].PropertyValue = PROPVAL_QUALITY_GOOD
 				Object[ArrayPos0].Hotaru1X = -4587520
 				Object[ArrayPos0].Hotaru2X = 4587520
 				break
@@ -1112,8 +1112,8 @@ sub ObjectStartup
 				// Radius of 56 pixels
 				// Bad variant, with a broken Light
 				// Start the Hotarus 140 pixels apart (70 pixels from the base Pos)
-				Object[ArrayPos0].HotaruRadius = 3670016
-				Object[ArrayPos0].PropertyValue = BADNIK_BAD
+				Object[ArrayPos0].HotaruRadius = 0x380000
+				Object[ArrayPos0].PropertyValue = PROPVAL_QUALITY_BAD
 				Object[ArrayPos0].Hotaru1X = -4587520
 				Object[ArrayPos0].Hotaru2X = 4587520
 				break
@@ -1124,9 +1124,9 @@ sub ObjectStartup
 				// Good variant, with a functioning Light
 				// Start the Hotarus 192 pixels apart (96 pixels from the base Pos)
 				Object[ArrayPos0].HotaruRadius = 1179648
-				Object[ArrayPos0].PropertyValue = BADNIK_GOOD
-				Object[ArrayPos0].Hotaru1X = -6291456
-				Object[ArrayPos0].Hotaru2X = 6291456
+				Object[ArrayPos0].PropertyValue = PROPVAL_QUALITY_GOOD
+				Object[ArrayPos0].Hotaru1X = -0x600000
+				Object[ArrayPos0].Hotaru2X = 0x600000
 				break
 	
 			case 13
@@ -1135,9 +1135,9 @@ sub ObjectStartup
 				// Bad variant, with a broken Light
 				// Start the Hotarus 192 pixels apart (96 pixels from the base Pos)
 				Object[ArrayPos0].HotaruRadius = 1179648
-				Object[ArrayPos0].PropertyValue = BADNIK_BAD
-				Object[ArrayPos0].Hotaru1X = -6291456
-				Object[ArrayPos0].Hotaru2X = 6291456
+				Object[ArrayPos0].PropertyValue = PROPVAL_QUALITY_BAD
+				Object[ArrayPos0].Hotaru1X = -0x600000
+				Object[ArrayPos0].Hotaru2X = 0x600000
 				break
 	
 			end switch
@@ -1208,12 +1208,12 @@ sub RSDKDraw
 		TempValue3 = -3276800
 		break
 	case 8
-		TempValue2 =  3670016
+		TempValue2 =  0x380000
 		TempValue3 = -4587520
 		break
 	case 12
 		TempValue2 =  1179648
-		TempValue3 = -6291456
+		TempValue3 = -0x600000
 		break
 	end switch
 	
@@ -1243,8 +1243,8 @@ sub RSDKLoad
 
 	AddEditorVariable("Condition")
 	SetActiveVariable("Condition")
-	AddEnumVariable("Good", BADNIK_GOOD)
-	AddEnumVariable("Bad",  BADNIK_BAD)
+	AddEnumVariable("Good", PROPVAL_QUALITY_GOOD)
+	AddEnumVariable("Bad",  PROPVAL_QUALITY_BAD)
 	
 	AddEditorVariable("Formation")
 	SetActiveVariable("Formation")

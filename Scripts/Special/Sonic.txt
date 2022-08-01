@@ -97,7 +97,7 @@
 #alias Object.Value0	:	HUD.UFOsCount
 #alias Object.Value3	:	HUD.Rings
 #alias Object.Value4	:	HUD.LastUFOType
-#alias Object.Value5	:	HUD.SpeedShoes
+#alias Object.Value5	:	HUD.SpeedShoesTimer
 
 // Ring aliases
 #alias Object.Value0	:	Ring.ZPos
@@ -799,7 +799,7 @@ function Sonic_HandleTileInteractions
 		Object[3].Type = TypeName[Dust Puff]
 		Object[3].DrawOrder = 4
 		
-		if HUD[4].SpeedShoes == 0
+		if HUD[4].SpeedShoesTimer == 0
 			if SSSonic.Speed > 0x28000
 				// Max speed of 0x28000 while on dust without speed shoes
 				SSSonic.Speed = 0x28000
@@ -820,7 +820,7 @@ function Sonic_HandleTileInteractions
 		// Give the water splash a Z Pos of just a tad bit lower than Sonic in order to make it draw behind him
 		Object[3].ScreenDepth = 22526
 		
-		if HUD[4].SpeedShoes > 0
+		if HUD[4].SpeedShoesTimer > 0
 			if SSSonic.Speed > 0x50000
 				// Max speed of 0x50000 while on water with speed shoes
 				SSSonic.Speed = 0x50000
@@ -1176,8 +1176,8 @@ end function
 sub ObjectMain
 	
 	// Update Speed Shoes, the value's stored within the HUD object for whatever reason
-	if HUD[4].SpeedShoes > 0
-		HUD[4].SpeedShoes--
+	if HUD[4].SpeedShoesTimer > 0
+		HUD[4].SpeedShoesTimer--
 	end if
 	
 	switch SSSonic.State
@@ -1236,7 +1236,7 @@ sub ObjectMain
 		// Sonic's animation speed is dependant on his actual speed
 		SSSonic.AnimationSpeed = SSSonic.Speed
 		SSSonic.AnimationSpeed *= 15
-		SSSonic.AnimationSpeed /= 81920
+		SSSonic.AnimationSpeed /= 0x14000
 		SSSonic.AnimationSpeed += 20
 		
 		CallFunction(Sonic_HandleMovement)
@@ -1298,7 +1298,7 @@ sub ObjectMain
 			SSSonic.YPos = 0
 			
 			if HUD[4].UFOsCount > 0
-				if HUD[4].SpeedShoes == 0
+				if HUD[4].SpeedShoesTimer == 0
 					SSSonic.State     = SSSONIC_WALKING
 					
 					SSSonic.Frame     = ANI_WALKING_START
@@ -1350,7 +1350,7 @@ sub ObjectMain
 		else
 			// Booster's over, restore the player to normal
 			
-			if HUD[4].SpeedShoes == 0
+			if HUD[4].SpeedShoesTimer == 0
 				SSSonic.State     = SSSONIC_WALKING
 				
 				SSSonic.Frame     = ANI_WALKING_START
@@ -1409,7 +1409,7 @@ sub ObjectMain
 			SSSonic.YPos = 0
 			
 			if HUD[4].UFOsCount > 0
-				if HUD[4].SpeedShoes == 0
+				if HUD[4].SpeedShoesTimer == 0
 					SSSonic.State     = SSSONIC_WALKING
 					
 					SSSonic.Frame     = ANI_WALKING_START
@@ -1469,7 +1469,7 @@ sub ObjectMain
 		if SSSonic.Timer > 0
 			SSSonic.Timer--
 		else
-			if HUD[4].SpeedShoes == 0
+			if HUD[4].SpeedShoesTimer == 0
 				SSSonic.State     = SSSONIC_WALKING
 				
 				SSSonic.Frame     = ANI_WALKING_START
@@ -1493,7 +1493,7 @@ sub ObjectMain
 	case SSSONIC_SPEEDSHOESRUN
 		CallFunction(Sonic_ProcessPlayer)
 		
-		if SSSonic.Speed < 458752
+		if SSSonic.Speed < 0x70000
 			SSSonic.Speed += 0x1000
 		end if
 		
@@ -1530,7 +1530,7 @@ sub ObjectMain
 			PlaySfx(SFX_JUMP, false)
 		end if
 		
-		if HUD[4].SpeedShoes == 0
+		if HUD[4].SpeedShoesTimer == 0
 			SSSonic.State     = SSSONIC_WALKING
 			
 			SSSonic.Frame     = ANI_WALKING_START
@@ -1559,7 +1559,7 @@ sub ObjectMain
 		else
 			if Object[3].Type == TypeName[Blank Object]
 				// Spawn the Time Stone and place it 24 pixels above the screen
-				ResetObjectEntity(3, TypeName[Time Stone], 0, 0, -1572864)
+				ResetObjectEntity(3, TypeName[Time Stone], 0, 0, -0x180000)
 				Object[3].iXPos = Screen.CenterX
 				Object[3].Priority = 1
 			end if
@@ -1606,7 +1606,7 @@ sub ObjectMain
 		if SSSonic.YPos < 0
 			SSSonic.YPos = 0
 			if HUD[4].UFOsCount > 0
-				if HUD[4].SpeedShoes == 0
+				if HUD[4].SpeedShoesTimer == 0
 					SSSonic.State     = SSSONIC_WALKING
 					
 					SSSonic.Frame     = ANI_WALKING_START
@@ -1669,7 +1669,7 @@ sub ObjectMain
 	// Y movement is much easier, no complex calcuations needed here
 	TileLayer[0].YPos = SSSonic.YPos
 	TileLayer[0].YPos /= 3
-	TileLayer[0].YPos += 5767168 // Offset of 88 pixels
+	TileLayer[0].YPos += 0x580000 // Offset of 88 pixels
 	
 end sub
 

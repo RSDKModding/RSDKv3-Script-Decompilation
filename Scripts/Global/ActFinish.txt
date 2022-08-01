@@ -64,10 +64,10 @@
 #alias Object[24].PropertyValue	: HUD.TimePeriod
 
 // Time Period Aliases
-#alias 0	:	PERIOD_PRESENT
-#alias 1	:	PERIOD_PAST
-#alias 2	:	PERIOD_FUTURE_G
-#alias 3	:	PERIOD_FUTURE_B
+#alias 0	:	PROPVAL_PRESENT
+#alias 1	:	PROPVAL_PAST
+#alias 2	:	PROPVAL_GOOD_FUTURE
+#alias 3	:	PROPVAL_BAD_FUTURE
 
 // SFX Aliases
 #alias 16	:	SFX_SCOREADD
@@ -182,18 +182,18 @@ sub ObjectMain
 		// Find the Present version of the current stage
 		Object.StagePosP = Stage.ListPos
 		switch HUD.TimePeriod
-		case PERIOD_PRESENT
+		case PROPVAL_PRESENT
 			break
 			
-		case PERIOD_PAST
+		case PROPVAL_PAST
 			Object.StagePosP--
 			break
 			
-		case PERIOD_FUTURE_G
+		case PROPVAL_GOOD_FUTURE
 			Object.StagePosP -= 2
 			break
 			
-		case PERIOD_FUTURE_B
+		case PROPVAL_BAD_FUTURE
 			Object.StagePosP -= 3
 			break
 			
@@ -333,7 +333,7 @@ sub ObjectMain
 				
 				// See if the Paradise Found achievement should be unlocked
 				if Stage.PlayerListPos == PLAYER_SONIC
-					if HUD.TimePeriod == PERIOD_FUTURE_G
+					if HUD.TimePeriod == PROPVAL_GOOD_FUTURE
 						if Stage.DebugMode == false
 							SetAchievement(2, 100)
 						end if
@@ -352,7 +352,7 @@ sub ObjectMain
 				
 				// See if the Paradise Found achievement should be unlocked
 				if Stage.PlayerListPos == PLAYER_SONIC
-					if HUD.TimePeriod == PERIOD_FUTURE_G
+					if HUD.TimePeriod == PROPVAL_GOOD_FUTURE
 						if Stage.DebugMode == false
 							SetAchievement(2, 100)
 						end if
@@ -503,19 +503,19 @@ sub ObjectMain
 				
 				// Get the Stage List Pos of the next stage's Present version
 				switch HUD.TimePeriod
-				case PERIOD_PRESENT
+				case PROPVAL_PRESENT
 					Stage.ListPos += 4
 					break
 					
-				case PERIOD_PAST
+				case PROPVAL_PAST
 					Stage.ListPos += 3
 					break
 					
-				case PERIOD_FUTURE_G
+				case PROPVAL_GOOD_FUTURE
 					Stage.ListPos += 2
 					break
 					
-				case PERIOD_FUTURE_B
+				case PROPVAL_BAD_FUTURE
 					Stage.ListPos++
 					break
 					
@@ -654,19 +654,19 @@ sub ObjectMain
 				
 				// Get the Stage ID of the next stage's starting version
 				switch Hud.TimePeriod
-				case PERIOD_PRESENT
+				case PROPVAL_PRESENT
 					Stage.ListPos += 4
 					break
 					
-				case PERIOD_PAST
+				case PROPVAL_PAST
 					Stage.ListPos += 3
 					break
 					
-				case PERIOD_FUTURE_G
+				case PROPVAL_GOOD_FUTURE
 					Stage.ListPos += 2
 					break
 					
-				case PERIOD_FUTURE_B
+				case PROPVAL_BAD_FUTURE
 					Stage.ListPos++
 					break
 					
@@ -846,13 +846,13 @@ sub ObjectMain
 					Stage.ListPos = 2	// Time Attack
 					LoadStage()
 				else
-#platform: Mobile
+	#platform: Mobile
 					if Options.GameMode < GAMEMODE_TRIALGAME
 						TempValue0 = Engine.TrialMode
 					else
 						TempValue0 = false
 					end if
-#endplatform
+	#endplatform
 					if Stage.ListPos >= Stage.ListSize	// tldr; check if you are playing the trial
 						TempValue0 = true
 					end if

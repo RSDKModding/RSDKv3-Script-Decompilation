@@ -3,57 +3,74 @@
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
 // Aliases
-#alias 40: TYPE_WHEELIESPRING
-#alias Player.Value7:Player.AnimationCheck
+#alias Object.Value0	:	Object.Timer
+
+#alias Player.Value7	:	Player.AnimationReserve
+
+// States
+#alias 0	:	WHEELIESPRING_MOVING_RIGHT
+#alias 1	:	WHEELIESPRING_MOVING_LEFT
+
+// Property Value
+#alias 0	:	PROPVAL_RED_SPRING
+#alias 1	:	PROPVAL_YELLOW_SPRING
+
+// Gravity
+#alias 0	:	GRAVITY_GROUND
+#alias 1	:	GRAVITY_AIR
+
+// Collision Sides
+#alias 0	:	CSIDE_FLOOR
+#alias 1	:	CSIDE_LWALL
 
 
 sub ObjectMain
-	if Object.State == 0
-		if Object.Value0 < 96
-			Object.Value0++
+	if Object.State == WHEELIESPRING_MOVING_RIGHT
+		if Object.Timer < 96
+			Object.Timer++
 			Object.XPos += 0x10000
-			ObjectTileGrip(0, 8, 15, 0)
-			if CheckResult == 0
-				Object.State = 1
-				Object.Value0 = -64
+			ObjectTileGrip(CSIDE_FLOOR, 8, 15, 0)
+			if CheckResult == false
+				Object.State = WHEELIESPRING_MOVING_LEFT
+				Object.Timer = -64
 			else
-				ObjectTileCollision(1, 40, -16, 0)
-				if CheckResult == 1
-					Object.State = 1
-					Object.Value0 = -64
+				ObjectTileCollision(CSIDE_LWALL, 40, -16, 0)	// CSide_LWALL is 1
+				if CheckResult == true
+					Object.State = WHEELIESPRING_MOVING_LEFT
+					Object.Timer = -64
 				end if
 			end if
-			ObjectTileGrip(0, 0, 15, 0)
+			ObjectTileGrip(CSIDE_FLOOR, 0, 15, 0)
 		else
-			Object.State = 1
-			Object.Value0 = -64
+			Object.State = WHEELIESPRING_MOVING_LEFT
+			Object.Timer = -64
 		end if
 	else
-		if Object.Value0 < 96
-			Object.Value0++
+		if Object.Timer < 96
+			Object.Timer++
 			Object.XPos -= 0x10000
-			ObjectTileGrip(0, -8, 15, 0)
-			if CheckResult == 0
-				Object.State = 0
-				Object.Value0 = -64
+			ObjectTileGrip(CSIDE_FLOOR, -8, 15, 0)
+			if CheckResult == false
+				Object.State = WHEELIESPRING_MOVING_RIGHT
+				Object.Timer = -64
 			else
 				ObjectTileCollision(3, -40, -16, 0)
-				if CheckResult == 1
-					Object.State = 0
-					Object.Value0 = -64
+				if CheckResult == true
+					Object.State = WHEELIESPRING_MOVING_RIGHT
+					Object.Timer = -64
 				end if
 			end if
-			ObjectTileGrip(0, 0, 15, 0)
+			ObjectTileGrip(CSIDE_FLOOR, 0, 15, 0)
 		else
-			Object.State = 0
-			Object.Value0 = -64
+			Object.State = WHEELIESPRING_MOVING_RIGHT
+			Object.Timer = -64
 		end if
 	end if
 end sub
 
 
 sub ObjectPlayerInteraction
-	if Player.State != PlayerObject_Blank
+	if Player.State != Player_State_Static
 		if Player.YVelocity >= 0
 			PlayerObjectCollision(C_BOX, -16, -16, 16, 16)
 			PlayerObjectCollision(C_TOUCH, -15, -18, 15, -12)
@@ -61,45 +78,45 @@ sub ObjectPlayerInteraction
 				Object.Frame = 1
 				
 #platform: Use_Origins
-				Player.State = PlayerObject_ResetDropDash
+				Player.State = Player_State_Air_NoDropDash
 #endplatform
 
 #platform: Use_Standalone
-				Player.State = PlayerObject_HandleAir
+				Player.State = Player_State_Air
 #endplatform
-				Player.Gravity = 1
-				if Object.PropertyValue == 0
+				Player.Gravity = GRAVITY_AIR
+				if Object.PropertyValue == PROPVAL_RED_SPRING
 					Player.YVelocity = -0x100000
 				else
 					Player.YVelocity = -0xA0000
 				end if
-				Player.AnimationCheck = ANI_WALKING
+				Player.AnimationReserve = ANI_WALKING
 				if Player.Animation == ANI_RUNNING
-					Player.AnimationCheck = ANI_RUNNING
+					Player.AnimationReserve = ANI_RUNNING
 				end if
 				if Player.Animation == ANI_PEELOUT
-					Player.AnimationCheck = ANI_PEELOUT
+					Player.AnimationReserve = ANI_PEELOUT
 				end if
 				Player.Animation = ANI_BOUNCING
 				Player.Timer = 0
 				PlaySfx(11, 0)
 			end if
 		end if
-		if Player.Gravity == 0
+		if Player.Gravity == GRAVITY_GROUND
 			PlayerObjectCollision(C_BOX, -16, -20, 16, 16)
 			PlayerObjectCollision(C_TOUCH, -15, -18, 15, -12)
 			if CheckResult == true
 				Object.Frame = 1
 				
 #platform: Use_Origins
-				Player.State = PlayerObject_ResetDropDash
+				Player.State = Player_State_Air_NoDropDash
 #endplatform
 
 #platform: Use_Standalone
-				Player.State = PlayerObject_HandleAir
+				Player.State = Player_State_Air
 #endplatform
-				Player.Gravity = 1
-				if Object.PropertyValue == 0
+				Player.Gravity = GRAVITY_AIR
+				if Object.PropertyValue == PROPVAL_RED_SPRING
 					Player.YVelocity = -0x100000
 				else
 					Player.YVelocity = -0xA0000
@@ -114,7 +131,7 @@ end sub
 
 
 sub ObjectDraw
-	if Object.PropertyValue == 0
+	if Object.PropertyValue == PROPVAL_RED_SPRING
 		if Object.Frame == 0
 			DrawSprite(0)
 		else
@@ -167,7 +184,7 @@ sub ObjectDraw
 			end if
 		end if
 	end if
-	TempValue0 = Object.Value0
+	TempValue0 = Object.Timer
 	TempValue0 += 64
 	TempValue0 %= 18
 	TempValue0 /= 9
@@ -178,14 +195,15 @@ end sub
 
 sub ObjectStartup
 	LoadSpriteSheet("Global/Items.gif")
-	SpriteFrame(-16, -16, 32, 16, 84, 1)
-	SpriteFrame(-16, -16, 32, 16, 84, 183)
-	SpriteFrame(-16, -8, 32, 8, 84, 1)
-	SpriteFrame(-16, -8, 32, 8, 84, 183)
-	SpriteFrame(-16, -40, 32, 40, 84, 18)
-	SpriteFrame(-16, -40, 32, 40, 215, 34)
-	SpriteFrame(-8, 0, 16, 16, 233, 0)
-	SpriteFrame(-8, 0, 16, 16, 233, 17)
+
+	SpriteFrame(-16, -16, 32, 16, 84, 1)	// #0 - Red Spring
+	SpriteFrame(-16, -16, 32, 16, 84, 183)	// #1 - Yellow Spring
+	SpriteFrame(-16, -8, 32, 8, 84, 1)		// #2 - Red Spring Head
+	SpriteFrame(-16, -8, 32, 8, 84, 183)	// #3 - Yellow Spring Head
+	SpriteFrame(-16, -40, 32, 40, 84, 18)	// #4 - Red Spring Launch
+	SpriteFrame(-16, -40, 32, 40, 215, 34)	// #5 - Yellow Spring Launch
+	SpriteFrame(-8, 0, 16, 16, 233, 0)		// #6 - Wheel Frame 0
+	SpriteFrame(-8, 0, 16, 16, 233, 17)		// #7 - Wheel Frame 1
 end sub
 
 // ========================

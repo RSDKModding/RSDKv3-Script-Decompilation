@@ -65,6 +65,7 @@ end function
 
 
 sub ObjectMain
+// a bit messy, isn't it? blame mobile version for not having debug mode :)
 #platform: Standard
 	TempValue0 = false
 	if KeyDown[1].Left == true
@@ -95,32 +96,39 @@ sub ObjectMain
 	else
 		Player.YVelocity = 0
 	end if
+#endplatform
 
 	if KeyPress[1].ButtonB == true
+#platform: Standard
 		Object.HelperSprite = 0
 		Object.Type = TypeName[PlayerObject]
 		// THEY #FIXED HIM!!!
 		if Stage.PlayerListPos == 1	// PlayerName[TAILS]
-			Object[+1].Type=TypeName[TailsObject]
+			Object[+1].Type = TypeName[TailsObject]
 		endif
 		Player.Speed = 0
 		Player.Rotation = 0
 		Player.XVelocity = 0
 		Player.YVelocity = 0
-		
+#endplatform
+
 #platform: Use_Origins
-				Player.State = PlayerObject_ResetDropDash
+		Player.State = Player_State_Air_NoDropDash
 #endplatform
 
 #platform: Use_Standalone
-				Player.State = PlayerObject_HandleAir
+		Player.State = Player_State_Air
 #endplatform
+
+#platform: Standard
 		Player.Animation = ANI_WALKING
 		Player.AnimationSpeed = 0
 		Player.Frame = 0
 		Player.ControlMode = 0
 		Player.ObjectInteraction = true
+#endplatform
 	else
+#platform: Standard
 		if KeyPress[0].ButtonA == true
 			Object.CurrentSelection++
 			if Object.CurrentSelection > 27
@@ -128,6 +136,7 @@ sub ObjectMain
 			end if
 			CallFunction(DebugMode_ChangeItem)
 		end if
+
 		if KeyDown[0].ButtonA == true
 			if KeyPress[0].ButtonC == true
 				Object.CurrentSelection--
@@ -197,8 +206,8 @@ sub ObjectMain
 				Object[TempObjectPos].Priority = PRIORITY_ACTIVE_BOUNDS_REMOVE
 			end if
 		end if
-	end if
 #endplatform
+	end if
 end sub
 
 
@@ -226,8 +235,10 @@ sub ObjectDraw
 				Object.PauseFade = Object.Fade
 				Object.PauseFade <<= 1
 			end if
+			
 			Object.Alpha = Object.Fade
 			DrawSpriteScreenFX(0, FX_INK, Object.DPadXPos, 160)
+
 			if Player.Left == true
 				Object.Alpha = 160
 				DrawSpriteScreenFX(7, FX_INK, Object.DPadXPos, 160)
@@ -235,6 +246,7 @@ sub ObjectDraw
 				Object.Alpha = Object.Fade
 				DrawSpriteScreenFX(3, FX_INK, Object.DPadXPos, 160)
 			end if
+
 			if Player.Down == true
 				Object.Alpha = 160
 				DrawSpriteScreenFX(6, FX_INK, Object.DPadXPos, 160)
@@ -242,6 +254,7 @@ sub ObjectDraw
 				Object.Alpha = Object.Fade
 				DrawSpriteScreenFX(2, FX_INK, Object.DPadXPos, 160)
 			end if
+
 			if Player.Right == true
 				Object.Alpha = 160
 				DrawSpriteScreenFX(8, FX_INK, Object.DPadXPos, 160)
@@ -249,6 +262,7 @@ sub ObjectDraw
 				Object.Alpha = Object.Fade
 				DrawSpriteScreenFX(4, FX_INK, Object.DPadXPos, 160)
 			end if
+
 			if Player.Up == true
 				Object.Alpha = 160
 				DrawSpriteScreenFX(5, FX_INK, Object.DPadXPos, 160)
@@ -256,6 +270,7 @@ sub ObjectDraw
 				Object.Alpha = Object.Fade
 				DrawSpriteScreenFX(1, FX_INK, Object.DPadXPos, 160)
 			end if
+
 			if Player.JumpHold == true
 				Object.Alpha = 160
 				DrawSpriteScreenFX(10, FX_INK, Object.AButtonXPos, 176)
@@ -266,6 +281,7 @@ sub ObjectDraw
 		else
 			Object.Fade = 0
 		end if
+
 		if Object.PauseFade < 256
 			Object.Alpha = Object.PauseFade
 			DrawSpriteScreenFX(11, FX_INK, Object.PauseXPos, 8)
@@ -277,6 +293,7 @@ sub ObjectDraw
 			Object.Fade -= 4
 			Object.PauseFade -= 8
 		end if
+
 		Object.Alpha = Object.Fade
 		if Object.Alpha > 0
 			DrawSpriteScreenFX(0, FX_INK, Object.DPadXPos, 160)
@@ -286,11 +303,13 @@ sub ObjectDraw
 			DrawSpriteScreenFX(3, FX_INK, Object.DPadXPos, 160)
 			DrawSpriteScreenFX(9, FX_INK, Object.AButtonXPos, 176)
 		end if
+
 		if Object.PauseFade < 0
 			Object.Alpha = 0
 		else
 			Object.Alpha = Object.PauseFade
 		end if
+
 		if Object.PauseFade < 256
 			Object.Alpha = Object.PauseFade
 			DrawSpriteScreenFX(11, FX_INK, Object.PauseXPos, 8)
@@ -311,8 +330,20 @@ sub ObjectStartup
 	SpriteFrame(-16, -16, 32, 32, 18, 34)		// #2  - Shield Monitor
 	SpriteFrame(-16, -16, 32, 32, 18, 67)		// #3  - Invincibility Monitor
 	SpriteFrame(-16, -16, 32, 32, 18, 100)		// #4  - Power Sneakers Monitor
+
+#endplatform
+
 #platform: Use_Origins
-	if game.coinMode == false
+	CheckEqual(game.coinMode, false)
+#endplatform
+
+#platform: Use_Standalone
+	CheckResult = true
+#endplatform
+
+#platform: Standard
+	// Originally game.coinMode == false, adapted for compatibility reasons
+	if CheckResult == true
 		SpriteFrame(-16, -16, 32, 32, 18, 133)	// #5  - Sonic Monitor
 		SpriteFrame(-16, -16, 32, 32, 18, 166)	// #6  - Time Monitor
 		SpriteFrame(-16, -16, 32, 32, 51, 100)	// #7  - Tails Monitor
@@ -323,14 +354,6 @@ sub ObjectStartup
 		SpriteFrame(-16, -16, 32, 32, 84, 200)	// #7  - Coin Monitor
 		SpriteFrame(-16, -16, 32, 32, 51, 133)	// #8  - S Monitor
 	endif
-#endplatform
-
-#platform: Use_Standalone
-	SpriteFrame(-16, -16, 32, 32, 18, 133)		// #5  - Sonic Monitor
-	SpriteFrame(-16, -16, 32, 32, 18, 166)		// #6  - Time Monitor
-	SpriteFrame(-16, -16, 32, 32, 51, 100)		// #7  - Tails Monitor
-	SpriteFrame(-16, -16, 32, 32, 51, 133)		// #8  - S Monitor
-#endplatform
 
 	// Springs
 	SpriteFrame(-16, -8, 32, 16, 84, 1)			// #9  - Red Spring facing up
@@ -362,7 +385,7 @@ sub ObjectStartup
 #platform: Mobile
 	if Options.AttractMode == false
 		LoadSpriteSheet("Global/DPad.gif")
-		Object[25].Type = TypeName[DebugMode]
+		Object[25].Type = TypeName[Debug Mode]
 		Object[25].Priority = PRIORITY_ACTIVE
 		Object[25].DrawOrder = 6
 		Object[25].InkEffect = INK_ALPHA

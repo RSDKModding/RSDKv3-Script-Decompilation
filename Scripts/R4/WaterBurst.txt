@@ -42,9 +42,9 @@ sub ObjectPlayerInteraction
 
 	PlayerObjectCollision(C_TOUCH, -128, -24, 128, 400)
 	if CheckResult == true
-		if Player.State != PlayerObject_Death
-			if Player.State != PlayerObject_Drown
-				Player.State = PlayerObject_DebugMode
+		if Player.State != Player_State_Death
+			if Player.State != Player_State_Drown
+				Player.State = Player_State_WaterCurrent
 				Player.Animation = ANI_FANROTATE
 
 				Player.ControlMode = -1
@@ -77,15 +77,15 @@ sub ObjectPlayerInteraction
 			Player.XPos += TempValue0
 		end if
 	else
-		if Player.State == PlayerObject_DebugMode
+		if Player.State == Player_State_WaterCurrent
 			
 
 #platform: Use_Origins
-				Player.State = PlayerObject_ResetDropDash
+				Player.State = Player_State_Air_NoDropDash
 #endplatform
 
 #platform: Use_Standalone
-				Player.State = PlayerObject_HandleAir
+				Player.State = Player_State_Air
 #endplatform
 			Player.ControlMode = 0
 			Player.Animation = ANI_BOUNCING

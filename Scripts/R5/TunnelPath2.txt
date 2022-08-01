@@ -13,7 +13,7 @@
 sub ObjectMain
 	
 	if Object.State == TUNNELPATH_ACTIVE
-		if Player.State == PlayerObject_Death
+		if Player.State == Player_State_Death
 			Object.State = TUNNELPATH_IDLE
 		end if
 		
@@ -535,11 +535,11 @@ sub ObjectMain
 			Player.YVelocity = 0x60000
 
 #platform: Use_Origins
-				Player.State = PlayerObject_ResetDropDash
+				Player.State = Player_State_Air_NoDropDash
 #endplatform
 
 #platform: Use_Standalone
-				Player.State = PlayerObject_HandleAir
+				Player.State = Player_State_Air
 #endplatform
 			Player.ObjectInteraction = true
 			break
@@ -561,10 +561,10 @@ end sub
 sub ObjectPlayerInteraction
 	
 	if Object.PropertyValue == 0
-		if Player.State != PlayerObject_Blank
+		if Player.State != Player_State_Static
 			PlayerObjectCollision(C_TOUCH, -8, -16, 8, 16)
 			if CheckResult == true
-				Player.State = PlayerObject_Blank
+				Player.State = Player_State_Static
 				Player.ObjectInteraction = 0
 				Object.State = TUNNELPATH_ACTIVE
 				Object.Timer = 0

@@ -13,11 +13,11 @@
 #alias Object[+4].Value1			: Object.OptionCount
 
 //Object[33] is MenuHeading
-#alias Object[33].State				: Object.MHState
-#alias Object[33].PropertyValue		: Object.MHPropertyValue
+#alias Object[33].State				: MenuHeading.State
+#alias Object[33].PropertyValue		: MenuHeading.Header
 
 //Object[-1] is MenuWindow
-#alias Object[-1].State				: Object.MWState
+#alias Object[-1].State				: MenuWindow.State
 
 // States
 #alias 0 	:	OPTIONS_SETUP
@@ -44,6 +44,8 @@
 #alias 3	:	DEUTSCH
 #alias 4	:	SPANISH
 #alias 5	:	JAPANESE
+
+#alias 2	:	INK_ALPHA
 
 // Engine & Callbacks
 #alias 9 	:	CALLBACK_HOW_TO_PLAY
@@ -87,8 +89,10 @@ end function
 sub ObjectMain
 	switch Object.State
 	case OPTIONS_SETUP
-#platform: Mobile
+#platform: Use_Standalone
+	#platform: Mobile
 		Object.CurrentSelection = -1
+	#endplatform
 #endplatform
 		Object.XPos = Screen.CenterX
 		Object.XPos -= 126
@@ -103,28 +107,28 @@ sub ObjectMain
 		break
 
 	case OPTIONS_CONTROLS
-#platform: Standard
-		if KeyPress.Up == true
+		if KeyPress[0].Up == true
 			Object.CurrentSelection--
 			if Object.CurrentSelection < 0
 				Object.CurrentSelection = 3
 			end if
 			PlaySfx(23, 0) 	//Menu Button SFX
 		end if
-		if KeyPress.Down == true
+
+		if KeyPress[0].Down == true
 			Object.CurrentSelection++
 			if Object.CurrentSelection > 3
 				Object.CurrentSelection = 0
 			end if
 			PlaySfx(23, 0) 	//Menu Button SFX
 		end if
-#endplatform
+
 		CheckResult = false
-		if KeyPress.Start == true
+		if KeyPress[0].Start == true
 			CheckResult = true
 		end if
 
-		if KeyPress.ButtonA == true
+		if KeyPress[0].ButtonA == true
 			CheckResult = true
 		end if
 
@@ -143,7 +147,7 @@ sub ObjectMain
 				end switch
 			end if
 		end if
-		if KeyPress.ButtonB == true
+		if KeyPress[0].ButtonB == true
 			Object.Timer = 248
 			Object.State = OPTIONS_EXIT
 			PlayStageSfx(1, 0)
@@ -221,7 +225,7 @@ sub ObjectMain
 	case 6
 		ArrayPos0 = Object.CurrentSelection
 #platform: Standard
-		if KeyPress.Up == true
+		if KeyPress[0].Up == true
 			Object.OptionCount--
 			PlaySfx(23, 0) 	//Menu Button SFX
 			if Object.OptionCount < 0
@@ -229,7 +233,7 @@ sub ObjectMain
 			end if
 		end if
 
-		if KeyPress.Down == true
+		if KeyPress[0].Down == true
 			Object.OptionCount++
 			PlaySfx(23, 0) 	//Menu Button SFX
 			if Object.OptionCount > 2
@@ -239,7 +243,7 @@ sub ObjectMain
 
 		switch Object.OptionCount
 		case 0
-			if KeyPress.Left == true
+			if KeyPress[0].Left == true
 				Object.Value3 = 10
 				SaveRAM[33] -= 10
 				if SaveRAM[33] < 0
@@ -251,7 +255,7 @@ sub ObjectMain
 				end if
 			end if
 
-			if KeyPress.Right == true
+			if KeyPress[0].Right == true
 				Object.Value4 = 10
 				SaveRAM[33] += 10
 				if SaveRAM[33] > 100
@@ -265,7 +269,7 @@ sub ObjectMain
 			break
 
 		case 1
-			if KeyPress.Left == true
+			if KeyPress[0].Left == true
 				Object.Value5 = 10
 				SaveRAM[34] -= 10
 				if SaveRAM[34] < 0
@@ -277,7 +281,7 @@ sub ObjectMain
 				end if
 			end if
 
-			if KeyPress.Right == true
+			if KeyPress[0].Right == true
 				Object.Value6 = 10
 				SaveRAM[34] += 10
 				if SaveRAM[34] > 100
@@ -290,7 +294,7 @@ sub ObjectMain
 			break
 
 		case 2
-			if KeyPress.Left == true
+			if KeyPress[0].Left == true
 				SaveRAM[35]--
 				if SaveRAM[35] < 0
 					SaveRAM[35] = 1
@@ -298,7 +302,7 @@ sub ObjectMain
 				PlaySfx(23, 0) 	//Menu Button SFX
 			end if
 
-			if KeyPress.Right == true
+			if KeyPress[0].Right == true
 				SaveRAM[35]++
 				if SaveRAM[35] > 1
 					SaveRAM[35] = 0
@@ -309,7 +313,7 @@ sub ObjectMain
 
 		end switch
 #endplatform
-		if KeyPress.ButtonB == true
+		if KeyPress[0].ButtonB == true
 			Object.State = OPTIONS_EXIT_SETTINGS
 			Object.Timer = 248
 			Options.OriginalControls = SaveRAM[35]
@@ -378,7 +382,7 @@ sub ObjectMain
 			Object.Timer -= 8
 		else
 			Object.Type = TypeName[Blank Object]
-			Object.MWState = 3
+			MenuWindow.State = 3
 			//All of this is MenuButton Objects
 			Object[34].State = 1
 			Object[35].State = 1
@@ -390,8 +394,8 @@ sub ObjectMain
 			Object[41].State = 1
 			Object[42].State = 1
 			//End
-			Object.MHState = 1
-			Object.MHPropertyValue = 5	// Set the heading to "MAIN MENU"
+			MenuHeading.State = 1
+			MenuHeading.Header = 5	// Set the heading to "MAIN MENU"
 		end if
 		break
 
@@ -409,7 +413,7 @@ sub ObjectMain
 			ResetObjectEntity(TempValue0, TypeName[AboutMenu], 0, 0, 0)
 			SetupMenu(MENU_1, 0, 3, 1)
 			GetVersionNumber(MENU_1, 1)
-			Object[+10].InkEffect = 2 //INK_ALPHA
+			Object[+10].InkEffect = INK_ALPHA
 			Object.State++
 			Object.Alpha = 0
 			Object.OptionCount = 0
@@ -443,7 +447,7 @@ sub ObjectMain
 		else
 			if TempValue3 < 0
 				if Object.OptionCount == 9
-					KeyPress.ButtonB = true
+					KeyPress[0].ButtonB = true
 				end if
 			else
 				if Object.OptionCount == 9
@@ -453,7 +457,7 @@ sub ObjectMain
 		end if
 
 #endplatform
-		if KeyPress.ButtonB == true
+		if KeyPress[0].ButtonB == true
 			Object.State = OPTIONS_EXIT_ABOUTMENU
 			Object.Timer = 248
 			PlayStageSfx(1, 0)
@@ -633,24 +637,24 @@ sub ObjectStartup
 		LoadSpriteSheet("Menu/MenuGfx2_JP.gif")
 		break
 	end switch
-#platform: Mobile
+
 	if SaveRAM[32] == 0
 		SaveRAM[33] = 100
 		SaveRAM[34] = 100
 		SaveRAM[35] = 0
 	end if
 	Options.OriginalControls = SaveRAM[35]
-#endplatform
-	SpriteFrame(4, 2, 32, 32, 479, 34)				// #0 - Gear
-	SpriteFrame(4, 2, 32, 32, 479, 34)				// #1 - Gear Again
-	SpriteFrame(4, 2, 32, 32, 479, 34)				// #2 - Why is this a Gear again
-	SpriteFrame(4, 2, 32, 32, 479, 34)				// #3 - Please Stop.
-	SpriteFrame(0, 0, 20, 20, 168, 366)				// #4 - Decrease button
-	SpriteFrame(0, 0, 20, 20, 168, 387)				// #5 - Decrease button Highlight
-	SpriteFrame(0, 0, 20, 20, 189, 366)				// #6 - Increase button
-	SpriteFrame(0, 0, 20, 20, 189, 387)				// #7 - Increase button Highlight
-	SpriteFrame(45, 12, 13, 13, 488, 1)				// #8 - Triangle detail
-	SpriteFrame(0, 0, 250, 37, 259, 421)			// #9 - Selection Border	
+
+	SpriteFrame(4, 2, 32, 32, 479, 34)				// #0  - Gear
+	SpriteFrame(4, 2, 32, 32, 479, 34)				// #1  - Gear Again
+	SpriteFrame(4, 2, 32, 32, 479, 34)				// #2  - Why is this a Gear again
+	SpriteFrame(4, 2, 32, 32, 479, 34)				// #3  - Please Stop.
+	SpriteFrame(0, 0, 20, 20, 168, 366)				// #4  - Decrease button
+	SpriteFrame(0, 0, 20, 20, 168, 387)				// #5  - Decrease button Highlight
+	SpriteFrame(0, 0, 20, 20, 189, 366)				// #6  - Increase button
+	SpriteFrame(0, 0, 20, 20, 189, 387)				// #7  - Increase button Highlight
+	SpriteFrame(45, 12, 13, 13, 488, 1)				// #8  - Triangle detail
+	SpriteFrame(0, 0, 250, 37, 259, 421)			// #9  - Selection Border	
 	SpriteFrame(64, 12, 128, 16, 1, 530)			// #10 - How to Play
 	SpriteFrame(64, 12, 128, 16, 1, 290)			// #11 - Controls
 	SpriteFrame(64, 12, 128, 16, 1, 205)			// #12 - Settings

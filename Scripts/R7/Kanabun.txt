@@ -16,8 +16,8 @@
 #alias 2	:	KANABUN_OFFSCREEN
 
 // Badnik Conditions
-#alias 0	:	BADNIK_GOOD
-#alias 1	:	BADNIK_BAD
+#alias 0	:	PROPVAL_QUALITY_GOOD
+#alias 1	:	PROPVAL_QUALITY_BAD
 
 
 sub ObjectMain
@@ -34,7 +34,7 @@ sub ObjectMain
 	// The different Kanabun types have their own main update routines
 	// However, their main State Switches are exactly the same
 
-	if Object.PropertyValue == BADNIK_GOOD		
+	if Object.PropertyValue == PROPVAL_QUALITY_GOOD		
 		switch Object.State
 		case KANABUN_FLYL
 			// This Kanabun is initially given always-active priority, in order for its OOB state to work properly
@@ -206,7 +206,7 @@ sub ObjectPlayerInteraction
 
 			PlayerObjectCollision(C_TOUCH, -14, -14, 14, 14)
 			if CheckResult == true
-				CallFunction(PlayerObject_BadnikBreak)
+				CallFunction(Player_BadnikBreak)
 			end if
 		else
 			// If in the BG, only interact with the player if the player is curled
@@ -215,7 +215,7 @@ sub ObjectPlayerInteraction
 			if Player.Animation == ANI_JUMPING
 				PlayerObjectCollision(C_TOUCH, -14, -14, 14, 14)
 				if CheckResult == true
-					CallFunction(PlayerObject_BadnikBreak)
+					CallFunction(Player_BadnikBreak)
 				end if
 			end if
 		end if
@@ -278,7 +278,7 @@ sub ObjectStartup
 			
 			// And setup where the Kanabun's gonna fly back to
 			if Object[ArrayPos0].PropertyValue == 2
-				Object[ArrayPos0].PropertyValue = BADNIK_GOOD
+				Object[ArrayPos0].PropertyValue = PROPVAL_QUALITY_GOOD
 				Object[ArrayPos0].DrawOrderEX = 3
 			else
 				Object[ArrayPos0].DrawOrderEX = 2

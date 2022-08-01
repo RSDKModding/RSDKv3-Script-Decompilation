@@ -7,7 +7,7 @@
 #alias Object.Value7	:	Object.YFlipped	// Only flipped in functionality, not in the way it displays
 
 // Player Aliases
-#alias Player.Value7	:	Player.AnimationCheck
+#alias Player.Value7	:	Player.AnimationReserve
 
 #alias 0	:	GRAVITY_GROUND
 #alias 1	:	GRAVITY_AIR
@@ -49,22 +49,22 @@ sub ObjectPlayerInteraction
 			PlayerObjectCollision(C_BOX, -16, -8, 16, 8)
 			PlayerObjectCollision(C_TOUCH, -16, -10, 16, -6)
 			if CheckResult == true
-				Player.AnimationCheck = ANI_WALKING
+				Player.AnimationReserve = ANI_WALKING
 				if Player.Animation == ANI_RUNNING
-					Player.AnimationCheck = ANI_RUNNING
+					Player.AnimationReserve = ANI_RUNNING
 				end if
 				if Player.Animation == ANI_PEELOUT
-					Player.AnimationCheck = ANI_PEELOUT
+					Player.AnimationReserve = ANI_PEELOUT
 				end if
 
 				Object.ActiveSpring = true
 				
 #platform: Use_Origins
-				Player.State = PlayerObject_ResetDropDash
+				Player.State = Player_State_Air_NoDropDash
 #endplatform
 
 #platform: Use_Standalone
-				Player.State = PlayerObject_HandleAir
+				Player.State = Player_State_Air
 #endplatform
 				Player.Gravity = GRAVITY_AIR
 				Player.YVelocity = -0xA0000
@@ -72,33 +72,32 @@ sub ObjectPlayerInteraction
 				Player.Timer = 0
 				PlaySfx(11, 0)
 				
-#platform: Use_Standalone
-	#platform: Use_Haptics
+#platform: Use_Haptics
 				HapticEffect(10, 0, 0, 0)
-	#endplatform
 #endplatform
+
 			end if
 		else
 			if Player.YVelocity >= 0
 				PlayerObjectCollision(C_PLATFORM, -16, -8, 16, 8)
 				PlayerObjectCollision(C_TOUCH, -16, -10, 16, -6)
 				if CheckResult == true
-					Player.AnimationCheck = ANI_WALKING
+					Player.AnimationReserve = ANI_WALKING
 					if Player.Animation == ANI_RUNNING
-						Player.AnimationCheck = ANI_RUNNING
+						Player.AnimationReserve = ANI_RUNNING
 					end if
 					if Player.Animation == ANI_PEELOUT
-						Player.AnimationCheck = ANI_PEELOUT
+						Player.AnimationReserve = ANI_PEELOUT
 					end if
 					
 					Object.ActiveSpring = true
 					
 #platform: Use_Origins
-				Player.State = PlayerObject_ResetDropDash
+				Player.State = Player_State_Air_NoDropDash
 #endplatform
 
 #platform: Use_Standalone
-				Player.State = PlayerObject_HandleAir
+				Player.State = Player_State_Air
 #endplatform
 					Player.Gravity = GRAVITY_AIR
 					Player.YVelocity = -0xA0000
@@ -106,11 +105,10 @@ sub ObjectPlayerInteraction
 					Player.Timer = 0
 					PlaySfx(11, 0)
 				
-#platform: Use_Standalone
-	#platform: Use_Haptics
-				HapticEffect(10, 0, 0, 0)
-	#endplatform
+#platform: Use_Haptics
+					HapticEffect(10, 0, 0, 0)
 #endplatform
+
 				end if
 			end if
 		end if
@@ -130,11 +128,10 @@ sub ObjectPlayerInteraction
 				Player.ControlLock = 16
 				PlaySfx(11, 0)
 				
-#platform: Use_Standalone
-	#platform: Use_Haptics
+#platform: Use_Haptics
 				HapticEffect(10, 0, 0, 0)
-	#endplatform
 #endplatform
+
 			end if
 		end if
 		break
@@ -152,11 +149,10 @@ sub ObjectPlayerInteraction
 				Player.ControlLock = 16
 				PlaySfx(11, 0)
 				
-#platform: Use_Standalone
-	#platform: Use_Haptics
+#platform: Use_Haptics
 				HapticEffect(10, 0, 0, 0)
-	#endplatform
 #endplatform
+
 			end if
 		end if
 		break
@@ -172,22 +168,21 @@ sub ObjectPlayerInteraction
 			end if
 			
 #platform: Use_Origins
-				Player.State = PlayerObject_ResetDropDash
+				Player.State = Player_State_Air_NoDropDash
 #endplatform
 
 #platform: Use_Standalone
-				Player.State = PlayerObject_HandleAir
+				Player.State = Player_State_Air
 #endplatform
 			Player.Gravity = GRAVITY_AIR
 			Player.YVelocity = 0x100000
 			Player.Timer = 0
 			PlaySfx(11, 0)
 				
-#platform: Use_Standalone
-	#platform: Use_Haptics
+#platform: Use_Haptics
 			HapticEffect(10, 0, 0, 0)
-	#endplatform
 #endplatform
+
 		end if
 		break
 	case PROPVAL_FACING_DIAGONAL_UR
@@ -198,11 +193,11 @@ sub ObjectPlayerInteraction
 				Object.ActiveSpring = true
 				
 #platform: Use_Origins
-				Player.State = PlayerObject_ResetDropDash
+				Player.State = Player_State_Air_NoDropDash
 #endplatform
 
 #platform: Use_Standalone
-				Player.State = PlayerObject_HandleAir
+				Player.State = Player_State_Air
 #endplatform
 				Player.Gravity = GRAVITY_AIR
 				Player.Speed = 0x74000
@@ -211,11 +206,10 @@ sub ObjectPlayerInteraction
 				Player.Timer = 0
 				PlaySfx(11, 0)
 				
-#platform: Use_Standalone
-	#platform: Use_Haptics
+#platform: Use_Haptics
 				HapticEffect(10, 0, 0, 0)
-	#endplatform
 #endplatform
+
 			end if
 		end if
 		if Player.YVelocity >= 0
@@ -224,11 +218,11 @@ sub ObjectPlayerInteraction
 				Object.ActiveSpring = true
 				
 #platform: Use_Origins
-				Player.State = PlayerObject_ResetDropDash
+				Player.State = Player_State_Air_NoDropDash
 #endplatform
 
 #platform: Use_Standalone
-				Player.State = PlayerObject_HandleAir
+				Player.State = Player_State_Air
 #endplatform
 				Player.Gravity = GRAVITY_AIR
 				Player.Speed = 0x74000
@@ -237,11 +231,10 @@ sub ObjectPlayerInteraction
 				Player.Timer = 0
 				PlaySfx(11, 0)
 				
-#platform: Use_Standalone
-	#platform: Use_Haptics
+#platform: Use_Haptics
 				HapticEffect(10, 0, 0, 0)
-	#endplatform
 #endplatform
+
 			end if
 		end if
 		break
@@ -254,11 +247,11 @@ sub ObjectPlayerInteraction
 				Object.ActiveSpring = true
 				
 #platform: Use_Origins
-				Player.State = PlayerObject_ResetDropDash
+				Player.State = Player_State_Air_NoDropDash
 #endplatform
 
 #platform: Use_Standalone
-				Player.State = PlayerObject_HandleAir
+				Player.State = Player_State_Air
 #endplatform
 				Player.Gravity = GRAVITY_AIR
 				Player.Speed = -0x74000
@@ -267,11 +260,10 @@ sub ObjectPlayerInteraction
 				Player.Timer = 0
 				PlaySfx(11, 0)
 				
-#platform: Use_Standalone
-	#platform: Use_Haptics
+#platform: Use_Haptics
 				HapticEffect(10, 0, 0, 0)
-	#endplatform
 #endplatform
+
 			end if
 		end if
 		if Player.Gravity == GRAVITY_GROUND
@@ -280,11 +272,11 @@ sub ObjectPlayerInteraction
 				Object.ActiveSpring = true
 				
 #platform: Use_Origins
-				Player.State = PlayerObject_ResetDropDash
+				Player.State = Player_State_Air_NoDropDash
 #endplatform
 
 #platform: Use_Standalone
-				Player.State = PlayerObject_HandleAir
+				Player.State = Player_State_Air
 #endplatform
 				Player.Gravity = GRAVITY_AIR
 				Player.Speed = -0x74000
@@ -293,11 +285,10 @@ sub ObjectPlayerInteraction
 				Player.Timer = 0
 				PlaySfx(11, 0)
 				
-#platform: Use_Standalone
-	#platform: Use_Haptics
+#platform: Use_Haptics
 				HapticEffect(10, 0, 0, 0)
-	#endplatform
 #endplatform
+
 			end if
 		end if
 		break
@@ -308,11 +299,11 @@ sub ObjectPlayerInteraction
 			Object.ActiveSpring = true
 			
 #platform: Use_Origins
-				Player.State = PlayerObject_ResetDropDash
+				Player.State = Player_State_Air_NoDropDash
 #endplatform
 
 #platform: Use_Standalone
-				Player.State = PlayerObject_HandleAir
+				Player.State = Player_State_Air
 #endplatform
 			Player.Gravity = GRAVITY_AIR
 			Player.Speed = 0x74000
@@ -320,11 +311,10 @@ sub ObjectPlayerInteraction
 			Player.Timer = 0
 			PlaySfx(11, 0)
 				
-#platform: Use_Standalone
-	#platform: Use_Haptics
+#platform: Use_Haptics
 			HapticEffect(10, 0, 0, 0)
-	#endplatform
 #endplatform
+
 		end if
 		break
 		
@@ -334,11 +324,11 @@ sub ObjectPlayerInteraction
 			Object.ActiveSpring = true
 			
 #platform: Use_Origins
-				Player.State = PlayerObject_ResetDropDash
+				Player.State = Player_State_Air_NoDropDash
 #endplatform
 
 #platform: Use_Standalone
-				Player.State = PlayerObject_HandleAir
+				Player.State = Player_State_Air
 #endplatform
 			Player.Gravity = GRAVITY_AIR
 			Player.Speed = -0x74000
@@ -346,11 +336,10 @@ sub ObjectPlayerInteraction
 			Player.Timer = 0
 			PlaySfx(11, 0)
 				
-#platform: Use_Standalone
-	#platform: Use_Haptics
+#platform: Use_Haptics
 			HapticEffect(10, 0, 0, 0)
-	#endplatform
 #endplatform
+
 		end if
 		break
 	end switch

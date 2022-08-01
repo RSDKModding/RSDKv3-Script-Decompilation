@@ -65,7 +65,7 @@ function BossBody_LaunchBomb
 			Object[TempObjectPos].XPos += 0x80000
 		end if
 
-		Object[TempObjectPos].YPos += 1572864
+		Object[TempObjectPos].YPos += 0x180000
 
 		Object[TempObjectPos].YVelocity = 0x30000
 
@@ -211,10 +211,9 @@ sub ObjectMain
 			Object.State = BOSSBODY_DESTROYED
 			Object.Timer = 0
 			Object.Priority = PRIORITY_ACTIVE
-#platform: Use_Standalone
-	#platform: Use_Haptics
+
+#platform: Use_Haptics
 			HapticEffect(76, 0, 0, 0)
-	#endplatform
 #endplatform
 		end if
 
@@ -294,10 +293,9 @@ sub ObjectPlayerInteraction
 
 			Eggman.State = EGGMAN_HURT
 			PlaySfx(22, 0)
-#platform: Use_Standalone
-	#platform: Use_Haptics
+
+#platform: Use_Haptics
 			HapticEffect(75, 0, 0, 0)
-	#endplatform
 #endplatform
 		end if
 		break
@@ -305,15 +303,22 @@ sub ObjectPlayerInteraction
 	case BOSSBODY_DRAG_EGGMAN_2
 		PlayerObjectCollision(C_TOUCH, -64, -16, 64, 16)
 		if CheckResult == true
+#platform: Use_Origins
+			EngineCallback(NOTIFY_KILL_BOSS)
+			game.callbackParam0 = 1
+			EngineCallback(NOTIFY_BOSS_END)
+			if game.playMode == BOOT_PLAYMODE_BOSSRUSH
+				StopMusic()
+			end if
+#endplatform
 			Player.YVelocity = 0
 			Object.YVelocity -= 0x800000	// 0x800000
 			Object.DamageTimer = 1
 			Object.State++
 			PlaySfx(22, 0)
-#platform: Use_Standalone
-	#platform: Use_Haptics
+
+#platform: Use_Haptics
 			HapticEffect(75, 0, 0, 0)
-	#endplatform
 #endplatform
 		end if
 		break

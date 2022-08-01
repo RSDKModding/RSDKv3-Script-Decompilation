@@ -19,7 +19,7 @@
 #alias 3	:	TITLECARD_SLIDEOUT
 
 // Player aliases
-#alias Object.Value4	:	Player.Invincible
+#alias Object.Value4	:	Player.InvincibleTimer
 
 #alias 0	:	PLAYER_SONIC
 
@@ -87,7 +87,7 @@ sub ObjectDraw
 					// A mobile update (+ Origins) fixes the issue though!
 					Stage.Minutes = Rec_Minutes
 					
-					Player[0].Invincible = 8000
+					Player[0].InvincibleTimer = 8000
 				end if
 				
 				Warp.Timer = 0
@@ -332,12 +332,12 @@ sub ObjectStartup
 #endplatform
 
 #platform: Use_Standalone
-	#platform: Mobile
-		SpriteFrame(72, 81, 160, 16, 49, 50)	// #5  - Sonic The Hedgehog CD
-	#endplatform
-
 	#platform: Standard
 		SpriteFrame(64, 81, 160, 16, 41, 50)	// #5  - Sonic The Hedgehog CD
+	#endplatform
+
+	#platform: Mobile
+		SpriteFrame(72, 81, 160, 16, 49, 50)	// #5  - Sonic The Hedgehog CD
 	#endplatform
 #endplatform
 	
@@ -367,6 +367,27 @@ sub ObjectStartup
 	SpriteFrame(81, 56, 11, 23, 187, 84) 	// "n"
 	SpriteFrame(92, 56, 10, 23, 81, 108) 	// "t"
 	
+#platform: Use_Origins
+	if game.playMode == BOOT_PLAYMODE_MISSION
+		TempValue0 = true
+	else
+		if game.playMode == BOOT_PLAYMODE_BOSSRUSH
+			TempValue0 = true
+		else
+			TempValue0 = false
+		end if
+	end if
+	
+	if TempValue0 != false
+		PlayMusic(0)
+		game.missionCondition = 0
+		game.missionEnd = false
+		Player.ControlMode = 0
+		Stage.TimeEnabled = true
+		ResetObjectEntity(20, TypeName[Blank Object], 0, 0, 0)
+		Warp.XPos = 0
+	end if
+#endplatform
 end sub
 
 

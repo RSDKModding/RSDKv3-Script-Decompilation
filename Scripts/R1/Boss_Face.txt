@@ -82,7 +82,7 @@
 #alias Object.Value5		:	Debris.YOffSet
 
 // Player Aliases
-#alias Player.Value4		:	Player.Invincible
+#alias Player.Value4		:	Player.InvincibleTimer
 
 // States
 #alias 0	:	R1_EGGMAN_SETUP
@@ -372,10 +372,9 @@ sub ObjectMain
 				Player.Score += 1000
 				ResetObjectEntity(TempValue0, TypeName[EggmanJetpack], 0, Object.XPos, Object.YPos)
 				Object.Animation = EGGANI_DESTROYED
-#platform: Use_Standalone
-	#platform: Use_Haptics
+
+#platform: Use_Haptics
 				HapticEffect(76, 0, 0, 0)
-	#endplatform
 #endplatform
 			end if
 		end if
@@ -653,10 +652,9 @@ sub ObjectPlayerInteraction
 						if Object.Timer == 0
 							if BossBody.State != BOSSBODY_DESCEND
 								PlaySfx(22, 0)
-#platform: Use_Standalone
-	#platform: Use_Haptics
+								
+#platform: Use_Haptics
 								HapticEffect(75, 0, 0, 0)
-	#endplatform
 #endplatform
 
 #platform: Use_Origins
@@ -776,10 +774,10 @@ sub ObjectPlayerInteraction
 							end if
 						end if
 					else
-						if Player.Invincible == 0
+						if Player.InvincibleTimer == 0
 							Object.Animation = EGGANI_LAUGH
 							Object.FaceTimer = 180
-							Player.State = PlayerObject_Hurt
+							Player.State = Player_State_GotHit
 							if Player.XPos > Object.XPos
 								Player.Speed =  0x20000
 							else

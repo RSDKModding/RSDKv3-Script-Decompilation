@@ -16,11 +16,10 @@ sub ObjectMain
 			Object.Value0 = 0
 			Object.State++
 			
-#platform: Use_Standalone
-	#platform: Use_Haptics
+#platform: Use_Haptics
 			HapticEffect(100, 0, 0, 0)
-	#endplatform
 #endplatform
+
 		end if
 		break
 	case 1
@@ -76,7 +75,7 @@ sub ObjectPlayerInteraction
 				end if
 			else
 				if Object.State < 2
-					if TempValue0 > 1572864
+					if TempValue0 > 0x180000
 						Player.XPos += 0x140000
 						Player.Speed = 0
 						Player.XVelocity = 0
@@ -104,7 +103,7 @@ sub ObjectPlayerInteraction
 				end if
 			else
 				if Object.State < 2
-					if TempValue0 > 1572864
+					if TempValue0 > 0x180000
 						Player.XPos -= 0x140000
 						Player.Speed = 0
 						Player.XVelocity = 0
@@ -124,13 +123,13 @@ sub ObjectPlayerInteraction
 				Player.XVelocity >>= 1
 				PlayerObjectCollision(C_BOX, -48, -80, -32, 20)
 				PlayerObjectCollision(C_BOX, 32, -80, 48, 20)
-				if Player.State == PlayerObject_HandleTailsFlight
+				if Player.State == Player_State_Fly
 #platform: Use_Origins
-					Player.State = PlayerObject_ResetDropDash
+					Player.State = Player_State_Air_NoDropDash
 #endplatform
 
 #platform: Use_Standalone
-					Player.State = PlayerObject_HandleAir
+					Player.State = Player_State_Air
 #endplatform
 					Player.Animation = ANI_WALKING
 				end if

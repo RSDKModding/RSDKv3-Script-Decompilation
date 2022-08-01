@@ -1,4 +1,4 @@
-//------------Sonic CD Eggman Mobile Script-------------//
+//----------------Sonic CD Eggman Mobile Script---------------//
 //--------Scripted by Christian Whitehead 'The Taxman'--------//
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
@@ -28,34 +28,34 @@
 #alias Object.Value2		:	SteamCloud.YVelocity
 
 // States
-#alias 0					:	R6_EGG_IDLE
-#alias 1					:	R6_EGG_START
-#alias 2					:	R6_EGG_INTRO
-#alias 3					:	R6_EGG_SET_ROUTE_1
-#alias 4					:	R6_EGG_ASCEND_1
-#alias 5					:	R6_EGG_SET_ROUTE_2
-#alias 6					:	R6_EGG_ASCEND_2
-#alias 7					:	R6_EGG_SET_ROUTE_3
-#alias 8					:	R6_EGG_ASCEND_3
-#alias 9					:	R6_EGG_ROOF_DRILL
-#alias 10					:	R6_EGG_DESTROYED
-#alias 11					:	R6_EGG_PANICKING
-#alias 12					:	R6_EGG_ESCAPE
+#alias 0		:	R6_EGG_IDLE
+#alias 1		:	R6_EGG_START
+#alias 2		:	R6_EGG_INTRO
+#alias 3		:	R6_EGG_SET_ROUTE_1
+#alias 4		:	R6_EGG_ASCEND_1
+#alias 5		:	R6_EGG_SET_ROUTE_2
+#alias 6		:	R6_EGG_ASCEND_2
+#alias 7		:	R6_EGG_SET_ROUTE_3
+#alias 8		:	R6_EGG_ASCEND_3
+#alias 9		:	R6_EGG_ROOF_DRILL
+#alias 10		:	R6_EGG_DESTROYED
+#alias 11		:	R6_EGG_PANICKING
+#alias 12		:	R6_EGG_ESCAPE
 
 // FloorControl States
-#alias 0					:	FLOORCONTROL_INACTIVE
-#alias 1					:	FLOORCONTROL_SETUP_CRUMBLE
-#alias 3					:	FLOORCONTROL_ELEC_ARC
-#alias 4					:	FLOORCONTROL_TILE_SWAP
+#alias 0		:	FLOORCONTROL_INACTIVE
+#alias 1		:	FLOORCONTROL_SETUP_CRUMBLE
+#alias 3		:	FLOORCONTROL_ELEC_ARC
+#alias 4		:	FLOORCONTROL_TILE_SWAP
 
 // Boss Barrier States
-#alias 2					:	BOSSBARRIER2_OPEN
+#alias 2		:	BOSSBARRIER2_OPEN
 
 // Eggman Animations
-#alias 0					:	EGG_ANI_IDLE
-#alias 1					:	EGG_ANI_HURT
-#alias 2					:	EGG_ANI_DEFEAT
-#alias 3					:	EGG_ANI_PANIC
+#alias 0		:	EGG_ANI_IDLE
+#alias 1		:	EGG_ANI_HURT
+#alias 2		:	EGG_ANI_DEFEAT
+#alias 3		:	EGG_ANI_PANIC
 
 
 // Function declarations
@@ -102,7 +102,7 @@ end function
 
 function R6_EGG_ROUTE_1ST_FLOOR
 	TempValue0 = Object.YPos
-	TempValue0 += 7864320
+	TempValue0 += 0x780000
 
 	if Player.YPos < TempValue0
 		if FloorControl.State < FLOORCONTROL_TILE_SWAP
@@ -148,7 +148,7 @@ end function
 
 function R6_EGG_ROUTE_2ST_FLOOR
 	TempValue0 = Object.YPos
-	TempValue0 += 7864320
+	TempValue0 += 0x780000
 
 	if Player.YPos < TempValue0
 		Object.TriggerElecArc = true
@@ -242,7 +242,7 @@ sub ObjectMain
 		if Object.Timer == 120
 			Object.Timer = 0
 			Object.YVelocity = 0x30000
-			Object.TargetYPos = 102760448
+			Object.TargetYPos = 0x6200000
 
 			Object.ThrusterAnimation = 1
 			Object.FrameTimer = 0
@@ -258,7 +258,7 @@ sub ObjectMain
 	case R6_EGG_SET_ROUTE_1
 		CallFunction(R6_EGG_ROUTE_1ST_FLOOR)
 		if Object.State > 3
-			Object.TargetYPos = 69730304
+			Object.TargetYPos = 0x4280000
 		end if
 		break
 
@@ -269,7 +269,7 @@ sub ObjectMain
 	case R6_EGG_SET_ROUTE_2
 		CallFunction(R6_EGG_ROUTE_2ST_FLOOR)
 		if Object.State > 5
-			Object.TargetYPos = 36175872
+			Object.TargetYPos = 0x2280000
 		end if
 		break
 
@@ -280,7 +280,7 @@ sub ObjectMain
 	case R6_EGG_SET_ROUTE_3
 		CallFunction(R6_EGG_ROUTE_2ST_FLOOR)
 		if Object.State > 7
-			Object.TargetYPos = 19922944
+			Object.TargetYPos = 0x1300000
 		end if
 		break
 
@@ -311,8 +311,8 @@ sub ObjectMain
 		Object.Timer++
 		Object.Timer &= 1
 
-		if Object.YPos >= 44040192
-			Object.YPos = 44040192
+		if Object.YPos >= 0x2A00000
+			Object.YPos = 0x2A00000
 			Object.Timer = 0
 			Object.YVelocity = 0
 
@@ -327,10 +327,10 @@ sub ObjectMain
 
 		if Player.XPos > Object.TargetYPos
 			Player.XPos = Object.TargetYPos
-			Player.XPos += 5242880
+			Player.XPos += 0x500000
 		else
 			Player.XPos = Object.TargetYPos
-			Player.XPos -= 5242880
+			Player.XPos -= 0x500000
 		end if
 
 		CallFunction(R6_EGG_STEAM)
@@ -340,10 +340,10 @@ sub ObjectMain
 		Player.Speed = 0
 		if Player.XPos > Object.XPos
 			Player.XPos = Object.XPos
-			Player.XPos += 5242880
+			Player.XPos += 0x500000
 		else
 			Player.XPos = Object.XPos
-			Player.XPos -= 5242880
+			Player.XPos -= 0x500000
 		end if
 
 		CallFunction(R6_EGG_STEAM)
@@ -365,10 +365,10 @@ sub ObjectMain
 		Player.Speed = 0
 		if Player.XPos > Object.XPos
 			Player.XPos = Object.XPos
-			Player.XPos += 5242880
+			Player.XPos += 0x500000
 		else
 			Player.XPos = Object.XPos
-			Player.XPos -= 5242880
+			Player.XPos -= 0x500000
 		end if
 		break
 
@@ -379,7 +379,7 @@ end sub
 sub ObjectPlayerInteraction
 	PlayerObjectCollision(C_TOUCH, -22, 40, 22, 64)
 	if CheckResult == true
-		CallFunction(PlayerObject_Hit)
+		CallFunction(Player_Hit)
 	end if
 	
 	if Player.Animation != ANI_HURT
@@ -391,10 +391,8 @@ sub ObjectPlayerInteraction
 			if TempValue0 == true
 				if Player.Animation == ANI_JUMPING
 			
-#platform: Use_Standalone
-	#platform: Use_Haptics
+#platform: Use_Haptics
 					HapticEffect(75, 0, 0, 0)
-	#endplatform
 #endplatform
 					Object.FaceTimer = 120
 
@@ -410,7 +408,17 @@ sub ObjectPlayerInteraction
 						Object.EggmanAnimation = EGG_ANI_HURT
 						Object.Frame = 0
 					else
-						Object.State = 10
+
+#platform: Use_Origins
+						EngineCallback(NOTIFY_KILL_BOSS)
+						game.callbackParam0 = 1
+						EngineCallback(NOTIFY_BOSS_END)
+						if game.playMode == BOOT_PLAYMODE_BOSSRUSH
+							StopMusic()
+						end if
+#endplatform
+
+						Object.State = R6_EGG_DESTROYED
 						Object.SpikesAnimation = 2
 						Object.AnimationTimer = 0
 						Object.EggmanAnimation = EGG_ANI_DEFEAT
@@ -426,7 +434,7 @@ sub ObjectPlayerInteraction
 						PlaySfx(22, 0)
 					end if
 				else
-					CallFunction(PlayerObject_Hit)
+					CallFunction(Player_Hit)
 				end if
 			end if
 		end if

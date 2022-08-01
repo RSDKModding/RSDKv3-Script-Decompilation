@@ -16,8 +16,8 @@
 #alias 3	:	KUMOKUMO_SHOOT
 
 // Badnik States (Property Values)
-#alias 0	:	BADNIK_GOOD
-#alias 1	:	BADNIK_BAD
+#alias 0	:	PROPVAL_QUALITY_GOOD
+#alias 1	:	PROPVAL_QUALITY_BAD
 
 // Kumo Kumo Web Aliases
 #alias Object.Value1	:	Object.XVelocity
@@ -53,7 +53,7 @@ sub ObjectMain
 				// (In most cases this won't change anything, but for Good Kumo Kumos, this restores them after they launch a web)
 				Object.DrawOrder = 3
 				
-				if Object.PropertyValue == BADNIK_GOOD
+				if Object.PropertyValue == PROPVAL_QUALITY_GOOD
 					Object.State = KUMOKUMO_GOOD_GROUND
 				else
 					Object.State = KUMOKUMO_BAD_GROUND
@@ -172,7 +172,7 @@ sub ObjectPlayerInteraction
 	// Check collision for the main Badnik
 	PlayerObjectCollision(C_TOUCH, -24, -16, 24, 16)
 	if CheckResult == true
-		CallFunction(PlayerObject_BadnikBreak)
+		CallFunction(Player_BadnikBreak)
 	end if
 	
 	// Only Good Badniks are able to shoot, and they have to be on the ground too
@@ -210,7 +210,7 @@ sub ObjectDraw
 	
 	switch Object.State
 	case KUMOKUMO_AIRBORNE
-		if Object.PropertyValue == BADNIK_GOOD
+		if Object.PropertyValue == PROPVAL_QUALITY_GOOD
 			DrawSpriteFX(2, FX_FLIP, Object.XPos, Object.YPos)
 		else
 			DrawSpriteFX(5, FX_FLIP, Object.XPos, Object.YPos)
@@ -304,6 +304,6 @@ sub RSDKLoad
 
 	AddEditorVariable("Condition")
 	SetActiveVariable("Condition")
-	AddEnumVariable("Good", BADNIK_GOOD)
-	AddEnumVariable("Bad",  BADNIK_BAD)
+	AddEnumVariable("Good", PROPVAL_QUALITY_GOOD)
+	AddEnumVariable("Bad",  PROPVAL_QUALITY_BAD)
 end sub

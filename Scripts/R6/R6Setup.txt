@@ -14,18 +14,18 @@
 #alias Object.Scale		:	Object.BounceFloorFlag
 
 // Player Aliases
-#alias Player.Value4	:	Player.Invincible
+#alias Player.Value4	:	Player.InvincibleTimer
 
 // Gravity
-#alias 1				:	GRAVITY_AIR
+#alias 1	:	GRAVITY_AIR
 
 // Priority
-#alias 1				:	PRIORITY_ACTIVE
+#alias 1	:	PRIORITY_ACTIVE
 
 // States
-#alias 0				:	R6_SETUP_PREPARE_CHARGE
-#alias 1				:	R6_SETUP_WEB_CHARGE
-#alias 2				:	R6_SETUP_WEB_SHOCK
+#alias 0	:	R6_SETUP_PREPARE_CHARGE
+#alias 1	:	R6_SETUP_WEB_CHARGE
+#alias 2	:	R6_SETUP_WEB_SHOCK
 
 
 sub ObjectMain
@@ -136,12 +136,12 @@ sub ObjectMain
 	Object.ElectricTile++
 	Object.ElectricTile %= 15
 
-	if Object.ElectricTile < 32
-		Object.ElectricTile++
+	if Object.BounceFloorAnim < 32
+		Object.BounceFloorAnim++
 		Object.BounceFloorFlag = false
 	else
-		if Object.ElectricTile < 212
-			TempValue0 = Object.ElectricTile
+		if Object.BounceFloorAnim < 212
+			TempValue0 = Object.BounceFloorAnim
 			TempValue0 &= 1
 			if TempValue0 == 0
 				TempValue0 = Object.BounceFloorTile
@@ -150,16 +150,16 @@ sub ObjectMain
 				Object.BounceFloorTile %= 6
 				Copy16x16Tile(543, TempValue0)
 			end if
-			Object.ElectricTile++
+			Object.BounceFloorAnim++
 			Object.BounceFloorFlag = true
 		else
-			Object.ElectricTile = 0
+			Object.BounceFloorAnim = 0
 			Object.BounceFloorFlag = false
 			Copy16x16Tile(543, 822)
 		end if
 	end if
 
-	TempValue0 = Object.PaletteBank
+	TempValue0   = Object.PaletteBank
 	TempValue0 >>= 1
 	SetActivePalette(TempValue0, 0, 240)
 	Object.PaletteBank++
@@ -189,22 +189,21 @@ sub ObjectPlayerInteraction
 				Player.Animation = ANI_JUMPING
 				Player.Gravity = GRAVITY_AIR
 				Player.Timer = 0
-				Player.YVelocity = -1441792
+				Player.YVelocity = -0x160000
 
 #platform: Use_Origins
-				Player.State = PlayerObject_ResetDropDash
+				Player.State = Player_State_Air_NoDropDash
 #endplatform
 
 #platform: Use_Standalone
-				Player.State = PlayerObject_HandleAir
+				Player.State = Player_State_Air
 #endplatform
 				PlayStageSfx(0, 0)
 				
-#platform: Use_Standalone
-	#platform: Use_Haptics
+#platform: Use_Haptics
 				HapticEffect(60, 0, 0, 0)
-	#endplatform
 #endplatform
+
 			end if
 		end if
 	end if
@@ -214,8 +213,8 @@ sub ObjectPlayerInteraction
 	Get16x16TileInfo(TempValue0, TempValue2, TempValue3, 8)
 	switch TempValue0
 	case 2
-		if Player.Invincible == 0
-			Player.State = PlayerObject_Hurt
+		if Player.InvincibleTimer == 0
+			Player.State = Player_State_GotHit
 			if Player.Direction == FACING_LEFT
 				Player.Speed = 0x20000
 			else
@@ -224,9 +223,9 @@ sub ObjectPlayerInteraction
 		end if
 		break
 	case 5
-		if Object.State == 2
-			if Player.Invincible == 0
-				Player.State = PlayerObject_Hurt
+		if Object.State == R6_SETUP_WEB_SHOCK
+			if Player.InvincibleTimer == 0
+				Player.State = Player_State_GotHit
 				if Player.Direction == FACING_LEFT
 					Player.Speed = 0x20000
 				else
@@ -236,10 +235,10 @@ sub ObjectPlayerInteraction
 		end if
 		break
 	case 6
-		if Object.State == 2
+		if Object.State == R6_SETUP_WEB_SHOCK
 			if Object.Direction == FACING_RIGHT
-				if Player.Invincible == 0
-					Player.State = PlayerObject_Hurt
+				if Player.InvincibleTimer == 0
+					Player.State = Player_State_GotHit
 					if Player.Direction == FACING_LEFT
 						Player.Speed = 0x20000
 					else
@@ -250,10 +249,10 @@ sub ObjectPlayerInteraction
 		end if
 		break
 	case 7
-		if Object.State == 2
+		if Object.State == R6_SETUP_WEB_SHOCK
 			if Object.Direction == FACING_LEFT
-				if Player.Invincible == 0
-					Player.State = PlayerObject_Hurt
+				if Player.InvincibleTimer == 0
+					Player.State = Player_State_GotHit
 					if Player.Direction == FACING_LEFT
 						Player.Speed = 0x20000
 					else
@@ -264,10 +263,10 @@ sub ObjectPlayerInteraction
 		end if
 		break
 	case 8
-		if Object.State == 2
+		if Object.State == R6_SETUP_WEB_SHOCK
 			if Object.Direction == 2
-				if Player.Invincible == 0
-					Player.State = PlayerObject_Hurt
+				if Player.InvincibleTimer == 0
+					Player.State = Player_State_GotHit
 					if Player.Direction == FACING_LEFT
 						Player.Speed = 0x20000
 					else
@@ -283,8 +282,8 @@ sub ObjectPlayerInteraction
 	Get16x16TileInfo(TempValue0, TempValue2, TempValue3, 8)
 	switch TempValue0
 	case 2
-		if Player.Invincible == 0
-			Player.State = PlayerObject_Hurt
+		if Player.InvincibleTimer == 0
+			Player.State = Player_State_GotHit
 			if Player.Direction == FACING_LEFT
 				Player.Speed = 0x20000
 			else
@@ -293,9 +292,9 @@ sub ObjectPlayerInteraction
 		end if
 		break
 	case 5
-		if Object.State == 2
-			if Player.Invincible == 0
-				Player.State = PlayerObject_Hurt
+		if Object.State == R6_SETUP_WEB_SHOCK
+			if Player.InvincibleTimer == 0
+				Player.State = Player_State_GotHit
 				if Player.Direction == FACING_LEFT
 					Player.Speed = 0x20000
 				else
@@ -305,10 +304,10 @@ sub ObjectPlayerInteraction
 		end if
 		break
 	case 6
-		if Object.State == 2
+		if Object.State == R6_SETUP_WEB_SHOCK
 			if Object.Direction == FACING_RIGHT
-				if Player.Invincible == 0
-					Player.State = PlayerObject_Hurt
+				if Player.InvincibleTimer == 0
+					Player.State = Player_State_GotHit
 					if Player.Direction == FACING_LEFT
 						Player.Speed = 0x20000
 					else
@@ -319,10 +318,10 @@ sub ObjectPlayerInteraction
 		end if
 		break
 	case 7
-		if Object.State == 2
+		if Object.State == R6_SETUP_WEB_SHOCK
 			if Object.Direction == FACING_LEFT
-				if Player.Invincible == 0
-					Player.State = PlayerObject_Hurt
+				if Player.InvincibleTimer == 0
+					Player.State = Player_State_GotHit
 					if Player.Direction == FACING_LEFT
 						Player.Speed = 0x20000
 					else
@@ -333,10 +332,10 @@ sub ObjectPlayerInteraction
 		end if
 		break
 	case 8
-		if Object.State == 2
+		if Object.State == R6_SETUP_WEB_SHOCK
 			if Object.Direction == 2
-				if Player.Invincible == 0
-					Player.State = PlayerObject_Hurt
+				if Player.InvincibleTimer == 0
+					Player.State = Player_State_GotHit
 					if Player.Direction == FACING_LEFT
 						Player.Speed = 0x20000
 					else
@@ -355,8 +354,8 @@ sub ObjectPlayerInteraction
 		TempValue4 = TempValue3
 		TempValue4 &= 15
 		if TempValue4 < 8
-			if Player.State != PlayerObject_HangingBar
-				Player.State = PlayerObject_HangingBar
+			if Player.State != Player_State_HangBar
+				Player.State = Player_State_HangBar
 				Player.YVelocity = 0
 				Player.Animation = ANI_HANGING
 				TempValue3 &= 32752

@@ -15,6 +15,9 @@
 // SFX Aliases
 #alias 22	:	SFX_EXPLOSION
 
+// Game modes
+#alias 2	:	GAMEMODE_TIMEATTACK
+
 
 sub ObjectMain
 	
@@ -37,7 +40,15 @@ sub ObjectMain
 			// Set Amy's bounds to make sure she doesn't go too far
 			Object.Bounds.Left  = 0x3EA40000 // Hardcoded left bounds  (16036 with the in-game debug position display)
 			Object.Bounds.Right = 0x40000000 // Hardcoded right bounds (16384 with the in-game debug position display)
-		
+
+#platform: Use_Origins
+			game.callbackParam0 = 1
+			EngineCallback(NOTIFY_BOSS_END)
+			if game.playMode == BOOT_PLAYMODE_BOSSRUSH
+				StopMusic()
+			end if		
+#endplatform
+
 		end if
 	end if
 	
@@ -64,7 +75,7 @@ sub ObjectPlayerInteraction
 				Player.YVelocity >>= 1
 				
 				// And start Amy's descent
-				Object.State = AMY1_FALLING
+				Object.State   = AMY1_FALLING
 				Object.Frame >>= 3
 				
 				// Create an Explosion for the rope (?) just broken
@@ -87,7 +98,7 @@ end sub
 sub ObjectDraw
 	
 	if Object.State == AMY1_CAUGHT
-		TempValue0 = Object.Frame
+		TempValue0   = Object.Frame
 		TempValue0 >>= 3
 		DrawSprite(TempValue0)
 		Object.Frame++
@@ -111,7 +122,7 @@ sub ObjectStartup
 			
 			// Only appear for Sonic
 			if Stage.PlayerListPos == 0
-				if Options.GameMode == 2
+				if Options.GameMode == GAMEMODE_TIMEATTACK
 					// Don't appear in time attack, unload
 					Object[ArrayPos0].Type = TypeName[Blank Object]
 				else

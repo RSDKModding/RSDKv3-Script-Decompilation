@@ -3,7 +3,7 @@
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
 // Aliases
-#alias Player.Value4	:	Player.Invincible
+#alias Player.Value4	:	Player.InvincibleTimer
 
 // Property Values
 #alias 0	:	PROPVAL_FACING_UP
@@ -17,10 +17,10 @@ sub ObjectPlayerInteraction
 	case PROPVAL_FACING_UP
 		PlayerObjectCollision(C_BOX, -16, -12, 16, 16)
 		if Player.YVelocity > -1
-			if Player.Invincible == 0
+			if Player.InvincibleTimer == 0
 				PlayerObjectCollision(C_TOUCH, -15, -13, 15, -12)
 				if CheckResult == true
-					Player.State = PlayerObject_Hurt
+					Player.State = Player_State_GotHit
 					if Player.XPos > Object.XPos
 						Player.Speed =  0x20000
 					else
@@ -34,10 +34,10 @@ sub ObjectPlayerInteraction
 	case PROPVAL_FACING_RIGHT
 		PlayerObjectCollision(C_BOX, -16, -16, 15, 16)
 		if Player.XVelocity <= 0
-			if Player.Invincible == 0
+			if Player.InvincibleTimer == 0
 				PlayerObjectCollision(C_TOUCH, 12, -15, 16, 15)
 				if CheckResult == true
-					Player.State = PlayerObject_Hurt
+					Player.State = Player_State_GotHit
 					Player.Speed = 0x20000
 				end if
 			end if
@@ -46,10 +46,10 @@ sub ObjectPlayerInteraction
 
 	case PROPVAL_FACING_LEFT
 		PlayerObjectCollision(C_BOX, -15, -16, 16, 16)
-		if Player.Invincible == 0
+		if Player.InvincibleTimer == 0
 			PlayerObjectCollision(C_TOUCH, -16, -15, -12, 15)
 			if CheckResult == true
-				Player.State = PlayerObject_Hurt
+				Player.State = Player_State_GotHit
 				Player.Speed = -0x20000				
 			end if
 		end if
@@ -59,10 +59,10 @@ sub ObjectPlayerInteraction
 		TempValue0 = Player.YVelocity
 		PlayerObjectCollision(C_BOX, -16, -16, 16, 15)
 		if TempValue0 < 1
-			if Player.Invincible == 0
+			if Player.InvincibleTimer == 0
 				PlayerObjectCollision(C_TOUCH, -15, 12, 15, 16)
 				if CheckResult == true
-					Player.State = PlayerObject_Hurt
+					Player.State = Player_State_GotHit
 					if Player.XPos > Object.XPos
 						Player.Speed =  0x20000
 					else

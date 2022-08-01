@@ -13,28 +13,28 @@
 #alias Object.Value7			:	Object.CharPos
 
 // Player Alias
-#alias Object[0].Value4			:	Player.Invincible
+#alias Object[0].Value4			:	Player.InvincibleTimer
 
 // States
-#alias 0						:	TITLECARD_FADEIN
-#alias 1						:	TITLECARD_SLIDEIN
-#alias 2						:	TITLECARD_DISPLAY
-#alias 3						:	TITLECARD_SLIDEOUT
+#alias 0			:	TITLECARD_FADEIN
+#alias 1			:	TITLECARD_SLIDEIN
+#alias 2			:	TITLECARD_DISPLAY
+#alias 3			:	TITLECARD_SLIDEOUT
 
 // OST
-#alias 0						:	JP_OST
+#alias 0			:	JP_OST
 
 // HUD aliases
 #alias Object[24].PropertyValue	:	HUD.TimePeriod
 
 // Time Periods
-#alias 0						:	PROPVAL_PRESENT
-#alias 1						:	PROPVAL_PAST
-#alias 2						:	PROPVAL_GOOD_FUTURE
-#alias 3						:	PROPVAL_BAD_FUTURE
+#alias 0			:	PROPVAL_PRESENT
+#alias 1			:	PROPVAL_PAST
+#alias 2			:	PROPVAL_GOOD_FUTURE
+#alias 3			:	PROPVAL_BAD_FUTURE
 
 // Priority
-#alias 1						:	PRIORITY_ACTIVE
+#alias 1			:	PRIORITY_ACTIVE
 
 
 sub ObjectPlayerInteraction
@@ -73,7 +73,7 @@ sub ObjectDraw
 					Stage.Seconds = Rec_Seconds
 					Stage.Minutes = Rec_Minutes
 
-					Player.Invincible = 8000
+					Player.InvincibleTimer = 8000
 				end if
 				Warp.Timer = 0
 				Warp.Frame = 0
@@ -214,19 +214,19 @@ sub ObjectStartup
 	SpriteFrame(64, 97, 48, 16, 41, 67)		// #4  - Zone Text
 
 	// Workaround for steam datafile to show this sprite correctly
-	#platform: Use_Origins
+#platform: Use_Origins
+	SpriteFrame(72, 81, 160, 16, 49, 50)	// #5  - Sonic The Hedgehog CD
+#endplatform
+
+#platform: Use_Standalone
+	#platform: Standard
+		SpriteFrame(64, 81, 160, 16, 41, 50)	// #5  - Sonic The Hedgehog CD
+	#endplatform
+
+	#platform: Mobile
 		SpriteFrame(72, 81, 160, 16, 49, 50)	// #5  - Sonic The Hedgehog CD
 	#endplatform
-
-	#platform: Use_Standalone
-		#platform: Mobile
-			SpriteFrame(72, 81, 160, 16, 49, 50)	// #5  - Sonic The Hedgehog CD
-		#endplatform
-
-		#platform: Standard
-			SpriteFrame(64, 81, 160, 16, 41, 50)	// #5  - Sonic The Hedgehog CD
-		#endplatform
-	#endplatform
+#endplatform
 
 	SpriteFrame(16, 81, 160, 16, 41, 50)	// #6  - Sonic CD Bar Extension
 	SpriteFrame(100, 32, 24, 48, 188, 1)	// #7  - Three Lines
@@ -244,6 +244,30 @@ sub ObjectStartup
 	SpriteFrame(41, 56, 10, 23, 158, 108)	// #17 - Z
 	SpriteFrame(52, 56, 9, 23, 159, 84)		// #18 - L
 	SpriteFrame(62, 56, 9, 23, 88, 84)		// #19 - E
+	
+#platform: Use_Origins
+	// Despite this zone going unused, Sonic Team added the Mission/Boss Rush code here LOL
+	
+	if game.playMode == BOOT_PLAYMODE_MISSION
+		TempValue0 = true
+	else
+		if game.playMode == BOOT_PLAYMODE_BOSSRUSH
+			TempValue0 = true
+		else
+			TempValue0 = false
+		end if
+	end if
+	
+	if TempValue0 != false
+		PlayMusic(0)
+		game.missionCondition = 0
+		game.missionEnd = false
+		Player.ControlMode = 0
+		Stage.TimeEnabled = true
+		ResetObjectEntity(20, TypeName[Blank Object], 0, 0, 0)
+		Warp.XPos = 0
+	end if
+#endplatform
 end sub
 
 

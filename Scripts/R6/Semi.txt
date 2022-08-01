@@ -11,18 +11,18 @@
 #alias Object.PropertyValue :	Object.Quality
 
 // States
-#alias 0					:	SEMI_IDLE
-#alias 1					:	SEMI_START_FLY
-#alias 2					:	SEMI_BOMB_THROW
-#alias 3					:	SEMI_RESET
+#alias 0		:	SEMI_IDLE
+#alias 1		:	SEMI_START_FLY
+#alias 2		:	SEMI_BOMB_THROW
+#alias 3		:	SEMI_RESET
 
 // Badnik Quality
-#alias 0					:	GOOD
-#alias 1					:	BAD
+#alias 0		:	PROPVAL_QUALITY_GOOD
+#alias 1		:	PROPVAL_QUALITY_BAD
 
 // Priority
-#alias 0					:	PRIORITY_ACTIVE_BOUNDS
-#alias 1					:	PRIORITY_ACTIVE
+#alias 0		:	PRIORITY_ACTIVE_BOUNDS
+#alias 1		:	PRIORITY_ACTIVE
 
 
 sub ObjectMain
@@ -48,7 +48,7 @@ sub ObjectMain
 
 	case SEMI_BOMB_THROW
 		Object.XPos += Object.XVelocity
-		if Object.Quality == GOOD
+		if Object.Quality == PROPVAL_QUALITY_GOOD
 			if Object.Timer == 0
 				Object.Timer = 60
 				CreateTempObject(TypeName[SemiBomb], 0, Object.XPos, Object.YPos)
@@ -59,7 +59,7 @@ sub ObjectMain
 		end if
 		break
 
-	case 3
+	case SEMI_RESET
 		if Object.OutOfBounds == true
 			Object.State = SEMI_IDLE
 			Object.Priority = PRIORITY_ACTIVE_BOUNDS
@@ -76,22 +76,22 @@ sub ObjectPlayerInteraction
 	case SEMI_IDLE
 		PlayerObjectCollision(C_TOUCH, -96, -128, 96, 128)
 		if CheckResult == true
-			Object.State = 1
+			Object.State = SEMI_START_FLY
 			if Object.XPos > Player.XPos
-				if Object.Quality == GOOD
-					Object.XVelocity = 0x10000
+				if Object.Quality == PROPVAL_QUALITY_GOOD
+					Object.XVelocity =  0x10000
 					Object.YVelocity = -0x8000
 				else
-					Object.XVelocity = 49152
+					Object.XVelocity = 0xC000
 					Object.YVelocity = 0x6000
 				end if
 			else
-				if Object.Quality == GOOD
+				if Object.Quality == PROPVAL_QUALITY_GOOD
 					Object.XVelocity = -0x10000
 					Object.YVelocity = -0x8000
 				else
-					Object.XVelocity = -49152
-					Object.YVelocity = 0x6000
+					Object.XVelocity = -0xC000
+					Object.YVelocity =  0x6000
 				end if
 			end if
 		end if
@@ -101,7 +101,7 @@ sub ObjectPlayerInteraction
 	case SEMI_BOMB_THROW
 		PlayerObjectCollision(C_TOUCH, -14, -12, 14, 12)
 		if CheckResult == true
-			CallFunction(PlayerObject_BadnikBreak)
+			CallFunction(Player_BadnikBreak)
 		end if
 		break
 	end switch
@@ -119,7 +119,7 @@ sub ObjectDraw
 		TempValue0 = Object.Frame
 		TempValue0 >>= 2
 
-		if Object.Quality == GOOD
+		if Object.Quality == PROPVAL_QUALITY_GOOD
 			TempValue0 += 2
 		else
 			TempValue0 += 6

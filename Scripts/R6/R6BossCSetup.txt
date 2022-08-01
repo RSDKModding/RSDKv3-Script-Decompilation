@@ -11,13 +11,13 @@
 #alias Object.Scale		:	Object.BounceFloorFlag
 
 // Player Aliases
-#alias Player.Value4	:	Player.Invincible
+#alias Player.Value4	:	Player.InvincibleTimer
 
 // Gravity
-#alias 1				:	GRAVITY_AIR
+#alias 1	:	GRAVITY_AIR
 
 // Priority
-#alias 1				:	PRIORITY_ACTIVE
+#alias 1	:	PRIORITY_ACTIVE
 
 
 sub ObjectMain
@@ -84,28 +84,27 @@ sub ObjectPlayerInteraction
 	Get16x16TileInfo(TempValue1, TempValue2, TempValue3, 8)
 
 	TempValue0 |= TempValue1
-	if TempValue0 == 1
+	if TempValue0 == true
 		if Object.BounceFloorFlag == true
 			if Player.YVelocity > -1
 				Player.Animation = ANI_JUMPING
 				Player.Gravity = GRAVITY_AIR
 				Player.Timer = 0
-				Player.YVelocity = -1441792
+				Player.YVelocity = -0x160000
 
 #platform: Use_Origins
-				Player.State = PlayerObject_ResetDropDash
+				Player.State = Player_State_Air_NoDropDash
 #endplatform
 
 #platform: Use_Standalone
-				Player.State = PlayerObject_HandleAir
+				Player.State = Player_State_Air
 #endplatform
 				PlayStageSfx(0, 0)
 				
-#platform: Use_Standalone
-	#platform: Use_Haptics
+#platform: Use_Haptics
 				HapticEffect(60, 0, 0, 0)
-	#endplatform
 #endplatform
+
 			end if
 		end if
 	end if
@@ -116,8 +115,8 @@ sub ObjectPlayerInteraction
 	Get16x16TileInfo(TempValue0, TempValue2, TempValue3, 8)
 	switch TempValue0
 	case 2
-		if Player.Invincible == 0
-			Player.State = PlayerObject_Hurt
+		if Player.InvincibleTimer == 0
+			Player.State = Player_State_GotHit
 			if Player.Direction == FACING_LEFT
 				Player.Speed = 0x20000
 			else
@@ -127,8 +126,8 @@ sub ObjectPlayerInteraction
 		break
 	case 5
 		if Object.State == 2
-			if Player.Invincible == 0
-				Player.State = PlayerObject_Hurt
+			if Player.InvincibleTimer == 0
+				Player.State = Player_State_GotHit
 				if Player.Direction == FACING_LEFT
 					Player.Speed = 0x20000
 				else
@@ -140,8 +139,8 @@ sub ObjectPlayerInteraction
 	case 6
 		if Object.State == 2
 			if Object.Direction == FACING_RIGHT
-				if Player.Invincible == 0
-					Player.State = PlayerObject_Hurt
+				if Player.InvincibleTimer == 0
+					Player.State = Player_State_GotHit
 					if Player.Direction == FACING_LEFT
 						Player.Speed = 0x20000
 					else
@@ -154,8 +153,8 @@ sub ObjectPlayerInteraction
 	case 7
 		if Object.State == 2
 			if Object.Direction == FACING_LEFT
-				if Player.Invincible == 0
-					Player.State = PlayerObject_Hurt
+				if Player.InvincibleTimer == 0
+					Player.State = Player_State_GotHit
 					if Player.Direction == FACING_LEFT
 						Player.Speed = 0x20000
 					else
@@ -168,8 +167,8 @@ sub ObjectPlayerInteraction
 	case 8
 		if Object.State == 2
 			if Object.Direction == 2
-				if Player.Invincible == 0
-					Player.State = PlayerObject_Hurt
+				if Player.InvincibleTimer == 0
+					Player.State = Player_State_GotHit
 					if Player.Direction == FACING_LEFT
 						Player.Speed = 0x20000
 					else
@@ -184,8 +183,8 @@ sub ObjectPlayerInteraction
 	Get16x16TileInfo(TempValue0, TempValue2, TempValue3, 8)
 	switch TempValue0
 	case 2
-		if Player.Invincible == 0
-			Player.State = PlayerObject_Hurt
+		if Player.InvincibleTimer == 0
+			Player.State = Player_State_GotHit
 			if Player.Direction == FACING_LEFT
 				Player.Speed = 0x20000
 			else
@@ -195,8 +194,8 @@ sub ObjectPlayerInteraction
 		break
 	case 5
 		if Object.State == 2
-			if Player.Invincible == 0
-				Player.State = PlayerObject_Hurt
+			if Player.InvincibleTimer == 0
+				Player.State = Player_State_GotHit
 				if Player.Direction == FACING_LEFT
 					Player.Speed = 0x20000
 				else
@@ -208,8 +207,8 @@ sub ObjectPlayerInteraction
 	case 6
 		if Object.State == 2
 			if Object.Direction == FACING_RIGHT
-				if Player.Invincible == 0
-					Player.State = PlayerObject_Hurt
+				if Player.InvincibleTimer == 0
+					Player.State = Player_State_GotHit
 					if Player.Direction == FACING_LEFT
 						Player.Speed = 0x20000
 					else
@@ -222,8 +221,8 @@ sub ObjectPlayerInteraction
 	case 7
 		if Object.State == 2
 			if Object.Direction == FACING_LEFT
-				if Player.Invincible == 0
-					Player.State = PlayerObject_Hurt
+				if Player.InvincibleTimer == 0
+					Player.State = Player_State_GotHit
 					if Player.Direction == FACING_LEFT
 						Player.Speed = 0x20000
 					else
@@ -236,8 +235,8 @@ sub ObjectPlayerInteraction
 	case 8
 		if Object.State == 2
 			if Object.Direction == 2
-				if Player.Invincible == 0
-					Player.State = PlayerObject_Hurt
+				if Player.InvincibleTimer == 0
+					Player.State = Player_State_GotHit
 					if Player.Direction == FACING_LEFT
 						Player.Speed = 0x20000
 					else
@@ -255,8 +254,8 @@ sub ObjectPlayerInteraction
 		TempValue4 = TempValue3
 		TempValue4 &= 15
 		if TempValue4 < 8
-			if Player.State != PlayerObject_HangingBar
-				Player.State = PlayerObject_HangingBar
+			if Player.State != Player_State_HangBar
+				Player.State = Player_State_HangBar
 				Player.YVelocity = 0
 				Player.Animation = ANI_HANGING
 				TempValue3 &= 32752

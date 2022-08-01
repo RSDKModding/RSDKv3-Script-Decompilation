@@ -18,11 +18,11 @@
 #alias Object[+ArrayPos0].Value2 	: Object.FlickerText
 
 //Object[33] is MenuHeading
-#alias Object[33].State				: Object.MHState
-#alias Object[33].PropertyValue		: Object.MHPropertyValue
+#alias Object[33].State				: MenuHeading.State
+#alias Object[33].PropertyValue		: MenuHeading.Header
 
 //Object[-1] is MenuWindow
-#alias Object[-1].State				: Object.MWState
+#alias Object[-1].State				: MenuWindow.State
 
 // Object[1] is a blank object just to share values
 #alias Object[1].Value4				: Object.BackTouchPress
@@ -44,6 +44,8 @@
 #alias 13	:	OPTIONS_ENTER_ABOUTMENU
 #alias 14	:	OPTIONS_ABOUTMENU_CONTROLS
 #alias 15	:	OPTIONS_EXIT_ABOUTMENU
+#alias 16	:	OPTIONS_RETURN_TO_TITLE
+#alias 17	:	OPTIONS_RETURN_TO_TITLE_ALT	// before you say this looks silly, it's actually used to draw different
 
 // Languages
 #alias 0	:	ENGLISH
@@ -52,6 +54,12 @@
 #alias 3	:	DEUTSCH
 #alias 4	:	SPANISH
 #alias 5	:	JAPANESE
+
+// Ink Effects
+#alias 2	:	INK_ALPHA
+
+// DeviceType
+#alias 1	:	RETRO_MOBILE
 
 // SaveRAM Values
 #alias 32	:	SavedSettings
@@ -101,11 +109,33 @@ end function
 sub ObjectMain
 	switch Object.State
 	case OPTIONS_SETUP
-#platform: Mobile
+
+#platform: Use_Origins
+		Object.State = OPTIONS_SETTINGS_CONTROLS
+		Object.CurrentSelection = 1	
+		ReadSaveRAM()
+		if SaveRAM[32] == 0
+			SaveRAM[33] = 100
+			SaveRAM[34] = 100
+			SaveRAM[35] = 0
+		endif
+		Object.State = OPTIONS_SETTINGS_SETUP
+
+		Object.XPos  = Screen.CenterX
+		Object.XPos -= 126
+
+		Object.YPos  = 40
+		Object.YPos *= Object.CurrentSelection
+		Object.YPos += Screen.CenterY
+		Object.YPos -= 87
+#endplatform
+
+#platform: Use_Standalone
+	#platform: Mobile
 		if Options.PhysicalControls == false
 			Object.CurrentSelection = -1
 		end if
-#endplatform
+	#endplatform
 
 		Object.XPos = Screen.CenterX
 		Object.XPos -= 126
@@ -117,19 +147,27 @@ sub ObjectMain
 			Object.Alpha = 255
 			Object.State++
 		end if
+#endplatform
 		break
 
 	case OPTIONS_CONTROLS
-#platform: Mobile
-		CheckEqual(Options.PhysicalControls, true)
+#platform: Use_Origins
+			CheckEqual(Options.PhysicalControls, true)
 #endplatform
 
-#platform: Standard
-		CheckResult = true
+#platform: Use_Standalone
+	#platform: Mobile
+			CheckEqual(Options.PhysicalControls, true)
+	#endplatform
+
+	#platform: Standard
+			CheckResult = true
+	#endplatform
 #endplatform
 
+		// Originally "if Options.PhysicalControls == true", changed to avoid syntax errors because of platform checks
 		if CheckResult == true
-			if KeyPress.Up == true
+			if KeyPress[0].Up == true
 				Object.CurrentSelection--
 				if Object.CurrentSelection < 0
 					Object.CurrentSelection = 3
@@ -137,20 +175,22 @@ sub ObjectMain
 				PlaySfx(23, 0) 	//Menu Button SFX
 			end if
 
-			if KeyPress.Down == true
+			if KeyPress[0].Down == true
 				Object.CurrentSelection++
 				if Object.CurrentSelection > 3
 					Object.CurrentSelection = 0
 				end if
 				PlaySfx(23, 0) 	//Menu Button SFX
 			end if
-		end if
 
-#platform: Mobile	
-		if Options.PhysicalControls == true
 			CheckTouchRect(0, 0, Screen.XSize, Screen.YSize)
 			if CheckResult > -1
+#platform: Mobile
 				Options.PhysicalControls = false
+#endplatform
+#platform: Use_Origins
+				Options.PhysicalControls = false
+#endplatform
 				Object.CurrentSelection = -1
 			end if
 		else
@@ -164,7 +204,7 @@ sub ObjectMain
 			else
 				if TempValue3 < 0
 					if Object.CurrentSelection == 0
-						KeyPress.Start = true
+						KeyPress[0].Start = true
 					end if
 				else
 					if Object.CurrentSelection == 0
@@ -180,7 +220,7 @@ sub ObjectMain
 			else
 				if TempValue3 < 0
 					if Object.CurrentSelection == 1
-						KeyPress.Start = true
+						KeyPress[0].Start = true
 					end if
 				else
 					if Object.CurrentSelection == 1
@@ -196,7 +236,7 @@ sub ObjectMain
 			else
 				if TempValue3 < 0
 					if Object.CurrentSelection == 2
-						KeyPress.Start = true
+						KeyPress[0].Start = true
 					end if
 				else
 					if Object.CurrentSelection == 2
@@ -212,7 +252,7 @@ sub ObjectMain
 			else
 				if TempValue3 < 0
 					if Object.CurrentSelection == 3
-						KeyPress.Start = true
+						KeyPress[0].Start = true
 					end if
 				else
 					if Object.CurrentSelection == 3
@@ -222,39 +262,37 @@ sub ObjectMain
 			end if
 
 			CallFunction(MenuHeading_CheckTouchBack)
-			if KeyPress.Up == true
+			if KeyPress[0].Up == true
 				Object.CurrentSelection = 3
+#platform: Mobile
 				Options.PhysicalControls = true
+#endplatform
+#platform: Use_Origins
+				Options.PhysicalControls = true
+#endplatform
 			end if
-			
-			if KeyPress.Down == true
+
+			if KeyPress[0].Down == true
 				Object.CurrentSelection = 0
+#platform: Mobile
 				Options.PhysicalControls = true
+#endplatform
+#platform: Use_Origins
+				Options.PhysicalControls = true
+#endplatform
 			end if
 		end if
-#endplatform
 
 		CheckResult = false
-
-#platform: Mobile			
+	
 		if Object.CurrentSelection > -1
-			if KeyPress.Start == true
+			if KeyPress[0].Start == true
 				CheckResult = true
 			end if
-			if KeyPress.ButtonA == true
+			if KeyPress[0].ButtonA == true
 				CheckResult = true
 			end if
 		end if
-#endplatform
-
-#platform: Standard
-		if KeyPress.Start == true
-			CheckResult = true
-		end if
-		if KeyPress.ButtonA == true
-			CheckResult = true
-		end if
-#endplatform
 
 		if CheckResult == true
 			if Object.CurrentSelection < 4
@@ -280,14 +318,21 @@ sub ObjectMain
 				PlaySfx(27, 0)
 			end if
 		end if
-		if KeyPress.ButtonB == true
+		if KeyPress[0].ButtonB == true
+#platform: Use_Origins
+			Object.State = OPTIONS_RETURN_TO_TITLE
+			Object.Timer = 0
+			StopMusic()
+#endplatform
+#platform: Use_Standalone
 			Object.Timer = 248
 			Object.State = OPTIONS_EXIT
 			PlayStageSfx(1, 0)
+#endplatform
 		end if
 		break
 
-	case 2
+	case OPTIONS_SELECTED
 		if Object.Timer < 30
 			Object.Timer++
 		else
@@ -335,20 +380,22 @@ sub ObjectMain
 		else
 			switch Object.CurrentSelection
 			case 0
-
-#platform: Standard
-				Stage.ListPos = 6			//Help
-				LoadStage()
-#endplatform
-
-#platform: Mobile
 				if Options.DevMenuFlag == true
 					Engine.State = RESET_GAME
 				else
-					Stage.ListPos = 6		//Help
+#platform: Use_Origins
+					if Engine.DeviceType == RETRO_MOBILE
+						Stage.ListPos = 6
+					else
+						Stage.ListPos = 12
+					endif
+#endplatform
+
+#platform: Use_Standalone
+					Stage.ListPos = 6
+#endplatform
 					LoadStage()
 				end if
-#endplatform
 				break
 
 			case 2
@@ -362,6 +409,7 @@ sub ObjectMain
 
 			end switch
 		end if
+
 		TempValue0 = Object.Timer
 		if TempValue0 > 255
 			TempValue0 = 255
@@ -381,6 +429,13 @@ sub ObjectMain
 			Object.State++
 			Object.Alpha = 0
 			Object.OptionCount = 0
+
+#platform: Use_Origins
+			if Options.PhysicalControls == false
+				ArrayPos0 = Object.CurrentSelection
+				Object.OptionCount = -1
+			end if
+#endplatform
 
 #platform: Mobile
 			if Options.PhysicalControls == false
@@ -404,18 +459,59 @@ sub ObjectMain
 		break
 
 	case OPTIONS_SETTINGS_CONTROLS
+		// Origins completely drops most of this options in favor of letting HE2 handle audio
+		// So we only have available the spin dash type
 		ArrayPos0 = Object.CurrentSelection
 
-#platform: Mobile
-		CheckEqual(Options.PhysicalControls, true)
+#platform: Use_Origins
+
+		Object.OptionCount = 2
+		if KeyPress[0].Left == true
+			SaveRAM[35]--
+			if SaveRAM[35] < 0
+				SaveRAM[35] = 1
+			endif
+			PlaySfx(23, 0)
+		endif
+		if KeyPress[0].Right == true
+			SaveRAM[35]++
+			if SaveRAM[35] > 1
+				SaveRAM[35] = 0
+			endif
+			PlaySfx(23, 0)
+		endif
+		// Save and leave
+		if KeyPress[0].ButtonA == true
+			Object.State = 17
+			Object.Value0 = 0
+			Options.OriginalControls = SaveRAM[35]
+			SaveRAM[32] = true
+			WriteSaveRAM()
+			game.callbackParam0 = Options.OriginalControls
+			EngineCallback(NOTIFY_SPIN_DASH_TYPE)
+			PlaySfx(27, 0)
+			StopMusic()
+		endif
+		// Just leave
+		if KeyPress[0].ButtonB == true
+			Object.State = 17
+			Object.Timer = 0
+			PlayStageSfx(1, 0)
+			StopMusic()
+		endif
 #endplatform
 
-#platform: Standard
+#platform: Use_Standalone
+	#platform: Mobile
+		CheckEqual(Options.PhysicalControls, true)
+	#endplatform
+
+	#platform: Standard
 		CheckResult = true
-#endplatform
+	#endplatform
 
 		if CheckResult == true
-			if KeyPress.Up == true
+			if KeyPress[0].Up == true
 				Object.OptionCount--
 				PlaySfx(23, 0) 	//Menu Button SFX
 				if Object.OptionCount < 0
@@ -423,7 +519,7 @@ sub ObjectMain
 				end if
 			end if
 
-			if KeyPress.Down == true
+			if KeyPress[0].Down == true
 				Object.OptionCount++
 				PlaySfx(23, 0) 	//Menu Button SFX
 				if Object.OptionCount > 2
@@ -433,7 +529,7 @@ sub ObjectMain
 
 			switch Object.OptionCount
 			case 0
-				if KeyPress.Left == true
+				if KeyPress[0].Left == true
 					Object.BGMDecreaseTimer = 10
 					SaveRAM[33] -= 10
 					if SaveRAM[33] < 0
@@ -445,7 +541,7 @@ sub ObjectMain
 					end if
 				end if
 
-				if KeyPress.Right == true
+				if KeyPress[0].Right == true
 					Object.BGMIncreaseTimer = 10
 					SaveRAM[33] += 10
 					if SaveRAM[33] > 100
@@ -459,7 +555,7 @@ sub ObjectMain
 				break
 
 			case 1
-				if KeyPress.Left == true
+				if KeyPress[0].Left == true
 					Object.SFXDecreaseTimer = 10
 					SaveRAM[34] -= 10
 					if SaveRAM[34] < 0
@@ -470,7 +566,7 @@ sub ObjectMain
 						Engine.SFXVolume = SaveRAM[34]
 					end if
 				end if
-				if KeyPress.Right == true
+				if KeyPress[0].Right == true
 					Object.SFXIncreaseTimer = 10
 					SaveRAM[34] += 10
 					if SaveRAM[34] > 100
@@ -483,7 +579,7 @@ sub ObjectMain
 				break
 
 			case 2
-				if KeyPress.Left == true
+				if KeyPress[0].Left == true
 					SaveRAM[35]--
 					if SaveRAM[35] < 0
 						SaveRAM[35] = 1
@@ -491,7 +587,7 @@ sub ObjectMain
 					PlaySfx(23, 0) 	//Menu Button SFX
 				end if
 
-				if KeyPress.Right == true
+				if KeyPress[0].Right == true
 					SaveRAM[35]++
 					if SaveRAM[35] > 1
 						SaveRAM[35] = 0
@@ -501,13 +597,11 @@ sub ObjectMain
 				break
 
 			end switch
-		end if
-
-#platform: Mobile
-		if Options.PhysicalControls == true
 			CheckTouchRect(0, 0, Screen.XSize, Screen.YSize)
 			if CheckResult > -1
+#platform: Mobile
 				Options.PhysicalControls = false
+#endplatform
 				Object.OptionCount = -1
 			end if
 		else
@@ -720,7 +814,7 @@ sub ObjectMain
 				Object.BackTouchPress = false
 				if TempValue3 < 0
 					if Object.OptionCount == 9
-						KeyPress.ButtonB = true
+						KeyPress[0].ButtonB = true
 					end if
 				else
 					if Object.OptionCount == 9
@@ -729,19 +823,20 @@ sub ObjectMain
 				end if
 			end if
 
-			if KeyPress.Up == true
+	#platform: Mobile
+			if KeyPress[0].Up == true
 				Object.OptionCount = 2
 				Options.PhysicalControls = true
 			end if
 			
-			if KeyPress.Down == true
+			if KeyPress[0].Down == true
 				Object.OptionCount = 0
 				Options.PhysicalControls = true
 			end if
+	#endplatform
 		end if
-#endplatform
 
-		if KeyPress.ButtonB == true
+		if KeyPress[0].ButtonB == true
 			Object.State = OPTIONS_EXIT_SETTINGS
 			Object.Timer = 248
 			Options.OriginalControls = SaveRAM[35]
@@ -749,6 +844,9 @@ sub ObjectMain
 			WriteSaveRAM()
 			PlayStageSfx(1, 0)
 		end if
+
+#endplatform
+
 		break
 
 	case OPTIONS_UNUSED
@@ -822,7 +920,7 @@ sub ObjectMain
 			Object.Timer -= 8
 		else
 			Object.Type = TypeName[Blank Object]
-			Object.MWState = 3
+			MenuWindow.State = 3
 			//All of this is MenuButton Objects
 			Object[34].State = 1
 			Object[35].State = 1
@@ -834,8 +932,8 @@ sub ObjectMain
 			Object[41].State = 1
 			Object[42].State = 1
 			//End
-			Object.MHState = 1
-			Object.MHPropertyValue = 5
+			MenuHeading.State = 1
+			MenuHeading.Header = 5
 		end if
 		break
 
@@ -853,7 +951,7 @@ sub ObjectMain
 			ResetObjectEntity(TempValue0, TypeName[AboutMenu], 0, 0, 0)
 			SetupMenu(MENU_1, 0, 3, 1)
 			GetVersionNumber(MENU_1, 1)
-			Object[+10].InkEffect = 2 //INK_ALPHA
+			Object[+10].InkEffect = INK_ALPHA
 			Object.State++
 			Object.Alpha = 0
 			Object.OptionCount = 0
@@ -881,7 +979,8 @@ sub ObjectMain
 
 	case OPTIONS_ABOUTMENU_CONTROLS
 
-#platform: Mobile	//Off-brand MenuHeading_CheckTouchBack
+#platform: Use_Standalone //This got removed in Origins
+	#platform: Mobile	//Off-brand MenuHeading_CheckTouchBack
 		CheckTouchRect(0, 0, Screen.XSize, Screen.YSize)
 		TempValue3 = CheckResult
 		TempValue0 = Screen.XSize
@@ -894,7 +993,7 @@ sub ObjectMain
 			Object.BackTouchPress = false
 			if TempValue3 < 0
 				if Object.OptionCount == 9
-					KeyPress.ButtonB = 1
+					KeyPress[0].ButtonB = true
 				end if
 			else
 				if Object.OptionCount == 9
@@ -902,9 +1001,9 @@ sub ObjectMain
 				end if
 			end if
 		end if
+	#endplatform
 #endplatform
-
-		if KeyPress.ButtonB == true
+		if KeyPress[0].ButtonB == true
 			Object.State = OPTIONS_EXIT_ABOUTMENU
 			Object.Timer = 248
 			PlayStageSfx(1, 0)
@@ -921,6 +1020,26 @@ sub ObjectMain
 			Object[+10].Type = TypeName[Blank Object]
 		end if
 		break
+		
+	case OPTIONS_RETURN_TO_TITLE
+		Object.Timer += 4
+		if Object.Timer == 384
+			Stage.ActiveList = PRESENTATION_STAGE
+			Stage.ListPos = 0
+			LoadStage()
+		endif
+		SetScreenFade(0, 0, 0, Object.Timer)
+		break
+
+	case OPTIONS_RETURN_TO_TITLE_ALT
+		Object.Timer += 4
+		if Object.Timer == 384
+			Stage.ActiveList = PRESENTATION_STAGE
+			Stage.ListPos = 0
+			LoadStage()
+		endif
+		SetScreenFade(0, 0, 0, Object.Timer)
+		break
 
 	end switch
 end sub
@@ -934,6 +1053,7 @@ sub ObjectDraw
 	case OPTIONS_STAGE_LOAD
 	case OPTIONS_UNUSED2
 	case OPTIONS_EXIT
+	case OPTIONS_RETURN_TO_TITLE
 		Object.YPos = Screen.CenterY
 		Object.YPos -= 87
 		ArrayPos0 = 0
@@ -959,32 +1079,39 @@ sub ObjectDraw
 	case OPTIONS_SETTINGS_CONTROLS
 	case OPTIONS_EXIT_SETTINGS
 	case OPTIONS_LEAVE_SUBMENU
+	case OPTIONS_RETURN_TO_TITLE_ALT
 		ArrayPos0 = Object.CurrentSelection
 		TempValue0 = Screen.CenterX
 		TempValue0 += 15
 		if Object.OptionCount == 7
-			DrawSpriteScreenFX(40, FX_INK, TempValue0, 134)
+			DrawSpriteScreenFX(40, FX_INK, TempValue0, 93)
 		else
-			DrawSpriteScreenFX(29, FX_INK, TempValue0, 134)
+			DrawSpriteScreenFX(29, FX_INK, TempValue0, 93)
 		end if
 
 		TempValue0 += 52
 		if Object.OptionCount == 8
-			DrawSpriteScreenFX(41, FX_INK, TempValue0, 134)
+			DrawSpriteScreenFX(41, FX_INK, TempValue0, 93)
 		else
-			DrawSpriteScreenFX(30, FX_INK, TempValue0, 134)
+			DrawSpriteScreenFX(30, FX_INK, TempValue0, 93)
 		end if
 		TempValue0 = Screen.CenterX
 		TempValue0 -= 117
 
-#platform: Mobile
+#platform: Use_Origins
+		DrawSpriteScreenFX(36,FX_INK,TempValue0,110)
+#endplatform
+
+#platform: Use_Standalone
+	#platform: Mobile
 		CheckEqual(Options.PhysicalControls,true)
-#endplatform
+	#endplatform
 
-#platform: Standard
+	#platform: Standard
 		CheckResult = true
-#endplatform
+	#endplatform
 
+		// Originally "if Options.PhysicalControls == true", changed to avoid syntax errors because of platform checks
 		if CheckResult == true
 			switch Object.OptionCount
 			case 0
@@ -1006,10 +1133,7 @@ sub ObjectDraw
 				break
 
 			end switch
-		end if
-
-#platform: Mobile
-		if Options.PhysicalControls == false
+		else
 			DrawSpriteScreenFX(31, FX_INK, TempValue0, 81)
 			DrawSpriteScreenFX(33, FX_INK, TempValue0, 110)
 			DrawSpriteScreenFX(35, FX_INK, TempValue0, 151)
@@ -1113,14 +1237,13 @@ sub ObjectStartup
 		break
 	end switch
 	
-#platform: Mobile
 	if SaveRAM[32] == false
 		SaveRAM[33] = 100
 		SaveRAM[34] = 100
 		SaveRAM[35] = 0
 	end if
 	Options.OriginalControls = SaveRAM[35]
-#endplatform
+
 	SpriteFrame(4, 2, 32, 32, 479, 34)				// #0 - Gear
 	SpriteFrame(4, 2, 32, 32, 479, 34)				// #1 - Gear Again
 	SpriteFrame(4, 2, 32, 32, 479, 34)				// #2 - Why is this a Gear again
@@ -1131,29 +1254,19 @@ sub ObjectStartup
 	SpriteFrame(0, 0, 20, 20, 189, 387)				// #7 - Increase button Highlight
 	SpriteFrame(45, 12, 13, 13, 488, 1)				// #8 - Triangle detail
 	SpriteFrame(0, 0, 250, 37, 259, 421)			// #9 - Selection Border
-#platform: Standard  
-	SpriteFrame(64, 12, 128, 16, 1, 188)			// #10 - Instructions
-#endplatform
-#platform: Mobile
 	if Options.DevMenuFlag == true
 		SpriteFrame(64, 12, 66, 16, 259, 598)		// #10 - Dev Menu
 	else
 		SpriteFrame(64, 12, 128, 16, 1, 188)		// #10 - Instructions
 	end if
-#endplatform
 	SpriteFrame(64, 12, 128, 16, 1, 205)			// #11 - Settings
 	SpriteFrame(64, 12, 128, 16, 1, 222)			// #12 - Staff Credits
 	SpriteFrame(64, 12, 128, 16, 1, 239)			// #13 - About
-#platform: Standard  
-	SpriteFrame(64, 12, 128, 16, 130, 188)			// #14 - Instructions Highlight
-#endplatform
-#platform: Mobile
 	if Options.DevMenuFlag == true
 		SpriteFrame(64, 12, 66, 16, 326, 598)		// #14 - Dev Menu Highlight
 	else
 		SpriteFrame(64, 12, 128, 16, 130, 188)		// #14 - Instructions Highlight
 	end if
-#endplatform			  
 	SpriteFrame(64, 12, 128, 16, 130, 205)			// #15 - Settings Highlight
 	SpriteFrame(64, 12, 128, 16, 130, 222)			// #16 - Staff Credits Highlight
 	SpriteFrame(64, 12, 128, 16, 130, 239)			// #17 - About Highlight

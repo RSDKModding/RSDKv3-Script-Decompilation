@@ -5,13 +5,13 @@
 // Aliases
 #alias Object.Value0	:	Object.Timer
 #alias Object.Value1	:	Object.TimerResetFreq
-#alias Player.Value4	:	Player.Invincible
+#alias Player.Value4	:	Player.InvincibleTimer
 
 // States
-#alias 0				:	FREEZEJET_STARTUP
-#alias 1				:	FREEZEJET_SHOT_BEAM
-#alias 2				:	FREEZEJET_STOPPING_BEAM
-#alias 3				:	FREEZEJET_COOLDOWN
+#alias 0	:	FREEZEJET_STARTUP
+#alias 1	:	FREEZEJET_SHOT_BEAM
+#alias 2	:	FREEZEJET_STOPPING_BEAM
+#alias 3	:	FREEZEJET_COOLDOWN
 
 
 sub ObjectMain
@@ -98,8 +98,7 @@ sub ObjectPlayerInteraction
 	if Object.State == FREEZEJET_SHOT_BEAM
 		PlayerObjectCollision(C_TOUCH, -16, 0, 16, 60)
 		if CheckResult == true
-			if Player.Invincible == 0
-#platform: Mobile
+			if Player.InvincibleTimer == 0
 				if Warp.Destination > 0
 					if Warp.Timer > 99
 						if Warp.Timer < 220
@@ -108,8 +107,7 @@ sub ObjectPlayerInteraction
 					end if
 					Warp.Timer = 0
 				end if
-#endplatform
-				Player.State = PlayerObject_Blank
+				Player.State = Player_State_Static
 
 				Player.Visible = false
 				Player.ObjectInteraction = false
