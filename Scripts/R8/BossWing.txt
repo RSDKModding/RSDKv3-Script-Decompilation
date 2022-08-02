@@ -114,34 +114,42 @@ end sub
 
 
 sub ObjectPlayerInteraction
-	if Object.State < 4
+	if Object.State < BOSSWING_VANISH
 		TempValue0 = 0
 		TempValue1 = Object.XPos
 		TempValue2 = Object.YPos
 		PlayerObjectCollision(C_TOUCH, -12, -12, 12, 12)
 		TempValue0 = CheckResult
+
 		Sin(Object.XPos, Object.Rotation)
-		Object.XPos *= -0x100000
+		Object.XPos  *= -0x100000
 		Object.XPos >>= 9
-		Object.XPos += TempValue1
+		Object.XPos  += TempValue1
+
 		Cos(Object.YPos, Object.Rotation)
-		Object.YPos *= 0x100000
+		Object.YPos  *= 0x100000
 		Object.YPos >>= 9
-		Object.YPos += TempValue2
+		Object.YPos  += TempValue2
+
 		PlayerObjectCollision(C_TOUCH, -10, -10, 10, 10)
 		TempValue0 |= CheckResult
+		
 		Sin(Object.XPos, Object.Rotation)
-		Object.XPos *= 0x100000
+		Object.XPos  *= 0x100000
 		Object.XPos >>= 9
-		Object.XPos += TempValue1
+		Object.XPos  += TempValue1
+
 		Cos(Object.YPos, Object.Rotation)
-		Object.YPos *= -0x100000
+		Object.YPos  *= -0x100000
 		Object.YPos >>= 9
-		Object.YPos += TempValue2
+		Object.YPos  += TempValue2
+
 		PlayerObjectCollision(C_TOUCH, -15, -15, 15, 15)
 		TempValue0 |= CheckResult
+
 		Object.XPos = TempValue1
 		Object.YPos = TempValue2
+
 		if TempValue0 == true
 			CallFunction(Player_Hit)
 			if Player.State == Player_State_GotHit

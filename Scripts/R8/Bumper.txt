@@ -1,113 +1,144 @@
-//------------Sonic CD Bumper Script-------------//
+//-----------------Sonic CD Bumper Script---------------------//
 //--------Scripted by Christian Whitehead 'The Taxman'--------//
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
 // Aliases
-#alias 50: TYPE_BUMPER
+#alias Object.Value0	:	Object.FrameTimer
+#alias Object.Value1	:	Object.BonusScore
+#alias Object.Value2	:	Object.Oscillation
+#alias Object.Value3	:	Object.TurnDirection
+#alias Object.Value4	:	Object.XOriginPos
+#alias Object.Value5	:	Object.YOriginPos
+
+// States
+#alias 0	:	BUMPER_IDLE
+#alias 1	:	BUMPER_ACTIVE
+
+// Gravity
+#alias 0	:	GRAVITY_GROUND
+#alias 1	:	GRAVITY_AIR
+
+// Priority
+#alias 0	:	PRIORITY_ACTIVE_BOUNDS
+#alias 1	:	PRIORITY_ACTIVE
+
+// Property Values
+#alias 1	:	BUMPER_RIGHT_TO_LEFT
+#alias 2	:	BUMPER_LEFT_TO_RIGHT
+#alias 3	:	BUMPER_TOP_TO_BOTTOM
+#alias 4	:	BUMPER_BOTTOM_TO_TOP
 
 
 sub ObjectMain
 	switch Object.PropertyValue
-	case 1
-		if Object.Value3 == 0
-			if Object.Value2 < 0x300000
-				Object.Value2 += 0x10000
+	case BUMPER_RIGHT_TO_LEFT
+		if Object.TurnDirection == false
+			if Object.Oscillation < 0x300000
+				Object.Oscillation += 0x10000
 			else
-				Object.Value3 = 1
+				Object.TurnDirection = true
 			end if
 		else
-			if Object.Value2 > -0x300000
-				Object.Value2 -= 0x10000
+			if Object.Oscillation > -0x300000
+				Object.Oscillation -= 0x10000
 			else
-				Object.Value3 = 0
+				Object.TurnDirection = false
 			end if
 		end if
-		Object.XPos = Object.Value4
-		Object.XPos += Object.Value2
+		Object.XPos  = Object.XOriginPos
+		Object.XPos += Object.Oscillation
 		break
-	case 2
-		if Object.Value3 == 0
-			if Object.Value2 < 0x300000
-				Object.Value2 += 0x10000
+
+	case BUMPER_LEFT_TO_RIGHT
+		if Object.TurnDirection == false
+			if Object.Oscillation < 0x300000
+				Object.Oscillation += 0x10000
 			else
-				Object.Value3 = 1
+				Object.TurnDirection = true
 			end if
 		else
-			if Object.Value2 > -0x300000
-				Object.Value2 -= 0x10000
+			if Object.Oscillation > -0x300000
+				Object.Oscillation -= 0x10000
 			else
-				Object.Value3 = 0
+				Object.TurnDirection = false
 			end if
 		end if
-		Object.XPos = Object.Value4
-		Object.XPos -= Object.Value2
+		Object.XPos  = Object.XOriginPos
+		Object.XPos += Object.Oscillation
 		break
-	case 3
-		if Object.Value3 == 0
-			if Object.Value2 < 0x300000
-				Object.Value2 += 0x10000
+
+	case BUMPER_TOP_TO_BOTTOM
+		if Object.TurnDirection == false
+			if Object.Oscillation < 0x300000
+				Object.Oscillation += 0x10000
 			else
-				Object.Value3 = 1
+				Object.TurnDirection = true
 			end if
 		else
-			if Object.Value2 > -0x300000
-				Object.Value2 -= 0x10000
+			if Object.Oscillation > -0x300000
+				Object.Oscillation -= 0x10000
 			else
-				Object.Value3 = 0
+				Object.TurnDirection = false
 			end if
 		end if
-		Object.YPos = Object.Value5
-		Object.YPos += Object.Value2
+		Object.YPos  = Object.YOriginPos
+		Object.YPos += Object.Oscillation
 		break
-	case 4
-		if Object.Value3 == 0
-			if Object.Value2 < 0x300000
-				Object.Value2 += 0x10000
+
+	case BUMPER_BOTTOM_TO_TOP
+		if Object.TurnDirection == false
+			if Object.Oscillation < 0x300000
+				Object.Oscillation += 0x10000
 			else
-				Object.Value3 = 1
+				Object.TurnDirection = true
 			end if
 		else
-			if Object.Value2 > -0x300000
-				Object.Value2 -= 0x10000
+			if Object.Oscillation > -0x300000
+				Object.Oscillation -= 0x10000
 			else
-				Object.Value3 = 0
+				Object.TurnDirection = false
 			end if
 		end if
-		Object.YPos = Object.Value5
-		Object.YPos -= Object.Value2
+		Object.YPos  = Object.YOriginPos
+		Object.YPos -= Object.Oscillation
 		break
 	end switch
-	if Object.State > 0
-		Object.Frame = Object.Value0
+	
+	if Object.State > BUMPER_IDLE	// Check that is being used
+		Object.Frame  = Object.FrameTimer
 		Object.Frame /= 5
 		Object.Frame++
-		Object.Value0++
-		if Object.Value0 > 22
-			Object.Value0 = 0
-			Object.State = 0
+
+		Object.FrameTimer++
+		if Object.FrameTimer > 22
+			Object.FrameTimer = 0
+			Object.State = BUMPER_IDLE
 			Object.Frame = 0
 		end if
 	end if
-	if Object.OutOfBounds == 1
-		Object.Value1 = 0
-		Object.Priority = 0
+
+	if Object.OutOfBounds == true
+		Object.BonusScore = 0
+		Object.Priority   = PRIORITY_ACTIVE_BOUNDS
 	end if
 end sub
 
 
 sub ObjectPlayerInteraction
 	if Player.Animation != ANI_HURT
+
 		PlayerObjectCollision(C_TOUCH, -14, -14, 14, 14)
-		if CheckResult == 1
-			if Object.State == 0
+		if CheckResult == true
+
+			if Object.State == BUMPER_IDLE
 				PlayStageSfx(3, 0)
-				if Object.Value1 < 5
+				if Object.BonusScore < 5
 					CreateTempObject(TypeName[ObjectScore], 0, Object.XPos, Object.YPos)
 					Player.Score += 100
-					Object.Value1++
+					Object.BonusScore++
 				end if
 			end if
-			if Object.Value0 > 5
+			if Object.FrameTimer > 5
 				PlayStageSfx(3, 0)
 
 #platform: Use_Haptics
@@ -115,27 +146,31 @@ sub ObjectPlayerInteraction
 #endplatform
 
 			end if
-			Object.State = 1
-			Object.Priority = 1
-			TempValue0 = Player.XPos
+			Object.State = BUMPER_ACTIVE
+
+			Object.Priority = PRIORITY_ACTIVE
+
+			TempValue0  = Player.XPos
 			TempValue0 -= Object.XPos
-			TempValue1 = Player.YPos
+			TempValue1  = Player.YPos
 			TempValue1 -= Object.YPos
 			ATan2(TempValue2, TempValue0, TempValue1)
 			Cos256(TempValue0, TempValue2)
 			Sin256(TempValue1, TempValue2)
+
 			if Player.State == Player_State_Fly
 				TempValue0 <<= 10
 				TempValue1 <<= 10
 			else
-				TempValue0 *= 1792
-				TempValue1 *= 1792
+				TempValue0  *= 1792
+				TempValue1  *= 1792
 				Player.Timer = 0
 			end if
 			Player.XVelocity = TempValue0
 			Player.YVelocity = TempValue1
-			Player.Speed = Player.XVelocity
-			Player.Gravity = 1
+			Player.Speed 	 = Player.XVelocity
+
+			Player.Gravity	 = GRAVITY_AIR
 		end if
 	end if
 end sub
@@ -148,20 +183,23 @@ end sub
 
 sub ObjectStartup
 	LoadSpriteSheet("R8/Objects3.gif")
+
+	SpriteFrame(-16, -16, 32, 32, 100, 100)		// #0 - Bumper
+	SpriteFrame(-12, -12, 24, 24, 1, 228)		// #1 - Bumper Hit Frame 0
+	SpriteFrame(-20, -20, 40, 40, 1, 187)		// #2 - Bumper Hit Frame 1
+	SpriteFrame(-12, -12, 24, 24, 1, 228)		// #3 - Bumper Hit Frame 2
+	SpriteFrame(-20, -20, 40, 40, 1, 187)		// #4 - Bumper Hit Frame 3
+	SpriteFrame(-20, -20, 40, 40, 1, 187)		// #5 - Bumper Hit Frame 4
+
+	// Used to be below LoadSpriteSheet, moved here for consistency with the rest
 	ArrayPos0 = 32
 	while ArrayPos0 < 1056
 		if Object[ArrayPos0].Type == TypeName[Bumper]
-			Object[ArrayPos0].Value4 = Object[ArrayPos0].XPos
-			Object[ArrayPos0].Value5 = Object[ArrayPos0].YPos
+			Object[ArrayPos0].XOriginPos = Object[ArrayPos0].XPos
+			Object[ArrayPos0].YOriginPos = Object[ArrayPos0].YPos
 		end if
 		ArrayPos0++
 	loop
-	SpriteFrame(-16, -16, 32, 32, 100, 100)
-	SpriteFrame(-12, -12, 24, 24, 1, 228)
-	SpriteFrame(-20, -20, 40, 40, 1, 187)
-	SpriteFrame(-12, -12, 24, 24, 1, 228)
-	SpriteFrame(-20, -20, 40, 40, 1, 187)
-	SpriteFrame(-20, -20, 40, 40, 1, 187)
 end sub
 
 // ========================

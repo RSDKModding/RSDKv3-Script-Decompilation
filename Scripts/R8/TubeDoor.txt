@@ -1,57 +1,75 @@
-//------------Sonic CD Tube Door Script-------------//
+//-----------------Sonic CD Tube Door Script------------------//
 //--------Scripted by Christian Whitehead 'The Taxman'--------//
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
 // Aliases
-#alias 53: TYPE_TUBEDOOR
+#alias Object.Value1			:	Object.XOffset
+#alias Object[-1].PropertyValue	:	PushButton.Pressed
+
+// States
+#alias 0	:	TUBEDOOR_CLOSED
+#alias 1	:	TUBEDOOR_OPEN
+#alias 2	:	TUBEDOOR_CLOSE
+#alias 3	:	TUBEDOOR_CHECK_HEIGHT
+
+// Property Values
+#alias 0	:	OPENABLE
+
+// Priority
+#alias 0	:	PRIORITY_ACTIVE_BOUNDS
+#alias 1	:	PRIORITY_ACTIVE
 
 
 sub ObjectMain
-	if Object.OutOfBounds == 1
-		Object.State = 0
-		Object.Value1 = 0
-		Object.Priority = 0
+	if Object.OutOfBounds == true
+		Object.State    = TUBEDOOR_CLOSED
+		Object.XOffset  = 0
+		Object.Priority = PRIORITY_ACTIVE_BOUNDS
 	end if
+
 	switch Object.State
-	case 0
-		Object.Priority = 1
-		if Object[-1].PropertyValue == 1
-			if Object.PropertyValue == 0
-				Object.State = 1
+	case TUBEDOOR_CLOSED
+		Object.Priority = PRIORITY_ACTIVE
+		if PushButton.Pressed == true
+			if Object.PropertyValue == OPENABLE
+				Object.State = TUBEDOOR_OPEN
 			end if
 		else
 			if Player.State == Player_State_Static
 				if Player.Animation == ANI_JUMPING
-					Object.State = 3
-					Object.Value1 = 0x100000
+					Object.State   = TUBEDOOR_CHECK_HEIGHT
+					Object.XOffset = 0x100000
 				end if
 			end if
 		end if
 		break
-	case 1
-		if Object.Value1 < 0x100000
-			Object.Value1 += 0x20000
+
+	case TUBEDOOR_OPEN
+		if Object.XOffset < 0x100000
+			Object.XOffset += 0x20000
 		end if
 		if Player.State == Player_State_Static
 			if Player.Animation == ANI_JUMPING
 				if Player.YPos > Object.YPos
-					Object.State = 3
+					Object.State = TUBEDOOR_CHECK_HEIGHT
 				end if
 			end if
 		end if
 		break
-	case 2
-		if Object.Value1 > 0
-			Object.Value1 -= 0x20000
+		
+	case TUBEDOOR_CLOSE
+		if Object.XOffset > 0
+			Object.XOffset -= 0x20000
 		else
-			Object.State = 0
+			Object.State = TUBEDOOR_CLOSED
 		end if
 		break
-	case 3
-		TempValue0 = Object.YPos
+
+	case TUBEDOOR_CHECK_HEIGHT
+		TempValue0  = Object.YPos
 		TempValue0 -= Player.YPos
 		if TempValue0 > 0x100000
-			Object.State = 2
+			Object.State = TUBEDOOR_CLOSE
 		end if
 		break
 	end switch
@@ -59,7 +77,7 @@ end sub
 
 
 sub ObjectPlayerInteraction
-	if Object.State == 0
+	if Object.State == TUBEDOOR_CLOSED
 		PlayerObjectCollision(C_PLATFORM, -8, -4, 56, 32)
 	else
 		PlayerObjectCollision(C_PLATFORM, -8, -4, 4, 32)
@@ -69,13 +87,15 @@ end sub
 
 
 sub ObjectDraw
-	TempValue0 = Object.Value1
+	TempValue0  = Object.XOffset
 	FlipSign(TempValue0)
 	TempValue0 += Object.XPos
 	DrawSpriteXY(2, TempValue0, Object.YPos)
-	TempValue0 = Object.Value1
+
+	TempValue0  = Object.XOffset
 	TempValue0 += Object.XPos
 	DrawSpriteXY(3, TempValue0, Object.YPos)
+
 	DrawSprite(0)
 	DrawSprite(1)
 end sub
@@ -83,10 +103,11 @@ end sub
 
 sub ObjectStartup
 	LoadSpriteSheet("R8/Objects2.gif")
-	SpriteFrame(-8, -4, 16, 8, 19, 75)
-	SpriteFrame(40, -4, 16, 8, 133, 26)
-	SpriteFrame(8, -4, 16, 8, 100, 26)
-	SpriteFrame(24, -4, 16, 8, 116, 26)
+
+	SpriteFrame(-8, -4, 16, 8, 19, 75)	// #0 - Tube Door left side
+	SpriteFrame(40, -4, 16, 8, 133, 26)	// #1 - Tube Door right side
+	SpriteFrame(8, -4, 16, 8, 100, 26)	// #2 - Tube Door first half
+	SpriteFrame(24, -4, 16, 8, 116, 26)	// #3 - Tube Door second half
 end sub
 
 // ========================

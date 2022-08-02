@@ -1,47 +1,62 @@
-//------------Sonic CD R8 Setup Script-------------//
+//-----------------Sonic CD R8 Setup Script-------------------//
 //--------Scripted by Christian Whitehead 'The Taxman'--------//
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
 // Aliases
-#alias 35: TYPE_R8SETUP
+#alias Object.Value0	:	Object.PaletteTimer
+#alias Object.Value1	:	Object.CurrentPalette
+#alias Object.Value2	:	Object.VGearFrame
+#alias Object.Value3	:	Object.HCylinderFrame
+#alias Object.Value4	:	Object.VCylinderFrame
+#alias Object.Value5	:	Object.LightsFrame
+
+// Priority
+#alias 1	:	PRIORITY_ACTIVE
+
+// Tile Info
+#alias 1	:	TILEINFO_DIRECTION
+#alias 8	:	TILEINFO_ANGLEB
 
 
 sub ObjectMain
 	Object.Rotation++
 	Object.Rotation %= 144
-	TempValue0 = Object.Value2
+
+	TempValue0  = Object.VGearFrame
 	TempValue0 %= 7
 	if TempValue0 == 0
-		TempValue0 = Object.Value2
-		TempValue0 /= 7
+		TempValue0   = Object.VGearFrame
+		TempValue0  /= 7
 		TempValue0 <<= 1
-		TempValue0 += 600
+		TempValue0  += 600
 		Copy16x16Tile(490, TempValue0)
 		TempValue0++
 		Copy16x16Tile(491, TempValue0)
 	end if
-	Object.Value2++
-	Object.Value2 %= 28
-	TempValue0 = Object.Value3
+	Object.VGearFrame++
+	Object.VGearFrame %= 28
+
+	TempValue0  = Object.HCylinderFrame
 	TempValue0 &= 3
 	if TempValue0 == 0
-		TempValue0 = Object.Value3
+		TempValue0   = Object.HCylinderFrame
 		TempValue0 >>= 2
 		TempValue0 <<= 1
-		TempValue0 += 608
+		TempValue0  += 608
 		Copy16x16Tile(492, TempValue0)
 		TempValue0++
 		Copy16x16Tile(493, TempValue0)
 	end if
-	Object.Value3++
-	Object.Value3 &= 15
-	TempValue0 = Object.Value4
+	Object.HCylinderFrame++
+	Object.HCylinderFrame &= 15
+
+	TempValue0  = Object.VCylinderFrame
 	TempValue0 %= 5
 	if TempValue0 == 0
-		TempValue0 = Object.Value4
-		TempValue0 /= 5
+		TempValue0   = Object.VCylinderFrame
+		TempValue0  /= 5
 		TempValue0 <<= 2
-		TempValue0 += 616
+		TempValue0  += 616
 		Copy16x16Tile(494, TempValue0)
 		TempValue0++
 		Copy16x16Tile(495, TempValue0)
@@ -50,54 +65,56 @@ sub ObjectMain
 		TempValue0++
 		Copy16x16Tile(497, TempValue0)
 	end if
-	Object.Value4++
-	Object.Value4 %= 20
-	TempValue0 = Object.Value5
+	Object.VCylinderFrame++
+	Object.VCylinderFrame %= 20
+
+	TempValue0  = Object.LightsFrame
 	TempValue0 &= 7
 	if TempValue0 == 0
-		TempValue0 = Object.Value5
+		TempValue0   = Object.LightsFrame
 		TempValue0 >>= 3
-		TempValue0 += 632
+		TempValue0  += 632
 		Copy16x16Tile(498, TempValue0)
 	end if
-	Object.Value5++
-	Object.Value5 %= 56
-	Object.Value0++
-	if Object.Value0 == 5
-		Object.Value0 = 0
-		Object.Value1++
-		Object.Value1 %= 6
-		TempValue0 = Object.Value1
+	Object.LightsFrame++
+	Object.LightsFrame %= 56
+
+	Object.PaletteTimer++
+	if Object.PaletteTimer == 5
+		Object.PaletteTimer = 0
+		Object.CurrentPalette++
+		Object.CurrentPalette %= 6
+		TempValue0 = Object.CurrentPalette
 		TempValue0 += 639
 		Copy16x16Tile(499, TempValue0)
 	end if
-	SetActivePalette(Object.Value1, 0, Screen.YSize)
+	SetActivePalette(Object.CurrentPalette, 0, Screen.YSize)
 end sub
 
 
 sub ObjectPlayerInteraction
-	TempValue1 = Player.XPos
+	TempValue1   = Player.XPos
 	TempValue1 >>= 16
-	TempValue1 += Player.CollisionRight
-	TempValue2 = Player.YPos
+	TempValue1  += Player.CollisionRight
+	TempValue2   = Player.YPos
 	TempValue2 >>= 16
-	TempValue2 += Player.CollisionBottom
-	TempValue2 += 2
-	Get16x16TileInfo(TempValue0, TempValue1, TempValue2, 8)
+	TempValue2  += Player.CollisionBottom
+	TempValue2  += 2
+	Get16x16TileInfo(TempValue0, TempValue1, TempValue2, TILEINFO_ANGLEB)
 	if TempValue0 == 1
-		Get16x16TileInfo(TempValue0, TempValue1, TempValue2, 1)
+		Get16x16TileInfo(TempValue0, TempValue1, TempValue2, TILEINFO_DIRECTION)
 		if TempValue0 == 0
 			Player.XPos += 0x10000
 		else
 			Player.XPos -= 0x10000
 		end if
 	else
-		TempValue1 = Player.XPos
+		TempValue1   = Player.XPos
 		TempValue1 >>= 16
-		TempValue1 += Player.CollisionLeft
-		Get16x16TileInfo(TempValue0, TempValue1, TempValue2, 8)
+		TempValue1  += Player.CollisionLeft
+		Get16x16TileInfo(TempValue0, TempValue1, TempValue2, TILEINFO_ANGLEB)
 		if TempValue0 == 1
-			Get16x16TileInfo(TempValue0, TempValue1, TempValue2, 1)
+			Get16x16TileInfo(TempValue0, TempValue1, TempValue2, TILEINFO_DIRECTION)
 			if TempValue0 == 0
 				Player.XPos += 0x10000
 			else
@@ -110,12 +127,14 @@ end sub
 
 sub ObjectStartup
 	Object[19].Type = TypeName[R8Setup]
-	Object[19].Priority = 1
+	Object[19].Priority = PRIORITY_ACTIVE
+
 	CopyPalette(0, 1)
 	CopyPalette(0, 2)
 	CopyPalette(0, 3)
 	CopyPalette(0, 4)
 	CopyPalette(0, 5)
+
 	TempValue0 = 0
 	TempValue1 = 0
 	TempValue2 = 32

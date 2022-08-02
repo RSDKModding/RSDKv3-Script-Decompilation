@@ -1,28 +1,36 @@
-//------------Sonic CD Boundary Adjust Script-------------//
+//---------------Sonic CD Boundary Adjust Script--------------//
 //--------Scripted by Christian Whitehead 'The Taxman'--------//
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
-// Aliases
-#alias 52: TYPE_BOUNDARYADJUST
+// States
+#alias 0	:	BOUNDARYADJUST_SET_BOUNDS
+#alias 1	:	BOUNDARYADJUST_RESTORE_BOUNDS
 
 
 sub ObjectMain
-	if Object.State == 0
+	if Object.State == BOUNDARYADJUST_SET_BOUNDS
 #platform: Use_Origins
 		if Object.PropertyValue == 0
 			if game.playMode == BOOT_PLAYMODE_BOSSRUSH
 				Object.Type = TypeName[BlankObject]
 			else
 				if Player.XPos > Object.XPos
-					TempValue0 = 0xC30
+					// Set Left Bound
+					TempValue0  = 0xC30
 					TempValue0 -= Screen.CenterX
 					Stage.NewXBoundary1 = TempValue0
+
+					// Set Right Bound
 					TempValue0 += Screen.XSize
 					Stage.NewXBoundary2 = TempValue0
-					TempValue0 = Object.iYPos
+
+					// Set Top Bound
+					TempValue0  = Object.iYPos
 					TempValue0 -= Screen.YSize
 					Stage.NewYBoundary1 = TempValue0
-					Stage.YBoundary2 = Screen.YOffset
+
+					// Set Bottom Bound
+					Stage.YBoundary2  = Screen.YOffset
 					Stage.YBoundary2 += Screen.YSize
 					if Stage.YBoundary2 < Object.iYPos
 						Stage.YBoundary2 = Object.iYPos
@@ -35,18 +43,26 @@ sub ObjectMain
 				Object.Type = TypeName[BlankObject]
 			else
 				if Player.XPos > Object.XPos
-					TempValue0 = 0xF00
+					// Set Left Bound
+					TempValue0  = 0xF00
 					TempValue0 -= Screen.CenterX
 					Stage.NewXBoundary1 = TempValue0
+
+					// Set Right Bound
 					TempValue0 += Screen.XSize
 					Stage.NewXBoundary2 = TempValue0
+
 					Screen.XOffset = 0xCBC
-					TempValue0 = Object.iYPos
+
+					// Set Top Bound
+					TempValue0  = Object.iYPos
 					TempValue0 -= Screen.YSize
 					Stage.NewYBoundary1 = TempValue0
-					Stage.YBoundary2 = Screen.YOffset
+
+					// Set Bottom Bound
+					Stage.YBoundary2  = Screen.YOffset
 					Stage.YBoundary2 += Screen.YSize
-					Stage.YBoundary2 = Object.iYPos
+					Stage.YBoundary2  = Object.iYPos
 					Object.State++
 				end if
 			end if
@@ -55,15 +71,21 @@ sub ObjectMain
 
 #platform: Use_Standalone
 		if Player.XPos > Object.XPos
-			TempValue0 = 3120
+			// Set Left Bound
+			TempValue0  = 3120
 			TempValue0 -= Screen.CenterX
 			Stage.NewXBoundary1 = TempValue0
+			// Set Right Bound
 			TempValue0 += Screen.XSize
 			Stage.NewXBoundary2 = TempValue0
-			TempValue0 = Object.iYPos
-			TempValue0 -= Screen.YSize
+
+			// Set Top Bound
+			TempValue0  = Object.iYPos
+			TempValue0 -= Screen.YSize			
 			Stage.NewYBoundary1 = TempValue0
-			Stage.YBoundary2 = Screen.YOffset
+
+			// Set Bottom Bound
+			Stage.YBoundary2  = Screen.YOffset
 			Stage.YBoundary2 += Screen.YSize
 			if Stage.YBoundary2 < Object.iYPos
 				Stage.YBoundary2 = Object.iYPos
@@ -88,9 +110,9 @@ sub RSDKDraw
 	if Editor.ShowGizmos == true
 		// Draw a little indicator of where the bounds will be moved to
 		
-		TempValue0 = Object.XPos
+		TempValue0  = Object.XPos
 		TempValue0 -= 0x180000
-		TempValue1 = Object.XPos
+		TempValue1  = Object.XPos
 		TempValue1 += 0x180000
 		DrawLine(TempValue0, Object.XPos, TempValue1, Object.YPos, 255, 255, 0)
 	end if

@@ -1,34 +1,42 @@
-//------------Sonic CD R8 Setup Script-------------//
+//-----------------Sonic CD R8 Setup Script-------------------//
 //--------Scripted by Christian Whitehead 'The Taxman'--------//
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
 // Aliases
-#alias 35: TYPE_R8SETUP
+#alias Object.Value0	:	Object.PaletteTimer
+#alias Object.Value1	:	Object.CurrentPalette
+
+// Priority
+#alias 1	:	PRIORITY_ACTIVE
 
 
 sub ObjectMain
 	Object.Rotation++
 	Object.Rotation %= 144
-	Object.Value0++
-	if Object.Value0 == 5
-		Object.Value0 = 0
-		Object.Value1++
-		Object.Value1 %= 3
-		TempValue0 = Object.Value1
+
+	Object.PaletteTimer++
+	if Object.PaletteTimer == 5
+		Object.PaletteTimer = 0
+		Object.CurrentPalette++
+		Object.CurrentPalette %= 3
+		TempValue0  = Object.CurrentPalette
 		TempValue0 += 639
 	end if
-	SetActivePalette(Object.Value1, 0, Screen.YSize)
+
+	SetActivePalette(Object.CurrentPalette, 0, Screen.YSize)
 end sub
 
 
 sub ObjectStartup
 	Object[19].Type = TypeName[R8Setup]
-	Object[19].Priority = 1
+	Object[19].Priority = PRIORITY_ACTIVE
+
 	CopyPalette(0, 1)
 	CopyPalette(0, 2)
 	CopyPalette(0, 3)
 	CopyPalette(0, 4)
 	CopyPalette(0, 5)
+
 	TempValue0 = 0
 	TempValue1 = 0
 	TempValue2 = 32
