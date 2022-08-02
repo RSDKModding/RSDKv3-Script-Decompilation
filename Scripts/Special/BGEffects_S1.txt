@@ -1,14 +1,14 @@
-//------------Sonic CD BGEffects Script-------------//
+//-----------------Sonic CD BGEffects Script------------------//
 //--------Scripted by Christian Whitehead 'The Taxman'--------//
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
 // Aliases
 // Values 0-1 are unused...
-#alias Object.Value2	:	Object.PrevAngle
-#alias Object.Value3	:	Object.Fans.Timer
-#alias Object.Value4	:	Object.Crunchers.Timer
-#alias Object.Value5	:	Object.Fans.Sprite
-#alias Object.Value6	:	Object.Crunchers.Sprite
+#alias Object.Value2 : Object.PrevAngle
+#alias Object.Value3 : Object.Fans.Timer
+#alias Object.Value4 : Object.Crunchers.Timer
+#alias Object.Value5 : Object.Fans.Sprite
+#alias Object.Value6 : Object.Crunchers.Sprite
 
 
 sub ObjectDraw
@@ -125,18 +125,18 @@ sub ObjectDraw
 	
 	// Move all the other BG layers in accordance with the difference from last frame
 	
-	TempValue1 = 0x2000   // An eight of a pixel
-						// Though this value doesn't seem to be used anyways, it corresponds to the first unused background layer
-	TempValue2 = 0x20000 // Two pixels
-	TempValue3 = 0x10000  // One pixel
+	TempValue1 = 0x02000 // This value isn't used, though it corresponds to the first unused background layer
+	TempValue2 = 0x20000
+	TempValue3 = 0x10000
 	
 	TempValue1 *= TempValue0 // See above
 	TempValue2 *= TempValue0
 	TempValue3 *= TempValue0
 	
-	// Presumably, there was one more of parallax multiplying here before, my best guess is that it'd be something like
+	// Presumably there was one more parallax updating here before that got cut, my best guess is that it'd be something like
 //	HParallax[1].ScrollPos += TempValue1
 	// That would update the background water in the scene, provided the layer is left enabled
+	// HParallax[0] is an option too, that would be the unused wave BG layer (disabled too)
 	
 	HParallax[2].ScrollPos += TempValue2
 	HParallax[3].ScrollPos += TempValue3
@@ -147,14 +147,14 @@ end sub
 sub ObjectStartup
 	
 	// Setup stage bounds
-	Stage.XBoundary1 = 58720256  // 896 pixels to the left
-	Stage.XBoundary2 = 209715200 // 3200 pixels to the right
-	Stage.YBoundary1 = 58720256  // 896 pixels upwards
-	Stage.YBoundary2 = 209715200 // 3200 pixels downwards
+	Stage.XBoundary1 = 0x3800000  // 896 pixels to the left
+	Stage.XBoundary2 = 0xC800000  // 3200 pixels to the right
+	Stage.YBoundary1 = 0x3800000  // 896 pixels upwards
+	Stage.YBoundary2 = 0xC800000  // 3200 pixels downwards
 	
 	// Set the initial BG position
 	
-	// Move it 15 pixels to the right
+	// Move the first layer 15 pixels to the right
 	// -> I don't believe this does anything, though, as it's shifting the unused BG layer which later gets disabled anyways...
 	HParallax[0].ScrollPos += 0xF0000
 	

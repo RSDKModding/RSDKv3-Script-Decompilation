@@ -1,15 +1,15 @@
-//------------Sonic CD Ring Script-------------//
+//--------------------Sonic CD Ring Script--------------------//
 //--------Scripted by Christian Whitehead 'The Taxman'--------//
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
 // Aliases
-#alias Object.Value0	:	Object.ZPos
-#alias Object.Value1	:	Object.XVelocity
-#alias Object.Value2	:	Object.YVelocity
-#alias Object.Value3	:	Object.ZVelocity
-#alias Object.Value4	:	Object.Timer
-#alias Object.Value5	:	Object.ScreenDepth
-#alias Object.Value6	:	Object.ScreenXPos
+#alias Object.Value0 : Object.ZPos
+#alias Object.Value1 : Object.XVelocity
+#alias Object.Value2 : Object.YVelocity
+#alias Object.Value3 : Object.ZVelocity
+#alias Object.Value4 : Object.Timer
+#alias Object.Value5 : Object.ScreenDepth
+#alias Object.Value6 : Object.ScreenXPos
 
 
 sub ObjectMain
@@ -19,15 +19,16 @@ sub ObjectMain
 	Object.YPos += Object.YVelocity
 	Object.ZPos += Object.ZVelocity
 	
-	// Apply a gravity of 0x2000
+	// Apply a gravity of an eight of a pixel per frame
 	Object.YVelocity -= 0x2000
 	
 	if Object.YPos < 0
-		// If the ring hit the floor, then bounce
+		// If the ring hit the floor, then bounce back up
+		
 		Object.YPos = 0
 		FlipSign(Object.YVelocity)
 	end if
-
+	
 	TempValue0 = Object.XPos
 	TempValue0 -= TileLayer[0].XPos
 	TempValue0 >>= 8
@@ -69,7 +70,7 @@ sub ObjectDraw
 		
 		// Do some maths to find the position & scale the Ring should be at
 		
-		Object.Scale = 12582912 // AKA 0xC00000
+		Object.Scale = 0xC00000
 		Object.Scale /= Object.ScreenDepth
 		
 		TempValue0 = 768

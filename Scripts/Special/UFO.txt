@@ -1,35 +1,35 @@
-//------------Sonic CD UFO Script-------------//
+//--------------------Sonic CD UFO Script---------------------//
 //--------Scripted by Christian Whitehead 'The Taxman'--------//
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
 // Aliases
-#alias Object.YPos  	:	Object.ZPos
+#alias Object.YPos : Object.ZPos
 
-#alias Object.Value0	:	Object.TargetNode
-#alias Object.Value1	:	Object.XVelocity
-#alias Object.Value2	:	Object.ZVelocity
-#alias Object.Value3	:	Object.Timer
-#alias Object.Value4	:	Object.ScreenXPos // Difference from the center of the camera (which is where Sonic is always located)
-#alias Object.Value5	:	Object.ScreenDepth
+#alias Object.Value0 : Object.TargetNode
+#alias Object.Value1 : Object.XVelocity
+#alias Object.Value2 : Object.ZVelocity
+#alias Object.Value3 : Object.Timer
+#alias Object.Value4 : Object.ScreenXPos // Difference from the center of the camera (which is where Sonic is always located)
+#alias Object.Value5 : Object.ScreenDepth
 
 // HUD Aliases
-#alias Object.Value0	:	HUD.UFOsCount     // Initially set via a loop in the UFO script
-#alias Object.Value1	:	HUD.Time.Seconds  // Displayed time
-#alias Object.Value3	:	HUD.Rings
-#alias Object.Value4	:	HUD.LastUFOType   // Used by UFOs for ring streak bonus
-#alias Object.Value5	:	HUD.SpeedShoesTimer    // Used to transmit between player and UFO
-#alias Object.Value6	:	HUD.BonusUFOPos   // "Pos" akin to entity pos, not as in X or Y Position
+#alias Object.Value0 : HUD.UFOsCount     // Initially set via a loop in the UFO script
+#alias Object.Value1 : HUD.Time.Seconds  // Displayed time
+#alias Object.Value3 : HUD.Rings
+#alias Object.Value4 : HUD.LastUFOType   // Used by UFOs for ring streak bonus
+#alias Object.Value5 : HUD.SpeedShoesTimer    // Used to transmit between player and UFO
+#alias Object.Value6 : HUD.BonusUFOPos   // "Pos" akin to entity pos, not as in X or Y Position
 
 // UFOPowerUp Aliases
-#alias Object.Value0	:	UFOPowerUp.ExplosionDir
-#alias Object.Value1	:	UFOPowerUp.ExplosionXVel
-#alias Object.Value2	:	UFOPowerUp.ExplosionYVel
-#alias Object.Value4	:	UFOPowerUp.YVelocity
-#alias Object.Value5	:	UFOPowerUp.ScreenDepth
-#alias Object.Value7	:	UFOPowerUp.StartResults
+#alias Object.Value0 : UFOPowerUp.ExplosionDir
+#alias Object.Value1 : UFOPowerUp.ExplosionXVel
+#alias Object.Value2 : UFOPowerUp.ExplosionYVel
+#alias Object.Value4 : UFOPowerUp.YVelocity
+#alias Object.Value5 : UFOPowerUp.ScreenDepth
+#alias Object.Value7 : UFOPowerUp.StartResults
 
 // SFX Aliases
-#alias 1	:	SFX_RING
+#alias 1 : SFX_RING
 
 
 sub ObjectMain
@@ -104,13 +104,12 @@ sub ObjectMain
 	// Long list of checks for the hitbox detection
 	
 	// The Player has to be more than 54 pixels off the ground, but lower than 122 pixels towards the sky
-	if Player.YPos > 3538944
-		if Player.YPos < 7995392
+	if Player.YPos > 0x360000
+		if Player.YPos < 0x7A0000
 			
-			// The UFO has to be between 20628 and 22728 away from the screen
-			// (I can't use any fancy units like pixels here, since there aren't really any applicate ones here...)
-			if Object.ScreenDepth < 22728
-				if Object.ScreenDepth > 20628
+			// The UFO has to be within the 2100 range from the player, who's at a depth of 0x5800 normally
+			if Object.ScreenDepth < 0x58C8
+				if Object.ScreenDepth > 0x5094
 					
 					// The UFO has to be between -0.125 and +0.125 pixels away from the screen centre
 					if Object.ScreenXPos > -0x2000
@@ -123,7 +122,7 @@ sub ObjectMain
 							TempValue0 /= Object.ScreenDepth
 							TempValue0 += Screen.CenterX
 							TempValue0 <<= 16
-	
+							
 							TempValue1 = TileLayer[0].YPos
 							TempValue1 >>= 8
 							TempValue1 -= 0x6000
@@ -134,12 +133,12 @@ sub ObjectMain
 							
 							// Play the ring SFX
 							PlaySfx(SFX_RING, false)
-
+							
 #platform: Use_Haptics
 							// Do shake index 55 to really sell the impact of hitting a floating UFO
 							HapticEffect(55, 0, 0, 0)
 #endplatform
-
+							
 							switch Object.PropertyValue
 							case 0
 								// Rings UFO - decrease the UFO count and give some bonus rings
@@ -174,7 +173,7 @@ sub ObjectMain
 							UFOPowerUp[TempObjectPos].ExplosionXVel = TempValue0
 							UFOPowerUp[TempObjectPos].ExplosionYVel = TempValue1
 							UFOPowerUp[TempObjectPos].YVelocity = -0x40000
-							UFOPowerUp[TempObjectPos].ScreenDepth = 22728
+							UFOPowerUp[TempObjectPos].ScreenDepth = 0x58C8
 							
 							// If the last UFO was just destroyed, then signal that to the PowerUp object too
 							if HUD[4].UFOsCount == 0
@@ -202,7 +201,7 @@ sub ObjectDraw
 		
 		// Do some maths to find the position & scale the UFO should be at
 		
-		Object.Scale = 12582912 // AKA 0xC00000
+		Object.Scale = 0xC00000
 		Object.Scale /= Object.ScreenDepth
 		
 		TempValue0 = 768
@@ -280,7 +279,8 @@ sub ObjectStartup
 				
 			else
 				
-				// Bonus UFO Spawn point, delete the UFO for right now and store its EntityPos into the HUD values
+				// Bonus UFO Spawn point, delete the UFO for right now and store its EntityPos into the HUD value
+				
 				Object[ArrayPos0].Type = TypeName[Blank Object]
 				HUD[4].BonusUFOPos = ArrayPos0
 				

@@ -1,14 +1,14 @@
-//------------Sonic CD BGEffects Script-------------//
+//-----------------Sonic CD BGEffects Script------------------//
 //--------Scripted by Christian Whitehead 'The Taxman'--------//
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
 // Aliases
 // Values 0-1 are unused...
-#alias Object.Value2	:	Object.PrevAngle
-#alias Object.Value3	:	Object.Fans.Timer
-#alias Object.Value4	:	Object.Crunchers.Timer
-#alias Object.Value5	:	Object.Fans.Sprite
-#alias Object.Value6	:	Object.Crunchers.Sprite
+#alias Object.Value2 : Object.PrevAngle
+#alias Object.Value3 : Object.Fans.Timer
+#alias Object.Value4 : Object.Crunchers.Timer
+#alias Object.Value5 : Object.Fans.Sprite
+#alias Object.Value6 : Object.Crunchers.Sprite
 
 
 sub ObjectDraw
@@ -127,8 +127,8 @@ sub ObjectDraw
 	
 	// Move the other BG layers based on the difference found
 	
-	TempValue1 = 0x10000  // 1 pixel
-	TempValue2 = 0x20000 // 2 pixels
+	TempValue1 = 0x10000
+	TempValue2 = 0x20000
 	
 	TempValue1 *= TempValue0
 	
@@ -144,11 +144,11 @@ sub ObjectDraw
 	HParallax[3].ScrollPos = HParallax[2].ScrollPos
 	HParallax[3].ScrollPos >>= 16
 	
-	// Update the pseudo-3d-ness of the BG red bars using deformation
+	// Now, update the pseudo-3d-ness of the BG red bars using deformation
 	// Process is done from the bottom of the screen -> upwards
 	
-	// - ArrayPos0 is the number of lines to change
-	// - TempValue2 (0x4000) is the starting offset
+	// - ArrayPos0 is the current line, starting off as the number of lines to change
+	// - TempValue2 is the starting offset
 	// - TempValue3 gets applied to the offset after every line in order to make the top of the screen move less drastically to the bottom
 	
 	ArrayPos0 = 128
@@ -163,14 +163,13 @@ sub ObjectDraw
 		// Do note - swapping them around WILL crash the game!
 		// These values must've been picked with great care in order for that to happen
 		
+#platform: HW_Rendering
+		TempValue4 >>= 10
+#endplatform
 		
-		// The different platforms shift it by different amounts
-		// TODO: this is somewhat new code, it tied back to something that needs to be fixed on the engine decomp itself seemingly?
-		// Not quite sure of much beyond this, gotta get to the bottom of that...
-		
-		// TODO: bug rdc to fix this, it stems from the engine itself
-		
+#platform: SW_Rendering
 		TempValue4 >>= 14
+#endplatform
 		
 		Stage.DeformationData2[ArrayPos0] = TempValue4
 		TempValue2 -= TempValue3
@@ -194,10 +193,10 @@ end sub
 sub ObjectStartup
 	
 	// Set the stage's bounds
-	Stage.XBoundary1 = 50331648  // left bounds  @ 768 pixels
-	Stage.XBoundary2 = 218103808 // right bounds @ 3328 pixels
-	Stage.YBoundary1 = 50331648  // upper bounds @ 768 pixels
-	Stage.YBoundary2 = 218103808 // lower bounds @ 3328 pixels
+	Stage.XBoundary1 = 0x3000000 // left bounds  @ 768 pixels
+	Stage.XBoundary2 = 0xD000000 // right bounds @ 3328 pixels
+	Stage.YBoundary1 = 0x3000000 // upper bounds @ 768 pixels
+	Stage.YBoundary2 = 0xD000000 // lower bounds @ 3328 pixels
 	
 #platform: HW_Rendering
 	// If needed, do some setup for hardware rendering
@@ -210,7 +209,7 @@ sub ObjectStartup
 	// Set starting scroll positions
 	
 	// Make the first parallax layer start at 176 pixels from its base position
-	HParallax[0].ScrollPos = 11534336
+	HParallax[0].ScrollPos = 0xB00000
 	
 	// Set the other starting scroll position, but with respect to the screen's size to make it start in the right place
 	TempValue0 = Screen.XSize
