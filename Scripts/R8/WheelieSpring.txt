@@ -1,10 +1,11 @@
-//------------Sonic CD Wheelie Spring Script-------------//
+//--------------Sonic CD Wheelie Spring Script----------------//
 //--------Scripted by Christian Whitehead 'The Taxman'--------//
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
-// Aliases
+// Alias
 #alias Object.Value0	:	Object.Timer
 
+// Player Alias
 #alias Player.Value7	:	Player.AnimationReserve
 
 // States
@@ -22,7 +23,7 @@
 // Collision Sides
 #alias 0	:	CSIDE_FLOOR
 #alias 1	:	CSIDE_LWALL
-
+#alias 3	:	CSIDE_ROOF	// Yes, Roof is used instead of RWALL, don't ask
 
 sub ObjectMain
 	if Object.State == WHEELIESPRING_MOVING_RIGHT
@@ -34,7 +35,7 @@ sub ObjectMain
 				Object.State = WHEELIESPRING_MOVING_LEFT
 				Object.Timer = -64
 			else
-				ObjectTileCollision(CSIDE_LWALL, 40, -16, 0)	// CSide_LWALL is 1
+				ObjectTileCollision(CSIDE_LWALL, 40, -16, 0)
 				if CheckResult == true
 					Object.State = WHEELIESPRING_MOVING_LEFT
 					Object.Timer = -64
@@ -54,7 +55,7 @@ sub ObjectMain
 				Object.State = WHEELIESPRING_MOVING_RIGHT
 				Object.Timer = -64
 			else
-				ObjectTileCollision(3, -40, -16, 0)
+				ObjectTileCollision(CSIDE_ROOF, -40, -16, 0)
 				if CheckResult == true
 					Object.State = WHEELIESPRING_MOVING_RIGHT
 					Object.Timer = -64
@@ -84,12 +85,15 @@ sub ObjectPlayerInteraction
 #platform: Use_Standalone
 				Player.State = Player_State_Air
 #endplatform
+
 				Player.Gravity = GRAVITY_AIR
+
 				if Object.PropertyValue == PROPVAL_RED_SPRING
 					Player.YVelocity = -0x100000
 				else
 					Player.YVelocity = -0xA0000
 				end if
+
 				Player.AnimationReserve = ANI_WALKING
 				if Player.Animation == ANI_RUNNING
 					Player.AnimationReserve = ANI_RUNNING
@@ -97,8 +101,10 @@ sub ObjectPlayerInteraction
 				if Player.Animation == ANI_PEELOUT
 					Player.AnimationReserve = ANI_PEELOUT
 				end if
+
 				Player.Animation = ANI_BOUNCING
 				Player.Timer = 0
+
 				PlaySfx(11, 0)
 			end if
 		end if
@@ -115,6 +121,7 @@ sub ObjectPlayerInteraction
 #platform: Use_Standalone
 				Player.State = Player_State_Air
 #endplatform
+
 				Player.Gravity = GRAVITY_AIR
 				if Object.PropertyValue == PROPVAL_RED_SPRING
 					Player.YVelocity = -0x100000
@@ -123,6 +130,7 @@ sub ObjectPlayerInteraction
 				end if
 				Player.Animation = ANI_BOUNCING
 				Player.Timer = 0
+
 				PlaySfx(11, 0)
 			end if
 		end if
@@ -136,7 +144,7 @@ sub ObjectDraw
 			DrawSprite(0)
 		else
 			Object.Frame++
-			TempValue0 = Object.Frame
+			TempValue0   = Object.Frame
 			TempValue0 >>= 1
 			switch TempValue0
 			case 0
@@ -162,7 +170,7 @@ sub ObjectDraw
 			DrawSprite(1)
 		else
 			Object.Frame++
-			TempValue0 = Object.Frame
+			TempValue0   = Object.Frame
 			TempValue0 >>= 1
 			switch TempValue0
 			case 0
@@ -184,7 +192,7 @@ sub ObjectDraw
 			end if
 		end if
 	end if
-	TempValue0 = Object.Timer
+	TempValue0  = Object.Timer
 	TempValue0 += 64
 	TempValue0 %= 18
 	TempValue0 /= 9

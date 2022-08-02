@@ -1,9 +1,21 @@
-//------------Sonic CD FadeScreen Script-------------//
+//----------------Sonic CD Fade Screen Script-----------------//
 //--------Scripted by Christian Whitehead 'The Taxman'--------//
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
 // Aliases
-#alias 62: TYPE_FADESCREEN
+#alias Object.Value0	:	Object.Timer
+#alias Object.Value1	:	Object.Timer
+
+// States
+#alias 0	:	FADESCREEN_SETUP
+#alias 1	:	FADESCREEN_AMY
+#alias 2	:	FADESCREEN_TAILS
+#alias 3	:	FADESCREEN_BLANK
+#alias 4	:	FADESCREEN_BOSSRUSH		// Origins Exclusive
+
+// Property Values
+#alias 0	:	CUTSCENE_NO_SKIP
+#alias 1	:	CUTSCENE_SKIP
 
 // Game modes
 #alias 2	:	GAMEMODE_TIMEATTACK
@@ -11,39 +23,41 @@
 
 sub ObjectMain
 	switch Object.State
-	case 0
-		if Object.Value0 < 480
-			Object.Value0 += 4
+	case FADESCREEN_SETUP
+		if Object.Timer < 480
+			Object.Timer += 4
 			Music.Volume--
 		else
-			Object.Value0 = 224
-			if Object.PropertyValue == 0
+			Object.Timer = 224
+			if Object.PropertyValue == CUTSCENE_NO_SKIP
 				Object.State++
 			else
 				Object.State += 2
 			end if
 		end if
 
-		if Object.PropertyValue == 1
-			SetScreenFade(0, 0, 0, Object.Value0)
+		if Object.PropertyValue == CUTSCENE_SKIP
+			SetScreenFade(0, 0, 0, Object.Timer)
 		else
-			SetScreenFade(224, 224, 224, Object.Value0)
+			SetScreenFade(224, 224, 224, Object.Timer)
 		end if
 		break
-	case 1
-		if Object.Value0 > 0
+
+	case FADESCREEN_AMY
+		if Object.Timer > 0
 			Music.Volume--
-			Object.Value0 -= 16
+			Object.Timer -= 16
 		else
 			StopMusic()
+
 #platform: Use_Origins			
 			EngineCallback(NOTIFY_BOSS_END)
-			TempValue0 = 0
+			TempValue0 = false
 			if game.playMode == BOOT_PLAYMODE_BOSSRUSH
-				TempValue0 = 1
+				TempValue0 = true
 			else
 				if game.oneStageFlag != 0
-					TempValue0 = 1
+					TempValue0 = true
 					EngineCallback(NOTIFY_ACT_FINISH)
 					game.callbackResult = -1
 					game.callbackParam0 = 1
@@ -54,8 +68,8 @@ sub ObjectMain
 			end if
 #endplatform
 
-			if TempValue0 != 0
-				Object.State = 4
+			if TempValue0 != false
+				Object.State = FADESCREEN_BOSSRUSH
 			else
 				if Options.GameMode == GAMEMODE_TIMEATTACK
 					TimeAttack.Result = Stage.Seconds
@@ -65,26 +79,26 @@ sub ObjectMain
 					TimeAttack.Result += TempValue0
 					TimeAttack.Result += Stage.MilliSeconds
 					TempValue0 = Stage.ListPos
-					TempValue0 %= 10
+					TempValue0  %= 10
 					TempValue0 >>= 2
-					TempValue1 = Stage.ListPos
-					TempValue1 /= 10
-					TempValue1 *= 3
-					TempValue0 += TempValue1
+					TempValue1   = Stage.ListPos
+					TempValue1  /= 10
+					TempValue1  *= 3
+					TempValue0  += TempValue1
 					TempValue0++
-					TempValue1 = Stage.Seconds
-					TempValue1 *= 100
-					TempValue2 = Stage.Minutes
-					TempValue2 *= 0x1770
-					TempValue1 += TempValue2
-					TempValue1 += Stage.MilliSeconds
+					TempValue1   = Stage.Seconds
+					TempValue1  *= 100
+					TempValue2   = Stage.Minutes
+					TempValue2  *= 0x1770
+					TempValue1  += TempValue2
+					TempValue1  += Stage.MilliSeconds
 					SetLeaderboard(TempValue0, TempValue1)
 					Stage.ListPos = 2
 				else
 					EngineCallback(4)
 					if Player.Score > 0
 						if Options.GameMode == 1
-							if Stage.DebugMode == 0
+							if Stage.DebugMode == false
 								SetLeaderboard(0, Player.Score)
 							end if
 						end if
@@ -198,21 +212,24 @@ sub ObjectMain
 			end if
 
 		end if
-		SetScreenFade(Object.Value0, Object.Value0, Object.Value0, 255)
+		SetScreenFade(Object.Timer, Object.Timer, Object.Timer, 255)
 		break
-	case 2
-		if Object.Value0 > 0
+
+	case FADESCREEN_TAILS
+		if Object.Timer > 0
 			Music.Volume--
-			Object.Value0 -= 16
+			Object.Timer -= 16
 		else
 			StopMusic()
 			Stage.ListPos += 2
 			LoadStage()
 		end if
 		break
-	case 3
+
+	case FADESCREEN_BLANK
 		break
-	case 4
+
+	case FADESCREEN_BOSSRUSH
 		SetScreenFade(255, 255, 255, 255)
 		break
 	end switch

@@ -1,76 +1,105 @@
-//------------Sonic CD Buzzsaw Script-------------//
+//------------------Sonic CD Buzzsaw Script-------------------//
 //--------Scripted by Christian Whitehead 'The Taxman'--------//
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
 // Aliases
-#alias 42: TYPE_BUZZSAW
+#alias Object.Value0	:	Object.Timer
+#alias Object.Value1	:	Object.XVelocity
+#alias Object.Value2	:	Object.YVelocity
+#alias Object.Value3	:	Object.FrameTimer
+#alias Object.Value4	:	Object.SfxTimer
+
+// States
+#alias 0	:	BUZZSAW_STOPPED
+#alias 1	:	BUZZSAW_DROP
+#alias 2	:	BUZZSAW_LOW_STOPPED
+#alias 3	:	BUZZSAW_LIFT
+
+// Property Values
+// tecnically direction is used, but it's set according to the property value so
+#alias 0	:	FACING_RIGHT
+#alias 1	:	FACING_LEFT
+#alias 3	:	FACING_UPEND_RIGHT
+#alias 4	:	FACING_UPEND_LEFT
+
+// These prop vals are going to switch the first state to 2
+// then behave the same as the ones above it
+#alias 128	:	LOW_FACING_RIGHT
+#alias 129	:	LOW_FACING_LEFT
+#alias 130	:	LOW_FACING_UPEND_RIGHT
+#alias 131	:	LOW_FACING_UPEND_LEFT
 
 
 sub ObjectMain
 	switch Object.State
-	case 0
-		if Object.Value0 < 60
-			Object.Value0++
+	case BUZZSAW_STOPPED
+		if Object.Timer < 60
+			Object.Timer++
 		else
-			Object.Value0 = 0
+			Object.Timer = 0
 			Object.State++
 		end if
 		break
-	case 1
-		if Object.Value0 < 74
-			Object.Value0++
-			Object.Value3++
-			Object.XPos += Object.Value1
-			Object.YPos += Object.Value2
+
+	case BUZZSAW_DROP
+		if Object.Timer < 74
+			Object.Timer++
+			Object.FrameTimer++
+			Object.XPos += Object.XVelocity
+			Object.YPos += Object.YVelocity
 		else
-			Object.Value0 = 0
+			Object.Timer = 0
 			Object.State++
 		end if
 		break
-	case 2
-		if Object.Value0 < 60
-			Object.Value0++
+
+	case BUZZSAW_LOW_STOPPED
+		if Object.Timer < 60
+			Object.Timer++
 		else
-			Object.Value0 = 0
+			Object.Timer = 0
 			Object.State++
 		end if
 		break
-	case 3
-		if Object.Value0 < 74
-			Object.Value0++
-			Object.Value3--
-			Object.XPos -= Object.Value1
-			Object.YPos -= Object.Value2
+
+	case BUZZSAW_LIFT
+		if Object.Timer < 74
+			Object.Timer++
+			Object.FrameTimer--
+			Object.XPos -= Object.XVelocity
+			Object.YPos -= Object.YVelocity
 		else
-			Object.Value0 = 0
-			Object.State = 0
+			Object.Timer = 0
+			Object.State = BUZZSAW_STOPPED
 		end if
 		break
 	end switch
-	if Object.Value4 > 0
-		Object.Value4--
+	
+	if Object.SfxTimer > 0
+		Object.SfxTimer--
 	else
 		PlayStageSfx(1, 0)
-		Object.Value4 += 48
+		Object.SfxTimer += 48
 	end if
 end sub
 
 
 sub ObjectPlayerInteraction
 	PlayerObjectCollision(C_TOUCH, -24, -24, 24, 24)
-	if CheckResult == 1
+	if CheckResult == true
 		CallFunction(Player_Hit)
 	end if
 end sub
 
 
 sub ObjectDraw
-	TempValue0 = Object.Frame
+	TempValue0   = Object.Frame
 	TempValue0 >>= 1
 	DrawSpriteFX(TempValue0, FX_FLIP, Object.XPos, Object.YPos)
 	Object.Frame++
 	Object.Frame &= 3
-	TempValue0 = Object.Value3
+
+	TempValue0  = Object.FrameTimer
 	TempValue0 /= 20
 	switch TempValue0
 	case 0
@@ -97,39 +126,43 @@ end sub
 
 sub ObjectStartup
 	LoadSpriteSheet("R8/Objects2.gif")
-	SpriteFrame(-33, -36, 66, 68, 67, 127)
-	SpriteFrame(-33, -36, 66, 68, 190, 154)
-	SpriteFrame(-53, -53, 26, 26, 158, 43)
-	SpriteFrame(-73, -73, 26, 26, 158, 43)
-	SpriteFrame(-93, -93, 26, 26, 158, 43)
-	SpriteFrame(-113, -113, 26, 26, 158, 43)
+
+	SpriteFrame(-33, -36, 66, 68, 67, 127)		// #0 - Buzzsaw frame 0
+	SpriteFrame(-33, -36, 66, 68, 190, 154)		// #1 - Buzzsaw frame 1
+
+	SpriteFrame(-53, -53, 26, 26, 158, 43)		// #2 - Buzzsaw Extension frame 0
+	SpriteFrame(-73, -73, 26, 26, 158, 43)		// #3 - Buzzsaw Extension frame 1
+	SpriteFrame(-93, -93, 26, 26, 158, 43)		// #4 - Buzzsaw Extension frame 2
+	SpriteFrame(-113, -113, 26, 26, 158, 43)	// #5 - Buzzsaw Extension frame 3
+
 	ArrayPos0 = 32
 	while ArrayPos0 < 1056
 		if Object[ArrayPos0].Type == TypeName[Buzzsaw]
 			if Object[ArrayPos0].PropertyValue > 127
 				Object[ArrayPos0].PropertyValue -= 128
 				Object[ArrayPos0].Direction = Object[ArrayPos0].PropertyValue
-				Object[ArrayPos0].Value3 = 74
-				Object[ArrayPos0].State = 2
+				Object[ArrayPos0].FrameTimer = 74
+				Object[ArrayPos0].State = BUZZSAW_LOW_STOPPED
 			else
 				Object[ArrayPos0].Direction = Object[ArrayPos0].PropertyValue
 			end if
+
 			switch Object[ArrayPos0].Direction
 			case 0
-				Object[ArrayPos0].Value1 = 0x10000
-				Object[ArrayPos0].Value2 = 0x10000
+				Object[ArrayPos0].XVelocity = 0x10000
+				Object[ArrayPos0].YVelocity = 0x10000
 				break
 			case 1
-				Object[ArrayPos0].Value1 = -0x10000
-				Object[ArrayPos0].Value2 = 0x10000
+				Object[ArrayPos0].XVelocity = -0x10000
+				Object[ArrayPos0].YVelocity =  0x10000
 				break
 			case 2
-				Object[ArrayPos0].Value1 = 0x10000
-				Object[ArrayPos0].Value2 = -0x10000
+				Object[ArrayPos0].XVelocity =  0x10000
+				Object[ArrayPos0].YVelocity = -0x10000
 				break
 			case 3
-				Object[ArrayPos0].Value1 = -0x10000
-				Object[ArrayPos0].Value2 = -0x10000
+				Object[ArrayPos0].XVelocity = -0x10000
+				Object[ArrayPos0].YVelocity = -0x10000
 				break
 			end switch
 		end if
