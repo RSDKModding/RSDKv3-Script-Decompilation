@@ -1,26 +1,45 @@
-//------------Sonic CD R Plane Shifter Script-------------//
+//---------------Sonic CD R Plane Shifter Script--------------//
 //--------Scripted by Christian Whitehead 'The Taxman'--------//
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
 // Aliases
-#alias 47: TYPE_RPLANESHIFTER
+#alias Object.Value1	:	Object.AnimFrameTimer
+#alias Object.Value2	:	Object.OnObject
+
+// States
+#alias 0	:	RPLANESHIFTER_IDLE
+// Facing Right
+#alias 1	:	RPLANESHIFTER_PLANE_A_TO_B_R
+#alias 2	:	RPLANESHIFTER_PLANE_B_TO_A_R
+// Facing Left
+#alias 3	:	RPLANESHIFTER_PLANE_A_TO_B_L
+#alias 4	:	RPLANESHIFTER_PLANE_B_TO_A_L
+
+// Property Values
+#alias 0	:	GIMMICK_PARENT
+#alias 1	:	GIMMICK_CHILD
+
+// Collision Planes
+#alias 0	:	COLLISION_PLANE_A
+#alias 1	:	COLLISION_PLANE_B
 
 
 sub ObjectMain
-	if Player.ObjectInteraction == 1
-		if Object.PropertyValue == 0
+	if Player.ObjectInteraction == true
+		if Object.PropertyValue == GIMMICK_PARENT
 			switch Object.State
-			case 1
-				if Object.Value1 < 256
-					Object.Value1 += 8
+			case RPLANESHIFTER_PLANE_A_TO_B_R
+				if Object.AnimFrameTimer < 256
+					Object.AnimFrameTimer += 8
 				else
-					Object.State = 0
+					Object.State = RPLANESHIFTER_IDLE
 					Player.State = Player_State_Ground
 					Player.Frame = 0
 					Player.DrawOrder = 2
-					Player.CollisionPlane = 1
+					Player.CollisionPlane = COLLISION_PLANE_B
 				end if
-				TempValue0 = Object.Value1
+
+				TempValue0   = Object.AnimFrameTimer
 				TempValue0 >>= 6
 				switch TempValue0
 				case 0
@@ -37,20 +56,23 @@ sub ObjectMain
 					Player.Direction = FACING_LEFT
 					break
 				end switch
+
 				Object.AnimationTimer++
 				Object.AnimationTimer %= 6
 				break
-			case 2
-				if Object.Value1 > 0
-					Object.Value1 -= 8
+
+			case RPLANESHIFTER_PLANE_B_TO_A_R
+				if Object.AnimFrameTimer > 0
+					Object.AnimFrameTimer -= 8
 				else
-					Object.State = 0
+					Object.State = RPLANESHIFTER_IDLE
 					Player.State = Player_State_Ground
 					Player.Frame = 0
 					Player.DrawOrder = 4
-					Player.CollisionPlane = 0
+					Player.CollisionPlane = COLLISION_PLANE_A
 				end if
-				TempValue0 = Object.Value1
+
+				TempValue0 = Object.AnimFrameTimer
 				TempValue0 >>= 6
 				switch TempValue0
 				case 0
@@ -67,21 +89,24 @@ sub ObjectMain
 					Player.Frame = 1
 					break
 				end switch
+
 				Object.AnimationTimer++
 				Object.AnimationTimer %= 6
 				break
-			case 3
-				if Object.Value1 > 256
-					Object.Value1 -= 8
+
+			case RPLANESHIFTER_PLANE_A_TO_B_L
+				if Object.AnimFrameTimer > 256
+					Object.AnimFrameTimer -= 8
 				else
-					Object.State = 0
+					Object.State = RPLANESHIFTER_IDLE
 					Player.State = Player_State_Ground
 					Player.Frame = 0
 					Player.DrawOrder = 2
-					Player.CollisionPlane = 1
+					Player.CollisionPlane = COLLISION_PLANE_B
 				end if
-				TempValue0 = 512
-				TempValue0 -= Object.Value1
+
+				TempValue0   = 512
+				TempValue0  -= Object.AnimFrameTimer
 				TempValue0 >>= 6
 				switch TempValue0
 				case 0
@@ -98,22 +123,25 @@ sub ObjectMain
 					Player.Direction = FACING_RIGHT
 					break
 				end switch
+
 				Object.AnimationTimer++
 				Object.AnimationTimer %= 6
 				break
-			case 4
-				if Object.Value1 < 512
-					Object.Value1 += 8
+
+			case RPLANESHIFTER_PLANE_B_TO_A_L
+				if Object.AnimFrameTimer < 512
+					Object.AnimFrameTimer += 8
 				else
-					Object.Value1 = 0
-					Object.State = 0
+					Object.AnimFrameTimer = 0
+					Object.State = RPLANESHIFTER_IDLE
 					Player.State = Player_State_Ground
 					Player.Frame = 0
 					Player.DrawOrder = 4
-					Player.CollisionPlane = 0
+					Player.CollisionPlane = COLLISION_PLANE_A
 				end if
-				TempValue0 = 512
-				TempValue0 -= Object.Value1
+
+				TempValue0   = 512
+				TempValue0  -= Object.AnimFrameTimer
 				TempValue0 >>= 6
 				switch TempValue0
 				case 0
@@ -130,16 +158,19 @@ sub ObjectMain
 					Player.Frame = 1
 					break
 				end switch
+
 				Object.AnimationTimer++
 				Object.AnimationTimer %= 6
 				break
 			end switch
-			Sin(Object[+1].XPos, Object.Value1)
+
+			// First Bar
+			Sin(Object[+1].XPos, Object.AnimFrameTimer)
 			Object[+1].XPos *= 3072
 			Object[+1].XPos += Object.XPos
-			Object[+1].YPos = Object.YPos
-			if Object.Value1 > 128
-				if Object.Value1 < 384
+			Object[+1].YPos  = Object.YPos
+			if Object.AnimFrameTimer > 128
+				if Object.AnimFrameTimer < 384
 					Object[+1].DrawOrder = 1
 				else
 					Object[+1].DrawOrder = 4
@@ -147,13 +178,15 @@ sub ObjectMain
 			else
 				Object[+1].DrawOrder = 4
 			end if
-			TempValue0 = Object.Value1
+
+			// Second Bar
+			TempValue0  = Object.AnimFrameTimer
 			TempValue0 += 170
 			TempValue0 &= 511
 			Sin(Object[+2].XPos, TempValue0)
 			Object[+2].XPos *= 3072
 			Object[+2].XPos += Object.XPos
-			Object[+2].YPos = Object.YPos
+			Object[+2].YPos  = Object.YPos
 			if TempValue0 > 128
 				if TempValue0 < 384
 					Object[+2].DrawOrder = 1
@@ -163,13 +196,15 @@ sub ObjectMain
 			else
 				Object[+2].DrawOrder = 4
 			end if
-			TempValue0 = Object.Value1
+
+			// Third Bar
+			TempValue0  = Object.AnimFrameTimer
 			TempValue0 += 341
 			TempValue0 &= 511
 			Sin(Object[+3].XPos, TempValue0)
 			Object[+3].XPos *= 3072
 			Object[+3].XPos += Object.XPos
-			Object[+3].YPos = Object.YPos
+			Object[+3].YPos  = Object.YPos
 			if TempValue0 > 128
 				if TempValue0 < 384
 					Object[+3].DrawOrder = 1
@@ -185,51 +220,51 @@ end sub
 
 
 sub ObjectPlayerInteraction
-	if Object.PropertyValue == 0
+	if Object.PropertyValue == GIMMICK_PARENT
 		PlayerObjectCollision(C_PLATFORM, -40, -8, 40, 24)
 		TempValue1 = CheckResult
 		PlayerObjectCollision(C_BOX, -40, -184, 40, -168)
 		PlayerObjectCollision(C_TOUCH, -4, -48, 4, 8)
-		if CheckResult == 1
-			if Object.Value2 == 0
-				if TempValue1 == 1
-					Object.Value2 = 1
+		if CheckResult == true
+			if Object.OnObject == false
+				if TempValue1 == true
+					Object.OnObject = true
 					Player.State = Player_State_Static
 					Player.Animation = ANI_STOPPED
 					Player.XPos = Object.XPos
 					Player.Speed = 0
 					Player.XVelocity = 0
 					Player.YVelocity = 0
-					Player.TrackScroll = 0
+					Player.TrackScroll = false
 					if Player.Direction == FACING_RIGHT
-						if Player.CollisionPlane == 0
-							Object.State = 1
-							Object.Value1 = 0
+						if Player.CollisionPlane == COLLISION_PLANE_A
+							Object.State = RPLANESHIFTER_PLANE_A_TO_B_R
+							Object.AnimFrameTimer = 0
 						else
-							Object.State = 2
-							Object.Value1 = 256
+							Object.State = RPLANESHIFTER_PLANE_B_TO_A_R
+							Object.AnimFrameTimer = 256
 						end if
 					else
-						if Player.CollisionPlane == 0
-							Object.State = 3
-							Object.Value1 = 512
+						if Player.CollisionPlane == COLLISION_PLANE_A
+							Object.State = RPLANESHIFTER_PLANE_A_TO_B_L
+							Object.AnimFrameTimer = 512
 						else
-							Object.State = 4
-							Object.Value1 = 256
+							Object.State = RPLANESHIFTER_PLANE_B_TO_A_L
+							Object.AnimFrameTimer = 256
 						end if
 					end if
 				end if
 			end if
 		else
-			Object.Value2 = 0
+			Object.OnObject = false
 		end if
 	end if
 end sub
 
 
 sub ObjectDraw
-	if Object.PropertyValue == 0
-		TempValue0 = Object.AnimationTimer
+	if Object.PropertyValue == GIMMICK_PARENT
+		TempValue0  = Object.AnimationTimer
 		TempValue0 /= 3
 		DrawSprite(TempValue0)
 		TempValue0 += 2
@@ -246,15 +281,18 @@ end sub
 
 sub ObjectStartup
 	LoadSpriteSheet("R8/Objects2.gif")
-	SpriteFrame(-40, -8, 80, 16, 1, 200)
-	SpriteFrame(-40, -8, 80, 16, 1, 217)
-	SpriteFrame(-40, -184, 80, 16, 1, 200)
-	SpriteFrame(-40, -184, 80, 16, 1, 217)
-	SpriteFrame(-4, -40, 8, 32, 100, 35)
-	SpriteFrame(-4, -72, 8, 32, 100, 35)
-	SpriteFrame(-4, -104, 8, 32, 100, 35)
-	SpriteFrame(-4, -136, 8, 32, 100, 35)
-	SpriteFrame(-4, -168, 8, 32, 100, 35)
+
+	SpriteFrame(-40, -8, 80, 16, 1, 200)	// #0 - R Plane Shifter Base frame 0
+	SpriteFrame(-40, -8, 80, 16, 1, 217)	// #1 - R Plane Shifter Base frame 1
+
+	SpriteFrame(-40, -184, 80, 16, 1, 200)	// #2 - R Plane Shifter Roof frame 0
+	SpriteFrame(-40, -184, 80, 16, 1, 217)	// #3 - R Plane Shifter Roof frame 1
+
+	SpriteFrame(-4, -40, 8, 32, 100, 35)	// #4 - R Plane Shifter Bars 0
+	SpriteFrame(-4, -72, 8, 32, 100, 35)	// #5 - R Plane Shifter Bars 1
+	SpriteFrame(-4, -104, 8, 32, 100, 35)	// #6 - R Plane Shifter Bars 2
+	SpriteFrame(-4, -136, 8, 32, 100, 35)	// #7 - R Plane Shifter Bars 3
+	SpriteFrame(-4, -168, 8, 32, 100, 35)	// #8 - R Plane Shifter Bars 4
 end sub
 
 // ========================

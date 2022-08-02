@@ -1,62 +1,91 @@
-//------------Sonic CD Crush Platform Script-------------//
+//--------------Sonic CD Crush Platform Script----------------//
 //--------Scripted by Christian Whitehead 'The Taxman'--------//
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
 // Aliases
-#alias 37: TYPE_CRUSHPLATFORM
-#alias Player.Value7:Player.AnimationReserve
+#alias Object.Value0	:	Object.Timer
+#alias Object.Value1	:	Object.YDrawPos
+#alias Object.Value2	:	Object.YCollisionOffset
+#alias Object.Value3	:	Object.Oscillation
+#alias Object.Value4	:	Object.Speed
+#alias Object.Value5	:	Object.LargePlatform
+#alias Object.Value6	:	Object.IncreaseValue
+
+// Player Aliases
+#alias Player.Value7	:	Player.AnimationReserve
+
+#alias 0	:	CRUSHPLATFORM_DESCEND
+#alias 1	:	CRUSHPLATFORM_WAIT
+#alias 2	:	CRUSHPLATFORM_ASCEND
+#alias 3	:	CRUSHPLATFORM_WAIT_2
+
+// Property Values
+#alias 0	:	PLATFORM_START_TOP
+#alias 1	:	PLATFORM_START_BOTTOM
+
+#alias 1	:	FLOOR
+#alias 4	:	ROOF
+
+// Gravity
+#alias 0	:	GRAVITY_GROUND
+#alias 1	:	GRAVITY_AIR
 
 
 sub ObjectMain
-	if Object.Value5 == 0
-		Object.Value3 += Object.Value6
-		Object.Value3 &= 511
-		if Object.PropertyValue == 1
-			Object.Value3 += 256
+	if Object.LargePlatform == false
+		Object.Oscillation += Object.IncreaseValue
+		Object.Oscillation &= 511
+		if Object.PropertyValue == PLATFORM_START_BOTTOM
+			Object.Oscillation += 256
 		end if
-		Sin(Object.Value2, Object.Value3)
-		Object.Value2 *= Object.Value4
-		Object.Value2 += Object.YPos
-		Object.Value2 &= -0x10000
-		Object.Value2 -= Object.Value1
+
+		Sin(Object.YCollisionOffset, Object.Oscillation)
+		Object.YCollisionOffset *= Object.Speed
+		Object.YCollisionOffset += Object.YPos
+		Object.YCollisionOffset &= -0x10000
+		Object.YCollisionOffset -= Object.YDrawPos
 	else
 		switch Object.State
-		case 0
-			Object.Value3 += 4
-			Object.Value3 &= 511
-			if Object.Value3 == 128
+		case CRUSHPLATFORM_DESCEND
+			Object.Oscillation += 4
+			Object.Oscillation &= 511
+			if Object.Oscillation == 128
 				Object.State++
 			end if
 			break
-		case 1
-			if Object.Value0 < 64
-				Object.Value0++
+
+		case CRUSHPLATFORM_WAIT
+			if Object.Timer < 64
+				Object.Timer++
 			else
-				Object.Value0 = 0
+				Object.Timer = 0
 				Object.State++
 			end if
 			break
-		case 2
-			Object.Value3 += 4
-			Object.Value3 &= 511
-			if Object.Value3 == 384
+
+		case CRUSHPLATFORM_ASCEND
+			Object.Oscillation += 4
+			Object.Oscillation &= 511
+			if Object.Oscillation == 384
 				Object.State++
 			end if
 			break
-		case 3
-			if Object.Value0 < 64
-				Object.Value0++
+
+		case CRUSHPLATFORM_WAIT_2
+			if Object.Timer < 64
+				Object.Timer++
 			else
-				Object.Value0 = 0
-				Object.State = 0
+				Object.Timer = 0
+				Object.State = CRUSHPLATFORM_DESCEND
 			end if
 			break
 		end switch
-		Sin(Object.Value2, Object.Value3)
-		Object.Value2 *= Object.Value4
-		Object.Value2 += Object.YPos
-		Object.Value2 &= -0x10000
-		Object.Value2 -= Object.Value1
+
+		Sin(Object.YCollisionOffset, Object.Oscillation)
+		Object.YCollisionOffset *= Object.Speed
+		Object.YCollisionOffset += Object.YPos
+		Object.YCollisionOffset &= -0x10000
+		Object.YCollisionOffset -= Object.YDrawPos
 	end if
 end sub
 
@@ -64,15 +93,16 @@ end sub
 sub ObjectPlayerInteraction
 	TempValue0 = Object.YPos
 	TempValue1 = Player.YPos
-	Object.YPos = Object.Value1
-	if Object.Value5 == 0
+	Object.YPos = Object.YDrawPos
+
+	if Object.LargePlatform == false
 		PlayerObjectCollision(C_BOX, -32, -32, 32, 32)
-		if CheckResult == 1
-			Player.YPos += Object.Value2
+		if CheckResult == FLOOR
+			Player.YPos += Object.YCollisionOffset
 		else
-			if CheckResult == 4
-				if Player.Gravity == 0
-					if Object.Value2 > 0
+			if CheckResult == ROOF
+				if Player.Gravity == GRAVITY_GROUND
+					if Object.YCollisionOffset > 0
 						CallFunction(Player_Kill)
 					else
 						Player.YPos = TempValue1
@@ -82,9 +112,9 @@ sub ObjectPlayerInteraction
 		end if
 	else
 		PlayerObjectCollision(C_BOX, -32, -96, 32, 96)
-		if CheckResult == 1
-			Player.YPos += Object.Value2
-			if Object.Value3 == 320
+		if CheckResult == FLOOR
+			Player.YPos += Object.YCollisionOffset
+			if Object.Oscillation == 320
 				
 #platform: Use_Origins
 				Player.State = Player_State_Air_NoDropDash
@@ -96,13 +126,13 @@ sub ObjectPlayerInteraction
 				Player.Timer = 0
 				Player.YVelocity = -0x100000
 				Player.Animation = ANI_BOUNCING
-				Player.Gravity = 1
+				Player.Gravity = GRAVITY_AIR
 				Player.AnimationReserve = ANI_WALKING
 			end if
 		else
-			if CheckResult == 4
-				if Player.Gravity == 0
-					if Object.Value2 > 0
+			if CheckResult == ROOF
+				if Player.Gravity == GRAVITY_GROUND
+					if Object.YCollisionOffset > 0
 						CallFunction(Player_Kill)
 					else
 						Player.YPos = TempValue1
@@ -112,46 +142,53 @@ sub ObjectPlayerInteraction
 		end if
 	end if
 	Object.YPos = TempValue0
+
 end sub
 
 
 sub ObjectDraw
-	Sin(Object.Value1, Object.Value3)
-	Object.Value1 *= Object.Value4
-	Object.Value1 += Object.YPos
-	Object.Value1 &= -0x10000
-	DrawSpriteXY(0, Object.XPos, Object.Value1)
-	if Object.Value5 == 1
-		DrawSpriteXY(1, Object.XPos, Object.Value1)
-		DrawSpriteXY(2, Object.XPos, Object.Value1)
+	Sin(Object.YDrawPos, Object.Oscillation)
+	Object.YDrawPos *= Object.Speed
+	Object.YDrawPos += Object.YPos
+	Object.YDrawPos &= -0x10000
+	DrawSpriteXY(0, Object.XPos, Object.YDrawPos)
+	if Object.LargePlatform == true
+		DrawSpriteXY(1, Object.XPos, Object.YDrawPos)
+		DrawSpriteXY(2, Object.XPos, Object.YDrawPos)
 	end if
 end sub
 
 
 sub ObjectStartup
 	LoadSpriteSheet("R8/Objects.gif")
-	SpriteFrame(-32, -32, 64, 64, 1, 1)
-	SpriteFrame(-32, -96, 64, 64, 1, 1)
-	SpriteFrame(-32, 32, 64, 64, 1, 1)
+
+	SpriteFrame(-32, -32, 64, 64, 1, 1)	// #0 - Crush Platform (also the middle of the large Crush Platform)
+	SpriteFrame(-32, -96, 64, 64, 1, 1)	// #1 - Large Crush Platform Top
+	SpriteFrame(-32, 32, 64, 64, 1, 1)	// #2 - Large Crush Platform Bottom
+
+
 	ArrayPos0 = 32
 	while ArrayPos0 < 1056
 		if Object[ArrayPos0].Type == TypeName[CrushPlatform]
-			Object[ArrayPos0].Value6 = 2
+			Object[ArrayPos0].IncreaseValue = 2
 			if Object[ArrayPos0].PropertyValue == 0
-				Object[ArrayPos0].Value4 = 0x1000
+				Object[ArrayPos0].Speed = 0x1000
 			else
-				Object[ArrayPos0].Value4 = 0x1800
+				Object[ArrayPos0].Speed = 0x1800
 			end if
+
 			if Object[ArrayPos0].PropertyValue == 5
-				Object[ArrayPos0].Value5 = 1
-				Object[ArrayPos0].Value4 = 0x1000
+				Object[ArrayPos0].LargePlatform = true
+				Object[ArrayPos0].Speed = 0x1000
 			end if
+
 			if Object[ArrayPos0].PropertyValue == 69
-				Object[ArrayPos0].Value5 = 1
-				Object[ArrayPos0].Value4 = 0x1800
+				Object[ArrayPos0].LargePlatform = true
+				Object[ArrayPos0].Speed = 0x1800
 			end if
+
 			if Object[ArrayPos0].PropertyValue == 72
-				Object[ArrayPos0].Value6 = 6
+				Object[ArrayPos0].IncreaseValue = 6
 			end if
 		end if
 		ArrayPos0++

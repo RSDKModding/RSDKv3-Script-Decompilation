@@ -8,9 +8,9 @@
 #alias Object.Value5	:	Object.YOffSet
 
 // Arm Aliases
-#alias Object.Frame		:	Arm.Frame
-#alias Object.XPos		:	Arm.XPos
-#alias Object.YPos		:	Arm.YPos
+#alias Object.Frame	:	Arm.Frame
+#alias Object.XPos	:	Arm.XPos
+#alias Object.YPos	:	Arm.YPos
 // States
 #alias 0	:	BOSSBUMPER_SETUP
 #alias 1	:	BOSSBUMPER_IDLE
@@ -19,13 +19,15 @@
 // Priority
 #alias 0	:	PRIORITY_ACTIVE_BOUNDS
 
+
 sub ObjectMain
 	switch Object.State
 	case BOSSBUMPER_SETUP
-		Object.State = BOSSBUMPER_IDLE	// here it used to be a duplicated of BOSSBUMPER_IDLE code, they noticed it in origins :)
+		Object.State = BOSSBUMPER_IDLE
+		// Fall-Through
 	case BOSSBUMPER_IDLE
 		ArrayPos0 = Object.ArmEntity
-		Object.XPos = Arm[ArrayPos0].XPos
+		Object.XPos  = Arm[ArrayPos0].XPos
 		Object.XPos -= 0x130000
 
 		Object.YPos = Arm[ArrayPos0].YPos
@@ -63,7 +65,7 @@ sub ObjectPlayerInteraction
 				PlayerObjectCollision(C_TOUCH, -10, -16, 14, 16)
 				if CheckResult == true
 
-					Player.Speed = -0x40000
+					Player.Speed	 = -0x40000
 					Player.XVelocity = -0x40000
 
 					if Object.Frame == 0

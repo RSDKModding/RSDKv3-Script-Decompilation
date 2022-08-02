@@ -1,46 +1,48 @@
-//------------Sonic CD Egg Mobile Script-------------//
+//----------------Sonic CD Egg Mobile Script------------------//
 //--------Scripted by Christian Whitehead 'The Taxman'--------//
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
 // Aliases
-#alias Object.Value0		:	Object.Timer
-#alias Object.Value1		:	Object.XVelocity
-#alias Object.Value2		:	Object.YVelocity
-#alias Object.Value3		:	Object.Oscillation
-#alias Object.Value4		:	Object.WingOffset
-#alias Object.Value6		:	Object.OscillationValue
-#alias Object.Value7		:	Object.InvulnerableTimer
+#alias Object.Value0				:	Object.Timer
+#alias Object.Value1				:	Object.XVelocity
+#alias Object.Value2				:	Object.YVelocity
+#alias Object.Value3				:	Object.Oscillation
+#alias Object.Value4				:	Object.WingOffset
+#alias Object.Value6				:	Object.OscillationValue
+#alias Object.Value7				:	Object.InvulnerableTimer
 
 // Helper 1 Aliases
-#alias Object[+1].Value0	:	Helper1.BossHealth
-#alias Object[+1].Value1	:	Helper1.Controller		// This handles the boss movement
-#alias Object[+1].Value2	:	Helper1.ControllerState
-#alias Object[+1].Value3	:	Helper1.ControllerDisabled
-#alias Object[+1].Value4	:	Helper1.LeftBound
-#alias Object[+1].Value5	:	Helper1.RightBound
-#alias Object[+1].Value6	:	Helper1.CenterBound
-#alias Object[+1].Value7	:	Helper1.TargetPos		// Depending of what the boss needs this target is for X or Y Positions
+#alias Object[+1].Value0			:	Helper1.BossHealth
+#alias Object[+1].Value1			:	Helper1.Controller		// This handles the boss movement
+#alias Object[+1].Value2			:	Helper1.ControllerState
+#alias Object[+1].Value3			:	Helper1.ControllerDisabled
+#alias Object[+1].Value4			:	Helper1.LeftBound
+#alias Object[+1].Value5			:	Helper1.RightBound
+#alias Object[+1].Value6			:	Helper1.CenterBound
+#alias Object[+1].Value7			:	Helper1.TargetPos		// Depending of what the boss needs this target is for X or Y Positions
 
 // Helper 2 Aliases
-#alias Object[+2].State		:	Helper2.BossInvincible		// Checks if Eggman can be hit during his patterns
-#alias Object[+2].Value0	:	Helper2.SecondaryState	// Sets the preparation of the Wing Throw Attack
-#alias Object[+2].Value1	:	Helper2.StopTimer		// How much time eggman will stop moving during the intro/ground spin attack
-#alias Object[+2].Value2	:	Helper2.SfxState
-#alias Object[+2].Value3	:	Helper2.WingSpawnXPos
-#alias Object[+2].Value4	:	Helper2.MaxOscillation
-#alias Object[+2].Value6	:	Helper2.CutsceneRightBound
+#alias Object[+2].State				:	Helper2.BossInvincible		// Checks if Eggman can be hit during his patterns
+#alias Object[+2].Value0			:	Helper2.SecondaryState	// Sets the preparation of the Wing Throw Attack
+#alias Object[+2].Value1			:	Helper2.StopTimer		// How much time eggman will stop moving during the intro/ground spin attack
+#alias Object[+2].Value2			:	Helper2.AnimSpeedState
+#alias Object[+2].Value3			:	Helper2.WingSpawnXPos
+#alias Object[+2].Value4			:	Helper2.MaxOscillation
+#alias Object[+2].Value6			:	Helper2.CutsceneRightBound
+#alias Object[+2].AnimationTimer	:	Helper2.SfxTimer
+#alias Object[+2].AnimationSpeed	:	Helper2.SfxUsed
 
 // Boss Wing Aliases
-#alias Object.XPos			:	BossWing.XPos
-#alias Object.YPos			:	BossWing.YPos
-#alias Object.Value0		:	BossWing.Timer
-#alias Object.Value1		:	BossWing.XVelocity
-#alias Object.Value2		:	BossWing.YVelocity
-#alias Object.Value5		:	BossWing.Attached
-#alias Object.Frame			:	BossWing.Frame
-#alias Object.Rotation		:	BossWing.Rotation
-#alias Object.State			:	BossWing.State
-#alias Object.Priority		:	BossWing.Priority
+#alias Object.XPos					:	BossWing.XPos
+#alias Object.YPos					:	BossWing.YPos
+#alias Object.Value0				:	BossWing.Timer
+#alias Object.Value1				:	BossWing.XVelocity
+#alias Object.Value2				:	BossWing.YVelocity
+#alias Object.Value5				:	BossWing.Attached
+#alias Object.Frame					:	BossWing.Frame
+#alias Object.Rotation				:	BossWing.Rotation
+#alias Object.State					:	BossWing.State
+#alias Object.Priority				:	BossWing.Priority
 
 // Helper 2 States
 #alias 0	:	HELPER2_PREPARE_DETACH
@@ -175,7 +177,7 @@ end function
 
 
 function EggMobile_GroundSpinLeft
-	Object.XPos -= 85196
+	Object.XPos -= 0x14CCC
 	if Object.XPos <= Helper1.TargetPos
 		Object.XPos = Helper1.TargetPos
 		Object.OscillationValue = 0
@@ -195,7 +197,7 @@ end function
 
 
 function EggMobile_GroundSpinRight
-	Object.XPos += 85196
+	Object.XPos += 0x14CCC
 	if Object.XPos >= Helper1.TargetPos
 		Object.XPos = Helper1.TargetPos
 		Object.OscillationValue = 0
@@ -265,7 +267,7 @@ function EggMobile_HandleWingThrowATK
 			Helper2.SecondaryState++
 			Object.OscillationValue = -64
 			Helper1.TargetPos = Object[+3].YPos
-			Helper1.TargetPos -= 4456448
+			Helper1.TargetPos -= 0x440000
 		end if
 		break
 
@@ -305,11 +307,11 @@ end function
 
 
 function EggMobile_WingThrowVertical
-	if Object[+2].Value2 < Helper1.BossHealth
+	if Helper2.AnimSpeedState < Helper1.BossHealth
 		if Object.Timer == 0
 			ArrayPos0 = Object.EntityNo
 			ArrayPos0 -= 4
-			ArrayPos0 += Object[+2].Value2
+			ArrayPos0 += Helper2.AnimSpeedState
 			Object[ArrayPos0].Type = TypeName[BossWing]
 			BossWing[ArrayPos0].State = BOSSWING_FALL_VERTICAL
 			BossWing[ArrayPos0].Rotation = 0
@@ -380,7 +382,7 @@ function EggMobile_WingThrowVertical
 				Object.Timer++
 			else
 				Object.Timer = 0
-				Object[+2].Value2++
+				Helper2.AnimSpeedState++
 				Helper2.WingSpawnXPos++
 			end if
 		end if
@@ -399,7 +401,7 @@ end function
 
 
 function EggMobile_WingThrowDiagonal
-	if Object[+2].Value2 < 1
+	if Helper2.AnimSpeedState < 1
 		Object[-1].Type = TypeName[BossWing]
 		Object[-1].State = 2
 		Object[-1].Value0 = 0
@@ -439,7 +441,7 @@ function EggMobile_WingThrowDiagonal
 			Object[-1].Value1 = 211898
 			Object[-1].Value2 = 87759
 		end if
-		Object[+2].Value2++
+		Helper2.AnimSpeedState++
 	else
 		if Object[-4].Type == TypeName[Blank Object]
 			if Object[-3].Type == TypeName[Blank Object]
@@ -580,7 +582,7 @@ function EggMobile_ApproachPlayer
 		Object.Timer = 0
 		Object.YPos = Helper1.TargetPos
 		Helper1.TargetPos = Object[+3].YPos
-		Helper1.TargetPos -= 4456448
+		Helper1.TargetPos -= 0x440000
 		FlipSign(Object.XVelocity)
 		FlipSign(Object.YVelocity)
 		Helper1.ControllerDisabled = false
@@ -623,7 +625,7 @@ function EggMobile_Hit
 	end if
 	Object.YPos -= Object.YVelocity
 	TempValue0 = Object[+3].YPos
-	TempValue0 -= 4456448
+	TempValue0 -= 0x440000
 	if Object.YPos <= TempValue0
 		Object.YPos = TempValue0
 		Helper1.ControllerDisabled = false
@@ -660,7 +662,7 @@ function EggMobile_PogoAttackDescend
 	if Object.Timer > 29
 		Object.Timer = 0
 		Object.YPos = Object[+3].YPos
-		Object.YPos -= 4456448
+		Object.YPos -= 0x440000
 		Helper1.ControllerDisabled = false
 	end if
 end function
@@ -786,9 +788,9 @@ function Helper1Controller_FourWings
 			Helper1.TargetPos -= 0x680000
 			Object.OscillationValue = -16
 		end if
-		Helper2.SfxState = 1
-		Object[+2].AnimationSpeed = 0
-		Object[+2].AnimationTimer = 0
+		Helper2.AnimSpeedState = 1
+		Helper2.SfxUsed = 0
+		Helper2.SfxTimer = 0
 		break
 	case 7
 		Object.State = EggMobile_StopMovement
@@ -807,14 +809,14 @@ function Helper1Controller_FourWings
 			Helper1.TargetPos -= 0x680000
 			Object.OscillationValue = -16
 		end if
-		Object[+2].AnimationTimer = 0
+		Helper2.SfxTimer = 0
 		break
 	case 9
 		Object.State = EggMobile_StopMovement
 		Helper2.StopTimer = 60
 		Object.OscillationValue = 0
-		Helper2.SfxState = 0
-		Object[+2].AnimationTimer = 0
+		Helper2.AnimSpeedState = 0
+		Helper2.SfxTimer = 0
 		break
 	case 10
 		Object.State = EggMobile_GroundSpinAscend
@@ -854,7 +856,7 @@ function Helper1Controller_FourWings
 		break
 	case 16
 		Object.State = EggMobile_WingThrowVertical
-		Object[+2].Value2 = 0
+		Helper2.AnimSpeedState = 0
 		Helper2.WingSpawnXPos = Player.XPos
 		Helper2.WingSpawnXPos >>= 16
 		Helper2.WingSpawnXPos &= 3
@@ -968,9 +970,9 @@ function Helper1Controller_ThreeWings
 			Helper1.TargetPos += 0x140000
 			Object.OscillationValue = -16
 		end if
-		Helper2.SfxState = 1
-		Object[+2].AnimationSpeed = 0
-		Object[+2].AnimationTimer = 0
+		Helper2.AnimSpeedState = 1
+		Helper2.SfxUsed = 0
+		Helper2.SfxTimer = 0
 		break
 	case 7
 		Object.State = EggMobile_StopMovement
@@ -989,14 +991,14 @@ function Helper1Controller_ThreeWings
 			Helper1.TargetPos = Helper1.RightBound
 			Object.OscillationValue = 16
 		end if
-		Object[+2].AnimationTimer = 0
+		Helper2.SfxTimer = 0
 		break
 	case 9
 		Object.State = EggMobile_StopMovement
 		Helper2.StopTimer = 60
 		Object.OscillationValue = 0
-		Helper2.SfxState = 2
-		Object[+2].AnimationTimer = 0
+		Helper2.AnimSpeedState = 2
+		Helper2.SfxTimer = 0
 		break
 	case 10
 		Object.State = EggMobile_GroundSpinAscend
@@ -1036,7 +1038,7 @@ function Helper1Controller_ThreeWings
 		break
 	case 16
 		Object.State = EggMobile_WingThrowVertical
-		Object[+2].Value2 = 0
+		Helper2.AnimSpeedState = 0
 		Helper2.WingSpawnXPos = Player.XPos
 		Helper2.WingSpawnXPos >>= 16
 		Helper2.WingSpawnXPos &= 3
@@ -1104,7 +1106,7 @@ function Helper1Controller_TwoWings
 		break
 	case 4
 		Object.State = EggMobile_WingThrowVertical
-		Object[+2].Value2 = 0
+		Helper2.AnimSpeedState = 0
 		Helper2.WingSpawnXPos = Player.XPos
 		Helper2.WingSpawnXPos >>= 16
 		Helper2.WingSpawnXPos &= 3
@@ -1173,11 +1175,11 @@ function Helper1Controller_OneWing
 		Object.Oscillation <<= 6
 		Object.Timer = 0
 		Helper1.TargetPos = Object[+3].YPos
-		Helper1.TargetPos -= 4456448
+		Helper1.TargetPos -= 0x440000
 		break
 	case 4
 		Object.State = EggMobile_WingThrowDiagonal
-		Object[+2].Value2 = 0
+		Helper2.AnimSpeedState = 0
 		Object[-4].Type = TypeName[Blank Object]
 		Object[-3].Type = TypeName[Blank Object]
 		Object[-2].Type = TypeName[Blank Object]
@@ -1475,7 +1477,7 @@ function EggMobile_DropDamagedWing
 	end if
 	TempValue7 = Object[ArrayPos0].YPos
 	TempValue7 -= Object.YPos
-	TempValue7 -= 4456448
+	TempValue7 -= 0x440000
 	if TempValue7 < 0
 		FlipSign(TempValue7)
 	end if
@@ -1566,48 +1568,48 @@ sub ObjectMain
 	end if
 
 	if Object.OscillationValue != 0
-		switch Helper2.SfxState
+		switch Helper2.AnimSpeedState
 		case 0
-			Object[+2].AnimationTimer += 6
-			if Object[+2].AnimationTimer == 42
+			Helper2.SfxTimer += 6
+			if Helper2.SfxTimer == 42
 				PlayStageSfx(6, 0)
 			end if
-			if Object[+2].AnimationTimer > 59
-				Object[+2].AnimationTimer -= 60
+			if Helper2.SfxTimer > 59
+				Helper2.SfxTimer -= 60
 				PlayStageSfx(6, 0)
 			end if
 			break
 		case 1
-			Object[+2].AnimationTimer += 3
-			if Object[+2].AnimationTimer > 59
-				Object[+2].AnimationTimer -= 60
-				if Object[+2].AnimationSpeed == 0
+			Helper2.SfxTimer += 3
+			if Helper2.SfxTimer > 59
+				Helper2.SfxTimer -= 60
+				if Helper2.SfxUsed == 0
 					PlayStageSfx(6, 0)
-					Object[+2].AnimationSpeed = 1
+					Helper2.SfxUsed = 1
 				else
 					PlayStageSfx(7, 0)
-					Object[+2].AnimationSpeed = 0
+					Helper2.SfxUsed = 0
 				end if
 			end if
 			break
 		case 2
-			Object[+2].AnimationTimer += 8
-			if Object[+2].AnimationTimer > 59
-				Object[+2].AnimationTimer -= 60
+			Helper2.SfxTimer += 8
+			if Helper2.SfxTimer > 59
+				Helper2.SfxTimer -= 60
 				PlayStageSfx(6, 0)
 			end if
 			break
 		case 3
-			Object[+2].AnimationTimer += 10
-			if Object[+2].AnimationTimer > 59
-				Object[+2].AnimationTimer -= 60
+			Helper2.SfxTimer += 10
+			if Helper2.SfxTimer > 59
+				Helper2.SfxTimer -= 60
 				PlayStageSfx(6, 0)
 			end if
 			break
 		case 4
-			Object[+2].AnimationTimer += 16
-			if Object[+2].AnimationTimer > 59
-				Object[+2].AnimationTimer -= 60
+			Helper2.SfxTimer += 16
+			if Helper2.SfxTimer > 59
+				Helper2.SfxTimer -= 60
 				PlayStageSfx(6, 0)
 			end if
 			break
@@ -1680,7 +1682,7 @@ sub ObjectPlayerInteraction
 						Helper2.SecondaryState = 0
 						Object.AnimationTimer = 0
 						Helper1.ControllerDisabled = true
-						Helper2.SfxState = 5
+						Helper2.AnimSpeedState = 5
 
 #platform: Use_Haptics	
 						HapticEffect(90, 0, 0, 0)
@@ -1696,7 +1698,7 @@ sub ObjectPlayerInteraction
 						Helper1.Controller = Helper1Controller_OneWing
 						Object.Timer = 0
 						Object.Animation = 1
-						Helper2.SfxState = 4
+						Helper2.AnimSpeedState = 4
 						PlayStageSfx(5, 0)
 
 #platform: Use_Haptics	
@@ -1713,7 +1715,7 @@ sub ObjectPlayerInteraction
 						Helper1.Controller = Helper1Controller_TwoWings
 						Object.Timer = 0
 						Object.Animation = 1
-						Helper2.SfxState = 3
+						Helper2.AnimSpeedState = 3
 						PlayStageSfx(5, 0)
 
 #platform: Use_Haptics	
@@ -1730,7 +1732,7 @@ sub ObjectPlayerInteraction
 						Helper1.Controller = Helper1Controller_ThreeWings
 						Object.Timer = 0
 						Object.Animation = 1
-						Helper2.SfxState = 2
+						Helper2.AnimSpeedState = 2
 						PlayStageSfx(5, 0)
 						
 #platform: Use_Haptics	

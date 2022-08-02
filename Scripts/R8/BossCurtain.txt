@@ -3,21 +3,33 @@
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
 // Aliases
-#alias Object.Value0	:	Object.Timer
-#alias Object.Value1	:	Object.LeftCurtainTile
-#alias Object.Value2	:	Object.RightCurtainTile
+#alias Object.Value0			:	Object.Timer
+#alias Object.Value1			:	Object.LeftCurtainTile
+#alias Object.Value2			:	Object.RightCurtainTile
 
+// Boss Wing Alias
+#alias Object.Value7			:	BossWing.EggMobileEntity
+
+// Egg Mobile Alias
+#alias Object[-3].Value4		:	EggMobile.WingOffset
 
 // Helper 1 Aliases
-#alias Object[-2].Value0	:	Helper1.BossHealth
-#alias Object[-2].Value1	:	Helper1.Controller
-#alias Object[-2].Value4	:	Helper1.LeftBound
-#alias Object[-2].Value5	:	Helper1.RightBound
-#alias Object[-2].Value6	:	Helper1.CenterBound
+#alias Object[-2].Value0		:	Helper1.BossHealth
+#alias Object[-2].Value1		:	Helper1.Controller
+#alias Object[-2].Value4		:	Helper1.LeftBound
+#alias Object[-2].Value5		:	Helper1.RightBound
+#alias Object[-2].Value6		:	Helper1.CenterBound
+
+// Helper 2 Alias
+#alias Object[+1].Value6		:	Helper2.CutsceneRightBound
+
+// R8 Setup Alias
+#alias Object[19].Value1		:	R8Setup.CurrentPalette
 
 // HUD Aliases
 #alias Object[24].PropertyValue	:	HUD.TimePeriod
 
+// States
 #alias 0	:	BOSSCURTAIN_WAIT_PLAYER
 #alias 1	:	BOSSCURTAIN_SPAWN_BOSS
 #alias 2	:	BOSSCURTAIN_SET_BOUNDS
@@ -56,33 +68,37 @@ sub ObjectMain
 			end if
 		else
 			Object.Timer = 0
-			Object[19].Value1 = 0
+			R8Setup.CurrentPalette = 0
 			ArrayPos0 = Object.EntityNo
 			ArrayPos0 -= 3
 			Object[-3].Type = TypeName[EggMobile]
+
 			Object[-7].Type = TypeName[BossWing]
-			Object[-7].Value7 = ArrayPos0
+			BossWing[-7].EggMobileEntity = ArrayPos0
+
 			Object[-6].Type = TypeName[BossWing]
-			Object[-6].Value7 = ArrayPos0
+			BossWing[-6].EggMobileEntity = ArrayPos0
+
 			Object[-5].Type = TypeName[BossWing]
-			Object[-5].Value7 = ArrayPos0
+			BossWing[-5].EggMobileEntity = ArrayPos0
+
 			Object[-4].Type = TypeName[BossWing]
-			Object[-4].Value7 = ArrayPos0
+			BossWing[-4].EggMobileEntity = ArrayPos0
 			
-			Helper1.BossHealth = 4
-			Helper1.CenterBound = Object.XPos
+			Helper1.BossHealth   = 4
+			Helper1.CenterBound  = Object.XPos
 
-			Helper1.LeftBound = Object.XPos
-			Helper1.LeftBound -= 8126464
+			Helper1.LeftBound    = Object.XPos
+			Helper1.LeftBound   -= 8126464
 
-			Helper1.RightBound = Object.XPos
-			Helper1.RightBound += 8126464
+			Helper1.RightBound   = Object.XPos
+			Helper1.RightBound  += 8126464
 			
-			Object[-3].Value4 = 0x1000
-			// Helper1
-			Helper1.Controller = Helper1Controller_FourWings
-			// Helper2
-			Object[-1].Value6 = Stage.XBoundary2
+			EggMobile.WingOffset = 0x1000
+
+			Helper1.Controller   = Helper1Controller_FourWings
+
+			Helper2.CutsceneRightBound = Stage.XBoundary2
 			Object.State++
 		end if
 		break
@@ -95,18 +111,18 @@ sub ObjectMain
 		Object.LeftCurtainTile  -= 0x20000
 		Object.RightCurtainTile += 0x20000
 
-		TempValue1 = Object.LeftCurtainTile
+		TempValue1   = Object.LeftCurtainTile
 		TempValue1 >>= 16
-		TempValue1 += 7
+		TempValue1  += 7
 
-		TempValue3 = Object.RightCurtainTile
+		TempValue3   = Object.RightCurtainTile
 		TempValue3 >>= 16
-		TempValue3 -= 7
+		TempValue3  -= 7
 
-		TempValue2 = Object.iYPos
-		TempValue2 -= 92
+		TempValue2   = Object.iYPos
+		TempValue2  -= 92
 
-		TempValue0 = 0
+		TempValue0   = 0
 		while TempValue0 < 12
 			// Swap tiles to fake motion on the curtain background
 			Set16x16TileInfo(0, TempValue1, TempValue2, 0)
@@ -140,21 +156,21 @@ end sub
 
 sub ObjectPlayerInteraction
 	// Player Right Bound
-	TempValue0 = Player.CollisionRight
+	TempValue0   = Player.CollisionRight
 	TempValue0 <<= 16
-	TempValue0 += Player.XPos
+	TempValue0  += Player.XPos
 
 	// Stage Bound
-	TempValue1 = Stage.XBoundary2
+	TempValue1   = Stage.XBoundary2
 	TempValue1 <<= 16
 
 	// Stop the player from advancing if the player right bound pos is after the stage bound pos
 	if TempValue0 > TempValue1
 		Player.XVelocity = 0
-		Player.Speed = 0
-		Player.XPos = TempValue1
+		Player.Speed     = 0
+		Player.XPos      = TempValue1
 
-		TempValue0 = Player.CollisionRight
+		TempValue0   = Player.CollisionRight
 		TempValue0 <<= 16
 		Player.XPos -= TempValue0
 	end if
@@ -182,23 +198,25 @@ end sub
 sub ObjectStartup
 	LoadSpriteSheet("R8/Objects2.gif")
 
-	SpriteFrame(-8, -96, 16, 32, 134, 187)
-	SpriteFrame(-8, -64, 16, 32, 134, 187)
-	SpriteFrame(-8, -32, 16, 32, 134, 187)
-	SpriteFrame(-8, 0, 16, 32, 134, 187)
-	SpriteFrame(-8, 32, 16, 32, 134, 187)
-	SpriteFrame(-8, 64, 16, 32, 134, 187)
+	SpriteFrame(-8, -96, 16, 32, 134, 187)	// #0 - Curtain Center Section 1
+	SpriteFrame(-8, -64, 16, 32, 134, 187)	// #1 - Curtain Center Section 2
+	SpriteFrame(-8, -32, 16, 32, 134, 187)	// #2 - Curtain Center Section 3
+	SpriteFrame(-8, 0, 16, 32, 134, 187)	// #3 - Curtain Center Section 4
+	SpriteFrame(-8, 32, 16, 32, 134, 187)	// #4 - Curtain Center Section 5
+	SpriteFrame(-8, 64, 16, 32, 134, 187)	// #5 - Curtain Center Section 6
 
 	ArrayPos0 = 32
 	while ArrayPos0 < 1056
 		if Object[ArrayPos0].Type == TypeName[BossCurtain]
 			Object[ArrayPos0].Direction = FACING_LEFT
 			Object[ArrayPos0].DrawOrder = 2
-			Object[ArrayPos0].Alpha = 224
-			Object[ArrayPos0].Value1 = Object[ArrayPos0].XPos
-			Object[ArrayPos0].Value1 -= 0x80000
-			Object[ArrayPos0].Value2 = Object[ArrayPos0].XPos
-			Object[ArrayPos0].Value2 += 0x80000
+			Object[ArrayPos0].Alpha     = 224
+
+			Object[ArrayPos0].LeftCurtainTile   = Object[ArrayPos0].XPos
+			Object[ArrayPos0].LeftCurtainTile  -= 0x80000
+
+			Object[ArrayPos0].RightCurtainTile  = Object[ArrayPos0].XPos
+			Object[ArrayPos0].RightCurtainTile += 0x80000
 		end if
 		ArrayPos0++
 	loop
