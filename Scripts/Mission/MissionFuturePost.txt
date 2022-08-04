@@ -1,40 +1,63 @@
-//------------Sonic CD M_FuturePos Script-------------//
+//------------Sonic CD Mission Future Post Script-------------//
 //--------Scripted by Christian Whitehead 'The Taxman'--------//
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
 // Aliases
-#alias 74: TYPE_M_FUTUREPOS
+#alias Object.Value0	:	Object.Timer
+#alias Object.Value1	:	Object.CollisionPlane
 
+// States
+#alias 0	:	MFUTUREPOST_IDLE
+#alias 1	:	MFUTUREPOST_ROTATE
+#alias 2	:	MFUTUREPOST_USED
+
+// Warp Destination
+#alias 2	:	WARP_FUTURE
+
+// Collision Plane
+#alias 1	:	COLLISION_PLANE_B
+
+// Property Values
+#alias 1	:	PROPVAL_PLANEB
+
+// Game Modes
 #alias 2	:	GAMEMODE_TIMEATTACK
+
+// Priority
+#alias 0	:	PRIORITY_ACTIVE_BOUNDS
+#alias 1	:	PRIORITY_ACTIVE
 
 
 sub ObjectPlayerInteraction
 	switch Object.State
-	case 0
-		if Player.CollisionPlane == Object.Value1
+	case MFUTUREPOST_IDLE
+		if Player.CollisionPlane == Object.CollisionPlane
 			PlayerObjectCollision(C_TOUCH,-8,-24,8,32)
-			if CheckResult == 1
-				Warp.Destination=2
-				Object.State=1
-				Object.Priority=1
-				Object.Frame=1
+			if CheckResult == true
+				Warp.Destination = WARP_FUTURE
+				Object.State = MFUTUREPOST_ROTATE
+				Object.Priority = PRIORITY_ACTIVE
+				Object.Frame = 1
 				PlaySfx(12,0)
 			end if
 		end if
 		break
-	case 2
-		if Object.OutOfBounds == 1
-			TempValue0=Stage.Minutes
+
+	case MFUTUREPOST_USED
+		if Object.OutOfBounds == true
+			TempValue0  = Stage.Minutes
 			TempValue0 *= 60
 			TempValue0 += Stage.Seconds
-			if Object.Value0 == 0
-				Object.Value0=TempValue0
-				Object.Value0 += 10
+
+			if Object.Timer == 0
+				Object.Timer  = TempValue0
+				Object.Timer += 10
 			else
-				if TempValue0 >= Object.Value0
-					Object.State=0
-					Object.Value0=0
-					Object.Priority=0
+				if TempValue0 >= Object.Timer
+					// Reset the post
+					Object.State = MFUTUREPOST_IDLE
+					Object.Timer = 0
+					Object.Priority = PRIORITY_ACTIVE_BOUNDS
 				end if
 			end if
 		end if
@@ -45,26 +68,29 @@ end sub
 
 sub ObjectDraw
 	switch Object.State
-	case 0
+	case MFUTUREPOST_IDLE
 		DrawSprite(0)
 		DrawSprite(1)
 		break
-	case 1
+
+	case MFUTUREPOST_ROTATE
 		DrawSprite(0)
-		Object.Value0++
-		if Object.Value0 == 64
-			Object.Value0=0
-			Object.State=2
+		Object.Timer++
+		if Object.Timer == 64
+			Object.Timer = 0
+			Object.State = MFUTUREPOST_USED
 		end if
 		DrawSprite(Object.Frame)
-		TempValue0=Object.Value0
-		TempValue0&=1
+
+		TempValue0 = Object.Timer
+		TempValue0 &= 1
 		Object.Frame += TempValue0
-		if Object.Frame>8
-			Object.Frame=1
+		if Object.Frame > 8
+			Object.Frame = 1
 		end if
 		break
-	case 2
+
+	case MFUTUREPOST_USED
 		DrawSprite(0)
 		DrawSprite(5)
 		break
@@ -74,29 +100,34 @@ end sub
 
 sub ObjectStartup
 	LoadSpriteSheet("Global/Items.gif")
-	SpriteFrame(-8,-24,16,48,35,204)
-	SpriteFrame(-16,-40,32,16,52,239)
-	SpriteFrame(-8,-40,16,16,51,183)
-	SpriteFrame(-3,-40,8,16,68,183)
-	SpriteFrame(-8,-40,16,16,52,200)
-	SpriteFrame(-16,-40,32,16,85,239)
-	SpriteFrame(-8,-40,16,16,51,183)
-	SpriteFrame(-3,-40,8,16,68,183)
-	SpriteFrame(-8,-40,16,16,52,200)
-	ArrayPos0=32
-	while ArrayPos0<1056
+
+	SpriteFrame(-8, -24, 16, 48, 35, 204)		// #0 - Post Body
+	// Future Post Head
+	SpriteFrame(-16, -40, 32, 16, 52, 239)		// #1 - Post Head
+	SpriteFrame(-8, -40, 16, 16, 51, 183)		// #2 - Post Head Flip 1
+	SpriteFrame(-3, -40, 8, 16, 68, 183)		// #3 - Post Head Flip 2
+	SpriteFrame(-8, -40, 16, 16, 52, 200)		// #4 - Post Head Flip 3
+	SpriteFrame(-16, -40, 32, 16, 85, 239)		// #5 - Post Head Backwards
+	SpriteFrame(-8, -40, 16, 16, 51, 183)		// #6 - Post Head Flip 1
+	SpriteFrame(-3, -40, 8, 16, 68, 183)		// #7 - Post Head Flip 2
+	SpriteFrame(-8, -40, 16, 16, 52, 200)		// #8 - Post Head Flip 3
+
+	ArrayPos0 = 32
+	while ArrayPos0 < 1056
 		if Object[ArrayPos0].Type == TypeName[FuturePost]
-			if Object[ArrayPos0].PropertyValue == 1
-				Object[ArrayPos0].DrawOrder=1
-				Object[ArrayPos0].Value1=1
+			if Object[ArrayPos0].PropertyValue == PROPVAL_PLANEB
+				Object[ArrayPos0].DrawOrder 	 = 1
+				Object[ArrayPos0].CollisionPlane = COLLISION_PLANE_B
 			end if
+
 			if Options.GameMode == GAMEMODE_TIMEATTACK
-				Object[ArrayPos0].Type=TypeName[BlankObject]
+				Object[ArrayPos0].Type = TypeName[Blank Object]
 			end if
 		end if
 		ArrayPos0++
 	loop
-	Transporter_Destroyed=1
+
+	Transporter_Destroyed = true
 end sub
 
 

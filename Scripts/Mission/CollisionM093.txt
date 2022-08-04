@@ -1,119 +1,175 @@
-//------------Sonic CD CollisionM093 Script-------------//
+//---------------Sonic CD Collision M093 Script---------------//
 //--------Scripted by Christian Whitehead 'The Taxman'--------//
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
+//-----Used on Mission Quartz Quadrant Zone 1 : Fast Foes-----//
 
 // Aliases
-#alias 77: TYPE_COLLISIONM093
+// Used in general by all badniks
+#alias Object.Value0		:	Badnik.Timer
+#alias Object.Direction		:	Badnik.Direction
+#alias Object.State			:	Badnik.State
+
+// Used by NoroNoro and Sasuri
+#alias Object.Value2		:	Badnik.SavedTimer
+
+// Used by KumoKumo and KumoKumo2
+#alias Object.YPos			:	Badnik.YPos
+#alias Object.Value1		:	Badnik.YVelocity
+#alias Object.DrawOrder		:	Badnik.DrawOrder
+#alias Object.PropertyValue	:	Badnik.Quality
+#alias Object.Frame			:	Badnik.Frame
+
+// Mission Block Alias
+#alias Object.PropertyValue	:	Object.BlocksNo
+
+// Badniks
+#alias 53	:	TYPE_NORONORO
+#alias 54	:	TYPE_SASURI
+#alias 57	:	TYPE_KUMOKUMO
+#alias 76	:	TYPE_KUMOKUMO2
+
+// NoroNoro and Sasuri States
+#alias 0	:	BADNIK_FINDGROUND				// Good thing both NoroNoro and Sasuri uses this
+#alias 1	:	BADNIK_MOVELEFT					// CrawlLeft for Sasuri, RollLeft for NoroNoro
+#alias 2	:	BADNIK_MOVERIGHT				// CrawlRight for Sasuri, RollRight for NoroNoro
+
+// KumoKumo States
+#alias 0	:	KUMOKUMO_AIRBORNE
+#alias 1	:	KUMOKUMO_GOOD_GROUND
+#alias 2	:	KUMOKUMO_BAD_GROUND
+
+// Badnik Property Values
+#alias 0	:	PROPVAL_QUALITY_GOOD
+#alias 1	:	PROPVAL_QUALITY_BAD
+
+// Priority
+#alias 1	:	PRIORITY_ACTIVE
 
 
 sub ObjectMain
 	
-	// wtf is this object
-	
+	// This object fakes collision between Mission Blocks and Quartz Quadrant Badniks
+	// specifically for Mission 093, 'Fast Foes'.
+	// However, none of the badniks present in the level touches a mission block at any point
+	// that, along with the fact that Sasuri is present here despite never appearing in the level
+	// makes me think that the layout of the level was totally different when this object was made
+	// maybe starting from the middle of the level instead of the beginning?
+
 	ArrayPos0 = 32
 	while ArrayPos0 < 1056
 		CheckResult = false
 		switch Object[ArrayPos0].Type
-		case 53
-		case 54
-		case 57
-		case 76
+		case TYPE_NORONORO
+		case TYPE_SASURI
+		case TYPE_KUMOKUMO
+		case TYPE_KUMOKUMO2
 			CheckResult = true
 			break
 			
 		end switch
 		
 		if CheckResult == true
-			ArrayPos1 = 32
-			Object.XPos = Object[ArrayPos0].XPos
+			ArrayPos1     = 32
+			Object.XPos   = Object[ArrayPos0].XPos
 			Object.XPos >>= 16
-			Object.YPos = Object[ArrayPos0].YPos
+			Object.YPos   = Object[ArrayPos0].YPos
 			Object.YPos >>= 16
 		else
 			ArrayPos1 = 2000
 		end if
 		
-		while ArrayPos1<1056
+		while ArrayPos1 < 1056
 			if Object[ArrayPos1].Type == TypeName[MissionBlock]
-				if Object[ArrayPos1].PropertyValue <= 1
-					TempValue3=-16
+				if Object[ArrayPos1].BlocksNo <= 1
+					TempValue3  = -16
 				else
-					TempValue3=-32
+					TempValue3  = -32
 					TempValue3 *= Object[ArrayPos1].PropertyValue
 					TempValue3 += 16
 				end if
-				TempValue4=16
-				TempValue0=Object[ArrayPos1].XPos
+
+				TempValue4   = 16
+
+				TempValue0   = Object[ArrayPos1].XPos
 				TempValue0 >>= 16
-				TempValue0 -= Object.XPos
-				CheckGreater(TempValue0,TempValue3)
-				TempValue1=CheckResult
-				CheckLower(TempValue0,TempValue4)
-				TempValue1&=CheckResult
-				if TempValue1 == 1
-					TempValue2=Object[ArrayPos1].YPos
+				TempValue0  -= Object.XPos
+				CheckGreater(TempValue0, TempValue3)
+				TempValue1   = CheckResult
+				CheckLower(TempValue0, TempValue4)
+				TempValue1  &= CheckResult
+				if TempValue1 == true
+					TempValue2   = Object[ArrayPos1].YPos
 					TempValue2 >>= 16
-					TempValue1=Object.YPos
-					TempValue1 += 16
-					TempValue2 -= TempValue1
-					CheckGreater(TempValue2,-16)
-					TempValue1=CheckResult
-					CheckLower(TempValue2,15)
-					TempValue1&=CheckResult
-					if TempValue1 == 1
-						Object.YPos=Object[ArrayPos1].YPos
+
+					TempValue1   = Object.YPos
+					TempValue1  += 16
+
+					TempValue2  -= TempValue1
+					CheckGreater(TempValue2, -16)
+					TempValue1  = CheckResult
+					CheckLower(TempValue2 ,15)
+					TempValue1 &= CheckResult
+					if TempValue1 == true
+						Object.YPos   = Object[ArrayPos1].YPos
 						Object.YPos >>= 16
-						Object.YPos -= 32
-						Object[ArrayPos0].YPos=Object.YPos
+						Object.YPos  -= 32
+
+						Object[ArrayPos0].YPos   = Object.YPos
 						Object[ArrayPos0].YPos <<= 16
-						TempValue2=16
+
+						TempValue2 = 16
 					end if
+					
 					if TempValue2 == 16
 						switch Object[ArrayPos0].Type
-						case 53
-						case 54
-							Object[ArrayPos0].Value0=Object[ArrayPos0].Value2
-							switch Object[ArrayPos0].State
-							case 0
-								Object[ArrayPos0].State=1
+						case TYPE_NORONORO
+						case TYPE_SASURI
+							Badnik[ArrayPos0].Timer = Badnik[ArrayPos0].SavedTimer
+							switch Badnik[ArrayPos0].State
+							case BADNIK_FINDGROUND
+								Badnik[ArrayPos0].State = BADNIK_MOVELEFT
 								break
-							case 1
-								TempValue5=TempValue3
+
+							case BADNIK_MOVELEFT
+								TempValue5  = TempValue3
 								TempValue5 += 4
-								if TempValue0>TempValue5
-									Object[ArrayPos0].Value0++
-									if Object[ArrayPos0].Value0!=320
-										Object[ArrayPos0].State=2
-										Object[ArrayPos0].Direction=FACING_LEFT
+								if TempValue0 > TempValue5
+									Badnik[ArrayPos0].Timer++
+									if Badnik[ArrayPos0].Timer != 320
+										Badnik[ArrayPos0].State = BADNIK_MOVERIGHT
+										Badnik[ArrayPos0].Direction = FACING_LEFT
 									end if
 								end if
 								break
-							case 2
-								TempValue5=TempValue4
+
+							case BADNIK_MOVERIGHT
+								TempValue5  = TempValue4
 								TempValue5 -= 4
-								if TempValue0<TempValue5
-									Object[ArrayPos0].Value0--
-									if Object[ArrayPos0].Value0!=-320
-										Object[ArrayPos0].State=1
-										Object[ArrayPos0].Direction=FACING_RIGHT
+								if TempValue0 < TempValue5
+									Badnik[ArrayPos0].Timer--
+									if Badnik[ArrayPos0].Timer != -320
+										Object[ArrayPos0].State = BADNIK_MOVELEFT
+										Object[ArrayPos0].Direction = FACING_RIGHT
 									end if
 								end if
 								break
 							end switch
-							Object[ArrayPos0].Value2=Object[ArrayPos0].Value0
+							
+							Badnik[ArrayPos0].SavedTimer = Badnik[ArrayPos0].Timer
 							break
-						case 57
-						case 76
-							if Object[ArrayPos0].State == 0
-								if Object[ArrayPos0].Value1>0
-									Object[ArrayPos0].YPos += 0x80000
-									Object[ArrayPos0].Frame=0
-									Object[ArrayPos0].DrawOrder=3
-									if Object[ArrayPos0].PropertyValue == 0
-										Object[ArrayPos0].State=1
+
+						case TYPE_KUMOKUMO
+						case TYPE_KUMOKUMO2
+							if Badnik[ArrayPos0].State == KUMOKUMO_AIRBORNE
+								if Badnik[ArrayPos0].YVelocity > 0
+									Badnik[ArrayPos0].YPos += 0x80000
+									Badnik[ArrayPos0].Frame = 0
+									Badnik[ArrayPos0].DrawOrder = 3
+									if Badnik[ArrayPos0].Quality == PROPVAL_QUALITY_GOOD
+										Badnik[ArrayPos0].State = KUMOKUMO_GOOD_GROUND
 									else
-										Object[ArrayPos0].State=2
-										Object[ArrayPos0].Direction=FACING_LEFT
+										Badnik[ArrayPos0].State = KUMOKUMO_BAD_GROUND
+										Badnik[ArrayPos0].Direction = FACING_LEFT
 									end if
 								end if
 							end if
@@ -130,10 +186,10 @@ end sub
 
 
 sub ObjectStartup
-	ArrayPos0=32
-	while ArrayPos0<1056
+	ArrayPos0 = 32
+	while ArrayPos0 < 1056
 		if Object[ArrayPos0].Type == TypeName[CollisionM093]
-			Object[ArrayPos0].Priority=1
+			Object[ArrayPos0].Priority = PRIORITY_ACTIVE
 		end if
 		ArrayPos0++
 	loop

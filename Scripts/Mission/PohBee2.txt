@@ -1,14 +1,44 @@
-//------------Sonic CD PohBee2 Script-------------//
+//------------------Sonic CD PohBee 2 Script------------------//
 //--------Scripted by Christian Whitehead 'The Taxman'--------//
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
 // Aliases
-#alias 71: TYPE_POHBEE2
+#alias Object.Value0		:	Object.Timer
+#alias Object.Value1		:	Object.XOriginPos
+#alias Object.Value2		:	Object.CurrentFrame
+#alias Object.Value3		:	Object.ShootingCooldown
+#alias Object.Value4		:	Object.FrameIncrease
+#alias Object.PropertyValue	:	Object.Quality
+
+// PohBee Bullet Aliases
+#alias Object.Direction		:	PohBeeBullet.Direction
+#alias Object.XPos			:	PohBeeBullet.XPos
+#alias Object.YPos			:	PohBeeBullet.YPos
+#alias Object.Value1		:	PohBeeBullet.XVelocity
+#alias Object.Value2		:	PohBeeBullet.YVelocity
+
+// States
+#alias 0		:	POHBEE2_MOVING_LEFT
+#alias 1		:	POHBEE2_TURN_RIGHT
+#alias 2		:	POHBEE2_MOVING_RIGHT
+#alias 3		:	POHBEE2_TURN_LEFT
+#alias 4		:	POHBEE2_SHOOTING_LEFT
+#alias 5		:	POHBEE2_SHOOTING_RIGHT
+#alias 6		:	POHBEE2_RESET
+
+// Priority
+#alias 0		:	PRIORITY_ACTIVE_BOUNDS
+#alias 1		:	PRIORITY_ACTIVE
+
+// Badnik Quality
+#alias 0	:	PROPVAL_QUALITY_GOOD
+#alias 1	:	PROPVAL_QUALITY_BAD
+#alias 2	:	PROPVAL_STATIONARY	// This PohBee is also good quality
 
 
 sub ObjectMain
 	if Object.OutOfBounds == true
-		Object.State = POHBEE_RESET
+		Object.State = POHBEE2_RESET
 		Object.Timer = 0
 		Object.Direction = FACING_RIGHT
 		Object.XPos = Object.XOriginPos
@@ -19,7 +49,7 @@ sub ObjectMain
 	
 	if Object.Quality == PROPVAL_QUALITY_GOOD
 		switch Object.State
-		case POHBEE_MOVING_LEFT
+		case POHBEE2_MOVING_LEFT
 			Object.Priority = PRIORITY_ACTIVE
 			if Object.ShootingCooldown > 0
 				Object.ShootingCooldown--
@@ -28,12 +58,12 @@ sub ObjectMain
 				Object.Timer++
 				Object.XPos -= 0x20000
 			else
-				Object.State = POHBEE_TURN_RIGHT
+				Object.State = POHBEE2_TURN_RIGHT
 				Object.Timer = 0
 			end if
 			break
 
-		case POHBEE_TURN_RIGHT
+		case POHBEE2_TURN_RIGHT
 			Object.Priority = PRIORITY_ACTIVE
 			if Object.ShootingCooldown > 0
 				Object.ShootingCooldown--
@@ -44,11 +74,11 @@ sub ObjectMain
 				end if
 				Object.Timer++
 			else
-				Object.State = POHBEE_MOVING_RIGHT
+				Object.State = POHBEE2_MOVING_RIGHT
 			end if
 			break
 
-		case POHBEE_MOVING_RIGHT
+		case POHBEE2_MOVING_RIGHT
 			Object.Priority = PRIORITY_ACTIVE
 			if Object.ShootingCooldown > 0
 				Object.ShootingCooldown--
@@ -57,12 +87,12 @@ sub ObjectMain
 				Object.Timer++
 				Object.XPos += 0x20000
 			else
-				Object.State = POHBEE_TURN_LEFT
+				Object.State = POHBEE2_TURN_LEFT
 				Object.Timer = 0
 			end if
 			break
 
-		case POHBEE_TURN_LEFT
+		case POHBEE2_TURN_LEFT
 			Object.Priority = PRIORITY_ACTIVE
 			if Object.ShootingCooldown > 0
 				Object.ShootingCooldown--
@@ -73,11 +103,11 @@ sub ObjectMain
 				end if
 				Object.Timer++
 			else
-				Object.State = POHBEE_MOVING_LEFT
+				Object.State = POHBEE2_MOVING_LEFT
 			end if
 			break
 
-		case POHBEE_SHOOTING_LEFT
+		case POHBEE2_SHOOTING_LEFT
 			Object.Priority = PRIORITY_ACTIVE
 			if Object.ShootingCooldown < 46
 				Object.ShootingCooldown++
@@ -86,20 +116,20 @@ sub ObjectMain
 				end if
 				if Object.ShootingCooldown == 32
 					CreateTempObject(TypeName[PohBeeBullet],0,Object.XPos,Object.YPos)
-					Object[TempObjectPos].XPos -= 0xF0000
-					Object[TempObjectPos].YPos += 0x1B0000
-					Object[TempObjectPos].XVelocity = -0x40000
-					Object[TempObjectPos].YVelocity =  0x40000
+					PohBeeBullet[TempObjectPos].XPos -= 0xF0000
+					PohBeeBullet[TempObjectPos].YPos += 0x1B0000
+					PohBeeBullet[TempObjectPos].XVelocity = -0x40000
+					PohBeeBullet[TempObjectPos].YVelocity =  0x40000
 					PlayStageSfx(7,0)
 				end if
 			else
-				Object.State = POHBEE_MOVING_LEFT
+				Object.State = POHBEE2_MOVING_LEFT
 				Object.FrameIncrease = 0
 				Object.ShootingCooldown = 30
 			end if
 			break
 			
-		case POHBEE_SHOOTING_RIGHT
+		case POHBEE2_SHOOTING_RIGHT
 			Object.Priority = PRIORITY_ACTIVE
 			if Object.ShootingCooldown < 46
 				Object.ShootingCooldown++
@@ -108,23 +138,23 @@ sub ObjectMain
 				end if
 				if Object.ShootingCooldown == 32
 					CreateTempObject(TypeName[PohBeeBullet],0,Object.XPos,Object.YPos)
-					Object[TempObjectPos].Direction=FACING_LEFT
-					Object[TempObjectPos].XPos += 0xF0000
-					Object[TempObjectPos].YPos += 0x1B0000
-					Object[TempObjectPos].XVelocity = 0x40000
-					Object[TempObjectPos].YVelocity = 0x40000
+					PohBeeBullet[TempObjectPos].Direction = FACING_LEFT
+					PohBeeBullet[TempObjectPos].XPos += 0xF0000
+					PohBeeBullet[TempObjectPos].YPos += 0x1B0000
+					PohBeeBullet[TempObjectPos].XVelocity = 0x40000
+					PohBeeBullet[TempObjectPos].YVelocity = 0x40000
 					PlayStageSfx(7,0)
 				end if
 			else
-				Object.State = POHBEE_MOVING_RIGHT
+				Object.State = POHBEE2_MOVING_RIGHT
 				Object.FrameIncrease = 0
 				Object.ShootingCooldown = 30
 			end if
 			break
 
-		case POHBEE_RESET
+		case POHBEE2_RESET
 			if Object.OutOfBounds == true
-				Object.State = POHBEE_MOVING_LEFT
+				Object.State = POHBEE2_MOVING_LEFT
 				Object.Priority = PRIORITY_ACTIVE_BOUNDS
 			end if
 			break
@@ -132,18 +162,18 @@ sub ObjectMain
 		end switch
 	else
 		switch Object.State
-		case POHBEE_MOVING_LEFT
+		case POHBEE2_MOVING_LEFT
 			Object.Priority = PRIORITY_ACTIVE
 			if Object.Timer < 256
 				Object.Timer++
 				Object.XPos -= 0x10000
 			else
-				Object.State = POHBEE_TURN_RIGHT
+				Object.State = POHBEE2_TURN_RIGHT
 				Object.Timer = 0
 			end if
 			break
 			
-		case POHBEE_TURN_RIGHT
+		case POHBEE2_TURN_RIGHT
 			Object.Priority = PRIORITY_ACTIVE
 			if Object.Timer < 30
 				if Object.Timer == 15
@@ -151,23 +181,23 @@ sub ObjectMain
 				end if
 				Object.Timer++
 			else
-				Object.State = POHBEE_MOVING_RIGHT
+				Object.State = POHBEE2_MOVING_RIGHT
 			end if
 			break
 			
 
-		case POHBEE_MOVING_RIGHT
+		case POHBEE2_MOVING_RIGHT
 			Object.Priority = PRIORITY_ACTIVE
 			if Object.Timer < 512
 				Object.Timer++
 				Object.XPos += 0x10000
 			else
-				Object.State = POHBEE_TURN_LEFT
+				Object.State = POHBEE2_TURN_LEFT
 				Object.Timer = 0
 			end if
 			break
 
-		case POHBEE_TURN_LEFT
+		case POHBEE2_TURN_LEFT
 			Object.Priority = PRIORITY_ACTIVE
 			if Object.Timer < 30
 				if Object.Timer == 15
@@ -175,13 +205,13 @@ sub ObjectMain
 				end if
 				Object.Timer++
 			else
-				Object.State = POHBEE_MOVING_LEFT
+				Object.State = POHBEE2_MOVING_LEFT
 			end if
 			break
 
-		case POHBEE_RESET
+		case POHBEE2_RESET
 			if Object.OutOfBounds == true
-				Object.State = POHBEE_MOVING_LEFT
+				Object.State = POHBEE2_MOVING_LEFT
 				Object.Priority = PRIORITY_ACTIVE_BOUNDS
 			end if
 			break
@@ -194,23 +224,23 @@ end sub
 
 sub ObjectPlayerInteraction
 	if Object.Quality == PROPVAL_QUALITY_GOOD
-		if Object.State < POHBEE_SHOOTING_LEFT
+		if Object.State < POHBEE2_SHOOTING_LEFT
 			if Object.ShootingCooldown == 0
 				PlayerObjectCollision(C_TOUCH, -96, -64, 96, 64)
 				if CheckResult == true
 					if Object.XPos > Player.XPos
 						Object.Direction = FACING_RIGHT
-						Object.State = POHBEE_SHOOTING_LEFT
+						Object.State = POHBEE2_SHOOTING_LEFT
 					else
 						Object.Direction = FACING_LEFT
-						Object.State = POHBEE_SHOOTING_RIGHT
+						Object.State = POHBEE2_SHOOTING_RIGHT
 					end if
 				end if
 			end if
 		end if
 	end if
 	
-	if Object.State < POHBEE_RESET
+	if Object.State < POHBEE2_RESET
 		PlayerObjectCollision(C_TOUCH, -20, -16, 20, 14)
 		if CheckResult == true
 			CallFunction(Player_BadnikBreak)
@@ -220,7 +250,7 @@ end sub
 
 
 sub ObjectDraw
-	if Object.State < POHBEE_RESET
+	if Object.State < POHBEE2_RESET
 		if Object.Quality == PROPVAL_QUALITY_GOOD
 			Object.CurrentFrame++
 			Object.CurrentFrame &= 3
@@ -253,8 +283,8 @@ sub ObjectStartup
 	SpriteFrame(-24, -20, 48, 40, 197, 91)	// #4 - PohBee Shoot frame 0
 	SpriteFrame(-24, -16, 48, 36, 197, 132)	// #5 - PohBee Shoot frame 1
 	
-	ArrayPos0=32
-	while ArrayPos0<1056
+	ArrayPos0 = 32
+	while ArrayPos0 < 1056
 		if Object[ArrayPos0].Type == TypeName[PohBee]
 			Object[ArrayPos0].Type = TypeName[PohBee2]
 		end if

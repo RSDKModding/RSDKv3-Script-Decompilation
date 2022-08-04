@@ -1,15 +1,47 @@
-//------------Sonic CD Minomusi2 Script-------------//
+//----------------Sonic CD Minomusi 2 Script------------------//
 //--------Scripted by Christian Whitehead 'The Taxman'--------//
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
 // Aliases
-#alias 74: TYPE_MINOMUSI2
+#alias Object.Value0		:	Object.Timer
+#alias Object.Value1 		:	Object.YOriginPos
+#alias Object.Value2 		:	Object.SpikeTimer	// You read it right
+#alias Object.PropertyValue :	Object.Quality
+
+// States
+#alias 0	:	MINOMUSI2_DETECT_PLAYER
+#alias 1	:	MINOMUSI2_DROP
+
+// Good Quality States
+#alias 2	:	MINOMUSI2_GOOD_SPIKE_ANIM_1
+#alias 3	:	MINOMUSI2_GOOD_SPIKE_ANIM_2
+#alias 4	:	MINOMUSI2_GOOD_SPIKE_ANIM_3
+#alias 5	:	MINOMUSI2_GOOD_SPIKE_ANIM_4
+#alias 6	:	MINOMUSI2_GOOD_SPIKE_ANIM_5
+#alias 7	:	MINOMUSI2_GOOD_SPIKE_ANIM_6
+#alias 8	:	MINOMUSI2_GOOD_SPIKE_ANIM_7
+#alias 9	:	MINOMUSI2_GOOD_SPIKE_ANIM_8
+#alias 10	:	MINOMUSI2_GOOD_SPIKE_ANIM_9
+#alias 11	:	MINOMUSI2_GOOD_RETIRE
+
+// Bad Quality States
+#alias 2	:	MINOMUSI2_BAD_FLIP
+#alias 3	:	MINOMUSI2_BAD_FLIP_2
+#alias 4	:	MINOMUSI2_BAD_RETIRE
+
+// Badnik Quality
+#alias 0	:	PROPVAL_QUALITY_GOOD
+#alias 1	:	PROPVAL_QUALITY_BAD
+
+// Priority
+#alias 0	:	PRIORITY_ACTIVE_BOUNDS
+#alias 1	:	PRIORITY_ACTIVE
 
 
 sub ObjectMain
 
 	if Object.OutOfBounds == true
-		Object.State = MINOMUSI_DETECT_PLAYER
+		Object.State = MINOMUSI2_DETECT_PLAYER
 		Object.Timer = 0
 		Object.SpikeTimer = 0
 		Object.YPos = Object.YOriginPos
@@ -18,14 +50,14 @@ sub ObjectMain
 
 	if Object.Quality == PROPVAL_QUALITY_GOOD
 		switch Object.State
-		case MINOMUSI_DETECT_PLAYER
+		case MINOMUSI2_DETECT_PLAYER
 			Object.Frame = 0
 			if Object.Timer > 0
 				Object.Timer--
 			end if
 			break
 
-		case MINOMUSI_DROP
+		case MINOMUSI2_DROP
 			if Object.Timer < 6
 				Object.YPos += 0x100000
 				Object.Timer++
@@ -35,7 +67,7 @@ sub ObjectMain
 			end if
 			break
 
-		case MINOMUSI_GOOD_SPIKE_ANIM_1
+		case MINOMUSI2_GOOD_SPIKE_ANIM_1
 			if Object.SpikeTimer < 15
 				Object.SpikeTimer++
 			else
@@ -45,13 +77,13 @@ sub ObjectMain
 			end if
 			break
 
-		case MINOMUSI_GOOD_SPIKE_ANIM_2
+		case MINOMUSI2_GOOD_SPIKE_ANIM_2
 			Object.State++
 			Object.Frame = 4
 			PlayStageSfx(8, 0)
 			break
 
-		case MINOMUSI_GOOD_SPIKE_ANIM_3
+		case MINOMUSI2_GOOD_SPIKE_ANIM_3
 			if Object.SpikeTimer < 2
 				Object.SpikeTimer++
 			else
@@ -61,22 +93,22 @@ sub ObjectMain
 			end if
 			break
 
-		case MINOMUSI_GOOD_SPIKE_ANIM_4
+		case MINOMUSI2_GOOD_SPIKE_ANIM_4
 			Object.State++
 			Object.Frame = 0
 			break
 
-		case MINOMUSI_GOOD_SPIKE_ANIM_5
+		case MINOMUSI2_GOOD_SPIKE_ANIM_5
 			Object.State++
 			Object.Frame = 3
 			break
 
-		case MINOMUSI_GOOD_SPIKE_ANIM_6
+		case MINOMUSI2_GOOD_SPIKE_ANIM_6
 			Object.State++
 			Object.Frame = 4
 			break
 
-		case MINOMUSI_GOOD_SPIKE_ANIM_7
+		case MINOMUSI2_GOOD_SPIKE_ANIM_7
 			if Object.SpikeTimer < 15
 				Object.SpikeTimer++
 			else
@@ -86,10 +118,10 @@ sub ObjectMain
 			end if
 			break
 
-		case MINOMUSI_GOOD_SPIKE_ANIM_8
+		case MINOMUSI2_GOOD_SPIKE_ANIM_8
 			Object.Frame = 0
 			if Object.Timer < 1
-				Object.State=MINOMUSI_GOOD_SPIKE_ANIM_1
+				Object.State=MINOMUSI2_GOOD_SPIKE_ANIM_1
 				Object.Timer++
 			else
 				Object.State++
@@ -97,7 +129,7 @@ sub ObjectMain
 			end if
 			break
 
-		case MINOMUSI_GOOD_SPIKE_ANIM_9
+		case MINOMUSI2_GOOD_SPIKE_ANIM_9
 			if Object.Timer < 10
 				Object.Timer++
 			else
@@ -106,26 +138,26 @@ sub ObjectMain
 			end if
 			break
 
-		case MINOMUSI_GOOD_RETIRE
+		case MINOMUSI2_GOOD_RETIRE
 			if Object.Timer < 6
 				Object.YPos -= 0x100000
 				Object.Timer++
 			else
 				Object.Timer = 60
-				Object.State = MINOMUSI_DETECT_PLAYER
+				Object.State = MINOMUSI2_DETECT_PLAYER
 			end if
 			break
 		end switch
 	else
 		switch Object.State
-		case MINOMUSI_DETECT_PLAYER
+		case MINOMUSI2_DETECT_PLAYER
 			Object.Frame = 1
 			if Object.Timer > 0
 				Object.Timer--
 			end if
 			break
 
-		case MINOMUSI_DROP
+		case MINOMUSI2_DROP
 			Object.Frame = 1
 			if Object.Timer < 6
 				Object.YPos += 0x100000
@@ -136,7 +168,7 @@ sub ObjectMain
 			end if
 			break
 
-		case MINOMUSI_BAD_FLIP
+		case MINOMUSI2_BAD_FLIP
 			if Object.SpikeTimer < 5
 				Object.SpikeTimer++
 			else
@@ -146,7 +178,7 @@ sub ObjectMain
 			end if
 			break
 
-		case MINOMUSI_BAD_FLIP_2
+		case MINOMUSI2_BAD_FLIP_2
 			if Object.SpikeTimer < 5
 				Object.SpikeTimer++
 			else
@@ -157,18 +189,18 @@ sub ObjectMain
 					Object.Timer = 0
 					Object.State++
 				else
-					Object.State = MINOMUSI_BAD_FLIP
+					Object.State = MINOMUSI2_BAD_FLIP
 				end if
 			end if
 			break
 
-		case MINOMUSI_BAD_RETIRE
+		case MINOMUSI2_BAD_RETIRE
 			if Object.Timer < 24
 				Object.YPos -= 0x40000
 				Object.Timer++
 			else
 				Object.Timer = 60
-				Object.State = MINOMUSI_DETECT_PLAYER
+				Object.State = MINOMUSI2_DETECT_PLAYER
 			end if
 			break
 		end switch
@@ -194,11 +226,11 @@ sub ObjectPlayerInteraction
 			end if
 		end if
 	end if
-	if Object.State == MINOMUSI_DETECT_PLAYER
+	if Object.State == MINOMUSI2_DETECT_PLAYER
 		if Object.Timer == 0
 			PlayerObjectCollision(C_TOUCH, -64, 0, 64, 128)
 			if CheckResult == true
-				Object.State = MINOMUSI_DROP
+				Object.State = MINOMUSI2_DROP
 				Object.Priority = PRIORITY_ACTIVE
 			end if
 		end if
