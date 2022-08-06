@@ -15,8 +15,8 @@
 #alias Object.PropertyValue	:	Object.Quality
 
 // States
-#alias 0	:	POHBEE_MOVING_RIGHT
-#alias 1	:	POHBEE_MOVING_LEFT
+#alias 0	:	POHBEE3_MOVING_RIGHT
+#alias 1	:	POHBEE3_MOVING_LEFT
 
 // Property Values
 #alias 0	:	PROPVAL_QUALITY_GOOD
@@ -27,7 +27,7 @@ sub ObjectMain
 	if Object.OutOfBounds == true
 		Object.XPos  = Object.XOriginPos
 		Object.Timer = 0
-		Object.State = POHBEE_MOVING_RIGHT
+		Object.State = POHBEE3_MOVING_RIGHT
 	end if
 
 	Object.Rotation += 16
@@ -37,23 +37,23 @@ sub ObjectMain
 		SpikeBallN2.Rotation += 20
 		SpikeBallN2.Rotation &= 2047
 		switch Object.State
-		case POHBEE_MOVING_RIGHT
+		case POHBEE3_MOVING_RIGHT
 			Object.Direction = FACING_LEFT
 			if Object.Timer < 64
 				Object.Timer++
 				Object.XPos += 0x20000
 			else
-				Object.State = POHBEE_MOVING_LEFT
+				Object.State = POHBEE3_MOVING_LEFT
 				Object.Timer = 0
 			end if
 			break
-		case POHBEE_MOVING_LEFT
+		case POHBEE3_MOVING_LEFT
 			Object.Direction = FACING_RIGHT
 			if Object.Timer < 64
 				Object.Timer++
 				Object.XPos -= 0x20000
 			else
-				Object.State = POHBEE_MOVING_RIGHT
+				Object.State = POHBEE3_MOVING_RIGHT
 				Object.Timer = 0
 			end if
 			break
@@ -82,24 +82,24 @@ sub ObjectMain
 		SpikeBallN2.Oscillation >>= 7
 	else
 		switch Object.State
-		case POHBEE_MOVING_RIGHT
+		case POHBEE3_MOVING_RIGHT
 			Object.Direction = FACING_LEFT
 			if Object.Timer < 128
 				Object.Timer++
 				Object.XPos += 0x10000
 			else
-				Object.State = POHBEE_MOVING_LEFT
+				Object.State = POHBEE3_MOVING_LEFT
 				Object.Timer = 0
 			end if
 			break
 
-		case POHBEE_MOVING_LEFT
+		case POHBEE3_MOVING_LEFT
 			Object.Direction = FACING_RIGHT
 			if Object.Timer < 128
 				Object.Timer++
 				Object.XPos -= 0x10000
 			else
-				Object.State = POHBEE_MOVING_RIGHT
+				Object.State = POHBEE3_MOVING_RIGHT
 				Object.Timer = 0
 			end if
 			break
@@ -122,7 +122,7 @@ sub ObjectMain
 	end if
 
 	Object.SBallDistance  = Object.YPos
-	Object.SBallDistance += 851968
+	Object.SBallDistance += 0xD0000
 
 	CallFunction(StageSetup_CheckGoodFuture)
 end sub

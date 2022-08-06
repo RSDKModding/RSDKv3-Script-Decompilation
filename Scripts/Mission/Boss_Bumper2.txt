@@ -14,20 +14,20 @@
 #alias Object.YPos		:	Arm.YPos
 
 // States
-#alias 0	:	BOSSBUMPER_SETUP
-#alias 1	:	BOSSBUMPER_IDLE
-#alias 2	:	BOSSBUMPER_DESTROYED
+#alias 0	:	BOSSBUMPER2_SETUP
+#alias 1	:	BOSSBUMPER2_IDLE
+#alias 2	:	BOSSBUMPER2_DESTROYED
 
 // Priority
-#alias 0	:	PRIORITY_ACTIVE_BOUNDS
+#alias 0	:	PRIORITY_BOUNDS
 
 
 sub ObjectMain
 	switch Object.State
-	case BOSSBUMPER_SETUP
-		Object.State = BOSSBUMPER_IDLE
+	case BOSSBUMPER2_SETUP
+		Object.State = BOSSBUMPER2_IDLE
 		// Fall-Through
-	case BOSSBUMPER_IDLE
+	case BOSSBUMPER2_IDLE
 		ArrayPos0 = Object.ArmEntity
 		Object.XPos  = Arm[ArrayPos0].XPos
 		Object.XPos -= 0x130000
@@ -41,7 +41,7 @@ sub ObjectMain
 		end if
 		break
 
-	case BOSSBUMPER_DESTROYED
+	case BOSSBUMPER2_DESTROYED
 		Object.XOffSet -= 0x500
 		Object.XPos += Object.XOffSet
 
@@ -50,7 +50,7 @@ sub ObjectMain
 
 		if Object.OutOfBounds == true
 			Object.Type = TypeName[Blank Object]
-			Object.Priority = PRIORITY_ACTIVE_BOUNDS
+			Object.Priority = PRIORITY_BOUNDS
 		end if
 		break
 	end switch
@@ -58,7 +58,7 @@ end sub
 
 
 sub ObjectPlayerInteraction
-	if Object.State < BOSSBUMPER_DESTROYED
+	if Object.State < BOSSBUMPER2_DESTROYED
 		if Player.Animation != ANI_HURT
 			ArrayPos0 = Object.ArmEntity
 

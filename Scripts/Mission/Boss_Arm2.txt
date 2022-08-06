@@ -17,22 +17,22 @@
 #alias Object.YPos		:	ArmJoint.YPos
 
 // States
-#alias 0	:	BOSSARM_SETUP
-#alias 1	:	BOSSARM_IDLE
-#alias 2	:	BOSSARM_DESTROYED
-#alias 3	:	BOSSARM_MOVE_TO_FRONT
-#alias 4	:	BOSSARM_MOVE_TO_BACK
-#alias 5	:	BOSSARM_START_CHARGE
+#alias 0	:	BOSSARM2_SETUP
+#alias 1	:	BOSSARM2_IDLE
+#alias 2	:	BOSSARM2_DESTROYED
+#alias 3	:	BOSSARM2_MOVE_TO_FRONT
+#alias 4	:	BOSSARM2_MOVE_TO_BACK
+#alias 5	:	BOSSARM2_START_CHARGE
 
 // Priority
-#alias 0	:	PRIORITY_ACTIVE_BOUNDS
+#alias 0	:	PRIORITY_BOUNDS
 
 
 // Function declarations
-#function BossArm_HandleArmMovement
+#function BossArm2_HandleArmMovement
 
 
-function BossArm_HandleArmMovement
+function BossArm2_HandleArmMovement
 	ArrayPos0 = Object.ArmJointEntity
 
 	Object.XPos  = ArmJoint[ArrayPos0].XPos
@@ -64,14 +64,14 @@ endfunction
 
 sub ObjectMain
 	switch Object.State
-	case BOSSARM_SETUP
-		Object.State=BOSSARM_IDLE
+	case BOSSARM2_SETUP
+		Object.State=BOSSARM2_IDLE
 		// Fall Through
-	case BOSSARM_IDLE
-		CallFunction(BossArm_HandleArmMovement)
+	case BOSSARM2_IDLE
+		CallFunction(BossArm2_HandleArmMovement)
 		break
 
-	case BOSSARM_DESTROYED
+	case BOSSARM2_DESTROYED
 		Object.XOffSet -= 0x620
 		Object.YOffSet += 0x1220
 		
@@ -87,31 +87,31 @@ sub ObjectMain
 
 		if Object.OutOfBounds == true
 			Object.Type = TypeName[Blank Object]
-			Object.Priority = PRIORITY_ACTIVE_BOUNDS
+			Object.Priority = PRIORITY_BOUNDS
 		end if
 		break
 
-	case BOSSARM_MOVE_TO_FRONT
+	case BOSSARM2_MOVE_TO_FRONT
 		if Object.XVelocity > 0
 			TempValue0  = 0x8000
 			TempValue0 *= Object.PropertyValue	// Set the XVelocity decrease value based on it's property value
 			TempValue0 /= 10
 			Object.XVelocity -= TempValue0
 		end if
-		CallFunction(BossArm_HandleArmMovement)
+		CallFunction(BossArm2_HandleArmMovement)
 		break
 
-	case BOSSARM_MOVE_TO_BACK
+	case BOSSARM2_MOVE_TO_BACK
 		if Object.XVelocity < 0x100000
 			TempValue0  = 0x8000
 			TempValue0 *= Object.PropertyValue
 			TempValue0 /= 10
 			Object.XVelocity += TempValue0
 		end if
-		CallFunction(BossArm_HandleArmMovement)
+		CallFunction(BossArm2_HandleArmMovement)
 		break
 
-	case BOSSARM_START_CHARGE
+	case BOSSARM2_START_CHARGE
 		if Object.XVelocity < 0x80000
 			TempValue0		  =	0x8000
 			TempValue0 		 *= Object.PropertyValue	// Set the XVelocity increase value based on it's property value

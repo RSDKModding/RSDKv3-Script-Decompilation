@@ -1,11 +1,14 @@
-//------------Sonic CD MissionAreaBL Script-------------//
+//----------Sonic CD Mission Area Bottom Left Script----------//
 //--------Scripted by Christian Whitehead 'The Taxman'--------//
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
 // Aliases
-#alias 59: TYPE_MISSIONAREABL
-
 #alias Object.State	:	Object.SetBounds
+
+// Priority
+#alias 1	:	PRIORITY_ACTIVE
+#alias 5	:	PRIORITY_INACTIVE
+
 
 sub ObjectMain
 	
@@ -13,12 +16,12 @@ sub ObjectMain
 	if Object.SetBounds == false
 		
 		// Move the X Bounds to 16 pixels to the left of this Object
-		Stage.NewXBoundary1 = Object.XPos
+		Stage.NewXBoundary1   = Object.XPos
 		Stage.NewXBoundary1 >>= 16
-		Stage.NewXBoundary1 -= 16
+		Stage.NewXBoundary1  -= 16
 		
 		// And then move the Y Bounds to be right at this Object's position
-		Stage.NewYBoundary2 = Object.YPos
+		Stage.NewYBoundary2   = Object.YPos
 		Stage.NewYBoundary2 >>= 16
 		
 		// Set the flag, as the bounds have been set now
@@ -28,23 +31,23 @@ sub ObjectMain
 	if Stage.State == STAGE_RUNNING
 		if Player.YPos > Object.YPos
 			CheckEqual(Player.State, Player_State_Death)
-			TempValue0 = CheckResult
+			TempValue0   = CheckResult
 			CheckEqual(Player.State, Player_State_Drown)
 			CheckResult |= TempValue0
-			if CheckResult == 0
+			if CheckResult == false
 				Player.YVelocity = 0
-				Player.Speed = 0
-				Player.YPos = Object.YPos
-				game.forceKillPlayer = 1
+				Player.Speed	 = 0
+				Player.YPos		 = Object.YPos
+				game.forceKillPlayer = true
 			end if
 			
-			Object.Priority = 5
+			Object.Priority = PRIORITY_INACTIVE
 		end if
 		
 		if Player.XPos < Object.XPos
 			Player.XVelocity = 0
-			Player.Speed = 0
-			Player.XPos = Object.XPos
+			Player.Speed	 = 0
+			Player.XPos		 = Object.XPos
 		end if
 	end if
 	
@@ -53,10 +56,10 @@ end sub
 
 sub ObjectStartup
 	
-	ArrayPos0=32
-	while ArrayPos0<1056
+	ArrayPos0 = 32
+	while ArrayPos0 < 1056
 		if Object[ArrayPos0].Type == TypeName[MissionAreaBL]
-			Object[ArrayPos0].Priority=1
+			Object[ArrayPos0].Priority = PRIORITY_ACTIVE
 		end if
 		
 		ArrayPos0++

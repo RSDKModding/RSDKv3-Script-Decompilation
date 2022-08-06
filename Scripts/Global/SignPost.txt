@@ -5,6 +5,7 @@
 // Aliases
 #alias Object.Value0		:	Object.Timer
 #alias Object.Value1		:	Object.FrameTimer
+
 // Player Aliases
 #alias Player.Value4		:	Player.InvincibleTimer
 
@@ -21,7 +22,7 @@
 
 // Priorities
 #alias 1	:	PRIORITY_ACTIVE
-#alias 3	:	PRIORITY_ACTIVE_XBOUNDS
+#alias 3	:	PRIORITY_XBOUNDS
 
 
 sub ObjectMain
@@ -199,7 +200,8 @@ sub ObjectMain
 #platform: Use_Origins
 	if game.playMode == BOOT_PLAYMODE_MISSION
 		if Object.State > SIGNPOST_IDLE
-			Player.InvincibleTimer = 80	// Origins for some reason gives the character invincibility after crossing the signpost
+			// 	// Origins gives the player invincibility, in case the game stops you close to a hazard
+			Player.InvincibleTimer = 80
 		endif
 	endif
 #endplatform
@@ -232,7 +234,7 @@ sub ObjectStartup
 	ArrayPos0 = 32
 	while ArrayPos0 < 1056
 		if Object[ArrayPos0].Type == TypeName[SignPost]
-			Object[ArrayPos0].Priority = PRIORITY_ACTIVE_XBOUNDS
+			Object[ArrayPos0].Priority = PRIORITY_XBOUNDS
 			if Object[ArrayPos0].PropertyValue < 2
 				TempValue0 = TileLayer[0].XSize
 				TempValue0 -= 2

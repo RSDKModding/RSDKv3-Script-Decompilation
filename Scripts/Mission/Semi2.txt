@@ -1,9 +1,28 @@
-//------------Sonic CD Semi2 Script-------------//
+//------------------Sonic CD Semi 2 Script--------------------//
 //--------Scripted by Christian Whitehead 'The Taxman'--------//
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
 // Aliases
-#alias 72: TYPE_SEMI2
+#alias Object.Value0		:	Object.Timer
+#alias Object.Value1		:	Object.XVelocity
+#alias Object.Value2		:	Object.YVelocity
+#alias Object.Value3 		:	Object.XOriginPos
+#alias Object.Value4 		:	Object.YOriginPos
+#alias Object.PropertyValue :	Object.Quality
+
+// States
+#alias 0	:	SEMI_IDLE
+#alias 1	:	SEMI_START_FLY
+#alias 2	:	SEMI_BOMB_THROW
+#alias 3	:	SEMI_RESET
+
+// Badnik Quality
+#alias 0	:	PROPVAL_QUALITY_GOOD
+#alias 1	:	PROPVAL_QUALITY_BAD
+
+// Priority
+#alias 0	:	PRIORITY_BOUNDS
+#alias 1	:	PRIORITY_ACTIVE
 
 
 sub ObjectMain
@@ -26,6 +45,7 @@ sub ObjectMain
 			Object.State++
 		end if
 		break
+
 	case SEMI_BOMB_THROW
 		Object.XPos += Object.XVelocity
 		if Object.Quality == PROPVAL_QUALITY_GOOD
@@ -42,7 +62,7 @@ sub ObjectMain
 	case SEMI_RESET
 		if Object.OutOfBounds == true
 			Object.State = SEMI_IDLE
-			Object.Priority = PRIORITY_ACTIVE_BOUNDS
+			Object.Priority = PRIORITY_BOUNDS
 		end if
 		break
 	end switch
@@ -144,7 +164,7 @@ sub ObjectStartup
 		if Object[ArrayPos0].Type == TypeName[Semi2]
 			Object[ArrayPos0].XOriginPos = Object[ArrayPos0].XPos
 			Object[ArrayPos0].YOriginPos = Object[ArrayPos0].YPos
-			Object[ArrayPos0].DrawOrder = 5
+			Object[ArrayPos0].DrawOrder  = 5
 		end if
 		ArrayPos0++
 	loop

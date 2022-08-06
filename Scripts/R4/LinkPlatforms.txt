@@ -1,15 +1,15 @@
-//------------Sonic CD Link Platforms Script-------------//
+//---------------Sonic CD Link Platforms Script---------------//
 //--------Scripted by Christian Whitehead 'The Taxman'--------//
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
 // Aliases
-#alias 65: TYPE_LINKPLATFORMS
 #alias Object.Value0	:	Object.Angle
 #alias Object.Value1	:	Object.XDrawPos
 #alias Object.Value2	:	Object.YDrawPos
 #alias Object.Value3	:	Object.XOffset
 #alias Object.Value4	:	Object.YOffset
 #alias Object.Value5	:	Object.AngleIncrease
+
 
 sub ObjectMain
 	Object.Angle += Object.AngleIncrease
@@ -20,18 +20,18 @@ sub ObjectMain
 	
 	TempValue1 = 96
 	Cos(Object.XOffset, Object.Angle)
-	Object.XOffset *= TempValue1
+	Object.XOffset  *= TempValue1
 	Object.XOffset <<= 7
-	Object.XOffset += Object.XPos
-	Object.XOffset &= 0xFFFF0000
-	Object.XOffset -= Object.XDrawPos
+	Object.XOffset  += Object.XPos
+	Object.XOffset  &= 0xFFFF0000
+	Object.XOffset  -= Object.XDrawPos
 
 	Sin(Object.YOffset, Object.Angle)
-	Object.YOffset *= TempValue1
+	Object.YOffset  *= TempValue1
 	Object.YOffset <<= 7
-	Object.YOffset += Object.YPos
-	Object.YOffset &= 0xFFFF0000
-	Object.YOffset -= Object.YDrawPos
+	Object.YOffset  += Object.YPos
+	Object.YOffset  &= 0xFFFF0000
+	Object.YOffset  -= Object.YDrawPos
 end sub
 
 
@@ -59,24 +59,26 @@ sub ObjectDraw
 	TempValue1 = 96
 
 	Cos(Object.XDrawPos, Object.Angle)
-	Object.XDrawPos *= TempValue1
+	Object.XDrawPos  *= TempValue1
 	Object.XDrawPos <<= 7
-	Object.XDrawPos += Object.XPos
-	Object.XDrawPos &= 0xFFFF0000
+	Object.XDrawPos  += Object.XPos
+	Object.XDrawPos  &= 0xFFFF0000
 
 	Sin(Object.YDrawPos, Object.Angle)
-	Object.YDrawPos *= TempValue1
+	Object.YDrawPos  *= TempValue1
 	Object.YDrawPos <<= 7
-	Object.YDrawPos += Object.YPos
-	Object.YDrawPos &= 0xFFFF0000
+	Object.YDrawPos  += Object.YPos
+	Object.YDrawPos  &= 0xFFFF0000
 	DrawSpriteXY(Object.Frame, Object.XDrawPos, Object.YDrawPos)
 end sub
 
 
 sub ObjectStartup
 	LoadSpriteSheet("R4/Objects.gif")
-	SpriteFrame(-8, -8, 16, 16, 180, 52)
-	SpriteFrame(-32, -8, 64, 16, 147, 69)
+
+	SpriteFrame(-8, -8, 16, 16, 180, 52)	// #0 - Chain
+	SpriteFrame(-32, -8, 64, 16, 147, 69)	// #1 - Platform
+
 	ArrayPos0 = 32
 	while ArrayPos0 < 1056
 		if Object[ArrayPos0].Type == TypeName[LinkPlatforms]

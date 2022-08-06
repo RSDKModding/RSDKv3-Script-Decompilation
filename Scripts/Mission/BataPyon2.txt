@@ -1,139 +1,185 @@
-//------------Sonic CD BataPyon2 Script-------------//
+//---------------Sonic CD Bata Pyon 2 Script------------------//
 //--------Scripted by Christian Whitehead 'The Taxman'--------//
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
 // Aliases
-#alias 70: TYPE_BATAPYON2
+#alias Object.Value0 		:	Object.Timer
+#alias Object.Value1 		:	Object.XVelocity
+#alias Object.Value2 		:	Object.YVelocity
+#alias Object.Value3 		:	Object.XOriginPos
+#alias Object.Value4 		:	Object.YOriginPos
+#alias Object.Value5 		:	Object.TurnTimer
+
+#alias Object.PropertyValue :	Object.Quality
+
+// States
+#alias 0	:	BATAPYON2_JUMP
+#alias 1	:	BATAPYON2_BOUNCE
+#alias 2	:	BATAPYON2_BAD_RECOIL_1
+#alias 3	:	BATAPYON2_BAD_RECOIL_2
+#alias 4	:	BATAPYON2_BAD_RECOIL_3
+#alias 5	:	BATAPYON2_BAD_RECOIL_4
+#alias 6	:	BATAPYON2_BAD_BOUNCE
+#alias 7	:	BATAPYON2_RESET
+
+// Priority
+#alias 0	:	PRIORITY_BOUNDS
+#alias 1	:	PRIORITY_ACTIVE
+
+// Property Values
+#alias 0	:	PROPVAL_QUALITY_GOOD
+#alias 1	:	PROPVAL_QUALITY_BAD
 
 
 sub ObjectMain
-	if Object.OutOfBounds == 1
-		Object.State=7
-		Object.Direction=FACING_RIGHT
-		Object.XPos=Object.Value3
-		Object.YPos=Object.Value4
-		Object.Value1=-0x14000
-		Object.Value2=0x100000
-		Object.Value5=0
+	if Object.OutOfBounds == true
+		Object.State	 = BATAPYON2_RESET
+		Object.Direction = FACING_RIGHT
+		Object.XPos		 = Object.XOriginPos
+		Object.YPos		 = Object.YOriginPos
+
+		Object.XVelocity = -0x14000
+		Object.YVelocity =  0x100000
+		Object.TurnTimer =  0
 	end if
+
 	switch Object.State
-	case 0
-		Object.XPos += Object.Value1
-		Object.YPos += Object.Value2
-		Object.Value2 += 0x4000
-		ObjectTileCollision(3,0,-18,0)
-		if CheckResult == 1
-			Object.Value2=0
+	case BATAPYON2_JUMP
+		Object.XPos		 += Object.XVelocity
+
+		Object.YPos		 += Object.YVelocity
+		Object.YVelocity += 0x4000
+
+		ObjectTileCollision(3, 0, -18, 0)
+		if CheckResult == true
+			Object.YVelocity = 0
 		end if
-		if Object.Value2>0
-			ObjectTileCollision(0,0,20,0)
-			if CheckResult == 1
-				if Object.PropertyValue == 0
-					Object.State=1
-					Object.Priority=1
-					Object.Value5++
-					if Object.Value5 == 8
-						Object.Value5=0
+
+		if Object.YVelocity > 0
+			ObjectTileCollision(0, 0, 20, 0)
+			if CheckResult == true
+				if Object.Quality == PROPVAL_QUALITY_GOOD
+					Object.State	= BATAPYON2_BOUNCE
+					Object.Priority = PRIORITY_ACTIVE
+					Object.TurnTimer++
+					if Object.TurnTimer == 8
+						Object.TurnTimer = 0
 						Object.Direction++
-						Object.Direction&=FACING_LEFT
-						FlipSign(Object.Value1)
+						Object.Direction &= FACING_LEFT
+						FlipSign(Object.XVelocity)
 					end if
 				else
-					Object.State=2
-					Object.Priority=1
-					Object.Value5++
-					if Object.Value5 == 4
-						Object.Value5=0
+					Object.State	= BATAPYON2_BAD_RECOIL_1
+					Object.Priority = PRIORITY_ACTIVE
+					Object.TurnTimer++
+					if Object.TurnTimer == 4
+						Object.TurnTimer = 0
 						Object.Direction++
-						Object.Direction&=FACING_LEFT
-						FlipSign(Object.Value1)
+						Object.Direction &= FACING_LEFT
+						FlipSign(Object.XVelocity)
 					end if
 				end if
 			end if
 		end if
-		if Object.Value1>0
-			ObjectTileCollision(1,16,0,0)
-			if CheckResult == 1
-				Object.Value5=0
-				Object.Direction=FACING_RIGHT
-				FlipSign(Object.Value1)
+
+		if Object.XVelocity > 0
+			ObjectTileCollision(1, 16, 0, 0)
+			if CheckResult == true
+				Object.TurnTimer = 0
+				Object.Direction = FACING_RIGHT
+				FlipSign(Object.XVelocity)
 			end if
 		else
-			ObjectTileCollision(2,-16,0,0)
-			if CheckResult == 1
-				Object.Value5=0
-				Object.Direction=FACING_LEFT
-				FlipSign(Object.Value1)
+			ObjectTileCollision(2, -16, 0, 0)
+			if CheckResult == true
+				Object.TurnTimer = 0
+				Object.Direction = FACING_LEFT
+				FlipSign(Object.XVelocity)
 			end if
 		end if
-		Object.Frame=Object.PropertyValue
+		
+		Object.Frame   = Object.Quality
 		Object.Frame <<= 1
-		if Object.Value2<0
+
+		if Object.YVelocity < 0
 			Object.Frame++
 		end if
 		break
-	case 1
-		Object.XPos += Object.Value1
-		Object.YPos -= 1179648
-		Object.Value2=-0xC0000
-		Object.State=0
-		Object.Frame=Object.PropertyValue
-		Object.Frame <<= 1
-		if Object.Value2<0
+
+	case BATAPYON2_BOUNCE
+		Object.XPos		+= Object.XVelocity
+		Object.YPos		-= 0x120000
+
+		Object.YVelocity = -0xC0000
+
+		Object.State     = BATAPYON2_JUMP
+
+		Object.Frame     = Object.Quality
+		Object.Frame   <<= 1
+
+		if Object.YVelocity < 0
 			Object.Frame++
 		end if
 		break
-	case 2
-		if Object.Value0<2
-			Object.Value0++
+
+	case BATAPYON2_BAD_RECOIL_1
+		if Object.Timer < 2
+			Object.Timer++
 		else
 			Object.State++
-			Object.Frame=3
-			Object.YPos -= 1179648
+			Object.Frame = 3
+			Object.YPos -= 0x120000
 		end if
 		break
-	case 3
-		if Object.Value0<3
-			Object.Value0++
+
+	case BATAPYON2_BAD_RECOIL_2
+		if Object.Timer < 3
+			Object.Timer++
 		else
 			Object.State++
-			Object.Frame=2
-			Object.YPos += 1179648
+			Object.Frame = 2
+			Object.YPos += 0x120000
 		end if
 		break
-	case 4
-		if Object.Value0<5
-			Object.Value0++
+
+	case BATAPYON2_BAD_RECOIL_3
+		if Object.Timer < 5
+			Object.Timer++
 		else
 			Object.State++
-			Object.Frame=3
-			Object.YPos -= 1179648
+			Object.Frame = 3
+			Object.YPos -= 0x120000
 		end if
 		break
-	case 5
-		if Object.Value0<8
-			Object.Value0++
+
+	case BATAPYON2_BAD_RECOIL_4
+		if Object.Timer < 8
+			Object.Timer++
 		else
 			Object.State++
-			Object.Frame=2
-			Object.YPos += 1179648
+			Object.Frame = 2
+			Object.YPos += 0x120000
 		end if
 		break
-	case 6
-		if Object.Value0<10
-			Object.Value0++
+
+	case BATAPYON2_BAD_BOUNCE
+		if Object.Timer < 10
+			Object.Timer++
 		else
-			Object.Value0=0
-			Object.Frame=3
-			Object.YPos -= 1179648
-			Object.Value2=-0xA0000
-			Object.State=0
+			Object.Timer = 0
+			Object.Frame = 3
+
+			Object.YPos		-=  0x120000
+			Object.YVelocity = -0x50000
+
+			Object.State = BATAPYON2_JUMP
 		end if
 		break
-	case 7
-		if Object.OutOfBounds == 1
-			Object.State=0
-			Object.Priority=0
+
+	case BATAPYON2_RESET
+		if Object.OutOfBounds == true
+			Object.State = BATAPYON2_JUMP
+			Object.Priority = PRIORITY_BOUNDS
 		end if
 		break
 	end switch
@@ -142,9 +188,9 @@ end sub
 
 
 sub ObjectPlayerInteraction
-	if Object.State<7
-		PlayerObjectCollision(C_TOUCH,-14,-12,14,12)
-		if CheckResult == 1
+	if Object.State < BATAPYON2_RESET
+		PlayerObjectCollision(C_TOUCH, -14, -12, 14, 12)
+		if CheckResult == true
 			CallFunction(Player_BadnikBreak)
 		end if
 	end if
@@ -152,28 +198,34 @@ end sub
 
 
 sub ObjectDraw
-	if Object.State<7
-		DrawSpriteFX(Object.Frame,FX_FLIP,Object.XPos,Object.YPos)
+	if Object.State < BATAPYON2_RESET
+		DrawSpriteFX(Object.Frame, FX_FLIP, Object.XPos, Object.YPos)
 	end if
 end sub
 
 
 sub ObjectStartup
 	LoadSpriteSheet("R6/Objects.gif")
-	SpriteFrame(-16,-18,32,40,34,134)
-	SpriteFrame(-16,-18,32,56,67,167)
-	SpriteFrame(-16,-18,32,40,34,175)
-	SpriteFrame(-16,-18,32,56,100,167)
-	ArrayPos0=32
-	while ArrayPos0<1056
+
+	// Good
+	SpriteFrame(-16, -18, 32, 40, 34, 134)	// #0 - Pata Byon
+	SpriteFrame(-16, -18, 32, 56, 67, 167)	// #1 - Pata Byon Jump
+	// Bad
+	SpriteFrame(-16, -18, 32, 40, 34, 175)	// #2 - Pata Byon
+	SpriteFrame(-16, -18, 32, 56, 100, 167)	// #3 - Pata Byon Jump
+	
+	ArrayPos0 = 32
+	while ArrayPos0 < 1056
 		if Object[ArrayPos0].Type == TypeName[BataPyon]
-			Object[ArrayPos0].Type=TypeName[BataPyon2]
+			Object[ArrayPos0].Type = TypeName[BataPyon2]
 		end if
+
 		if Object[ArrayPos0].Type == TypeName[BataPyon2]
-			Object[ArrayPos0].Value3=Object[ArrayPos0].XPos
-			Object[ArrayPos0].Value4=Object[ArrayPos0].YPos
-			Object[ArrayPos0].Value1=-0x14000
-			Object[ArrayPos0].Value2=0x100000
+			Object[ArrayPos0].XOriginPos = Object[ArrayPos0].XPos
+			Object[ArrayPos0].YOriginPos = Object[ArrayPos0].YPos
+
+			Object[ArrayPos0].XVelocity  = -0x14000
+			Object[ArrayPos0].YVelocity  =  0x100000
 		end if
 		ArrayPos0++
 	loop

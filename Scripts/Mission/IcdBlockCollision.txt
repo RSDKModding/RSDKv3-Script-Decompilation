@@ -1,65 +1,87 @@
-//------------Sonic CD C_IceBlock Script-------------//
+//------------Sonic CD Collision Ice Block Script-------------//
 //--------Scripted by Christian Whitehead 'The Taxman'--------//
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
 // Aliases
-#alias 70: TYPE_C_ICEBLOCK
+#alias Object.Value0	:	Object.IceBlockEntity
+
+// Aliases
+#alias Object.Value1	:	Object.XVelocity
+#alias Object.Value2	:	Object.YVelocity
+
+// States
+#alias 0	:	ICEBLOCK_FALLING
+#alias 1	:	ICEBLOCK_BREAKICE
+
+// Property Values
+#alias 0	:	CHARACTER_ICEBLOCK
+
+// Priority
+#alias 0	:	PRIORITY_BOUNDS
+#alias 1	:	PRIORITY_ACTIVE
 
 
 sub ObjectMain
-	if Object.Value0 == 0
-		ArrayPos0=1056
-		while ArrayPos0<1184
-			CheckEqual(Object[ArrayPos0].Type,TypeName[IceBlock])
-			TempValue0=CheckResult
-			CheckEqual(Object[ArrayPos0].PropertyValue,0)
-			TempValue0&=CheckResult
-			CheckEqual(Object[ArrayPos0].State,0)
-			TempValue0&=CheckResult
-			if TempValue0 == 1
-				Object.Value0=ArrayPos0
-				Object.Priority=1
-				ArrayPos0=10000
+	if Object.IceBlockEntity == 0
+		// Search through Temp objects
+		ArrayPos0 = 1056
+		while ArrayPos0 < 1184
+			CheckEqual(Object[ArrayPos0].Type, TypeName[IceBlock])
+			TempValue0  = CheckResult
+			CheckEqual(Object[ArrayPos0].PropertyValue, CHARACTER_ICEBLOCK)
+			TempValue0 &= CheckResult
+			CheckEqual(Object[ArrayPos0].State, ICEBLOCK_FALLING)
+			TempValue0 &= CheckResult
+			if TempValue0 == true
+				Object.IceBlockEntity = ArrayPos0
+				Object.Priority = PRIORITY_ACTIVE
+				ArrayPos0 = 10000
 			end if
 			ArrayPos0++
 		loop
 	end if
-	if Object.Value0!=0
-		ArrayPos1=Object.Value0
-		ArrayPos0=32
-		if Object[ArrayPos1].State == 1
-			Object.Value0=0
-			Object.Priority=0
-			ArrayPos0=10000
+
+	if Object.IceBlockEntity != 0
+		ArrayPos1 = Object.IceBlockEntity
+		ArrayPos0 = 32
+		if Object[ArrayPos1].State == ICEBLOCK_BREAKICE
+			Object.IceBlockEntity = 0
+			Object.Priority = PRIORITY_BOUNDS
+			ArrayPos0 = 10000
 		end if
-		while ArrayPos0<1056
-			CheckEqual(Object[ArrayPos0].Type,TypeName[MissionBlock])
-			TempValue0=CheckResult
-			CheckEqual(Object[ArrayPos0].Type,TypeName[MovingBlocks])
-			TempValue0|=CheckResult
-			if TempValue0 == 1
-				TempValue1=Object[ArrayPos0].YPos
+
+		while ArrayPos0 < 1056
+			CheckEqual(Object[ArrayPos0].Type, TypeName[MissionBlock])
+			TempValue0  = CheckResult
+			CheckEqual(Object[ArrayPos0].Type, TypeName[MovingBlocks])
+			TempValue0 |= CheckResult
+			if TempValue0 == true
+				TempValue1  = Object[ArrayPos0].YPos
 				TempValue1 -= Object[ArrayPos1].YPos
-				CheckLower(TempValue1,0x280000)
-				TempValue0=CheckResult
-				CheckGreater(TempValue1,-0x200000)
-				TempValue0&=CheckResult
-				if TempValue0 == 1
-					TempValue1=Object[ArrayPos0].XPos
+				// Check vertical distance between mission/moving blocks and the ice block
+				CheckLower(TempValue1, 0x280000)
+				TempValue0  = CheckResult
+				CheckGreater(TempValue1, -0x200000)
+				TempValue0 &= CheckResult
+				if TempValue0 == true
+					TempValue1  = Object[ArrayPos0].XPos
 					TempValue1 -= Object[ArrayPos1].XPos
-					CheckLower(TempValue1,0x200000)
-					TempValue0=CheckResult
-					CheckGreater(TempValue1,-0x200000)
-					TempValue0&=CheckResult
-					if TempValue0 == 1
-						Object[ArrayPos1].YPos=Object[ArrayPos0].YPos
+					// Check horizontal distance between mission/moving blocks and the ice block
+					CheckLower(TempValue1, 0x200000)
+					TempValue0  = CheckResult
+					CheckGreater(TempValue1, -0x200000)
+					TempValue0 &= CheckResult
+					if TempValue0 == true
+						// Turns out you collided with a block, must hurt
+						Object[ArrayPos1].YPos  = Object[ArrayPos0].YPos
 						Object[ArrayPos1].YPos -= 0x280000
-						Object[ArrayPos1].State=1
-						Object[ArrayPos1].Value2=0
+						Object[ArrayPos1].State = ICEBLOCK_BREAKICE
+						Object[ArrayPos1].YVelocity = 0
+						
 						PlayStageSfx(4,0)
-						Object.Value0=0
-						Object.Priority=0
-						ArrayPos0=10000
+						Object.IceBlockEntity = 0
+						Object.Priority = PRIORITY_BOUNDS
+						ArrayPos0 = 10000
 					end if
 				end if
 			end if

@@ -15,21 +15,21 @@
 #alias Object.YPos	:	Shoulder.YPos
 
 // States
-#alias 0	:	BOSSARMJOINT_SETUP
-#alias 1	:	BOSSARMJOINT_REPOSITION_F
-#alias 2	:	BOSSARMJOINT_HANDLE_F_JOINT
-#alias 3	:	BOSSARMJOINT_REPOSITION_B
-#alias 4	:	BOSSARMJOINT_HANDLE_B_JOINT
-#alias 5	:	BOSSARMJOINT_DESTROYED
+#alias 0	:	BOSSARMJOINT2_SETUP
+#alias 1	:	BOSSARMJOINT2_REPOSITION_F
+#alias 2	:	BOSSARMJOINT2_HANDLE_F_JOINT
+#alias 3	:	BOSSARMJOINT2_REPOSITION_B
+#alias 4	:	BOSSARMJOINT2_HANDLE_B_JOINT
+#alias 5	:	BOSSARMJOINT2_DESTROYED
 
 // Priotity
-#alias 0	:	PRIORITY_ACTIVE_BOUNDS
+#alias 0	:	PRIORITY_BOUNDS
 
 // Function declarations
-#function BossArmJoint_HandleMovement
+#function BossArmJoint2_HandleMovement
 
 
-function BossArmJoint_HandleMovement
+function BossArmJoint2_HandleMovement
 	TempValue0 = Object.XOffSet
 	TempValue0 += 64
 
@@ -55,45 +55,45 @@ endfunction
 
 sub ObjectMain
 	switch Object.State
-	case BOSSARMJOINT_SETUP
+	case BOSSARMJOINT2_SETUP
 		if Object.DrawOrder == 3	// Left Arm Joint
 			Object.XOffSet = 128	// Delays the left arm joint
 		end if
-		Object.State = BOSSARMJOINT_REPOSITION_B
+		Object.State = BOSSARMJOINT2_REPOSITION_B
 
 		Object.OffsetValue  = 2
 		Object.OffsetValue *= Object.PropertyValue	// Set the XOffset value based on it's property value
 		Object.OffsetValue /= 10
 		// Fall Through
-	case BOSSARMJOINT_REPOSITION_F
+	case BOSSARMJOINT2_REPOSITION_F
 		Object.XOffSet -= Object.OffsetValue
 		if Object.XOffSet <= 0
-			Object.State = BOSSARMJOINT_HANDLE_F_JOINT
+			Object.State = BOSSARMJOINT2_HANDLE_F_JOINT
 			Object.XOffSet = 0
 			SetBit(Object.Charging, 0, 1)
 		end if
-		CallFunction(BossArmJoint_HandleMovement)
+		CallFunction(BossArmJoint2_HandleMovement)
 		break
 
-	case BOSSARMJOINT_HANDLE_F_JOINT
-		CallFunction(BossArmJoint_HandleMovement)
+	case BOSSARMJOINT2_HANDLE_F_JOINT
+		CallFunction(BossArmJoint2_HandleMovement)
 		break
 
-	case BOSSARMJOINT_REPOSITION_B
+	case BOSSARMJOINT2_REPOSITION_B
 		Object.XOffSet += Object.OffsetValue
 		if Object.XOffSet >= 48
-			Object.State = BOSSARMJOINT_HANDLE_B_JOINT
+			Object.State = BOSSARMJOINT2_HANDLE_B_JOINT
 			Object.XOffSet = 48
 			SetBit(Object.Charging, 0, 1)
 		end if
-		CallFunction(BossArmJoint_HandleMovement)
+		CallFunction(BossArmJoint2_HandleMovement)
 		break
 
-	case BOSSARMJOINT_HANDLE_B_JOINT
-		CallFunction(BossArmJoint_HandleMovement)
+	case BOSSARMJOINT2_HANDLE_B_JOINT
+		CallFunction(BossArmJoint2_HandleMovement)
 		break
 
-	case BOSSARMJOINT_DESTROYED
+	case BOSSARMJOINT2_DESTROYED
 		Object.XOffSet += 0x600
 		Object.YOffSet += 0x1F00
 
@@ -102,7 +102,7 @@ sub ObjectMain
 
 		if Object.OutOfBounds == true
 			Object.Type = TypeName[Blank Object]
-			Object.Priority = PRIORITY_ACTIVE_BOUNDS
+			Object.Priority = PRIORITY_BOUNDS
 		end if
 		break
 	end switch

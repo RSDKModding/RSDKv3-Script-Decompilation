@@ -1,22 +1,21 @@
-//------------Sonic CD Fan Elevator Script-------------//
+//----------------Sonic CD Fan Elevator Script----------------//
 //--------Scripted by Christian Whitehead 'The Taxman'--------//
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
 // Aliases
-#alias 74: TYPE_FANELEVATOR
-#alias Object.Value1	:	Object.MinHeight
-#alias Object.Value2	:	Object.YVelocity
-
-#alias 0	:	FAN_ELEVATOR_CLOSED
-#alias 1	:	FAN_ELEVATOR_OPEN
+#alias Object.Value1			:	Object.MinHeight
+#alias Object.Value2			:	Object.YVelocity
 // HUD alias
 #alias Object[24].PropertyValue	:	Hud.TimePeriod
 
+#alias 0	:	FAN_ELEVATOR_CLOSED
+#alias 1	:	FAN_ELEVATOR_OPEN
+
 // Time Periods
-#alias 0			:	PROPVAL_PRESENT
-#alias 1			:	PROPVAL_PAST
-#alias 2			:	PROPVAL_GOOD_FUTURE
-#alias 3			:	PROPVAL_BAD_FUTURE
+#alias 0	:	PROPVAL_PRESENT
+#alias 1	:	PROPVAL_PAST
+#alias 2	:	PROPVAL_GOOD_FUTURE
+#alias 3	:	PROPVAL_BAD_FUTURE
 
 // Priority
 #alias 3	:	PRIORITY_XBOUNDS
@@ -24,19 +23,19 @@
 
 sub ObjectMain
 	if Object.State == FAN_ELEVATOR_CLOSED
-		if Object.YVelocity < 0x10000		// 0x10000
-			Object.YVelocity += 0x2000	// 0x2000
+		if Object.YVelocity < 0x10000
+			Object.YVelocity += 0x2000
 		end if
 		if Object.YPos == Object.MinHeight
 			TempValue0 = Player.YPos
 			TempValue0 -= Object.YPos
-			if TempValue0 < 0xA00000	// 0xA00000
+			if TempValue0 < 0xA00000
 				Object.YVelocity = 0
 			end if
 		else
 			TempValue0 = Object.YPos
 			TempValue0 -= Object.MinHeight
-			if TempValue0 > 0x2A00000	// 0x2A00000
+			if TempValue0 > 0x2A00000
 				Object.YPos = Object.MinHeight
 			end if
 		end if
@@ -48,7 +47,7 @@ end sub
 sub ObjectPlayerInteraction
 	PlayerObjectCollision(C_PLATFORM, -32, -28, 32, 8)
 	if CheckResult == true
-		Object.YVelocity = -0x20000	// 0x20000
+		Object.YVelocity = -0x20000
 		if Object.State == FAN_ELEVATOR_CLOSED
 			PlayStageSfx(8, 0)
 		end if
@@ -95,7 +94,7 @@ sub ObjectStartup
 	while ArrayPos0 < 1056
 		if Object[ArrayPos0].Type == TypeName[FanElevator]
 			Object[ArrayPos0].Direction = FACING_LEFT
-			Object[ArrayPos0].Priority = PRIORITY_XBOUNDS
+			Object[ArrayPos0].Priority  = PRIORITY_XBOUNDS
 			Object[ArrayPos0].MinHeight = Object[ArrayPos0].YPos
 		end if
 		ArrayPos0++
