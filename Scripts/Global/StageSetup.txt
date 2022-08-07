@@ -389,3 +389,84 @@ sub RSDKLoad
 
 	SetVariableAlias(ALIAS_VAR_PROPVAL, "unused")
 end sub
+
+
+// ========================
+// Editor Helpers
+// ========================
+
+// All the following is only to be used from Editor subs, using these in the game itself won't give desired results
+// None of these exist in the original game, these are all custom to the decomp
+
+#function EditorHelpers_DrawHitbox
+#function EditorHelpers_DrawX
+
+
+function EditorHelpers_DrawHitbox
+	
+#platform: Editor
+	
+	// This function is called in order to draw an object's hitbox, as a white 
+	// Editor.DrawingOverlay isn't set here
+	
+	// Preconditions:
+	// - Object.XPos and Object.YPos are the position for the hitbox to be centered around
+	// - TempValue0 is the left hitbox size
+	// - TempValue1 is the top hitbox size
+	// - TempValue2 is the right hitbox size
+	// - TempValue3 is the bottom hitbox size
+	
+	// Get the base 1:1 position of the object
+	TempValue4 = Object.iXPos
+	TempValue5 = Object.iXPos
+	
+	// Move to its top left corner
+	TempValue4 -= TempValue0
+	TempValue5 -= TempValue1
+	
+	// Get the hitbox's total width and height
+	TempValue2 += TempValue0
+	TempValue3 += TempValue1
+	
+	DrawRectOutline(TempValue4, TempValue5, TempValue2, TempValue3, 255, 255, 255, 255)
+	
+#endplatform
+	
+end function
+
+
+function EditorHelpers_DrawX
+	
+#platform: Editor
+	
+	// This function is called to draw a red X, just for when you wanna show something's *really* wrong
+	// Editor.DrawingOverlay isn't set here, it's expected to be set (or ignored) by the Object calling this function
+	
+	// Preconditions:
+	// - TempValue0 and TempValue1 are the position for the X to be centered around, in world-space
+	
+	// Left
+	TempValue2 = TempValue0
+	TempValue2 -= 0x100000
+	
+	// Right
+	TempValue3 = TempValue0
+	TempValue3 += 0x100000
+	
+	// Top
+	TempValue4 = TempValue1
+	TempValue4 -= 0x100000
+	
+	// Bottom
+	TempValue5 = TempValue1
+	TempValue5 += 0x100000
+	
+	// TL-BR
+	DrawLine(TempValue2, TempValue4, TempValue3, TempValue5, 255, 0, 0)
+	
+	// TR-BL
+	DrawLine(TempValue3, TempValue4, TempValue2, TempValue5, 255, 0, 0)
+	
+#endplatform
+	
+end function
