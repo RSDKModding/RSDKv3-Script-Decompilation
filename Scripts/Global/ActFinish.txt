@@ -29,7 +29,7 @@
 #alias Object.Value4	:	Object.LineXPos4
 
 // New to Origins!
-// The Stage LIst Pos of the current stage's Present version
+// The Stage List Pos of the current stage's Present version
 #alias Object.Value7	:	Object.StagePosP
 
 // States
@@ -471,9 +471,7 @@ sub ObjectMain
 #endplatform
 
 			if Object.Timer == 1024
-				
-				// Set Fade_Colour to be off-white (0xd0ffe0)
-				
+				// Set Fade_Colour to be off-white (0xD0FFE0)
 				Fade_Colour = 208
 				Fade_Colour <<= 16
 				TempValue0 = 255
@@ -482,7 +480,6 @@ sub ObjectMain
 				Fade_Colour += 224
 				
 				// Reset more stuff
-				
 				Player.Direction = 0
 				Object.Timer = 0
 				LampPost.Check = 0
@@ -522,8 +519,6 @@ sub ObjectMain
 				end switch
 				
 				if Options.GameMode == GAMEMODE_MAINGAME
-					// Save the game, if needed
-					
 					ArrayPos1 = Options.SaveSlot
 					ArrayPos1 <<= 3
 					SaveRAM[ArrayPos1] = Stage.PlayerListPos
@@ -536,7 +531,6 @@ sub ObjectMain
 					
 					ArrayPos1++
 					SaveRAM[ArrayPos1] = Stage.ListPos
-					
 					// Add 81 to the Stage List Pos to signify that it's a Special Stage save
 					SaveRAM[ArrayPos1] += 81
 					
@@ -556,21 +550,17 @@ sub ObjectMain
 					
 					WriteSaveRAM()
 				end if
+				
 #platform: Use_Origins
 				recScore = Player.Score
 				SpecialStage.NextZone = Stage.ListPos
 				Stage.ActiveList = SPECIAL_STAGE
 				Stage.ListPos = SpecialStage.ListPos
 				
-				if game.oneStageFlag != 0
-					
-					// Don't advance the stage if we're just, well, one stage
-					
+				if game.oneStageFlag != false
 					Stage.ActiveList = REGULAR_STAGE
 					Stage.ListPos = Object.StagePosP
-					
 					Object.State = ACTFINISH_WAITFORHE2
-					
 				else
 					TempValue0 = Engine.TrialMode
 					if Stage.ListPos >= Stage.ListSize
@@ -578,21 +568,13 @@ sub ObjectMain
 					end if
 					
 					if TempValue0 == false
-						
-						// We're in normal conditions, load the next stage
 						LoadStage()
-						
 					else
-						
-						// Just go back to the Title Screen, if on a trial version of the next stage doesn't exist
-						
 						Stage.ActiveList = PRESENTATION_STAGE
 						Stage.ListPos = STAGE_P_TITLE
 						Engine.State = 8
-						
 					end if
 				end if
-#endplatform
 
 #platform: Use_Standalone
 				SpecialStage.NextZone = Stage.ListPos
@@ -600,9 +582,10 @@ sub ObjectMain
 				Stage.ActiveList = SPECIAL_STAGE
 
 				TempValue0 = Engine.TrialMode
-				if Stage.ListPos >= Stage.ListSize	// tldr; check if you are playing the trial
+				if Stage.ListPos >= Stage.ListSize
 					TempValue0 = true
 				end if
+				
 				if TempValue0 == false
 					LoadStage()
 				else
@@ -611,15 +594,10 @@ sub ObjectMain
 					LoadStage()
 				end if
 #endplatform
-
 			end if
 		else
-			
 			// We didn't enter a Special Ring, we're staying in normal stages
-			
 			Object.Timer += 4
-			
-			// Use black for the screen fade
 			SetScreenFade(0, 0, 0, Object.Timer)
 			
 			if Engine.TrialMode == true
@@ -629,8 +607,7 @@ sub ObjectMain
 			end if
 			
 			if Object.Timer == 384
-				
-				// Set Fade_Colour to be black as well
+				// Set Fade_Colour to be black
 				Fade_Colour = 0
 				
 				// Reset some cool values
@@ -673,8 +650,6 @@ sub ObjectMain
 				end switch
 				
 				if Options.GameMode == GAMEMODE_MAINGAME
-					// Save up everything
-					
 					ArrayPos1 = Options.SaveSlot
 					ArrayPos1 <<= 3
 					SaveRAM[ArrayPos1] = Stage.PlayerListPos
@@ -709,19 +684,13 @@ sub ObjectMain
 #platform: Use_Origins
 				recScore = Player.Score
 				
-				if game.oneStageFlag != 0
-					
-					// If on a single stage, then don't progress
-					
+				if game.oneStageFlag != false
 					Stage.ActiveList = REGULAR_STAGE
 					Stage.ListPos = Object.StagePosP
-					
 					Object.State = ACTFINISH_WAITFORHE2
-					
 				else
 					if Options.GameMode == GAMEMODE_TIMEATTACK
 						if Stage.PlayerListPos == PLAYER_SONIC
-							
 							// Get the act number
 							TempValue0 = Stage.ListPos
 							TempValue0 %= 10
@@ -752,7 +721,6 @@ sub ObjectMain
 						end if
 						
 						// Tally up all the results, into one single large number
-						
 						TimeAttack.Result = Stage.Seconds
 						TimeAttack.Result *= 100
 						
@@ -762,13 +730,10 @@ sub ObjectMain
 						TimeAttack.Result += TempValue0
 						TimeAttack.Result += Stage.MilliSeconds
 						
-						// Now, head over to the TA scene
-						
 						Stage.ActiveList = PRESENTATION_STAGE
 						Stage.ListPos = STAGE_P_TIMEATTACK
 						
 						LoadStage()
-						
 					else
 						// Huh?
 						// TODO: something seems wrong here...
@@ -783,20 +748,12 @@ sub ObjectMain
 						end if
 						
 						if TempValue0 == false
-							
-							// On a normal version, proceed as normal
 							LoadStage()
-							
 						else
 							if Engine.TrialMode == true
-								
-								// If on a trial version, then send the Player to the download screen now
-								
 								Stage.ActiveList = PRESENTATION_STAGE
 								Stage.ListPos = STAGE_P_DOWNLOADSCREEN
-								
 								LoadStage()
-								
 							else
 								Engine.State = ENGINE_WAIT
 							end if
@@ -864,13 +821,13 @@ sub ObjectMain
 						LoadStage()
 					end if
 				end if
-#endplatform
+	#endplatform
 			end if
 		end if
 		break
+		
 #platform: Use_Origins
 	case ACTFINISH_HOLDOVERRESTART
-		
 		// Wait and see, does the Player want to restart the stage?
 		if game.callbackResult >= 0
 			Object.Timer = 0
@@ -879,7 +836,6 @@ sub ObjectMain
 		break
 		
 	case ACTFINISH_WAITFORHE2
-		// Just have the screen be black for now, nothing fancy
 		SetScreenFade(0, 0, 0, 255)
 		break
 #endplatform

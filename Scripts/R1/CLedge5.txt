@@ -20,7 +20,7 @@
 #alias 6	:	CLEDGE5_DEBRIS
 
 // Priority
-#alias 0	:	PRIORITY_ACTIVE_BOUNDS
+#alias 0	:	PRIORITY_BOUNDS
 #alias 1	:	PRIORITY_ACTIVE
 
 
@@ -51,10 +51,10 @@ sub ObjectMain
 			if Object.HitboxRight > Object.HitboxLeft
 			
 				Object.HitboxRight -= 16
-				TempValue0 = Object.HitboxRight
-				TempValue0 += 8
+				TempValue0   = Object.HitboxRight
+				TempValue0  += 8
 				TempValue0 <<= 16
-				TempValue0 += Object.XPos
+				TempValue0  += Object.XPos
 				CreateTempObject(TypeName[CrumbleLedge5], 0, TempValue0, Object.YPos)
 				Object[TempObjectPos].State = CLEDGE5_DEBRIS
 				if Object.Length == 1
@@ -81,10 +81,10 @@ sub ObjectMain
 			if Object.HitboxLeft < Object.HitboxRight
 
 				Object.HitboxLeft += 16
-				TempValue0 = Object.HitboxLeft
-				TempValue0 -= 8
+				TempValue0   = Object.HitboxLeft
+				TempValue0  -= 8
 				TempValue0 <<= 16
-				TempValue0 += Object.XPos
+				TempValue0  += Object.XPos
 
 				CreateTempObject(TypeName[CrumbleLedge5], 0, TempValue0, Object.YPos)
 				Object[TempObjectPos].State = CLEDGE5_DEBRIS
@@ -107,22 +107,22 @@ sub ObjectMain
 
 	case CLEDGE5_RESTORE
 		if Object.OutOfBounds == true
-			Object.State = CLEDGE5_IDLE
+			Object.State  = CLEDGE5_IDLE
 			Object.Length = Object.PropertyValue
 
-			Object.HitboxLeft = Object.PropertyValue
+			Object.HitboxLeft   = Object.PropertyValue
 			Object.HitboxLeft <<= 3
 
-			Object.HitboxRight = Object.HitboxLeft
+			Object.HitboxRight  = Object.HitboxLeft
 			FlipSign(Object.HitboxLeft)
 
-			Object.Priority = PRIORITY_ACTIVE_BOUNDS
+			Object.Priority = PRIORITY_BOUNDS
 			Object.Timer = 0
 		end if
 		break
 
 	case CLEDGE5_DEBRIS
-		Object.YVelocity += 0x4000	// 0x4000
+		Object.YVelocity += 0x4000
 		if Object.YVelocity > 0
 			Object.YPos += Object.YVelocity
 		end if
@@ -161,12 +161,12 @@ sub ObjectDraw
 	case CLEDGE5_DELAY_FROM_RIGHT
 	case CLEDGE5_DELAY_FROM_LEFT
 	case CLEDGE5_COLLAPSE_RIGHT
-		TempValue0 = 0
-		TempValue1 = Object.HitboxLeft
+		TempValue0   = 0
+		TempValue1   = Object.HitboxLeft
 		TempValue1 <<= 16
-		TempValue1 += 0x80000	// 0x80000
-		TempValue1 += Object.XPos
-		TempValue2 = Object.PropertyValue
+		TempValue1  += 0x80000
+		TempValue1  += Object.XPos
+		TempValue2   = Object.PropertyValue
 		TempValue2--
 		while TempValue0 < Object.Length
 			DrawSpriteXY(0, TempValue1, Object.YPos)
@@ -181,16 +181,17 @@ sub ObjectDraw
 				end if
 			end if
 			TempValue0++
-			TempValue1 += 0x100000	// 0x100000
+			TempValue1 += 0x100000
 		loop
 		break
+
 	case CLEDGE5_COLLAPSE_LEFT
-		TempValue0 = 0
-		TempValue1 = Object.HitboxRight
+		TempValue0   = 0
+		TempValue1   = Object.HitboxRight
 		TempValue1 <<= 16
-		TempValue1 -= 0x80000	// 0x80000
-		TempValue1 += Object.XPos
-		TempValue2 = Object.PropertyValue
+		TempValue1  -= 0x80000
+		TempValue1  += Object.XPos
+		TempValue2   = Object.PropertyValue
 		TempValue2--
 		while TempValue0 < Object.Length
 			DrawSpriteXY(0, TempValue1, Object.YPos)
@@ -205,9 +206,10 @@ sub ObjectDraw
 				end if
 			end if
 			TempValue0++
-			TempValue1 -= 0x100000	// 0x100000
+			TempValue1 -= 0x100000
 		loop
 		break
+
 	case CLEDGE5_DEBRIS
 		DrawSprite(0)
 		DrawSprite(1)
@@ -230,10 +232,10 @@ sub ObjectStartup
 	ArrayPos0 = 32
 	while ArrayPos0 < 1056
 		if Object[ArrayPos0].Type == TypeName[CrumbleLedge5]
-			Object[ArrayPos0].Length = Object[ArrayPos0].PropertyValue
-			Object[ArrayPos0].HitboxLeft = Object[ArrayPos0].PropertyValue
-			Object[ArrayPos0].HitboxLeft <<= 3
-			Object[ArrayPos0].HitboxRight = Object[ArrayPos0].HitboxLeft
+			Object[ArrayPos0].Length		= Object[ArrayPos0].PropertyValue
+			Object[ArrayPos0].HitboxLeft	= Object[ArrayPos0].PropertyValue
+			Object[ArrayPos0].HitboxLeft  <<= 3
+			Object[ArrayPos0].HitboxRight	= Object[ArrayPos0].HitboxLeft
 			FlipSign(Object[ArrayPos0].HitboxLeft)
 		end if
 		ArrayPos0++
@@ -245,18 +247,18 @@ end sub
 // ========================
 
 sub RSDKDraw
-	Object.Length = Object.PropertyValue
-	Object.HitboxLeft = Object.PropertyValue
+	Object.Length		= Object.PropertyValue
+	Object.HitboxLeft	= Object.PropertyValue
 	Object.HitboxLeft <<= 3
-	Object.HitboxRight = Object.HitboxLeft
+	Object.HitboxRight	= Object.HitboxLeft
 	FlipSign(Object.HitboxLeft)
 
-	TempValue0 = 0
-	TempValue1 = Object.HitboxLeft
+	TempValue0   = 0
+	TempValue1   = Object.HitboxLeft
 	TempValue1 <<= 16
-	TempValue1 += 0x80000	// 0x80000
-	TempValue1 += Object.XPos
-	TempValue2 = Object.PropertyValue
+	TempValue1  += 0x80000
+	TempValue1  += Object.XPos
+	TempValue2   = Object.PropertyValue
 	TempValue2--
 	while TempValue0 < Object.Length
 		DrawSpriteXY(0, TempValue1, Object.YPos)
@@ -271,12 +273,13 @@ sub RSDKDraw
 			end if
 		end if
 		TempValue0++
-		TempValue1 += 0x100000	// 0x100000
+		TempValue1 += 0x100000
 	loop
 end sub
 
 sub RSDKLoad
 	LoadSpriteSheet("R1/Objects2.gif")
+
 	SpriteFrame(-8, -40, 16, 48, 163, 1)	// #0 - Ledge top
 	SpriteFrame(-8, 8, 16, 16, 190, 66)		// #1 - Ledge middle
 	SpriteFrame(-8, 24, 16, 16, 82, 49)		// #2 - Ledge bottom left

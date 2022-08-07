@@ -8,6 +8,7 @@
 #alias Object.Value2		:	Object.YOriginPos
 #alias Object.PropertyValue	:	Object.Quality
 
+// States
 #alias 0	:	TAGATAGA_SET_LAUNCH_SPEED
 #alias 1	:	TAGATAGA_EMERGE
 #alias 2	:	TAGATAGA_MOVE_PINCH_1
@@ -22,7 +23,7 @@
 #alias 1	:	PROPVAL_QUALITY_BAD
 
 // Priority
-#alias 0	:	PRIORITY_ACTIVE_BOUNDS
+#alias 0	:	PRIORITY_BOUNDS
 #alias 1	:	PRIORITY_ACTIVE
 
 
@@ -31,7 +32,7 @@ sub ObjectMain
 
 		switch Object.State
 		case TAGATAGA_SET_LAUNCH_SPEED
-			Object.YVelocity = -0x40000	// -0x40000
+			Object.YVelocity = -0x40000
 
 			Object.Timer = 1
 
@@ -39,7 +40,7 @@ sub ObjectMain
 			break
 
 		case TAGATAGA_EMERGE
-			Object.YVelocity += 0x1000	// 0x1000
+			Object.YVelocity += 0x1000
 			Object.YPos += Object.YVelocity
 
 			Object.Timer++
@@ -49,7 +50,7 @@ sub ObjectMain
 			break
 
 		case TAGATAGA_MOVE_PINCH_1
-			Object.YVelocity += 0x1000	// 0x1000
+			Object.YVelocity += 0x1000
 			Object.YPos += Object.YVelocity
 
 			Object.Timer++
@@ -59,7 +60,7 @@ sub ObjectMain
 			break
 
 		case TAGATAGA_TURN_1
-			Object.YVelocity += 0x1000	// 0x1000
+			Object.YVelocity += 0x1000
 			Object.YPos += Object.YVelocity
 
 			Object.Timer++
@@ -69,7 +70,7 @@ sub ObjectMain
 			break
 
 		case TAGATAGA_TURN_2
-			Object.YVelocity += 0x1000	// 0x1000
+			Object.YVelocity += 0x1000
 			Object.YPos += Object.YVelocity
 
 			Object.Timer++
@@ -79,7 +80,7 @@ sub ObjectMain
 			break
 
 		case TAGATAGA_TURN_3
-			Object.YVelocity += 0x1000	// 0x1000
+			Object.YVelocity += 0x1000
 			Object.YPos += Object.YVelocity
 
 			Object.Timer++
@@ -89,7 +90,7 @@ sub ObjectMain
 			break
 
 		case TAGATAGA_MOVE_PINCH_2
-			Object.YVelocity += 0x1000	// 0x1000
+			Object.YVelocity += 0x1000
 			Object.YPos += Object.YVelocity
 
 			Object.Timer++
@@ -116,7 +117,7 @@ sub ObjectMain
 	else
 		switch Object.State
 		case TAGATAGA_SET_LAUNCH_SPEED
-			Object.YVelocity = -0x30000	// -0x30000
+			Object.YVelocity = -0x30000
 
 			Object.Timer = 1
 
@@ -124,7 +125,7 @@ sub ObjectMain
 			break
 
 		case TAGATAGA_EMERGE
-			Object.YVelocity += 0xEC4	// 0xEC4
+			Object.YVelocity += 0xEC4
 			Object.YPos += Object.YVelocity
 
 			Object.Timer++
@@ -134,7 +135,7 @@ sub ObjectMain
 			break
 
 		case TAGATAGA_MOVE_PINCH_1
-			Object.YVelocity += 0xEC4	// 0xEC4
+			Object.YVelocity += 0xEC4
 			Object.YPos += Object.YVelocity
 
 			Object.Timer++
@@ -144,7 +145,7 @@ sub ObjectMain
 			break
 
 		case TAGATAGA_TURN_1
-			Object.YVelocity += 0xEC4	// 0xEC4
+			Object.YVelocity += 0xEC4
 			Object.YPos += Object.YVelocity
 
 			Object.Timer++
@@ -154,7 +155,7 @@ sub ObjectMain
 			break
 
 		case TAGATAGA_TURN_2
-			Object.YVelocity += 0xEC4	// 0xEC4
+			Object.YVelocity += 0xEC4
 			Object.YPos += Object.YVelocity
 
 			Object.Timer++
@@ -211,7 +212,7 @@ sub ObjectDraw
 			break
 
 		case TAGATAGA_MOVE_PINCH_1
-			TempValue0 = Object.Timer
+			TempValue0  = Object.Timer
 			TempValue0 &= 15
 			if TempValue0 < 8
 				DrawSprite(0)
@@ -233,7 +234,7 @@ sub ObjectDraw
 			break
 
 		case TAGATAGA_MOVE_PINCH_2
-			TempValue0 = Object.Timer
+			TempValue0  = Object.Timer
 			TempValue0 &= 15
 			if TempValue0 < 8
 				DrawSprite(4)
@@ -283,6 +284,7 @@ sub ObjectStartup
 	SpriteFrame(-16, -16, 32, 32, 35, 142)		// #8 - TagaTaga turning Frame 1
 	SpriteFrame(-16, -22, 32, 44, 1, 191)		// #9 - TagaTaga submerge Frame 0
 
+	// Used to be below LoadSpriteSheet, moved here for consistency
 	ArrayPos0 = 32
 	while ArrayPos0 < 1056
 		if Object[ArrayPos0].Type == TypeName[TagaTaga]

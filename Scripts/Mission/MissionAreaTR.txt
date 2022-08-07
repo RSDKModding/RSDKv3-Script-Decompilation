@@ -1,30 +1,41 @@
-//------------Sonic CD MissionAreaTR Script-------------//
+//-----------Sonic CD Mission Area Top Right Script-----------//
 //--------Scripted by Christian Whitehead 'The Taxman'--------//
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
 // Aliases
-#alias 58: TYPE_MISSIONAREATR
+#alias Object.State	:	Object.SetBounds
+
+// Priority
+#alias 1	:	PRIORITY_ACTIVE
 
 
 sub ObjectMain
-	if Object.State == 0
-		Stage.NewXBoundary2=Object.XPos
+	// If it hasn't been done already, set the Stage's boundaries
+	if Object.SetBounds == false
+		// Move the X Bounds to 16 pixels to the right of this Object
+		Stage.NewXBoundary2   = Object.XPos
 		Stage.NewXBoundary2 >>= 16
-		Stage.NewXBoundary2 += 16
-		Stage.NewYBoundary1=Object.YPos
+		Stage.NewXBoundary2  += 16
+		
+		// And then move the Y Bounds to be right at this Object's position
+		Stage.NewYBoundary1   = Object.YPos
 		Stage.NewYBoundary1 >>= 16
-		Object.State=1
+		
+		// Set the flag, as the bounds have been set now
+		Object.SetBounds = true
 	end if
+
 	if Stage.State == STAGE_RUNNING
-		if Player.YPos<Object.YPos
-			Player.YVelocity=0
-			Player.Speed=0
-			Player.YPos=Object.YPos
+		if Player.YPos < Object.YPos
+			Player.YVelocity = 0
+			Player.Speed	 = 0
+			Player.YPos		 = Object.YPos
 		end if
-		if Player.XPos>Object.XPos
-			Player.XVelocity=0
-			Player.Speed=0
-			Player.XPos=Object.XPos
+		
+		if Player.XPos > Object.XPos
+			Player.XVelocity = 0
+			Player.Speed	 = 0
+			Player.XPos		 = Object.XPos
 		end if
 	end if
 end sub
@@ -34,7 +45,7 @@ sub ObjectStartup
 	ArrayPos0=32
 	while ArrayPos0<1056
 		if Object[ArrayPos0].Type == TypeName[MissionAreaTR]
-			Object[ArrayPos0].Priority=1
+			Object[ArrayPos0].Priority = PRIORITY_ACTIVE
 		end if
 		ArrayPos0++
 	loop

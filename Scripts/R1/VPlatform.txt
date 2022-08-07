@@ -8,25 +8,25 @@
 #alias Object.Value3	:	Object.Oscillation
 
 // Property Values
-#alias 0	:	VPLATFORM_START_TOP
-#alias 1	:	VPLATFORM_START_BOTTOM
+#alias 0	:	START_FROM_BEGINNING
+#alias 1	:	START_HALFWAY_THROUGH
 
 // Collision
 #alias 1	:	FLOOR
 
 
 sub ObjectMain
-	Object.Oscillation = Oscillation
+	Object.Oscillation   = Oscillation
 	Object.Oscillation <<= 1
 
-	if Object.PropertyValue == VPLATFORM_START_BOTTOM
+	if Object.PropertyValue == START_HALFWAY_THROUGH
 		Object.Oscillation += 256
 	end if
 
 	Sin(Object.YVelocity, Object.Oscillation)
-	Object.YVelocity *= 0x1800	// 0x1800
+	Object.YVelocity *= 0x1800
 	Object.YVelocity += Object.YPos
-	Object.YVelocity &= 0xFFFF0000	// -0x10000
+	Object.YVelocity &= 0xFFFF0000
 	Object.YVelocity -= Object.YCollisionOffset
 end sub
 
@@ -46,9 +46,9 @@ end sub
 
 sub ObjectDraw
 	Sin(Object.YCollisionOffset, Object.Oscillation)
-	Object.YCollisionOffset *= 0x1800	// 0x1800
+	Object.YCollisionOffset *= 0x1800
 	Object.YCollisionOffset += Object.YPos
-	Object.YCollisionOffset &= 0xFFFF0000	// -0x10000
+	Object.YCollisionOffset &= 0xFFFF0000
 
 	DrawSpriteXY(0, Object.XPos, Object.YCollisionOffset)
 end sub

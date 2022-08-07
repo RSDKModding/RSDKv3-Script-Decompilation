@@ -1,4 +1,4 @@
-//------------Sonic CD Piston Script-------------//
+//-------------------Sonic CD Piston Script-------------------//
 //--------Scripted by Christian Whitehead 'The Taxman'--------//
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
@@ -6,32 +6,32 @@
 #alias Object.Value0			:	Object.Timer
 #alias Object.Value1			:	Object.YOffSet
 
-// HUD Aliases
-#alias Object[24].PropertyValue	:	HUD.TimePeriod
-
 // Fireball Aliases
 #alias Object.Value0			:	Object.Fade
 #alias Object.Value1			:	Object.XVelocity
 
+// HUD Aliases
+#alias Object[24].PropertyValue	:	HUD.TimePeriod
+
 // States
-#alias 0			:	PISTON_DETECT_PLAYER
-#alias 1			:	PISTON_PREPARE_FIRE
-#alias 2			:	PISTON_EMERGE
-#alias 3			:	PISTON_FIRE
-#alias 4			:	PISTON_HIDE
+#alias 0	:	PISTON_DETECT_PLAYER
+#alias 1	:	PISTON_PREPARE_FIRE
+#alias 2	:	PISTON_EMERGE
+#alias 3	:	PISTON_FIRE
+#alias 4	:	PISTON_HIDE
 
 // Gravity
-#alias 0			:	GRAVITY_GROUND
-#alias 1			:	GRAVITY_AIR
+#alias 0	:	GRAVITY_GROUND
+#alias 1	:	GRAVITY_AIR
 
 // Ink
-#alias 2			:	INK_ALPHA
+#alias 2	:	INK_ALPHA
 
 // Time Periods
-#alias 0			:	PROPVAL_PRESENT
-#alias 1			:	PROPVAL_PAST
-#alias 2			:	PROPVAL_GOOD_FUTURE
-#alias 3			:	PROPVAL_BAD_FUTURE
+#alias 0	:	PROPVAL_PRESENT
+#alias 1	:	PROPVAL_PAST
+#alias 2	:	PROPVAL_GOOD_FUTURE
+#alias 3	:	PROPVAL_BAD_FUTURE
 
 
 sub ObjectMain
@@ -52,12 +52,12 @@ sub ObjectMain
 	case PISTON_PREPARE_FIRE
 		if Object.Timer < 33
 			Object.Timer++
-			Object.Frame = Object.Timer
+			Object.Frame  = Object.Timer
 			Object.Frame /= 3
 		else
-			Object.Frame = 1
-			Object.Timer = 0
-			Object.State = PISTON_EMERGE
+			Object.Frame  = 1
+			Object.Timer  = 0
+			Object.State  = PISTON_EMERGE
 		end if
 		break
 
@@ -71,9 +71,7 @@ sub ObjectMain
 
 	case PISTON_FIRE
 		if Object.Timer < 8
-
 			if Object.Timer == 0
-
 				switch HUD.TimePeriod
 				case PROPVAL_PRESENT
 				case PROPVAL_BAD_FUTURE
@@ -96,7 +94,6 @@ sub ObjectMain
 					Object[TempObjectPos].Frame = 1
 					
 				end switch
-
 			end if
 			Object.Timer++
 		else
@@ -118,7 +115,7 @@ end sub
 
 
 sub ObjectPlayerInteraction
-	TempValue0 = -0xC0000	// -0xC0000
+	TempValue0 = -0xC0000
 	TempValue0 -= Object.YOffSet
 	TempValue0 >>= 16
 	PlayerObjectCollision(C_BOX, -16, -12, 16, 16)
@@ -126,10 +123,10 @@ sub ObjectPlayerInteraction
 	// if the player is on top when the piston emerges, launch it to the sky
 	if CheckResult == true
 
-		if Object.YOffSet == 0x200000		// 0x200000
+		if Object.YOffSet == 0x200000
 
 			if Object.State == PISTON_EMERGE
-				Player.YVelocity = -0x70000	// -0x70000
+				Player.YVelocity = -0x70000
 
 				Player.Timer = 0
 
@@ -161,13 +158,7 @@ end sub
 
 sub ObjectStartup
 	LoadSpriteSheet("R3/Objects.gif")
-	ArrayPos0 = 32
-	while ArrayPos0 < 1056
-		if Object[ArrayPos0].Type == TypeName[Piston]
-			Object[ArrayPos0].Frame = 1
-		end if
-		ArrayPos0++
-	loop
+
 	SpriteFrame(-16, -4, 32, 8, 214, 34)		// #0 - Piston Head
 	SpriteFrame(-16, -12, 32, 40, 1, 34)		// #1 - Piston 
 	
@@ -200,6 +191,15 @@ sub ObjectStartup
 		SpriteFrame(-16, -12, 32, 40, 1, 34)	// #11 - Piston Emerge Frame 9
 		break
 	end switch
+	
+	// Used to be below LoadSpriteSheet, moved here for consistency
+	ArrayPos0 = 32
+	while ArrayPos0 < 1056
+		if Object[ArrayPos0].Type == TypeName[Piston]
+			Object[ArrayPos0].Frame = 1
+		end if
+		ArrayPos0++
+	loop
 end sub
 
 // ========================

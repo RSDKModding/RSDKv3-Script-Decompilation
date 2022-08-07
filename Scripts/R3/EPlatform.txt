@@ -1,4 +1,4 @@
-//------------Sonic CD Eggman Platform Script-------------//
+//---------------Sonic CD Eggman Platform Script--------------//
 //--------Scripted by Christian Whitehead 'The Taxman'--------//
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
@@ -19,7 +19,7 @@
 #alias 8	:	EPLATFORM_LARGE
 
 // Priority
-#alias 0	:	PRIORITY_ACTIVE_BOUNDS
+#alias 0	:	PRIORITY_BOUNDS
 #alias 1	:	PRIORITY_ACTIVE
 
 
@@ -37,10 +37,10 @@ sub ObjectMain
 
 		else
 
-			TempValue0 = Object.HitboxRight
-			TempValue0 += 32
+			TempValue0   = Object.HitboxRight
+			TempValue0  += 32
 			TempValue0 <<= 16
-			TempValue0 += Object.XPos
+			TempValue0  += Object.XPos
 			if Player.XPos > TempValue0
 				Object.State = EPLATFORM_EXTEND_SHORT
 				Object.Priority = PRIORITY_ACTIVE
@@ -70,7 +70,7 @@ sub ObjectMain
 		else
 			PlayMusic(4)
 			Object.State = EPLATFORM_BLANK
-			Object.Priority = PRIORITY_ACTIVE_BOUNDS
+			Object.Priority = PRIORITY_BOUNDS
 		end if
 		break
 
@@ -86,16 +86,14 @@ end sub
 
 
 sub ObjectDraw
-	TempValue0 = 0
-	TempValue1 = Object.HitBoxRight
+	TempValue0   = 0
+	TempValue1   = Object.HitBoxRight
 	TempValue1 <<= 16
-	TempValue1 -= 0x80000
-	TempValue1 += Object.XPos
+	TempValue1  -= 0x80000
+	TempValue1  += Object.XPos
 	while TempValue0 < Object.Length
 		DrawSpriteXY(0, TempValue1, Object.YPos)
-
 		TempValue0++
-
 		TempValue1 -= 0x100000
 	loop
 end sub
@@ -106,12 +104,13 @@ sub ObjectStartup
 
 	SpriteFrame(-8, -16, 16, 32, 117, 0)	// #0 - Eggman Platform
 
+	// Used to be below LoadSpriteSheet, moved here for consistency
 	ArrayPos0 = 32
 	while ArrayPos0 < 1056
 		if Object[ArrayPos0].Type == TypeName[EPlatform]
-			Object[ArrayPos0].HitBoxRight = Object[ArrayPos0].PropertyValue
+			Object[ArrayPos0].HitBoxRight   = Object[ArrayPos0].PropertyValue
 			Object[ArrayPos0].HitBoxRight <<= 3
-			Object[ArrayPos0].HitboxLeft = Object[ArrayPos0].HitBoxRight
+			Object[ArrayPos0].HitboxLeft    = Object[ArrayPos0].HitBoxRight
 		end if
 		ArrayPos0++
 	loop

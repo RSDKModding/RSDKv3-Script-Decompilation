@@ -15,9 +15,8 @@
 #alias 2	:	INVBLOCK_RESTORE
 
 // Priority
-#alias 0	:	PRIORITY_ACTIVE_BOUNDS
+#alias 0	:	PRIORITY_BOUNDS
 #alias 1	:	PRIORITY_ACTIVE
-
 
 // Time Periods
 #alias 0	:	PROPVAL_PRESENT
@@ -38,13 +37,13 @@ sub ObjectPlayerInteraction
 			if Object.OnObject == true
 				Object.State = INVBLOCK_FALL
 				Object.Priority = PRIORITY_ACTIVE
-				Player.YPos += 0x20000	// 0x20000
+				Player.YPos += 0x20000
 			end if
 			break
 
 		case INVBLOCK_FALL
 			if Object.OnObject == true
-				Player.YPos += 0x20000	// 0x20000
+				Player.YPos += 0x20000
 			end if
 			break
 		end switch
@@ -55,7 +54,7 @@ end sub
 sub ObjectDraw
 	switch Object.State
 	case INVBLOCK_FALL
-		Object.YPos += 0x20000	// 0x20000
+		Object.YPos += 0x20000
 		if Object.OutOfBounds == true
 			Object.State = INVBLOCK_RESTORE
 			Object.YPos = Object.YOriginPos
@@ -65,7 +64,7 @@ sub ObjectDraw
 	case INVBLOCK_RESTORE
 		if Object.OutOfBounds == true
 			Object.State = INVBLOCK_IDLE
-			Object.Priority = PRIORITY_ACTIVE_BOUNDS
+			Object.Priority = PRIORITY_BOUNDS
 		end if
 		break
 
@@ -129,6 +128,7 @@ sub ObjectStartup
 	SpriteFrame(-12, -12, 24, 24, 168, 142)	// #23 - Inv Block Appearing Frame 22
 	SpriteFrame(-12, -12, 24, 24, 68, 142)	// #24 - Inv Block Appearing Frame 23 / Main Frame in the Present
 
+	// Used to be below LoadSpriteSheet, moved here for consistency
 	ArrayPos0 = 32
 	while ArrayPos0 < 1056
 		if Object[ArrayPos0].Type == TypeName[InvisibleBlock]

@@ -1,4 +1,4 @@
-//------------Sonic CD Bumper Script-------------//
+//-------------------Sonic CD Bumper Script-------------------//
 //--------Scripted by Christian Whitehead 'The Taxman'--------//
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
@@ -22,7 +22,7 @@
 #alias 1	:	GRAVITY_AIR
 
 // Priority
-#alias 0	:	PRIORITY_ACTIVE_BOUNDS
+#alias 0	:	PRIORITY_BOUNDS
 #alias 1	:	PRIORITY_ACTIVE
 
 // Property Values
@@ -35,6 +35,7 @@
 #alias 4	:	BUMPER_BOTTOM_TO_TOP
 #alias 5	:	BUMPER_TOP_TO_BOTTOM_G
 #alias 6	:	BUMPER_BOTTOM_TO_TOP_G
+
 
 sub ObjectMain
 	switch Object.PropertyValue
@@ -51,61 +52,61 @@ sub ObjectMain
 	case BUMPER_TOP_TO_BOTTOM
 		if Object.TurnDirection == false
 
-			if Object.Oscillation < 0x380000		// 0x380000
-				Object.Oscillation += 0x10000		// 0x10000
+			if Object.Oscillation < 0x380000
+				Object.Oscillation += 0x10000
 			else
 				Object.TurnDirection = true
 			end if
 
 		else
 
-			if Object.Oscillation > -0x380000	// -0x380000
-				Object.Oscillation -= 0x10000		// 0x10000
+			if Object.Oscillation > -0x380000
+				Object.Oscillation -= 0x10000
 			else
 				Object.TurnDirection = false
 			end if
 
 		end if
-		Object.YPos = Object.YOriginPos
+		Object.YPos  = Object.YOriginPos
 		Object.YPos += Object.Oscillation
 		break
 
 	case BUMPER_BOTTOM_TO_TOP
 		if Object.TurnDirection == false
 
-			if Object.Oscillation < 0x380000		// 0x380000
-				Object.Oscillation += 0x10000		// 0x10000
+			if Object.Oscillation < 0x380000
+				Object.Oscillation += 0x10000
 			else
 				Object.TurnDirection = true
 			end if
 
 		else
 
-			if Object.Oscillation > -0x380000	// -0x380000
-				Object.Oscillation -= 0x10000		// 0x10000
+			if Object.Oscillation > -0x380000
+				Object.Oscillation -= 0x10000
 			else
 				Object.TurnDirection = false
 			end if
 
 		end if
-		Object.YPos = Object.YOriginPos
+		Object.YPos  = Object.YOriginPos
 		Object.YPos -= Object.Oscillation
 		break
 
 	case BUMPER_TOP_TO_BOTTOM_G
-		Object.YPos = Object.YOriginPos
+		Object.YPos  = Object.YOriginPos
 		Object.YPos += R3Setup.BumperOscillation
 		break
 
 	case BUMPER_BOTTOM_TO_TOP_G
-		Object.YPos = Object.YOriginPos
+		Object.YPos  = Object.YOriginPos
 		Object.YPos -= R3Setup.BumperOscillation
 		break
 
 	end switch
 
 	if Object.State > 0
-		Object.Frame = Object.FrameTimer
+		Object.Frame  = Object.FrameTimer
 		Object.Frame /= 5
 		Object.Frame++
 		
@@ -120,17 +121,15 @@ sub ObjectMain
 
 	if Object.OutOfBounds == true
 		Object.BonusScore = 0
-		Object.Priority = PRIORITY_ACTIVE_BOUNDS
+		Object.Priority = PRIORITY_BOUNDS
 	end if
 end sub
 
 
 sub ObjectPlayerInteraction
 	if Player.Animation != ANI_HURT
-
 		PlayerObjectCollision(C_TOUCH, -14, -14, 14, 14)
 		if CheckResult == true
-
 			if Object.State == BUMPER_IDLE
 				PlayStageSfx(0, 0)
 
@@ -143,7 +142,6 @@ sub ObjectPlayerInteraction
 					Player.Score += 100
 					Object.BonusScore++
 				end if
-
 			end if
 
 			if Object.FrameTimer > 5
@@ -154,10 +152,10 @@ sub ObjectPlayerInteraction
 
 			Object.Priority = PRIORITY_ACTIVE
 
-			TempValue0 = Player.XPos
+			TempValue0  = Player.XPos
 			TempValue0 -= Object.XPos
 
-			TempValue1 = Player.YPos
+			TempValue1  = Player.YPos
 			TempValue1 -= Object.YPos
 
 			ATan2(TempValue2, TempValue0, TempValue1)
@@ -168,8 +166,8 @@ sub ObjectPlayerInteraction
 				TempValue0 <<= 10
 				TempValue1 <<= 10
 			else
-				TempValue0 *= 1792
-				TempValue1 *= 1792
+				TempValue0  *= 1792
+				TempValue1  *= 1792
 				Player.Timer = 0
 			end if
 
@@ -180,7 +178,6 @@ sub ObjectPlayerInteraction
 
 			Player.Gravity = GRAVITY_AIR
 		end if
-
 	end if
 end sub
 
@@ -200,6 +197,7 @@ sub ObjectStartup
 	SpriteFrame(-20, -20, 40, 40, 215, 203)		// #4 - Bumper Hit Frame 3
 	SpriteFrame(-20, -20, 40, 40, 215, 203)		// #5 - Bumper Hit Frame 4
 
+	// Used to be below LoadSpriteSheet, moved here for consistency
 	ArrayPos0 = 32
 	while ArrayPos0 < 1056
 		if Object[ArrayPos0].Type == TypeName[Bumper]

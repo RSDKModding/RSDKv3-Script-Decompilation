@@ -1,499 +1,726 @@
-//------------Sonic CD Kemusi2 Script-------------//
+//------------------Sonic CD Kemusi 2 Script------------------//
 //--------Scripted by Christian Whitehead 'The Taxman'--------//
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
 // Aliases
-#alias 75: TYPE_KEMUSI2
+
+#alias Object.Value0	:	Object.Timer
+
+// The head is base XPos and YPos
+
+#alias Object.Value1	:	Object.BodyPosition1X
+#alias Object.Value4	:	Object.BodyPosition1Y
+
+#alias Object.Value2	:	Object.BodyPosition2X
+#alias Object.Value5	:	Object.BodyPosition2Y
+
+#alias Object.Value3	:	Object.BodyPosition3X
+#alias Object.Value6	:	Object.BodyPosition3Y
+
+// Bitfield for all the directions of the individual pieces
+#alias Object.Value7	:	Object.Directions
+
+// The range the Kemusi will go, stored in rather unconventional values...
+#alias Object.Scale   	:	Object.BoundsL
+#alias Object.Rotation	:	Object.BoundsR
+
+// States
+#alias 0	:	KEMUSI2_INIT
+#alias 1	:	KEMUSI2_FINDGROUND
+#alias 2	:	KEMUSI2_SPIKED_ADVANCE
+#alias 3	:	KEMUSI2_SPIKED_RETRACT
+#alias 4	:	KEMUSI2_NORMAL_ADVANCE
+#alias 5	:	KEMUSI2_NORMAL_RETRACT
 
 
 sub ObjectMain
 	switch Object.State
-	case 0
-		Object.Value1=Object.XPos
-		Object.Value1 += 0xC0000
-		Object.Value2=Object.XPos
-		Object.Value2 += 0x180000
-		Object.Value3=Object.XPos
-		Object.Value3 += 0x240000
-		Object.Value4=Object.YPos
-		Object.Value5=Object.YPos
-		Object.Value6=Object.YPos
-		Object.Scale=Object.XPos
-		Object.Scale -= 0x400000
-		Object.Rotation=Object.XPos
-		Object.Rotation += 0x400000
-		Object.State=1
+	case KEMUSI2_INIT
+		// Set initial body part positions
+		
+		// Setup the first body fragment to be 12 pixels to the right from the head
+		Object.BodyPosition1X  = Object.XPos
+		Object.BodyPosition1X += 0xC0000
+		
+		// Set the second body fragment to be 24 pixels away from the head
+		Object.BodyPosition2X  = Object.XPos
+		Object.BodyPosition2X += 0x180000
+		
+		// And then make the third, and last, body fragment 36 pixels away from the head
+		Object.BodyPosition3X  = Object.XPos
+		Object.BodyPosition3X += 0x240000
+		
+		// All the body fragments start on the same Y Position as the head
+		Object.BodyPosition1Y = Object.YPos
+		Object.BodyPosition2Y = Object.YPos
+		Object.BodyPosition3Y = Object.YPos
+		
+		// And setup initial bounds too
+		
+		// Left bounds is 64 pixels away
+		Object.BoundsL  = Object.XPos
+		Object.BoundsL -= 0x400000
+		
+		// And right bounds is 64 pixels away too, adding up to a total of 128 pixels range
+		Object.BoundsR  = Object.XPos
+		Object.BoundsR += 0x400000
+		
+		Object.State = KEMUSI2_FINDGROUND
 		break
-	case 1
-		GetBit(TempValue0,Object.Value7,0)
-		GetBit(TempValue1,Object.Value7,1)
-		GetBit(TempValue2,Object.Value7,2)
-		GetBit(TempValue3,Object.Value7,3)
-		if TempValue0 == 0
-			ObjectTileCollision(0,0,8,0)
-			if CheckResult == 0
+
+	case KEMUSI2_FINDGROUND
+		// Get the directions of every piece (incl. head)
+		GetBit(TempValue0, Object.Directions, 0)
+		GetBit(TempValue1, Object.Directions, 1)
+		GetBit(TempValue2, Object.Directions, 2)
+		GetBit(TempValue3, Object.Directions, 3)
+		
+		// First, update make the head track the ground if needed
+		if TempValue0 == false
+			ObjectTileCollision(0, 0, 8, 0)
+			if CheckResult == false
+				// If there was no collision, move the head down by a pixel
 				Object.YPos += 0x10000
 			else
-				TempValue0=CheckResult
+				TempValue0 = CheckResult
 			end if
 		end if
-		TempValue4=Object.XPos
-		TempValue5=Object.YPos
-		if TempValue1 == 0
-			Object.XPos=Object.Value1
-			Object.YPos=Object.Value4
-			ObjectTileCollision(0,0,8,0)
-			if CheckResult == 0
-				Object.Value4 += 0x10000
+		
+		// ObjectTileCollision can only pull from Object.XPos and Object.YPos, no custom values, so it's rapidly
+		// changing throughout this section
+		// With that, back it up now so it can be properly set again later
+		TempValue4 = Object.XPos
+		TempValue5 = Object.YPos
+		
+		// Then, update following piece 1
+		if TempValue1 == false
+			Object.XPos = Object.BodyPosition1X
+			Object.YPos = Object.BodyPosition1Y
+			
+			ObjectTileCollision(0, 0, 8, 0)
+			if CheckResult == false
+				Object.BodyPosition1Y += 0x10000
 			else
-				TempValue1=CheckResult
-				Object.Value4=Object.YPos
+				TempValue1 = CheckResult
+				Object.BodyPosition1Y = Object.YPos
 			end if
 		end if
-		if TempValue2 == 0
-			Object.XPos=Object.Value2
-			Object.YPos=Object.Value5
-			ObjectTileCollision(0,0,8,0)
-			if CheckResult == 0
-				Object.Value5 += 0x10000
+		
+		// Now, update piece 2's grip to the ground
+		if TempValue2 == false
+			Object.XPos = Object.BodyPosition2X
+			Object.YPos = Object.BodyPosition2Y
+			
+			ObjectTileCollision(0, 0, 8, 0)
+			if CheckResult == false
+				Object.BodyPosition2Y += 0x10000
 			else
-				TempValue2=CheckResult
-				Object.Value5=Object.YPos
+				TempValue2 = CheckResult
+				Object.BodyPosition2Y = Object.YPos
 			end if
 		end if
-		if TempValue3 == 0
-			Object.XPos=Object.Value3
-			Object.YPos=Object.Value6
-			ObjectTileCollision(0,0,8,0)
-			if CheckResult == 0
-				Object.Value6 += 0x10000
+		
+		// And finally, piece 3
+		if TempValue3 == false
+			Object.XPos = Object.BodyPosition3X
+			Object.YPos = Object.BodyPosition3Y
+			
+			ObjectTileCollision(0, 0, 8, 0)
+			if CheckResult == false
+				Object.BodyPosition3Y += 0x10000
 			else
-				TempValue3=CheckResult
-				Object.Value6=Object.YPos
+				TempValue3 = CheckResult
+				Object.BodyPosition3Y = Object.YPos
 			end if
 		end if
-		Object.XPos=TempValue4
-		Object.YPos=TempValue5
-		TempValue4=TempValue0
+		
+		// Restore the Object's position, now that all the Object Tile Collision checks have been done
+		Object.XPos = TempValue4
+		Object.YPos = TempValue5
+		
+		// Add the collision results of all individual pieces
+		// (0 if in the air, 1 if on the ground)
+		TempValue4 = TempValue0
 		TempValue4 += TempValue1
 		TempValue4 += TempValue2
 		TempValue4 += TempValue3
+		
+		// 4 means, are all pieces are touching the ground?
 		if TempValue4 == 4
 			if Object.PropertyValue == 0
-				Object.State=3
+				Object.State = KEMUSI2_SPIKED_RETRACT
 			else
-				Object.State=5
+				Object.State = KEMUSI2_NORMAL_RETRACT
 			end if
-			Object.Value7=0
+			
+			Object.Directions = 0
 		else
-			SetBit(Object.Value7,0,TempValue0)
-			SetBit(Object.Value7,1,TempValue1)
-			SetBit(Object.Value7,2,TempValue2)
-			SetBit(Object.Value7,3,TempValue3)
+			// Store the current collision states for use next frame
+			SetBit(Object.Directions, 0, TempValue0)
+			SetBit(Object.Directions, 1, TempValue1)
+			SetBit(Object.Directions, 2, TempValue2)
+			SetBit(Object.Directions, 3, TempValue3)
 		end if
 		break
-	case 2
-		if Object.Value0<9
-			Object.Value0++
-			GetBit(TempValue0,Object.Value7,0)
+
+	case KEMUSI2_SPIKED_ADVANCE
+		if Object.Timer < 9
+			Object.Timer++
+			
+			// See which way the Head's facing
+			GetBit(TempValue0, Object.Directions, 0)
+			
 			if TempValue0 == 0
-				Object.XPos -= 0x20000
-				ObjectTileGrip(0,0,8,0)
-				if CheckResult == 1
-					if Object.XPos<Object.Scale
-						SetBit(Object.Value7,0,1)
+				// The Head's facing left
+				
+				// Move it half a pixel to the left
+				Object.XPos -=  0x20000
+				
+				// See if it's still the ground
+				ObjectTileGrip(0, 0, 8, 0)
+				
+				if CheckResult == true
+					// The Head's still on the ground, that's good
+					
+					if Object.XPos < Object.BoundsL
+						// However, if the Head's now past the Object's Left bounds, then turn around
+						SetBit(Object.Directions, 0, 1)
 					end if
 				else
-					SetBit(Object.Value7,0,1)
+					// The Head's now in the air, turn it around
+					SetBit(Object.Directions, 0, 1)
 				end if
 			else
+				// The Head's facing right
+				
+				// Move it a half pixel to the right
 				Object.XPos += 0x20000
-				ObjectTileGrip(0,0,8,0)
-				if CheckResult == 1
-					if Object.XPos>Object.Rotation
-						SetBit(Object.Value7,0,0)
+				
+				// See if the Head's still on the ground
+				ObjectTileGrip(0, 0, 8, 0)
+				if CheckResult == true
+					// Yup the Head's still grounded, that's good
+					
+					if Object.XPos > Object.BoundsR
+						// However, the Head's beyond the Right bounds, so turn around
+						SetBit(Object.Directions, 0, 0)
 					end if
 				else
-					SetBit(Object.Value7,0,0)
+					// Head's now in the air, turn around
+					SetBit(Object.Directions, 0, 0)
 				end if
 			end if
-			TempValue1=Object.XPos
-			TempValue2=Object.YPos
-			GetBit(TempValue0,Object.Value7,1)
+			
+			// Now, onto the Body segments!
+			
+			// First, backup the Object's base Position
+			TempValue1 = Object.XPos
+			TempValue2 = Object.YPos
+			
+			// Get Body Piece 1's Direction
+			GetBit(TempValue0, Object.Directions, 1)
+			
 			if TempValue0 == 0
-				Object.Value1 -= 87380
-				Object.XPos=Object.Value1
-				Object.YPos=Object.Value4
-				ObjectTileGrip(0,0,8,0)
-				if CheckResult == 1
-					Object.Value4=Object.YPos
-					if Object.Value1<Object.Scale
-						SetBit(Object.Value7,1,1)
+				// Facing left
+				Object.BodyPosition1X -= 0x15554
+				
+				// Move the entire Object to this Body Piece's Position
+				Object.XPos = Object.BodyPosition1X
+				Object.YPos = Object.BodyPosition1Y
+				
+				// Check to see if it can Grip to a tile
+				ObjectTileGrip(0, 0, 8, 0)
+				
+				if CheckResult == true
+					// Move this Body Piece to be on the floor
+					Object.BodyPosition1Y = Object.YPos
+					
+					if Object.BodyPosition1X < Object.BoundsL
+						// Left bounds reached, turn around
+						SetBit(Object.Directions, 1, 1)
 					end if
 				else
-					SetBit(Object.Value7,1,1)
+					// It's in the air, so turn around
+					SetBit(Object.Directions, 1, 1)
 				end if
 			else
-				Object.Value1 += 87380
-				Object.XPos=Object.Value1
-				Object.YPos=Object.Value4
-				ObjectTileGrip(0,0,8,0)
-				if CheckResult == 1
-					Object.Value4=Object.YPos
-					if Object.Value1>Object.Rotation
-						SetBit(Object.Value7,1,0)
+				Object.BodyPosition1X += 0x15554
+				
+				// Move the entire Object to the current Body Piece's Position
+				Object.XPos = Object.BodyPosition1X
+				Object.YPos = Object.BodyPosition1Y
+				
+				// Check Grip to the Tile, this is why the Object needed to be moved
+				ObjectTileGrip(0, 0, 8, 0)
+				
+				if CheckResult == true
+					// Move the Body Piece to where the ground grip is
+					Object.BodyPosition1Y = Object.YPos
+					
+					if Object.BodyPosition1X > Object.BoundsR
+						// The Piece is past its right Bounds, turn it around
+						SetBit(Object.Directions, 1, 0)
 					end if
 				else
-					SetBit(Object.Value7,1,0)
+					// The Object's in the air, turn around
+					SetBit(Object.Directions, 1, 0)
 				end if
 			end if
-			GetBit(TempValue0,Object.Value7,2)
+			
+			// Get the direction of Body Fragment 2
+			GetBit(TempValue0, Object.Directions, 2)
+			
 			if TempValue0 == 0
-				Object.Value2 -= 43688
-				Object.XPos=Object.Value2
-				Object.YPos=Object.Value5
-				ObjectTileGrip(0,0,8,0)
-				if CheckResult == 1
-					Object.Value5=Object.YPos
-					if Object.Value2<Object.Scale
-						SetBit(Object.Value7,2,1)
+				// Piece is facing left
+				Object.BodyPosition2X -= 0xAAA8
+				
+				// And now move the entire Object to this Piece's Position
+				Object.XPos = Object.BodyPosition2X
+				Object.YPos = Object.BodyPosition2Y
+				
+				// Grip this Piece to the tile
+				ObjectTileGrip(0, 0, 8, 0)
+				
+				if CheckResult == true
+					Object.BodyPosition2Y = Object.YPos
+					if Object.BodyPosition2X < Object.BoundsL
+						SetBit(Object.Directions, 2, 1)
 					end if
 				else
-					SetBit(Object.Value7,2,1)
+					SetBit(Object.Directions, 2, 1)
 				end if
 			else
-				Object.Value2 += 43688
-				Object.XPos=Object.Value2
-				Object.YPos=Object.Value5
-				ObjectTileGrip(0,0,8,0)
-				if CheckResult == 1
-					Object.Value5=Object.YPos
-					if Object.Value2>Object.Rotation
-						SetBit(Object.Value7,2,0)
+				Object.BodyPosition2X += 0xAAA8
+				
+				Object.XPos = Object.BodyPosition2X
+				Object.YPos = Object.BodyPosition2Y
+				
+				ObjectTileGrip(0, 0, 8, 0)
+				if CheckResult == true
+					Object.BodyPosition2Y = Object.YPos
+					
+					if Object.BodyPosition2X > Object.BoundsR
+						SetBit(Object.Directions, 2, 0)
 					end if
 				else
-					SetBit(Object.Value7,2,0)
+					SetBit(Object.Directions, 2, 0)
 				end if
 			end if
-			Object.XPos=TempValue1
-			Object.YPos=TempValue2
+			
+			Object.XPos = TempValue1
+			Object.YPos = TempValue2
 		else
-			if Object.Value7 == 0
-				Object.Value1=Object.XPos
-				Object.Value1 += 0xC0000
-				Object.Value2=Object.XPos
-				Object.Value2 += 0x180000
-				Object.Value3=Object.XPos
-				Object.Value3 += 0x240000
+			
+			// Are all Pieces facing left?
+			if Object.Directions == 0
+				Object.BodyPosition1X = Object.XPos
+				Object.BodyPosition1X += 0xC0000
+				
+				Object.BodyPosition2X = Object.XPos
+				Object.BodyPosition2X += 0x180000
+				
+				Object.BodyPosition3X = Object.XPos
+				Object.BodyPosition3X += 0x240000
 			end if
-			if Object.Value7 == 15
-				Object.Value1=Object.XPos
-				Object.Value1 -= 0xC0000
-				Object.Value2=Object.XPos
-				Object.Value2 -= 0x180000
-				Object.Value3=Object.XPos
-				Object.Value3 -= 0x240000
+			
+			// Are all Pieces facing right?
+			if Object.Directions == 15
+				Object.BodyPosition1X = Object.XPos
+				Object.BodyPosition1X -= 0xC0000
+				
+				Object.BodyPosition2X = Object.XPos
+				Object.BodyPosition2X -= 0x180000
+				
+				Object.BodyPosition3X = Object.XPos
+				Object.BodyPosition3X -= 0x240000
 			end if
-			Object.Value0=0
-			Object.State=3
+			
+			Object.Timer = 0
+			Object.State = KEMUSI2_SPIKED_RETRACT
 		end if
 		break
+
 	case 3
-		if Object.Value0<9
-			Object.Value0++
-			TempValue1=Object.XPos
-			TempValue2=Object.YPos
-			GetBit(TempValue0,Object.Value7,1)
+		if Object.Timer < 9
+			Object.Timer++
+			
+			TempValue1 = Object.XPos
+			TempValue2 = Object.YPos
+			
+			GetBit(TempValue0, Object.Directions, 1)
 			if TempValue0 == 0
-				Object.Value1 -= 43688
-				Object.XPos=Object.Value1
-				Object.YPos=Object.Value4
-				ObjectTileGrip(0,0,8,0)
-				if CheckResult == 1
-					Object.Value4=Object.YPos
-					if Object.Value1<Object.Scale
-						SetBit(Object.Value7,1,1)
+				Object.BodyPosition1X -= 0xAAA8
+				
+				Object.XPos = Object.BodyPosition1X
+				Object.YPos = Object.BodyPosition1Y
+				
+				ObjectTileGrip(0, 0, 8, 0)
+				if CheckResult == true
+					Object.BodyPosition1Y = Object.YPos
+					
+					if Object.BodyPosition1X < Object.BoundsL
+						SetBit(Object.Directions, 1, 1)
 					end if
 				else
-					SetBit(Object.Value7,1,1)
+					SetBit(Object.Directions, 1, 1)
 				end if
 			else
-				Object.Value1 += 43688
-				Object.XPos=Object.Value1
-				Object.YPos=Object.Value4
-				ObjectTileGrip(0,0,8,0)
-				if CheckResult == 1
-					Object.Value4=Object.YPos
-					if Object.Value1>Object.Rotation
-						SetBit(Object.Value7,1,0)
+				Object.BodyPosition1X += 0xAAA8
+				
+				Object.XPos = Object.BodyPosition1X
+				Object.YPos = Object.BodyPosition1Y
+				
+				ObjectTileGrip(0, 0, 8, 0)
+				if CheckResult == true
+					Object.BodyPosition1Y = Object.YPos
+					
+					if Object.BodyPosition1X > Object.BoundsR
+						SetBit(Object.Directions, 1, 0)
 					end if
 				else
-					SetBit(Object.Value7,1,0)
+					SetBit(Object.Directions, 1, 0)
 				end if
 			end if
-			GetBit(TempValue0,Object.Value7,2)
+			
+			GetBit(TempValue0, Object.Directions, 2)
 			if TempValue0 == 0
-				Object.Value2 -= 87380
-				Object.XPos=Object.Value2
-				Object.YPos=Object.Value5
-				ObjectTileGrip(0,0,8,0)
-				if CheckResult == 1
-					Object.Value5=Object.YPos
-					if Object.Value2<Object.Scale
-						SetBit(Object.Value7,2,1)
+				Object.BodyPosition2X -= 0x15554
+				
+				Object.XPos = Object.BodyPosition2X
+				Object.YPos = Object.BodyPosition2Y
+				
+				ObjectTileGrip(0, 0, 8, 0)
+				if CheckResult == true
+					Object.BodyPosition2Y = Object.YPos
+					
+					if Object.BodyPosition2X < Object.BoundsL
+						SetBit(Object.Directions, 2, 1)
 					end if
 				else
-					SetBit(Object.Value7,2,1)
+					SetBit(Object.Directions, 2, 1)
 				end if
 			else
-				Object.Value2 += 87380
-				Object.XPos=Object.Value2
-				Object.YPos=Object.Value5
-				ObjectTileGrip(0,0,8,0)
-				if CheckResult == 1
-					Object.Value5=Object.YPos
-					if Object.Value2>Object.Rotation
-						SetBit(Object.Value7,2,0)
+				Object.BodyPosition2X += 0x15554
+				
+				Object.XPos = Object.BodyPosition2X
+				Object.YPos = Object.BodyPosition2Y
+				
+				ObjectTileGrip(0, 0, 8, 0)
+				if CheckResult == true
+					Object.BodyPosition2Y = Object.YPos
+					
+					if Object.BodyPosition2X > Object.BoundsR
+						SetBit(Object.Directions, 2, 0)
 					end if
 				else
-					SetBit(Object.Value7,2,0)
+					SetBit(Object.Directions, 2, 0)
 				end if
 			end if
-			GetBit(TempValue0,Object.Value7,3)
+			
+			GetBit(TempValue0, Object.Directions, 3)
 			if TempValue0 == 0
-				Object.Value3 -= 0x20000
-				Object.XPos=Object.Value3
-				Object.YPos=Object.Value6
-				ObjectTileGrip(0,0,8,0)
-				if CheckResult == 1
-					Object.Value6=Object.YPos
-					if Object.Value3<Object.Scale
-						SetBit(Object.Value7,3,1)
+				Object.BodyPosition3X -=  0x20000
+				
+				Object.XPos = Object.BodyPosition3X
+				Object.YPos = Object.BodyPosition3Y
+				
+				ObjectTileGrip(0, 0, 8, 0)
+				if CheckResult == true
+					Object.BodyPosition3Y = Object.YPos
+					
+					if Object.BodyPosition3X < Object.BoundsL
+						SetBit(Object.Directions, 3, 1)
 					end if
 				else
-					SetBit(Object.Value7,3,1)
+					SetBit(Object.Directions, 3, 1)
 				end if
 			else
-				Object.Value3 += 0x20000
-				Object.XPos=Object.Value3
-				Object.YPos=Object.Value6
-				ObjectTileGrip(0,0,8,0)
-				if CheckResult == 1
-					Object.Value6=Object.YPos
-					if Object.Value3>Object.Rotation
-						SetBit(Object.Value7,3,0)
+				Object.BodyPosition3X += 0x20000
+				
+				Object.XPos = Object.BodyPosition3X
+				Object.YPos = Object.BodyPosition3Y
+				
+				ObjectTileGrip(0, 0, 8, 0)
+				
+				if CheckResult == true
+					Object.BodyPosition3Y = Object.YPos
+					
+					if Object.BodyPosition3X > Object.BoundsR
+						SetBit(Object.Directions, 3, 0)
 					end if
 				else
-					SetBit(Object.Value7,3,0)
+					SetBit(Object.Directions, 3, 0)
 				end if
 			end if
-			Object.XPos=TempValue1
-			Object.YPos=TempValue2
+			
+			Object.XPos = TempValue1
+			Object.YPos = TempValue2
 		else
-			Object.Value0=0
-			Object.State=2
+			Object.Timer = 0
+			Object.State = KEMUSI2_SPIKED_ADVANCE
 		end if
 		break
-	case 4
-		if Object.Value0<9
-			Object.Value0++
-			GetBit(TempValue0,Object.Value7,0)
+
+	case KEMUSI2_NORMAL_ADVANCE
+		if Object.Timer < 9
+			Object.Timer++
+			
+			GetBit(TempValue0, Object.Directions, 0)
 			if TempValue0 == 0
 				Object.XPos -= 0x10000
-				ObjectTileGrip(0,0,8,0)
-				if CheckResult == 1
-					if Object.XPos<Object.Scale
-						SetBit(Object.Value7,0,1)
+				
+				ObjectTileGrip(0, 0, 8, 0)
+				
+				if CheckResult == true
+					if Object.XPos < Object.BoundsL
+						SetBit(Object.Directions, 0, 1)
 					end if
 				else
-					SetBit(Object.Value7,0,1)
+					SetBit(Object.Directions, 0, 1)
 				end if
 			else
 				Object.XPos += 0x10000
-				ObjectTileGrip(0,0,8,0)
-				if CheckResult == 1
-					if Object.XPos>Object.Rotation
-						SetBit(Object.Value7,0,0)
+				
+				ObjectTileGrip(0, 0, 8, 0)
+				
+				if CheckResult == true
+					if Object.XPos > Object.BoundsR
+						SetBit(Object.Directions, 0, 0)
 					end if
 				else
-					SetBit(Object.Value7,0,0)
+					SetBit(Object.Directions, 0, 0)
 				end if
 			end if
-			TempValue1=Object.XPos
-			TempValue2=Object.YPos
-			GetBit(TempValue0,Object.Value7,1)
+			
+			TempValue1 = Object.XPos
+			TempValue2 = Object.YPos
+			
+			GetBit(TempValue0, Object.Directions, 1)
 			if TempValue0 == 0
-				Object.Value1 -= 0xAAAA
-				Object.XPos=Object.Value1
-				Object.YPos=Object.Value4
-				ObjectTileGrip(0,0,8,0)
-				if CheckResult == 1
-					Object.Value4=Object.YPos
-					if Object.Value1<Object.Scale
-						SetBit(Object.Value7,1,1)
+				Object.BodyPosition1X -= 0xAAAA
+				
+				Object.XPos = Object.BodyPosition1X
+				Object.YPos = Object.BodyPosition1Y
+				
+				ObjectTileGrip(0, 0, 8, 0)
+				
+				if CheckResult == true
+					Object.BodyPosition1Y = Object.YPos
+					
+					if Object.BodyPosition1X < Object.BoundsL
+						SetBit(Object.Directions, 1, 1)
 					end if
 				else
-					SetBit(Object.Value7,1,1)
+					SetBit(Object.Directions, 1, 1)
 				end if
 			else
-				Object.Value1 += 0xAAAA
-				Object.XPos=Object.Value1
-				Object.YPos=Object.Value4
-				ObjectTileGrip(0,0,8,0)
-				if CheckResult == 1
-					Object.Value4=Object.YPos
-					if Object.Value1>Object.Rotation
-						SetBit(Object.Value7,1,0)
+				Object.BodyPosition1X += 0xAAAA
+				
+				Object.XPos = Object.BodyPosition1X
+				Object.YPos = Object.BodyPosition1Y
+				
+				ObjectTileGrip(0, 0, 8, 0)
+				
+				if CheckResult == true
+					Object.BodyPosition1Y = Object.YPos
+					
+					if Object.BodyPosition1X > Object.BoundsR
+						SetBit(Object.Directions, 1, 0)
 					end if
 				else
-					SetBit(Object.Value7,1,0)
+					SetBit(Object.Directions, 1, 0)
 				end if
 			end if
-			GetBit(TempValue0,Object.Value7,2)
+			
+			GetBit(TempValue0, Object.Directions, 2)
 			if TempValue0 == 0
-				Object.Value2 -= 21844
-				Object.XPos=Object.Value2
-				Object.YPos=Object.Value5
-				ObjectTileGrip(0,0,8,0)
-				if CheckResult == 1
-					Object.Value5=Object.YPos
-					if Object.Value2<Object.Scale
-						SetBit(Object.Value7,2,1)
+				Object.BodyPosition2X -= 0x5554
+				
+				Object.XPos = Object.BodyPosition2X
+				Object.YPos = Object.BodyPosition2Y
+				
+				ObjectTileGrip(0, 0, 8, 0)
+				
+				if CheckResult == true
+					Object.BodyPosition2Y = Object.YPos
+					
+					if Object.BodyPosition2X < Object.BoundsL
+						SetBit(Object.Directions, 2, 1)
 					end if
 				else
-					SetBit(Object.Value7,2,1)
+					SetBit(Object.Directions, 2, 1)
 				end if
 			else
-				Object.Value2 += 21844
-				Object.XPos=Object.Value2
-				Object.YPos=Object.Value5
-				ObjectTileGrip(0,0,8,0)
-				if CheckResult == 1
-					Object.Value5=Object.YPos
-					if Object.Value2>Object.Rotation
-						SetBit(Object.Value7,2,0)
+				Object.BodyPosition2X += 0x5554
+				
+				Object.XPos = Object.BodyPosition2X
+				Object.YPos = Object.BodyPosition2Y
+				
+				ObjectTileGrip(0, 0, 8, 0)
+				
+				if CheckResult == true
+					Object.BodyPosition2Y = Object.YPos
+					
+					if Object.BodyPosition2X > Object.BoundsR
+						SetBit(Object.Directions, 2, 0)
 					end if
 				else
-					SetBit(Object.Value7,2,0)
+					SetBit(Object.Directions, 2, 0)
 				end if
 			end if
+
 			Object.XPos=TempValue1
 			Object.YPos=TempValue2
 		else
-			if Object.Value7 == 0
-				Object.Value1=Object.XPos
-				Object.Value1 += 0xC0000
-				Object.Value2=Object.XPos
-				Object.Value2 += 0x180000
-				Object.Value3=Object.XPos
-				Object.Value3 += 0x240000
+			if Object.Directions == 0
+				Object.BodyPosition1X = Object.XPos
+				Object.BodyPosition1X += 0xC0000
+				
+				Object.BodyPosition2X = Object.XPos
+				Object.BodyPosition2X += 0x180000
+				
+				Object.BodyPosition3X = Object.XPos
+				Object.BodyPosition3X += 0x240000
 			end if
-			if Object.Value7 == 15
-				Object.Value1=Object.XPos
-				Object.Value1 -= 0xC0000
-				Object.Value2=Object.XPos
-				Object.Value2 -= 0x180000
-				Object.Value3=Object.XPos
-				Object.Value3 -= 0x240000
+			
+			if Object.Directions == 15
+				Object.BodyPosition1X = Object.XPos
+				Object.BodyPosition1X -= 0xC0000
+				
+				Object.BodyPosition2X = Object.XPos
+				Object.BodyPosition2X -= 0x180000
+				
+				Object.BodyPosition3X = Object.XPos
+				Object.BodyPosition3X -= 0x240000
 			end if
-			Object.Value0=0
-			Object.State=5
+			
+			Object.Timer = 0
+			Object.State = KEMUSI2_NORMAL_RETRACT
 		end if
 		break
-	case 5
-		if Object.Value0<9
-			Object.Value0++
-			TempValue1=Object.XPos
-			TempValue2=Object.YPos
-			GetBit(TempValue0,Object.Value7,1)
+		
+	case KEMUSI2_NORMAL_RETRACT
+		if Object.Timer < 36
+			Object.Timer++
+			
+			TempValue1 = Object.XPos
+			TempValue2 = Object.YPos
+			
+			GetBit(TempValue0, Object.Directions, 1)
 			if TempValue0 == 0
-				Object.Value1 -= 21844
-				Object.XPos=Object.Value1
-				Object.YPos=Object.Value4
-				ObjectTileGrip(0,0,8,0)
-				if CheckResult == 1
-					Object.Value4=Object.YPos
-					if Object.Value1<Object.Scale
-						SetBit(Object.Value7,1,1)
+				Object.BodyPosition1X -= 0x5554
+				
+				Object.XPos = Object.BodyPosition1X
+				Object.YPos = Object.BodyPosition1Y
+				
+				ObjectTileGrip(0, 0, 8, 0)
+				if CheckResult == true
+					Object.BodyPosition1Y = Object.YPos
+					
+					if Object.BodyPosition1X < Object.BoundsL
+						SetBit(Object.Directions, 1, 1)
 					end if
 				else
-					SetBit(Object.Value7,1,1)
+					SetBit(Object.Directions, 1, 1)
 				end if
 			else
-				Object.Value1 += 21844
-				Object.XPos=Object.Value1
-				Object.YPos=Object.Value4
-				ObjectTileGrip(0,0,8,0)
-				if CheckResult == 1
-					Object.Value4=Object.YPos
-					if Object.Value1>Object.Rotation
-						SetBit(Object.Value7,1,0)
+				Object.BodyPosition1X += 0x5554
+				
+				Object.XPos = Object.BodyPosition1X
+				Object.YPos = Object.BodyPosition1Y
+				
+				ObjectTileGrip(0, 0, 8, 0)
+				
+				if CheckResult == true
+					Object.BodyPosition1Y = Object.YPos
+					
+					if Object.BodyPosition1X > Object.BoundsR
+						SetBit(Object.Directions, 1, 0)
 					end if
 				else
-					SetBit(Object.Value7,1,0)
+					SetBit(Object.Directions, 1, 0)
 				end if
 			end if
-			GetBit(TempValue0,Object.Value7,2)
+			
+			GetBit(TempValue0, Object.Directions, 2)
 			if TempValue0 == 0
-				Object.Value2 -= 43688
-				Object.XPos=Object.Value2
-				Object.YPos=Object.Value5
-				ObjectTileGrip(0,0,8,0)
-				if CheckResult == 1
-					Object.Value5=Object.YPos
-					if Object.Value2<Object.Scale
-						SetBit(Object.Value7,2,1)
+				Object.BodyPosition2X -= 0xAAA8
+				
+				Object.XPos = Object.BodyPosition2X
+				Object.YPos = Object.BodyPosition2Y
+				
+				ObjectTileGrip(0, 0, 8, 0)
+				
+				if CheckResult == true
+					Object.BodyPosition2Y = Object.YPos
+					
+					if Object.BodyPosition2X < Object.BoundsL
+						SetBit(Object.Directions, 2, 1)
 					end if
 				else
-					SetBit(Object.Value7,2,1)
+					SetBit(Object.Directions, 2, 1)
 				end if
 			else
-				Object.Value2 += 43688
-				Object.XPos=Object.Value2
-				Object.YPos=Object.Value5
-				ObjectTileGrip(0,0,8,0)
-				if CheckResult == 1
-					Object.Value5=Object.YPos
-					if Object.Value2>Object.Rotation
-						SetBit(Object.Value7,2,0)
+				Object.BodyPosition2X += 0xAAA8
+				
+				Object.XPos = Object.BodyPosition2X
+				Object.YPos = Object.BodyPosition2Y
+				
+				ObjectTileGrip(0, 0, 8, 0)
+				
+				if CheckResult == true
+					Object.BodyPosition2Y = Object.YPos
+					
+					if Object.BodyPosition2X > Object.BoundsR
+						SetBit(Object.Directions, 2, 0)
 					end if
 				else
-					SetBit(Object.Value7,2,0)
+					SetBit(Object.Directions, 2, 0)
 				end if
 			end if
-			GetBit(TempValue0,Object.Value7,3)
+			
+			GetBit(TempValue0, Object.Directions, 3)
 			if TempValue0 == 0
-				Object.Value3 -= 0x10000
-				Object.XPos=Object.Value3
-				Object.YPos=Object.Value6
-				ObjectTileGrip(0,0,8,0)
-				if CheckResult == 1
-					Object.Value6=Object.YPos
-					if Object.Value3<Object.Scale
-						SetBit(Object.Value7,3,1)
+				Object.BodyPosition3X -= 0x10000
+				
+				Object.XPos = Object.BodyPosition3X
+				Object.YPos = Object.BodyPosition3Y
+				
+				ObjectTileGrip(0, 0, 8, 0)
+				
+				if CheckResult == true
+					Object.BodyPosition3Y = Object.YPos
+					
+					if Object.BodyPosition3X < Object.BoundsL
+						SetBit(Object.Directions, 3, 1)
 					end if
 				else
-					SetBit(Object.Value7,3,1)
+					SetBit(Object.Directions, 3, 1)
 				end if
 			else
-				Object.Value3 += 0x10000
-				Object.XPos=Object.Value3
-				Object.YPos=Object.Value6
-				ObjectTileGrip(0,0,8,0)
-				if CheckResult == 1
-					Object.Value6=Object.YPos
-					if Object.Value3>Object.Rotation
-						SetBit(Object.Value7,3,0)
+				Object.BodyPosition3X += 0x10000
+				
+				Object.XPos = Object.BodyPosition3X
+				Object.YPos = Object.BodyPosition3Y
+				
+				ObjectTileGrip(0, 0, 8, 0)
+				
+				if CheckResult == true
+					Object.BodyPosition3Y = Object.YPos
+					
+					if Object.BodyPosition3X > Object.BoundsR
+						SetBit(Object.Directions, 3, 0)
 					end if
 				else
-					SetBit(Object.Value7,3,0)
+					SetBit(Object.Directions, 3, 0)
 				end if
 			end if
+
 			Object.XPos=TempValue1
 			Object.YPos=TempValue2
 		else
-			Object.Value0=0
-			Object.State=4
+			Object.Timer = 0
+			Object.State = KEMUSI2_NORMAL_ADVANCE
 		end if
 		break
 	end switch
@@ -502,99 +729,139 @@ end sub
 
 
 sub ObjectPlayerInteraction
-	PlayerObjectCollision(C_TOUCH,-8,-10,8,8)
-	if CheckResult == 1
+	
+	// First, check for the head
+	PlayerObjectCollision(C_TOUCH, -8, -10, 8, 8)
+	if CheckResult == true
 		CallFunction(Player_BadnikBreak)
 	else
-		TempValue1=Object.XPos
-		TempValue2=Object.YPos
+		// The head wasn't hit, so now check against every body fragment
+		
+		// First, backup the Object's base Position
+		TempValue1 = Object.XPos
+		TempValue2 = Object.YPos
+		
 		if Object.PropertyValue == 0
-			Object.XPos=Object.Value1
-			Object.YPos=Object.Value4
-			PlayerObjectCollision(C_TOUCH,-8,-10,8,8)
-			if CheckResult == 1
+			Object.XPos = Object.BodyPosition1X
+			Object.YPos = Object.BodyPosition1Y
+			
+			PlayerObjectCollision(C_TOUCH, -8, -10, 8, 8)
+			
+			if CheckResult == true
 				CallFunction(Player_Hit)
 			else
-				Object.XPos=Object.Value2
-				Object.YPos=Object.Value5
-				PlayerObjectCollision(C_TOUCH,-8,-10,8,8)
-				if CheckResult == 1
+				Object.XPos = Object.BodyPosition2X
+				Object.YPos = Object.BodyPosition2Y
+				
+				PlayerObjectCollision(C_TOUCH, -8, -10, 8, 8)
+				
+				if CheckResult == true
 					CallFunction(Player_Hit)
 				else
-					Object.XPos=Object.Value3
-					Object.YPos=Object.Value6
-					PlayerObjectCollision(C_TOUCH,-8,-10,8,8)
-					if CheckResult == 1
+					Object.XPos = Object.BodyPosition3X
+					Object.YPos = Object.BodyPosition3Y
+					
+					PlayerObjectCollision(C_TOUCH, -8, -10, 8, 8)
+					
+					if CheckResult == true
 						CallFunction(Player_Hit)
 					end if
 				end if
 			end if
 		else
-			Object.XPos=Object.Value1
-			Object.YPos=Object.Value4
-			PlayerObjectCollision(C_TOUCH,-8,-8,8,8)
-			if CheckResult == 1
+			Object.XPos = Object.BodyPosition1X
+			Object.YPos = Object.BodyPosition1Y
+			
+			PlayerObjectCollision(C_TOUCH, -8, -8, 8, 8)
+			
+			if CheckResult == true
 				CallFunction(Player_BadnikBreak)
 			else
-				Object.XPos=Object.Value2
-				Object.YPos=Object.Value5
-				PlayerObjectCollision(C_TOUCH,-8,-8,8,8)
-				if CheckResult == 1
+				Object.XPos = Object.BodyPosition2X
+				Object.YPos = Object.BodyPosition2Y
+				
+				PlayerObjectCollision(C_TOUCH, -8, -8, 8, 8)
+				
+				if CheckResult == true
 					CallFunction(Player_BadnikBreak)
 				else
-					Object.XPos=Object.Value3
-					Object.YPos=Object.Value6
-					PlayerObjectCollision(C_TOUCH,-8,-8,8,8)
-					if CheckResult == 1
+					Object.XPos = Object.BodyPosition3X
+					Object.YPos = Object.BodyPosition3Y
+					
+					PlayerObjectCollision(C_TOUCH, -8, -8, 8, 8)
+					
+					if CheckResult == true
 						CallFunction(Player_BadnikBreak)
 					end if
 				end if
 			end if
 		end if
-		Object.XPos=TempValue1
-		Object.YPos=TempValue2
+		
+		// It's safe to restore the Object's base Position now
+		Object.XPos = TempValue1
+		Object.YPos = TempValue2
+		
 	end if
 end sub
 
 
 sub ObjectDraw
 	if Object.PropertyValue == 0
-		GetBit(Object.Direction,Object.Value7,3)
-		DrawSpriteFX(2,FX_FLIP,Object.Value3,Object.Value6)
-		GetBit(Object.Direction,Object.Value7,2)
-		DrawSpriteFX(2,FX_FLIP,Object.Value2,Object.Value5)
-		GetBit(Object.Direction,Object.Value7,1)
-		DrawSpriteFX(2,FX_FLIP,Object.Value1,Object.Value4)
+		GetBit(Object.Direction, Object.Directions, 3)
+		DrawSpriteFX(2, FX_FLIP, Object.BodyPosition3X, Object.BodyPosition3Y)
+		
+		GetBit(Object.Direction, Object.Directions, 2)
+		DrawSpriteFX(2, FX_FLIP, Object.BodyPosition2X, Object.BodyPosition2Y)
+		
+		GetBit(Object.Direction, Object.Directions, 1)
+		DrawSpriteFX(2, FX_FLIP, Object.BodyPosition1X, Object.BodyPosition1Y)
 	else
-		GetBit(Object.Direction,Object.Value7,3)
-		DrawSpriteFX(3,FX_FLIP,Object.Value3,Object.Value6)
-		GetBit(Object.Direction,Object.Value7,2)
-		DrawSpriteFX(3,FX_FLIP,Object.Value2,Object.Value5)
-		GetBit(Object.Direction,Object.Value7,1)
-		DrawSpriteFX(3,FX_FLIP,Object.Value1,Object.Value4)
+		GetBit(Object.Direction, Object.Directions, 3)
+		DrawSpriteFX(3, FX_FLIP, Object.BodyPosition3X, Object.BodyPosition3Y)
+		
+		GetBit(Object.Direction, Object.Directions, 2)
+		DrawSpriteFX(3, FX_FLIP, Object.BodyPosition2X, Object.BodyPosition2Y)
+		
+		GetBit(Object.Direction, Object.Directions, 1)
+		DrawSpriteFX(3, FX_FLIP, Object.BodyPosition1X, Object.BodyPosition1Y)
 	end if
-	GetBit(Object.Direction,Object.Value7,0)
+	
+	// Get the direction of the head
+	GetBit(Object.Direction, Object.Directions, 0)
+	
 	switch Object.State
-	case 0
-	case 1
-	case 3
-	case 5
-		DrawSpriteFX(0,FX_FLIP,Object.XPos,Object.YPos)
+	case KEMUSI2_INIT
+	case KEMUSI2_FINDGROUND
+	case KEMUSI2_SPIKED_RETRACT
+	case KEMUSI2_NORMAL_RETRACT
+		// Closed mouth Frame
+		DrawSpriteFX(0, FX_FLIP, Object.XPos, Object.YPos)
 		break
-	case 2
-	case 4
-		DrawSpriteFX(1,FX_FLIP,Object.XPos,Object.YPos)
+		
+	case KEMUSI2_SPIKED_ADVANCE
+	case KEMUSI2_NORMAL_ADVANCE
+		// Mouth Open Frame
+		DrawSpriteFX(1, FX_FLIP, Object.XPos, Object.YPos)
 		break
+		
 	end switch
 end sub
 
 
 sub ObjectStartup
 	LoadSpriteSheet("R5/Objects.gif")
-	SpriteFrame(-8,-16,16,24,125,75)
-	SpriteFrame(-8,-16,16,24,125,50)
-	SpriteFrame(-8,-16,16,24,67,150)
-	SpriteFrame(-8,-8,16,16,52,1)
+	
+	// 0 - Kemusi Closed Mouth Frame
+	SpriteFrame(-8, -16, 16, 24, 125, 75)
+	
+	// 1 - Kemusi Smiling Frame
+	SpriteFrame(-8, -16, 16, 24, 125, 50)
+	
+	// 2- Kemusi Spiked Fragment Frame
+	SpriteFrame(-8, -16, 16, 24, 67, 150)
+	
+	// 2- Kemusi Normal Fragment Frame
+	SpriteFrame(-8, -8, 16, 16, 52, 1)
 end sub
 
 
@@ -602,16 +869,57 @@ end sub
 // Editor Subs
 // ========================
 
+sub RSDKEdit
+	if Editor.ReturnVariable == true
+		switch Editor.VariableID
+		case EDIT_VAR_PROPVAL // Property Value
+			CheckResult = Object.PropertyValue
+			break
+		case 0 // Type
+			CheckResult = Object.PropertyValue
+			break
+		end switch
+	else
+		switch Editor.variableID
+		case EDIT_VAR_PROPVAL // Property Value
+			Object.PropertyValue = Editor.VariableValue
+			break
+		case 0 // Type
+			Object.PropertyValue = Editor.VariableValue
+			break
+		end switch
+	end if
+end sub
+
+
 sub RSDKDraw
-	DrawSprite(0)
+	TempValue0 = Object.XPos
+	TempValue0 += 0x240000
+	
+	DrawSpriteXY(Object.PropertyValue, TempValue0, Object.YPos)
+	
+	TempValue0 -= 0xC0000
+	DrawSpriteXY(Object.PropertyValue, TempValue0, Object.YPos)
+	
+	TempValue0 -= 0xC0000
+	DrawSpriteXY(Object.PropertyValue, TempValue0, Object.YPos)
+	
+	TempValue0 -= 0xC0000
+	DrawSpriteXY(2, TempValue0, Object.YPos) // smile :)
 end sub
 
 
 sub RSDKLoad
-	LoadSpriteSheet("Global/Display.gif")
-	SpriteFrame(-16, -16, 32, 32, 1, 143)		// #0 - "Script" Icon
-	
-	SetVariableAlias(ALIAS_VAR_PROPVAL, "unused")
+	LoadSpriteSheet("R5/Objects.gif")
+
+	SpriteFrame(-8, -16, 16, 24, 67, 150)
+	SpriteFrame(-8, -8, 16, 16, 52, 1)
+	SpriteFrame(-8, -16, 16, 24, 125, 50)
+
+	AddEditorVariable("Type")
+	SetActiveVariable("Type")
+	AddEnumVariable("Spiked", 0)
+	AddEnumVariable("No Spikes", 1)
 end sub
 
 

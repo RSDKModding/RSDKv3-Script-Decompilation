@@ -13,41 +13,41 @@
 #alias Object.PropertyValue :	Object.Quality
 
 // States
-#alias 0		:	BATAPYON_JUMP
-#alias 1		:	BATAPYON_BOUNCE
-#alias 2		:	BATAPYON_BAD_RECOIL_1
-#alias 3		:	BATAPYON_BAD_RECOIL_2
-#alias 4		:	BATAPYON_BAD_RECOIL_3
-#alias 5		:	BATAPYON_BAD_RECOIL_4
-#alias 6		:	BATAPYON_BAD_BOUNCE
-#alias 7		:	BATAPYON_RESET
+#alias 0	:	BATAPYON_JUMP
+#alias 1	:	BATAPYON_BOUNCE
+#alias 2	:	BATAPYON_BAD_RECOIL_1
+#alias 3	:	BATAPYON_BAD_RECOIL_2
+#alias 4	:	BATAPYON_BAD_RECOIL_3
+#alias 5	:	BATAPYON_BAD_RECOIL_4
+#alias 6	:	BATAPYON_BAD_BOUNCE
+#alias 7	:	BATAPYON_RESET
 
 // Priority
-#alias 0		:	PRIORITY_ACTIVE_BOUNDS
+#alias 0		:	PRIORITY_BOUNDS
 #alias 1		:	PRIORITY_ACTIVE
 
-// Badnik Quality
-#alias 0		:	PROPVAL_QUALITY_GOOD
-#alias 1		:	PROPVAL_QUALITY_BAD
+// Property Values
+#alias 0	:	PROPVAL_QUALITY_GOOD
+#alias 1	:	PROPVAL_QUALITY_BAD
 
 
 sub ObjectMain
 	if Object.OutOfBounds == true
-		Object.State = BATAPYON_RESET
+		Object.State	 = BATAPYON_RESET
 		Object.Direction = FACING_RIGHT
-		Object.XPos = Object.XOriginPos
-		Object.YPos = Object.YOriginPos
-		Object.XVelocity = -0xA000	// -0xA000
-		Object.YVelocity = 0x80000	//  0x80000
-		Object.TurnTimer = 0
+		Object.XPos		 = Object.XOriginPos
+		Object.YPos		 = Object.YOriginPos
+		Object.XVelocity = -0xA000
+		Object.YVelocity =  0x80000
+		Object.TurnTimer =  0
 	end if
 
 	switch Object.State
 	case BATAPYON_JUMP
-		Object.XPos += Object.XVelocity
+		Object.XPos		 += Object.XVelocity
 
-		Object.YPos += Object.YVelocity
-		Object.YVelocity += 0x2000	//0x2000
+		Object.YPos		 += Object.YVelocity
+		Object.YVelocity += 0x2000
 
 		ObjectTileCollision(3, 0, -18, 0)
 		if CheckResult == true
@@ -58,7 +58,7 @@ sub ObjectMain
 			ObjectTileCollision(0, 0, 20, 0)
 			if CheckResult == true
 				if Object.Quality == PROPVAL_QUALITY_GOOD
-					Object.State = BATAPYON_BOUNCE
+					Object.State	= BATAPYON_BOUNCE
 					Object.Priority = PRIORITY_ACTIVE
 					Object.TurnTimer++
 					if Object.TurnTimer == 8
@@ -68,7 +68,7 @@ sub ObjectMain
 						FlipSign(Object.XVelocity)
 					end if
 				else
-					Object.State = BATAPYON_BAD_RECOIL_1
+					Object.State	= BATAPYON_BAD_RECOIL_1
 					Object.Priority = PRIORITY_ACTIVE
 					Object.TurnTimer++
 					if Object.TurnTimer == 4
@@ -97,7 +97,7 @@ sub ObjectMain
 			end if
 		end if
 		
-		Object.Frame = Object.Quality
+		Object.Frame   = Object.Quality
 		Object.Frame <<= 1
 
 		if Object.YVelocity < 0
@@ -106,15 +106,15 @@ sub ObjectMain
 		break
 
 	case BATAPYON_BOUNCE
-		Object.XPos += Object.XVelocity
-		Object.YPos -= 1179648
+		Object.XPos		+= Object.XVelocity
+		Object.YPos		-= 0x120000
 
 		Object.YVelocity = -0x60000
 
-		Object.State = BATAPYON_JUMP
+		Object.State	 = BATAPYON_JUMP
 
-		Object.Frame = Object.Quality
-		Object.Frame <<= 1
+		Object.Frame	 = Object.Quality
+		Object.Frame   <<= 1
 
 		if Object.YVelocity < 0
 			Object.Frame++
@@ -127,7 +127,7 @@ sub ObjectMain
 		else
 			Object.State++
 			Object.Frame = 3
-			Object.YPos -= 1179648
+			Object.YPos -= 0x120000
 		end if
 		break
 
@@ -137,7 +137,7 @@ sub ObjectMain
 		else
 			Object.State++
 			Object.Frame = 2
-			Object.YPos += 1179648
+			Object.YPos += 0x120000
 		end if
 		break
 
@@ -147,7 +147,7 @@ sub ObjectMain
 		else
 			Object.State++
 			Object.Frame = 3
-			Object.YPos -= 1179648
+			Object.YPos -= 0x120000
 		end if
 		break
 
@@ -157,7 +157,7 @@ sub ObjectMain
 		else
 			Object.State++
 			Object.Frame = 2
-			Object.YPos += 1179648
+			Object.YPos += 0x120000
 		end if
 		break
 
@@ -168,7 +168,7 @@ sub ObjectMain
 			Object.Timer = 0
 			Object.Frame = 3
 
-			Object.YPos -= 1179648
+			Object.YPos		-=  0x120000
 			Object.YVelocity = -0x50000
 
 			Object.State = BATAPYON_JUMP
@@ -178,7 +178,7 @@ sub ObjectMain
 	case BATAPYON_RESET
 		if Object.OutOfBounds == true
 			Object.State = BATAPYON_JUMP
-			Object.Priority = PRIORITY_ACTIVE_BOUNDS
+			Object.Priority = PRIORITY_BOUNDS
 		end if
 		break
 	end switch
@@ -221,8 +221,8 @@ sub ObjectStartup
 			Object[ArrayPos0].XOriginPos = Object[ArrayPos0].XPos
 			Object[ArrayPos0].YOriginPos = Object[ArrayPos0].YPos
 
-			Object[ArrayPos0].XVelocity = -0xA000	// -0xA000
-			Object[ArrayPos0].YVelocity = 0x80000	//  0x80000
+			Object[ArrayPos0].XVelocity  = -0xA000
+			Object[ArrayPos0].YVelocity  =  0x80000
 		end if
 		ArrayPos0++
 	loop

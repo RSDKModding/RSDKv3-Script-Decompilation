@@ -14,9 +14,9 @@
 #alias Object.PropertyValue	:	Object.Quality
 
 // States
-#alias 0	:	MECHABU_FINDGROUND
-#alias 1	:	MECHABU_BACKTRACK
-#alias 2	:	MECHABU_ADVANCE
+#alias 0	:	MECHABU2_FINDGROUND
+#alias 1	:	MECHABU2_BACKTRACK
+#alias 2	:	MECHABU2_ADVANCE
 
 // SFX Aliases
 #alias 1	:	SFX_BUZZSAW
@@ -28,21 +28,21 @@
 
 sub ObjectMain
 	switch Object.State
-	case MECHABU_FINDGROUND
+	case MECHABU2_FINDGROUND
 		// See if there's any ground to be found at the Bu's current position
 		ObjectTileCollision(0, 0, 15, 0)
 		
 		if CheckResult == true
 			// Floor detected, go to the normal movement states now
 			
-			Object.State = MECHABU_BACKTRACK
+			Object.State = MECHABU2_BACKTRACK
 		else
 			// The Bu's still in the air, so move a pixel down
 			
 			Object.YPos += 0x10000
 		end if
 
-		if Object.State == MECHABU_FINDGROUND	// But you're already there...
+		if Object.State == MECHABU2_FINDGROUND	// But you're already there...
 
 			ArrayPos0=32
 			while ArrayPos0<1056
@@ -75,7 +75,7 @@ sub ObjectMain
 					if TempValue1 == true
 						Object.iYPos  = Object[ArrayPos0].iYPos
 						Object.iYPos -= 32
-						Object.State  = MECHABU_BACKTRACK
+						Object.State  = MECHABU2_BACKTRACK
 						ArrayPos0     = 2000
 					end if
 				end if
@@ -84,7 +84,7 @@ sub ObjectMain
 		end if
 		break
 
-	case MECHABU_BACKTRACK
+	case MECHABU2_BACKTRACK
 		if Object.Timer < 416
 			Object.Timer++
 			
@@ -94,14 +94,14 @@ sub ObjectMain
 			// Change direction, start going ahead now
 			
 			Object.Timer = 0
-			Object.State = MECHABU_ADVANCE
+			Object.State = MECHABU2_ADVANCE
 		end if
 		
 		// Stay with the ground even when going backwards, quite the fancy moonwalk!
 		ObjectTileGrip(0, 0, 15, 0)
 		break
 		
-	case MECHABU_ADVANCE
+	case MECHABU2_ADVANCE
 		if Object.Timer < 416
 			Object.Timer++
 			
@@ -111,7 +111,7 @@ sub ObjectMain
 			// Change direction once again, start going backwards
 			
 			Object.Timer = 0
-			Object.State = MECHABU_BACKTRACK
+			Object.State = MECHABU2_BACKTRACK
 		end if
 		
 		// Track the ground, the Bu should always be grounded

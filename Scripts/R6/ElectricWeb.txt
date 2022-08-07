@@ -1,77 +1,95 @@
-//------------Sonic CD Electric Web Script-------------//
+//---------------Sonic CD Electric Web Script-----------------//
 //--------Scripted by Christian Whitehead 'The Taxman'--------//
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
 // Aliases
-#alias 35: TYPE_ELECTRICWEB
+#alias Object.Value1		:	Object.VWebFrame
+#alias Object.Value2		:	Object.HWebFrame
+#alias Object.Value3		:	Object.DWebFrame
+
+// R6 Setup Aliases
 #alias Object[19].Value0	:	R6Setup.Timer
 #alias Object[19].State		:	R6Setup.State
 #alias Object[19].Frame		:	R6Setup.Frame
 #alias Object[19].Direction	:	R6Setup.Direction
+
+// States
+#alias 0	:	R6_SETUP_PREPARE_CHARGE
 
 
 sub ObjectDraw
 	switch Object.PropertyValue
 	case 0
 		DrawSprite(R6Setup.Frame)
-		TempValue0 = Object.XPos
-		TempValue1 = Object.YPos
+		TempValue0  = Object.XPos
+		TempValue1  = Object.YPos
 		TempValue1 -= 0x800000
 		DrawSpriteXY(R6Setup.Frame, TempValue0, TempValue1)
-		TempValue1 += 16777216
+
+		TempValue1 += 0x1000000
 		DrawSpriteXY(R6Setup.Frame, TempValue0, TempValue1)
-		if R6Setup.State > 0
+
+		if R6Setup.State > R6_SETUP_PREPARE_CHARGE
 			switch R6Setup.Direction
 			case 0
-				Object.Value2 = 9
-				Object.Value2 += R6Setup.Frame
-				DrawSprite(Object.Value2)
+				Object.HWebFrame = 9
+				Object.HWebFrame += R6Setup.Frame
+				DrawSprite(Object.HWebFrame)
 				Object.Direction = 2
-				DrawSpriteXY(Object.Value2, Object.XPos, TempValue1)
+				DrawSpriteXY(Object.HWebFrame, Object.XPos, TempValue1)
 				break
+
 			case 1
-				Object.Value1 = 18
-				Object.Value1 += R6Setup.Frame
-				DrawSprite(Object.Value1)
+				Object.VWebFrame  = 18
+				Object.VWebFrame += R6Setup.Frame
+				DrawSprite(Object.VWebFrame)
 				Object.Direction = FACING_LEFT
 				TempValue0 += 0x800000
-				DrawSpriteXY(Object.Value1, TempValue0, Object.YPos)
+				DrawSpriteXY(Object.VWebFrame, TempValue0, Object.YPos)
 				break
+				
 			case 2
 				TempValue0 += 0x800000
-				Object.Value3 = 27
-				Object.Value3 += R6Setup.Frame
-				Object.Direction = FACING_LEFT
-				TempValue2 = Object.XPos
+				Object.DWebFrame  = 27
+				Object.DWebFrame += R6Setup.Frame
+				Object.Direction  = FACING_LEFT
+
+				TempValue2  = Object.XPos
 				TempValue2 -= 0x800000
-				DrawSprite(Object.Value3)
-				DrawSpriteFX(Object.Value3, FX_FLIP, Object.XPos, Object.YPos)
-				DrawSpriteXY(Object.Value3, TempValue0, TempValue1)
-				DrawSpriteFX(Object.Value3, FX_FLIP, TempValue2, TempValue1)
-				Object.Value3 += 9
-				DrawSprite(Object.Value3)
-				DrawSpriteFX(Object.Value3, FX_FLIP, Object.XPos, Object.YPos)
-				DrawSpriteXY(Object.Value3, TempValue0, TempValue1)
-				DrawSpriteFX(Object.Value3, FX_FLIP, TempValue2, TempValue1)
-				Object.Value3 += 9
-				DrawSprite(Object.Value3)
-				DrawSpriteFX(Object.Value3, FX_FLIP, Object.XPos, Object.YPos)
-				DrawSpriteXY(Object.Value3, TempValue0, TempValue1)
-				DrawSpriteFX(Object.Value3, FX_FLIP, TempValue2, TempValue1)
-				Object.Value3 += 9
-				DrawSprite(Object.Value3)
-				DrawSpriteFX(Object.Value3, FX_FLIP, Object.XPos, Object.YPos)
-				DrawSpriteXY(Object.Value3, TempValue0, TempValue1)
-				DrawSpriteFX(Object.Value3, FX_FLIP, TempValue2, TempValue1)
+
+				DrawSprite(Object.DWebFrame)
+				DrawSpriteFX(Object.DWebFrame, FX_FLIP, Object.XPos, Object.YPos)
+				DrawSpriteXY(Object.DWebFrame, TempValue0, TempValue1)
+				DrawSpriteFX(Object.DWebFrame, FX_FLIP, TempValue2, TempValue1)
+
+				Object.DWebFrame += 9
+				DrawSprite(Object.DWebFrame)
+				DrawSpriteFX(Object.DWebFrame, FX_FLIP, Object.XPos, Object.YPos)
+				DrawSpriteXY(Object.DWebFrame, TempValue0, TempValue1)
+				DrawSpriteFX(Object.DWebFrame, FX_FLIP, TempValue2, TempValue1)
+
+				Object.DWebFrame += 9
+				DrawSprite(Object.DWebFrame)
+				DrawSpriteFX(Object.DWebFrame, FX_FLIP, Object.XPos, Object.YPos)
+				DrawSpriteXY(Object.DWebFrame, TempValue0, TempValue1)
+				DrawSpriteFX(Object.DWebFrame, FX_FLIP, TempValue2, TempValue1)
+
+				Object.DWebFrame += 9
+				DrawSprite(Object.DWebFrame)
+				DrawSpriteFX(Object.DWebFrame, FX_FLIP, Object.XPos, Object.YPos)
+				DrawSpriteXY(Object.DWebFrame, TempValue0, TempValue1)
+				DrawSpriteFX(Object.DWebFrame, FX_FLIP, TempValue2, TempValue1)
 				break
 			end switch
 		end if
 		break
+
 	case 1
 		DrawSprite(R6Setup.Frame)
 		break
+
 	case 2
-		if R6Setup.State == 0
+		if R6Setup.State == R6_SETUP_PREPARE_CHARGE
 			R6Setup.Timer = 0
 		end if
 		break
@@ -82,7 +100,7 @@ end sub
 
 sub ObjectStartup
 	LoadSpriteSheet("R6/Objects3.gif")
-	// Electric web frames
+	// Web Core Frames
 	SpriteFrame(-24, -24, 48, 48, 73, 34)
 	SpriteFrame(-24, -24, 48, 48, 122, 34)
 	SpriteFrame(-24, -24, 48, 48, 73, 34)
@@ -92,6 +110,8 @@ sub ObjectStartup
 	SpriteFrame(-24, -24, 48, 48, 73, 34)
 	SpriteFrame(-24, -24, 48, 48, 73, 34)
 	SpriteFrame(-24, -24, 48, 48, 122, 132)
+
+	// Vertical Web Frames
 	SpriteFrame(-8, -104, 16, 80, 171, 119)
 	SpriteFrame(-8, -104, 16, 80, 188, 119)
 	SpriteFrame(-8, -104, 16, 80, 171, 119)
@@ -101,6 +121,8 @@ sub ObjectStartup
 	SpriteFrame(-8, -104, 16, 80, 171, 119)
 	SpriteFrame(-8, -104, 16, 80, 171, 119)
 	SpriteFrame(-8, -104, 16, 80, 239, 119)
+
+	// Horizontal Web Frames
 	SpriteFrame(-104, -8, 80, 16, 175, 34)
 	SpriteFrame(-104, -8, 80, 16, 175, 51)
 	SpriteFrame(-104, -8, 80, 16, 175, 34)
@@ -110,6 +132,8 @@ sub ObjectStartup
 	SpriteFrame(-104, -8, 80, 16, 175, 34)
 	SpriteFrame(-104, -8, 80, 16, 175, 34)
 	SpriteFrame(-104, -8, 80, 16, 175, 102)
+
+	// Diagonal Web Frames
 	SpriteFrame(-43, -116, 32, 32, 66, 1)
 	SpriteFrame(-43, -116, 32, 32, 99, 1)
 	SpriteFrame(-43, -116, 32, 32, 66, 1)
@@ -119,6 +143,7 @@ sub ObjectStartup
 	SpriteFrame(-43, -116, 32, 32, 66, 1)
 	SpriteFrame(-43, -116, 32, 32, 66, 1)
 	SpriteFrame(-43, -116, 32, 32, 198, 1)
+
 	SpriteFrame(-67, -92, 32, 32, 66, 1)
 	SpriteFrame(-67, -92, 32, 32, 99, 1)
 	SpriteFrame(-67, -92, 32, 32, 66, 1)
@@ -128,6 +153,7 @@ sub ObjectStartup
 	SpriteFrame(-67, -92, 32, 32, 66, 1)
 	SpriteFrame(-67, -92, 32, 32, 66, 1)
 	SpriteFrame(-67, -92, 32, 32, 198, 1)
+
 	SpriteFrame(-91, -68, 32, 32, 66, 1)
 	SpriteFrame(-91, -68, 32, 32, 99, 1)
 	SpriteFrame(-91, -68, 32, 32, 66, 1)
@@ -137,6 +163,7 @@ sub ObjectStartup
 	SpriteFrame(-91, -68, 32, 32, 66, 1)
 	SpriteFrame(-91, -68, 32, 32, 66, 1)
 	SpriteFrame(-91, -68, 32, 32, 198, 1)
+
 	SpriteFrame(-115, -44, 32, 32, 66, 1)
 	SpriteFrame(-115, -44, 32, 32, 99, 1)
 	SpriteFrame(-115, -44, 32, 32, 66, 1)

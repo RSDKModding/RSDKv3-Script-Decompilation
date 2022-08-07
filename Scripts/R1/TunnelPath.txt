@@ -4,6 +4,8 @@
 
 // Aliases
 #alias Object.Value0	:	Object.Timer
+
+// Player Aliases
 #alias Player.Value4	:	Player.InvincibleTimer
 #alias Player.Value5	:	Player.BlinkTimer
 
@@ -11,8 +13,12 @@
 #alias 0	:	TUNNELPATH_IDLE
 #alias 1	:	TUNNELPATH_ACTIVE
 
+// Property Values
+#alias 0	:	TUNNEL_ENTRY
+#alias 1	:	TUNNEL_HOLE
+
 // Priority
-#alias 0	:	PRIORITY_ACTIVE_BOUNDS
+#alias 0	:	PRIORITY_BOUNDS
 #alias 1	:	PRIORITY_ACTIVE
 
 
@@ -32,7 +38,7 @@ sub ObjectMain
 		// this is a very awful fake-table
 		switch TempValue0
 		case 0
-			Player.ObjectInteraction=0
+			Player.ObjectInteraction = false
 			Player.XPos = 0x13F0B100
 			Player.YPos = 0xF06500
 			break
@@ -263,7 +269,7 @@ sub ObjectMain
 		case 57
 			Player.XPos = 0x15088900
 			Player.YPos = 0x1CC7E00
-			CreateTempObject(TypeName[WaterfallSplash],0,Player.XPos,Player.YPos)
+			CreateTempObject(TypeName[WaterfallSplash], 0, Player.XPos, Player.YPos)
 			break
 		case 58
 			Player.XPos = 0x15188900
@@ -276,7 +282,7 @@ sub ObjectMain
 		case 60
 			Player.XPos = 0x15388900
 			Player.YPos = 0x1D72800
-			CreateTempObject(TypeName[WaterfallSplash],0,Player.XPos,Player.YPos)
+			CreateTempObject(TypeName[WaterfallSplash], 0, Player.XPos, Player.YPos)
 			break
 		case 61
 			Player.XPos = 0x15488900
@@ -289,7 +295,7 @@ sub ObjectMain
 		case 63
 			Player.XPos = 0x15688900
 			Player.YPos = 0x1E1D200
-			CreateTempObject(TypeName[WaterfallSplash],0,Player.XPos,Player.YPos)
+			CreateTempObject(TypeName[WaterfallSplash], 0, Player.XPos, Player.YPos)
 			break
 		case 64
 			Player.XPos = 0x15788900
@@ -302,7 +308,7 @@ sub ObjectMain
 		case 66
 			Player.XPos = 0x15988900
 			Player.YPos = 0x1EC7C00
-			CreateTempObject(TypeName[WaterfallSplash],0,Player.XPos,Player.YPos)
+			CreateTempObject(TypeName[WaterfallSplash], 0, Player.XPos, Player.YPos)
 			break
 		case 67
 			Player.XPos = 0x15A88900
@@ -657,14 +663,14 @@ sub ObjectMain
 			Player.YPos = 0x2E4F900
 			break
 		case 155
-			Player.Visible = true
+			Player.Visible		  = true
 			Player.TileCollisions = true
 
-			Object.State = TUNNELPATH_IDLE
-			Object.Priority = PRIORITY_ACTIVE_BOUNDS
+			Object.State	= TUNNELPATH_IDLE
+			Object.Priority = PRIORITY_BOUNDS
 
-			Player.XVelocity = -0xC0000	// -0xC0000
-			Player.Speed = -0xC0000	// -0xC0000
+			Player.XVelocity = -0xC0000
+			Player.Speed = -0xC0000
 			Player.State = Player_State_Ground
 			Player.ObjectInteraction = true
 
@@ -684,7 +690,7 @@ end sub
 
 
 sub ObjectPlayerInteraction
-	if Object.PropertyValue == 0
+	if Object.PropertyValue == TUNNEL_ENTRY
 		if Player.State != Player_State_Static
 			PlayerObjectCollision(C_TOUCH, -16, -16, 16, 16)
 			if CheckResult == true
@@ -695,9 +701,11 @@ sub ObjectPlayerInteraction
 				end if
 				Player.TileCollisions = false
 				Player.Visible = false
+				
 				Object.State = TUNNELPATH_ACTIVE
 				Object.Timer = 0
 				Object.Priority = PRIORITY_ACTIVE
+
 				PlaySfx(7, 0)
 			end if
 		end if
@@ -713,7 +721,7 @@ end sub
 
 
 sub ObjectStartup
-	if Stage.PlayerListPos == 0	// PlayerName[SONIC]
+	if Stage.PlayerListPos == 0	// Sonic
 		LoadSpriteSheet("R1/Objects.gif")
 
 		SpriteFrame(-16, -16, 32, 32, 34, 175)	// #0 - Wall Hole

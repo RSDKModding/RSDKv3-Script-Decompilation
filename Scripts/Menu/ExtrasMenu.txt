@@ -733,7 +733,7 @@ sub ObjectMain
 #platform: Use_Origins
 			game.callbackParam0 = 1
 			EngineCallback(NOTIFY_EXTRAS_MODE)
-
+#endplatform
 			switch Helper.VMCurrentButtom
 			case 0
 				LoadVideo("Opening")
@@ -752,67 +752,45 @@ sub ObjectMain
 				break
 
 			end switch
+// Because of the way mobile cd worked (using the phone's native video player)
+// it needed to reproduce separated videos depending of the soundtrack option
+// for the sake of clarity and simplicity, the mobile code got commented out
+// 
+//			switch Helper.VMCurrentButtom
+//			case 0
+//				if Options.Soundtrack == JP_OST
+//					LoadVideo("Opening")
+//				else
+//					LoadVideo("OpeningUS")
+//				end if
+//				break
+//
+//			case 1
+//				LoadVideo("Pencil_Test")
+//				break
+//			
+//			case 2
+//				if Options.Soundtrack == JP_OST
+//					LoadVideo("Good_Ending")
+//				else
+//					LoadVideo("Good_EndingUS")
+//				end if
+//				break
+//			
+//			case 3
+//				if Options.Soundtrack == JP_OST
+//					LoadVideo("Bad_Ending")
+//				else
+//					LoadVideo("Bad_EndingUS")
+//				end if
+//				break
+//
+//			end switch
+#platform: Use_Origins
 			game.callbackParam0 = 0
 			EngineCallback(NOTIFY_EXTRAS_MODE)
 #endplatform
-
-#platform: Use_Standalone
-	#platform: Standard	
-			switch Helper.VMCurrentButtom
-			case 0
-				LoadVideo("Opening")
-				break
-
-			case 1
-				LoadVideo("Pencil_Test")
-				break
-
-			case 2
-				LoadVideo("Good_Ending")
-				break
-
-			case 3
-				LoadVideo("Bad_Ending")
-				break
-
-			end switch
-	#endplatform
-
-	#platform: Mobile	
-			switch Helper.VMCurrentButtom
-			case 0
-				if Options.Soundtrack == JP_OST
-					LoadVideo("Opening")
-				else
-					LoadVideo("OpeningUS")
-				end if
-				break
-
-			case 1
-				LoadVideo("Pencil_Test")
-				break
-			
-			case 2
-				if Options.Soundtrack == JP_OST
-					LoadVideo("Good_Ending")
-				else
-					LoadVideo("Good_EndingUS")
-				end if
-				break
-			
-			case 3
-				if Options.Soundtrack == JP_OST
-					LoadVideo("Bad_Ending")
-				else
-					LoadVideo("Bad_EndingUS")
-				end if
-				break
-
-			end switch
-
 			Helper.VMCurrentButtom = -1
-	#endplatform
-#endplatform
 			Object.State = EXTRASMENU_FADEIN
 		end if
 		

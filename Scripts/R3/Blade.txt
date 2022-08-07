@@ -1,4 +1,4 @@
-//------------Sonic CD Kama Kama Blade Script-------------//
+//--------------Sonic CD Kama Kama Blade Script---------------//
 //--------Scripted by Christian Whitehead 'The Taxman'--------//
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
@@ -29,24 +29,20 @@ sub ObjectMain
 		end if
 
 		if Object.PropertyValue > 0
-
 			Object.PropertyValue--
-
 		else
-
 			Object.State = BLADE_BLANK
 			PlayStageSfx(5, 0)
 			if Object.Direction == FACING_RIGHT
-				Object.XVelocity = -0x30000	// -0x30000
+				Object.XVelocity = -0x30000
 			else
-				Object.XVelocity = 0x30000	// 0x30000
+				Object.XVelocity = 0x30000
 			end if
-
 		end if
 		break
 
 	case BLADE_DEFLECTED
-		Object.YVelocity += 0x3000	// 0x3000
+		Object.YVelocity += 0x3000
 		break
 
 	end switch
@@ -54,8 +50,8 @@ sub ObjectMain
 	if Object.OutOfBounds == true
 		Object.Type = TypeName[Blank Object]
 	else
-		TempValue0 = Screen.YOffset
-		TempValue0 -= 8
+		TempValue0   = Screen.YOffset
+		TempValue0  -= 8
 		TempValue0 <<= 16
 		if Object.YPos < TempValue0
 			Object.Type = TypeName[Blank Object]
@@ -67,46 +63,37 @@ end sub
 
 sub ObjectPlayerInteraction
 	if Object.State == BLADE_BLANK
-
 		PlayerObjectCollision(C_TOUCH, -8, -6, 8, 6)
 		if CheckResult == true
 			// Check if the blades will bounce on the player
 			CheckEqual(Player.Animation, ANI_JUMPING)
-			TempValue0 = CheckResult
-
+			TempValue0  = CheckResult
 			CheckEqual(Player.Animation, ANI_SPINDASH)
 			TempValue0 |= CheckResult
 
 			if TempValue0 == true
 				Object.State = BLADE_DEFLECTED
 
-				Object.YVelocity = -0x80000			// 0x80000
-
+				Object.YVelocity = -0x80000
 				if Object.Direction == FACING_RIGHT
-
-					if Player.XVelocity > 0x8000		// 0x8000
-						FlipSign(Object.Value0)
+					if Player.XVelocity > 0x8000
+						FlipSign(Object.XVelocity)
 					end if
-
 				else
-
-					if Player.XVelocity < -0x8000	// -0x8000
-						FlipSign(Object.Value0)
+					if Player.XVelocity < -0x8000
+						FlipSign(Object.XVelocity)
 					end if
-
 				end if
 			else
 				CallFunction(Player_Hit)
 			end if
-
 		end if
-
 	end if
 end sub
 
 
 sub ObjectDraw
-	TempValue0 = Object.Frame
+	TempValue0   = Object.Frame
 	TempValue0 >>= 2
 	DrawSpriteFX(TempValue0, FX_FLIP, Object.XPos, Object.YPos)
 end sub
@@ -114,6 +101,7 @@ end sub
 
 sub ObjectStartup
 	LoadSpriteSheet("R3/Objects.gif")
+
 	SpriteFrame(-8, -8, 16, 16, 198, 68)	// #0 - Blade Frame 0
 	SpriteFrame(-8, -8, 16, 16, 215, 68)	// #1 - Blade Frame 1
 	SpriteFrame(-8, -8, 16, 16, 232, 68)	// #2 - Blade Frame 2

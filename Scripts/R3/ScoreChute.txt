@@ -1,4 +1,4 @@
-//------------Sonic CD Score Chute Script-------------//
+//----------------Sonic CD Score Chute Script-----------------//
 //--------Scripted by Christian Whitehead 'The Taxman'--------//
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
@@ -21,16 +21,17 @@
 #alias 7	:	SCORECHUTE_COOLDOWN
 
 // Priority
-#alias 0	:	PRIORITY_ACTIVE_BOUNDS
+#alias 0	:	PRIORITY_BOUNDS
 #alias 1	:	PRIORITY_ACTIVE
+
 
 sub ObjectMain
 	switch Object.State
 	case SCORECHUTE_CATCH_PLAYER
 		if Object.Timer < 8
 			Object.Timer++
-			Player.XPos = Object.XPos
-			Player.YPos = Object.YPos
+			Player.XPos  = Object.XPos
+			Player.YPos  = Object.YPos
 			Player.YPos -= 0x80000
 			Player.YVelocity = 0
 			Player.XVelocity = 0
@@ -40,7 +41,7 @@ sub ObjectMain
 			Object.Timer = 0
 			Player.YVelocity = 0
 			Player.XVelocity = 0
-			Player.Visible = false
+			Player.Visible   = false
 			if Player.BlinkTimer > 0
 				Player.InvincibleTimer = 0
 				Player.BlinkTimer = 0
@@ -137,7 +138,7 @@ sub ObjectMain
 
 			Player.ObjectInteraction = true
 
-			Player.YVelocity = -475136	// -0x74000
+			Player.YVelocity = -0x74000
 			Player.Timer = 0
 			PlayStageSfx(3, 0)
 		end if
@@ -157,7 +158,7 @@ sub ObjectMain
 
 	if Object.OutOfBounds == true
 		Object.ScoreBonus = 0
-		Object.Priority = PRIORITY_ACTIVE_BOUNDS
+		Object.Priority   = PRIORITY_BOUNDS
 	end if
 end sub
 
@@ -202,8 +203,8 @@ sub ObjectDraw
 		break
 
 	case SCORECHUTE_GIVE_POINTS
-		TempValue0 = Object.Timer
-		TempValue0 &= 7
+		TempValue0   = Object.Timer
+		TempValue0  &= 7
 		TempValue0 >>= 2
 		if TempValue0 > 0
 			DrawSprite(0)
@@ -228,7 +229,7 @@ sub ObjectStartup
 	LoadSpriteSheet("R3/Objects.gif")
 	SpriteFrame(-24, -8, 48, 16, 117, 233)			// #0 - Score Chute Active
 
-	if Stage.PlayerListPos == 0		// PlayerName[SONIC]
+	if Stage.PlayerListPos == 0		// Sonic
 		SpriteFrame(-16, -24, 32, 16, 2, 240)		// #1 - Jump Insert Frame 0
 		SpriteFrame(-8, -16, 16, 8, 35, 241)		// #2 - Jump Insert Frame 1
 	else
@@ -236,6 +237,7 @@ sub ObjectStartup
 		SpriteFrame(-8, -16, 16, 8, 211, 247)		// #2 - Jump Insert Frame 1
 	end if
 
+	// Used to be below LoadSpriteSheet, moved here for consistency
 	ArrayPos0 = 32
 	while ArrayPos0 < 1056
 		if Object[ArrayPos0].Type == TypeName[ScoreChute]
