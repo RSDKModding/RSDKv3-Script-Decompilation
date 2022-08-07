@@ -5,7 +5,9 @@
 // Aliases
 #alias Object.Value0	:	Object.Rotation
 #alias Object.Value1	:	Object.OnObject
-#alias Player.Value6   	:	  Player.MinRollSpeed
+
+// Player Alias
+#alias Player.Value6   	:	Player.MinRollSpeed
 
 // Gravity
 #alias 0	:	GRAVITY_GROUND
@@ -16,19 +18,18 @@ sub ObjectPlayerInteraction
 	PlayerObjectCollision(C_BOX, -16, -8, 16, 24)
 	TempValue1 = Object.Rotation	// This doesn't do anything...
 	if CheckResult == true
-
 		if Player.State != Player_State_SpinningTop
 			Player.Speed = 0
 			Object.OnObject = true
 			Player.MinRollSpeed = 0x1000
 
 			if Player.XPos > Object.XPos
-				Player.Timer = Player.XPos
+				Player.Timer  = Player.XPos
 				Player.Timer -= Object.XPos
 
 				Object.Rotation = 128
 			else
-				Player.Timer = Object.XPos
+				Player.Timer  = Object.XPos
 				Player.Timer -= Player.XPos
 
 				Object.Rotation = 384
@@ -59,13 +60,13 @@ sub ObjectPlayerInteraction
 		Player.Animation = ANI_SPINNING_TOP
 
 		Sin(Player.XPos, Object.Rotation)
-		Player.XPos *= Player.Timer
+		Player.XPos  *= Player.Timer
 		Player.XPos >>= 9
-		Player.XPos += Object.XPos
+		Player.XPos  += Object.XPos
 
-		TempValue0 = Object.Rotation
-		TempValue0 -= 128
-		TempValue0 /= 86
+		TempValue0   = Object.Rotation
+		TempValue0  -= 128
+		TempValue0  /= 86
 		Player.Frame = TempValue0
 
 		Object.Rotation += 16
@@ -75,16 +76,16 @@ sub ObjectPlayerInteraction
 
 		if Player.JumpPress == true
 			CallFunction(Player_Action_Jump)
-			Player.Speed = Player.XPos
-			Player.Speed -= Object.XPos
+			Player.Speed   = Player.XPos
+			Player.Speed  -= Object.XPos
 			Player.Speed >>= 2
 
 #platform: Use_Origins
-				Player.State = Player_State_Air_NoDropDash
+			Player.State = Player_State_Air_NoDropDash
 #endplatform
 
 #platform: Use_Standalone
-				Player.State = Player_State_Air
+			Player.State = Player_State_Air
 #endplatform
 
 			Player.Timer = 0
@@ -92,19 +93,14 @@ sub ObjectPlayerInteraction
 		end if
 	else
 		if Object.OnObject == true
-
 			if Player.State == Player_State_SpinningTop
-
 				if Player.Gravity == GRAVITY_GROUND
 					Player.State = Player_State_Ground
 					Object.OnObject = false
 					Player.Timer = 0
 				end if
-
 			end if
-
 		end if
-
 	end if
 end sub
 
@@ -112,7 +108,7 @@ end sub
 sub ObjectDraw
 	DrawSprite(Object.Frame)
 
-	TempValue0 = Ring.AniCount
+	TempValue0  = Ring.AniCount
 	TempValue0 &= 1
 
 	if TempValue0 == 0

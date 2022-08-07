@@ -1,4 +1,4 @@
-//------------Sonic CD Amy Rose Script-------------//
+//-----------------Sonic CD Amy Rose Script-------------------//
 //--------Scripted by Christian Whitehead 'The Taxman'--------//
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
@@ -54,9 +54,9 @@ sub ObjectMain
 
 	switch Object.State
 	case AMY_LOOKING_AROUND
-		TempValue0 = Object.FrameTimer
-		TempValue0 /= 10
-		TempValue0 += 11
+		TempValue0   = Object.FrameTimer
+		TempValue0  /= 10
+		TempValue0  += 11
 		Object.Frame = TempValue0
 
 		Object.FrameTimer++
@@ -99,15 +99,15 @@ sub ObjectMain
 		end if
 
 		if Object.Direction == FACING_RIGHT
-			if Object.XVelocity < 0x20000	// 0x20000
-				Object.XVelocity += 0x2000	// 0x2000
+			if Object.XVelocity < 0x20000
+				Object.XVelocity += 0x2000
 			end if
 
 			if Object.XPos < Object.RightLimit
 				Object.XPos += Object.XVelocity
 			else
 				Object.XVelocity = 0
-				Object.XPos = Object.RightLimit
+				Object.XPos  = Object.RightLimit
 				Object.State = AMY_AWAIT_RIGHT
 				Object.Frame = 0
 				Object.FrameTimer = 0
@@ -121,7 +121,7 @@ sub ObjectMain
 				Object.XPos += Object.XVelocity
 			else
 				Object.XVelocity = 0
-				Object.XPos = Object.LeftLimit
+				Object.XPos  = Object.LeftLimit
 				Object.State = AMY_AWAIT_LEFT
 				Object.Frame = 0
 				Object.FrameTimer = 0
@@ -216,48 +216,6 @@ end sub
 
 sub ObjectStartup
 	LoadSpriteSheet("R3/Objects3.gif")
-	ArrayPos0 = 32
-	while ArrayPos0 < 1056
-
-		if Object[ArrayPos0].Type == TypeName[AmyRose]
-
-			if Stage.PlayerListPos == 0	// PlayerName[SONIC]
-
-				if Options.GameMode == GAMEMODE_TIMEATTACK
-					Object[ArrayPos0].Type = TypeName[Blank Object]
-					ArrayPos0++
-					Object[ArrayPos0].Type = TypeName[Blank Object]
-					ArrayPos0++
-					Object[ArrayPos0].Type = TypeName[Blank Object]
-					ArrayPos0++
-					Object[ArrayPos0].Type = TypeName[Blank Object]
-					ArrayPos0++
-					Object[ArrayPos0].Type = TypeName[Blank Object]
-				else
-					Object[ArrayPos0].State = AMY_AWAIT_LEFT
-					Object[ArrayPos0].LeftLimit = 0x780000		// 0x780000
-					Object[ArrayPos0].RightLimit = 62652416		// 0x3BC0000
-					Object[ArrayPos0].DrawOrder = 4
-				end if
-
-			else
-				// Remove Amy
-				Object[ArrayPos0].Type = TypeName[Blank Object]
-				ArrayPos0++
-				// Remove Metal
-				Object[ArrayPos0].Type = TypeName[Blank Object]
-				ArrayPos0++
-				// Remove Spikes
-				Object[ArrayPos0].Type = TypeName[Blank Object]
-				ArrayPos0++
-				Object[ArrayPos0].Type = TypeName[Blank Object]
-				ArrayPos0++
-				Object[ArrayPos0].Type = TypeName[Blank Object]
-			end if
-
-		end if
-		ArrayPos0++
-	loop
 
 	// Idle
 	SpriteFrame(-11, -20, 22, 40, 34, 208)		// #0  - Amy Idle Frame 0
@@ -300,6 +258,50 @@ sub ObjectStartup
 	SpriteFrame(-14, -20, 25, 40, 132, 208)		// #22
 	SpriteFrame(-14, -20, 25, 40, 132, 208)		// #23
 	SpriteFrame(-14, -20, 25, 40, 132, 208)		// #24
+
+	// Used to be below LoadSpriteSheet, moved here for consistency
+	ArrayPos0 = 32
+	while ArrayPos0 < 1056
+
+		if Object[ArrayPos0].Type == TypeName[AmyRose]
+
+			if Stage.PlayerListPos == 0	// Sonic
+
+				if Options.GameMode == GAMEMODE_TIMEATTACK
+					Object[ArrayPos0].Type = TypeName[Blank Object]
+					ArrayPos0++
+					Object[ArrayPos0].Type = TypeName[Blank Object]
+					ArrayPos0++
+					Object[ArrayPos0].Type = TypeName[Blank Object]
+					ArrayPos0++
+					Object[ArrayPos0].Type = TypeName[Blank Object]
+					ArrayPos0++
+					Object[ArrayPos0].Type = TypeName[Blank Object]
+				else
+					Object[ArrayPos0].State = AMY_AWAIT_LEFT
+					Object[ArrayPos0].LeftLimit  = 0x780000
+					Object[ArrayPos0].RightLimit = 0x3BC0000
+					Object[ArrayPos0].DrawOrder = 4
+				end if
+
+			else
+				// Remove Amy
+				Object[ArrayPos0].Type = TypeName[Blank Object]
+				ArrayPos0++
+				// Remove Metal
+				Object[ArrayPos0].Type = TypeName[Blank Object]
+				ArrayPos0++
+				// Remove Spikes
+				Object[ArrayPos0].Type = TypeName[Blank Object]
+				ArrayPos0++
+				Object[ArrayPos0].Type = TypeName[Blank Object]
+				ArrayPos0++
+				Object[ArrayPos0].Type = TypeName[Blank Object]
+			end if
+
+		end if
+		ArrayPos0++
+	loop
 end sub
 
 // ========================

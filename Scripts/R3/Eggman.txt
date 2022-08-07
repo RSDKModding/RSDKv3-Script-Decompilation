@@ -1,4 +1,4 @@
-//------------Sonic CD Eggman Script-------------//
+//------------------Sonic CD Eggman Script--------------------//
 //--------Scripted by Christian Whitehead 'The Taxman'--------//
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
@@ -11,13 +11,14 @@
 #alias Object[+1].State		:	BossBody.State
 
 // States
-#alias 0		:	EGGMAN_IDLE
-#alias 1		:	EGGMAN_HURT
-#alias 2		:	EGGMAN_NERVOUS
-#alias 3		:	EGGMAN_FLEE
+#alias 0	:	EGGMAN_IDLE
+#alias 1	:	EGGMAN_HURT
+#alias 2	:	EGGMAN_NERVOUS
+#alias 3	:	EGGMAN_FLEE
 
 // BossBody Aliases
-#alias 5		:	BOSSBODY_DRAG_EGGMAN_2
+#alias 5	:	BOSSBODY_DRAG_EGGMAN_2
+
 
 sub ObjectMain
 	switch Object.State
@@ -59,48 +60,50 @@ sub ObjectDraw
 	case EGGMAN_IDLE
 		DrawSprite(4)
 
-		TempValue0 = Object.FrameTimer
+		TempValue0  = Object.FrameTimer
 		TempValue0 /= 10
 		DrawSprite(TempValue0)
 		break
 
 	case EGGMAN_HURT
-		TempValue1 = Object.Timer
+		TempValue1   = Object.Timer
 		TempValue1 <<= 8
-		TempValue1 /= 40
+		TempValue1  /= 40
 
 		Sin(TempValue0, TempValue1)
 		TempValue0 <<= 11
 		FlipSign(TempValue0)
-		TempValue0 += Object.YPos
+		TempValue0  += Object.YPos
 
-		TempValue1 = Object.Timer
-		TempValue1 &= 15
+		TempValue1   = Object.Timer
+		TempValue1  &= 15
 		TempValue1 >>= 3
-		TempValue1 += 7
+		TempValue1  += 7
 		DrawSpriteXY(TempValue1, Object.XPos, TempValue0)
 
-		TempValue0 = BossBody.DamageTimer
+		TempValue0  = BossBody.DamageTimer
 		TempValue0 &= 1
 		TempValue0 += 4
 		DrawSprite(TempValue0)
+
 		DrawSprite(6)
 		break
 
 	case EGGMAN_NERVOUS
-		TempValue0 = Object.FrameTimer
+		TempValue0   = Object.FrameTimer
 		TempValue0 >>= 4
-		TempValue0 += 9
+		TempValue0  += 9
 		DrawSprite(TempValue0)
 		break
 
 	case EGGMAN_FLEE
-		TempValue0 = Object.FrameTimer
+		TempValue0   = Object.FrameTimer
 		TempValue0 >>= 2
-		TempValue0 += 11
+		TempValue0  += 11
 		DrawSprite(TempValue0)
 
-		Object.XPos += 0x40000	// 0x40000
+		Object.XPos += 0x40000
+		
 		if Object.OutOfBounds == true
 			ResetObjectEntity(Object.EntityNo, TypeName[Blank Object], 0, 0, 0)
 		end if

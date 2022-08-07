@@ -8,12 +8,15 @@
 #alias Object.Value2	:	Object.TrophieSheet
 #alias Object.Value3	:	Object.HelpTextSheet
 
+// Priority
+#alias 1	:	PRIORITY_ACTIVE
+
+
 sub ObjectDraw
-#platform: Mobile
-	Object.YPos = Object.PropertyValue
-	Object.YPos *= 0x300000		// 0x300000
+	Object.YPos  = Object.PropertyValue
+	Object.YPos *= 0x300000
 	Object.YPos -= Object[0].Value2
-	Object.YPos += 0x480000		// 0x480000
+	Object.YPos += 0x480000
 	Object.Scale = 128
 	
 	Object.SpriteSheet = Object.TrophieSheet
@@ -23,17 +26,17 @@ sub ObjectDraw
 		DrawSpriteFX(12, FX_SCALE, Object.XPos, Object.YPos)
 	end if
 
-	TempValue0 = Object.XPos
+	TempValue0   = Object.XPos
 	TempValue0 >>= 16
-	TempValue0 -= Screen.XOffset
-	TempValue0 += 20
+	TempValue0  -= Screen.XOffset
+	TempValue0  += 20
 
-	TempValue1 = Object.YPos
+	TempValue1   = Object.YPos
 	TempValue1 >>= 16
-	TempValue1 -= Screen.YOffset
-	TempValue1 -= 13
+	TempValue1  -= Screen.YOffset
+	TempValue1  -= 13
 
-	TempValue2 = Object.PropertyValue
+	TempValue2   = Object.PropertyValue
 	TempValue2 <<= 1
 	
 	Object.SpriteSheet = Object.HelpTextSheet
@@ -42,12 +45,10 @@ sub ObjectDraw
 	TempValue1 += 15
 	TempValue2++
 	DrawText(MENU_2, TempValue0, TempValue1, 92, 41, TempValue2, 1)
-#endplatform
 end sub
 
 
 sub ObjectStartup
-#platform: Mobile
 	LoadSpriteSheet("Menu/Trophies.gif")
 	TempValue0 = Object.SpriteSheet
 	LoadSpriteSheet("Menu/HelpText.gif")
@@ -56,12 +57,12 @@ sub ObjectStartup
 	ArrayPos0 = 32
 	while ArrayPos0 < 1056
 		if Object[ArrayPos0].Type == TypeName[TrophieList]
-			Object[ArrayPos0].TrophieSheet = TempValue0
+			Object[ArrayPos0].TrophieSheet  = TempValue0
 			Object[ArrayPos0].HelpTextSheet = TempValue1
 			Object[ArrayPos0].DrawOrder = 2
-			Object[ArrayPos0].Priority = 1
+			Object[ArrayPos0].Priority  = PRIORITY_ACTIVE
 			if Screen.XSize >= 384
-				Object[ArrayPos0].XPos -= 0x100000	// 0x100000
+				Object[ArrayPos0].XPos -= 0x100000
 			end if
 		end if
 		ArrayPos0++
@@ -120,7 +121,6 @@ sub ObjectStartup
 	AddMenuEntry(MENU_2, "Destroy all the robot transporters and Metal Sonic holograms in the past.", 0)
 
 	LoadOnlineMenu(0)
-#endplatform
 end sub
 
 // ========================

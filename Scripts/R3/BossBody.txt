@@ -1,4 +1,4 @@
-//------------Sonic CD Boss Body Script-------------//
+//-----------------Sonic CD Boss Body Script------------------//
 //--------Scripted by Christian Whitehead 'The Taxman'--------//
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
@@ -34,10 +34,10 @@
 #alias 7	:	BOSSBODY_DESTROYED
 
 // Eggman States
-#alias 0	:	EGGMAN_IDLE
-#alias 1	:	EGGMAN_HURT
-#alias 2	:	EGGMAN_NERVOUS
-#alias 3	:	EGGMAN_FLEE
+#alias 0	:	EGGANI_IDLE
+#alias 1	:	EGGANI_HURT
+#alias 2	:	EGGANI_NERVOUS
+#alias 3	:	EGGANI_FLEE
 
 // Priority
 #alias 0	:	PRIORITY_BOUNDS
@@ -48,13 +48,13 @@
 
 
 function BossBody_LaunchBomb
-	TempValue0 = Player.YPos
+	TempValue0  = Player.YPos
 	TempValue0 -= Object.YPos
 
 	if TempValue0 < 37748736
 		CreateTempObject(TypeName[PinballBomb], 0, Object.XPos, Object.YPos)
 
-		Rand(Object[TempObjectPos].XVelocity, 1024)
+		Rand(Object[TempObjectPos].XVelocity, 0x400)
 
 		Object[TempObjectPos].XVelocity <<= 8
 
@@ -77,16 +77,16 @@ end function
 sub ObjectMain
 	switch Object.State
 	case BOSSBODY_DESCEND
-		Object.YPos = Player.YPos
+		Object.YPos  = Player.YPos
 		Object.YPos &= 0xFFFF0000
 		// Height Limit
 		if Object.YPos < Object.YOriginPos
-			Object.YPos = Object.YOriginPos
+			Object.YPos  = Object.YOriginPos
 			Object.Frame = 0
 		end if
 
 		if Object.YPos > Object.YVelocity
-			Object.YPos = Object.YVelocity
+			Object.YPos  = Object.YVelocity
 			Object.Frame = 0
 			Object.State = BOSSBODY_DROP_BOMBS
 			Object.Priority = PRIORITY_ACTIVE
@@ -137,7 +137,7 @@ sub ObjectMain
 			Object.Frame++
 			Object.Frame %= 9
 		else
-			Object.YPos = Object.YVelocity
+			Object.YPos  = Object.YVelocity
 			Object.Frame = 0
 			Object.State = BOSSBODY_DRAG_EGGMAN_1
 		end if
@@ -171,7 +171,7 @@ sub ObjectMain
 			Object.Frame++
 			Object.Frame %= 9
 		else
-			Object.YPos = Object.YVelocity
+			Object.YPos  = Object.YVelocity
 			Object.Frame = 0
 			Object.State = BOSSBODY_DRAG_EGGMAN_2
 		end if
@@ -206,7 +206,7 @@ sub ObjectMain
 			Object.Frame %= 9
 			Music.Volume--
 		else
-			Object.YPos = Object.YVelocity
+			Object.YPos  = Object.YVelocity
 			Object.Frame = 0
 			Object.State = BOSSBODY_DESTROYED
 			Object.Timer = 0
@@ -218,20 +218,20 @@ sub ObjectMain
 		end if
 
 		if Object.DamageTimer > 0
-			Eggman.YPos = Object.DamageTimer
+			Eggman.YPos   = Object.DamageTimer
 			Eggman.YPos <<= 17
 			FlipSign(Eggman.YPos)
 			Eggman.YPos += Object.YPos
 		else
 
-			if Eggman.State == EGGMAN_IDLE
-				Eggman.State = EGGMAN_FLEE
+			if Eggman.State == EGGANI_IDLE
+				Eggman.State = EGGANI_FLEE
 				Eggman.Priority = PRIORITY_ACTIVE
 				Eggman.FrameTimer &= 7
 			end if
 
-			if Eggman.State == EGGMAN_NERVOUS
-				Eggman.State = EGGMAN_FLEE
+			if Eggman.State == EGGANI_NERVOUS
+				Eggman.State = EGGANI_FLEE
 				Eggman.Priority = PRIORITY_ACTIVE
 				Eggman.FrameTimer &= 7
 			end if
@@ -252,17 +252,17 @@ sub ObjectMain
 		break
 
 	case BOSSBODY_DESTROYED
-		TempValue0 = Object.Timer
+		TempValue0  = Object.Timer
 		TempValue0 &= 3
 		if TempValue0 == 0
 			Rand(TempValue0, 128)
-			TempValue0 -= 64
+			TempValue0  -= 64
 			TempValue0 <<= 16
-			TempValue0 += Object.XPos
+			TempValue0  += Object.XPos
 			Rand(TempValue1, 48)
-			TempValue1 -= 24
+			TempValue1  -= 24
 			TempValue1 <<= 16
-			TempValue1 += Object.YPos
+			TempValue1  += Object.YPos
 			CreateTempObject(TypeName[Explosion], 0, TempValue0, TempValue1)
 			PlaySfx(22, 0)
 		end if
@@ -285,13 +285,13 @@ sub ObjectPlayerInteraction
 	case BOSSBODY_DRAG_EGGMAN_1
 		PlayerObjectCollision(C_TOUCH, -64, -16, 64, 16)
 		if CheckResult == true
-			Player.YVelocity = 0
-			Object.YVelocity -= 0x480000	// 0x480000
+			Player.YVelocity  = 0
+			Object.YVelocity -= 0x480000
 
 			Object.DamageTimer = 1
 			Object.State++
 
-			Eggman.State = EGGMAN_HURT
+			Eggman.State = EGGANI_HURT
 			PlaySfx(22, 0)
 
 #platform: Use_Haptics
@@ -311,8 +311,8 @@ sub ObjectPlayerInteraction
 				StopMusic()
 			end if
 #endplatform
-			Player.YVelocity = 0
-			Object.YVelocity -= 0x800000	// 0x800000
+			Player.YVelocity  = 0
+			Object.YVelocity -= 0x800000
 			Object.DamageTimer = 1
 			Object.State++
 			PlaySfx(22, 0)
@@ -335,9 +335,9 @@ sub ObjectDraw
 
 		if Object.AttackTimer < 128
 			if Object.AttackTimer < 8
-				TempValue0 = Object.AttackTimer
+				TempValue0   = Object.AttackTimer
 				TempValue0 >>= 1
-				TempValue0 += 7
+				TempValue0  += 7
 			else
 				TempValue0 = 8
 			end if
@@ -345,10 +345,10 @@ sub ObjectDraw
 			DrawSprite(12)
 		else
 			if Object.AttackTimer < 136
-				TempValue0 = Object.AttackTimer
-				TempValue0 -= 128
+				TempValue0   = Object.AttackTimer
+				TempValue0  -= 128
 				TempValue0 >>= 1
-				TempValue0 += 11
+				TempValue0  += 11
 			else
 				TempValue0 = 12
 			end if
@@ -359,7 +359,7 @@ sub ObjectDraw
 		DrawSprite(6)
 		DrawSprite(3)
 
-		TempValue0 = Object.Frame
+		TempValue0  = Object.Frame
 		TempValue0 /= 3
 		DrawSprite(TempValue0)
 		break
@@ -367,7 +367,7 @@ sub ObjectDraw
 	case BOSSBODY_HIT_1
 	case BOSSBODY_DRAG_EGGMAN_1
 	case BOSSBODY_HIT_2
-		TempValue0 = Object.DamageTimer
+		TempValue0  = Object.DamageTimer
 		TempValue0 &= 1
 		if TempValue0 == 0
 			DrawSprite(4)
@@ -384,16 +384,16 @@ sub ObjectDraw
 			Object.DamageTimer &= 15
 		end if
 
-		TempValue0 = Object.Frame
+		TempValue0  = Object.Frame
 		TempValue0 /= 3
 		DrawSprite(TempValue0)
 		break
 
 	case BOSSBODY_DRAG_EGGMAN_2
-		TempValue1 = Object.YPos
+		TempValue1  = Object.YPos
 		TempValue1 += Object.YControllerPos
 
-		TempValue0 = Object.DamageTimer
+		TempValue0  = Object.DamageTimer
 		TempValue0 &= 1
 		if TempValue0 == 0
 			DrawSprite(4)
@@ -407,7 +407,7 @@ sub ObjectDraw
 			DrawSprite(15)
 		end if
 
-		if Eggman.State == EGGMAN_NERVOUS
+		if Eggman.State == EGGANI_NERVOUS
 			if Object.YControllerPos < 0x100000
 				Object.YControllerPos += 0x8000
 			end if
@@ -424,7 +424,7 @@ sub ObjectDraw
 		break
 
 	case BOSSBODY_HIT_3
-		TempValue0 = Object.YPos
+		TempValue0  = Object.YPos
 		TempValue0 -= 0x200000
 
 		if TempValue0 < Object.YVelocity
@@ -432,10 +432,10 @@ sub ObjectDraw
 			DrawSprite(17)
 			DrawSprite(3)
 		else
-			TempValue1 = Object.YPos
+			TempValue1  = Object.YPos
 			TempValue1 += Object.YControllerPos
 
-			TempValue0 = Object.DamageTimer
+			TempValue0  = Object.DamageTimer
 			TempValue0 &= 1
 			if TempValue0 == 0
 				DrawSprite(4)
@@ -457,7 +457,7 @@ sub ObjectDraw
 			Object.DamageTimer &= 15
 		end if
 
-		TempValue0 = Object.Frame
+		TempValue0  = Object.Frame
 		TempValue0 /= 3
 		DrawSprite(TempValue0)
 		break
@@ -505,6 +505,7 @@ sub ObjectStartup
 	SpriteFrame(-24, -32, 48, 16, 148, 107)	// #18 - Egg Tilter Controller
 	SpriteFrame(-24, -32, 48, 16, 148, 124)	// #19 - Egg Tilter Controller Flicker
 
+	// Used to be below LoadSpriteSheet, moved here for consistency
 	ArrayPos0 = 32
 	while ArrayPos0 < 1056
 		if Object[ArrayPos0].Type == TypeName[BossBody]

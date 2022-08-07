@@ -1,9 +1,10 @@
-//-----------------Sonic CD Tube Switch Script----------------//
+//----------------Sonic CD Tube Switch Script-----------------//
 //--------Scripted by Christian Whitehead 'The Taxman'--------//
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
 // Aliases
 #alias Object.Value0	:	Object.OnObject
+#alias Object.Value1	:	Object.LaunchSpeed
 
 // Player Aliases
 #alias Player.Value6	:	Player.MinRollSpeed
@@ -19,40 +20,41 @@
 #alias 3	:	CMODE_RWALL
 
 // Property Values
-#alias 0	:	TUBESWITCH_ENTER_H
-#alias 1	:	TUBESWITCH_ENTER_V
-#alias 2	:	TUBESWITCH_BOOST_ANGLE
-#alias 3	:	TUBESWITCH_BOOST_V
-#alias 4	:	TUBESWITCH_EXIT_H
-#alias 5	:	TUBESWITCH_EXIT_V
-#alias 6	:	TUBESWITCH_LIMIT_SPEED
-#alias 7	:	TUBESWITCH_EXIT_ANGLE
-#alias 8	:	TUBESWITCH_EXIT_BOOST
+#alias 0	:	HORIZONTAL_TUBE
+#alias 1	:	VERTICAL_TUBE
+#alias 2	:	BOOST_ANGLE_TUBE
+#alias 3	:	BOOST_VERTICAL_TUBE
+#alias 4	:	HORIZONTAL_EXIT_TUBE
+#alias 5	:	VERTICAL_EXIT_TUBE
+#alias 6	:	SPEED_LIMITED_TUBE
+#alias 7	:	EXIT_ANGLE_TUBE
+#alias 8	:	EXIT_BOOST_TUBE
 
 
 sub ObjectPlayerInteraction
 	PlayerObjectCollision(C_TOUCH, -16, -16, 16, 16)
 	if CheckResult == true
 		switch Object.PropertyValue
-		case TUBESWITCH_ENTER_H
+		case HORIZONTAL_TUBE
 			if Player.Speed > 0
 				if Player.State != Player_State_TubeRoll
 					PlaySfx(7, 0)
 				end if
 
 				Player.Direction = FACING_RIGHT
-				Player.State = Player_State_TubeRoll
+				Player.State	 = Player_State_TubeRoll
 				Player.Animation = ANI_JUMPING
-				Player.MinRollSpeed = 0xA0000	// 0xA0000
 
-				if Player.Speed < 0xA0000		// 0xA0000
-					Player.Speed = 0xA0000		// 0xA0000
+				Player.MinRollSpeed = 0xA0000
+
+				if Player.Speed < 0xA0000
+					Player.Speed = 0xA0000
 				end if
 			else
 				if Player.Gravity == GRAVITY_GROUND
 
-					if Player.Speed > -0x20000	// -0x20000
-						Player.Speed = -0x20000	// -0x20000
+					if Player.Speed > -0x20000
+						Player.Speed = -0x20000
 					end if
 
 				end if
@@ -61,20 +63,20 @@ sub ObjectPlayerInteraction
 			end if
 			break
 
-		case TUBESWITCH_ENTER_V
+		case VERTICAL_TUBE
 			if Player.State != Player_State_TubeRoll
 				PlaySfx(7, 0)
 			end if
-			Player.Gravity = GRAVITY_GROUND
-			Player.State = Player_State_TubeRoll
+			Player.Gravity	 = GRAVITY_GROUND
+			Player.State	 = Player_State_TubeRoll
 			Player.Animation = ANI_JUMPING
 			Player.CollisionMode = CMODE_RWALL
 			Player.Angle = 64
-			Player.Speed = 0x100000			// 0x100000
-			Player.MinRollSpeed = 0x100000	// 0x100000
+			Player.Speed = 0x100000
+			Player.MinRollSpeed = 0x100000
 			break
 
-		case TUBESWITCH_BOOST_ANGLE
+		case BOOST_ANGLE_TUBE
 			if Object.OnObject == false
 			
 				if Player.CollisionMode == CMODE_FLOOR
@@ -85,7 +87,7 @@ sub ObjectPlayerInteraction
 					Player.CollisionMode = CMODE_FLOOR
 					FlipSign(Player.Speed)
 					Player.Angle = 0
-					Player.YPos += 0x40000	// 0x40000
+					Player.YPos += 0x40000
 				end if
 
 				Player.State = Player_State_TubeRoll
@@ -94,58 +96,58 @@ sub ObjectPlayerInteraction
 			end if
 			break
 
-		case TUBESWITCH_BOOST_V
+		case BOOST_VERTICAL_TUBE
 			if Player.YVelocity < 0
 
-				Player.Gravity = GRAVITY_GROUND
-				Player.State = Player_State_TubeRoll
+				Player.Gravity	 = GRAVITY_GROUND
+				Player.State	 = Player_State_TubeRoll
 				Player.Animation = ANI_JUMPING
 				Player.CollisionMode = CMODE_LWALL
 				Player.Angle = 192
-				Player.MinRollSpeed = 0xA0000	// 0xA0000
+				Player.MinRollSpeed = 0xA0000
 				Player.Speed = Player.YVelocity
 				FlipSign(Player.Speed)
 
 			end if
 			break
 
-		case TUBESWITCH_EXIT_H
+		case HORIZONTAL_EXIT_TUBE
 			if Player.Speed < 0
 				if Player.State != Player_State_TubeRoll
 					PlaySfx(7, 0)
 				end if
 
-				Player.State = Player_State_TubeRoll
+				Player.State	 = Player_State_TubeRoll
 				Player.Animation = ANI_JUMPING
-				Player.MinRollSpeed = 0xA0000	// 0xA0000
+				Player.MinRollSpeed = 0xA0000
 			else
-				Player.State = Player_State_Roll
+				Player.State	 = Player_State_Roll
 				Player.Animation = ANI_JUMPING
 			end if
 			break
 
-		case TUBESWITCH_EXIT_V
+		case VERTICAL_EXIT_TUBE
 			if Player.Gravity == GRAVITY_AIR
-				Player.XVelocity = Object.Value1
-				Player.Speed = Object.Value1
+				Player.XVelocity = Object.LaunchSpeed
+				Player.Speed	 = Object.LaunchSpeed
 			else
 				if Player.CollisionMode == CMODE_LWALL
 					Player.Angle = 196
 					Cos256(TempValue0, Player.Angle)
-					TempValue0 *= Player.Speed
+					TempValue0  *= Player.Speed
 					TempValue0 >>= 8
 					if TempValue0 != 0
-						Object.Value1 = TempValue0
+						Object.LaunchSpeed = TempValue0
 					end if
 				end if
 			end if
 			break
 
-		case TUBESWITCH_LIMIT_SPEED
+		case SPEED_LIMITED_TUBE
 			if Player.State == Player_State_TubeRoll
 
-				if Player.YVelocity < -0x60000	// -0x60000
-					Player.YVelocity = -0x60000	// -0x60000
+				if Player.YVelocity < -0x60000
+					Player.YVelocity = -0x60000
 				end if
 
 			else
@@ -153,16 +155,16 @@ sub ObjectPlayerInteraction
 			end if
 			break
 
-		case TUBESWITCH_EXIT_ANGLE
+		case EXIT_ANGLE_TUBE
 			if Player.State == Player_State_TubeRoll
-				Object.PropertyValue = TUBESWITCH_EXIT_BOOST
+				Object.PropertyValue = EXIT_BOOST_TUBE
 			end if
 			break
 
-		case TUBESWITCH_EXIT_BOOST
+		case EXIT_BOOST_TUBE
 			if Player.Gravity == GRAVITY_AIR
-				Player.YVelocity = -0xA8000	// -0xA8000
-				Object.PropertyValue = TUBESWITCH_EXIT_ANGLE
+				Player.YVelocity = -0xA8000
+				Object.PropertyValue = EXIT_ANGLE_TUBE
 			end if
 			break
 
@@ -179,9 +181,9 @@ end sub
 // ========================
 
 sub RSDKDraw
-	TempValue0 = Object.XPos
+	TempValue0  = Object.XPos
 	TempValue0 -= 0x80000
-	TempValue1 = Object.YPos
+	TempValue1  = Object.YPos
 	TempValue1 -= 0x80000
 
 	DrawSpriteXY(0, TempValue0, TempValue1)

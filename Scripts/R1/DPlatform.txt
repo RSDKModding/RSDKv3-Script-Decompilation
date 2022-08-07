@@ -11,19 +11,22 @@
 #alias Object.Value6	:	Object.Amplitude
 
 // Property Values
-#alias 0	:	DIAGONAL_UR_DL
-#alias 1	:	DIAGONAL_UL_DR	// in a map editor you will find this as property value 3
+// This property values only cover the starting position
+#alias 0	:	START_FROM_BEGINNING
+#alias 1	:	START_HALFWAY_THROUGH
+// On a map editor this would rather be (0)Left-Down, (1)Right-Down, (2)Left-Up and (3)Right-Up
+// But here we only cover what's useful for the script itself
 
 
 sub ObjectMain
-	Object.Oscillation = Oscillation
+	Object.Oscillation   = Oscillation
 	Object.Oscillation <<= 1
-	if Object.PropertyValue == DIAGONAL_UL_DR
+	if Object.PropertyValue == START_HALFWAY_THROUGH
 		Object.Oscillation += 256
 	end if
 
 	Cos(Object.XPlayerFloor, Object.Oscillation)
-	Object.XPlayerFloor *= 0x1800	// 0x1800
+	Object.XPlayerFloor *= 0x1800
 	Object.XPlayerFloor += Object.XPos
 	Object.XPlayerFloor &= 0xFFFF0000
 	Object.XPlayerFloor -= Object.XOriginPos
@@ -38,10 +41,10 @@ end sub
 
 
 sub ObjectPlayerInteraction
-	TempValue0 = Object.XPos
+	TempValue0  = Object.XPos
 	Object.XPos = Object.XOriginPos
 
-	TempValue1 = Object.YPos
+	TempValue1  = Object.YPos
 	Object.YPos = Object.YOriginPos
 
 	PlayerObjectCollision(C_PLATFORM, -32, -9, 32, 12)
@@ -57,7 +60,7 @@ end sub
 
 sub ObjectDraw
 	Cos(Object.XOriginPos, Object.Oscillation)
-	Object.XOriginPos *= 0x1800		// 0x1800
+	Object.XOriginPos *= 0x1800
 	Object.XOriginPos += Object.XPos
 	Object.XOriginPos &= 0xFFFF0000
 
@@ -80,10 +83,10 @@ sub ObjectStartup
 	while ArrayPos0 < 1056
 		if Object[ArrayPos0].Type == TypeName[DiagPlatform]
 			if Object[ArrayPos0].PropertyValue > 1
-				Object[ArrayPos0].Amplitude = -0x1800		// -0x1800
+				Object[ArrayPos0].Amplitude = -0x1800
 				Object[ArrayPos0].PropertyValue -= 2
 			else
-				Object[ArrayPos0].Amplitude = 0x1800		// 0x1800
+				Object[ArrayPos0].Amplitude = 0x1800
 			end if
 		end if
 		ArrayPos0++

@@ -1,4 +1,4 @@
-//------------Sonic CD Flat Bumper Script-------------//
+//-----------------Sonic CD Flat Bumper Script----------------//
 //--------Scripted by Christian Whitehead 'The Taxman'--------//
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
@@ -26,22 +26,20 @@
 #alias 4			:	ROOF
 
 // Property Values
-#alias 0			:	FLATBUMPER_MOVE_H
-#alias 1			:	FLATBUMPER_MOVE_V
+#alias 0			:	MOVE_HORIZONTALLY
+#alias 1			:	MOVE_VERTICALLY
 
 
 sub ObjectMain
 	switch Object.State
 	case FLATBUMPER_MOVE_R_OR_U
 		if Object.Timer < 96
-
 			Object.Timer++
-			if Object.PropertyValue == FLATBUMPER_MOVE_H
-				Object.XPos += 0x10000	// 0x10000
+			if Object.PropertyValue == MOVE_HORIZONTALLY
+				Object.XPos += 0x10000
 			else
-				Object.YPos += 0x10000	// 0x10000
+				Object.YPos += 0x10000
 			end if
-
 		else
 			Object.State = FLATBUMPER_MOVE_L_OR_D
 		end if
@@ -50,14 +48,12 @@ sub ObjectMain
 
 	case FLATBUMPER_MOVE_L_OR_D
 		if Object.Timer > -96
-
 			Object.Timer--
-			if Object.PropertyValue == FLATBUMPER_MOVE_H
-				Object.XPos -= 0x10000	// 0x10000
+			if Object.PropertyValue == MOVE_HORIZONTALLY
+				Object.XPos -= 0x10000
 			else
-				Object.YPos -= 0x10000	// 0x10000
+				Object.YPos -= 0x10000
 			end if
-
 		else
 			Object.State = FLATBUMPER_MOVE_R_OR_U
 		end if
@@ -78,9 +74,9 @@ sub ObjectPlayerInteraction
 	switch CheckResult
 	case FLOOR
 		if Player.State == Player_State_Fly
-			Player.YVelocity = -0x40000	// -0x40000
+			Player.YVelocity = -0x40000
 		else
-			Player.YVelocity = -0x70000	// -0x70000
+			Player.YVelocity = -0x70000
 			Player.Timer = 0
 		end if
 		Player.Gravity = GRAVITY_AIR
@@ -89,9 +85,9 @@ sub ObjectPlayerInteraction
 
 	case ROOF
 		if Player.State == Player_State_Fly
-			Player.YVelocity = 0x40000	// 0x40000
+			Player.YVelocity = 0x40000
 		else
-			Player.YVelocity = 0x70000	// 0x70000
+			Player.YVelocity = 0x70000
 			Player.Timer = 0
 		end if
 		Player.Timer = 0
@@ -102,23 +98,23 @@ sub ObjectPlayerInteraction
 	end switch
 
 	if TempValue1 == true		// Check if you collided with the left side of the bumper
-		Player.Speed = -0x70000		// -0x70000
-		Player.XVelocity = -0x70000	// -0x70000
+		Player.Speed = -0x70000
+		Player.XVelocity = -0x70000
 		TempValue0 = true
 	end if
 	
 	if TempValue2 == true		// Check if you collided with the right side of the bumper
-		Player.Speed = 0x70000		// 0x70000
-		Player.XVelocity = 0x70000	// 0x70000
+		Player.Speed = 0x70000
+		Player.XVelocity = 0x70000
 		TempValue0 = true
 	end if
 
 	PlayerObjectCollision(C_TOUCH, -16, -14, 16, 0)	// Check if you collided with the center from the top
 	if CheckResult == true
 		if Player.State == Player_State_Fly
-			Player.YVelocity = -0x40000	// -0x40000
+			Player.YVelocity = -0x40000
 		else
-			Player.YVelocity = -0x70000	// -0x70000
+			Player.YVelocity = -0x70000
 			Player.Timer = 0
 		end if
 		Player.Gravity = GRAVITY_AIR
@@ -128,9 +124,9 @@ sub ObjectPlayerInteraction
 	PlayerObjectCollision(C_TOUCH, -16, 0, 16, 14)	// Check if you collided with the center from the bottom
 	if CheckResult == true
 		if Player.State == Player_State_Fly
-			Player.YVelocity = 0x40000	// 0x40000
+			Player.YVelocity = 0x40000
 		else
-			Player.YVelocity = 0x70000	// 0x70000
+			Player.YVelocity = 0x70000
 			Player.Timer = 0
 		end if
 		Player.Gravity = GRAVITY_AIR

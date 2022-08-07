@@ -36,7 +36,7 @@ sub ObjectMain
 			Object.Frame++
 			Object.Frame &= 3
 
-			Object.XPos -= 0x10000	// 0x10000
+			Object.XPos -= 0x10000
 
 			Object.Timer--
 			if Object.Timer == -128
@@ -47,7 +47,7 @@ sub ObjectMain
 			if Player.YPos > Object.YPos	// Check that player is below Mosqui
 				TempValue0 = Player.YPos
 				TempValue0 -= Object.YPos
-				if TempValue0 < 0x800000	// 0x800000
+				if TempValue0 < 0x800000
 					if Player.XPos > Object.XPos	// Check that player is in attack range
 						TempValue0 = Player.XPos
 						TempValue0 -= Object.XPos
@@ -55,7 +55,7 @@ sub ObjectMain
 						TempValue0 = Object.XPos
 						TempValue0 -= Player.XPos
 					end if
-					if TempValue0 < 0x300000	// 0x300000
+					if TempValue0 < 0x300000
 						Object.Timer = 0
 						Object.Frame = 2
 						Object.State = MOSQUI_TURN_DOWN
@@ -67,7 +67,7 @@ sub ObjectMain
 		case MOSQUI_MOVE_RIGHT
 			Object.Frame++
 			Object.Frame &= 3
-			Object.XPos += 0x10000	// 0x10000
+			Object.XPos += 0x10000
 			Object.Timer++
 			if Object.Timer == 128
 				Object.State = MOSQUI_MOVE_LEFT
@@ -76,7 +76,7 @@ sub ObjectMain
 			if Player.YPos > Object.YPos	// Check that player is below Mosqui
 				TempValue0 = Player.YPos
 				TempValue0 -= Object.YPos
-				if TempValue0 < 0x800000	// 0x800000
+				if TempValue0 < 0x800000
 					if Player.XPos > Object.XPos	// Check that player is in attack range
 						TempValue0 = Player.XPos
 						TempValue0 -= Object.XPos
@@ -84,7 +84,7 @@ sub ObjectMain
 						TempValue0 = Object.XPos
 						TempValue0 -= Player.XPos
 					end if
-					if TempValue0 < 0x300000	// 0x300000
+					if TempValue0 < 0x300000
 						Object.Timer = 0
 						Object.Frame = 2
 						Object.State = MOSQUI_TURN_DOWN
@@ -106,7 +106,7 @@ sub ObjectMain
 			break
 
 		case MOSQUI_DART
-			Object.YPos += 0x60000	// 0x60000
+			Object.YPos += 0x60000
 			ObjectTileCollision(CSIDE_FLOOR, 0, 14, 0)
 			if CheckResult == true
 				Object.State = MOSQUI_BLANK
@@ -130,26 +130,30 @@ sub ObjectMain
 		switch Object.State
 		case MOSQUI_MOVE_LEFT
 			Object.Priority = PRIORITY_ACTIVE
+
 			Object.Frame++
 			Object.Frame %= 10
-			Object.XPos -= 0x8000	// 0x8000
+
+			Object.XPos -= 0x8000
+
 			Object.Timer--
 			if Object.Timer == -256
 				Object.State = MOSQUI_MOVE_RIGHT
 				Object.Direction = FACING_LEFT
 			end if
+
 			if Player.YPos > Object.YPos	// Check that player is below Mosqui
-				TempValue0 = Player.YPos
+				TempValue0  = Player.YPos
 				TempValue0 -= Object.YPos
-				if TempValue0 < 0x400000	// 0x400000
+				if TempValue0 < 0x400000
 					if Player.XPos > Object.XPos	// Check that player is in attack range
-						TempValue0 = Player.XPos
+						TempValue0  = Player.XPos
 						TempValue0 -= Object.XPos
 					else
-						TempValue0 = Object.XPos
+						TempValue0  = Object.XPos
 						TempValue0 -= Player.XPos
 					end if
-					if TempValue0 < 0x300000	// 0x300000
+					if TempValue0 < 0x300000
 						Object.Timer = 0
 						Object.Frame = 7
 						Object.State = MOSQUI_TURN_DOWN
@@ -161,24 +165,26 @@ sub ObjectMain
 		case MOSQUI_MOVE_RIGHT
 			Object.Frame++
 			Object.Frame %= 10
-			Object.XPos += 0x8000	// 0x8000
+
+			Object.XPos += 0x8000
+
 			Object.Timer++
 			if Object.Timer == 256
 				Object.State = MOSQUI_MOVE_LEFT
 				Object.Direction = FACING_RIGHT
 			end if
 			if Player.YPos > Object.YPos	// Check that player is below Mosqui
-				TempValue0 = Player.YPos
+				TempValue0  = Player.YPos
 				TempValue0 -= Object.YPos
-				if TempValue0 < 0x400000	// 0x400000
+				if TempValue0 < 0x400000
 					if Player.XPos > Object.XPos	// Check that player is in attack range
-						TempValue0 = Player.XPos
+						TempValue0  = Player.XPos
 						TempValue0 -= Object.XPos
 					else
-						TempValue0 = Object.XPos
+						TempValue0  = Object.XPos
 						TempValue0 -= Player.XPos
 					end if
-					if TempValue0 < 0x300000	// 0x300000
+					if TempValue0 < 0x300000
 						Object.Timer = 0
 						Object.Frame = 7
 						Object.State = MOSQUI_TURN_DOWN
@@ -200,7 +206,7 @@ sub ObjectMain
 			break
 			
 		case MOSQUI_DART
-			Object.YPos += 0x60000	// 0x60000
+			Object.YPos += 0x60000
 			ObjectTileCollision(CSIDE_FLOOR, 0, 14, 0)
 			if CheckResult == true
 				Object.State = MOSQUI_BLANK
@@ -260,7 +266,7 @@ sub ObjectDraw
 	if Object.State < MOSQUI_RESTORE
 		if Object.Quality == PROPVAL_QUALITY_GOOD
 			if Object.State < MOSQUI_TURN_DOWN
-				TempValue0 = Object.Frame
+				TempValue0   = Object.Frame
 				TempValue0 >>= 1
 				DrawSpriteFX(TempValue0, FX_FLIP, Object.XPos, Object.YPos)
 			else
@@ -268,7 +274,7 @@ sub ObjectDraw
 			end if
 		else
 			if Object.State < MOSQUI_TURN_DOWN
-				TempValue0 = Object.Frame
+				TempValue0  = Object.Frame
 				TempValue0 /= 5
 				TempValue0 += 5
 				DrawSpriteFX(TempValue0, FX_FLIP, Object.XPos, Object.YPos)
@@ -297,6 +303,7 @@ sub ObjectStartup
 	SpriteFrame(-6, -13, 24, 32, 51, 76)		// #8 - Mosqui Turning Frame 1
 	SpriteFrame(-10, -14, 24, 32, 76, 76)		// #9 - Mosqui Turning Frame 2
 
+	// Used to be below LoadSpriteSheet, moved here for consistency
 	ArrayPos0 = 32
 	while ArrayPos0 < 1056
 		if Object[ArrayPos0].Type == TypeName[Mosqui]

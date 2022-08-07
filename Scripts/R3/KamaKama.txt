@@ -1,4 +1,4 @@
-//------------Sonic CD Kama Kama Script-------------//
+//-----------------Sonic CD Kama Kama Script------------------//
 //--------Scripted by Christian Whitehead 'The Taxman'--------//
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
@@ -105,7 +105,8 @@ sub ObjectMain
 	case KAMAKAMA_CHARGE
 		Object.Frame++
 		Object.Frame &= 31
-		Object.XPos += Object.XVelocity
+
+		Object.XPos  += Object.XVelocity
 		ObjectTileGrip(CSIDE_FLOOR, 0, 19, 0)	// Check if it's reaching a ledge
 		if CheckResult == false
 			Object.State = KAMAKAMA_SWITCH_DIRECTION
@@ -161,12 +162,12 @@ end sub
 sub ObjectDraw
 	switch Object.State
 	case KAMAKAMA_GUARD
-		TempValue0 = Object.FrameTimer
+		TempValue0   = Object.FrameTimer
 		TempValue0 >>= 3
 		DrawSpriteFX(TempValue0, FX_FLIP, Object.XPos, Object.YPos)
 
 		if Object.Quality == PROPVAL_QUALITY_GOOD
-			TempValue1 = TempValue0
+			TempValue1  = TempValue0
 			TempValue1 += 4
 			DrawSpriteFX(TempValue1, FX_FLIP, Object.XPos, Object.YPos)
 
@@ -176,7 +177,7 @@ sub ObjectDraw
 			TempValue1 -= 10
 			DrawSpriteFX(TempValue1, FX_FLIP, Object.XPos, Object.YPos)
 		else
-			TempValue1 = TempValue0
+			TempValue1  = TempValue0
 			TempValue1 += 10
 			DrawSpriteFX(TempValue1, FX_FLIP, Object.XPos, Object.YPos)
 
@@ -186,19 +187,19 @@ sub ObjectDraw
 		break
 
 	case KAMAKAMA_LAUNCH_BLADE
-		TempValue0 = Object.FrameTimer
+		TempValue0   = Object.FrameTimer
 		TempValue0 >>= 3
 		DrawSpriteFX(TempValue0, FX_FLIP, Object.XPos, Object.YPos)
 
 		if Object.Quality == PROPVAL_QUALITY_GOOD
-			TempValue1 = TempValue0
+			TempValue1  = TempValue0
 			TempValue1 += 4
 			DrawSpriteFX(TempValue1, FX_FLIP, Object.XPos, Object.YPos)
 
 			TempValue1 += 2
 			DrawSpriteFX(TempValue1, FX_FLIP, Object.XPos, Object.YPos)
 		else
-			TempValue1 = TempValue0
+			TempValue1  = TempValue0
 			TempValue1 += 10
 			DrawSpriteFX(TempValue1, FX_FLIP, Object.XPos, Object.YPos)
 
@@ -208,19 +209,19 @@ sub ObjectDraw
 		break
 
 	case KAMAKAMA_PREPARE_CHARGE
-		TempValue0 = Object.FrameTimer
+		TempValue0   = Object.FrameTimer
 		TempValue0 >>= 3
 		DrawSpriteFX(TempValue0, FX_FLIP, Object.XPos, Object.YPos)
 
 		if Object.Quality == PROPVAL_QUALITY_GOOD
-			TempValue1 = TempValue0
+			TempValue1  = TempValue0
 			TempValue1 += 4
 			DrawSpriteFX(TempValue1, FX_FLIP, Object.XPos, Object.YPos)
 
 			TempValue1 += 4
 			DrawSpriteFX(TempValue1, FX_FLIP, Object.XPos, Object.YPos)
 		else
-			TempValue1 = TempValue0
+			TempValue1  = TempValue0
 			TempValue1 += 10
 			DrawSpriteFX(TempValue1, FX_FLIP, Object.XPos, Object.YPos)
 
@@ -231,22 +232,22 @@ sub ObjectDraw
 
 	case KAMAKAMA_CHARGE
 	case KAMAKAMA_SWITCH_DIRECTION
-		TempValue0 = Object.Frame
+		TempValue0   = Object.Frame
 		TempValue0 >>= 3
 		DrawSpriteFX(TempValue0, FX_FLIP, Object.XPos, Object.YPos)
 
-		TempValue0 = Object.FrameTimer
+		TempValue0   = Object.FrameTimer
 		TempValue0 >>= 3
 
 		if Object.Quality == PROPVAL_QUALITY_GOOD
-			TempValue1 = TempValue0
+			TempValue1  = TempValue0
 			TempValue1 += 4
 			DrawSpriteFX(TempValue1, FX_FLIP, Object.XPos, Object.YPos)
 
 			TempValue1 += 2
 			DrawSpriteFX(TempValue1, FX_FLIP, Object.XPos, Object.YPos)
 		else
-			TempValue1 = TempValue0
+			TempValue1  = TempValue0
 			TempValue1 += 10
 			DrawSpriteFX(TempValue1, FX_FLIP, Object.XPos, Object.YPos)
 
@@ -261,6 +262,7 @@ end sub
 
 sub ObjectStartup
 	LoadSpriteSheet("R3/Objects.gif")
+
 	SpriteFrame(0, 4, 16, 16, 198, 119)		// #0  - Wheel Frame 0
 	SpriteFrame(0, 4, 16, 16, 215, 119)		// #1  - Wheel Frame 1
 	SpriteFrame(0, 4, 16, 16, 232, 119)		// #2  - Wheel Frame 2
@@ -287,6 +289,7 @@ sub ObjectStartup
 	SpriteFrame(-22, -14, 24, 20, 173, 101)	// #16 - Claws Frame 0
 	SpriteFrame(-22, -14, 24, 20, 173, 122)	// #17 - Claws Frame 1
 
+	// Used to be below LoadSpriteSheet, moved here for consistency
 	ArrayPos0 = 32
 	while ArrayPos0 < 1056
 		if Object[ArrayPos0].Type == TypeName[KamaKama]

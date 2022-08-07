@@ -16,6 +16,10 @@
 #alias 2	:	FALLPLATFORM_FALL
 #alias 3	:	FALLPLATFORM_RESTORE
 
+// Property Values
+#alias 0	:	FALLING_PLATFORM
+#alias 1	:	STATIC_PLATFORM
+
 // Priority
 #alias 0	:	PRIORITY_BOUNDS
 #alias 1	:	PRIORITY_ACTIVE
@@ -31,11 +35,11 @@ sub ObjectMain
 		if Object.Timer < 16
 			Object.Timer++
 
-			TempValue0 = Object.Timer
+			TempValue0  = Object.Timer
 			TempValue0 &= 3
 
 			if TempValue0 == 3
-				Object.YPlayerFloor = 0x10000	// 0x10000
+				Object.YPlayerFloor = 0x10000
 			else
 				Object.YPlayerFloor = 0
 			end if
@@ -48,11 +52,11 @@ sub ObjectMain
 		if Object.Timer > 0
 			Object.Timer--
 
-			TempValue0 = Object.Timer
+			TempValue0  = Object.Timer
 			TempValue0 &= 3
 
 			if TempValue0 == 3
-				Object.YPlayerFloor = -0x10000	// -0x10000
+				Object.YPlayerFloor = -0x10000
 			else
 				Object.YPlayerFloor = 0
 			end if
@@ -64,7 +68,7 @@ sub ObjectMain
 	end if
 	Object.Falling = false
 
-	if Object.PropertyValue == 0
+	if Object.PropertyValue == FALLING_PLATFORM
 		switch Object.State
 		case FALLPLATFORM_CRUMBLE
 			if Object.FallTimer < 30
@@ -78,8 +82,8 @@ sub ObjectMain
 			break
 
 		case FALLPLATFORM_FALL
-			if Object.YVelocity < 0x40000	// 0x40000
-				Object.YVelocity += 0x2000	// 0x2000
+			if Object.YVelocity < 0x40000
+				Object.YVelocity += 0x2000
 			end if
 			Object.YPlayerFloor += Object.YVelocity
 			if Object.OutOfBounds == true
@@ -141,22 +145,22 @@ sub RSDKEdit
 	if Editor.ReturnVariable == true
 		switch Editor.VariableID
 		case EDIT_VAR_PROPVAL // property value
-			CheckResult = Object.PropertyValue
+			CheckResult  = Object.PropertyValue
 			CheckResult &= 1
 			break
 		case 0 // type
-			CheckResult = Object.PropertyValue
+			CheckResult  = Object.PropertyValue
 			CheckResult &= 1
 			break
 		end switch
 	else
 		switch Editor.variableID
 		case EDIT_VAR_PROPVAL // property value
-			Object.PropertyValue = Editor.VariableValue
+			Object.PropertyValue  = Editor.VariableValue
 			Object.PropertyValue &= 1
 			break
 		case 0 // type
-			Object.PropertyValue = Editor.VariableValue
+			Object.PropertyValue  = Editor.VariableValue
 			Object.PropertyValue &= 1
 			break
 		end switch

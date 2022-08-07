@@ -1,4 +1,4 @@
-//------------Sonic CD Metal Sonic Script-------------//
+//----------------Sonic CD Metal Sonic Script-----------------//
 //--------Scripted by Christian Whitehead 'The Taxman'--------//
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
@@ -33,7 +33,7 @@ sub ObjectMain
 		break
 
 	case METALSONIC_APPROACH
-		Object.XPos -= 0x30000	// 0x30000
+		Object.XPos -= 0x30000
 		Object.Frame++
 		Object.Frame &= 1
 
@@ -43,13 +43,13 @@ sub ObjectMain
 		ArrayPos0++
 		while TempValue0 < 3
 			if Object[ArrayPos0].Type > TypeName[Blank Object]
-				TempValue1 = Object[ArrayPos0].XPos
-				TempValue1 += 0x240000	// 0x240000
+				TempValue1  = Object[ArrayPos0].XPos
+				TempValue1 += 0x240000
 
 				if Object.XPos < TempValue1
 					// Destroy Spikes
 					Object[ArrayPos0].Type = TypeName[Blank Object]
-					TempValue2 = Object[ArrayPos0].PropertyValue
+					TempValue2   = Object[ArrayPos0].PropertyValue
 					TempValue2 <<= 2
 
 					// Create Debris
@@ -63,7 +63,7 @@ sub ObjectMain
 					CreateTempObject(TypeName[SpikeDebris], TempValue2, Object[ArrayPos0].XPos, Object[ArrayPos0].YPos)
 					Object[TempObjectPos].iXPos += 8
 					Object[TempObjectPos].iYPos -= 9
-					Object[TempObjectPos].XVelocity = 0x10000
+					Object[TempObjectPos].XVelocity =  0x10000
 					Object[TempObjectPos].YVelocity = -0x30000
 					TempValue2++
 
@@ -77,7 +77,7 @@ sub ObjectMain
 					CreateTempObject(TypeName[SpikeDebris], TempValue2, Object[ArrayPos0].XPos, Object[ArrayPos0].YPos)
 					Object[TempObjectPos].iXPos += 8
 					Object[TempObjectPos].iYPos += 8
-					Object[TempObjectPos].XVelocity = 0x10000
+					Object[TempObjectPos].XVelocity =  0x10000
 					Object[TempObjectPos].YVelocity = -0x18000
 					TempValue2++
 
@@ -91,8 +91,8 @@ sub ObjectMain
 			ArrayPos0++
 			TempValue0++
 		loop
-		TempValue0 = Amy.XPos
-		TempValue0 += 0x200000	// 0x200000
+		TempValue0  = Amy.XPos
+		TempValue0 += 0x200000
 		if Object.XPos < TempValue0
 			Object.State = METALSONIC_CATCH_AMY
 			Object.Frame = 2
@@ -116,7 +116,7 @@ sub ObjectMain
 
 		Sin(Object.YPos, Object.Timer)
 		Object.YPos <<= 9
-		Object.YPos += Object.YVelocity
+		Object.YPos  += Object.YVelocity
 
 		Object.Timer += 8
 		if Object.Timer > 607
@@ -135,8 +135,8 @@ sub ObjectMain
 
 		if Object.Timer < 40
 			Object.Timer++
-			Object.YVelocity -= 0x20000	// 0x20000
-			Object.YPos -= 0x20000		// 0x20000
+			Object.YVelocity -= 0x20000
+			Object.YPos -= 0x20000
 		else
 			Object.State = METALSONIC_STARE
 			Object.Timer = 256
@@ -153,7 +153,7 @@ sub ObjectMain
 
 		Sin(Object.YPos, Object.Timer)
 		Object.YPos <<= 9
-		Object.YPos += Object.YVelocity
+		Object.YPos  += Object.YVelocity
 
 		Object.Timer += 8
 		if Object.Timer > 976
@@ -164,8 +164,8 @@ sub ObjectMain
 
 	case METALSONIC_FLEE
 
-		if Object.XVelocity < 0x60000	// 0x60000
-			Object.XVelocity += 0x2000	// 0x2000
+		if Object.XVelocity < 0x60000
+			Object.XVelocity += 0x2000
 		end if
 		Object.XPos += Object.XVelocity
 
@@ -183,16 +183,16 @@ end sub
 
 
 sub ObjectDraw
-	if Object.State < 2
+	if Object.State < METALSONIC_CATCH_AMY
 		DrawSprite(Object.Frame)
 	else
 		Amy.XPos = Object.XPos
 		Amy.YPos = Object.YPos
 		Amy.Direction = Object.Direction
 
-		TempValue0 = Object.FrameTimer
+		TempValue0   = Object.FrameTimer
 		TempValue0 >>= 1
-		TempValue0 += 3
+		TempValue0  += 3
 		DrawSpriteFX(TempValue0, FX_FLIP, Object.XPos, Object.YPos)
 
 		Object.FrameTimer++

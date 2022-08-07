@@ -1,4 +1,4 @@
-//------------Sonic CD Rotating Spikes Script-------------//
+//--------------Sonic CD Rotating Spikes Script---------------//
 //--------Scripted by Christian Whitehead 'The Taxman'--------//
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
@@ -11,13 +11,13 @@
 #alias Object[24].PropertyValue	:	HUD.TimePeriod
 
 // Property Values
-#alias 0			:	ROTATINGSPIKES_MAXSPIKES_R
-#alias 1			:	ROTATINGSPIKES_MAXSPIKES_L
-#alias 2			:	ROTATINGSPIKES_TWO_SPIKES_R
-#alias 3			:	ROTATINGSPIKES_TWO_SPIKES_L
+#alias 0	:	MAXSPIKES_RIGHT
+#alias 1	:	MAXSPIKES_LEFT
+#alias 2	:	TWO_SPIKES_RIGHT
+#alias 3	:	TWO_SPIKES_LEFT
 
 // Time Periods
-#alias 1			:	PROPVAL_PAST
+#alias 1	:	PROPVAL_PAST
 
 
 sub ObjectMain
@@ -38,14 +38,14 @@ sub ObjectPlayerInteraction
 	while TempValue0 < Object.SpawnedSpikes
 	
 		Cos(Object.XPos, Object.Angle)
-		Object.XPos *= TempValue1
+		Object.XPos  *= TempValue1
 		Object.XPos <<= 7
-		Object.XPos += TempValue2
+		Object.XPos  += TempValue2
 
 		Sin(Object.YPos, Object.Angle)
-		Object.YPos *= TempValue1
+		Object.YPos  *= TempValue1
 		Object.YPos <<= 7
-		Object.YPos += TempValue3
+		Object.YPos  += TempValue3
 
 		PlayerObjectCollision(C_TOUCH, -8, -8, 8, 8)
 		if CheckResult == true
@@ -62,19 +62,20 @@ end sub
 
 sub ObjectDraw
 	DrawSprite(0)
+
 	TempValue0 = 0
 	TempValue1 = 16
 	while TempValue0 < Object.SpawnedSpikes
 
 		Cos(TempValue2, Object.Angle)
-		TempValue2 *= TempValue1
+		TempValue2  *= TempValue1
 		TempValue2 <<= 7
-		TempValue2 += Object.XPos
+		TempValue2  += Object.XPos
 		
 		Sin(TempValue3, Object.Angle)
-		TempValue3 *= TempValue1
+		TempValue3  *= TempValue1
 		TempValue3 <<= 7
-		TempValue3 += Object.YPos
+		TempValue3  += Object.YPos
 
 		DrawSpriteXY(1, TempValue2, TempValue3)
 		
@@ -94,7 +95,7 @@ sub ObjectStartup
 	while ArrayPos0 < 1056
 		if Object[ArrayPos0].Type == TypeName[RotatingSpikes]
 			switch Object[ArrayPos0].PropertyValue
-			case ROTATINGSPIKES_MAXSPIKES_R
+			case MAXSPIKES_RIGHT
 				Object[ArrayPos0].Increment = 2
 				if HUD.TimePeriod > PROPVAL_PAST	// In the future it has 4 spikes
 					Object[ArrayPos0].SpawnedSpikes = 4
@@ -103,7 +104,7 @@ sub ObjectStartup
 				end if
 				break
 
-			case ROTATINGSPIKES_MAXSPIKES_L
+			case MAXSPIKES_LEFT
 				Object[ArrayPos0].Increment = -2
 				if HUD.TimePeriod > PROPVAL_PAST	// In the future it has 4 spikes
 					Object[ArrayPos0].SpawnedSpikes = 4
@@ -112,12 +113,12 @@ sub ObjectStartup
 				end if
 				break
 
-			case ROTATINGSPIKES_TWO_SPIKES_R
+			case TWO_SPIKES_RIGHT
 				Object[ArrayPos0].Increment = 2
 				Object[ArrayPos0].SpawnedSpikes = 2
 				break
 
-			case ROTATINGSPIKES_TWO_SPIKES_L
+			case TWO_SPIKES_LEFT
 				Object[ArrayPos0].Increment = -2
 				Object[ArrayPos0].SpawnedSpikes = 2
 				break
