@@ -1,15 +1,16 @@
-//------------Sonic CD Rotating Log Script-------------//
+//----------------Sonic CD Rotating Log Script----------------//
 //--------Scripted by Christian Whitehead 'The Taxman'--------//
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
 // Aliases
-#alias Object.Value0	:	Object.Angle
+#alias Object.Value0 : Object.Angle
 
-#alias Object.Value1	:	Object.LogX
-#alias Object.Value2	:	Object.LogY
+#alias Object.Value1 : Object.LogX
+#alias Object.Value2 : Object.LogY
 
-#alias Object.Value3	:	Object.ChangeX
-#alias Object.Value4	:	Object.ChangeY
+#alias Object.Value3 : Object.ChangeX
+#alias Object.Value4 : Object.ChangeY
+
 
 sub ObjectMain
 
@@ -179,67 +180,77 @@ end sub
 
 
 sub RSDKDraw
-	if Object.PropertyValue == 1
-		TempValue0 = 504
-	else
-		GetObjectType(TempValue1, "Rotating Log")
-		ArrayPos0 = Object.EntityNo
-		TempValue0 = 0
-
-		TempValue2 = true
-
-		while TempValue2 == true
-			if TempValue0 == 8
-				break
-			end if
-			
-			ArrayPos0--
-			TempValue0++
-			
-			CheckEqual(Object[ArrayPos0].Type, TempValue1)
-			TempValue2 = CheckResult
-			CheckEqual(Object[ArrayPos0].PropertyValue, false)
-			TempValue2 &= CheckResult
-		loop
+	DrawSprite(0)
+	
+	if Editor.ShowGizmos == true
+		Editor.DrawingOverlay = true
 		
-		switch TempValue0
-		case 1
-			TempValue0 = 392; break
-		case 2
-			TempValue0 = 376; break
-		case 3
-			TempValue0 = 264; break
-		case 4
-			TempValue0 = 248; break
-		case 5
-			TempValue0 = 136; break
-		case 6
-			TempValue0 = 120; break
-		case 7
-			TempValue0 =   8; break
-			
-		// should never get here!
-		case 0
-		default
-			TempValue0 = 504; break
-			
-		end switch
-	end if
+		if Object.PropertyValue == 1
+			TempValue0 = 504
+		else
+			GetObjectType(TempValue1, "Rotating Log")
+			ArrayPos0 = Object.EntityNo
+			TempValue0 = 0
 
-	Cos(TempValue1, TempValue0)
-	TempValue1 *= 96
-	TempValue1 <<= 7
-	TempValue1 += Object.XPos
-	TempValue1 &= 0xFFFF0000
-	
-	// Get the Y Position of the Log
-	Sin(TempValue2, TempValue0)
-	TempValue2 *= 96
-	TempValue2 <<= 7
-	TempValue2 += Object.YPos
-	TempValue2 &= 0xFFFF0000
-	
-	DrawSpriteXY(0, TempValue1, TempValue2)
+			TempValue2 = false
+
+			while TempValue2 == false
+				if TempValue0 == 8
+					TempValue2 = true
+				end if
+				
+				ArrayPos0--
+				TempValue0++
+				
+				CheckEqual(Object[ArrayPos0].Type, TempValue1)
+				TempValue2 = CheckResult
+				CheckEqual(Object[ArrayPos0].PropertyValue, false)
+				TempValue2 &= CheckResult
+			loop
+			
+			switch TempValue0
+			case 1
+				TempValue0 = 392; break
+			case 2
+				TempValue0 = 376; break
+			case 3
+				TempValue0 = 264; break
+			case 4
+				TempValue0 = 248; break
+			case 5
+				TempValue0 = 136; break
+			case 6
+				TempValue0 = 120; break
+			case 7
+				TempValue0 =   8; break
+				
+			// should never get here!
+			case 0
+			default
+				TempValue0 = 504; break
+				
+			end switch
+		end if
+
+		Cos(TempValue1, TempValue0)
+		TempValue1 *= 96
+		TempValue1 <<= 7
+		TempValue1 += Object.XPos
+		TempValue1 &= 0xFFFF0000
+		
+		// Get the Y Position of the Log
+		Sin(TempValue2, TempValue0)
+		TempValue2 *= 96
+		TempValue2 <<= 7
+		TempValue2 += Object.YPos
+		TempValue2 &= 0xFFFF0000
+		
+		Object.InkEffect = 1
+		
+		DrawSpriteFX(0, FX_INK, TempValue1, TempValue2)
+		
+		Editor.DrawingOverlay = false
+	end if
 end sub
 
 

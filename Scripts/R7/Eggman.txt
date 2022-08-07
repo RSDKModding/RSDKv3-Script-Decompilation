@@ -1,77 +1,83 @@
-//------------Sonic CD Eggman Script-------------//
+//-------------------Sonic CD Eggman Script-------------------//
 //--------Scripted by Christian Whitehead 'The Taxman'--------//
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
 // Note: We're using R7Eggman as a prefix here because there's like 5 "Eggman" objects in the game, it's less confusing this way
 
 // Aliases
-#alias Object.Value0	:	Object.Timer
-#alias Object.Value1	:	Object.XVelocity
-#alias Object.Value2	:	Object.LaserActive
-#alias Object.Value3	:	Object.DebrisTimer
-#alias Object.Value4	:	Object.LastExplosion
-#alias Object.Value5	:	Object.LaserOffset
-#alias Object.Value6	:	Object.Acceleration
+#alias Object.Value0 : Object.Timer
+#alias Object.Value1 : Object.XVelocity
+#alias Object.Value2 : Object.LaserActive
+#alias Object.Value3 : Object.DebrisTimer
+#alias Object.Value4 : Object.LastExplosion
+#alias Object.Value5 : Object.LaserOffset
+#alias Object.Value6 : Object.Acceleration
 
 // Initial few States
-#alias 0 	:	R7EGGMAN_AWAITPLAYER
-#alias 1 	:	R7EGGMAN_WAIT
+#alias 0  : R7EGGMAN_AWAITPLAYER
+#alias 1  : R7EGGMAN_WAIT
 
 // Flying across the Screen, Right -> Left, then Left -> Right
-#alias 2 	:	R7EGGMAN_FLYIN_RL
-#alias 3 	:	R7EGGMAN_FLYIN_LR
+#alias 2  : R7EGGMAN_FLYIN_RL
+#alias 3  : R7EGGMAN_FLYIN_LR
 
 // Some States for taking care of Metal
-#alias 4 	:	R7EGGMAN_GOTOMETAL
-#alias 5 	:	R7EGGMAN_STARTUPMETAL
+#alias 4  : R7EGGMAN_GOTOMETAL
+#alias 5  : R7EGGMAN_STARTUPMETAL
 
 // A bunch of small States for when he's flashing the laser on and off
-#alias 6 	:	R7EGGMAN_INTROLASERON1
-#alias 7 	:	R7EGGMAN_INTROLASEROFF1
-#alias 8 	:	R7EGGMAN_INTROLASERON2
-#alias 9 	:	R7EGGMAN_INTROLASEROFF2
-#alias 10	:	R7EGGMAN_INTROLASERON3
-#alias 11	:	R7EGGMAN_INTROLASEROFF3
+#alias 6  : R7EGGMAN_INTROLASERON1
+#alias 7  : R7EGGMAN_INTROLASEROFF1
+#alias 8  : R7EGGMAN_INTROLASERON2
+#alias 9  : R7EGGMAN_INTROLASEROFF2
+#alias 10 : R7EGGMAN_INTROLASERON3
+#alias 11 : R7EGGMAN_INTROLASEROFF3
 
 // Chasing the pair of Blues during the race
-#alias 12	:	R7EGGMAN_CHASESTART
-#alias 13	:	R7EGGMAN_CHASEMAIN
+#alias 12 : R7EGGMAN_CHASESTART
+#alias 13 : R7EGGMAN_CHASEMAIN
 
 // After the race, a series of states for him repeatedly lasering Metal Sonic's scrapped remains (?)
-#alias 14	:	R7EGGMAN_ENDLASERON1
-#alias 15	:	R7EGGMAN_ENDLASEROFF1
-#alias 16	:	R7EGGMAN_ENDLASERON2
-#alias 17	:	R7EGGMAN_ENDLASEROFF2
-#alias 18	:	R7EGGMAN_ENDLASERON3
-#alias 19	:	R7EGGMAN_ENDLASEROFF3
+#alias 14 : R7EGGMAN_ENDLASERON1
+#alias 15 : R7EGGMAN_ENDLASEROFF1
+#alias 16 : R7EGGMAN_ENDLASERON2
+#alias 17 : R7EGGMAN_ENDLASEROFF2
+#alias 18 : R7EGGMAN_ENDLASERON3
+#alias 19 : R7EGGMAN_ENDLASEROFF3
 
 // After that fit, now he descends and flies off to the right
-#alias 20	:	R7EGGMAN_DESCEND
-#alias 21	:	R7EGGMAN_PAUSE
-#alias 22	:	R7EGGMAN_FLYAWAY
+#alias 20 : R7EGGMAN_DESCEND
+#alias 21 : R7EGGMAN_PAUSE
+#alias 22 : R7EGGMAN_FLYAWAY
 
 // Thruster Animations
-#alias 0	:	R7EGGMANANI_THRUSTEROFF
-#alias 1	:	R7EGGMANANI_THRUSTERON
+#alias 0 : R7EGGMANANI_THRUSTEROFF
+#alias 1 : R7EGGMANANI_THRUSTERON
 
 // Metal Sonic (Object[+1]) Aliases
-#alias 1	:	METALSONIC_TURNRIGHT
-#alias 2	:	ANI_TURNING
+#alias 1 : METALSONIC_TURNRIGHT
+
+#alias 2 : ANI_TURNING
 
 // Vertical Door (Object [-2] and [-1]) Aliases
 #alias Object.Value0	:	Object.DrawPosY
 
-#alias 1	:	VERTICALDOOR_START_OPENING
-#alias 3	:	VERTICALDOOR_END_OPENED
+#alias 1 : VERTICALDOOR_START_OPENING
+#alias 3 : VERTICALDOOR_END_OPENED
 
 // Object[-2] is the door at the start of the race, [-1] is the final door
 
 // Debris Aliases
 // (XVel is coincidentally the same value as the main Eggman object so it doesn't need to be redeclared here)
-#alias Object.Value2	:	Object.YVelocity
+#alias Object.Value2 : Object.YVelocity
+
+// Fade Music Aliases
+#alias 0 : FADEMUSIC_FADE_TO_BOSS
+#alias 1 : FADEMUSIC_FADE_TO_LEVEL
+#alias 2 : FADEMUSIC_SSZEGGMAN
 
 // Soundtrack Aliases
-#alias 0	:	SOUNDTRACK_JP
+#alias 0 : SOUNDTRACK_JP
 
 
 // Function declarations
@@ -109,8 +115,12 @@ sub ObjectMain
 	
 	switch Object.State
 	case R7EGGMAN_AWAITPLAYER
+		// Setup some things for the Boss Fight
+		
+		// Set screen bounds
 		Stage.XBoundary2 = Object.iXPos
 		Stage.XBoundary2 -= 64
+		
 		TempValue0 = Stage.XBoundary2
 		TempValue0 -= Screen.XSize
 		Stage.NewXBoundary1 = TempValue0
@@ -122,7 +132,7 @@ sub ObjectMain
 		if CheckResult == true
 			// If the player's within range, start the startup sequence
 			
-			CreateTempObject(TypeName[FadeMusic], 0, Object.XPos, Object.YPos)
+			CreateTempObject(TypeName[Fade Music], FADEMUSIC_FADE_TO_BOSS, Object.XPos, Object.YPos)
 			
 			Object.Direction = FACING_LEFT
 			
@@ -278,7 +288,7 @@ sub ObjectMain
 				end if
 			end if
 			
-			CreateTempObject(TypeName[FadeMusic], 2, Object.XPos, Object.YPos)
+			CreateTempObject(TypeName[Fade Music], FADEMUSIC_SSZEGGMAN, Object.XPos, Object.YPos)
 			
 			// Open the starting door
 			Object[-2].State = VERTICALDOOR_START_OPENING
@@ -333,13 +343,14 @@ sub ObjectMain
 		
 		// As the race progresses, Robotnik speeds up...
 		Object.Acceleration++
-		Object.Acceleration &= 16383
+		Object.Acceleration &= 0x3FFF
 		
 		TempValue1 = Object.Acceleration
 		TempValue1 >>= 4
 		Object.XVelocity += TempValue1
 		if Object.XVelocity > 0x50000
 			// Maximum speed of 5 pixels per frame
+			
 			Object.XVelocity = 0x50000
 		end if
 		
@@ -374,6 +385,8 @@ sub ObjectMain
 		TempValue0 -= 16
 		if Stage.XBoundary1 < TempValue0
 			Stage.XBoundary1 = TempValue0
+			
+			// More hardcoded stage bounds...
 			if Stage.XBoundary1 > 15840
 				Stage.XBoundary1 = 15840
 			end if
@@ -382,7 +395,7 @@ sub ObjectMain
 		// Is Robotnik further than 34 pixels before the last door?
 		// (Strange way to put it, I hope you don't mind...)
 		TempValue0 = Object[-1].XPos
-		TempValue0 -= 2228224
+		TempValue0 -= 0x220000
 		if Object.XPos > TempValue0
 			Object.XPos = TempValue0
 			Object.Animation = R7EGGMANANI_THRUSTEROFF
@@ -458,6 +471,7 @@ sub ObjectMain
 	case R7EGGMAN_DESCEND
 		// Going down for a moment before retreating...
 		Object.YPos += 0x20000
+		
 		if Object.Timer < 42
 			Object.Timer++
 		else
@@ -468,6 +482,7 @@ sub ObjectMain
 		break
 		
 	case R7EGGMAN_PAUSE
+		// Hold for a second...
 		if Object.Timer < 60
 			Object.Timer++
 		else
@@ -483,6 +498,7 @@ sub ObjectMain
 		if Object.OutOfBounds == true
 			Object.Type = TypeName[Blank Object]
 			Object.Priority = 0
+			
 			if Object[24].PropertyValue == 2
 				// In the Bad Future nothing needs to change, but in the Good Future start playing the normal Good Future music again
 				if Options.Soundtrack == SOUNDTRACK_JP
@@ -491,7 +507,7 @@ sub ObjectMain
 					SetMusicTrack("US/R7C.ogg", 0, 136670)
 				end if
 				
-				CreateTempObject(TypeName[FadeMusic], 1, Object.XPos, Object.YPos)
+				CreateTempObject(TypeName[Fade Music], FADEMUSIC_FADE_TO_LEVEL, Object.XPos, Object.YPos)
 			end if
 			
 			Stage.NewXBoundary2 = 16352
@@ -505,9 +521,9 @@ sub ObjectMain
 			CreateTempObject(TypeName[Explosion], 0, Object.XPos, Object.YPos)
 			
 			// Offset the new object accordingly as needed
-			// (11534336 is 176 pixels down, which is where the base of the laser touches the ground)
+			// Horizontal offset is +/- 6 pixels depending on Robotnik's current direction, and the laser touches the ground 176 pixels down
 			Object[TempObjectPos].XPos += Object.LaserOffset
-			Object[TempObjectPos].YPos += 11534336
+			Object[TempObjectPos].YPos += 0xB00000
 			
 			ArrayPos0 = Object.LastExplosion
 			Object.LastExplosion = Object[TempObjectPos].EntityNo
@@ -521,7 +537,7 @@ sub ObjectMain
 				CreateTempObject(TypeName[Debris], TempValue0, Object.XPos, Object.YPos)
 				
 				Object[TempObjectPos].XPos += Object.LaserOffset
-				Object[TempObjectPos].YPos += 11534336
+				Object[TempObjectPos].YPos += 0xB00000
 				
 				Rand(Object[TempObjectPos].XVelocity, 6)
 				Object[TempObjectPos].XVelocity <<= 16
@@ -541,7 +557,7 @@ sub ObjectMain
 			Object[ArrayPos0].XPos += Object.LaserOffset
 			
 			Object[ArrayPos0].YPos = Object.YPos
-			Object[ArrayPos0].YPos += 11534336
+			Object[ArrayPos0].YPos += 0xB00000
 			
 			Object.DebrisTimer--
 		end if
@@ -554,7 +570,7 @@ sub ObjectMain
 			Object[ArrayPos0].XPos += Object.LaserOffset
 			
 			Object[ArrayPos0].YPos = Object.YPos
-			Object[ArrayPos0].YPos += 11534336
+			Object[ArrayPos0].YPos += 0xB00000
 			
 			Object.DebrisTimer--
 		end if

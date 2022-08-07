@@ -1,63 +1,81 @@
-//------------Sonic CD Solid Block Script-------------//
+//----------------Sonic CD Solid Block Script-----------------//
 //--------Scripted by Christian Whitehead 'The Taxman'--------//
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
+// Aliases
+
+// Time Period Aliases
+#alias Object.PropertyValue : Object.TimePeriod
+
+#alias 0 : PERIOD_PRESENT
+#alias 1 : PERIOD_PAST
+#alias 2 : PERIOD_FUTURE_G
+#alias 3 : PERIOD_FUTURE_B
 
 sub ObjectPlayerInteraction
-
+	
 	TempValue0 = Player.YPos
-
+	
 	// Different collision widths & heights for different block types
 	switch Object.PropertyValue
 	case 0 // Single Block
 	case 7 // Invisible Block (same size as Single Block)
 		PlayerObjectCollision(C_BOX, -16, -16, 16, 16)
 		break
+		
 	case 1 // Two Blocks H
 		PlayerObjectCollision(C_BOX, -32, -16, 32, 16)
 		break
+		
 	case 2 // Three Blocks H
 		PlayerObjectCollision(C_BOX, -48, -16, 48, 16)
 		break
+		
 	case 3 // Four Blocks H
 		PlayerObjectCollision(C_BOX, -64, -16, 64, 16)
 		break
+		
 	case 4 // Two Blocks V
 		PlayerObjectCollision(C_BOX, -16, -32, 16, 32)
 		break
+		
 	case 5 // Three Blocks V
 		PlayerObjectCollision(C_BOX, -16, -48, 16, 48)
 		break
+		
 	case 6 // Four Blocks V
 		PlayerObjectCollision(C_BOX, -16, -64, 16, 64)
 		break
+		
 	end switch
-
-	// Left Wall Collsion detected?
+	
+	// Left Wall Collsion (on the block) detected?
 	if CheckResult == 2
 		// Set the Player's Right Collision Flag to true
 		// (Used in the Metal Sonic race sequence)
+		
 		Player.RCollisionFlag = true
 	end if
-
+	
 	// Roof collision detected while the player's on the ground?
 	if Player.Gravity == false
 		if CheckResult == 4
 			// Move the player back ontop of the block
+			
 			Player.YPos = TempValue0
 		end if
 	end if
-
+	
 end sub
 
 
 sub ObjectDraw
-
+	
 	switch Object.PropertyValue
 	case 0 // Single Block
 		DrawSprite(0)
 		break
-
+		
 	case 1 // Two Blocks H
 		TempValue0 = Object.XPos
 		TempValue0 -= 0x100000
@@ -65,7 +83,7 @@ sub ObjectDraw
 		TempValue0 += 0x200000
 		DrawSpriteXY(0, TempValue0, Object.YPos)
 		break
-
+		
 	case 2 // Three Blocks H
 		TempValue0 = Object.XPos
 		TempValue0 -= 0x200000
@@ -75,7 +93,7 @@ sub ObjectDraw
 		TempValue0 += 0x200000
 		DrawSpriteXY(0, TempValue0, Object.YPos)
 		break
-
+		
 	case 3 // Four Blocks H
 		TempValue0 = Object.XPos
 		TempValue0 -= 0x300000
@@ -87,7 +105,7 @@ sub ObjectDraw
 		TempValue0 += 0x200000
 		DrawSpriteXY(0, TempValue0, Object.YPos)
 		break
-
+		
 	case 4 // Two Blocks V
 		TempValue0 = Object.YPos
 		TempValue0 -= 0x100000
@@ -95,7 +113,7 @@ sub ObjectDraw
 		TempValue0 += 0x200000
 		DrawSpriteXY(0, Object.XPos, TempValue0)
 		break
-
+		
 	case 5 // Three Blocks V
 		TempValue0 = Object.YPos
 		TempValue0 -= 0x200000
@@ -105,7 +123,7 @@ sub ObjectDraw
 		TempValue0 += 0x200000
 		DrawSpriteXY(0, Object.XPos, TempValue0)
 		break
-
+		
 	case 6 // Four Blocks V
 		TempValue0 = Object.YPos
 		TempValue0 -= 0x300000
@@ -117,9 +135,11 @@ sub ObjectDraw
 		TempValue0 += 0x200000
 		DrawSpriteXY(0, Object.XPos, TempValue0)
 		break
-
+		
+	// case 7, the invisible block, doesn't draw anything of course
+	
 	end switch
-
+	
 end sub
 
 
@@ -128,14 +148,15 @@ sub ObjectStartup
 	LoadSpriteSheet("R7/Objects.gif")
 	
 	// Load the appropriate version of the sprite based on the current time period
-	switch Object[24].PropertyValue
-	case 0
-	case 1
-	case 3
+	switch Object[24].TimePeriod
+	case PERIOD_PRESENT
+	case PERIOD_PAST
+	case PERIOD_FUTURE_B
 		// Normal version of the sprite
 		SpriteFrame(-16, -16, 32, 32, 1, 1)
 		break
-	case 2
+		
+	case PERIOD_FUTURE_G
 		// Good future version of the sprite
 		SpriteFrame(-16, -16, 32, 32, 117, 219)
 		break
@@ -254,19 +275,7 @@ end sub
 
 sub RSDKLoad
 	LoadSpriteSheet("R7/Objects.gif")
-
-	// Load the correct sprite based on the current time zone
-	CheckCurrentStageFolder("R71C")
-	TempValue0 = CheckResult
-	CheckCurrentStageFolder("R72C")
-	TempValue0 |= CheckResult
-	CheckCurrentStageFolder("R73C")
-	TempValue0 |= CheckResult
-	if TempValue0 == true
-		SpriteFrame(-16, -16, 32, 32, 117, 219)
-	else
-		SpriteFrame(-16, -16, 32, 32, 1, 1)
-	end if
+	SpriteFrame(-16, -16, 32, 32, 1, 1)
 
 	AddEditorVariable("Type")
 	SetActiveVariable("Type")

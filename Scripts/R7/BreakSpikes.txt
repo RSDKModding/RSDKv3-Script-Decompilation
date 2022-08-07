@@ -1,32 +1,32 @@
-//------------Sonic CD Break Spikes Script-------------//
+//----------------Sonic CD Break Spikes Script----------------//
 //--------Scripted by Christian Whitehead 'The Taxman'--------//
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
 // Aliases
 
-// Value aliases
-#alias Object.Value1	:	Object.XVelocity
-#alias Object.Value2	:	Object.YVelocity
+// Value Aliases
+#alias Object.Value1 : Object.XVelocity
+#alias Object.Value2 : Object.YVelocity
 
-#alias Object.Value3	:	Object.YAcceleration
+#alias Object.Value3 : Object.YAcceleration
 
-// Property Value aliases
-#alias 0	:	BREAKSPIKES_MAIN
-
-#alias 2	:	INK_ALPHA
+// Property Value Aliases
 // All non-zero property values are for individual spike pieces
+#alias 0 : BREAKSPIKES_MAIN
 
-// Player aliases
-#alias Player.Value4	:	Player.InvincibleTimer
+#alias 2 : INK_ALPHA
+
+// Player Aliases
+#alias Player.Value4 : Player.InvincibleTimer
 
 
 sub ObjectMain
 	
 	if Object.PropertyValue == BREAKSPIKES_MAIN
 		
-		// Compare Metal Sonic's position with the spikes to see if they should be broken
+		// Compare Metal Sonic's position with that of the spikes' to see if they should be broken
 		
-		// Take the spike position and subtract 20 pixels from it
+		// Take the spike's position and subtract 20 pixels from it
 		TempValue0 = Object.XPos
 		TempValue0 -= 0x140000
 		
@@ -39,12 +39,11 @@ sub ObjectMain
 			// Play the Crumble SFX
 			PlayStageSfx(7, 0)
 			
-			
 #platform: Use_Haptics
 			// Do a strong shake
 			HapticEffect(96, 0, 0, 0)
 #endplatform
-
+			
 			// Create a bunch of spike fragments
 			// Their property value is what frame they should use
 			
@@ -93,11 +92,12 @@ sub ObjectMain
 		Object.XPos += Object.XVelocity
 		Object.YPos += Object.YVelocity
 		
-		// The top and bottom spikes get different gravities, which is why gravity is just stored as an object variable in this case
+		// The top and bottom spikes get different gravities, which is why gravity is just stored as an Object Value in this case
 		Object.YVelocity += Object.YAcceleration
 		
 		if Object.OutOfBounds == true
-			// Unload if out of bounds, since the object's not needed anymore
+			// Unload as soon as out of view, as at that point the Object's no longer needed
+			
 			Object.Type = TypeName[Blank Object]
 		end if
 	end if
@@ -107,6 +107,7 @@ end sub
 
 sub ObjectPlayerInteraction
 	
+	// If the Spikes are all still together, then they can still damage Sonic
 	if Object.PropertyValue == BREAKSPIKES_MAIN
 		
 		// Act as a box for the player
@@ -126,7 +127,8 @@ sub ObjectPlayerInteraction
 					// (For refrence, the Heavy Metal Achievement has you get through the entire Metal Sonic race without getting hit)
 					Player.HeavyMetalFlag = false
 					
-					// Decide knockback direction based on if the player's behind or in front of this obejct
+					// Decide knockback direction based on if the player's behind or in front of this object
+					// The X Positions used are based on the centers of both entities
 					if Player.XPos > Object.XPos
 						Player.Speed = 0x20000
 					else

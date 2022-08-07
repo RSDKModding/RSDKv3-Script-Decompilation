@@ -1,4 +1,4 @@
-//------------Sonic CD Hotaru Script-------------//
+//-------------------Sonic CD Hotaru Script-------------------//
 //--------Scripted by Christian Whitehead 'The Taxman'--------//
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
@@ -11,44 +11,44 @@
 
 // Aliases
 
-#alias Object.Value0	:	Object.Timer
+#alias Object.Value0 : Object.Timer
 
-#alias Object.Value1	:	Object.StartPosX
-#alias Object.Value2	:	Object.StartPosY
+#alias Object.Value1 : Object.StartPosX
+#alias Object.Value2 : Object.StartPosY
 
-// Stored as offsets, not complete positions
-#alias Object.Value3	:	Object.Hotaru1X
-#alias Object.Value4	:	Object.Hotaru2X
+// Stored as offsets from the base Hotaru object, not complete positions
+#alias Object.Value3 : Object.Hotaru1X
+#alias Object.Value4 : Object.Hotaru2X
 
 // Y-Offset, half the distance between the two Hotarus
-#alias Object.Value7	:	Object.HotaruRadius
+#alias Object.Value7 : Object.HotaruRadius
 
 // Bit-field that represents the state of the active Hotarus, bit 0 is Hotaru 1 and bit 1 is Hotaru 2
-#alias Object.Value5	:	Object.ActiveHotarus
+#alias Object.Value5 : Object.ActiveHotarus
 
-#alias Object.Value6	:	Object.EletricityActive
+#alias Object.Value6 : Object.EletricityActive
 
 // Player Aliases
-#alias Player.Value4	:	Player.InvincibleTimer
+#alias Player.Value4 : Player.InvincibleTimer
 
 // Hotaru States
-#alias 0 	:	HOTARU_IDLE1
-#alias 1 	:	HOTARU_IDLE2
-#alias 2 	:	HOTARU_TRACKPLAYER
-#alias 3 	:	HOTARU_PAUSE
-#alias 4 	:	HOTARU_LIGHTSON1
-#alias 5 	:	HOTARU_LIGHTSOFF1
-#alias 6 	:	HOTARU_LIGHTSON2
-#alias 7 	:	HOTARU_LIGHTSOFF2
-#alias 8 	:	HOTARU_LIGHTSON3
-#alias 9 	:	HOTARU_LIGHTSOFF3
-#alias 10	:	HOTARU_FLASHING
-#alias 11	:	HOTARU_FLYAWAY
-#alias 12	:	HOTARU_OFFSCREEN
+#alias 0  : HOTARU_IDLE1
+#alias 1  : HOTARU_IDLE2
+#alias 2  : HOTARU_TRACKPLAYER
+#alias 3  : HOTARU_PAUSE
+#alias 4  : HOTARU_LIGHTSON1
+#alias 5  : HOTARU_LIGHTSOFF1
+#alias 6  : HOTARU_LIGHTSON2
+#alias 7  : HOTARU_LIGHTSOFF2
+#alias 8  : HOTARU_LIGHTSON3
+#alias 9  : HOTARU_LIGHTSOFF3
+#alias 10 : HOTARU_FLASHING
+#alias 11 : HOTARU_FLYAWAY
+#alias 12 : HOTARU_OFFSCREEN
 
-// Badnik Condition States
-#alias 0	:	PROPVAL_QUALITY_GOOD
-#alias 1	:	PROPVAL_QUALITY_BAD
+// Badnik Condition Aliases
+#alias 0 : CONDITION_GOOD
+#alias 1 : CONDITION_BAD
 
 
 // Function declarations
@@ -58,6 +58,7 @@
 function Hotaru_HotaruBreak
 	
 	// This function is called to see if the individual Hotaru being checked should break
+	
 	// Preconditions:
 	// - Object.XPos & Object.YPos are set to the positions of the Hotaru being checked (not the base Hotaru object!)
 	// - ArrayPos1 is the EntityNo of where to spawn the Hotaru, if it needs to be broken
@@ -179,14 +180,14 @@ sub ObjectMain
 		
 		// Reset the Hotarus to be 70 pixels apart
 		// (Regardless of their Property Value, since that's already been reset...)
-		Object.Hotaru1X = -2293760
-		Object.Hotaru2X = 2293760
+		Object.Hotaru1X = -0x230000
+		Object.Hotaru2X = 0x230000
 		
 		Object.EletricityActive = false
 	end if
 	
 	// Even if there are really only small differences between the two's behaviours, the GOOD and BAD badnik types just have entirely different
-	if Object.PropertyValue == PROPVAL_QUALITY_GOOD
+	if Object.PropertyValue == CONDITION_GOOD
 		switch Object.State
 		case HOTARU_IDLE1
 			Object.Priority = 1
@@ -369,8 +370,8 @@ sub ObjectMain
 				
 				// Reset the Hotarus to be 70 pixels apart
 				// (Regardless of their initial Property Value, since that's already been reset)
-				Object.Hotaru1X = -2293760
-				Object.Hotaru2X =  2293760
+				Object.Hotaru1X = -0x230000
+				Object.Hotaru2X =  0x230000
 			end if
 			break
 			
@@ -565,8 +566,8 @@ sub ObjectMain
 				
 				// Reset the Hotarus to be 70 pixels apart
 				// (Ignoring their Property Value, since it got replaced by Hotaru Condition during startup)
-				Object.Hotaru1X = -2293760
-				Object.Hotaru2X =  2293760
+				Object.Hotaru1X = -0x230000
+				Object.Hotaru2X =  0x230000
 			end if
 			break
 			
@@ -609,8 +610,7 @@ sub ObjectPlayerInteraction
 	case HOTARU_LIGHTSOFF2
 	case HOTARU_LIGHTSON3
 	case HOTARU_LIGHTSOFF3
-//	case HOTARU_FLASHING // There's good reason to imagine this was here, as this case provides all the necesary Spark collision checks...
-		if Object.PropertyValue == PROPVAL_QUALITY_GOOD
+		if Object.PropertyValue == CONDITION_GOOD
 			// Broken Hotarus don't have functional lights...
 			
 			if Object.Hotaru1X < 0
@@ -1057,10 +1057,10 @@ sub ObjectStartup
 				// Radius of 60 pixels
 				// Good variant, with a functioning Light
 				// Start the Hotarus 70 pixels apart (35 pixels from the base Pos)
-				Object[ArrayPos0].HotaruRadius = 3932160
-				Object[ArrayPos0].PropertyValue = PROPVAL_QUALITY_GOOD
-				Object[ArrayPos0].Hotaru1X = -2293760
-				Object[ArrayPos0].Hotaru2X = 2293760
+				Object[ArrayPos0].HotaruRadius = 0x3C0000
+				Object[ArrayPos0].PropertyValue = CONDITION_GOOD
+				Object[ArrayPos0].Hotaru1X = -0x230000
+				Object[ArrayPos0].Hotaru2X = 0x230000
 				break
 				
 			case 1
@@ -1068,10 +1068,10 @@ sub ObjectStartup
 				// Radius of 60 pixels
 				// Bad variant, with a broken Light
 				// Start the Hotarus 70 pixels apart (35 pixels from the base Pos)
-				Object[ArrayPos0].HotaruRadius = 3932160
-				Object[ArrayPos0].PropertyValue = PROPVAL_QUALITY_BAD
-				Object[ArrayPos0].Hotaru1X = -2293760
-				Object[ArrayPos0].Hotaru2X = 2293760
+				Object[ArrayPos0].HotaruRadius = 0x3C0000
+				Object[ArrayPos0].PropertyValue = CONDITION_BAD
+				Object[ArrayPos0].Hotaru1X = -0x230000
+				Object[ArrayPos0].Hotaru2X = 0x230000
 				break
 	
 			case 4
@@ -1080,9 +1080,9 @@ sub ObjectStartup
 				// Good variant, with a functioning Light
 				// Start the Hotarus 100 pixels apart (50 pixels from the base Pos)
 				Object[ArrayPos0].HotaruRadius = 0x440000
-				Object[ArrayPos0].PropertyValue = PROPVAL_QUALITY_GOOD
-				Object[ArrayPos0].Hotaru1X = -3276800
-				Object[ArrayPos0].Hotaru2X = 3276800
+				Object[ArrayPos0].PropertyValue = CONDITION_GOOD
+				Object[ArrayPos0].Hotaru1X = -0x320000
+				Object[ArrayPos0].Hotaru2X = 0x320000
 				break
 	
 			case 5
@@ -1091,9 +1091,9 @@ sub ObjectStartup
 				// Bad variant, with a broken Light
 				// Start the Hotarus 100 pixels apart (50 pixels from the base Pos)
 				Object[ArrayPos0].HotaruRadius = 0x440000
-				Object[ArrayPos0].PropertyValue = PROPVAL_QUALITY_BAD
-				Object[ArrayPos0].Hotaru1X = -3276800
-				Object[ArrayPos0].Hotaru2X = 3276800
+				Object[ArrayPos0].PropertyValue = CONDITION_BAD
+				Object[ArrayPos0].Hotaru1X = -0x320000
+				Object[ArrayPos0].Hotaru2X = 0x320000
 				break
 	
 			case 8
@@ -1102,9 +1102,9 @@ sub ObjectStartup
 				// Good variant, with a functioning Light
 				// Start the Hotarus 140 pixels apart (70 pixels from the base Pos)
 				Object[ArrayPos0].HotaruRadius = 0x380000
-				Object[ArrayPos0].PropertyValue = PROPVAL_QUALITY_GOOD
-				Object[ArrayPos0].Hotaru1X = -4587520
-				Object[ArrayPos0].Hotaru2X = 4587520
+				Object[ArrayPos0].PropertyValue = CONDITION_GOOD
+				Object[ArrayPos0].Hotaru1X = -0x460000
+				Object[ArrayPos0].Hotaru2X = 0x460000
 				break
 	
 			case 9
@@ -1113,9 +1113,9 @@ sub ObjectStartup
 				// Bad variant, with a broken Light
 				// Start the Hotarus 140 pixels apart (70 pixels from the base Pos)
 				Object[ArrayPos0].HotaruRadius = 0x380000
-				Object[ArrayPos0].PropertyValue = PROPVAL_QUALITY_BAD
-				Object[ArrayPos0].Hotaru1X = -4587520
-				Object[ArrayPos0].Hotaru2X = 4587520
+				Object[ArrayPos0].PropertyValue = CONDITION_BAD
+				Object[ArrayPos0].Hotaru1X = -0x460000
+				Object[ArrayPos0].Hotaru2X = 0x460000
 				break
 	
 			case 12
@@ -1123,8 +1123,8 @@ sub ObjectStartup
 				// Radius of 18 pixels
 				// Good variant, with a functioning Light
 				// Start the Hotarus 192 pixels apart (96 pixels from the base Pos)
-				Object[ArrayPos0].HotaruRadius = 1179648
-				Object[ArrayPos0].PropertyValue = PROPVAL_QUALITY_GOOD
+				Object[ArrayPos0].HotaruRadius = 0x120000
+				Object[ArrayPos0].PropertyValue = CONDITION_GOOD
 				Object[ArrayPos0].Hotaru1X = -0x600000
 				Object[ArrayPos0].Hotaru2X = 0x600000
 				break
@@ -1134,8 +1134,8 @@ sub ObjectStartup
 				// Radius of 18 pixels
 				// Bad variant, with a broken Light
 				// Start the Hotarus 192 pixels apart (96 pixels from the base Pos)
-				Object[ArrayPos0].HotaruRadius = 1179648
-				Object[ArrayPos0].PropertyValue = PROPVAL_QUALITY_BAD
+				Object[ArrayPos0].HotaruRadius = 0x120000
+				Object[ArrayPos0].PropertyValue = CONDITION_BAD
 				Object[ArrayPos0].Hotaru1X = -0x600000
 				Object[ArrayPos0].Hotaru2X = 0x600000
 				break
@@ -1192,27 +1192,26 @@ end sub
 
 
 sub RSDKDraw
-	TempValue5 = Object.PropertyValue
-	TempValue5 &= 1
+	GetBit(TempValue5, Object.PropertyValue, 0)
 	
 	TempValue0 = Object.PropertyValue
 	TempValue0 &= 254
 	switch TempValue0
 	case 0
 	default
-		TempValue2 =  3932160
-		TempValue3 = -2293760
+		TempValue2 =  0x3C0000
+		TempValue3 = -0x230000
 		break
 	case 4
 		TempValue2 =  0x440000
-		TempValue3 = -3276800
+		TempValue3 = -0x320000
 		break
 	case 8
 		TempValue2 =  0x380000
-		TempValue3 = -4587520
+		TempValue3 = -0x460000
 		break
 	case 12
-		TempValue2 =  1179648
+		TempValue2 =  0x120000
 		TempValue3 = -0x600000
 		break
 	end switch
@@ -1243,8 +1242,8 @@ sub RSDKLoad
 
 	AddEditorVariable("Condition")
 	SetActiveVariable("Condition")
-	AddEnumVariable("Good", PROPVAL_QUALITY_GOOD)
-	AddEnumVariable("Bad",  PROPVAL_QUALITY_BAD)
+	AddEnumVariable("Good", CONDITION_GOOD)
+	AddEnumVariable("Bad",  CONDITION_BAD)
 	
 	AddEditorVariable("Formation")
 	SetActiveVariable("Formation")

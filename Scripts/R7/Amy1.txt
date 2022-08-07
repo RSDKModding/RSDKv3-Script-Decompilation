@@ -1,31 +1,36 @@
-//------------Sonic CD Amy 1 Script-------------//
+//-------------------Sonic CD Amy 1 Script--------------------//
 //--------Scripted by Christian Whitehead 'The Taxman'--------//
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
 // Aliases
 
 // Values0-1 are skipped over... possibly to keep values parallel with the Amy 2 object
-#alias Object.Value2	:	Object.YVelocity
-#alias Object.Value3	:	Object.Bounds.Left
-#alias Object.Value4	:	Object.Bounds.Right
+#alias Object.Value2 : Object.YVelocity
+#alias Object.Value3 : Object.Bounds.Left
+#alias Object.Value4 : Object.Bounds.Right
 
-#alias 0	:	AMY1_CAUGHT
-#alias 1	:	AMY1_FALLING
+#alias 0 : AMY1_CAUGHT
+#alias 1 : AMY1_FALLING
+
+// Player Aliases
+#alias 0 : PLAYER_SONIC
 
 // SFX Aliases
-#alias 22	:	SFX_EXPLOSION
+#alias 22 : SFX_EXPLOSION
 
 // Game modes
-#alias 2	:	GAMEMODE_TIMEATTACK
+#alias 2 : GAMEMODE_TIMEATTACK
 
 
 sub ObjectMain
 	
 	if Object.State == AMY1_FALLING
-	
-		// Update falling movement
+		
+		// Update falling movements
 		Object.YPos += Object.YVelocity
-		Object.YVelocity += 0x2000 // Gravity of 0x2000 per frame
+		
+		// Gravity of 0.125 pixels per frame
+		Object.YVelocity += 0x2000
 		
 		// Check if Amy's touched the floor
 		ObjectTileCollision(0, 0, 19, 0)
@@ -40,15 +45,24 @@ sub ObjectMain
 			// Set Amy's bounds to make sure she doesn't go too far
 			Object.Bounds.Left  = 0x3EA40000 // Hardcoded left bounds  (16036 with the in-game debug position display)
 			Object.Bounds.Right = 0x40000000 // Hardcoded right bounds (16384 with the in-game debug position display)
-
+			
 #platform: Use_Origins
-			game.callbackParam0 = 1
+			// Some additional stuff for Origins
+			
+			// Let the game know we've finished the boss!
+			// This is somewhat unused, as in ths Boss Rush, Metal Sonic already does this same thing,
+			//  so Amy never gets a turn before the stage switches
+			// In normal play though this hits, though at that point it doesn't have any effect at all
+			game.callbackParam0 = true
 			EngineCallback(NOTIFY_BOSS_END)
+			
 			if game.playMode == BOOT_PLAYMODE_BOSSRUSH
+				// This code will never hit at all, check out above
+				
 				StopMusic()
-			end if		
+			end if
 #endplatform
-
+		
 		end if
 	end if
 	
@@ -59,9 +73,9 @@ sub ObjectPlayerInteraction
 	
 	if Object.State == AMY1_CAUGHT
 		
-		// Due to how the engine works, there's a single frame upon landinig where this code is actually
+		// Due to how the engine works, there's a single frame upon landing where this code is actually
 		//   being run from an Amy 2 object, so check against that
-		// This check was only introduced in an update, so it's not in the Steam version or anything
+		// This check was only introduced in an update, so it's not in the 2012 Steam version or anything
 		
 		if Object.Type == TypeName[Amy 1]
 			
@@ -105,6 +119,7 @@ sub ObjectDraw
 		Object.Frame &= 31
 	else
 		// Stay static while falling down
+		
 		DrawSprite(Object.Frame)
 	end if
 	
@@ -121,16 +136,20 @@ sub ObjectStartup
 		if Object[ArrayPos0].Type == TypeName[Amy 1]
 			
 			// Only appear for Sonic
-			if Stage.PlayerListPos == 0
+			if Stage.PlayerListPos == PLAYER_SONIC
 				if Options.GameMode == GAMEMODE_TIMEATTACK
 					// Don't appear in time attack, unload
+					
 					Object[ArrayPos0].Type = TypeName[Blank Object]
 				else
 					// All conditions passed - Amy can continue as normal
+					
+					// Have her draw above Sonic, 
 					Object[ArrayPos0].DrawOrder = 4
 				end if
 			else
 				// Amy doesn't care about Tails, unload
+				
 				Object[ArrayPos0].Type = TypeName[Blank Object]
 			end if
 			

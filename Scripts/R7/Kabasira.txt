@@ -1,20 +1,25 @@
-//------------Sonic CD Kabasira Script-------------//
+//------------------Sonic CD Kabasira Script------------------//
 //--------Scripted by Christian Whitehead 'The Taxman'--------//
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
 // Aliases
-#alias Object.Value0	:	Object.Timer
-#alias Object.Value1	:	Object.Angle
-#alias Object.Value2	:	Object.StartPosX
-#alias Object.Value3	:	Object.StartPosY
-#alias Object.Value4	:	Object.DrawPosX
-#alias Object.Value5	:	Object.DrawPosY
+#alias Object.Value0 : Object.Timer
+#alias Object.Value1 : Object.Angle
+#alias Object.Value2 : Object.StartPosX
+#alias Object.Value3 : Object.StartPosY
+#alias Object.Value4 : Object.DrawPosX
+#alias Object.Value5 : Object.DrawPosY
 
-#alias 2	:	KABASIRA_INACTIVE
+// States 0-1 are never used, aside from state 0 being the default state
+#alias 2 : KABASIRA_INACTIVE
 
 // KabasiraShot Aliases
-#alias Object.Value1	:	Object.XVelocity
-#alias Object.Value2	:	Object.YVelocity
+#alias Object.Value1 : Object.XVelocity
+#alias Object.Value2 : Object.YVelocity
+
+// Badnik Conditions
+#alias 0 : CONDITION_GOOD
+#alias 1 : CONDITION_BAD
 
 
 sub ObjectMain
@@ -36,8 +41,8 @@ sub ObjectMain
 		Object.YPos = Object.StartPosY
 	end if
 	
-	if Object.PropertyValue == 0
-		// Attacking variant of the object
+	if Object.PropertyValue == CONDITION_GOOD
+		// Good variant of the object, able to attack
 		
 		Object.Angle += 2
 		Object.Angle &= 511
@@ -331,7 +336,7 @@ sub RSDKEdit
 		case EDIT_VAR_PROPVAL // Property Value
 			CheckResult = Object.PropertyValue
 			break
-		case 0 // Type
+		case 0 // Condition
 			CheckResult = Object.PropertyValue
 			break
 		end switch
@@ -340,7 +345,7 @@ sub RSDKEdit
 		case EDIT_VAR_PROPVAL // Property Value
 			Object.PropertyValue = Editor.VariableValue
 			break
-		case 0 // Type
+		case 0 // Condition
 			Object.PropertyValue = Editor.VariableValue
 			break
 		end switch
@@ -359,8 +364,8 @@ sub RSDKLoad
 	SpriteFrame(-8, -8, 16, 16, 116, 100)
 	SpriteFrame(-8, -6, 8, 8, 243, 101)
 
-	AddEditorVariable("Type")
-	SetActiveVariable("Type")
-	AddEnumVariable("Attacking", 0)
-	AddEnumVariable("Peaceful",  1)
+	AddEditorVariable("Condition")
+	SetActiveVariable("Condition")
+	AddEnumVariable("Good", CONDITION_GOOD)
+	AddEnumVariable("Bad",  CONDITION_BAD)
 end sub

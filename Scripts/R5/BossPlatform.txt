@@ -1,4 +1,4 @@
-//------------Sonic CD Boss Platform Script-------------//
+//---------------Sonic CD Boss Platform Script----------------//
 //--------Scripted by Christian Whitehead 'The Taxman'--------//
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
@@ -844,10 +844,20 @@ sub ObjectMain
 		else
 
 #platform: Use_Origins
+			// Some addditions for Origins
+			
+			// Let the game know that we've "killed" the boss
+			// Poor Robotnik, I hope he's alright...
 			EngineCallback(NOTIFY_KILL_BOSS)
-			game.callbackParam0 = 1
+			
+			// And then, as a separate callback, let the game know we've ended the boss as well
+			// No idea why this and the previous one are separate, they're pretty much the same
+			game.callbackParam0 = true
 			EngineCallback(NOTIFY_BOSS_END)
+			
 			if game.playMode == BOOT_PLAYMODE_BOSSRUSH
+				// In Boss Rush, stop the music since we're getting sent to the next zone now
+				
 				StopMusic()
 			end if
 #endplatform

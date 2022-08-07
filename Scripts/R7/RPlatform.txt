@@ -1,26 +1,26 @@
-//------------Sonic CD R Platform Script-------------//
+//-----------------Sonic CD R Platform Script-----------------//
 //--------Scripted by Christian Whitehead 'The Taxman'--------//
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
 // Aliases
-#alias Object.Value0	:	Object.Angle
-#alias Object.Value1	:	Object.PlatformX
-#alias Object.Value2	:	Object.PlatformY
-#alias Object.Value3	:	Object.ChangeX
-#alias Object.Value4	:	Object.ChangeY
-#alias Object.Value5	:	Object.SwingAngle
-#alias Object.Value6	:	Object.ChainsNo
+#alias Object.Value0 : Object.Angle
+#alias Object.Value1 : Object.PlatformX
+#alias Object.Value2 : Object.PlatformY
+#alias Object.Value3 : Object.ChangeX
+#alias Object.Value4 : Object.ChangeY
+#alias Object.Value5 : Object.SwingAngle
+#alias Object.Value6 : Object.ChainsNo
 
-#alias 0	:	RPLATFORM_FULL_CW_SLOWAPEX
-#alias 1	:	RPLATFORM_FULL_CW
-#alias 2	:	RPLATFORM_FULL_CCW
-#alias 3	:	RPLATFORM_TOP180
-#alias 4	:	RPLATFORM_RIGHT180
-#alias 5	:	RPLATFORM_BOTTOM180
+#alias 0 : RPLATFORM_FULL_CW_SLOWAPEX
+#alias 1 : RPLATFORM_FULL_CW
+#alias 2 : RPLATFORM_FULL_CCW
+#alias 3 : RPLATFORM_TOP180
+#alias 4 : RPLATFORM_RIGHT180
+#alias 5 : RPLATFORM_BOTTOM180
 
 
 sub ObjectMain
-
+	
 	// Each state directly corresponds to a subtype of the platform
 	switch Object.State
 	case RPLATFORM_FULL_CW_SLOWAPEX
@@ -30,7 +30,7 @@ sub ObjectMain
 		Object.Angle /= 3
 		Object.Angle += 640
 		break
-
+		
 	case RPLATFORM_FULL_CW
 		Object.SwingAngle++
 		Object.SwingAngle &= 511
@@ -41,7 +41,7 @@ sub ObjectMain
 		Object.Angle = 640
 		Object.Angle -= TempValue1
 		break
-
+		
 	case RPLATFORM_FULL_CCW
 		Object.SwingAngle++
 		Object.SwingAngle &= 511
@@ -51,7 +51,7 @@ sub ObjectMain
 		Object.Angle >>= 1
 		Object.Angle += 640
 		break
-
+		
 	case RPLATFORM_TOP180
 		Object.SwingAngle++
 		Object.SwingAngle &= 511
@@ -59,7 +59,7 @@ sub ObjectMain
 		Object.Angle >>= 2
 		Object.Angle += 896
 		break
-
+		
 	case RPLATFORM_RIGHT180
 		Object.SwingAngle++
 		Object.SwingAngle &= 511
@@ -67,7 +67,7 @@ sub ObjectMain
 		Object.Angle >>= 2
 		Object.Angle += 512
 		break
-
+		
 	case RPLATFORM_BOTTOM180
 		Object.SwingAngle++
 		Object.SwingAngle &= 511
@@ -75,93 +75,69 @@ sub ObjectMain
 		Object.Angle >>= 2
 		Object.Angle += 640
 		break
-
+		
 	end switch
-
+	
 	TempValue1 = Object.ChainsNo
 	TempValue1++
 	TempValue1 <<= 4
-
+	
 	Cos(Object.ChangeX, Object.Angle)
 	Object.ChangeX *= TempValue1
 	Object.ChangeX <<= 7
 	Object.ChangeX += Object.XPos
 	Object.ChangeX &= 0xFFFF0000 // Truncating to the iXpos, the number is 0xFFFF0000
 	Object.ChangeX -= Object.PlatformX
-
+	
 	Sin(Object.ChangeY, Object.Angle)
 	Object.ChangeY *= TempValue1
 	Object.ChangeY <<= 7
 	Object.ChangeY += Object.YPos
 	Object.ChangeY &= 0xFFFF0000 // Same as above, this 0xFFFF0000 number is truncating the YPos
 	Object.ChangeY -= Object.PlatformY
-
+	
 end sub
 
 
 sub ObjectPlayerInteraction
-
+	
 	// First backup the object's position
 	TempValue0 = Object.XPos
 	TempValue1 = Object.YPos
-
+	
 	TempValue2 = Player.YPos
 	Object.XPos = Object.PlatformX
 	Object.YPos = Object.PlatformY
-
+	
 	if Player.State == Player_State_Hurt
 		PlayerObjectCollision(C_BOX, -32, -8, 32, 8)
 	else
 		PlayerObjectCollision(C_BOX, -24, -8, 24, 8)
 	end if
-
+	
 	switch CheckResult
 	case 1
 		// The player's on top of the platform, just move them with it for now
 		Player.XPos += Object.ChangeX
 		Player.YPos += Object.ChangeY
 		break
-
+		
 	case 2
 	case 3
 		CallFunction(Player_Hit)
-		PlayerObjectCollision(C_TOUCH, -16, -8, 16, 9)
-		if CheckResult == true
-			if Player.State != Player_State_Hurt
-				TempValue3 = Player.XVelocity
-				if TempValue3 < 0
-					FlipSign(TempValue3)
-				end if
-
-				if TempValue3 < 0x60000
-					if Player.Gravity == 0
-						CallFunction(Player_Kill)
-					end if
-				else
-					if Player.Gravity == 0
-						CallFunction(Player_Hit)
-					end if
-				end if
-			else
-				Player.YPos = TempValue2
-			end if
-		else
-			Player.YPos = TempValue2
-
-			if Player.Gravity == 0
-				CallFunction(Player_Hit)
-			end if
-		end if
-		break
-
+		
+		// [Fallthrough to below, for more collision checks]
+		
 	case 4
 		PlayerObjectCollision(C_TOUCH, -16, -8, 16, 9)
+		
 		if CheckResult == true
 			if Player.State != Player_State_Hurt
 				TempValue3 = Player.XVelocity
 				if TempValue3 < 0
 					FlipSign(TempValue3)
 				end if
+				
 				if TempValue3 < 0x60000
 					if Player.Gravity == 0
 						CallFunction(Player_Kill)
@@ -176,25 +152,27 @@ sub ObjectPlayerInteraction
 			end if
 		else
 			Player.YPos = TempValue2
+			
 			if Player.Gravity == 0
 				CallFunction(Player_Hit)
 			end if
 		end if
 		break
-
+		
 	end switch
-
+	
+	// Now we can restore the Object back to its normal position
 	Object.XPos = TempValue0
 	Object.YPos = TempValue1
-
+	
 end sub
 
 
 sub ObjectDraw
-
+	
 	// Draw the platform post frame
 	DrawSprite(0)
-
+	
 	// Draw all the chains
 	TempValue0 = 0
 	TempValue1 = 16
@@ -203,18 +181,18 @@ sub ObjectDraw
 		TempValue2 *= TempValue1
 		TempValue2 <<= 7
 		TempValue2 += Object.XPos
-
+		
 		Sin(TempValue3, Object.Angle)
 		TempValue3 *= TempValue1
 		TempValue3 <<= 7
 		TempValue3 += Object.YPos
-
+		
 		DrawSpriteXY(1, TempValue2, TempValue3)
-
+		
 		TempValue0++
 		TempValue1 += 16
 	loop
-
+	
 	// Draw the main platform sprite
 	
 	// Find the X component
@@ -223,32 +201,32 @@ sub ObjectDraw
 	Object.PlatformX <<= 7
 	Object.PlatformX += Object.XPos
 	Object.PlatformX &= 0xFFFF0000 // Rounding to iXPos, getting rid of the subpixels inbetween
-
+	
 	// And then find the Y
 	Sin(Object.PlatformY, Object.Angle)
 	Object.PlatformY *= TempValue1
 	Object.PlatformY <<= 7
 	Object.PlatformY += Object.YPos
 	Object.PlatformY &= 0xFFFF0000 // Same as above
-
+	
 	DrawSpriteXY(2, Object.PlatformX, Object.PlatformY)
 	
 end sub
 
 
 sub ObjectStartup
-
+	
 	LoadSpriteSheet("R7/Objects.gif")
-
+	
 	// Pivot Ball Frame
 	SpriteFrame(-8, -8, 16, 16, 34, 1)
-
+	
 	// Chain Frame
 	SpriteFrame(-8, -8, 16, 16, 51, 1)
-
+	
 	// Platform Frame
 	SpriteFrame(-32, -8, 64, 16, 68, 1)
-
+	
 	ArrayPos0 = 32
 	while ArrayPos0 < 1056
 		if Object[ArrayPos0].Type == TypeName[RPlatform]
@@ -256,36 +234,36 @@ sub ObjectStartup
 				Object[ArrayPos0].State = RPLATFORM_BOTTOM180
 				Object[ArrayPos0].ChainsNo = 2
 			end if
-
+			
 			if Object[ArrayPos0].PropertyValue == 35
 				Object[ArrayPos0].State = RPLATFORM_TOP180
 				Object[ArrayPos0].ChainsNo = 2
 			end if
-
+			
 			if Object[ArrayPos0].PropertyValue == 54
 				Object[ArrayPos0].State = RPLATFORM_FULL_CW_SLOWAPEX
 				Object[ArrayPos0].ChainsNo = 5
 			end if
-
+			
 			if Object[ArrayPos0].PropertyValue == 67
 				Object[ArrayPos0].State = RPLATFORM_RIGHT180
 				Object[ArrayPos0].ChainsNo = 2
 			end if
-
+			
 			if Object[ArrayPos0].PropertyValue == 99
 				Object[ArrayPos0].State = RPLATFORM_FULL_CW
 				Object[ArrayPos0].ChainsNo = 2
 			end if
-
+			
 			if Object[ArrayPos0].PropertyValue == 115
 				Object[ArrayPos0].State = RPLATFORM_FULL_CCW
 				Object[ArrayPos0].ChainsNo = 2
 			end if
 		end if
-
+		
 		ArrayPos0++
 	loop
-
+	
 end sub
 
 

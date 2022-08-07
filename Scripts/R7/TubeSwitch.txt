@@ -1,16 +1,16 @@
-//------------Sonic CD Tube Switch Script-------------//
+//----------------Sonic CD Tube Switch Script-----------------//
 //--------Scripted by Christian Whitehead 'The Taxman'--------//
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
 // Aliases
 #alias 42: TYPE_TUBESWITCH
 
-#alias Object.Value0	:	Object.InTube
+#alias Object.Value0 : Object.InTube
 
 // TODO: i have no idea how the naming conventions for this should work
-#alias 0	:	TUBESWITCH_IDK
+#alias 0 : TUBESWITCH_IDK
 
-#alias Player.Value6	:	Player.MinRollSpeed
+#alias Player.Value6 : Player.MinRollSpeed
 
 
 sub ObjectPlayerInteraction
@@ -23,45 +23,45 @@ sub ObjectPlayerInteraction
 					Player.State = Player_State_TubeAirRoll
 					Player.Gravity = 0
 					Player.Animation = ANI_JUMPING
-					Player.MinRollSpeed = 851968
+					Player.MinRollSpeed = 0xD0000
 				else
 					Player.State = Player_State_Roll
 					Player.Animation = ANI_JUMPING
 				end if
 			end if
 			break
-
+			
 		case 1
-
+			
 #platform: Use_Origins
 			Player.State = Player_State_Air_NoDropDash
 #endplatform
-
+			
 #platform: Use_Standalone
 			Player.State = Player_State_Air
 #endplatform
-
+			
 			Player.Animation = ANI_JUMPING
 			if Player.Gravity == 1
 				if Player.YVelocity < 0
-					Player.YVelocity = -851968
+					Player.YVelocity = -0xD0000
 				else
-					Player.YVelocity = 851968
+					Player.YVelocity = 0xD0000
 				end if
 			else
 				switch Player.CollisionMode
 				case 1
 					if Player.Speed < 0
-						Player.YVelocity = 851968
+						Player.YVelocity = 0xD0000
 					else
-						Player.YVelocity = -851968
+						Player.YVelocity = -0xD0000
 					end if
 					break
 				case 3
 					if Player.Speed < 0
-						Player.YVelocity = -851968
+						Player.YVelocity = -0xD0000
 					else
-						Player.YVelocity = 851968
+						Player.YVelocity = 0xD0000
 					end if
 					break
 				end switch
@@ -78,15 +78,15 @@ sub ObjectPlayerInteraction
 					Player.XPos = Object.XPos
 					Player.State = Player_State_TubeAirRoll
 					Player.Animation = ANI_JUMPING
-					Player.MinRollSpeed = 851968
+					Player.MinRollSpeed = 0xD0000
 					Player.CollisionMode = 3
 					Player.Angle = 64
 					Player.Gravity = 0
 					Player.XVelocity = 0
 					if Player.YVelocity < 0
-						Player.Speed = -851968
+						Player.Speed = -0xD0000
 					else
-						Player.Speed = 851968
+						Player.Speed = 0xD0000
 					end if
 					Player.YVelocity = 0
 					Player.Right = 0
@@ -104,16 +104,16 @@ sub ObjectPlayerInteraction
 					switch Player.CollisionMode
 					case 1
 						if Player.Speed < 0
-							Player.YVelocity = 851968
+							Player.YVelocity = 0xD0000
 						else
-							Player.YVelocity = -851968
+							Player.YVelocity = -0xD0000
 						end if
 						break
 					case 3
 						if Player.Speed < 0
-							Player.YVelocity = -851968
+							Player.YVelocity = -0xD0000
 						else
-							Player.YVelocity = 851968
+							Player.YVelocity = 0xD0000
 						end if
 						break
 					end switch
@@ -163,8 +163,8 @@ sub ObjectPlayerInteraction
 						Player.CollisionMode = 3
 						Player.Angle = 64
 						Player.Animation = ANI_JUMPING
-						Player.MinRollSpeed = 851968
-						Player.Speed = -851968
+						Player.MinRollSpeed = 0xD0000
+						Player.Speed = -0xD0000
 						Player.XVelocity = 0
 						Player.YVelocity = 0
 						Player.XPos -= 0x80000
@@ -176,8 +176,8 @@ sub ObjectPlayerInteraction
 						Player.CollisionMode = 1
 						Player.Angle = 192
 						Player.Animation = ANI_JUMPING
-						Player.MinRollSpeed = 851968
-						Player.Speed = 851968
+						Player.MinRollSpeed = 0xD0000
+						Player.Speed = 0xD0000
 						Player.XVelocity = 0
 						Player.YVelocity = 0
 						Player.XPos += 0x80000
@@ -188,8 +188,9 @@ sub ObjectPlayerInteraction
 
 		case 6
 			if Object.InTube == false
-
+				
 #platform: Use_Origins
+				// In Origins, both versions of the Air state are checked against just in case
 				CheckEqual(Player.State, Player_State_Air_NoDropDash)
 				TempValue0 = CheckResult
 				CheckEqual(Player.State, Player_State_Air)
@@ -200,15 +201,16 @@ sub ObjectPlayerInteraction
 					Player.Speed = 0
 				end if
 #endplatform
-
+				
 #platform: Use_Standalone
+				// In Standalone, we don't have any pesky Dropdash to worry about
 				if Player.State == Player_State_Air
 					Player.XPos = Object.XPos
 					Player.XVelocity = 0
 					Player.Speed = 0
 				end if
 #endplatform
-
+				
 			end if
 			break
 

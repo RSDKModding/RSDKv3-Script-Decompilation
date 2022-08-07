@@ -1,23 +1,23 @@
-//------------Sonic CD Kanabun Script-------------//
+//------------------Sonic CD Kanabun Script-------------------//
 //--------Scripted by Christian Whitehead 'The Taxman'--------//
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
 // Aliases
-#alias Object.Value0	:	Object.Timer
-#alias Object.Value1	:	Object.Angle
-#alias Object.Value2	:	Object.StartPosX
-#alias Object.Value3	:	Object.StartPosY
-#alias Object.Value4	:	Object.Depth
-#alias Object.Value5	:	Object.DrawOrderEX
+#alias Object.Value0 : Object.Timer
+#alias Object.Value1 : Object.Angle
+#alias Object.Value2 : Object.StartPosX
+#alias Object.Value3 : Object.StartPosY
+#alias Object.Value4 : Object.Depth
+#alias Object.Value5 : Object.ReturnDrawOrder
 
 // States
-#alias 0	:	KANABUN_FLYL
-#alias 1	:	KANABUN_FLYR
-#alias 2	:	KANABUN_OFFSCREEN
+#alias 0 : KANABUN_FLYL
+#alias 1 : KANABUN_FLYR
+#alias 2 : KANABUN_OFFSCREEN
 
 // Badnik Conditions
-#alias 0	:	PROPVAL_QUALITY_GOOD
-#alias 1	:	PROPVAL_QUALITY_BAD
+#alias 0 : CONDITION_GOOD
+#alias 1 : CONDITION_BAD
 
 
 sub ObjectMain
@@ -34,7 +34,7 @@ sub ObjectMain
 	// The different Kanabun types have their own main update routines
 	// However, their main State Switches are exactly the same
 
-	if Object.PropertyValue == PROPVAL_QUALITY_GOOD		
+	if Object.PropertyValue == CONDITION_GOOD		
 		switch Object.State
 		case KANABUN_FLYL
 			// This Kanabun is initially given always-active priority, in order for its OOB state to work properly
@@ -152,7 +152,7 @@ sub ObjectMain
 	Sin(Object.YPos, Object.Angle)
 	if Object.Angle < 128
 		Object.DrawOrder = 5
-
+		
 		Object.Depth = 0
 		if Object.YPos < -384
 			Object.Depth = 2
@@ -174,13 +174,13 @@ sub ObjectMain
 				Object.Depth = 2
 			end if
 		else
-			Object.DrawOrder = Object.DrawOrderEX
-
+			Object.DrawOrder = Object.ReturnDrawOrder
+			
 			Object.Depth = 4
 			if Object.YPos < -384
 				Object.Depth = 2
 			end if
-
+			
 			if Object.YPos > 384
 				Object.Depth = 2
 			end if
@@ -203,7 +203,7 @@ sub ObjectPlayerInteraction
 	if Object.State < KANABUN_OFFSCREEN
 		if Object.Depth == 0
 			// If in the Foreground, then act as a normal badnik
-
+			
 			PlayerObjectCollision(C_TOUCH, -14, -14, 14, 14)
 			if CheckResult == true
 				CallFunction(Player_BadnikBreak)
@@ -211,7 +211,7 @@ sub ObjectPlayerInteraction
 		else
 			// If in the BG, only interact with the player if the player is curled
 			// (Don't want to damage them unfairly!)
-
+			
 			if Player.Animation == ANI_JUMPING
 				PlayerObjectCollision(C_TOUCH, -14, -14, 14, 14)
 				if CheckResult == true
@@ -272,16 +272,16 @@ sub ObjectStartup
 			// Make the Kanabun start halfway across its movement cycle, right in the middle
 			Object[ArrayPos0].Angle = 256
 			
-			// And store the Kanabun's starating position, not only for object resetting but also for Y movement calculations
+			// Store the Kanabun's starating position, not only for object resetting but also for Y movement calculations
 			Object[ArrayPos0].StartPosX = Object[ArrayPos0].XPos
 			Object[ArrayPos0].StartPosY = Object[ArrayPos0].YPos
 			
-			// And setup where the Kanabun's gonna fly back to
+			// And setup where the Kanabun's gonna fly back to, only the Good variant can go back to the higher layer
 			if Object[ArrayPos0].PropertyValue == 2
-				Object[ArrayPos0].PropertyValue = PROPVAL_QUALITY_GOOD
-				Object[ArrayPos0].DrawOrderEX = 3
+				Object[ArrayPos0].PropertyValue = CONDITION_GOOD
+				Object[ArrayPos0].ReturnDrawOrder = 3
 			else
-				Object[ArrayPos0].DrawOrderEX = 2
+				Object[ArrayPos0].ReturnDrawOrder = 2
 			end if
 		end if
 
@@ -331,7 +331,7 @@ sub RSDKLoad
 
 	AddEditorVariable("Condition")
 	SetActiveVariable("Condition")
-	AddEnumVariable("Good", 0)
-	AddEnumVariable("Bad", 1)
+	AddEnumVariable("Good", CONDITION_GOOD)
+	AddEnumVariable("Bad", CONDITION_BAD)
 	AddEnumVariable("Good (Return to high layer)", 2)
 end sub
