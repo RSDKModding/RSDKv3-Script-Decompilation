@@ -27,9 +27,9 @@ sub ObjectMain
 		case PATABATA_FLY_DOWN
 			Sin(Object.YPos, Object.Oscillation)
 			Object.YPos <<= 12
-			Object.YPos += Object.YOriginPos
+			Object.YPos  += Object.YOriginPos
 
-			Object.XPos -= 0x8000	// 0x8000
+			Object.XPos  -= 0x8000
 
 			Object.Oscillation -= 4
 			if Object.Oscillation == 0
@@ -42,9 +42,9 @@ sub ObjectMain
 			Sin(Object.YPos, Object.Oscillation)
 			FlipSign(Object.YPos)
 			Object.YPos <<= 12
-			Object.YPos += Object.YOriginPos
+			Object.YPos  += Object.YOriginPos
 
-			Object.XPos += 0x8000	// 0x8000
+			Object.XPos  += 0x8000
 
 			Object.Oscillation += 4
 			if Object.Oscillation == 2048
@@ -64,9 +64,9 @@ sub ObjectMain
 		case PATABATA_FLY_DOWN
 			Sin(Object.YPos, Object.Oscillation)
 			Object.YPos <<= 11
-			Object.YPos += Object.YOriginPos
+			Object.YPos  += Object.YOriginPos
 			
-			Object.XPos -= 0x4000	// 0x4000
+			Object.XPos  -= 0x4000
 
 			Object.Oscillation -= 2
 			if Object.Oscillation == 0
@@ -79,9 +79,9 @@ sub ObjectMain
 			Sin(Object.YPos, Object.Oscillation)
 			FlipSign(Object.YPos)
 			Object.YPos <<= 11
-			Object.YPos += Object.YOriginPos
+			Object.YPos  += Object.YOriginPos
 
-			Object.XPos += 0x4000	// 0x4000
+			Object.XPos  += 0x4000
 
 			Object.Oscillation += 2
 			if Object.Oscillation == 2048
@@ -107,11 +107,11 @@ end sub
 
 sub ObjectDraw
 	if Object.Quality == PROPVAL_QUALITY_GOOD
-		TempValue0 = Object.Frame
+		TempValue0   = Object.Frame
 		TempValue0 >>= 3
 		DrawSpriteFX(TempValue0, FX_FLIP, Object.XPos, Object.YPos)
 	else
-		TempValue0 = Object.Frame
+		TempValue0   = Object.Frame
 		TempValue0 >>= 2
 		DrawSpriteFX(TempValue0, FX_FLIP, Object.XPos, Object.YPos)
 	end if
@@ -135,12 +135,13 @@ sub ObjectStartup
 	SpriteFrame(-16, -8, 32, 16, 1, 84)		// #8 - PataBata Fly Frame 3
 	SpriteFrame(-16, -16, 32, 32, 150, 1)	// #9 - PataBata Fly Frame 4
 	
+	// Used to be below LoadSpriteSheet, moved here for consistency
 	ArrayPos0 = 32
 	while ArrayPos0 < 1056
 		if Object[ArrayPos0].Type == TypeName[PataBata]
-			Object[ArrayPos0].YOriginPos = Object[ArrayPos0].YPos
+			Object[ArrayPos0].YOriginPos  = Object[ArrayPos0].YPos
 			Object[ArrayPos0].Oscillation = 1024
-			Object[ArrayPos0].Frame = Object[ArrayPos0].Quality
+			Object[ArrayPos0].Frame  = Object[ArrayPos0].Quality
 			Object[ArrayPos0].Frame *= 20
 		end if
 		ArrayPos0++

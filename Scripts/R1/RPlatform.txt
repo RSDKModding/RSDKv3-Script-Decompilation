@@ -27,8 +27,8 @@ sub ObjectMain
 		Object.YPlayerFloor = 0
 		if Object.Raising == true
 			Object.State = RISEPLATFORM_CRUMBLE
-			Object.Priority = PRIORITY_ACTIVE
-			Object.YVelocity = -0x40000		// -0x40000
+			Object.Priority  = PRIORITY_ACTIVE
+			Object.YVelocity = -0x40000
 			Object.RiseTimer = 0
 		end if
 		break
@@ -43,63 +43,57 @@ sub ObjectMain
 		end if
 		if Object.OutOfBounds == true
 			Object.YPos = Object.YOriginPos
-			Object.State = 0
+			Object.State = RISEPLATFORM_IDLE
 			Object.Timer = 0
 		end if
 		break
 
 	case RISEPLATFORM_RISE
 		if Object.YVelocity < 0
-			Object.YVelocity += 0x2000		// 0x2000
+			Object.YVelocity += 0x2000
 		else
 			Object.State = RISEPLATFORM_FLOAT
 		end if
 		Object.YPlayerFloor = Object.YVelocity
 		if Object.OutOfBounds == true
-			Object.YPos = Object.YOriginPos
-			Object.State = 0
+			Object.YPos  = Object.YOriginPos
+			Object.State = RISEPLATFORM_IDLE
 			Object.Timer = 0
 		end if
 		break
 
 	case RISEPLATFORM_FLOAT
 		if Object.Raising == true
-
 			if Object.Timer < 16
 				Object.Timer++
-				TempValue0 = Object.Timer
+				TempValue0  = Object.Timer
 				TempValue0 &= 3
 				if TempValue0 == 3
-					Object.YPlayerFloor = 0x10000	// 0x10000
+					Object.YPlayerFloor = 0x10000
 				else
 					Object.YPlayerFloor = 0
 				end if
-
 			else
 				Object.YPlayerFloor = 0
 			end if
-
 		else
-		
 			if Object.Timer > 0
 				Object.Timer--
-				TempValue0 = Object.Timer
+				TempValue0  = Object.Timer
 				TempValue0 &= 3
 				if TempValue0 == 3
-					Object.YPlayerFloor = -0x10000	// -0x10000
+					Object.YPlayerFloor = -0x10000
 				else
 					Object.YPlayerFloor = 0
 				end if
-
 			else
 				Object.YPlayerFloor = 0
 			end if
-
 		end if
 
 		if Object.OutOfBounds == true
 			Object.YPos = Object.YOriginPos
-			Object.State = 0
+			Object.State = RISEPLATFORM_IDLE
 			Object.Timer = 0
 		end if
 		break

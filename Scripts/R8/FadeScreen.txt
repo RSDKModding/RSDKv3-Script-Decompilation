@@ -20,6 +20,12 @@
 // Game modes
 #alias 2	:	GAMEMODE_TIMEATTACK
 
+#alias 0	:	JP_OST
+
+// Engine States
+#alias 1	:	ENGINE_MAINGAME
+#alias 8	:	ENGINE_WAIT
+
 
 sub ObjectMain
 	switch Object.State
@@ -50,7 +56,7 @@ sub ObjectMain
 		else
 			StopMusic()
 
-#platform: Use_Origins			
+#platform: Use_Origins
 			EngineCallback(NOTIFY_BOSS_END)
 			TempValue0 = false
 			if game.playMode == BOOT_PLAYMODE_BOSSRUSH
@@ -67,7 +73,9 @@ sub ObjectMain
 				end if
 			end if
 #endplatform
-
+#platform: Use_Standalone
+			TempValue0 = false
+#endplatform
 			if TempValue0 != false
 				Object.State = FADESCREEN_BOSSRUSH
 			else
@@ -126,74 +134,81 @@ sub ObjectMain
 					StatsUsabilityParam3 = 0
 					StatsUsabilityParam4 = 0
 
-					if SpecialStage.TimeStones > 126
+					if SpecialStage.TimeStones > 126	// 0b1111110, each '1' bit represents an obtained time stone
 						EngineCallback(NOTIFY_GOOD_ENDING)
 					else
-						if Good_Future_List > 0x3FFE
+						if Good_Future_List > 0x3FFE	// 0b11111111111110, each '1' bit represents a zone with the robot transporters destroyed
 							EngineCallback(NOTIFY_GOOD_ENDING)
 						end if
 					end if
 #endplatform
-					if SpecialStage.TimeStones > 126
-#platform: Standard
+
+					if SpecialStage.TimeStones > 126	// 0b1111110, each '1' bit represents an obtained time stone
 						LoadVideo("Good_Ending")
-#endplatform
-#platform: Mobile
-						if Options.Soundtrack == 0
-							LoadVideo("Good_Ending")
-						else
-							LoadVideo("Good_EndingUS")
-						end if
-#endplatform
 					else
-						if Good_Future_List > 16382
-#platform: Standard
+						if Good_Future_List > 0x3FFE	// 0b11111111111110, each '1' bit represents a zone with the robot transporters destroyed
 							LoadVideo("Good_Ending")
-#endplatform
-
-#platform: Mobile
-							if Options.Soundtrack == 0
-								LoadVideo("Good_Ending")
-							else
-								LoadVideo("Good_EndingUS")
-							end if
-#endplatform
 						else
-#platform: Standard
 							LoadVideo("Bad_Ending")
-#endplatform
-
-#platform: Mobile
-							if Options.Soundtrack == 0
-								LoadVideo("Bad_Ending")
-							else
-								LoadVideo("Bad_EndingUS")
-							end if
-#endplatform
 						end if
 					end if
-					
-					if SaveRAM[36] == 0
+
+// Because of the way mobile cd worked (using the phone's native video player)
+// it needed to reproduce separated videos depending of the soundtrack option
+// for the sake of clarity and simplicity, the mobile code got commented out
+//					if SpecialStage.TimeStones > 126	// 0b1111110, each '1' bit represents an obtained time stone
+//						if Options.Soundtrack == JP_OST
+//							LoadVideo("Good_Ending")
+//						else
+//							LoadVideo("Good_EndingUS")
+//						end if
+//					else
+//						if Good_Future_List > 0x3FFE	// 0b11111111111110, each '1' bit represents a zone with the robot transporters destroyed
+//							if Options.Soundtrack == JP_OST
+//								LoadVideo("Good_Ending")
+//							else
+//								LoadVideo("Good_EndingUS")
+//							end if
+//						else
+//							if Options.Soundtrack == JP_OST
+//								LoadVideo("Bad_Ending")
+//							else
+//								LoadVideo("Bad_EndingUS")
+//							end if
+//						end if
+//					end if
+
+					if SaveRAM[36] == false	// Is Tails unlocked?
 #platform: Use_Origins
 						if game.playMode == BOOT_PLAYMODE_CLASSIC
-							Stage.ListPos = 0
-							Engine.State = 8
+							Stage.ListPos = 0	// Title Screen
+							Engine.State = ENGINE_WAIT
 						else
-							SaveRAM[36] = 1
+							SaveRAM[36] = true
 							WriteSaveRAM()
-							Stage.ListPos = 8
+							Stage.ListPos = 8	// Tails Unlock Screen
 						end if
 #endplatform
 
 #platform: Use_Standalone
-						SaveRAM[36] = 1
+						SaveRAM[36] = true
 						WriteSaveRAM()
-						Stage.ListPos = 8
+						Stage.ListPos = 8	// Tails Unlock Screen
 #endplatform
 					else
-						Stage.ListPos = 0
-						Engine.State = 8
+						Stage.ListPos = 0	// Title Screen
+#platform: Use_Origins
+						Engine.State = ENGINE_WAIT
+#endplatform
 					end if
+
+#platform: Use_Decomp
+					// We don't really want to softlock the game don't we?
+					if Engine.State == ENGINE_WAIT
+						Engine.State = ENGINE_MAINGAME
+					end if
+#endplatform
+
 #platform: Use_Origins
 					game.callbackParam0 = 1
 					EngineCallback(NOTIFY_STATS_MOVIE)
@@ -202,8 +217,8 @@ sub ObjectMain
 #platform: Use_Standalone
 					// Originally the game checked if the player was using sonic or tails
 					// This got removed on origins, but since it covers this whole thing, this workaround should do
-					if Stage.PlayerListPos == 1
-						Stage.ListPos = 7
+					if Stage.PlayerListPos == 1	// Tails
+						Stage.ListPos = 7	// 2011 Remaster Credits
 					end if
 #endplatform
 				end if

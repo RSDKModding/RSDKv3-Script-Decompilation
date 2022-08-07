@@ -8,6 +8,10 @@
 #alias Object.Value2	:	Object.Scroll
 #alias Object.Value3	:	Object.EndCredits
 
+// Text Font Aliases
+#alias Object.Value1	:	Object.TargetLine
+
+// States
 #alias 0	:	CREDITSCONTROL_INIT
 #alias 1	:	CREDITSCONTROL_FADEIN
 #alias 2	:	CREDITSCONTROL_MAIN
@@ -23,14 +27,14 @@
 
 // On Standard Platforms (ie PC 2012 & consoles) "Data/Game/Credits_Console.txt" is used instead
 
-// Text Font Aliases
-#alias Object.Value1	:	Object.TargetLine
-
 // Soundtrack Aliases
 #alias 0	:	SOUNDTRACK_JP
 
 // Stage Aliases
 #alias 1	:	STAGE_P_MENU
+
+// Priority
+#alias 1	:	PRIORITY_ACTIVE
 
 // Engine States
 #alias 8	:	ENGINE_WAIT
@@ -46,7 +50,7 @@ sub ObjectMain
 		Screen.YOffset = Object.Scroll
 		
 		// Center the camera to be around 256 pixels in, to make sure the text is centered
-		TempValue0 = 256
+		TempValue0  = 256
 		TempValue0 -= Screen.CenterX
 		
 		Screen.XOffset = TempValue0
@@ -92,7 +96,7 @@ sub ObjectMain
 			Object.Scroll++
 		end if
 		
-		TempValue0 = Object.Scroll
+		TempValue0   = Object.Scroll
 		TempValue0 >>= 1
 		
 		Screen.YOffset = TempValue0
@@ -187,7 +191,7 @@ sub ObjectStartup
 	Object[0].Type = TypeName[Credits Control]
 	
 	// Make sure that it's always active, since it's the master control in this scene
-	Object[0].Priority = 1
+	Object[0].Priority = PRIORITY_ACTIVE
 	
 	// Get the row count of how many entries there are in the credits file
 	GetTextInfo(TempValue1, MENU_1, 2, 0, 0)

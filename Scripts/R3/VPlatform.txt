@@ -1,4 +1,4 @@
-//------------Sonic CD V Platform Script-------------//
+//-------------Sonic CD Vertical Platform Script--------------//
 //--------Scripted by Christian Whitehead 'The Taxman'--------//
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
@@ -8,22 +8,22 @@
 #alias Object.Value3	:	Object.Oscillation
 
 // Property Values
-#alias 0	:	VPLATFORM_START_TOP
-#alias 1	:	VPLATFORM_START_BOTTOM
+#alias 0	:	START_FROM_BEGINNING
+#alias 1	:	START_HALFWAY_THROUGH
 
 // Collision
-#alias 1	:	FLOOR
+#alias 1	:	CSIDE_FLOOR
 
 
 sub ObjectMain
-	Object.Oscillation = Oscillation
+	Object.Oscillation  = Oscillation
 	Object.Oscillation *= 3
-	if Object.PropertyValue == VPLATFORM_START_BOTTOM
+	if Object.PropertyValue == START_HALFWAY_THROUGH
 		Object.Oscillation += 256
 	end if
 
 	Sin(Object.YVelocity, Object.Oscillation)
-	Object.YVelocity *= 9984	// 0x2700
+	Object.YVelocity *= 0x2700
 	Object.YVelocity += Object.YPos
 	Object.YVelocity &= 0xFFFF0000
 	Object.YVelocity -= Object.YCollisionOffset
@@ -31,10 +31,10 @@ end sub
 
 
 sub ObjectPlayerInteraction
-	TempValue0 = Object.YPos
+	TempValue0  = Object.YPos
 	Object.YPos = Object.YCollisionOffset
 	PlayerObjectCollision(C_PLATFORM, -32, -16, 32, 12)
-	if CheckResult == FLOOR
+	if CheckResult == CSIDE_FLOOR
 		Player.YPos += Object.YVelocity
 	end if
 	Object.YPos = TempValue0
@@ -43,7 +43,7 @@ end sub
 
 sub ObjectDraw
 	Sin(Object.YCollisionOffset, Object.Oscillation)
-	Object.YCollisionOffset *= 9984	// 0x2700
+	Object.YCollisionOffset *= 0x2700
 	Object.YCollisionOffset += Object.YPos
 	Object.YCollisionOffset &= 0xFFFF0000
 	DrawSpriteXY(0, Object.XPos, Object.YCollisionOffset)
@@ -52,7 +52,8 @@ end sub
 
 sub ObjectStartup
 	LoadSpriteSheet("R3/Objects.gif")
-	SpriteFrame(-32, -16, 64, 32, 100, 1)
+
+	SpriteFrame(-32, -16, 64, 32, 100, 1)	// #0 - Vertical Platform
 end sub
 
 // ========================

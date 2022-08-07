@@ -1,4 +1,4 @@
-//------------Sonic CD R3 Setup Script-------------//
+//------------------Sonic CD R3 Setup Script------------------//
 //--------Scripted by Christian Whitehead 'The Taxman'--------//
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
@@ -13,18 +13,23 @@
 // Time Periods
 #alias 1	:	PROPVAL_PAST
 
+// Gravity
 #alias 1	:	GRAVITY_AIR
+
+// Priority
+#alias 1	:	PRIORITY_ACTIVE
+
 
 sub ObjectMain
 	if Object.TurnDirection == false
-		if Object.BumperOscillation < 0x300000		// 0x380000
-			Object.BumperOscillation += 0x10000		// 0x10000
+		if Object.BumperOscillation < 0x300000
+			Object.BumperOscillation += 0x10000
 		else
 			Object.TurnDirection = true
 		end if
 	else
-		if Object.BumperOscillation > -0x300000		// -0x380000
-			Object.BumperOscillation -= 0x10000		// 0x10000
+		if Object.BumperOscillation > -0x300000
+			Object.BumperOscillation -= 0x10000
 		else
 			Object.TurnDirection = false
 		end if
@@ -38,14 +43,14 @@ end sub
 
 
 sub ObjectPlayerInteraction
-	TempValue2 = Player.XPos
+	TempValue2   = Player.XPos
 	TempValue2 >>= 16
 	
-	TempValue4 = TempValue2
+	TempValue4  = TempValue2
 	TempValue2 -= 8
 	TempValue4 += 8
 
-	TempValue3 = Player.YPos
+	TempValue3   = Player.YPos
 	TempValue3 >>= 16
 
 	if Player.YVelocity >= 0
@@ -104,9 +109,9 @@ sub ObjectPlayerInteraction
 #endplatform
 
 			if Player.State == Player_State_Fly
-				Player.YVelocity = -0x40000	// -0x40000
+				Player.YVelocity = -0x40000
 			else
-				Player.YVelocity = -0x70000	// -0x70000
+				Player.YVelocity = -0x70000
 			end if
 
 			if Player.State == Player_State_Hurt
@@ -122,7 +127,7 @@ sub ObjectPlayerInteraction
 			end if
 		else
 			if Player.Gravity == GRAVITY_AIR
-				Player.YVelocity = 0x40000	// 0x40000
+				Player.YVelocity = 0x40000
 				PlayStageSfx(1, 0)
 			end if
 		end if
@@ -137,9 +142,9 @@ sub ObjectPlayerInteraction
 #endplatform
 
 			if Player.YVelocity >= 0
-				Player.YVelocity = -0x40000	// -0x40000
+				Player.YVelocity = -0x40000
 			else
-				Player.YVelocity = 0x40000	// 0x40000
+				Player.YVelocity =  0x40000
 			end if
 		end if
 		break
@@ -154,38 +159,38 @@ sub ObjectPlayerInteraction
 
 			if Player.YVelocity >= 0
 				if Player.State == Player_State_Fly
-					Player.YVelocity = -0x40000	// -0x40000
+					Player.YVelocity = -0x40000
 				else
-					Player.YVelocity = -0x70000	// -0x70000
+					Player.YVelocity = -0x70000
 				end if
 			else
-				Player.YVelocity = 0x40000	// 0x40000
+				Player.YVelocity = 0x40000
 			end if
 
 			if TempValue6 == 0
 				if Player.XVelocity > 0
 					FlipSign(Player.XVelocity)
-					Player.XVelocity *= 5
+					Player.XVelocity  *= 5
 					Player.XVelocity >>= 2
-					if Player.XVelocity > -0x20000	// -0x20000
-						Player.XVelocity = -0x20000	// -0x20000
+					if Player.XVelocity > -0x20000
+						Player.XVelocity = -0x20000
 					end if
 				else
-					if Player.XVelocity > -0x20000	// -0x20000
-						Player.XVelocity = -0x20000	// -0x20000
+					if Player.XVelocity > -0x20000
+						Player.XVelocity = -0x20000
 					end if
 				end if
 			else
 				if Player.XVelocity < 0
 					FlipSign(Player.XVelocity)
-					Player.XVelocity *= 5
+					Player.XVelocity  *= 5
 					Player.XVelocity >>= 2
-					if Player.XVelocity < 0x20000	// 0x20000
-						Player.XVelocity = 0x20000	// 0x20000
+					if Player.XVelocity < 0x20000
+						Player.XVelocity = 0x20000
 					end if
 				else
-					if Player.XVelocity < 0x20000	// 0x20000
-						Player.XVelocity = 0x20000	// 0x20000
+					if Player.XVelocity < 0x20000
+						Player.XVelocity = 0x20000
 					end if
 				end if
 			end if
@@ -194,14 +199,14 @@ sub ObjectPlayerInteraction
 		break
 	end switch
 
-	TempValue3 = Player.YPos
+	TempValue3   = Player.YPos
 	TempValue3 >>= 16
 
-	TempValue5 = TempValue3
-	TempValue3 -= 6
-	TempValue5 += 6
+	TempValue5   = TempValue3
+	TempValue3  -= 6
+	TempValue5  += 6
 
-	TempValue2 = Player.XPos
+	TempValue2   = Player.XPos
 	TempValue2 >>= 16
 
 	if Player.XVelocity > 0
@@ -247,9 +252,9 @@ sub ObjectPlayerInteraction
 	switch TempValue7
 	case 1
 		if Player.XVelocity > 0
-			Player.XVelocity = -0x50000	// -0x50000
+			Player.XVelocity = -0x50000
 		else
-			Player.XVelocity = 0x50000	// 0x50000
+			Player.XVelocity = 0x50000
 		end if
 		Player.Speed = Player.XVelocity
 		PlayStageSfx(1, 0)
@@ -257,9 +262,9 @@ sub ObjectPlayerInteraction
 
 	case 2
 		if Player.XVelocity > 0
-			Player.XVelocity = -0x40000	// -0x40000
+			Player.XVelocity = -0x40000
 		else
-			Player.XVelocity = 0x40000	// 0x40000
+			Player.XVelocity = 0x40000
 		end if
 		Player.Speed = Player.XVelocity
 		PlayStageSfx(6, 0)
@@ -285,11 +290,14 @@ end sub
 
 sub ObjectStartup
 	Object[29].Type = TypeName[R3Setup]
-	Object[29].Priority = 1
+	Object[29].Priority = PRIORITY_ACTIVE
 	Object[29].DrawOrder = 0
+
 	SetLayerDeformation(2, 128, 6, 0, 0, 0)
 	SetLayerDeformation(1, 64, 4, 0, 0, 0)
+
 	Stage.WaterLevel = 1472
+
 	if HUD.TimePeriod == PROPVAL_PAST
 		RotatingDrum_Timer = 1
 	else
