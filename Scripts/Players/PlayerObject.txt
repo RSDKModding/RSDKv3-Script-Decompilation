@@ -235,18 +235,18 @@ function Player_BadnikBreak
 		CheckEqual(Player.State, 15)
 		TempValue0 |= CheckResult
 		if TempValue0 == true
-			if Stage.PlayerListPos == 0
+			if Stage.PlayerListPos == PLAYER_SONIC
 				game.callbackParam0 = KILL_ENEMY_ATTR_SPINDASH
 				StageStatsUsabilityParam2 += 1
-			endif
-		endif
+			end if
+		end if
 		StageStatsUsabilityParam1 += 1
 		EngineCallback(NOTIFY_KILL_ENEMY)
 		if game.playMode == BOOT_PLAYMODE_MISSION
 			if game.missionFunctionNo == 8
 				game.forceKillPlayer = 1
-			endif
-		endif
+			end if
+		end if
 #endplatform
 	else
 		if Player.InvincibleTimer == 0
@@ -255,8 +255,8 @@ function Player_BadnikBreak
 			if game.playMode == BOOT_PLAYMODE_MISSION
 				if game.missionFunctionNo == 8
 					game.forceKillPlayer = true
-				endif
-			endif
+				end if
+			end if
 #endplatform
 			if Player.XPos > Object.XPos
 				Player.Speed = 0x20000
@@ -642,14 +642,19 @@ function Player_State_Ground
 					if Stage.PlayerListPos == PLAYER_SONIC
 						Player.Timer++
 #platform: Use_Origins
+						// In Origins, Sonic can only go Outta Here in Classic mode...
+						
 						if game.playMode == BOOT_PLAYMODE_CLASSIC
 							if Player.Timer == 10620
 								Player.Timer = 0
+								
+								// This SFX doesn't really do much in Origins, though they left it here anyways cuz why not
 								PlaySfx(26, 0)
+								
 								Player.State = Player_State_OuttaHere
 								Player.Animation = ANI_BORED
-							endif
-						endif
+							end if
+						end if
 #endplatform
 
 #platform: Use_Standalone
@@ -971,7 +976,7 @@ function Player_State_Air_NoDropDash	// Origins function, prevents Sonic from dr
 	Player.State = Player_State_Air
 	CallFunction(Player_State_Air)
 #endplatform
-endfunction
+end function
 
 function Player_State_Air
 	CallFunction(Player_HandleAirFriction)
@@ -1055,7 +1060,7 @@ function Player_State_Air
 			Player.State = Player_State_Ground
 			CallFunction(Player_HandleOnGround)
 			Player.Skidding = 0
-		endif
+		end if
 #endplatform
 
 #platform: Use_Standalone
@@ -1173,7 +1178,7 @@ function Player_State_RollJump
 			Player.State = Player_State_Ground
 			CallFunction(Player_HandleOnGround)
 			Player.Skidding = 0
-		endif
+		end if
 #endplatform
 
 #platform: Use_Standalone
@@ -1414,7 +1419,7 @@ function Player_Action_Jump
 		Player.DropDashCharge = -1
 	else
 		Player.DropDashCharge =  0
-	endif
+	end if
 #endplatform
 end function
 
@@ -1588,36 +1593,38 @@ function Player_State_Spindash_S2
 	end if
 
 #platform: Use_Origins
-	TempValue1=Player.Down
-	if Player.DropDashCharge>=20
-		Player.DropDashCharge=-1
+	TempValue1 = Player.Down
+	if Player.DropDashCharge >= 20
+		Player.DropDashCharge = -1
 		Sin256(TempValue0, Player.Angle)
 		if Player.Direction == FACING_RIGHT
 			if TempValue0 >= 0
 				TempValue0 <<= 2
 			else
 				TempValue0 <<= 1
-			endif
+			end if
 		else
 			if TempValue0 >= 0
 				TempValue0 <<= 1
 			else
 				TempValue0 <<= 2
-			endif
+			end if
 			FlipSign(TempValue0)
-		endif
+		end if
 		if TempValue0 > 512
 			TempValue0 = 512
-		endif
+		end if
 		Player.AbilityTimer = TempValue0
 		TempValue1 = false
-	endif
+	end if
+	
 	CheckEqual(TempValue1, false)
 #endplatform
-
+	
 #platform: Use_Standalone
 	CheckEqual(Player.Down, false)
 #endplatform
+	
 	// Spin Dash release
 	if CheckResult == true
 		Player.Timer = 0
@@ -2153,22 +2160,32 @@ function Player_State_Death
 			if Player.Animation == ANI_BORED	// Outta Here makes an automatic game over, no lifes will save you
 				Player.Lives = 0
 			else
-
+			
 #platform: Use_Origins
+				// In Origins, lives aren't used too often so make sure we're in a scenario where they are before we subtract some
+				
 				if game.coinMode == false
 					if game.playMode != BOOT_PLAYMODE_MISSION
-						Player.Lives--
-					endif
-				endif
+						CheckEqual(game.playMode, BOOT_PLAYMODE_BOSSRUSH)
+						TempValue0 = CheckResult
+						CheckEqual(game.oneStageFlag, false)
+						TempValue0 |= CheckResult
+						if TempValue0 != false
+							Player.Lives--
+						end if
+					end if
+				end if
 #endplatform
-
+				
 #platform: Use_Standalone
+				// In Standalone, we don't have any extra things to worry about
 				Player.Lives--
 #endplatform
 			end if
 		end if
-
+		
 		Stage.TimeEnabled = false
+		
 #platform: Use_Origins
 		CheckEqual(game.playMode, BOOT_PLAYMODE_BOSSRUSH)
 		TempValue0 = CheckResult
@@ -2179,9 +2196,12 @@ function Player_State_Death
 #endplatform
 
 #platform: Use_Standalone
-		CheckResult = true	// Slight workaround to make this cleaner, the check below this comes from origins, but we need it to always be true on standalone
+		// Slight workaround to make this cleaner - the check below this comes from Origins, but we need it to always be true on standalone
+		
+		CheckResult = true
 #endplatform
-
+		
+		// Again, this check is new to Origins and doesn't exist in Standalone
 		if CheckResult != false
 			Object.Type = TypeName[DeathEvent]
 			DeathEvent.DrawOrder  = 7
@@ -2203,21 +2223,26 @@ function Player_State_Death
 			else
 				DeathEvent.Timer = 0
 				DeathEvent.State = DEATHEVENT_FADEOUT
+				
 #platform: Use_Origins
+				// Lots of checks here, before we do anything else
+				
 				if game.coinMode == false
 					if game.playMode != BOOT_PLAYMODE_BOSSRUSH
 						if Stage.Minutes == 9
 							if Stage.Seconds == 59
-								DeathEvent.Timer = -2880
-								Object.State = DEATHEVENT_GAMEOVER
-								PlayMusic(5)
-								Stage.PauseEnabled = false
-							endif
-						endif
-					endif
-				endif
+								if game.oneStageFlag == false
+									DeathEvent.Timer = -2880
+									Object.State = DEATHEVENT_GAMEOVER
+									PlayMusic(5)
+									Stage.PauseEnabled = false
+								end if
+							end if
+						end if
+					end if
+				end if
 #endplatform
-
+			
 #platform: Use_Standalone
 				if Stage.Minutes == 9
 					if Stage.Seconds == 59
@@ -2225,7 +2250,7 @@ function Player_State_Death
 						DeathEvent.State = DEATHEVENT_GAMEOVER
 						PlayMusic(5)
 						Stage.PauseEnabled = false
-					end if					
+					end if
 				end if
 #endplatform
 			end if
@@ -2238,26 +2263,35 @@ function Player_State_Drown
 	Player.ControlMode = CONTROL_DISABLED
 	Player.YVelocity += Player.GravityStrength
 	Player.Animation = ANI_DROWNING
+	
 	if Player.YVelocity > 0x80000
-
 #platform: Use_Origins
 		EngineCallback(NOTIFY_DEATH_EVENT)
+		
+		// We only subtract lives sometimes in Origins
 		if game.coinMode == false
 			if game.playMode != BOOT_PLAYMODE_MISSION
-				if Player.Lives > 0
-					Player.Lives--
-				endif
-			endif
-		endif
+				CheckEqual(game.playMode, BOOT_PLAYMODE_BOSSRUSH)
+				TempValue0 = CheckResult
+				CheckEqual(game.oneStageFlag, false)
+				TempValue0 |= CheckResult
+				if TempValue0 != false
+					if Player.Lives > 0
+						Player.Lives--
+					end if
+				end if
+			end if
+		end if
 #endplatform
-
+		
 #platform: Use_Standalone
 		if Player.Lives > 0
 			Player.Lives--
 		end if
 #endplatform
-
+		
 		Stage.TimeEnabled = false
+		
 		Object.Type = TypeName[DeathEvent]
 		DeathEvent.DrawOrder  = 7
 		DeathEvent.Text1XPos  = Screen.CenterX
@@ -2680,6 +2714,7 @@ function Player_State_Ramp3D
 				Player.Animation = ANI_RAMP_RUNNING4
 			end if
 		end if
+		
 		if Player.JumpPress == true
 			CallFunction(Player_Action_Jump)
 		else
@@ -2724,6 +2759,7 @@ function Player_State_Ramp3D
 	end if
 end function
 
+
 function Player_State_SizeChange
 	if Player.Gravity == GRAVITY_AIR	// Knockback after touching the laser
 		Player.TrackScroll = true
@@ -2740,31 +2776,42 @@ function Player_State_SizeChange
 			Mini_PlayerFlag = true
 			Player.JumpOffset = -1
 			switch Stage.PlayerListPos
-			case 0
+			case PLAYER_SONIC
 				LoadAnimation("MiniSonic.Ani")
 				break
-			case 1
+				
+			case PLAYER_TAILS
 				LoadAnimation("MiniTails.Ani")
-				Object[1].Type = TypeName[Blank Object]	// Deletes TailsObject
+				
+				// Delete the following Tails Object, since Mini Tails's tails are built-in with his sprites
+				Object[1].Type = TypeName[Blank Object]
 				break
+				
 			end switch
 		else
 			Mini_PlayerFlag = false
 			switch Stage.PlayerListPos
-			case 0
+			case PLAYER_SONIC
 				LoadAnimation("Sonic.Ani")
 				Player.JumpOffset = -5
 				break
-			case 1
+				
+			case PLAYER_TAILS
 				LoadAnimation("Tails.Ani")
 				Player.JumpOffset = -1
-				Object[1].Type = TypeName[TailsObject]	// Restores TailsObject
+				
+				// Restore Tails's tails
+				Object[1].Type = TypeName[Tails Object]
 				break
+				
 			end switch
 		end if
+		
 		BindPlayerToObject(0, 0)
 	end if
+	
 end function
+
 
 function Player_HandleDropDash
 	if Player.DropDashCharge >= 0
@@ -2774,8 +2821,8 @@ function Player_HandleDropDash
 					Player.DropDashCharge =  1
 				else
 					Player.DropDashCharge = -1
-				endif
-			endif
+				end if
+			end if
 		else
 			if Player.JumpHold == false
 				Player.DropDashCharge = -1
@@ -2783,19 +2830,19 @@ function Player_HandleDropDash
 				Player.DropDashCharge++
 				if Player.DropDashCharge == 20
 					PlaySfx(28, 0)
-				endif
+				end if
 				
 				if Player.DropDashCharge >= 20
 					if Player.Animation == ANI_JUMPING
 						Player.Frame = 0
 						Player.AnimationTimer = 0
 						Player.AnimationSpeed = 0
-					endif
-				endif
-			endif
-		endif
-	endif
-endfunction
+					end if
+				end if
+			end if
+		end if
+	end if
+end function
 
 
 sub ObjectMain
@@ -2862,8 +2909,8 @@ sub ObjectMain
 				Player.Frame = 0
 				Player.AnimationTimer = 0
 				Player.AnimationSpeed = 1
-			endif
-		endif
+			end if
+		end if
 #endplatform
 
 		ProcessAnimation()
