@@ -1,21 +1,21 @@
-//------------Sonic CD Vertical Door Script-------------//
+//---------------Sonic CD Vertical Door Script----------------//
 //--------Scripted by Christian Whitehead 'The Taxman'--------//
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
 // Aliases
-#alias Object.Value0	:	Object.DrawPosY
+#alias Object.Value0 : Object.DrawPosY
 
-#alias 0	:	VERTICALDOOR_CLOSED
-#alias 1	:	VERTICALDOOR_START_OPENING
-#alias 2	:	VERTICALDOOR_END_CLOSING
-#alias 3	:	VERTICALDOOR_END_OPENED
-#alias 4	:	VERTICALDOOR_END_CLOSING_METAL
-#alias 5	:	VERTICALDOOR_START_OPENED
-#alias 6	:	VERTICALDOOR_END_CLOSED_SONIC
+#alias 0 : VERTICALDOOR_CLOSED
+#alias 1 : VERTICALDOOR_START_OPENING
+#alias 2 : VERTICALDOOR_END_CLOSING
+#alias 3 : VERTICALDOOR_END_OPENED
+#alias 4 : VERTICALDOOR_END_CLOSING_METAL
+#alias 5 : VERTICALDOOR_START_OPENED
+#alias 6 : VERTICALDOOR_END_CLOSED_SONIC
 
 
 sub ObjectMain
-
+	
 	switch Object.State
 	case VERTICALDOOR_START_OPENING
 		if Object.DrawPosY < 0x400000
@@ -27,7 +27,7 @@ sub ObjectMain
 		break
 		
 	case VERTICALDOOR_END_CLOSING
-		if Object.DrawPosY > 0
+		if Object.DrawPosY > 0x00000
 			Object.DrawPosY -= 0x20000
 			Object.YPos += 0x20000
 		else
@@ -41,11 +41,15 @@ sub ObjectMain
 		TempValue0 <<= 16
 		TempValue0 += Object.XPos
 		if Player.XPos > TempValue0
+			// The Player is past the door, meaning Sonic's won
+			
 #platform: Use_Origins
-			// Weird, usually it has a param value before this
+			// There can only be one, let the game know we've killed Metal Sonic
+			// -> This doesn't really seem to do much, the NOTIFY_BOSS_END is what triggers all the fancy screens and such
 			EngineCallback(NOTIFY_KILL_BOSS)
 #endplatform
-			// Player is past the door, do the standard closing routine
+			
+			// From here, do the standard closing routine
 			Object.State = VERTICALDOOR_END_CLOSING
 			PlayStageSfx(3, 0)
 		else
@@ -58,7 +62,7 @@ sub ObjectMain
 		break
 		
 	case VERTICALDOOR_END_CLOSING_METAL
-		if Object.DrawPosY > 0
+		if Object.DrawPosY > 0x00000
 			Object.DrawPosY -= 0x20000
 			Object.YPos += 0x20000
 		end if

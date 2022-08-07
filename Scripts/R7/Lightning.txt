@@ -1,16 +1,16 @@
-//------------Sonic CD Lightning Script-------------//
+//-----------------Sonic CD Lightning Script------------------//
 //--------Scripted by Christian Whitehead 'The Taxman'--------//
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
 // Aliases
-#alias Object.Value0	:	Object.Timer
-#alias Object.Value1	:	Object.Flash
+#alias Object.Value0 : Object.Timer
+#alias Object.Value1 : Object.Flash
 
 // Note - Object.Alpha is used for the actual lightning sprites, while Object.Flash is used for the screen-wide lightning flash
 
 
 sub ObjectMain
-
+	
 	switch Object.State
 	case 0
 		if Object.Timer < 256
@@ -38,14 +38,16 @@ sub ObjectMain
 		break
 		
 	end switch
-
+	
 end sub
 
 
 sub ObjectDraw
-
+	
 	if Object.State > 0
 		if Object.DrawOrder == 1
+			// In this Draw Order, we're in the BG
+			
 			Object.YPos = Screen.YOffset
 			Object.YPos *= Object.PropertyValue
 			Object.YPos >>= 7
@@ -101,27 +103,31 @@ sub ObjectDraw
 				DrawSpriteScreenFX(TempValue1, FX_INK, TempValue0, Object.YPos)
 			end if
 			
-			SetDrawListEntityRef(Object.EntityNo, 5, Screen[5].DrawListSize)
+			// For the flash, add this Object to a higher draw list
+			SetDrawListEntityRef(Object.EntityNo, 5, Screen.DrawListSize[5])
 			Screen[5].DrawListSize++
 			Object.DrawOrder = 5
 		else
+			// On this Draw Order, we're between the game objects and the HUD
+			
 			DrawRect(0, 0, Screen.XSize, Screen.YSize, 224, 224, 192, Object.Flash)
 			Object.DrawOrder = 1
 		end if
 	end if
-
+	
 end sub
 
 
 sub ObjectStartup
+	
 	LoadSpriteSheet("R7/Objects3.gif")
-
+	
 	// Lightning Frames
 	SpriteFrame(-8, 0, 16, 40, 43, 140)
 	SpriteFrame(-8, 0, 16, 24, 60, 140)
 	SpriteFrame(-16, 0, 32, 40, 77, 132)
 	SpriteFrame(-8, 0, 16, 24, 60, 140)
-
+	
 	// Go through the level to find and setup the Lightning object
 	ArrayPos0 = 32
 	while ArrayPos0 < 1056
@@ -138,10 +144,10 @@ sub ObjectStartup
 			Object[ArrayPos0].InkEffect = 2
 			
 		end if
-
+		
 		ArrayPos0++
 	loop
-
+	
 end sub
 
 

@@ -1,128 +1,131 @@
-//------------Sonic CD PauseMenu Script-------------//
+//-----------------Sonic CD PauseMenu Script------------------//
 //--------Scripted by Christian Whitehead 'The Taxman'--------//
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
 // Aliases
-#alias Object.PropertyValue	:	Object.ExtendTime
 
-#alias Object.Value0	:	Object.Timer
+// How long the Pause Menu should initially slide out for
+#alias Object.PropertyValue : Object.ExtendTime
 
-#alias Object.Value1	:	Object.CurrentSelection
+#alias Object.Value0 : Object.Timer
+
+// The current highlighted selection, check out the SELECTION_* aliases right down below
+#alias Object.Value1 : Object.CurrentSelection
 
 // Selection Aliases
-#alias -1	:	SELECTION_NULL
-#alias  0	:	SELECTION_CONTINUE
-#alias  1	:	SELECTION_RESTART
-#alias  2	:	SELECTION_EXIT
-#alias  3	:	SELECTION_DEVMENU
+#alias -1 : SELECTION_NULL
+#alias  0 : SELECTION_CONTINUE
+#alias  1 : SELECTION_RESTART
+#alias  2 : SELECTION_EXIT
+#alias  3 : SELECTION_DEVMENU
 
 // X Position of the underline that's underneat the Options texts
-#alias Object.Value2	:	Object.UnderlinePos
+#alias Object.Value2 : Object.UnderlinePos
 
 // X Position for the Black Bar behind the Pause Text
 // This is accompanied by PauseBarYPos, check out below for more about Value4 since it's multi-use in this Object
-#alias Object.Value3	:	Object.PauseBarXPos
+#alias Object.Value3 : Object.PauseBarXPos
 
 // Value4 has different uses across this Object's various States
 
 // In states 0-2:
 	// Value 4 is used to hold the Y Position of the White Rectangle
-	#alias Object.Value4	:	Object.WhiteRectPos
+	#alias Object.Value4 : Object.WhiteRectPos
 	
 	// And then, this holds the position of that White Rectangle from the previous frame during those states
 	// -> See ObjectDraw for more info
-	#alias Object.Value5	:	Object.PrevWhiteRectPos
+	#alias Object.Value5 : Object.PrevWhiteRectPos
 
 // In states 4-5:
 	// Value 4 is used to hold the Y Position of the Pause text & its bar
 	// Check out PauseBarXPos too, though that one's just a normal Value and only has one use
-	#alias Object.Value4	:	Object.PauseBarYPos
+	#alias Object.Value4 : Object.PauseBarYPos
 
 // For clarity's sake, the two types of Value 4 uses are aliases differently
 
 // Just a bool, essentially useless since restarts are always disabled in Special Stages so there's no reason for this to be here
 // Check out its initial use for more info, but this Object's pretty much a copy of the Global version, where the variable *is* used for actual purpose
-#alias Object.Value6	:	Object.RestartDisabled
+#alias Object.Value6 : Object.RestartDisabled
 
 // Position of the stuff on the right side (options, black bar, etc.)
-#alias Object.XPos	:	Object.SelectionBarPos
+#alias Object.XPos : Object.SelectionBarPos
 
 // values for the tiny 'lil sonic :)
-#alias Object.Frame         	:	Object.SonicFrame
-#alias Object.AnimationTimer	:	Object.SonicTimer
+#alias Object.Frame          : Object.SonicFrame
+#alias Object.AnimationTimer : Object.SonicTimer
 
 // States
 
 // This Object can't have its value setup via a normal loop in ObjectStartup since it doesn't even exist 
 // normally - it's spawned in by the Sonic Object instead - so the first state is for initialising its values
-#alias 0	:	PAUSEMENU_INIT
+#alias 0 : PAUSEMENU_INIT
 
 // Once the Object is setup, all the shape parts of it slide in, including the white background, pause bar, and other black bar to the right
-#alias 1	:	PAUSEMENU_SLIDEIN
+#alias 1 : PAUSEMENU_SLIDEIN
 
 // After that, now the Sprite aspects of it fade in, like the Options and Pause text
-#alias 2	:	PAUSEMENU_FADEIN
+#alias 2 : PAUSEMENU_FADEIN
 
 // Yup, now we're in the main state!
 // This is where all the good stuff is done, of course
-#alias 3	:	PAUSEMENU_MAIN
+#alias 3 : PAUSEMENU_MAIN
 
 // Upon selecting any option, the selected option will flash for a few moments...
-#alias 4	:	PAUSEMENU_FLASH
+#alias 4 : PAUSEMENU_FLASH
 
-// ... and after that, the paths branch
+// ... and after that comes a branch of fate - choose a path!
 
-// If you selected the Continue option, then
+// If you selected the Continue option, then...
 	// Close the Pause Menu, and resume the normal game
-	#alias 5	:	PAUSEMENU_CLOSE
+	#alias 5 : PAUSEMENU_CLOSE
 
-// If you selected any other option, then 
+// If you selected any other option, then...
 	// Make the Pause Menu consume the screen, and exit the level or whatever afterwards
-	#alias 6	:	PAUSEMENU_EXIT
+	#alias 6 : PAUSEMENU_EXIT
 
 // One of the updates changed the left bounds for how far the Pause Menu should go
 // Originally was -32, but the current evrsion is -64
 // That's about a two frames difference, isn't that interesting?
-#alias -64	:	PAUSEMENU_LEFTMOST
+#alias -64 : PAUSEMENU_LEFTMOST
 
 // Player Aliases
-#alias 0	:	PLAYER_SONIC
+#alias 0 : PLAYER_SONIC
 
 // Stage List Position Aliases
-#alias 0	:	STAGE_P_TITLE
-#alias 2	:	STAGE_P_TIMEATTACK
+#alias 0 : STAGE_P_TITLE
+#alias 2 : STAGE_P_TIMEATTACK
 
 // Languages
-#alias 0	:	LANGUAGE_ENGLISH
-#alias 1	:	LANGUAGE_FRENCH
-#alias 2	:	LANGUAGE_ITALIAN
-#alias 3	:	LANGUAGE_DEUTSCH
-#alias 4	:	LANGUAGE_SPANISH
-#alias 5	:	LANGUAGE_JAPANESE
+#alias 0 : LANGUAGE_ENGLISH
+#alias 1 : LANGUAGE_FRENCH
+#alias 2 : LANGUAGE_ITALIAN
+#alias 3 : LANGUAGE_DEUTSCH
+#alias 4 : LANGUAGE_SPANISH
+#alias 5 : LANGUAGE_JAPANESE
 
 // Screen Aliases
 // This Object uses a hardcoded constant of 240 rather often, rather than Screen.YSize, so this is here just to clarify stuff a bit
-#alias 240	:	SCREEN_YSIZE
+#alias 240 : SCREEN_YSIZE
 
 // SFX Aliases
-#alias 23	:	SFX_MENUBUTTON
-#alias 27	:	SFX_SELECT
+#alias 23 : SFX_MENUBUTTON
+#alias 27 : SFX_SELECT
 
 // Ink Effect Aliases
-#alias 2	:	INK_ALPHA
+#alias 2 : INK_ALPHA
 
 // Game modes
-#alias 2	:	GAMEMODE_TIMEATTACK
+#alias 2 : GAMEMODE_TIMEATTACK
 
 // Engine Messages
 // (Strange to describe, but they're essentially system-level stuff that the engine transmits to the scripts)
-#alias 2	:	MESSAGE_LOSTFOCUS
-#alias 3	:	MESSAGE_YES_SELECTED
-#alias 4	:	MESSAGE_NO_SELECTED
+#alias 2 : MESSAGE_LOSTFOCUS
+#alias 3 : MESSAGE_YES_SELECTED
+#alias 4 : MESSAGE_NO_SELECTED
 
 // Engine Callbacks
-#alias 6	:	CALLBACK_RESTART_SELECTED
-#alias 7	:	CALLBACK_EXIT_SELECTED
+#alias 6 : CALLBACK_RESTART_SELECTED
+#alias 7 : CALLBACK_EXIT_SELECTED
 
 
 sub ObjectMain
@@ -253,21 +256,24 @@ sub ObjectMain
 		break
 		
 	case PAUSEMENU_MAIN
-	// Some things never change
+	
+	// There's normally a `if Options.PhysicalControls == true` path here, but to keep Steam datafiles working we gotta do this roundabout way instead
 #platform: Use_Origins
 		CheckEqual(Options.PhysicalControls, true)
 #endplatform
-
+	
 #platform: Use_Standalone
 	#platform: Mobile
 		CheckEqual(Options.PhysicalControls, true)
 	#endplatform
-
+	
 	#platform: Standard
+		// Let's assume the variable doesn't exist, force Physical Controls
+		
 		CheckResult = true
 	#endplatform
 #endplatform
-
+		
 		if CheckResult == true
 			// Update Physical Controls
 			// (Standard Platforms don't have any extra conditions before this because y'know... it's always physical controls there)
@@ -366,6 +372,7 @@ sub ObjectMain
 #platform: Mobile
 			// If the Player's touched the screen at all, then switch to Touch Controls
 			CheckTouchRect(0, 0, Screen.XSize, Screen.YSize)
+			
 			if CheckResult > -1
 				Options.PhysicalControls = false
 				Object.CurrentSelection = SELECTION_NULL
@@ -535,8 +542,9 @@ sub ObjectMain
 					Object.CurrentSelection = SELECTION_EXIT
 				end if
 				
-				// And set Physical Controls to active, now that the player's actually pressed something
 #platform: Mobile
+				// And set Physical Controls to active, now that the player's actually pressed something
+				
 				Options.PhysicalControls = true
 #endplatform
 			end if
@@ -548,8 +556,9 @@ sub ObjectMain
 				
 				Object.CurrentSelection = SELECTION_CONTINUE
 				
-				// And similarly, set Physical Controls to be active for the same reason as before
 #platform: Mobile
+				// And similarly, set Physical Controls to be active for the same reason as before
+				
 				Options.PhysicalControls = true
 #endplatform
 			end if
@@ -798,7 +807,7 @@ sub ObjectDraw
 		
 		// Fall through to the next part
 		// Note - Originally, there was a whole identical duplicate of the below code here, but Origins actually cleaned it up
-		//        and made it easier for our eyes! How nice of them
+		//        and made it easier for our eyes! How nice of them!
 		
 	case PAUSEMENU_MAIN
 		

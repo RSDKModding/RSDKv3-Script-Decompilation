@@ -1,25 +1,29 @@
-//------------Sonic CD Spring Cage Script-------------//
+//----------------Sonic CD Spring Cage Script-----------------//
 //--------Scripted by Christian Whitehead 'The Taxman'--------//
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
 // Note - Object[+1} should be an R7Spring object
 
 // Aliases
-#alias Object.Value0	:	Object.FullAngle
-#alias Object.Value1	:	Object.Angle
+#alias Object.Value0 : Object.FullAngle
+#alias Object.Value1 : Object.Angle
 // Value2 is unused...
-#alias Object.Value3	:	Object.LaunchTimer
+#alias Object.Value3 : Object.LaunchTimer
 
-#alias 0	:	SPRINGCAGE_FREE
-#alias 1	:	SPRINGCAGE_OCCUPIED
+#alias 0 : SPRINGCAGE_OPEN
+#alias 1 : SPRINGCAGE_OCCUPIED
 
 // R7 Spring Aliases
-#alias Object.Value0	:	Object.Timer
+#alias Object.Value0 : Object.Timer
+
+// SFX Aliases
+#alias 0 : SFX_LARGEBOOSTER
+#alias 3 : SFX_LAUNCHER
 
 
 sub ObjectMain
 	
-	if Object.State == SPRINGCAGE_FREE
+	if Object.State == SPRINGCAGE_OPEN
 		if Object.PropertyValue == 0
 			// Spin around
 			Object.FullAngle++
@@ -59,16 +63,21 @@ sub ObjectMain
 		if Object.LaunchTimer < 90
 			if Player.State != Player_State_Death
 				Object.LaunchTimer++
+				
 				if Object.LaunchTimer == 60
+					
+					// Origins fixed the SFX the Cage uses
+					// This sound ID is only valid on Origins data files though, which is why we gotta separate it
 #platform: Use_Origins
-					PlayStageSfx(3, 0)
+					PlayStageSfx(SFX_LAUNCHER, false)
 					Player.State = Player_State_Air_NoDropDash
 #endplatform
-
+					
 #platform: Use_Standalone
-					PlayStageSfx(0, 0)
+					PlayStageSfx(SFX_LARGEBOOSTER, false)
 					Player.State = Player_State_Air
 #endplatform
+					
 					Player.Gravity = 1
 					Player.Timer = 0
 					
@@ -77,46 +86,46 @@ sub ObjectMain
 					
 					switch Object.Angle
 					case 0
-						Player.Speed = 0x100000
-						Player.XVelocity = 0x100000
-						Player.YVelocity = 0
+						Player.Speed     =  0x100000
+						Player.XVelocity =  0x100000
+						Player.YVelocity =  0x000000
 						break
 						
 					case 1
 					case 7
-						Player.Speed = 0xC0000
-						Player.XVelocity = 0xC0000
-						Player.YVelocity = -720896
+						Player.Speed     =  0x0C0000
+						Player.XVelocity =  0x0C0000
+						Player.YVelocity = -0x0B0000
 						break
 						
 					case 2
 					case 6
-						Player.Speed = 0
-						Player.XVelocity = 0
+						Player.Speed     =  0x000000
+						Player.XVelocity =  0x000000
 						Player.YVelocity = -0x100000
 						break
 						
 					case 3
 					case 5
-						Player.Speed = -0xC0000
-						Player.XVelocity = -0xC0000
-						Player.YVelocity = -720896
+						Player.Speed     = -0x0C0000
+						Player.XVelocity = -0x0C0000
+						Player.YVelocity = -0x0B0000
 						break
 						
 					case 4
-						Player.Speed = -0x100000
+						Player.Speed     = -0x100000
 						Player.XVelocity = -0x100000
-						Player.YVelocity = 0
+						Player.YVelocity =  0x000000
 						break
 						
 					end switch
 				end if
 			else
-				Object.State = SPRINGCAGE_FREE
+				Object.State = SPRINGCAGE_OPEN
 				Object.LaunchTimer = 0
 			end if
 		else
-			Object.State = SPRINGCAGE_FREE
+			Object.State = SPRINGCAGE_OPEN
 			Object.LaunchTimer = 0
 		end if
 	end if
@@ -126,7 +135,7 @@ end sub
 
 sub ObjectPlayerInteraction
 	
-	if Object.State == SPRINGCAGE_FREE
+	if Object.State == SPRINGCAGE_OPEN
 		
 		// See if the player's hopped in yet
 		PlayerObjectCollision(C_TOUCH, -28, -32, 28, 24)
@@ -400,11 +409,11 @@ sub RSDKLoad
 
 	AddEditorVariable("Direction")
 	SetActiveVariable("Direction")
-	AddEnumVariable("Rotating", 1)
-	AddEnumVariable("Pointing Up-Right", 1)
-	AddEnumVariable("Pointing Up-Right", 1)
-	AddEnumVariable("Pointing Up-Left", 3)
-	AddEnumVariable("Pointing Left", 4)
-	AddEnumVariable("Pointing Up-Left", 5)
-	AddEnumVariable("Pointing Up", 6)
+	AddEnumVariable("Rotating", 0)
+	AddEnumVariable("Left", 1)
+	// 2 is pointing up dupe
+	AddEnumVariable("Up-Right", 3)
+	AddEnumVariable("Up", 4)
+	AddEnumVariable("Up-Left", 5)
+	AddEnumVariable("Right", 6)
 end sub

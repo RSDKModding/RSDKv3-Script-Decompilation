@@ -1,85 +1,86 @@
-//------------Sonic CD TimeStone Script-------------//
+//-----------------Sonic CD TimeStone Script------------------//
 //--------Scripted by Christian Whitehead 'The Taxman'--------//
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
 // Aliases
-#alias 0	:	TIMESTONE_FALLING
-#alias 1	:	TIMESTONE_HELD
+#alias 0 : TIMESTONE_FALLING
+#alias 1 : TIMESTONE_HELD
 
 // SFX Aliases
-#alias 21	:	SFX_ACHIEVEMENT
+#alias 21 : SFX_ACHIEVEMENT
 
 // Sonic Aliases
-#alias Object.State	:	SSSonic.State
-#alias Object.Frame	:	SSSonic.Frame
+#alias Object.State : SSSonic.State
+#alias Object.Frame : SSSonic.Frame
 
-#alias 10	:	SSSONIC_STONEGRABBED
+#alias 10 : SSSONIC_STONEGRABBED
 
 
 sub ObjectDraw
-
+	
 	// Get the frame the Stone should draw
 	// (But note that it's not drawn till the end, see there)
 	TempValue0 = Object.Frame
 	TempValue0 /= 12
-
+	
 	// Animate the Stone
 	Object.Frame++
 	if Object.Frame > 47
 		Object.Frame = 0
 	end if
-
+	
 	if Object.State == TIMESTONE_FALLING
 		// Stone's still falling, so draw the sparkles that it's dropping
-
-		// Smaller sparkle
+		
+		// Smaller sparkle, to be 32 pixels above the Time Stone
 		TempValue1 = Object.YPos
-		TempValue1 -= 0x200000 // 32 pixels above the Time Stone
+		TempValue1 -= 0x200000
 		DrawSpriteFX(5, FX_FLIP, Object.XPos, TempValue1)
-
-		// Bigger sparkle
-		TempValue1 += 0xC0000 // 12 pixels down from before, AKA 20 pixels above the Time Stone
+		
+		// Bigger sparkle, 12 pixels below the smaller sparkle (absolute difference of 20 pixels above the Time Stone)
+		TempValue1 += 0xC0000
 		DrawSpriteFX(4, FX_FLIP, Object.XPos, TempValue1)
-
+		
 		// Flip the object when needed in order to make the rotating animation appear smoother
 		Object.Direction = Object.Frame
 		Object.Direction %= 24
 		Object.Direction /= 6
-
+		
 		if Object.iYPos < 200
-			// Time Stone isn't at its target destination yet, keep it falling
-			Object.YPos += 0x18000 // Descent speed of 1.5 px per frame
+			// Time Stone isn't at its target destination yet, keep it falling at a rate of 1.5 px per frame
+			Object.YPos += 0x18000
 		else
-
-			// Move to the player's hands
+			
+			// Snap to Sonic's hands
 			Object.iYPos = 200
-
+			
 			// Stop further movement of the Stone
 			Object.State = TIMESTONE_HELD
 			PlaySfx(SFX_ACHIEVEMENT, false)
-
-			// Signal to Sonic that he's grabbed the Stone
+			
+			// Signal to the Sonic Object that he's grabbed the Stone
 			SSSonic[2].State = SSSONIC_STONEGRABBED
 			SSSonic[2].Frame++
+			
 #platform: Use_Origins
 			// Let the Engine know we've touched an... "emerald"?
 			EngineCallback(NOTIFY_TOUCH_EMERALD)
 #endplatform
-
+			
 		end if
 	end if
-
+	
 	// Draw the actual Stone sprite
-	// It's drawn all the way at the end so that it stays above the sparkle frames
+	// It's drawn all the way at the end so that it stays above the sparkles
 	DrawSprite(TempValue0)
-
+	
 end sub
 
 
 sub ObjectStartup
-
+	
 	LoadSpriteSheet("Special/Objects.gif")
-
+	
 	// 0-3 - Time Stone Frames
 	SpriteFrame(-10, -12, 20, 24, 1, 232)
 	SpriteFrame(-10, -12, 20, 24, 22, 232)
@@ -89,9 +90,9 @@ sub ObjectStartup
 	// 4-5 - Sparkles
 	SpriteFrame(-12, -12, 24, 24, 83, 143)
 	SpriteFrame(-8, -8, 16, 16, 83, 126)
-
-	// No extra sprites needed for alternate colours - they're handled via palettes in the StageConfig instead
-
+	
+	// No extra sprites needed for alternate colours - they're handled via palettes stored in the StageConfig instead
+	
 end sub
 
 

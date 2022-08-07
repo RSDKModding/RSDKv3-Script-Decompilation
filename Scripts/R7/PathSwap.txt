@@ -1,26 +1,26 @@
-//------------Sonic CD Path Swap Script-------------//
+//-----------------Sonic CD Path Swap Script------------------//
 //--------Scripted by Christian Whitehead 'The Taxman'--------//
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
 // Aliases
-#alias Object.Value0	:	Object.Timer
-#alias Object.Value7	:	Object.Interacted
+#alias Object.Value0 : Object.Timer
+#alias Object.Value7 : Object.Interacted
 
-#alias Object.Value1	:	Object.ChunkX1
-#alias Object.Value3	:	Object.ChunkX2
-#alias Object.Value2	:	Object.ChunkY1
-#alias Object.Value4	:	Object.ChunkY2
+#alias Object.Value1 : Object.ChunkX1
+#alias Object.Value3 : Object.ChunkX2
+#alias Object.Value2 : Object.ChunkY1
+#alias Object.Value4 : Object.ChunkY2
 
 // Old holds the chunk ID of what's already there on the level map, New holds what it should be replaced with
-#alias Object.Value5	:	Object.ChunkIDOld
-#alias Object.Value6	:	Object.ChunkIDNew
+#alias Object.Value5 : Object.ChunkIDOld
+#alias Object.Value6 : Object.ChunkIDNew
 
-#alias 0	:	PATHSWAP_UNTOUCHED
-#alias 1	:	PATHSWAP_INTERACTED
+#alias 0 : PATHSWAP_UNTOUCHED
+#alias 1 : PATHSWAP_INTERACTED
 
 
 sub ObjectMain
-
+	
 	if Object.State == PATHSWAP_INTERACTED
 		if Object.Timer < 39
 			Object.Timer++
@@ -29,11 +29,11 @@ sub ObjectMain
 			Object.Timer = 0
 			Object.Priority = 0
 		end if
-
+		
 		PathSwap_Frame = Object.Timer
 		PathSwap_Frame /= 5
 	end if
-
+	
 	if PathSwap_Flag == false
 		TempValue0 = Object.ChunkIDOld
 	else
@@ -49,12 +49,12 @@ sub ObjectMain
 		TempValue0++
 		SetTileLayerEntry(TempValue0, 0, Object.ChunkX2, Object.ChunkY2)
 	end if
-
+	
 end sub
 
 
 sub ObjectPlayerInteraction
-
+	
 	if Object.PropertyValue < 2
 		if Object.State == PATHSWAP_UNTOUCHED
 			if PathSwap_Frame == 0
@@ -64,15 +64,16 @@ sub ObjectPlayerInteraction
 						Object.State = PATHSWAP_INTERACTED
 						Object.Priority = 1
 						Object.Interacted = true
-
+						
 						PathSwap_Flag++
 						PathSwap_Flag &= true
-
+						
 #platform: Use_Haptics
-						// Give the player a bit of a shake to really convey the feeling that they're in a loop, y'know?
+						// Give the player a bit of a shake to really convey the feeling that they've hit a sign, y'know?
+						
 						HapticEffect(19, 0, 0, 0)
 #endplatform
-
+						
 					end if
 				else
 					Object.Interacted = false
@@ -92,9 +93,9 @@ end sub
 
 
 sub ObjectStartup
-
+	
 	LoadSpriteSheet("R7/Objects.gif")
-
+	
 	// Path Swapper Frames
 	SpriteFrame(-24, -15, 48, 40, 109, 18)
 	SpriteFrame(-24, -11, 48, 36, 158, 22)
@@ -104,43 +105,44 @@ sub ObjectStartup
 	SpriteFrame(-24, -11, 48, 36, 158, 63)
 	SpriteFrame(-24, -7, 48, 32, 207, 26)
 	SpriteFrame(-24, -11, 48, 36, 158, 22)
-
+	
 	PathSwap_Flag = false
 	PathSwap_Frame = 0
-
+	
 	ArrayPos0 = 32
 	while ArrayPos0 < 1056
 		if Object[ArrayPos0].Type == TypeName[Path Swap]
-
+			
 			// Setup chunk positions
-
+			
 			Object[ArrayPos0].ChunkX1 = Object[ArrayPos0].iXPos
 			Object[ArrayPos0].ChunkX1 >>= 8
 			Object[ArrayPos0].ChunkX1 <<= 1
-
+			
 			Object[ArrayPos0].ChunkX2 = Object[ArrayPos0].ChunkX1
 			Object[ArrayPos0].ChunkX2++
-
+			
 			Object[ArrayPos0].ChunkY1 = Object[ArrayPos0].iYPos
 			Object[ArrayPos0].ChunkY1 >>= 8
 			Object[ArrayPos0].ChunkY1 <<= 1
-
+			
 			Object[ArrayPos0].ChunkY2 = Object[ArrayPos0].ChunkY1
 			Object[ArrayPos0].ChunkY2++
-
+			
 			// Setup chunk IDs
-
+			
 			// Get the base chunk ID
 			GetTileLayerEntry(Object[ArrayPos0].ChunkIDOld, 0, Object[ArrayPos0].ChunkX1, Object[ArrayPos0].ChunkY1)
-
+			
 			// The chunk's B replacement is always 4 chunks immediately after it
 			Object[ArrayPos0].ChunkIDNew = Object[ArrayPos0].ChunkIDOld
 			Object[ArrayPos0].ChunkIDNew += 4
-
+			
 		end if
-
+		
 		ArrayPos0++
 	loop
+	
 end sub
 
 
@@ -172,10 +174,8 @@ end sub
 
 
 sub RSDKDraw
-	if Object.PropertyValue == 2
-		// Invisible...
-		Object.InkEffect = 1
-	end if
+	CheckEqual(Object.PropertyValue, 2)
+	Object.InkEffect = CheckResult
 	
 	DrawSpriteFX(0, FX_INK, Object.XPos, Object.YPos)
 	

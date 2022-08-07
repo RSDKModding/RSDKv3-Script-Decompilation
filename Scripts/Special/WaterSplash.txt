@@ -1,19 +1,19 @@
-//------------Sonic CD WaterSplash Script-------------//
+//----------------Sonic CD WaterSplash Script-----------------//
 //--------Scripted by Christian Whitehead 'The Taxman'--------//
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
 // Aliases
 
 // HUD Aliases
-#alias Object.Value7	:	HUD.WaterTimer
+#alias Object.Value7 : HUD.WaterTimer
 
 // Player Alises
-#alias Player.XPos	:	SSSonic.XPos
-#alias Player.YPos	:	SSSonic.YPos
-#alias Object.Value0	:	SSSonic.ZPos
+#alias Player.XPos : SSSonic.XPos
+#alias Player.YPos : SSSonic.YPos
+#alias Object.Value0 : SSSonic.ZPos
 
 // SFX Aliases
-#alias 1	:	SFX_WATERSPLASH
+#alias 1 : SFX_WATERSPLASH
 
 
 sub ObjectDraw
@@ -21,40 +21,40 @@ sub ObjectDraw
 	if SSSonic.YPos > 0
 		ResetObjectEntity(3, TypeName[Blank Object], 0, 0, 0)
 	else
-
+		
 		// Find the player's truncated X and Z pos
 		TempValue0 = SSSonic.XPos
 		TempValue0 >>= 16
 		TempValue1 = SSSonic[-1].ZPos
 		TempValue1 >>= 16
-
+		
 		// Get the tile type Sonic's currently standing on
 		Get16x16TileInfo(CheckResult, TempValue0, TempValue1, 6)
-
+		
 		// Is it a water tile?
 		if CheckResult == 2
-
+			
 			if Object.Frame == 0
 				PlayStageSfx(SFX_WATERSPLASH, false)
-
+				
 				if Stage.TimeEnabled == true
 					HUD[4].WaterTimer = 40
 				end if
 			end if
-
+			
 			// Animate the object
 			Object.Frame++
 			if Object.Frame == 40
 				Object.Frame = 28
 			end if
-
+			
 			// Get the frame it should draw
 			TempValue0 = Object.Frame
 			TempValue0 >>= 2
-
+			
 			// Draw the sprite around the center of the screen
 			DrawSpriteScreenXY(TempValue0, Screen.CenterX, 224)
-
+			
 		else
 			// Sonic's not on a water tile, so erase the Water Splash object
 			ResetObjectEntity(3, TypeName[Blank Object], 0, 0, 0)
@@ -66,9 +66,9 @@ end sub
 
 
 sub ObjectStartup
-
+	
 	LoadSpriteSheet("Special/Objects.gif")
-
+	
 	// Water Splash Frames
 	SpriteFrame(-20, -32, 40, 32, 1, 84)
 	SpriteFrame(-20, -32, 40, 32, 42, 84)
@@ -80,7 +80,7 @@ sub ObjectStartup
 	SpriteFrame(-20, -32, 40, 32, 42, 84)
 	SpriteFrame(-20, -32, 40, 32, 83, 84)
 	SpriteFrame(-20, -32, 40, 32, 1, 84)
-
+	
 end sub
 
 

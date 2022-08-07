@@ -1,41 +1,42 @@
-//------------Sonic CD UFOPowerUp Script-------------//
+//-----------------Sonic CD UFOPowerUp Script-----------------//
 //--------Scripted by Christian Whitehead 'The Taxman'--------//
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
 // Aliases
-#alias Object.Value0	:	Object.ExplosionDir
-#alias Object.Value1	:	Object.ExplosionXVel
-#alias Object.Value2	:	Object.ExplosionYVel
-#alias Object.Value3	:	Object.Timer
-#alias Object.Value4	:	Object.YVelocity
-// Value5 is unused here...
-#alias Object.Value6	:	Object.ExplosionTimer
-#alias Object.Value7	:	Object.StartResults
+#alias Object.Value0 : Object.ExplosionDir
+#alias Object.Value1 : Object.ExplosionXVel
+#alias Object.Value2 : Object.ExplosionYVel
+#alias Object.Value3 : Object.Timer
+#alias Object.Value4 : Object.YVelocity
+#alias Object.Value5 : Object.ScreenDepth // Not used in this script, but set by the parent UFO Object upon spawning
+#alias Object.Value6 : Object.ExplosionTimer
+#alias Object.Value7 : Object.StartResults
 
 // Player aliases
-#alias Object.State	:	SSSonic.State
-#alias 9	:	SSSONIC_CAMERAPAN
+#alias Object.State : SSSonic.State
+
+#alias 9 : SSSONIC_CAMERAPAN
 
 // Stage Finish Aliases
-#alias 8	:	STAGEFINISH_LOADTIMEATTACK
-#alias 9	:	STAGEFINISH_LOADCREDITS
+#alias 8 : STAGEFINISH_LOADTIMEATTACK
+#alias 9 : STAGEFINISH_LOADCREDITS
 
 // SFX aliases
-#alias 22	:	SFX_EXPLOSION
+#alias 22 : SFX_EXPLOSION
 
 
 sub ObjectDraw
 	
-	// If the Object isn't falling at a rate of 4px per frame yet, then...
+	// If the Object isn't falling at a rate of 4px downwards per frame yet, then update movements
 	if Object.YVelocity < 0x40000
 		
 		// Draw the Power Up icon
 		DrawSpriteScreenXY(Object.PropertyValue, Object.iXPos, Object.iYPos)
 		
-		// Apply a gravity of 0.125 pixels per frame
+		// Apply an eighth pixel's worth of gravity per frame
 		Object.YVelocity += 0x2000
 		
-		// And then update the Power Up Velocity
+		// And then update the Power Up's position itself
 		Object.YPos += Object.YVelocity
 	end if
 	
@@ -63,35 +64,41 @@ sub ObjectDraw
 		Object[TempObjectPos].DrawOrder = 4
 	end if
 	
-	// Value is randomised by the parent UFO object, it's not set in this object's ObjectStartup or anything
+	// This value is randomised by the parent UFO object already, this Object doesn't set it itself
 	if Object.ExplosionDir > 50
-		// Going to the right
+		// Moving to the bottom right corner of the screen
+		
 		Object.ExplosionXVel += 0x20000
 	else
-		// Going to the left
+		// Moving to the bottom left corner of the screen
+		
 		Object.ExplosionXVel -= 0x20000
 	end if
 	
-	// Make the explosions gravitate to the bottom corner of the screen
+	// Make the explosions gravitate to the bottom corner of the screen, at a rate of 0.75 pixels per frame
 	Object.ExplosionYVel += 0xC000
 	
 	Object.Timer++
 	if Object.Timer == 160
 		if Object.StartResults == true
 			// If this object was the spawned by the last UFO, then end the stage
+			// -> StartResults is set by the parent UFO when spawning this Power Up
 			
 			if Options.GameMode < 2
 				if Stage.ActNo < 8
 					// If in a normal Special Stage, then hand the rest of the ending sequence to Sonic
+					
 					SSSonic[2].State = SSSONIC_CAMERAPAN
 				else
 					// If in the hidden Robotnik Special Stage, then go ahead and load the credits
+					
 					Object[30].Type = TypeName[Stage Finish]
 					Object[30].State = STAGEFINISH_LOADCREDITS
 					Object[30].DrawOrder = 7
 				end if
 			else
 				// If in time attack, then go ahead and fade out to the TA Menu scene
+				
 				Object[30].Type = TypeName[Stage Finish]
 				Object[30].State = STAGEFINISH_LOADTIMEATTACK
 				Object[30].DrawOrder = 7

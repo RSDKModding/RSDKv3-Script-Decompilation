@@ -1,28 +1,34 @@
-//------------Sonic CD Amy 2 Script-------------//
+//-------------------Sonic CD Amy 2 Script--------------------//
 //--------Scripted by Christian Whitehead 'The Taxman'--------//
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
 // Aliases
-#alias Object.Value0	:	Object.Timer
-#alias Object.Value1	:	Object.XVelocity
-#alias Object.Value2	:	Object.YVelocity
-#alias Object.Value3	:	Object.Bounds.Left
-#alias Object.Value4	:	Object.Bounds.Right
-#alias Object.Value5	:	Object.InAir
-#alias Object.Value6	:	Object.HeartsTimer
-#alias Object.Value7	:	Object.FallBackTimer
+#alias Object.Value0 : Object.Timer
+#alias Object.Value1 : Object.XVelocity
+#alias Object.Value2 : Object.YVelocity
+#alias Object.Value3 : Object.Bounds.Left
+#alias Object.Value4 : Object.Bounds.Right
+#alias Object.Value5 : Object.InAir
+#alias Object.Value6 : Object.HeartsTimer
+#alias Object.Value7 : Object.FallBackTimer
 
-#alias 0	:	AMY2_CHASEPLAYER
-#alias 1	:	AMY2_UNKNOWN // TODO: this tbh
-#alias 2	:	AMY2_HUGGING
-#alias 3	:	AMY2_RECOIL
-#alias 4	:	AMY2_WAITNG_R
-#alias 5	:	AMY2_WAITNG_L
+#alias 0 : AMY2_CHASEPLAYER
+#alias 1 : AMY2_UNKNOWN // TODO: this tbh
+#alias 2 : AMY2_HUGGING
+#alias 3 : AMY2_RECOIL
+#alias 4 : AMY2_WAITNG_R
+#alias 5 : AMY2_WAITNG_L
+
+// Player Aliases
+#alias -1 : CONTROLMODE_NONE
+
+// Fade Music Aliases
+#alias 3 : FADEMUSIC_SSZAMY
 
 
 sub ObjectMain
 
-	// Always face the player
+	// Always face Sonic
 	if Player.XPos < Object.XPos
 		Object.Direction = FACING_LEFT
 	else
@@ -34,16 +40,18 @@ sub ObjectMain
 	else
 		if Object.FallBackTimer == 600
 			// Can't run away forever!
-			// It's been 10 seconds of chasing Sonic already so just take away Sonic's control and end the level regardless if he wants it or not
+			
+			// It's been 10 seconds of chasing Sonic already so end the level regardless if he wants it or not
 			Object.FallBackTimer = 601
 			
+			// Lock Sonic's controls
 			Player.Left  = false
 			Player.Right = false
 			Player.Up    = false
 			Player.Down  = false
-			Player.ControlMode = -1
+			Player.ControlMode = CONTROLMODE_NONE
 			
-			CreateTempObject(TypeName[Fade Music], 3, Object.XPos, Object.YPos)
+			CreateTempObject(TypeName[Fade Music], FADEMUSIC_SSZAMY, Object.XPos, Object.YPos)
 		end if
 	end if
 	
@@ -74,7 +82,8 @@ sub ObjectMain
 		end if
 
 		if Object.Direction == FACING_RIGHT
-		
+			// We're chasing Sonic, going right of course
+			
 			if Object.XVelocity < 0x20000
 				Object.XVelocity += 0x2000
 			end if
@@ -87,6 +96,7 @@ sub ObjectMain
 						if CheckResult == true
 							if Player.Animation == 9
 								// Sonic's doing a spindash, throw Amy back (!)
+								
 								Object.State = AMY2_RECOIL
 								Object.Frame = 9
 								Object.YVelocity = -0x40000
@@ -99,15 +109,16 @@ sub ObjectMain
 									Player.Right = false
 									Player.Up    = false
 									Player.Down  = false
-									Player.ControlMode = -1
+									Player.ControlMode = CONTROLMODE_NONE
 									
-									CreateTempObject(TypeName[FadeMusic], 3, Object.XPos, Object.YPos)
+									CreateTempObject(TypeName[Fade Music], FADEMUSIC_SSZAMY, Object.XPos, Object.YPos)
 								end if
-			
+								
 #platform: Use_Haptics
+								// Soft little nudge
 								HapticEffect(52, 0, 0, 0)
 #endplatform
-
+								
 								Object.State = AMY2_HUGGING
 								Object.Frame = 8
 								Object.Timer = 0
@@ -115,8 +126,8 @@ sub ObjectMain
 								PlayStageSfx(8, 0)
 
 								// Grant the "One Hug Is Enough" achievement
-								// - It's possible that the player may have skipped Amy in PPZ, where the achievement is normally unlocked,
-								//   so there's another opportunity here
+								// -> It's possible that the player may have skipped Amy in PPZ, where the achievement is normally unlocked,
+								//    so there's another opportunity here
 								SetAchievement(1, 100)
 							end if
 						else
@@ -156,6 +167,7 @@ sub ObjectMain
 						if CheckResult == true
 							if Player.Animation == 9
 								// Sonic's doing a spindash, hit Amy back (!)
+								
 								Object.State = AMY2_RECOIL
 								Object.Frame = 9
 								Object.YVelocity = -0x40000
@@ -169,9 +181,9 @@ sub ObjectMain
 									Player.Right = false
 									Player.Up    = false
 									Player.Down  = false
-									Player.ControlMode = -1
+									Player.ControlMode = CONTROLMODE_NONE
 									
-									CreateTempObject(TypeName[FadeMusic], 3, Object.XPos, Object.YPos)
+									CreateTempObject(TypeName[Fade Music], FADEMUSIC_SSZAMY, Object.XPos, Object.YPos)
 								end if
 								
 								Object.State = AMY2_HUGGING
@@ -183,11 +195,11 @@ sub ObjectMain
 								// Unlock the "One Hug Is Enough" achievement
 								// There's a small chance you missed it in PPZ, so now you have a second chance at it here!
 								SetAchievement(1, 100)
-			
+								
 #platform: Use_Haptics
 								HapticEffect(52, 0, 0, 0)
 #endplatform
-
+								
 							end if
 						else
 							Object.State = AMY2_UNKNOWN
@@ -200,7 +212,7 @@ sub ObjectMain
 					end if
 				end if
 			end if
-
+			
 			if Object.XPos > Object.Bounds.Left
 				Object.XPos += Object.XVelocity
 			else
@@ -214,7 +226,7 @@ sub ObjectMain
 			
 		end if
 		break
-
+		
 	case AMY2_UNKNOWN
 		Object.Timer++
 		if Object.Timer == 12
@@ -241,26 +253,26 @@ sub ObjectMain
 			end if
 		end if
 		break
-
+		
 	case AMY2_HUGGING
 		Player.Speed = 0
 		Player.XVelocity = 0
 		Player.Direction = Object.Direction
 		break
-
+		
 	case AMY2_RECOIL
 		if Object.YVelocity > 0
 			Object.Frame = 10
 		end if
-	
+		
 		if Object.XVelocity > 0
 			Object.XVelocity -= 2048
 		end if
-
+		
 		if Object.XVelocity < 0
 			Object.XVelocity += 2048
 		end if
-
+		
 		Object.XPos += Object.XVelocity
 		if Object.InAir == false
 			if Object.Timer == 16
@@ -272,7 +284,7 @@ sub ObjectMain
 			end if
 		end if
 		break
-
+		
 	case AMY2_WAITNG_R
 		// Staring at Sonic to the right
 		Object.Timer++
@@ -280,18 +292,18 @@ sub ObjectMain
 			Object.Timer = 0
 			Object.Frame++
 		end if
-
+		
 		if Object.Frame > 3
 			Object.Frame = 0
 		end if
-
+		
 		if Object.Direction == FACING_LEFT
 			Object.State = AMY2_CHASEPLAYER
 			Object.Frame = 4
 			Object.Timer = 0
 		end if
 		break
-
+		
 	case AMY2_WAITNG_L
 		// Staring at Sonic to the Left
 		Object.Timer++
@@ -299,20 +311,20 @@ sub ObjectMain
 			Object.Timer = 0
 			Object.Frame++
 		end if
-
+		
 		if Object.Frame > 3
 			Object.Frame = 0
 		end if
-
+		
 		if Object.Direction == FACING_RIGHT
 			Object.State = AMY2_CHASEPLAYER
 			Object.Frame = 4
 			Object.Timer = 0
 		end if
 		break
-
+		
 	end switch
-
+	
 	Object.HeartsTimer++
 	
 	// Wait what? State 7? Where'd that come from? This object's states end at 5!
@@ -322,7 +334,7 @@ sub ObjectMain
 		if Object.HeartsTimer > 15
 			CreateTempObject(TypeName[Love Heart], 0, Object.XPos, Object.YPos)
 			Object[TempObjectPos].iYPos -= 6
-
+			
 			// Give the Heart the INK_ALPHA effect and start it at full opacity
 			Object[TempObjectPos].InkEffect = 2
 			Object[TempObjectPos].Alpha = 255
@@ -341,12 +353,13 @@ sub ObjectMain
 			Object.HeartsTimer = 0
 		end if
 	end if
-
+	
 	if Object.InAir == false
 		// Track the ground
 		ObjectTileGrip(0, 0, 19, 0)
 	else
 		// Got launched into the air by Sonic...
+		
 		// Apply air movements & gravity
 		Object.YVelocity += 0x4000
 		Object.YPos += Object.YVelocity
@@ -358,7 +371,7 @@ sub ObjectMain
 			Object.InAir = false
 		end if
 	end if
-
+	
 end sub
 
 
@@ -378,13 +391,13 @@ sub ObjectStartup
 	SpriteFrame(-11, -20, 22, 40, 57, 208)
 	SpriteFrame(-11, -20, 22, 40, 34, 208)
 	SpriteFrame(-11, -20, 22, 40, 126, 167)
-
+	
 	// Walking Animation
 	SpriteFrame(-15, -20, 30, 40, 68, 167)
 	SpriteFrame(-10, -20, 21, 40, 149, 109)
 	SpriteFrame(-13, -20, 26, 40, 99, 167)
 	SpriteFrame(-10, -20, 21, 40, 149, 109)
-
+	
 	// Hugging Frame, hearted eyes
 	SpriteFrame(-12, -20, 24, 40, 181, 208)
 	
@@ -393,7 +406,7 @@ sub ObjectStartup
 	
 	// Falling Frame
 	SpriteFrame(-12, -20, 24, 40, 107, 208)
-
+	
 end sub
 
 

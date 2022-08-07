@@ -1,33 +1,33 @@
-//------------Sonic CD Dango Script-------------//
+//-------------------Sonic CD Dango Script--------------------//
 //--------Scripted by Christian Whitehead 'The Taxman'--------//
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
 // Aliases
-#alias Object.Value0	:	Object.Timer
-#alias Object.Value1	:	Object.OriginPosX
-#alias Object.Value2	:	Object.OriginPosY
-#alias Object.Value3	:	Object.XVelocity
-#alias Object.Value4	:	Object.ChaseChain
+#alias Object.Value0 : Object.Timer
+#alias Object.Value1 : Object.OriginPosX
+#alias Object.Value2 : Object.OriginPosY
+#alias Object.Value3 : Object.XVelocity
+#alias Object.Value4 : Object.ChaseChain
 
 // States
-#alias 0	:	DANGO_WALK
-#alias 1	:	DANGO_CURL1
-#alias 2	:	DANGO_CURL2
-#alias 3	:	DANGO_CHARGEROLL
-#alias 4	:	DANGO_ROLLING
-#alias 5	:	DANGO_UNCURL1
-#alias 6	:	DANGO_UNCURL2
-#alias 7	:	DANGO_UNCURLED
-#alias 8	:	DANGO_OFFSCREEN // Unused
+#alias 0 : DANGO_WALK
+#alias 1 : DANGO_CURL1
+#alias 2 : DANGO_CURL2
+#alias 3 : DANGO_CHARGEROLL
+#alias 4 : DANGO_ROLLING
+#alias 5 : DANGO_UNCURL1
+#alias 6 : DANGO_UNCURL2
+#alias 7 : DANGO_UNCURLED
+#alias 8 : DANGO_OFFSCREEN // Unused
 
-// Badnik States (Property Values)
-#alias 0	:	PROPVAL_QUALITY_GOOD
-#alias 1	:	PROPVAL_QUALITY_BAD
+// Badnik Conditions
+#alias 0 : CONDITION_GOOD
+#alias 1 : CONDITION_BAD
 
 
 sub ObjectMain
-
-	if Object.PropertyValue == PROPVAL_QUALITY_GOOD
+	
+	if Object.PropertyValue == CONDITION_GOOD
 		switch Object.State
 		case DANGO_WALK
 			Object.Priority = 1
@@ -36,13 +36,13 @@ sub ObjectMain
 			Object.Timer++
 			Object.Timer %= 20
 			Object.XPos += Object.XVelocity
-
+			
 			if Object.Direction == FACING_RIGHT
 				ObjectTileGrip(0, -5, 15, 0)
 			else
 				ObjectTileGrip(0, 5, 15, 0)
 			end if
-
+			
 			if CheckResult == false
 				FlipSign(Object.XVelocity)
 				Object.Direction++
@@ -78,7 +78,7 @@ sub ObjectMain
 				Object.State++
 			end if
 			break
-
+			
 		case DANGO_CURL2
 			Object.Frame = 5
 			if Object.Timer < 6
@@ -88,7 +88,7 @@ sub ObjectMain
 				Object.State++
 			end if
 			break
-
+			
 		case DANGO_CHARGEROLL
 			Object.Frame = Object.AnimationTimer
 			Object.Frame /= 5
@@ -107,7 +107,7 @@ sub ObjectMain
 				end if
 			end if
 			break
-
+			
 		case DANGO_ROLLING
 			Object.Frame = Object.AnimationTimer
 			Object.Frame /= 5
@@ -121,7 +121,7 @@ sub ObjectMain
 			else
 				ObjectTileGrip(0, 5, 15, 0)
 			end if
-
+			
 			if CheckResult == false
 				Object.State++
 				Object.ChaseChain++
@@ -141,7 +141,7 @@ sub ObjectMain
 				end if
 			end if
 			break
-
+			
 		case DANGO_UNCURL1
 			Object.Frame = 5
 			if Object.Timer < 6
@@ -151,7 +151,7 @@ sub ObjectMain
 				Object.State++
 			end if
 			break
-
+			
 		case DANGO_UNCURL2
 			Object.Frame = 4
 			if Object.Timer < 8
@@ -161,7 +161,7 @@ sub ObjectMain
 				Object.State++
 			end if
 			break
-
+			
 		case DANGO_UNCURLED
 			Object.Frame = 0
 			if Object.Timer < 16
@@ -172,11 +172,12 @@ sub ObjectMain
 				if Object.ChaseChain > 7
 					// Tried going in the same direction 8 times now...
 					// Even if the player's the other way, go ahead and change directions
+					
 					Object.Direction++
 					Object.Direction &= FACING_LEFT
 					Object.ChaseChain = 0
 				end if
-
+				
 				if Object.Direction == FACING_RIGHT
 					Object.XVelocity = -0x6000
 				else
@@ -184,7 +185,7 @@ sub ObjectMain
 				end if
 			end if
 			break
-
+			
 		case DANGO_OFFSCREEN
 			// This state is unused, but it serves just about the same buffer purpose as it does with other badniks
 			if Object.OutOfBounds == true
@@ -192,7 +193,7 @@ sub ObjectMain
 				Object.Priority = 0
 			end if
 			break
-
+			
 		end switch
 	else
 		switch Object.State
@@ -204,13 +205,13 @@ sub ObjectMain
 			Object.Timer++
 			Object.Timer %= 60
 			Object.XPos += Object.XVelocity
-
+			
 			if Object.Direction == FACING_RIGHT
 				ObjectTileGrip(0, -5, 15, 0)
 			else
 				ObjectTileGrip(0, 5, 15, 0)
 			end if
-
+			
 			if CheckResult == false
 				FlipSign(Object.XVelocity)
 				Object.Direction++
@@ -236,7 +237,7 @@ sub ObjectMain
 				end if
 			end if
 			break
-	
+			
 		case DANGO_CURL1
 			Object.Frame = 4
 			if Object.Timer < 20
@@ -246,7 +247,7 @@ sub ObjectMain
 				Object.State++
 			end if
 			break
-		
+			
 		case DANGO_CURL2
 			Object.Frame = 5
 			if Object.Timer < 12
@@ -256,7 +257,7 @@ sub ObjectMain
 				Object.State++
 			end if
 			break
-	
+			
 		case DANGO_CHARGEROLL
 			Object.Frame = Object.AnimationTimer
 			Object.Frame /= 10
@@ -275,7 +276,7 @@ sub ObjectMain
 				end if
 			end if
 			break
-
+			
 		case DANGO_ROLLING
 			Object.Frame = Object.AnimationTimer
 			Object.Frame /= 10
@@ -283,7 +284,7 @@ sub ObjectMain
 			Object.AnimationTimer++
 			Object.AnimationTimer %= 20
 			Object.XPos += Object.XVelocity
-
+			
 			if Object.Direction == FACING_RIGHT
 				ObjectTileGrip(0, -5, 15, 0)
 			else
@@ -309,7 +310,7 @@ sub ObjectMain
 				end if
 			end if
 			break
-
+			
 		case DANGO_UNCURL1
 			Object.Frame = 5
 			if Object.Timer < 12
@@ -319,7 +320,7 @@ sub ObjectMain
 				Object.State++
 			end if
 			break
-
+			
 		case DANGO_UNCURL2
 			Object.Frame = 4
 			if Object.Timer < 20
@@ -329,7 +330,7 @@ sub ObjectMain
 				Object.State++
 			end if
 			break
-
+			
 		case DANGO_UNCURLED
 			Object.Frame = 2
 			if Object.Timer < 64
@@ -339,7 +340,8 @@ sub ObjectMain
 				Object.State = DANGO_WALK
 				if Object.ChaseChain > 7
 					// Been going in the same direction for 8 cycles now...
-					// Even if it may be opposite of the player, go ahead and change direction because much isn't happening now anyways
+					// Even if it may be opposite of the player, go ahead and change directions because much isn't happening now anyways
+					
 					Object.Direction++
 					Object.Direction &= FACING_LEFT
 					Object.ChaseChain = 0
@@ -352,7 +354,7 @@ sub ObjectMain
 				end if
 			end if
 			break
-
+			
 		case DANGO_OFFSCREEN
 			// This state is unused as Dango uses a simpler OOB process instead
 			if Object.OutOfBounds == true
@@ -360,60 +362,64 @@ sub ObjectMain
 				Object.Priority = 0
 			end if
 			break
-
+			
 		end switch
 	end if
-
+	
+	// Standard Badnik stuff, make sure it shouldn't become a Flower automatically or anything
 	CallFunction(StageSetup_CheckGoodFuture)
-
+	
 	// See if the Dango is out of bounds
 	if Object.OutOfBounds == true
-
+		
 		// If it is, then see if its starting position is out of bounds too
 		TempValue0 = Object.XPos
 		TempValue1 = Object.YPos
 		Object.XPos = Object.OriginPosX
 		Object.YPos = Object.OriginPosY
 		if Object.OutOfBounds == true
-
-			// It is, so in that case it's clear to restore the Dango to its original spot
+			
+			// It is too, so in that case it's clear to restore the Dango to its original spot
 			Object.Priority = 0
 			Object.State = DANGO_WALK
 			Object.Timer = 0
 			Object.Direction = FACING_RIGHT
 			Object.ChaseChain = 0
 			
-			if Object.PropertyValue == PROPVAL_QUALITY_GOOD
+			if Object.PropertyValue == CONDITION_GOOD
 				Object.XVelocity = -0x6000
 			else
 				Object.XVelocity = -0x1000
 			end if
 		else
+			// Nope not ready yet, move back
+			
 			Object.XPos = TempValue0
 			Object.YPos = TempValue1
 		end if
 	end if
-
+	
 end sub
 
 
 sub ObjectPlayerInteraction
-
+	
 	if Object.State == DANGO_WALK
 		// If the Dango's just wandering, then check to see if the player's stepped within activation range
-
+		
 		if Object.Direction == FACING_RIGHT
 			PlayerObjectCollision(C_TOUCH, -112, -128, 0, 128)
 		else
 			PlayerObjectCollision(C_TOUCH, 0, -128, 112, 128)
 		end if
-
+		
 		if CheckResult == true
 			// On the attack!
+			
 			Object.State = DANGO_CURL1
 		end if
 	end if
-
+	
 	switch Object.State
 	case DANGO_WALK
 	case DANGO_CURL1
@@ -427,7 +433,7 @@ sub ObjectPlayerInteraction
 			CallFunction(Player_BadnikBreak)
 		end if
 		break
-
+		
 	case DANGO_CHARGEROLL
 		PlayerObjectCollision(C_TOUCH, -14, -10, 14, 10)
 		if CheckResult == true
@@ -455,7 +461,7 @@ sub ObjectPlayerInteraction
 			end if
 		end if
 		break
-
+		
 	case DANGO_ROLLING
 		PlayerObjectCollision(C_TOUCH, -14, -10, 14, 10)
 		if CheckResult == true
@@ -465,12 +471,13 @@ sub ObjectPlayerInteraction
 			TempValue0 |= CheckResult
 			if TempValue0 == true
 				// The player's rolled towards the Dango, so recoil the both of them
+				
 				Object.XVelocity = Player.XVelocity
 				Player.Speed = Player.XPos
 				Player.Speed -= Object.XPos
 				Player.Speed >>= 2
 				Player.XVelocity = Player.Speed
-
+				
 				if Player.Gravity == 1
 					// Account for Y recoil, too
 					Player.YVelocity = Player.YPos
@@ -488,7 +495,7 @@ sub ObjectPlayerInteraction
 			end if
 		end if
 		break
-
+		
 	end switch
 	
 end sub
@@ -503,9 +510,9 @@ end sub
 
 sub ObjectStartup
 	LoadSpriteSheet("R7/Objects.gif")
-
+	
 	// Dango Frames
-
+	
 	// 0-1 - Idle Animation, "Good" variant
 	SpriteFrame(-16, -7, 32, 24, 116, 121)
 	SpriteFrame(-16, -7, 32, 24, 149, 121)
@@ -534,10 +541,12 @@ sub ObjectStartup
 			Object[ArrayPos0].OriginPosY = Object[ArrayPos0].YPos
 			
 			// Set its starting velocity as well, "Bad" Dangos go slower than "Good" ones since they're, y'know, "Bad"
-			if Object[ArrayPos0].PropertyValue == PROPVAL_QUALITY_GOOD
-				Object[ArrayPos0].XVelocity = -0x6000 // 0.375 pixels per frame
+			if Object[ArrayPos0].PropertyValue == CONDITION_GOOD
+				// Speed of 0.375 pixels per frame
+				Object[ArrayPos0].XVelocity = -0x6000
 			else
-				Object[ArrayPos0].XVelocity = -0x1000  // 0.0625 pixels per frame... that's hardly anything!
+				// 0.0625 pixels per frame... that's hardly anything!
+				Object[ArrayPos0].XVelocity = -0x1000 
 			end if
 		end if
 		
@@ -555,8 +564,6 @@ sub RSDKEdit
 	if Editor.ReturnVariable == true
 		switch Editor.VariableID
 		case EDIT_VAR_PROPVAL // Property Value
-			CheckResult = Object.PropertyValue
-			break
 		case 0 // Condition
 			CheckResult = Object.PropertyValue
 			break
@@ -564,8 +571,6 @@ sub RSDKEdit
 	else
 		switch Editor.variableID
 		case EDIT_VAR_PROPVAL // Property Value
-			Object.PropertyValue = Editor.VariableValue
-			break
 		case 0 // Condition
 			Object.PropertyValue = Editor.VariableValue
 			break
@@ -586,6 +591,6 @@ sub RSDKLoad
 
 	AddEditorVariable("Condition")
 	SetActiveVariable("Condition")
-	AddEnumVariable("Good", PROPVAL_QUALITY_GOOD)
-	AddEnumVariable("Bad",  PROPVAL_QUALITY_BAD)
+	AddEnumVariable("Good", CONDITION_GOOD)
+	AddEnumVariable("Bad",  CONDITION_BAD)
 end sub
