@@ -9,9 +9,18 @@
 #alias Object.Value6	:	Object.BounceFloorAnim
 #alias Object.Value7	:	Object.BounceFloorTile
 #alias Object.Scale		:	Object.BounceFloorFlag
+#alias Object.Direction	:	Object.WebDirection
 
 // Player Aliases
 #alias Player.Value4	:	Player.InvincibleTimer
+
+// States
+#alias 2	:	R6C_SETUP_WEB_SHOCK	// Unused in boss stages
+
+// Web Directions
+#alias 0	:	VERTICAL_WEB
+#alias 1	:	HORIZONTAL_WEB
+#alias 2	:	DIAGONAL_WEB
 
 // Gravity
 #alias 1	:	GRAVITY_AIR
@@ -21,21 +30,21 @@
 
 
 sub ObjectMain
-	TempValue0 = Object.LightTile
+	TempValue0  = Object.LightTile
 	TempValue0 &= 1
 	if TempValue0 == 0
-		TempValue0 = Object.LightTile
+		TempValue0   = Object.LightTile
 		TempValue0 >>= 1
-		TempValue0 += 808
+		TempValue0  += 808
 		Copy16x16Tile(579, TempValue0)
 	end if
 	Object.LightTile++
 	Object.LightTile %= 24
 
-	TempValue0 = Object.ElectricTile
+	TempValue0  = Object.ElectricTile
 	TempValue0 %= 5
 	if TempValue0 == 0
-		TempValue0 = Object.ElectricTile
+		TempValue0  = Object.ElectricTile
 		TempValue0 /= 5
 		TempValue0 += 820
 		Copy16x16Tile(580, TempValue0)
@@ -45,10 +54,10 @@ sub ObjectMain
 	Object.ElectricTile++
 	Object.ElectricTile %= 15
 	
-	TempValue0 = Object.BounceFloorAnim
+	TempValue0  = Object.BounceFloorAnim
 	TempValue0 &= 1
 	if TempValue0 == 0
-		TempValue0 = Object.BounceFloorTile
+		TempValue0  = Object.BounceFloorTile
 		TempValue0 += 826
 		Object.BounceFloorTile++
 		Object.BounceFloorTile %= 6
@@ -59,7 +68,7 @@ sub ObjectMain
 
 	Object.BounceFloorFlag = true
 
-	TempValue0 = Object.PaletteBank
+	TempValue0   = Object.PaletteBank
 	TempValue0 >>= 1
 	SetActivePalette(TempValue0, 0, Screen.YSize)
 	Object.PaletteBank++
@@ -68,19 +77,19 @@ end sub
 
 
 sub ObjectPlayerInteraction
-	TempValue2 = Player.XPos
+	TempValue2   = Player.XPos
 	TempValue2 >>= 16
-	TempValue2 += Player.CollisionRight
+	TempValue2  += Player.CollisionRight
 
-	TempValue3 = Player.YPos
+	TempValue3   = Player.YPos
 	TempValue3 >>= 16
-	TempValue3 += Player.CollisionBottom
-	TempValue3 += 2
+	TempValue3  += Player.CollisionBottom
+	TempValue3  += 2
 	Get16x16TileInfo(TempValue0, TempValue2, TempValue3, 8)
 
-	TempValue2 = Player.XPos
+	TempValue2   = Player.XPos
 	TempValue2 >>= 16
-	TempValue2 += Player.CollisionLeft
+	TempValue2  += Player.CollisionLeft
 	Get16x16TileInfo(TempValue1, TempValue2, TempValue3, 8)
 
 	TempValue0 |= TempValue1
@@ -112,6 +121,8 @@ sub ObjectPlayerInteraction
 	TempValue2 -= Player.CollisionLeft
 	TempValue3 -= Player.CollisionBottom
 	TempValue3 -= 2
+	// You will see constant checks for R6C_SETUP_WEB_SHOCK state
+	// but the code to reach that state is removed, since there are no shock webs on the boss stage
 	Get16x16TileInfo(TempValue0, TempValue2, TempValue3, 8)
 	switch TempValue0
 	case 2
@@ -125,7 +136,7 @@ sub ObjectPlayerInteraction
 		end if
 		break
 	case 5
-		if Object.State == 2
+		if Object.State == R6C_SETUP_WEB_SHOCK
 			if Player.InvincibleTimer == 0
 				Player.State = Player_State_GotHit
 				if Player.Direction == FACING_LEFT
@@ -137,8 +148,8 @@ sub ObjectPlayerInteraction
 		end if
 		break
 	case 6
-		if Object.State == 2
-			if Object.Direction == FACING_RIGHT
+		if Object.State == R6C_SETUP_WEB_SHOCK
+			if Object.WebDirection == VERTICAL_WEB
 				if Player.InvincibleTimer == 0
 					Player.State = Player_State_GotHit
 					if Player.Direction == FACING_LEFT
@@ -151,8 +162,8 @@ sub ObjectPlayerInteraction
 		end if
 		break
 	case 7
-		if Object.State == 2
-			if Object.Direction == FACING_LEFT
+		if Object.State == R6C_SETUP_WEB_SHOCK
+			if Object.WebDirection == HORIZONTAL_WEB
 				if Player.InvincibleTimer == 0
 					Player.State = Player_State_GotHit
 					if Player.Direction == FACING_LEFT
@@ -165,8 +176,8 @@ sub ObjectPlayerInteraction
 		end if
 		break
 	case 8
-		if Object.State == 2
-			if Object.Direction == 2
+		if Object.State == R6C_SETUP_WEB_SHOCK
+			if Object.WebDirection == DIAGONAL_WEB
 				if Player.InvincibleTimer == 0
 					Player.State = Player_State_GotHit
 					if Player.Direction == FACING_LEFT
@@ -193,7 +204,7 @@ sub ObjectPlayerInteraction
 		end if
 		break
 	case 5
-		if Object.State == 2
+		if Object.State == R6C_SETUP_WEB_SHOCK
 			if Player.InvincibleTimer == 0
 				Player.State = Player_State_GotHit
 				if Player.Direction == FACING_LEFT
@@ -205,8 +216,8 @@ sub ObjectPlayerInteraction
 		end if
 		break
 	case 6
-		if Object.State == 2
-			if Object.Direction == FACING_RIGHT
+		if Object.State == R6C_SETUP_WEB_SHOCK
+			if Object.WebDirection == VERTICAL_WEB
 				if Player.InvincibleTimer == 0
 					Player.State = Player_State_GotHit
 					if Player.Direction == FACING_LEFT
@@ -219,8 +230,8 @@ sub ObjectPlayerInteraction
 		end if
 		break
 	case 7
-		if Object.State == 2
-			if Object.Direction == FACING_LEFT
+		if Object.State == R6C_SETUP_WEB_SHOCK
+			if Object.WebDirection == HORIZONTAL_WEB
 				if Player.InvincibleTimer == 0
 					Player.State = Player_State_GotHit
 					if Player.Direction == FACING_LEFT
@@ -233,8 +244,8 @@ sub ObjectPlayerInteraction
 		end if
 		break
 	case 8
-		if Object.State == 2
-			if Object.Direction == 2
+		if Object.State == R6C_SETUP_WEB_SHOCK
+			if Object.WebDirection == DIAGONAL_WEB
 				if Player.InvincibleTimer == 0
 					Player.State = Player_State_GotHit
 					if Player.Direction == FACING_LEFT

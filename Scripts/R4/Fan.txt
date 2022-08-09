@@ -1,40 +1,42 @@
-//------------Sonic CD Fan Script-------------//
+//--------------------Sonic CD Fan Script---------------------//
 //--------Scripted by Christian Whitehead 'The Taxman'--------//
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
-// States
-#alias 0	:	FAN_CLOSED
-#alias 1	:	FAN_OPEN
-#alias 2	:	FUTURE_FAN_CLOSED
-#alias 3	:	FUTURE_FAN_OPEN
 
 // Button alias
-#alias Object[-1].PropertyValue	:	Button.Pushed
+#alias Object[-1].PropertyValue	:	PushButton.Pressed
 
 // HUD alias
 #alias Object[24].PropertyValue	:	Hud.TimePeriod
 
+// States / Property Values
+// These are based on Property Value, so technically they are named the same
+#alias 0	:	VERTICAL_FAN_OFF
+#alias 1	:	VERTICAL_FAN_ON
+#alias 2	:	HORIZONTAL_FAN_OFF
+#alias 3	:	HORIZONTAL_FAN_ON
+
 // Time Periods
-#alias 0			:	PROPVAL_PRESENT
-#alias 1			:	PROPVAL_PAST
-#alias 2			:	PROPVAL_GOOD_FUTURE
-#alias 3			:	PROPVAL_BAD_FUTURE
+#alias 0	:	PROPVAL_PRESENT
+#alias 1	:	PROPVAL_PAST
+#alias 2	:	PROPVAL_GOOD_FUTURE
+#alias 3	:	PROPVAL_BAD_FUTURE
 
 
 
 sub ObjectMain
 	switch Object.State
-	case FAN_CLOSED
-	case FUTURE_FAN_CLOSED
-		if Button.Pushed == true
-			Object.PropertyValue = 1
+	case VERTICAL_FAN_OFF
+	case HORIZONTAL_FAN_OFF
+		if PushButton.Pressed == true
+			Object.PropertyValue = VERTICAL_FAN_ON
 			Object.State++
 		end if
 		break
 
-	case FAN_OPEN
-	case FUTURE_FAN_OPEN
-		if Hud.TimePeriod < 2
+	case VERTICAL_FAN_ON
+	case HORIZONTAL_FAN_ON
+		if Hud.TimePeriod < PROPVAL_GOOD_FUTURE
 			Object.Frame++
 			if Object.Frame > 9
 				Object.Frame = 0
@@ -50,24 +52,24 @@ end sub
 
 sub ObjectDraw
 	switch Object.State
-	case FAN_CLOSED
+	case VERTICAL_FAN_OFF
 		DrawSprite(0)
 		break
 
-	case FAN_OPEN
-		TempValue0 = Object.Frame
+	case VERTICAL_FAN_ON
+		TempValue0   = Object.Frame
 		TempValue0 >>= 1
 		DrawSprite(TempValue0)
 		break
 		
-	case FUTURE_FAN_CLOSED
+	case HORIZONTAL_FAN_OFF
 		DrawSpriteFX(5, FX_FLIP, Object.XPos, Object.YPos)
 		break
 
-	case FUTURE_FAN_OPEN
-		TempValue0 = Object.Frame
+	case HORIZONTAL_FAN_ON
+		TempValue0   = Object.Frame
 		TempValue0 >>= 1
-		TempValue0 += 5
+		TempValue0  += 5
 		DrawSpriteFX(TempValue0, FX_FLIP, Object.XPos, Object.YPos)
 		break
 
@@ -80,6 +82,7 @@ sub ObjectStartup
 	case PROPVAL_PRESENT
 	case PROPVAL_PAST
 		LoadSpriteSheet("R4/Objects.gif")
+		
 		SpriteFrame(-16, -8, 32, 16, 163, 35)	// #0 - Fan vertical frame 0
 		SpriteFrame(-12, -8, 24, 16, 229, 1)	// #1 - Fan vertical frame 1
 		SpriteFrame(-8, -8, 16, 16, 229, 18)	// #2 - Fan vertical frame 2
@@ -94,30 +97,32 @@ sub ObjectStartup
 
 	case PROPVAL_GOOD_FUTURE
 		LoadSpriteSheet("R4/Objects3.gif")
-		SpriteFrame(-16, -8, 32, 16, 51, 67)	// #0 - Future fan vertical closed
-		SpriteFrame(-16, -8, 32, 16, 51, 84)	// #1 - Future fan vertical open
-		SpriteFrame(-16, -8, 32, 16, 51, 84)	// #2 - Future fan vertical open
-		SpriteFrame(-16, -8, 32, 16, 51, 84)	// #3 - Future fan vertical open
-		SpriteFrame(-16, -8, 32, 16, 51, 84)	// #4 - Future fan vertical open
-		SpriteFrame(-8, -16, 16, 32, 50, 101)	// #5 - Future fan horizontal closed
-		SpriteFrame(-8, -16, 16, 32, 67, 101)	// #6 - Future fan horizontal open
-		SpriteFrame(-8, -16, 16, 32, 67, 101)	// #7 - Future fan horizontal open
-		SpriteFrame(-8, -16, 16, 32, 67, 101)	// #8 - Future fan horizontal open
-		SpriteFrame(-8, -16, 16, 32, 67, 101)	// #9 - Future fan horizontal open
+
+		SpriteFrame(-16, -8, 32, 16, 51, 67)	// #0 - Future fan vertical off
+		SpriteFrame(-16, -8, 32, 16, 51, 84)	// #1 - Future fan vertical on
+		SpriteFrame(-16, -8, 32, 16, 51, 84)	// #2 - Future fan vertical on
+		SpriteFrame(-16, -8, 32, 16, 51, 84)	// #3 - Future fan vertical on
+		SpriteFrame(-16, -8, 32, 16, 51, 84)	// #4 - Future fan vertical on
+		SpriteFrame(-8, -16, 16, 32, 50, 101)	// #5 - Future fan horizontal off
+		SpriteFrame(-8, -16, 16, 32, 67, 101)	// #6 - Future fan horizontal on
+		SpriteFrame(-8, -16, 16, 32, 67, 101)	// #7 - Future fan horizontal on
+		SpriteFrame(-8, -16, 16, 32, 67, 101)	// #8 - Future fan horizontal on
+		SpriteFrame(-8, -16, 16, 32, 67, 101)	// #9 - Future fan horizontal on
 		break
 
 	case PROPVAL_BAD_FUTURE
 		LoadSpriteSheet("R4/Objects3.gif")
-		SpriteFrame(-16, -8, 32, 16, 62, 228)	// #0 - Future fan vertical closed
-		SpriteFrame(-16, -8, 32, 16, 94, 228)	// #1 - Future fan vertical open
-		SpriteFrame(-16, -8, 32, 16, 94, 228)	// #2 - Future fan vertical open
-		SpriteFrame(-16, -8, 32, 16, 94, 228)	// #3 - Future fan vertical open
-		SpriteFrame(-16, -8, 32, 16, 94, 228)	// #4 - Future fan vertical open
-		SpriteFrame(-8, -16, 16, 32, 76, 144)	// #5 - Future fan horizontal closed
-		SpriteFrame(-8, -16, 16, 32, 93, 144)	// #6 - Future fan horizontal open
-		SpriteFrame(-8, -16, 16, 32, 93, 144)	// #7 - Future fan horizontal open
-		SpriteFrame(-8, -16, 16, 32, 93, 144)	// #8 - Future fan horizontal open
-		SpriteFrame(-8, -16, 16, 32, 93, 144)	// #9 - Future fan horizontal open
+
+		SpriteFrame(-16, -8, 32, 16, 62, 228)	// #0 - Future fan vertical off
+		SpriteFrame(-16, -8, 32, 16, 94, 228)	// #1 - Future fan vertical on
+		SpriteFrame(-16, -8, 32, 16, 94, 228)	// #2 - Future fan vertical on
+		SpriteFrame(-16, -8, 32, 16, 94, 228)	// #3 - Future fan vertical on
+		SpriteFrame(-16, -8, 32, 16, 94, 228)	// #4 - Future fan vertical on
+		SpriteFrame(-8, -16, 16, 32, 76, 144)	// #5 - Future fan horizontal off
+		SpriteFrame(-8, -16, 16, 32, 93, 144)	// #6 - Future fan horizontal on
+		SpriteFrame(-8, -16, 16, 32, 93, 144)	// #7 - Future fan horizontal on
+		SpriteFrame(-8, -16, 16, 32, 93, 144)	// #8 - Future fan horizontal on
+		SpriteFrame(-8, -16, 16, 32, 93, 144)	// #9 - Future fan horizontal on
 		break
 
 	end switch
@@ -126,10 +131,12 @@ sub ObjectStartup
 	while ArrayPos0 < 1056
 		if Object[ArrayPos0].Type == TypeName[Fan]
 			Object[ArrayPos0].State = Object[ArrayPos0].PropertyValue
+
 			if Object[ArrayPos0].PropertyValue > 3
-				Object[ArrayPos0].State -= 2
-				Object[ArrayPos0].Direction = FACING_LEFT
+				Object[ArrayPos0].state		-= 2
+				Object[ArrayPos0].Direction  = FACING_LEFT
 			end if
+
 			Object[ArrayPos0].PropertyValue &= 1
 		end if
 		ArrayPos0++

@@ -6,8 +6,12 @@
 #alias Object.Value1	:	Object.HitboxLeft
 #alias Object.Value2	:	Object.HitboxRight
 
+// Control Mode
+#alias 0	:	CONTROL_ENABLED
+
 
 sub ObjectPlayerInteraction
+	// Water streams are activated through a chain, originated from a push button
 	if Object[-1].PropertyValue == 1
 		Object.PropertyValue = 1
 		PlayerObjectCollision(C_TOUCH, Object.HitboxLeft, -32, Object.HitboxRight, 32)
@@ -54,7 +58,7 @@ sub ObjectPlayerInteraction
 					Player.State = Player_State_Air
 #endplatform
 
-					Player.ControlMode = 0
+					Player.ControlMode = CONTROL_ENABLED
 					Player.Animation   = ANI_WALKING
 				end if
 			end if
@@ -67,9 +71,9 @@ sub ObjectStartup
 	ArrayPos0 = 32
 	while ArrayPos0 < 1056
 		if Object[ArrayPos0].Type == TypeName[WaterStreamL]
-			Object[ArrayPos0].HitboxLeft = Object[ArrayPos0].PropertyValue
+			Object[ArrayPos0].HitboxLeft   = Object[ArrayPos0].PropertyValue
 			Object[ArrayPos0].HitboxLeft <<= 3
-			Object[ArrayPos0].HitboxRight = Object[ArrayPos0].HitboxLeft
+			Object[ArrayPos0].HitboxRight  = Object[ArrayPos0].HitboxLeft
 			FlipSign(Object[ArrayPos0].HitboxLeft)
 			Object[ArrayPos0].PropertyValue = 0
 		end if

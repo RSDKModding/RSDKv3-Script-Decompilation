@@ -1,30 +1,30 @@
-//------------Sonic CD Effect Trigger Script-------------//
+//--------------Sonic CD Effect Trigger Script----------------//
 //--------Scripted by Christian Whitehead 'The Taxman'--------//
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
 // Property Values
 
 // Level
-#alias 0	:	EFFECTRIGGER_SET_BG_LAYER
-#alias 1	:	EFFECTRIGGER_SWAP_BACKGROUND
-#alias 2	:	EFFECTRIGGER_WATER_HEIGHT
-#alias 13	:	EFFECTRIGGER_WATER_HEIGHT_2	// not sure if this is used
+#alias 0	:	SET_BG_LAYER
+#alias 1	:	SWAP_BACKGROUND
+#alias 2	:	WATER_HEIGHT
+#alias 13	:	WATER_HEIGHT_2	// not sure if this is used
 
 // Pipes
-#alias 4	:	EFFECTRIGGER_PIPE_BOTTOM_ENTRY
-#alias 5	:	EFFECTRIGGER_PIPE_TOP_ENTRY
-#alias 6	:	EFFECTRIGGER_PIPE_TURN_LEFT
-#alias 7	:	EFFECTRIGGER_PIPE_TURN_RIGHT
-#alias 8	:	EFFECTRIGGER_PIPE_TURN_UP
-#alias 9	:	EFFECTRIGGER_PIPE_TURN_DOWN
-#alias 10	:	EFFECTRIGGER_UNUSED
-#alias 11	:	EFFECTRIGGER_UNUSED_2
-#alias 12	:	EFFECTRIGGER_PIPE_EXIT_PIPE
+#alias 4	:	PIPE_BOTTOM_ENTRY
+#alias 5	:	PIPE_TOP_ENTRY
+#alias 6	:	PIPE_TURN_LEFT
+#alias 7	:	PIPE_TURN_RIGHT
+#alias 8	:	PIPE_TURN_UP
+#alias 9	:	PIPE_TURN_DOWN
+#alias 10	:	UNUSED
+#alias 11	:	UNUSED_2
+#alias 12	:	PIPE_EXIT_PIPE
 
 
 sub ObjectMain
 	switch Object.PropertyValue
-	case EFFECTRIGGER_SET_BG_LAYER
+	case SET_BG_LAYER
 		if Player.XPos < 0x2800000		// X - 640 in map coords
 			Stage[0].ActiveLayer = 1	// why it does this instead of starting with this layer directly? no clue
 			
@@ -33,7 +33,7 @@ sub ObjectMain
 		end if
 		break
 
-	case EFFECTRIGGER_SWAP_BACKGROUND
+	case SWAP_BACKGROUND
 		if Player.YPos > Object.YPos
 			Stage[0].ActiveLayer = 2
 
@@ -45,7 +45,7 @@ sub ObjectMain
 		end if
 		break
 
-	case EFFECTRIGGER_WATER_HEIGHT
+	case WATER_HEIGHT
 		if Player.XPos > Object.XPos
 			Stage.NewWaterLevel = 0x2640000	// Y - 612 in map coords
 		else
@@ -53,7 +53,7 @@ sub ObjectMain
 		end if
 		break
 
-	case EFFECTRIGGER_PIPE_BOTTOM_ENTRY
+	case PIPE_BOTTOM_ENTRY
 		PlayerObjectCollision(C_TOUCH, -10, -16, 10, 16)
 		if CheckResult == true
 			if Player.State != Player_State_Death
@@ -64,12 +64,12 @@ sub ObjectMain
 					Player.Animation = ANI_FANROTATE
 
 					Player.XVelocity =  0
-					Player.YVelocity = -0x40000	//-0x40000
+					Player.YVelocity = -0x40000
 
 					if Player.XPos < Object.XPos
-						Player.XPos += 0x10000	// 0x10000
+						Player.XPos += 0x10000
 					else
-						Player.XPos -= 0x10000	// 0x10000
+						Player.XPos -= 0x10000
 					end if
 				end if
 			end if
@@ -90,7 +90,7 @@ sub ObjectMain
 		end if
 		break
 
-	case EFFECTRIGGER_PIPE_TOP_ENTRY
+	case PIPE_TOP_ENTRY
 		PlayerObjectCollision(C_TOUCH, -10, -16, 10, 16)
 		if CheckResult == true
 			if Player.State != Player_State_Death
@@ -102,12 +102,12 @@ sub ObjectMain
 					Player.Animation = ANI_FANROTATE
 
 					Player.XVelocity = 0
-					Player.YVelocity = 0x40000	// 0x40000
+					Player.YVelocity = 0x40000
 
 					if Player.XPos < Object.XPos
-						Player.XPos += 0x10000	// 0x10000
+						Player.XPos += 0x10000
 					else
-						Player.XPos -= 0x10000	// 0x10000
+						Player.XPos -= 0x10000
 					end if
 				end if
 			end if
@@ -128,55 +128,55 @@ sub ObjectMain
 		end if
 		break
 
-	case EFFECTRIGGER_PIPE_TURN_LEFT
+	case PIPE_TURN_LEFT
 		PlayerObjectCollision(C_TOUCH, -16, -16, 16, 16)
 		if CheckResult == true
 			if Player.State != Player_State_Death
 				if Player.State != Player_State_Drown
-					Player.XVelocity = -0x40000	// -0x40000
+					Player.XVelocity = -0x40000
 					Player.Animation = ANI_FANROTATE
 				end if
 			end if
 		end if
 		break
 
-	case EFFECTRIGGER_PIPE_TURN_RIGHT
+	case PIPE_TURN_RIGHT
 		PlayerObjectCollision(C_TOUCH, -16, -16, 16, 16)
 		if CheckResult == true
 			if Player.State != Player_State_Death
 				if Player.State != Player_State_Drown
-					Player.XVelocity = 0x40000	//  0x40000
+					Player.XVelocity = 0x40000
 					Player.Animation = ANI_FANROTATE
 				end if
 			end if
 		end if
 		break
 
-	case EFFECTRIGGER_PIPE_TURN_UP
+	case PIPE_TURN_UP
 		PlayerObjectCollision(C_TOUCH, -16, -16, 16, 16)
 		if CheckResult == true
 			if Player.State != Player_State_Death
 				if Player.State != Player_State_Drown
-					Player.YVelocity = -0x40000	// -0x40000
+					Player.YVelocity = -0x40000
 					Player.Animation = ANI_FANROTATE
 				end if
 			end if
 		end if
 		break
 
-	case EFFECTRIGGER_PIPE_TURN_DOWN
+	case PIPE_TURN_DOWN
 		PlayerObjectCollision(C_TOUCH, -16, -16, 16, 16)
 		if CheckResult == true
 			if Player.State != Player_State_Death
 				if Player.State != Player_State_Drown
-					Player.YVelocity = 0x40000	//  0x40000
+					Player.YVelocity = 0x40000
 					Player.Animation = ANI_FANROTATE
 				end if
 			end if
 		end if
 		break
 
-	case EFFECTRIGGER_UNUSED
+	case UNUSED
 		PlayerObjectCollision(C_TOUCH, -16, -16, 16, 16)
 		if CheckResult == true
 			if Player.State != Player_State_Death
@@ -187,7 +187,7 @@ sub ObjectMain
 		end if
 		break
 
-	case EFFECTRIGGER_UNUSED_2
+	case UNUSED_2
 		PlayerObjectCollision(C_TOUCH, -16, -16, 16, 16)
 		if CheckResult == true
 			if Player.State != Player_State_Death
@@ -198,33 +198,32 @@ sub ObjectMain
 		end if
 		break
 
-	case EFFECTRIGGER_PIPE_EXIT_PIPE
+	case PIPE_EXIT_PIPE
 		PlayerObjectCollision(C_TOUCH, -16, -16, 16, 16)
 		if CheckResult == true
 			if Player.State != Player_State_Death
 				if Player.State != Player_State_Drown
-					Player.YVelocity = 0x40000	//  0x40000
-					
-					
+					Player.YVelocity = 0x40000
 
 #platform: Use_Origins
-				Player.State = Player_State_Air_NoDropDash
+					Player.State = Player_State_Air_NoDropDash
 #endplatform
 
 #platform: Use_Standalone
-				Player.State = Player_State_Air
+					Player.State = Player_State_Air
 #endplatform
+
 					Player.Animation = ANI_WALKING
 				end if
 			end if
 		end if
 		break
 
-	case EFFECTRIGGER_WATER_HEIGHT_2
+	case WATER_HEIGHT_2
 		if Player.XPos > Object.XPos
-			Stage.NewWaterLevel = 125829120	// 0x7800000, Y - 1920 in map coords
+			Stage.NewWaterLevel = 0x7800000	// Y - 1920 in map coords
 		else
-			Stage.NewWaterLevel = 87293952	// 0x5340000, Y - 1332 in map coords
+			Stage.NewWaterLevel = 0x5340000	// Y - 1332 in map coords
 		end if
 		break
 

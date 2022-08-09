@@ -1,4 +1,4 @@
-//------------Sonic CD L Blocks Script-------------//
+//------------------Sonic CD L Blocks Script------------------//
 //--------Scripted by Christian Whitehead 'The Taxman'--------//
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
@@ -12,6 +12,9 @@
 #alias 2	:	LBLOCKS_STEP_RIGHT
 #alias 3	:	LBLOCKS_ROTATE_LEFT
 #alias 4	:	LBLOCKS_ROTATE_RIGHT
+
+// Player Collision
+#alias 1	:	PLAYER_COL_FLOOR
 
 
 sub ObjectMain
@@ -63,20 +66,21 @@ end sub
 
 sub ObjectPlayerInteraction
 	PlayerObjectCollision(C_BOX, -16, -16, 16, 16)
-	if Object.State == 0
+	
+	if Object.State == LBLOCKS_INACTIVE
 		TempValue1 = CheckResult
 	else
 		TempValue1 = 1
 	end if
 
-	if Object.State < 3
-		TempValue0 = Object.Rotation
+	if Object.State < LBLOCKS_ROTATE_LEFT
+		TempValue0   = Object.Rotation
 		TempValue0 >>= 3
 		switch TempValue0
 		case 0
 			PlayerObjectCollision(C_BOX, -16, -48, 16, -16)
 			PlayerObjectCollision(C_BOX, -48, -16, -16, 16)
-			if CheckResult == true
+			if CheckResult == PLAYER_COL_FLOOR
 				if TempValue1 == 0
 					Object.State = LBLOCKS_STEP_LEFT
 				end if
@@ -86,7 +90,7 @@ sub ObjectPlayerInteraction
 		case 1
 			PlayerObjectCollision(C_BOX, -16, 16, 16, 48)
 			PlayerObjectCollision(C_BOX, -48, -16, -16, 16)
-			if CheckResult == true
+			if CheckResult == PLAYER_COL_FLOOR
 				if TempValue1 == 0
 					Object.State = LBLOCKS_STEP_LEFT
 				end if
@@ -96,7 +100,7 @@ sub ObjectPlayerInteraction
 		case 2
 			PlayerObjectCollision(C_BOX, -16, 16, 16, 48)
 			PlayerObjectCollision(C_BOX, 16, -16, 48, 16)
-			if CheckResult == true
+			if CheckResult == PLAYER_COL_FLOOR
 				if TempValue1 == 0
 					Object.State = LBLOCKS_STEP_RIGHT
 				end if
@@ -106,7 +110,7 @@ sub ObjectPlayerInteraction
 		case 3
 			PlayerObjectCollision(C_BOX, -16, -48, 16, -16)
 			PlayerObjectCollision(C_BOX, 16, -16, 48, 16)
-			if CheckResult == true
+			if CheckResult == PLAYER_COL_FLOOR
 				if TempValue1 == 0
 					Object.State = LBLOCKS_STEP_RIGHT
 				end if
@@ -125,7 +129,7 @@ sub ObjectDraw
 	end if
 
 	TempValue0 >>= 2
-	TempValue0 *= 3
+	TempValue0  *= 3
 
 	TempValue0++
 	DrawSprite(TempValue0)
@@ -176,7 +180,7 @@ sub ObjectStartup
 	ArrayPos0 = 32
 	while ArrayPos0 < 1056
 		if Object[ArrayPos0].Type == TypeName[LBlocks]
-			Object[ArrayPos0].Rotation = Object[ArrayPos0].PropertyValue
+			Object[ArrayPos0].Rotation   = Object[ArrayPos0].PropertyValue
 			Object[ArrayPos0].Rotation <<= 3
 		end if
 		ArrayPos0++

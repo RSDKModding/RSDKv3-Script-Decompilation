@@ -1,29 +1,29 @@
-//------------Sonic CD VOBlocks Script-------------//
+//--------------Sonic CD Vertical Blocks Script---------------//
 //--------Scripted by Christian Whitehead 'The Taxman'--------//
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
 // Aliases
-#alias OBject.Value1	:	Object.YDrawPos
-#alias OBject.Value2	:	Object.YOffset
-#alias OBject.Value3	:	Object.Angle
+#alias OBject.Value1			:	Object.YDrawPos
+#alias OBject.Value2			:	Object.YOffset
+#alias OBject.Value3			:	Object.Angle
 
 // HUD alias
 #alias Object[24].PropertyValue	:	Hud.TimePeriod
 
 // Time Periods
-#alias 0			:	PROPVAL_PRESENT
-#alias 1			:	PROPVAL_PAST
-#alias 2			:	PROPVAL_GOOD_FUTURE
-#alias 3			:	PROPVAL_BAD_FUTURE
+#alias 0	:	PROPVAL_PRESENT
+#alias 1	:	PROPVAL_PAST
+#alias 2	:	PROPVAL_GOOD_FUTURE
+#alias 3	:	PROPVAL_BAD_FUTURE
 
 
 sub ObjectMain
-	Object.Angle = Oscillation
-	Object.Angle += Object.PropertyValue
+	Object.Angle   = Oscillation
+	Object.Angle  += Object.PropertyValue
 	Object.Angle <<= 1
 	
 	Sin(Object.YOffset, Object.Angle)
-	Object.YOffset *= 0x1800		//  0x1800
+	Object.YOffset *= 0x1800
 	Object.YOffset += Object.YPos
 	Object.YOffset &= 0xFFFF0000
 	Object.YOffset -= Object.YDrawPos
@@ -31,7 +31,7 @@ end sub
 
 
 sub ObjectPlayerInteraction
-	TempValue0 = Object.YPos
+	TempValue0  = Object.YPos
 	Object.YPos = Object.YDrawPos
 	PlayerObjectCollision(C_BOX, -16, -16, 16, 16)
 	if CheckResult == true
@@ -43,9 +43,10 @@ end sub
 
 sub ObjectDraw
 	Sin(Object.YDrawPos, Object.Angle)
-	Object.YDrawPos *= 0x1800		//  0x1800
+	Object.YDrawPos *= 0x1800
 	Object.YDrawPos += Object.YPos
 	Object.YDrawPos &= 0xFFFF0000
+	
 	DrawSpriteXY(0, Object.XPos, Object.YDrawPos)
 end sub
 

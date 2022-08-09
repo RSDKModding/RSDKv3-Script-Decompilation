@@ -1,21 +1,21 @@
-//------------Sonic CD Crush Blocks Script-------------//
+//----------------Sonic CD Crush Blocks Script----------------//
 //--------Scripted by Christian Whitehead 'The Taxman'--------//
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
 // Aliases
-#alias Object.Value0	:	Object.Timer
-#alias Object.Value1	:	Object.XVelocity
-#alias Object.Value2	:	Object.XOffSet
-#alias Object.Value3	:	Object.OnObject
+#alias Object.Value0			:	Object.Timer
+#alias Object.Value1			:	Object.XVelocity
+#alias Object.Value2			:	Object.XOffSet
+#alias Object.Value3			:	Object.OnObject
+
+// HUD aliases
+#alias Object[24].PropertyValue	:	HUD.TimePeriod
 
 //States
 #alias 0	:	CRUSHBLOCKS_DELAY_1
 #alias 1	:	CRUSHBLOCKS_OPEN
 #alias 2	:	CRUSHBLOCKS_DELAY_2
 #alias 3	:	CRUSHBLOCKS_CRUSH
-
-// HUD aliases
-#alias Object[24].PropertyValue	:	HUD.TimePeriod
 
 // Time Periods
 #alias 0	:	PROPVAL_PRESENT
@@ -24,9 +24,9 @@
 #alias 3	:	PROPVAL_BAD_FUTURE
 
 // Collision
-#alias 1	:	FLOOR
-#alias 2	:	LWALL
-#alias 3	:	RWALL
+#alias 1	:	PLAYER_COL_FLOOR
+#alias 2	:	PLAYER_COL_LWALL
+#alias 3	:	PLAYER_COL_RWALL
 
 // Gravity
 #alias 1	:	GRAVITY_AIR
@@ -39,14 +39,14 @@ sub ObjectMain
 			Object.Timer++
 		else
 			Object.Timer   = 0
-			Object.XOffSet = 0x8000		// 0x8000
+			Object.XOffSet = 0x8000
 			Object.State++
 		end if
 		break
 
 	case CRUSHBLOCKS_OPEN
-		if Object.XVelocity < 0x600000	// 0x600000
-			Object.XVelocity += 0x8000	// 0x8000
+		if Object.XVelocity < 0x600000	
+			Object.XVelocity += 0x8000
 		else
 			Object.XOffSet = 0
 			Object.State++
@@ -58,14 +58,14 @@ sub ObjectMain
 			Object.Timer++
 		else
 			Object.Timer   =  0
-			Object.XOffSet = -0x20000	// -0x20000
+			Object.XOffSet = -0x20000
 			Object.State++
 		end if
 		break
 
 	case CRUSHBLOCKS_CRUSH
 		if Object.XVelocity > 0
-			Object.XVelocity -= 0x20000	// -0x20000
+			Object.XVelocity -= 0x20000
 		else
 			Object.XOffSet = 0
 			Object.State   = CRUSHBLOCKS_DELAY_1
@@ -84,7 +84,7 @@ sub ObjectPlayerInteraction
 
 	PlayerObjectCollision(C_BOX, -80, -64, -48, -32)
 	switch CheckResult
-	case FLOOR
+	case PLAYER_COL_FLOOR
 		Player.XPos -= Object.XOffSet
 
 		if Player.Speed == 0
@@ -99,7 +99,7 @@ sub ObjectPlayerInteraction
 		end if
 		break
 
-	case RWALL
+	case PLAYER_COL_RWALL
 		TempValue1 = true
 		break
 
@@ -107,7 +107,7 @@ sub ObjectPlayerInteraction
 
 	PlayerObjectCollision(C_BOX, -80, -32, -16, 0)
 	switch CheckResult
-	case FLOOR
+	case PLAYER_COL_FLOOR
 		Player.XPos -= Object.XOffSet
 
 		if Player.Speed == 0
@@ -122,7 +122,7 @@ sub ObjectPlayerInteraction
 		end if
 		break
 
-	case RWALL
+	case PLAYER_COL_RWALL
 		TempValue1 = true
 		break
 
@@ -130,7 +130,7 @@ sub ObjectPlayerInteraction
 
 	PlayerObjectCollision(C_BOX, -80, 0, 16, 32)
 	switch CheckResult
-	case FLOOR
+	case PLAYER_COL_FLOOR
 		Player.XPos -= Object.XOffSet
 
 		if Player.Speed == 0
@@ -145,7 +145,7 @@ sub ObjectPlayerInteraction
 		end if
 		break
 
-	case RWALL
+	case PLAYER_COL_RWALL
 		TempValue1 = true
 		break
 
@@ -153,7 +153,7 @@ sub ObjectPlayerInteraction
 
 	PlayerObjectCollision(C_BOX, -80, 32, 48, 64)
 	switch CheckResult
-	case FLOOR
+	case PLAYER_COL_FLOOR
 		Player.XPos -= Object.XOffSet
 
 		if Player.Speed == 0
@@ -168,7 +168,7 @@ sub ObjectPlayerInteraction
 		end if
 		break
 
-	case RWALL
+	case PLAYER_COL_RWALL
 		TempValue1 = true
 		break
 
@@ -178,7 +178,7 @@ sub ObjectPlayerInteraction
 	Object.XPos += Object.XVelocity
 	PlayerObjectCollision(C_BOX, -48, -64, 80, -32)
 	switch CheckResult
-	case FLOOR
+	case PLAYER_COL_FLOOR
 		Player.XPos += Object.XOffSet
 
 		if Player.Speed == 0
@@ -193,7 +193,7 @@ sub ObjectPlayerInteraction
 		end if
 		break
 
-	case LWALL
+	case PLAYER_COL_LWALL
 		TempValue2 = true
 		break
 		
@@ -201,7 +201,7 @@ sub ObjectPlayerInteraction
 
 	PlayerObjectCollision(C_BOX, -16, -32, 80, 0)
 	switch CheckResult
-	case FLOOR
+	case PLAYER_COL_FLOOR
 		Player.XPos += Object.XOffSet
 
 		if Player.Speed == 0
@@ -216,7 +216,7 @@ sub ObjectPlayerInteraction
 		end if
 		break
 
-	case LWALL
+	case PLAYER_COL_LWALL
 		TempValue2 = true
 		break
 
@@ -224,7 +224,7 @@ sub ObjectPlayerInteraction
 
 	PlayerObjectCollision(C_BOX, 16, 0, 80, 32)
 	switch CheckResult
-	case FLOOR
+	case PLAYER_COL_FLOOR
 		Player.XPos += Object.XOffSet
 
 		if Player.Speed == 0
@@ -239,7 +239,7 @@ sub ObjectPlayerInteraction
 		end if
 		break
 
-	case LWALL
+	case PLAYER_COL_LWALL
 		TempValue2 = true
 		break
 
@@ -247,7 +247,7 @@ sub ObjectPlayerInteraction
 
 	PlayerObjectCollision(C_BOX, 48, 32, 80, 64)
 	switch CheckResult
-	case FLOOR
+	case PLAYER_COL_FLOOR
 		Player.XPos += Object.XOffSet
 
 		if Player.Speed == 0
@@ -262,7 +262,7 @@ sub ObjectPlayerInteraction
 		end if
 		break
 
-	case LWALL
+	case PLAYER_COL_LWALL
 		TempValue2 = true
 		break
 

@@ -1,26 +1,27 @@
-//------------Sonic CD Stream Change Script-------------//
+//---------------Sonic CD Stream Change Script----------------//
 //--------Scripted by Christian Whitehead 'The Taxman'--------//
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
 // Aliases
-#alias Object.Value1	:	Object.Status	// Wild guess
+#alias Object.Value1			:	Object.CurrentType	// Wild guess
 
 // WaterStream Alias
-#alias Object.Value1	:	Object.Oscillation
+#alias Object.Value1			:	Object.Oscillation
 
 // Push Button alias
-#alias Object[-2].PropertyValue	:	PushButton.PropertyValue
+#alias Object[-2].PropertyValue	:	PushButton.Pressed
 
-// Push Button Property Values
-#alias 1			:	PUSHBUTTON_PRESSED
+// Property Values
+#alias 0	:	SEARCH_NEXT_OBJ
+#alias 1	:	SEARCH_PREV_OBJ
 
 
 sub ObjectMain
-	if PushButton.PropertyValue == PUSHBUTTON_PRESSED
-		if Object.PropertyValue != Object.Status
+	if PushButton.Pressed == true
+		if Object.PropertyValue != Object.CurrentType
 			ArrayPos0 = Object.EntityNo
-			Object[ArrayPos0].Status = Object.PropertyValue
-			if Object.PropertyValue == 0
+			Object[ArrayPos0].CurrentType = Object.PropertyValue
+			if Object.PropertyValue == SEARCH_NEXT_OBJ
 				ArrayPos0++
 				while Object[ArrayPos0].Type != TypeName[StreamChange]
 					if Object[ArrayPos0].Type == TypeName[WaterStreamL]
@@ -73,7 +74,7 @@ sub ObjectMain
 					ArrayPos0--
 				loop
 			end if
-			Object[ArrayPos0].Status = Object.PropertyValue
+			Object[ArrayPos0].CurrentType = Object.PropertyValue
 		end if
 	end if
 end sub

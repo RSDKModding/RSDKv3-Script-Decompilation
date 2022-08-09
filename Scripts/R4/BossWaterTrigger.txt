@@ -1,4 +1,4 @@
-//------------Sonic CD Boss Water Trigger Script-------------//
+//-------------Sonic CD Boss Water Trigger Script-------------//
 //--------Scripted by Christian Whitehead 'The Taxman'--------//
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
@@ -15,32 +15,32 @@ sub ObjectMain
 	switch Object.PropertyValue
 	case BOSSWATERTRIGGER_RAISE_WATER
 		if Player.XPos > Object.XPos
-			// 0x4940000, Y - 1172 in map coords
-			if Stage.NewWaterLevel > 76808192
-				Stage.NewWaterLevel = 76808192
+			// Y - 1172 in map coords
+			if Stage.NewWaterLevel > 0x4940000
+				Stage.NewWaterLevel = 0x4940000
 				
 				ArrayPos0 = Object.WaterEntity
 
-				Water[ArrayPos0].YPos = Screen.YOffset
-				Water[ArrayPos0].YPos += 256
+				Water[ArrayPos0].YPos   = Screen.YOffset
+				Water[ArrayPos0].YPos  += 256
 				Water[ArrayPos0].YPos <<= 16
 
 				Stage.YBoundary2 = 1496
 			end if
 		else
-			// 0xC000000, Y - 3072 in map coords
-			if Stage.NewWaterLevel < 201326592
-				Stage.NewWaterLevel = 201326592
+			// Y - 3072 in map coords
+			if Stage.NewWaterLevel < 0xC000000
+				Stage.NewWaterLevel = 0xC000000
 				Stage.NewYBoundary2 = 2304
 			end if
 			
 			ArrayPos0 = Object.WaterEntity
 
-			TempValue0 = Screen.YOffset
-			TempValue0 += 256
+			TempValue0   = Screen.YOffset
+			TempValue0  += 256
 			TempValue0 <<= 16
 			if Water[ArrayPos0].YPos >= TempValue0
-				Water[ArrayPos0].YPos = 201326592 // 0xC000000
+				Water[ArrayPos0].YPos = 0xC000000
 			end if
 		end if
 		break

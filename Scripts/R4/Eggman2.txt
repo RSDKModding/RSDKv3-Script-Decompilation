@@ -1,4 +1,4 @@
-//------------Sonic CD Eggman Part 2 Script-------------//
+//-----------------Sonic CD Egg Bubble Script-----------------//
 //--------Scripted by Christian Whitehead 'The Taxman'--------//
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
@@ -13,30 +13,40 @@
 #alias Object.Value7		:	Object.Animation
 #alias Object.Frame			:	Object.FrameTimer
 
-// Boss Bubble aliases
-#alias Object.Value0		:	Bubble.Timer
-#alias Object.Value2		:	Bubble.XOffSet
-#alias Object.Value3		:	Bubble.YOffSet
-#alias Object.Value4		:	Bubble.XShift
-#alias Object.Value5		:	Bubble.BossEntity
-#alias Object.Value6		:	Bubble.RadiusSize
-#alias Object.XPos			:	Bubble.XPos
-#alias Object.YPos			:	Bubble.YPos
-#alias Object.State			:	Bubble.State
-#alias Object.DrawOrder		:	Bubble.DrawOrder
-#alias Object.Type			:	Bubble.Type
+
+// Boss Bubble 1 Aliases
+#alias Object.Value2		:	Bubble1.XOffSet
+#alias Object.Value4		:	Bubble1.XShift
+#alias Object.Value5		:	Bubble1.BossEntity
+#alias Object.Value6		:	Bubble1.RadiusSize
+#alias Object.XPos			:	Bubble1.XPos
+#alias Object.YPos			:	Bubble1.YPos
+
+// Boss Bubble 2 aliases
+#alias Object.Value0		:	Bubble2.Timer
+#alias Object.Value2		:	Bubble2.XOffSet
+#alias Object.Value3		:	Bubble2.YOffSet
+#alias Object.Value4		:	Bubble2.XShift
+#alias Object.Value5		:	Bubble2.BossEntity
+#alias Object.Value6		:	Bubble2.RadiusSize
+#alias Object.XPos			:	Bubble2.XPos
+#alias Object.YPos			:	Bubble2.YPos
+#alias Object.State			:	Bubble2.State
+#alias Object.DrawOrder		:	Bubble2.DrawOrder
+#alias Object.Type			:	Bubble2.Type
+
 
 // Boss Bullet alias		
 #alias Object.DrawOrder		:	Bullet.DrawOrder
 #alias Object.Value5		:	Bullet.BossEntity
 
-// Player alias
-#alias Player.Value4		:	Player.InvincibleTimer
-
 // Object +17 is a helper object for the boss movement
 #alias Object[+17].XPos		:	Helper.XPos
 #alias Object[+17].YPos		:	Helper.YPos
 #alias Object[+17].Value5	:	Helper.Angle
+
+// Player alias
+#alias Player.Value4		:	Player.InvincibleTimer
 
 // States
 #alias 0	:	R4_EGG_BUBBLE_PLAYER_APPROACH
@@ -87,22 +97,22 @@ function EggBubble_HandleBubbleMovement
 	ArrayPos0  = 1
 	TempValue0 = Object.Angle
 	while ArrayPos0 <= Object.MaxBubble
-		if Bubble[+ArrayPos0].State < 3
-			Bubble[+ArrayPos0].DrawOrder = 3
+		if Bubble2[+ArrayPos0].State < 3
+			Bubble2[+ArrayPos0].DrawOrder = 3
 			// Orbit-like movement
 			Cos(TempValue1, TempValue0)
-			TempValue1 *= Object.BubbleRadius
+			TempValue1  *= Object.BubbleRadius
 			TempValue1 >>= 1
 			// Horizontal movement
-			Cos(Bubble[+ArrayPos0].XPos, Object.Rotation)
-			Bubble[+ArrayPos0].XPos *= TempValue1
-			Bubble[+ArrayPos0].XPos >>= 9
-			Bubble[+ArrayPos0].XPos += Object.XPos
+			Cos(Bubble2[+ArrayPos0].XPos, Object.Rotation)
+			Bubble2[+ArrayPos0].XPos  *= TempValue1
+			Bubble2[+ArrayPos0].XPos >>= 9
+			Bubble2[+ArrayPos0].XPos  += Object.XPos
 			// Vertical movement
-			Sin(Bubble[+ArrayPos0].YPos, TempValue0)
-			Bubble[+ArrayPos0].YPos *= Object.BubbleRadius
-			Bubble[+ArrayPos0].YPos >>= 1
-			Bubble[+ArrayPos0].YPos += Object.YPos
+			Sin(Bubble2[+ArrayPos0].YPos, TempValue0)
+			Bubble2[+ArrayPos0].YPos  *= Object.BubbleRadius
+			Bubble2[+ArrayPos0].YPos >>= 1
+			Bubble2[+ArrayPos0].YPos  += Object.YPos
 		end if
 		TempValue0 += Object.BubbleOffset
 		ArrayPos0++
@@ -114,30 +124,30 @@ function EggBubble_HandleBubbleTurn
 	ArrayPos0  = 1
 	TempValue0 = Object.Angle
 	while ArrayPos0 <= Object.MaxBubble
-		if Bubble[+ArrayPos0].State < 3
+		if Bubble2[+ArrayPos0].State < 3
 			if TempValue0 < 128
-				Bubble[+ArrayPos0].DrawOrder = 3
+				Bubble2[+ArrayPos0].DrawOrder = 3
 			else
 				if TempValue0 > 383
-					Bubble[+ArrayPos0].DrawOrder = 3
+					Bubble2[+ArrayPos0].DrawOrder = 3
 				else
-					Bubble[+ArrayPos0].DrawOrder = 2
+					Bubble2[+ArrayPos0].DrawOrder = 2
 				end if
 			end if
 			// Orbit-like movement
 			Cos(TempValue1, TempValue0)
-			TempValue1 *= Object.BubbleRadius
+			TempValue1  *= Object.BubbleRadius
 			TempValue1 >>= 1
 			// Horizontal movement
-			Cos(Bubble[+ArrayPos0].XPos, Object.Rotation)
-			Bubble[+ArrayPos0].XPos *= TempValue1
-			Bubble[+ArrayPos0].XPos >>= 9
-			Bubble[+ArrayPos0].XPos += Object.XPos
+			Cos(Bubble2[+ArrayPos0].XPos, Object.Rotation)
+			Bubble2[+ArrayPos0].XPos  *= TempValue1
+			Bubble2[+ArrayPos0].XPos >>= 9
+			Bubble2[+ArrayPos0].XPos  += Object.XPos
 			// Vertical movement
-			Sin(Bubble[+ArrayPos0].YPos, TempValue0)
-			Bubble[+ArrayPos0].YPos *= Object.BubbleRadius
-			Bubble[+ArrayPos0].YPos >>= 1
-			Bubble[+ArrayPos0].YPos += Object.YPos
+			Sin(Bubble2[+ArrayPos0].YPos, TempValue0)
+			Bubble2[+ArrayPos0].YPos  *= Object.BubbleRadius
+			Bubble2[+ArrayPos0].YPos >>= 1
+			Bubble2[+ArrayPos0].YPos  += Object.YPos
 		end if
 		TempValue0 += Object.BubbleOffset
 		TempValue0 &= 511
@@ -150,7 +160,7 @@ function EggBubble_CheckShieldCondition
 	ArrayPos0  = 1
 	TempValue0 = 0
 	while ArrayPos0 <= Object.MaxBubble
-		if Bubble[+ArrayPos0].Type == TypeName[BossBubble2]
+		if Bubble2[+ArrayPos0].Type == TypeName[BossBubble2]
 			TempValue0++
 		end if
 		ArrayPos0++
@@ -195,7 +205,7 @@ function EggBubble_CheckBubbleAmount
 	ArrayPos0  = 1
 	TempValue0 = 0
 	while ArrayPos0 <= Object.MaxBubble
-		if Bubble[+ArrayPos0].Type == TypeName[BossBubble2]
+		if Bubble2[+ArrayPos0].Type == TypeName[BossBubble2]
 			TempValue0++
 		end if
 		ArrayPos0++
@@ -204,11 +214,11 @@ function EggBubble_CheckBubbleAmount
 	ArrayPos0 = 1
 	while ArrayPos0 <= Object.MaxBubble
 		if ArrayPos0 <= TempValue0
-			Bubble[+ArrayPos0].Type   = TypeName[BossBubble2]
-			Bubble[+ArrayPos0].State  = BOSSBUBBLE2_BREATHABLE
-			Bubble[+ArrayPos0].TImer = 0
+			Bubble2[+ArrayPos0].Type   = TypeName[BossBubble2]
+			Bubble2[+ArrayPos0].State  = BOSSBUBBLE2_BREATHABLE
+			Bubble2[+ArrayPos0].TImer  = 0
 		else
-			Bubble[+ArrayPos0].Type   = TypeName[Blank Object]
+			Bubble2[+ArrayPos0].Type   = TypeName[Blank Object]
 		end if
 		ArrayPos0++
 	loop
@@ -222,9 +232,9 @@ end function
 function EggBubble_DestroyBubbles
 	ArrayPos0 = 1
 	while ArrayPos0 <= Object.MaxBubble
-		if Bubble[+ArrayPos0].Type == TypeName[BossBubble2]
-			Bubble[+ArrayPos0].State  = BOSSBUBBLE2_CONSUMED
-			Bubble[+ArrayPos0].TImer = 0
+		if Bubble2[+ArrayPos0].Type == TypeName[BossBubble2]
+			Bubble2[+ArrayPos0].State  = BOSSBUBBLE2_CONSUMED
+			Bubble2[+ArrayPos0].TImer  = 0
 		end if
 		ArrayPos0++
 	loop
@@ -235,29 +245,29 @@ function EggBubble_FireBullet
 	if Object.Direction == FACING_RIGHT
 		CreateTempObject(TypeName[BossBullet], 0, Object.XPos, Object.YPos)
 		Bullet[TempObjectPos].BossEntity = Object.EntityNo
-		Bullet[TempObjectPos].DrawOrder = 2
+		Bullet[TempObjectPos].DrawOrder  = 2
 		CreateTempObject(TypeName[BossBullet], 1, Object.XPos, Object.YPos)
 		Bullet[TempObjectPos].BossEntity = Object.EntityNo
-		Bullet[TempObjectPos].DrawOrder = 2
+		Bullet[TempObjectPos].DrawOrder  = 2
 		CreateTempObject(TypeName[BossBullet], 2, Object.XPos, Object.YPos)
 		Bullet[TempObjectPos].BossEntity = Object.EntityNo
-		Bullet[TempObjectPos].DrawOrder = 2
+		Bullet[TempObjectPos].DrawOrder  = 2
 		CreateTempObject(TypeName[BossBullet], 3, Object.XPos, Object.YPos)
 		Bullet[TempObjectPos].BossEntity = Object.EntityNo
-		Bullet[TempObjectPos].DrawOrder = 2
+		Bullet[TempObjectPos].DrawOrder  = 2
 	else
 		CreateTempObject(TypeName[BossBullet], 4, Object.XPos, Object.YPos)
 		Bullet[TempObjectPos].BossEntity = Object.EntityNo
-		Bullet[TempObjectPos].DrawOrder = 2
+		Bullet[TempObjectPos].DrawOrder  = 2
 		CreateTempObject(TypeName[BossBullet], 5, Object.XPos, Object.YPos)
 		Bullet[TempObjectPos].BossEntity = Object.EntityNo
-		Bullet[TempObjectPos].DrawOrder = 2
+		Bullet[TempObjectPos].DrawOrder  = 2
 		CreateTempObject(TypeName[BossBullet], 6, Object.XPos, Object.YPos)
 		Bullet[TempObjectPos].BossEntity = Object.EntityNo
-		Bullet[TempObjectPos].DrawOrder = 2
+		Bullet[TempObjectPos].DrawOrder  = 2
 		CreateTempObject(TypeName[BossBullet], 7, Object.XPos, Object.YPos)
 		Bullet[TempObjectPos].BossEntity = Object.EntityNo
-		Bullet[TempObjectPos].DrawOrder = 2
+		Bullet[TempObjectPos].DrawOrder  = 2
 	end if
 end function
 
@@ -265,11 +275,11 @@ end function
 sub ObjectMain
 	switch Object.State
 	case R4_EGG_BUBBLE_PLAYER_APPROACH
-		Stage.NewXBoundary1 = Object.iXPos
+		Stage.NewXBoundary1  = Object.iXPos
 		Stage.NewXBoundary1 -= 96
 		Stage.NewXBoundary1 -= Screen.CenterX
 
-		Stage.NewXBoundary2 = Stage.NewXBoundary1
+		Stage.NewXBoundary2  = Stage.NewXBoundary1
 		Stage.NewXBoundary2 += Screen.CenterX
 		Stage.NewXBoundary2 += Screen.CenterX
 
@@ -277,10 +287,10 @@ sub ObjectMain
 		if CheckResult == true
 			Object.State = R4_EGG_BUBBLE_INTRO
 
-			Helper.XPos = Object.XPos
-			Helper.XPos -= 0x600000	// 0x600000
+			Helper.XPos  = Object.XPos
+			Helper.XPos -= 0x600000	
 
-			Helper.YPos = Object.YPos
+			Helper.YPos  = Object.YPos
 
 			CreateTempObject(TypeName[FadeMusic], 0, Object.XPos, Object.YPos)
 		end if
@@ -290,7 +300,7 @@ sub ObjectMain
 		if Object.Timer < 60
 			Object.Timer++
 		else
-			Object.Timer = 0
+			Object.Timer		  = 0
 			Object.BubbleSelector = 0
 
 			Object.State = R4_EGG_BUBBLE_SPAWN_BUBBLES
@@ -299,7 +309,7 @@ sub ObjectMain
 
 	case R4_EGG_BUBBLE_SPAWN_BUBBLES
 		if Object.Timer < 320
-			TempValue0 = Object.Timer
+			TempValue0  = Object.Timer
 			TempValue0 %= 20
 			if TempValue0 == 0
 				PlayStageSfx(7, 0)
@@ -312,26 +322,26 @@ sub ObjectMain
 
 				CreateTempObject(TypeName[BossBubble1], 0, Object.XPos, Object.YPos)
 				
-				Rand(Bubble[TempObjectPos].XPos, 28)
-				Bubble[TempObjectPos].XPos -= 14
-				Bubble[TempObjectPos].XPos <<= 16
-				Bubble[TempObjectPos].XPos += Object.XPos
+				Rand(Bubble1[TempObjectPos].XPos, 28)
+				Bubble1[TempObjectPos].XPos   -= 14
+				Bubble1[TempObjectPos].XPos  <<= 16
+				Bubble1[TempObjectPos].XPos   += Object.XPos
 
-				Bubble[TempObjectPos].XOffSet = Bubble[TempObjectPos].XPos
+				Bubble1[TempObjectPos].XOffSet = Bubble1[TempObjectPos].XPos
 
-				Bubble[TempObjectPos].YPos += 10223616	// 0x9C0000
+				Bubble1[TempObjectPos].YPos    += 0x9C0000
 
-				Rand(Bubble[TempObjectPos].XShift, 4)
-				Bubble[TempObjectPos].XShift += 9
+				Rand(Bubble1[TempObjectPos].XShift, 4)
+				Bubble1[TempObjectPos].XShift  += 9
 
-				Bubble[TempObjectPos].BossEntity = Object.EntityNo
+				Bubble1[TempObjectPos].BossEntity = Object.EntityNo
 
 				if Object.BubbleSelector == 1
-					Rand(Bubble[TempObjectPos].RadiusSize, 32)
-					Bubble[TempObjectPos].RadiusSize -= 16
-					Bubble[TempObjectPos].RadiusSize <<= 16
+					Rand(Bubble1[TempObjectPos].RadiusSize, 32)
+					Bubble1[TempObjectPos].RadiusSize  -= 16
+					Bubble1[TempObjectPos].RadiusSize <<= 16
 				else
-					Bubble[TempObjectPos].RadiusSize = 0
+					Bubble1[TempObjectPos].RadiusSize   = 0
 				end if
 				Object.BubbleSelector++
 				Object.BubbleSelector &= 1
@@ -348,18 +358,18 @@ sub ObjectMain
 		if Object.Timer < 180
 			Object.Timer++
 		else
-			Object.Timer = 0
-			Object.Angle = 0
+			Object.Timer	= 0
+			Object.Angle	= 0
 			Object.Rotation = 256
 
-			Object.MaxBubble = 16
+			Object.MaxBubble	= 16
 			Object.BubbleOffset = 32
-			Object.BubbleRadius = 0x1000	// 0x1000
+			Object.BubbleRadius = 0x1000
 
 			Object.State = R4_EGG_BUBBLE_EXPAND_SHIELD
 			ArrayPos0 = 1
 			while ArrayPos0 < 17
-				Bubble[+ArrayPos0].Type = TypeName[BossBubble2]
+				Bubble2[+ArrayPos0].Type = TypeName[BossBubble2]
 				ArrayPos0++
 			loop
 			CallFunction(EggBubble_HandleBubbleMovement)
@@ -370,8 +380,8 @@ sub ObjectMain
 		Object.Angle += 8
 		Object.Angle &= 511
 
-		if Object.BubbleRadius < 0x3000	// 0x3000
-			Object.BubbleRadius += 96	// 0x60
+		if Object.BubbleRadius < 0x3000
+			Object.BubbleRadius += 0x60
 		else
 			Object.State = R4_EGG_BUBBLE_START_BATTLE
 		end if
@@ -395,11 +405,11 @@ sub ObjectMain
 
 	case R4_EGG_BUBBLE_ATTACK_R_TO_L
 		Cos(Object.XPos, Helper.Angle)
-		Object.XPos *= 0x3000	// 0x3000
+		Object.XPos *= 0x3000
 		Object.XPos += Helper.XPos
 
 		Sin(Object.YPos, Helper.Angle)
-		Object.YPos *= 0x2000		// 0x2000
+		Object.YPos *= 0x2000
 		Object.YPos += Helper.YPos
 
 		if Helper.Angle == 12
@@ -443,11 +453,11 @@ sub ObjectMain
 
 	case R4_EGG_BUBBLE_ATTACK_L_TO_R
 		Cos(Object.XPos, Helper.Angle)
-		Object.XPos *= 0x3000	// 0x3000
+		Object.XPos *= 0x3000
 		Object.XPos += Helper.XPos
 
 		Sin(Object.YPos, Helper.Angle)
-		Object.YPos *= 0x2000		// 0x2000
+		Object.YPos *= 0x2000
 		Object.YPos += Helper.YPos
 
 		if Helper.Angle == 244
@@ -486,7 +496,7 @@ sub ObjectMain
 		break
 
 	case R4_EGG_BUBBLE_REBUILD_SHIELD_L
-		Object.XPos += 0x10000	// 0x10000
+		Object.XPos += 0x10000
 
 		if Object.Timer < 20
 			Object.Timer++
@@ -499,8 +509,8 @@ sub ObjectMain
 				Object.Animation = EGGANI_LAUGH
 			end if
 		else
-			if Object.BubbleRadius > 3072	// 0xC00
-				Object.BubbleRadius -= 256	// 0x100
+			if Object.BubbleRadius > 0xC00
+				Object.BubbleRadius -= 0x100
 			else
 				Object.State = R4_EGG_BUBBLE_MOVE_TO_R
 				CallFunction(EggBubble_CheckBubbleAmount)
@@ -514,20 +524,20 @@ sub ObjectMain
 		break
 		
 	case R4_EGG_BUBBLE_MOVE_TO_R
-		Object.XPos += 0x10000			// 0x10000
+		Object.XPos += 0x10000
 
-		if Object.BubbleRadius < 0x3000	// 0x3000
-			Object.BubbleRadius += 96	// 0x60
+		if Object.BubbleRadius < 0x3000	
+			Object.BubbleRadius += 0x60
 			Object.Angle += 8
 		else
 			Object.Angle += 2
 		end if
 
-		TempValue0 = Helper.XPos
-		TempValue0 += 0x600000	// 0x600000
+		TempValue0  = Helper.XPos
+		TempValue0 += 0x600000	
 
 		if Object.XPos > TempValue0
-			Object.XPos = TempValue0
+			Object.XPos  = TempValue0
 			Helper.Angle = 0
 			Object.State = R4_EGG_BUBBLE_TURN_TO_LEFT
 		end if
@@ -537,7 +547,7 @@ sub ObjectMain
 		break
 
 	case R4_EGG_BUBBLE_REBUILD_SHIELD_R
-		Object.XPos -= 0x10000	// 0x10000
+		Object.XPos -= 0x10000
 
 		if Object.Timer < 20
 			Object.Timer++
@@ -550,8 +560,8 @@ sub ObjectMain
 				Object.Animation = EGGANI_LAUGH
 			end if
 		else
-			if Object.BubbleRadius > 3072	// 0xC00
-				Object.BubbleRadius -= 256	// 0x100
+			if Object.BubbleRadius > 0xC00
+				Object.BubbleRadius -= 0x100
 			else
 				Object.State = R4_EGG_BUBBLE_MOVE_TO_L
 				CallFunction(EggBubble_CheckBubbleAmount)
@@ -565,20 +575,20 @@ sub ObjectMain
 		break
 
 	case R4_EGG_BUBBLE_MOVE_TO_L
-		Object.XPos -= 0x10000			// 0x10000
+		Object.XPos -= 0x10000
 		
-		if Object.BubbleRadius < 0x3000	// 0x3000
-			Object.BubbleRadius += 96
+		if Object.BubbleRadius < 0x3000
+			Object.BubbleRadius += 0x60
 			Object.Angle += 8
 		else
 			Object.Angle += 2
 		end if
 
-		TempValue0 = Helper.XPos
-		TempValue0 -= 0x600000	// 0x600000
+		TempValue0  = Helper.XPos
+		TempValue0 -= 0x600000	
 
 		if Object.XPos < TempValue0
-			Object.XPos = TempValue0
+			Object.XPos  = TempValue0
 			Helper.Angle = 256
 			Object.State = R4_EGG_BUBBLE_TURN_TO_RIGHT
 		end if
@@ -589,27 +599,27 @@ sub ObjectMain
 
 	case R4_EGG_BUBBLE_EXPLODE
 		if Object.Timer < 70
-			TempValue0 = Object.Timer
+			TempValue0  = Object.Timer
 			TempValue0 &= 3
 			if TempValue0 == 0
 				Rand(TempValue0, 80)
-				TempValue0 -= 40
+				TempValue0  -= 40
 				TempValue0 <<= 16
-				TempValue0 += Object.XPos
+				TempValue0  += Object.XPos
 
 				Rand(TempValue1, 56)
-				TempValue1 -= 28
+				TempValue1  -= 28
 				TempValue1 <<= 16
-				TempValue1 += Object.YPos
+				TempValue1  += Object.YPos
 
 				CreateTempObject(TypeName[Explosion], 0, TempValue0, TempValue1)
 				PlaySfx(22, 0)
 			end if
 			Object.Timer++
 		else
-			Object.State = R4_EGG_BUBBLE_DEFEAT
+			Object.State	 = R4_EGG_BUBBLE_DEFEAT
 			Object.Animation = EGGANI_DEFEAT
-			Object.Timer = 0
+			Object.Timer	 = 0
 			Object.Direction = FACING_LEFT
 			
 			CallFunction(EggBubble_DestroyBubbles)
@@ -622,22 +632,22 @@ sub ObjectMain
 		if Object.Timer < 70
 			Object.Timer++
 		else
-			Object.Timer = 0
+			Object.Timer	= 0
 			Object.Priority = PRIORITY_ACTIVE
 
-			Object.State = R4_EGG_BUBBLE_FLEE
-			Object.Animation = EGGANI_ESCAPE
+			Object.State	  = R4_EGG_BUBBLE_FLEE
+			Object.Animation  = EGGANI_ESCAPE
 			Object.FrameTimer = 0
 
-			Stage.NewWaterLevel = 134217728	// 0x8000000, Y - 2048 in map coords
+			Stage.NewWaterLevel = 0x8000000	// Y - 2048 in map coords
 			CreateTempObject(TypeName[FadeMusic], 1, Object.XPos, Object.YPos)
 		end if
 		break
 
 	case R4_EGG_BUBBLE_FLEE
-		Object.XPos += 114688	// 0x1C000
+		Object.XPos += 0x1C000
 		if Object.OutOfBounds == true
-			Object.State = R4_EGG_BUBBLE_RESTORE_BOUNDS
+			Object.State	 = R4_EGG_BUBBLE_RESTORE_BOUNDS
 			Object.Animation = EGGANI_NONE
 		end if
 		break
@@ -662,11 +672,12 @@ sub ObjectPlayerInteraction
 			PlayerObjectCollision(C_TOUCH, -24, -16, 24, 16)
 			if CheckResult == true
 				CheckEqual(Player.Animation, ANI_JUMPING)
-				TempValue0 = CheckResult
+				TempValue0  = CheckResult
 				CheckEqual(Player.Animation, ANI_SPINDASH)
 				TempValue0 |= CheckResult
-				ArrayPos0 = Player.EntityNo
-				ArrayPos0 += 2
+
+				ArrayPos0   = Player.EntityNo
+				ArrayPos0  += 2
 				if Object[ArrayPos0].Type == TypeName[Invincibility]
 					TempValue0 = true
 				end if
@@ -684,15 +695,15 @@ sub ObjectPlayerInteraction
 					FlipSign(Player.XVelocity)
 					FlipSign(Player.Speed)
 					Player.XVelocity >>= 1
-					Player.Speed >>= 1
+					Player.Speed 	 >>= 1
 
-					Player.YVelocity = Player.YPos
-					Player.YVelocity -= Object.YPos
+					Player.YVelocity   = Player.YPos
+					Player.YVelocity  -= Object.YPos
 					Player.YVelocity >>= 3
 
-					Object.State = R4_EGG_BUBBLE_EXPLODE
-					Object.Animation = EGGANI_HURT
-					Object.Timer = 0
+					Object.State	   = R4_EGG_BUBBLE_EXPLODE
+					Object.Animation   = EGGANI_HURT
+					Object.Timer	   = 0
 				else
 					if Player.InvincibleTimer == 0
 						Player.State = Player_State_GotHit
@@ -709,19 +720,19 @@ sub ObjectPlayerInteraction
 	end if
 
 	if Object.State < R4_EGG_BUBBLE_RESTORE_BOUNDS
-		TempValue0 = Player.CollisionRight
+		TempValue0   = Player.CollisionRight
 		TempValue0 <<= 16
-		TempValue0 += Player.XPos
+		TempValue0  += Player.XPos
 
-		TempValue1 = Stage.XBoundary2
+		TempValue1   = Stage.XBoundary2
 		TempValue1 <<= 16
 
 		if TempValue0 > TempValue1
 			Player.XVelocity = 0
-			Player.Speed = 0
-			Player.XPos = TempValue1
+			Player.Speed	 = 0
+			Player.XPos		 = TempValue1
 
-			TempValue0 = Player.CollisionRight
+			TempValue0   = Player.CollisionRight
 			TempValue0 <<= 16
 			Player.XPos -= TempValue0
 		end if
@@ -739,10 +750,10 @@ sub ObjectDraw
 	case EGGANI_LAUGH
 		DrawSpriteFX(0, FX_FLIP, Object.XPos, Object.YPos)
 
-		TempValue0 = Object.FrameTimer
-		TempValue0 &= 15
+		TempValue0   = Object.FrameTimer
+		TempValue0  &= 15
 		TempValue0 >>= 3
-		TempValue0 += 3
+		TempValue0  += 3
 		DrawSpriteFX(TempValue0, FX_FLIP, Object.XPos, Object.YPos)
 
 		if Object.FrameTimer < 112
@@ -767,9 +778,9 @@ sub ObjectDraw
 		DrawSpriteFX(1, FX_FLIP, Object.XPos, Object.YPos)
 		DrawSpriteFX(6, FX_FLIP, Object.XPos, Object.YPos)
 
-		TempValue0 = Object.FrameTimer
+		TempValue0   = Object.FrameTimer
 		TempValue0 >>= 2
-		TempValue0 += 7
+		TempValue0  += 7
 		DrawSpriteFX(TempValue0, FX_FLIP, Object.XPos, Object.YPos)
 
 		Object.FrameTimer++
@@ -783,8 +794,8 @@ sub ObjectStartup
 	LoadSpriteSheet("R4/Objects2.gif")
 
 	// Egg Mobile
-	SpriteFrame(-32, -28, 64, 56, 51, 58)	// #0  - Egg Bubble Battle
-	SpriteFrame(-32, -28, 64, 56, 189, 58)	// #1  - Egg Bubble Battle destroyed
+	SpriteFrame(-32, -28, 64, 56, 51, 58)	// #0  - Egg Bubble2 Battle
+	SpriteFrame(-32, -28, 64, 56, 189, 58)	// #1  - Egg Bubble2 Battle destroyed
 
 	// Eggman
 	SpriteFrame(-32, -28, 48, 16, 1, 67)	// #2  - Eggman face
@@ -799,10 +810,11 @@ sub ObjectStartup
 	SpriteFrame(4, -44, 16, 16, 224, 35)	// #9  - Sweat drop frame 2
 	SpriteFrame(4, -44, 1, 1, 207, 35)		// #10 - Sweat drop frame 3
 
+	// Used to be below LoadSpriteSheet, moved here for consistency
 	ArrayPos0 = 32
 	while ArrayPos0 < 1056
 		if Object[ArrayPos0].Type == TypeName[EggmanPart2]
-			TempValue0 = 160
+			TempValue0  = 160
 			TempValue0 -= Screen.CenterX
 			Object[ArrayPos0].iXPos += TempValue0
 		end if

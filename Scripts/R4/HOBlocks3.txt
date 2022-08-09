@@ -1,47 +1,55 @@
-//------------Sonic CD HOBlocks3 Script-------------//
+//------------Sonic CD Horizontal Blocks 3 Script-------------//
 //--------Scripted by Christian Whitehead 'The Taxman'--------//
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
 // Aliases
-#alias OBject.Value1	:	Object.XDrawPos
-#alias OBject.Value2	:	Object.XOffSet
-#alias OBject.Value3	:	Object.Angle
-#alias OBject.Value4	:	Object.AgainstBlock
+#alias OBject.Value1			:	Object.XDrawPos
+#alias OBject.Value2			:	Object.XOffSet
+#alias OBject.Value3			:	Object.Angle
+#alias OBject.Value4			:	Object.AgainstBlock
 
 // HUD alias
 #alias Object[24].PropertyValue	:	Hud.TimePeriod
 
-// Time Periods
-#alias 0			:	PROPVAL_PRESENT
-#alias 1			:	PROPVAL_PAST
-#alias 2			:	PROPVAL_GOOD_FUTURE
-#alias 3			:	PROPVAL_BAD_FUTURE
+// Property Values
+#alias 0	:	ONE_BLOCK
+#alias 1	:	TWO_BLOCKS
+#alias 2	:	THREE_BLOCKS
+#alias 3	:	FOUR_BLOCKS
 
 // Collision
-#alias 1	:	FLOOR
-#alias 2	:	LWALL
-#alias 3	:	RWALL
+#alias 1	:	PLAYER_COL_FLOOR
+#alias 2	:	PLAYER_COL_LWALL
+#alias 3	:	PLAYER_COL_RWALL
+
+// Time Periods
+#alias 0	:	PROPVAL_PRESENT
+#alias 1	:	PROPVAL_PAST
+#alias 2	:	PROPVAL_GOOD_FUTURE
+#alias 3	:	PROPVAL_BAD_FUTURE
 
 
 sub ObjectMain
-	Object.Angle = Oscillation
-	Object.Angle += Object.PropertyValue
+	Object.Angle   = Oscillation
+	Object.Angle  += Object.PropertyValue
 	Object.Angle <<= 1
 	Cos(Object.XOffSet, Object.Angle)
+
 	switch Object.PropertyValue
-	case 0
+	case ONE_BLOCK
 		Object.XOffSet <<= 11
 		break
-	case 1
+	case TWO_BLOCKS
 		Object.XOffSet <<= 12
 		break
-	case 2
-		Object.XOffSet *= 0x1800
+	case THREE_BLOCKS
+		Object.XOffSet  *= 0x1800
 		break
-	case 3
+	case FOUR_BLOCKS
 		Object.XOffSet <<= 13
 		break
 	end switch
+
 	Object.XOffSet += Object.XPos
 	Object.XOffSet &= 0xFFFF0000
 	Object.XOffSet -= Object.XDrawPos
@@ -50,31 +58,34 @@ end sub
 
 
 sub ObjectPlayerInteraction
-	TempValue0 = Object.XPos
+	TempValue0  = Object.XPos
 	Object.XPos = Object.XDrawPos
+	
 	switch Object.PropertyValue
-	case 0
+	case ONE_BLOCK
 		PlayerObjectCollision(C_BOX, -16, -16, 16, 16)
 		break
-	case 1
+	case TWO_BLOCKS
 		PlayerObjectCollision(C_BOX, -32, -16, 32, 16)
 		break
-	case 2
+	case THREE_BLOCKS
 		PlayerObjectCollision(C_BOX, -48, -16, 48, 16)
 		break
-	case 3
+	case FOUR_BLOCKS
 		PlayerObjectCollision(C_BOX, -64, -16, 64, 16)
 		break
 	end switch
 
 	Object.XPos = TempValue0
+
 	switch CheckResult
-	case FLOOR
+	case PLAYER_COL_FLOOR
 		Player.XPos += Object.XOffSet
 		break
-	case LWALL
+
+	case PLAYER_COL_LWALL
 		PlayerObjectCollision(C_BOX, -160, -16, -128, 16)
-		if CheckResult == RWALL
+		if CheckResult == PLAYER_COL_RWALL
 			CallFunction(Player_Kill)
 		end if
 		break
@@ -84,22 +95,24 @@ end sub
 
 sub ObjectDraw
 	switch Object.PropertyValue
-	case 0
+	case ONE_BLOCK
 		Cos(Object.XDrawPos, Object.Angle)
 		Object.XDrawPos <<= 11
-		Object.XDrawPos += Object.XPos
-		Object.XDrawPos &= 0xFFFF0000
+		Object.XDrawPos  += Object.XPos
+		Object.XDrawPos  &= 0xFFFF0000
 		DrawSpriteXY(1, Object.XDrawPos, Object.YPos)
 		break
-	case 1
+
+	case TWO_BLOCKS
 		Cos(Object.XDrawPos, Object.Angle)
 		Object.XDrawPos <<= 12
-		Object.XDrawPos += Object.XPos
-		Object.XDrawPos &= 0xFFFF0000
+		Object.XDrawPos  += Object.XPos
+		Object.XDrawPos  &= 0xFFFF0000
 		DrawSpriteXY(4, Object.XDrawPos, Object.YPos)
 		DrawSpriteXY(5, Object.XDrawPos, Object.YPos)
 		break
-	case 2
+
+	case THREE_BLOCKS
 		Cos(Object.XDrawPos, Object.Angle)
 		Object.XDrawPos *= 0x1800
 		Object.XDrawPos += Object.XPos
@@ -108,11 +121,12 @@ sub ObjectDraw
 		DrawSpriteXY(1, Object.XDrawPos, Object.YPos)
 		DrawSpriteXY(2, Object.XDrawPos, Object.YPos)
 		break
-	case 3
+
+	case FOUR_BLOCKS
 		Cos(Object.XDrawPos, Object.Angle)
 		Object.XDrawPos <<= 13
-		Object.XDrawPos += Object.XPos
-		Object.XDrawPos &= 0xFFFF0000
+		Object.XDrawPos  += Object.XPos
+		Object.XDrawPos  &= 0xFFFF0000
 		DrawSpriteXY(3, Object.XDrawPos, Object.YPos)
 		DrawSpriteXY(4, Object.XDrawPos, Object.YPos)
 		DrawSpriteXY(5, Object.XDrawPos, Object.YPos)
@@ -130,18 +144,21 @@ sub ObjectStartup
 		TempValue1 = 1
 		TempValue2 = 196
 		break
+
 	case PROPVAL_PAST
 		LoadSpriteSheet("R4/Objects2.gif")
 		TempValue0 = 1
 		TempValue1 = 157
 		TempValue2 = 34
 		break
+
 	case PROPVAL_GOOD_FUTURE
 		LoadSpriteSheet("R4/Objects2.gif")
 		TempValue0 = 1
 		TempValue1 = 190
 		TempValue2 = 34
 		break
+
 	case PROPVAL_BAD_FUTURE
 		LoadSpriteSheet("R4/Objects2.gif")
 		TempValue0 = 1

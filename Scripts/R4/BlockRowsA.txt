@@ -1,10 +1,10 @@
-//------------Sonic CD Block Rows A Script-------------//
+//----------------Sonic CD Block Rows A Script----------------//
 //--------Scripted by Christian Whitehead 'The Taxman'--------//
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
 // Aliases
-#alias Object.Value1	:	Object.XVelocity
-#alias Object.Value2	:	Object.OnObject
+#alias Object.Value1			:	Object.XVelocity
+#alias Object.Value2			:	Object.OnObject
 
 // HUD aliases
 #alias Object[24].PropertyValue	:	HUD.TimePeriod
@@ -19,39 +19,42 @@
 #alias 0	:	PRIORITY_BOUNDS
 
 // Collision
-#alias 1	:	FLOOR
-#alias 2	:	LWALL
-#alias 3	:	RWALL
-#alias 4	:	ROOF
+#alias 1	:	PLAYER_COL_FLOOR
+#alias 2	:	PLAYER_COL_LWALL
+#alias 3	:	PLAYER_COL_RWALL
+#alias 4	:	PLAYER_COL_ROOF
 
 // Gravity
 #alias 1	:	GRAVITY_AIR
 
 
 sub ObjectMain
-	Object.XVelocity += 0x8000		// 0x8000
-	Object.XVelocity %= 9437184 	// 0x900000
-	Object.Priority = PRIORITY_BOUNDS
+	Object.XVelocity += 0x8000
+	Object.XVelocity %= 0x900000
+
+	Object.Priority   = PRIORITY_BOUNDS
 end sub
 
 
 sub ObjectPlayerInteraction
-	TempValue0 = Object.XPos
-	Object.XPos -= 0xA00000			// 0xA00000
+	TempValue0   = Object.XPos
+
+	Object.XPos -= 0xA00000
 	Object.XPos -= Object.XVelocity
-	TempValue1 = 0
-	TempValue2 = 0
-	TempValue3 = 0
+
+	TempValue1   = 0
+	TempValue2   = 0
+	TempValue3   = 0
 
 	while TempValue1 < 4
 		PlayerObjectCollision(C_BOX, -32, -64, 32, 0)
 		switch CheckResult
-		case FLOOR
-			Player.XPos -= 0x8000	// 0x8000
+		case PLAYER_COL_FLOOR
+			Player.XPos -= 0x8000
 			if Player.Speed == 0
 				if Object.OnObject == false
 					Object.OnObject = true
-					Player.XPos &= 0xFFFF0000
+					Player.XPos		 &= 0xFFFF0000
 					Object.XVelocity &= 0xFFFF0000
 				end if
 			else
@@ -59,32 +62,33 @@ sub ObjectPlayerInteraction
 			end if
 			break
 
-		case LWALL
+		case PLAYER_COL_LWALL
 			TempValue2 = true
 			break
 
-		case RWALL
+		case PLAYER_COL_RWALL
 			TempValue3 = true
 			break
 
 		end switch
-		Object.XPos += 9437184 	// 0x900000
+		Object.XPos += 0x900000
 		TempValue1++
 	loop
 
-	Object.XPos = TempValue0
-	Object.XPos -= 0x1300000		// 0x1300000
+	Object.XPos  = TempValue0
+	Object.XPos -= 0x1300000
 	Object.XPos += Object.XVelocity
+
 	TempValue1 = 0
 	while TempValue1 < 4
 		PlayerObjectCollision(C_BOX, -32, 0, 32, 64)
 		switch CheckResult
-		case FLOOR
-			Player.XPos += 0x8000	// 0x8000
+		case PLAYER_COL_FLOOR
+			Player.XPos += 0x8000
 			if Player.Speed == 0
 				if Object.OnObject == false
 					Object.OnObject = true
-					Player.XPos &= 0xFFFF0000
+					Player.XPos		 &= 0xFFFF0000
 					Object.XVelocity &= 0xFFFF0000
 				end if
 			else
@@ -92,16 +96,16 @@ sub ObjectPlayerInteraction
 			end if
 			break
 
-		case LWALL
+		case PLAYER_COL_LWALL
 			TempValue2 = true
 			break
 
-		case RWALL
+		case PLAYER_COL_RWALL
 			TempValue3 = true
 			break
 
 		end switch
-		Object.XPos += 9437184	// 0x900000
+		Object.XPos += 0x900000
 		TempValue1++
 	loop
 
@@ -112,11 +116,11 @@ sub ObjectPlayerInteraction
 	Object.XPos = TempValue0
 	PlayerObjectCollision(C_BOX, -224, -128, -192, 128)
 	switch CheckResult
-	case LWALL
+	case PLAYER_COL_LWALL
 		TempValue2 = true
 		break
 
-	case RWALL
+	case PLAYER_COL_RWALL
 		TempValue3 = true
 		break
 
@@ -124,11 +128,11 @@ sub ObjectPlayerInteraction
 
 	PlayerObjectCollision(C_BOX, 192, -128, 224, 128)
 	switch CheckResult
-	case LWALL
+	case PLAYER_COL_LWALL
 		TempValue2 = true
 		break
 
-	case RWALL
+	case PLAYER_COL_RWALL
 		TempValue3 = true
 		break
 
@@ -144,34 +148,34 @@ end sub
 
 sub ObjectDraw
 	TempValue0 = Object.XPos
-	TempValue0 -= 0xA00000	// 0xA00000
+	TempValue0 -= 0xA00000
 	TempValue0 -= Object.XVelocity
 
 	TempValue1 = Object.YPos
-	TempValue1 -= 0x200000	// 0x200000
+	TempValue1 -= 0x200000
 	TempValue2 = 0
 	while TempValue2 < 4
 		DrawSpriteXY(0, TempValue0, TempValue1)
 		DrawSpriteXY(1, TempValue0, TempValue1)
 		DrawSpriteXY(2, TempValue0, TempValue1)
 		DrawSpriteXY(3, TempValue0, TempValue1)
-		TempValue0 += 9437184	// 0x900000
+		TempValue0 += 0x900000
 		TempValue2++
 	loop
 
 	TempValue0 = Object.XPos
-	TempValue0 -= 0x1300000	// 0x1300000
+	TempValue0 -= 0x1300000
 	TempValue0 += Object.XVelocity
 
 	TempValue1 = Object.YPos
-	TempValue1 += 0x200000	// 0x200000
+	TempValue1 += 0x200000
 	TempValue2 = 0
 	while TempValue2 < 4
 		DrawSpriteXY(0, TempValue0, TempValue1)
 		DrawSpriteXY(1, TempValue0, TempValue1)
 		DrawSpriteXY(2, TempValue0, TempValue1)
 		DrawSpriteXY(3, TempValue0, TempValue1)
-		TempValue0 += 9437184	// 0x900000
+		TempValue0 += 0x900000
 		TempValue2++
 	loop
 end sub

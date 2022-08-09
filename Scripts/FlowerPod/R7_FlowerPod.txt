@@ -3,12 +3,12 @@
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
 // Aliases
-#alias Object.Value0		:	Object.Timer
+#alias Object.Value0	:	Object.Timer
 
 // PodSeed Aliases
-#alias Object.Value1 		: Object.ParentPod
-#alias Object.Value2 		: Object.XVelocity
-#alias Object.Value3 		: Object.YVelocity
+#alias Object.Value1	:	Object.ParentPod
+#alias Object.Value2	:	Object.XVelocity
+#alias Object.Value3	:	Object.YVelocity
 
 // States
 #alias 0	:	FLOWERPOD_IDLE
@@ -16,6 +16,12 @@
 #alias 2	:	FLOWERPOD_VANISH
 #alias 3	:	FLOWERPOD_TRIGGER_ACTFINISH
 #alias 4	:	FLOWERPOD_CONTROL_PLAYER
+
+// Control Modes
+#alias -1	:	CONTROL_DISABLED
+
+// Game modes
+#alias 2	:	GAMEMODE_TIMEATTACK
 
 // Ink Effects
 #alias 2	:	INK_ALPHA
@@ -30,23 +36,23 @@
 sub ObjectMain
 	switch Object.State
 	case FLOWERPOD_IDLE
-		TempValue0 = Object.YPos
+		TempValue0  = Object.YPos
 		TempValue0 += 0x40005A
 		if Player.YPos < TempValue0
-			Stage.NewXBoundary1 = Object.XPos
+			Stage.NewXBoundary1   = Object.XPos
 			Stage.NewXBoundary1 >>= 16
-			Stage.NewXBoundary1 -= Screen.CenterX
+			Stage.NewXBoundary1  -= Screen.CenterX
 
-			Stage.NewXBoundary2 = Object.XPos
+			Stage.NewXBoundary2   = Object.XPos
 			Stage.NewXBoundary2 >>= 16
-			Stage.NewXBoundary2 += Screen.CenterX
+			Stage.NewXBoundary2  += Screen.CenterX
 		end if
 
 		if Object.Timer < 60
 			Object.Frame = 1
 		else
-			TempValue0 = Object.Timer
-			TempValue0 -= 60
+			TempValue0   = Object.Timer
+			TempValue0  -= 60
 			TempValue0 >>= 1
 			switch TempValue0
 			case 0
@@ -79,18 +85,18 @@ sub ObjectMain
 		if Object.Timer < 120
 			Object.Timer++
 
-			TempValue0 = Object.Timer
+			TempValue0  = Object.Timer
 			TempValue0 &= 3
 			if TempValue0 == 3
 				Rand(TempValue0, 64)
-				TempValue0 -= 32
+				TempValue0  -= 32
 				TempValue0 <<= 16
-				TempValue0 += Object.XPos
+				TempValue0  += Object.XPos
 
 				Rand(TempValue1, 40)
-				TempValue1 -= 40
+				TempValue1  -= 40
 				TempValue1 <<= 16
-				TempValue1 += Object.YPos
+				TempValue1  += Object.YPos
 
 				CreateTempObject(TypeName[Explosion], 0, TempValue0, TempValue1)
 				PlaySfx(22, 0)
@@ -105,9 +111,9 @@ sub ObjectMain
 			// Create all the Seeds that burst out of the Pod
 			
 			// Starting point is 3 pixels left and 24 pixels up from the Flower Pod's position
-			TempValue0 = Object.XPos
+			TempValue0  = Object.XPos
 			TempValue0 -= 0x30000
-			TempValue1 = Object.YPos
+			TempValue1  = Object.YPos
 			TempValue1 -= 0x180000
 			
 			// Create the leading seed, note its Property Value of 1 to signify that it should start level results upon landing
@@ -151,32 +157,33 @@ sub ObjectMain
 	case FLOWERPOD_VANISH
 		if Object.Timer > 0
 			Object.Timer -= 16
-			Object.Alpha = Object.Timer
+			Object.Alpha  = Object.Timer
 		end if
 		break
 
 	case FLOWERPOD_TRIGGER_ACTFINISH
-		if Player.ControlMode == -1
-			Player.Left = false
-			Player.Right = true
-			Player.Up = false
-			Player.Down = false
+		if Player.ControlMode == CONTROL_DISABLED
+			Player.Left		= false
+			Player.Right 	= true
+			Player.Up 		= false
+			Player.Down 	= false
 			Player.JumpHold = false
 		end if
 
-		TempValue0 = Object.XPos
+		TempValue0  = Object.XPos
 		TempValue0 += 0xA00000
+
 		if Player.XPos > TempValue0
 			PlayMusic(1)
 			Object.State = FLOWERPOD_CONTROL_PLAYER
 			Object[30].Type = TypeName[ActFinish]
 			Object[30].DrawOrder = 6
-			Object[30].Priority = PRIORITY_ACTIVE
+			Object[30].Priority  = PRIORITY_ACTIVE
 		end if
 		break
 
 	case FLOWERPOD_CONTROL_PLAYER
-		if Player.ControlMode == -1
+		if Player.ControlMode == CONTROL_DISABLED
 			Player.Right = true
 		end if
 		break
@@ -209,15 +216,15 @@ sub ObjectPlayerInteraction
 			end if
 		end if
 	end if
-	TempValue0 = Screen.CenterX
-	TempValue0 += 40
+	TempValue0   = Screen.CenterX
+	TempValue0  += 40
 	TempValue0 <<= 16
 
-	TempValue1 = Object.XPos
-	TempValue1 += TempValue0
+	TempValue1   = Object.XPos
+	TempValue1  += TempValue0
 
 	if Player.XPos > TempValue1
-		Player.XPos = TempValue1
+		Player.XPos  = TempValue1
 		Player.Speed = 0
 		Player.XVelocity = 0
 		if Player.Gravity == GRAVITY_GROUND
@@ -262,7 +269,7 @@ sub ObjectStartup
 		if Object[ArrayPos0].Type == TypeName[FlowerPod]
 		
 			if Stage.PlayerListPos == 0
-				if Options.GameMode != 2
+				if Options.GameMode != GAMEMODE_TIMEATTACK
 					// If Sonic's the main character and he's not in Time Attack, then unload
 					Object[ArrayPos0].Type = TypeName[Blank Object]
 				end if

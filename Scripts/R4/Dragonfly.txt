@@ -1,4 +1,4 @@
-//------------Sonic CD Dragonfly Script-------------//
+//----------------Sonic CD Dragonfly Script-------------------//
 //--------Scripted by Christian Whitehead 'The Taxman'--------//
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
@@ -22,9 +22,9 @@ sub ObjectMain
 		case DRAGONFLY_MOVE_LEFT
 			Sin(Object.YPos, Object.Angle)
 			Object.YPos <<= 11
-			Object.YPos += Object.YVelocity
+			Object.YPos  += Object.YVelocity
 
-			Object.XPos -= 0x10000	// 0x10000
+			Object.XPos  -= 0x10000
 
 			Object.Angle -= 8
 			if Object.Angle == 0
@@ -37,9 +37,9 @@ sub ObjectMain
 			Sin(Object.YPos, Object.Angle)
 			FlipSign(Object.YPos)
 			Object.YPos <<= 11
-			Object.YPos += Object.YVelocity
+			Object.YPos  += Object.YVelocity
 
-			Object.XPos += 0x10000	// 0x10000
+			Object.XPos  += 0x10000
 
 			Object.Angle += 8
 			if Object.Angle == 2048
@@ -55,9 +55,9 @@ sub ObjectMain
 		case DRAGONFLY_MOVE_LEFT
 			Sin(Object.YPos, Object.Angle)
 			Object.YPos <<= 11
-			Object.YPos += Object.YVelocity
+			Object.YPos  += Object.YVelocity
 
-			Object.XPos -= 0x8000	// 0x8000
+			Object.XPos  -= 0x8000
 			
 			Object.Angle -= 2
 			if Object.Angle == 0
@@ -70,9 +70,9 @@ sub ObjectMain
 			Sin(Object.YPos, Object.Angle)
 			FlipSign(Object.YPos)
 			Object.YPos <<= 11
-			Object.YPos += Object.YVelocity
+			Object.YPos  += Object.YVelocity
 
-			Object.XPos += 0x8000	// 0x8000
+			Object.XPos  += 0x8000
 
 			Object.Angle += 2
 			if Object.Angle == 1024
@@ -97,7 +97,7 @@ end sub
 
 
 sub ObjectDraw
-	TempValue0 = Object.Frame
+	TempValue0  = Object.Frame
 	TempValue0 /= 3
 
 	if Object.Quality == PROPVAL_QUALITY_GOOD
@@ -114,16 +114,18 @@ end sub
 
 sub ObjectStartup
 	LoadSpriteSheet("R4/Objects.gif")
+
 	SpriteFrame(-29, -20, 64, 32, 18, 119)	// #0 - Dragon Fly frame 0
 	SpriteFrame(-29, -16, 64, 28, 83, 152)	// #1 - Dragon Fly frame 1
 	SpriteFrame(-29, -20, 64, 32, 18, 86)	// #2 - Dragon Fly frame 2
 	SpriteFrame(-29, -16, 64, 28, 18, 152)	// #3 - Dragon Fly frame 3
 
+	// Used to be below LoadSpriteSheet, moved here for consistency
 	ArrayPos0 = 32
 	while ArrayPos0 < 1056
 		if Object[ArrayPos0].Type == TypeName[Dragonfly]
 			Object[ArrayPos0].YVelocity = Object[ArrayPos0].YPos
-			Object[ArrayPos0].Angle = 1024
+			Object[ArrayPos0].Angle   = 1024
 			Object[ArrayPos0].Angle >>= Object[ArrayPos0].Quality
 		end if
 		ArrayPos0++

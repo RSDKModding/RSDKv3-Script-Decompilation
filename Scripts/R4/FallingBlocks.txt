@@ -1,14 +1,14 @@
-//------------Sonic CD Falling Blocks Script-------------//
+//----------------Sonic CD Falling Blocks Script--------------//
 //--------Scripted by Christian Whitehead 'The Taxman'--------//
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
 // Aliases
-#alias Object.Value0	:	Object.Timer
-#alias Object.Value1	:	Object.YVelocity
-#alias Object.Value2	:	Object.YOriginPos
-#alias Object.Value3	:	Object.TargetHeight
-#alias Object.Value4	:	Object.R4BlockSheet
-#alias Object.Value5	:	Object.SpikeSheet
+#alias Object.Value0			:	Object.Timer
+#alias Object.Value1			:	Object.YVelocity
+#alias Object.Value2			:	Object.YOriginPos
+#alias Object.Value3			:	Object.TargetHeight
+#alias Object.Value4			:	Object.R4BlockSheet
+#alias Object.Value5			:	Object.SpikeSheet
 
 // HUD alias
 #alias Object[24].PropertyValue	:	Hud.TimePeriod
@@ -20,11 +20,10 @@
 #alias 3	:	FALLINGBLOCKS_FALL
 
 // Time Periods
-#alias 0			:	PROPVAL_PRESENT
-#alias 1			:	PROPVAL_PAST
-#alias 2			:	PROPVAL_GOOD_FUTURE
-#alias 3			:	PROPVAL_BAD_FUTURE
-
+#alias 0	:	PROPVAL_PRESENT
+#alias 1	:	PROPVAL_PAST
+#alias 2	:	PROPVAL_GOOD_FUTURE
+#alias 3	:	PROPVAL_BAD_FUTURE
 
 // Priority
 #alias 0	:	PRIORITY_BOUNDS
@@ -34,7 +33,7 @@
 #alias 0	:	CSIDE_FLOOR
 
 // Collision
-#alias 4	:	ROOF
+#alias 4	:	PLAYER_COL_ROOF
 
 // Gravity
 #alias 1	:	GRAVITY_AIR
@@ -45,12 +44,12 @@ sub ObjectMain
 	case FALLINGBLOCKS_SETUP
 		PlayerObjectCollision(C_TOUCH, -16, -64, 16, 192)
 		if CheckResult == true
-			Object.Priority = PRIORITY_ACTIVE
+			Object.Priority  = PRIORITY_ACTIVE
 
 			Object.YVelocity = 0
 
 			Object.TargetHeight  = Object.YPos
-			Object.TargetHeight += 0x200000	// 0x200000
+			Object.TargetHeight += 0x200000	
 
 			Object.State++
 		end if
@@ -58,7 +57,7 @@ sub ObjectMain
 
 	case FALLINGBLOCKS_CRUMBLE
 		Object.YVelocity += 0x2000
-		Object.YPos += Object.YVelocity
+		Object.YPos 	 += Object.YVelocity
 		if Object.YPos >= Object.TargetHeight
 			Object.YPos = Object.TargetHeight
 			Object.YVelocity = 0
@@ -77,8 +76,8 @@ sub ObjectMain
 		break
 
 	case FALLINGBLOCKS_FALL
-		Object.YVelocity += 0x2000	// 0x2000
-		Object.YPos += Object.YVelocity
+		Object.YVelocity += 0x2000
+		Object.YPos 	 += Object.YVelocity
 
 		ObjectTileCollision(CSIDE_FLOOR, 0, 32, 0)
 		if CheckResult == true
@@ -89,17 +88,17 @@ sub ObjectMain
 	end switch
 
 	if Object.OutOfBounds == true
-		Object.YPos = Object.YOriginPos
+		Object.YPos		= Object.YOriginPos
 		Object.Priority = PRIORITY_BOUNDS
 		
-		Object.State = FALLINGBLOCKS_SETUP
+		Object.State	= FALLINGBLOCKS_SETUP
 	end if
 end sub
 
 
 sub ObjectPlayerInteraction
 	PlayerObjectCollision(C_BOX, -16, -64, 16, 62)
-	if CheckResult == ROOF
+	if CheckResult == PLAYER_COL_ROOF
 		if Player.Gravity == GRAVITY_AIR
 			CallFunction(Player_Hit)
 		else

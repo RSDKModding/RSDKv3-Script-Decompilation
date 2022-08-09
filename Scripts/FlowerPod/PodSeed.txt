@@ -1,25 +1,28 @@
-//------------Sonic CD PodSeed Script-------------//
+//------------------Sonic CD Pod Seed Script------------------//
 //--------Scripted by Christian Whitehead 'The Taxman'--------//
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
 // Aliases
 #alias Object.PropertyValue	:	Object.ActivateResults
-#alias Object.Value0 		: Object.Timer
-#alias Object.Value1 		: Object.ParentPod
-#alias Object.Value2 		: Object.XVelocity
-#alias Object.Value3 		: Object.YVelocity
+#alias Object.Value0 		:	Object.Timer
+#alias Object.Value1 		:	Object.ParentPod
+#alias Object.Value2 		:	Object.XVelocity
+#alias Object.Value3 		:	Object.YVelocity
 
 // Flower Aliases
-#alias 2 					: FLOWER_SEED_PLANTED_1
+#alias 2 					:	FLOWER_SEED_PLANTED_1
 
 // Collision Sides
-#alias 0					: CSIDE_FLOOR
+#alias 0					:	CSIDE_FLOOR
+
+// Control Mode
+#alias -1	:	CONTROL_DISABLED
 
 
 sub ObjectMain
 
 	// Animate the seed
-	Object.Frame = Object.Timer
+	Object.Frame  = Object.Timer
 	Object.Frame /= 3
 	Object.Timer++
 	Object.Timer %= 18
@@ -27,7 +30,7 @@ sub ObjectMain
 	// Update movements
 	Object.XPos += Object.XVelocity
 	Object.YPos += Object.YVelocity
-	Object.YVelocity += 0x4000 // Gravity of 0x4000
+	Object.YVelocity += 0x4000
 
 	// Before landing, the object has to be going at a rate of at least 6px per frame
 	if Object.YVelocity > 0x60000
@@ -36,12 +39,12 @@ sub ObjectMain
 			if Object.ActivateResults == true
 				ArrayPos0 = Object.ParentPod
 				Object[ArrayPos0].State++
-				Player.ControlMode = -1
+				Player.ControlMode = CONTROL_DISABLED
 			end if
 
 			// Grow into a Flower
 			ResetObjectEntity(Object.EntityNo, Flower_TypeNo, 0, Object.XPos, Object.YPos)
-			Object.YPos += 0x80000 // Moving 8 pixels down
+			Object.YPos += 0x80000
 			Object.State = FLOWER_SEED_PLANTED_1
 			Object.Frame = 2
 			Object.DrawOrder = 4

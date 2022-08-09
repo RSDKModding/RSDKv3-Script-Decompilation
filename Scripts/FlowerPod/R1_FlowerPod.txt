@@ -17,6 +17,9 @@
 #alias 3	:	FLOWERPOD_TRIGGER_ACTFINISH
 #alias 4	:	FLOWERPOD_CONTROL_PLAYER
 
+// Control Mode
+#alias -1	:	CONTROL_DISABLED
+
 // Ink Effects
 #alias 2	:	INK_ALPHA
 
@@ -30,19 +33,19 @@
 sub ObjectMain
 	switch Object.State
 	case FLOWERPOD_IDLE
-		Stage.NewXBoundary1 = Object.XPos
+		Stage.NewXBoundary1   = Object.XPos
 		Stage.NewXBoundary1 >>= 16
-		Stage.NewXBoundary1 -= Screen.CenterX
+		Stage.NewXBoundary1  -= Screen.CenterX
 
-		Stage.NewXBoundary2 = Object.XPos
+		Stage.NewXBoundary2   = Object.XPos
 		Stage.NewXBoundary2 >>= 16
-		Stage.NewXBoundary2 += Screen.CenterX
+		Stage.NewXBoundary2  += Screen.CenterX
 
 		if Object.Timer < 60
 			Object.Frame = 1
 		else
-			TempValue0 = Object.Timer
-			TempValue0 -= 60
+			TempValue0   = Object.Timer
+			TempValue0  -= 60
 			TempValue0 >>= 1
 			switch TempValue0
 			case 0
@@ -78,14 +81,14 @@ sub ObjectMain
 			TempValue0 &= 3
 			if TempValue0 == 3
 				Rand(TempValue0, 64)
-				TempValue0 -= 32
+				TempValue0  -= 32
 				TempValue0 <<= 16
-				TempValue0 += Object.XPos
+				TempValue0  += Object.XPos
 
 				Rand(TempValue1, 40)
-				TempValue1 -= 40
+				TempValue1  -= 40
 				TempValue1 <<= 16
-				TempValue1 += Object.YPos
+				TempValue1  += Object.YPos
 
 				CreateTempObject(TypeName[Explosion], 0, TempValue0, TempValue1)
 				PlaySfx(22, 0)
@@ -96,9 +99,9 @@ sub ObjectMain
 			Object.InkEffect = INK_ALPHA
 			Object.Alpha = 255
 
-			TempValue0 = Object.XPos
+			TempValue0  = Object.XPos
 			TempValue0 -= 0x30000
-			TempValue1 = Object.YPos
+			TempValue1  = Object.YPos
 			TempValue1 -= 0x180000
 			CreateTempObject(TypeName[PodSeed], 1, TempValue0, TempValue1)
 			Object[TempObjectPos].XVelocity = -0x20000
@@ -145,15 +148,15 @@ sub ObjectMain
 		break
 
 	case FLOWERPOD_TRIGGER_ACTFINISH
-		if Player.ControlMode == -1
-			Player.Left = false
-			Player.Right = true
-			Player.Up = false
-			Player.Down = false
+		if Player.ControlMode == CONTROL_DISABLED
+			Player.Left 	= false
+			Player.Right 	= true
+			Player.Up 		= false
+			Player.Down 	= false
 			Player.JumpHold = false
 		end if
 
-		TempValue0 = Object.XPos
+		TempValue0  = Object.XPos
 		TempValue0 += 0xA00000
 
 		if Player.XPos > TempValue0
@@ -161,12 +164,12 @@ sub ObjectMain
 			Object.State = FLOWERPOD_CONTROL_PLAYER
 			Object[30].Type = TypeName[ActFinish]
 			Object[30].DrawOrder = 6
-			Object[30].Priority = PRIORITY_ACTIVE
+			Object[30].Priority  = PRIORITY_ACTIVE
 		end if
 		break
 
 	case FLOWERPOD_CONTROL_PLAYER
-		if Player.ControlMode == -1
+		if Player.ControlMode == CONTROL_DISABLED
 			Player.Right = true
 		end if
 		break
@@ -199,15 +202,15 @@ sub ObjectPlayerInteraction
 			end if
 		end if
 	end if
-	TempValue0 = Screen.CenterX
-	TempValue0 += 40
+	TempValue0   = Screen.CenterX
+	TempValue0  += 40
 	TempValue0 <<= 16
 
-	TempValue1 = Object.XPos
-	TempValue1 += TempValue0
+	TempValue1   = Object.XPos
+	TempValue1  += TempValue0
 
 	if Player.XPos > TempValue1
-		Player.XPos = TempValue1
+		Player.XPos  = TempValue1
 		Player.Speed = 0
 		Player.XVelocity = 0
 		if Player.Gravity == GRAVITY_GROUND
@@ -239,8 +242,8 @@ sub ObjectStartup
 	ArrayPos0 = 32
 	while ArrayPos0 < 1056
 		if Object[ArrayPos0].Type == TypeName[FlowerPod]
-			TempValue0 = Screen.CenterX
-			TempValue0 -= 160
+			TempValue0   = Screen.CenterX
+			TempValue0  -= 160
 			TempValue0 <<= 16
 			Object[ArrayPos0].XPos -= TempValue0
 		end if

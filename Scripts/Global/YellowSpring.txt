@@ -15,21 +15,21 @@
 #alias 0	:	CMODE_FLOOR
 #alias 2	:	CMODE_ROOF
 
-// Player Animations
-#alias 11	:	ANI_BOUNCING
+// Player Collision
+#alias 1	:	PLAYER_COL_FLOOR
 
 // Directions
-#alias 2	:	FACING_UPWARDS
+#alias 2	:	FACING_UPEND_RIGHT
 
 // Property Values
-#alias 0	: PROPVAL_FACING_UP
-#alias 1	: PROPVAL_FACING_RIGHT
-#alias 2	: PROPVAL_FACING_LEFT
-#alias 3	: PROPVAL_FACING_DOWN
-#alias 4	: PROPVAL_FACING_DIAGONAL_UR
-#alias 5	: PROPVAL_FACING_DIAGONAL_UL
-#alias 6	: PROPVAL_FACING_DIAGONAL_DR	// Not actually facing down
-#alias 7	: PROPVAL_FACING_DIAGONAL_DL	// Not actually facing down
+#alias 0	:	PROPVAL_FACING_UP
+#alias 1	:	PROPVAL_FACING_RIGHT
+#alias 2	:	PROPVAL_FACING_LEFT
+#alias 3	:	PROPVAL_FACING_DOWN
+#alias 4	:	PROPVAL_FACING_DIAGONAL_UR
+#alias 5	:	PROPVAL_FACING_DIAGONAL_UL
+#alias 6	:	PROPVAL_FACING_DIAGONAL_DR	// Not actually facing down
+#alias 7	:	PROPVAL_FACING_DIAGONAL_DL	// Not actually facing down
 
 
 sub ObjectPlayerInteraction
@@ -81,7 +81,7 @@ sub ObjectPlayerInteraction
 			if Player.YVelocity >= 0
 				PlayerObjectCollision(C_PLATFORM, -16, -8, 16, 8)
 				PlayerObjectCollision(C_TOUCH, -16, -10, 16, -6)
-				if CheckResult == true
+				if CheckResult == PLAYER_COL_FLOOR
 					Player.AnimationReserve = ANI_WALKING
 					if Player.Animation == ANI_RUNNING
 						Player.AnimationReserve = ANI_RUNNING
@@ -419,7 +419,7 @@ sub ObjectStartup
 	while ArrayPos0 < 1056
 		if Object[ArrayPos0].Type == TypeName[YellowSpring]
 			if Object[ArrayPos0].PropertyValue > PROPVAL_FACING_DIAGONAL_UL
-				Object[ArrayPos0].Direction = FACING_UPWARDS
+				Object[ArrayPos0].Direction = FACING_UPEND_RIGHT
 			end if
 		end if
 		ArrayPos0++

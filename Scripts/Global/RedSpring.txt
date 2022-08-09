@@ -1,4 +1,4 @@
-//-----------------Sonic CD Red Spring Script-----------------//
+//----------------Sonic CD Red Spring Script------------------//
 //--------Scripted by Christian Whitehead 'The Taxman'--------//
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
@@ -10,25 +10,28 @@
 #alias Player.Value7	:	Player.AnimationReserve
 
 // Directions
-#alias 2	:	FACING_UPWARDS
+#alias 2	:	FACING_UPEND_RIGHT
 
 // Gravity
 #alias 0	:	GRAVITY_GROUND
 #alias 1	:	GRAVITY_AIR
+
+// Player Collision
+#alias 1	:	PLAYER_COL_FLOOR
 
 // Collision Modes
 #alias 0	:	CMODE_FLOOR
 #alias 2	:	CMODE_ROOF
 
 // Property Values
-#alias 0	: PROPVAL_FACING_UP
-#alias 1	: PROPVAL_FACING_RIGHT
-#alias 2	: PROPVAL_FACING_LEFT
-#alias 3	: PROPVAL_FACING_DOWN
-#alias 4	: PROPVAL_FACING_DIAGONAL_UR
-#alias 5	: PROPVAL_FACING_DIAGONAL_UL
-#alias 6	: PROPVAL_FACING_DIAGONAL_DR	// Actually not facing down
-#alias 7	: PROPVAL_FACING_DIAGONAL_DL	// Actually not facing down
+#alias 0	:	PROPVAL_FACING_UP
+#alias 1	:	PROPVAL_FACING_RIGHT
+#alias 2	:	PROPVAL_FACING_LEFT
+#alias 3	:	PROPVAL_FACING_DOWN
+#alias 4	:	PROPVAL_FACING_DIAGONAL_UR
+#alias 5	:	PROPVAL_FACING_DIAGONAL_UL
+#alias 6	:	PROPVAL_FACING_DIAGONAL_DR	// Actually not facing down
+#alias 7	:	PROPVAL_FACING_DIAGONAL_DL	// Actually not facing down
 
 
 sub ObjectPlayerInteraction
@@ -46,8 +49,8 @@ sub ObjectPlayerInteraction
 
 		if TempValue0 == false
 			PlayerObjectCollision(C_BOX, -16, -8, 16, 8)
-			PlayerObjectCollision(C_TOUCH, -16, -10, 16, -6)	// Hey, they actually made this match
-			if CheckResult == true
+			PlayerObjectCollision(C_TOUCH, -16, -10, 16, -6)
+			if CheckResult == PLAYER_COL_FLOOR
 				Player.AnimationReserve = ANI_WALKING
 				if Player.Animation == ANI_RUNNING
 					Player.AnimationReserve = ANI_RUNNING
@@ -79,8 +82,8 @@ sub ObjectPlayerInteraction
 		else
 			if Player.YVelocity >= 0
 				PlayerObjectCollision(C_PLATFORM, -16, -8, 16, 8)
-				PlayerObjectCollision(C_TOUCH, -16, -10, 16, -6)	// Hey, they actually made this match
-				if CheckResult == true
+				PlayerObjectCollision(C_TOUCH, -16, -10, 16, -6)
+				if CheckResult == PLAYER_COL_FLOOR
 					Player.AnimationReserve = ANI_WALKING
 					if Player.Animation == ANI_RUNNING
 						Player.AnimationReserve = ANI_RUNNING
@@ -187,7 +190,7 @@ sub ObjectPlayerInteraction
 	case PROPVAL_FACING_DOWN
 		PlayerObjectCollision(C_BOX, -16, -8, 16, 8)
 		PlayerObjectCollision(C_TOUCH, -15, 6, 15, 10)
-		if CheckResult == true
+		if CheckResult == PLAYER_COL_FLOOR
 			if Player.CollisionMode == CMODE_ROOF
 				FlipSign(Player.Speed)
 				FlipSign(Player.XVelocity)
@@ -422,7 +425,7 @@ sub ObjectStartup
 				Object[ArrayPos0].YFlipped = true
 			end if
 			if Object[ArrayPos0].PropertyValue > PROPVAL_FACING_DIAGONAL_UL
-				Object[ArrayPos0].Direction = FACING_UPWARDS
+				Object[ArrayPos0].Direction = FACING_UPEND_RIGHT
 			end if
 		end if
 		ArrayPos0++
@@ -489,7 +492,7 @@ end sub
 sub RSDKDraw
 	Object.Direction = FACING_RIGHT
 	if Object.PropertyValue > PROPVAL_FACING_DIAGONAL_UL
-		Object.Direction = FACING_UPWARDS
+		Object.Direction = FACING_UPEND_RIGHT
 	end if
 
 	DrawSpriteFX(Object.PropertyValue, FX_FLIP, Object.XPos, Object.YPos)

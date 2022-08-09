@@ -20,10 +20,10 @@
 #alias 3	:	PROPVAL_BAD_FUTURE
 
 // Collision
-#alias 1	:	FLOOR
-#alias 2	:	LWALL
-#alias 3	:	RWALL
-#alias 4	:	ROOF
+#alias 1	:	PLAYER_COL_FLOOR
+#alias 2	:	PLAYER_COL_LWALL
+#alias 3	:	PLAYER_COL_RWALL
+#alias 4	:	PLAYER_COL_ROOF
 
 // Gravity
 #alias 1	:	GRAVITY_AIR
@@ -35,13 +35,13 @@
 
 sub ObjectMain
 	if Object.State == BLOCKROWSB_MOVE_RIGHT
-		Object.XVelocity += 0x8000	// 0x8000
-		if Object.XVelocity >= 12582912	// 0xC00000
-			Object.XVelocity = 12582912	// 0xC00000
+		Object.XVelocity += 0x8000
+		if Object.XVelocity >= 0xC00000
+			Object.XVelocity = 0xC00000
 			Object.State = BLOCKROWSB_MOVE_LEFT
 		end if
 	else
-		Object.XVelocity -= 0x8000	// 0x8000
+		Object.XVelocity -= 0x8000
 		if Object.XVelocity <= 0
 			Object.XVelocity = 0
 			Object.State = BLOCKROWSB_MOVE_RIGHT
@@ -54,21 +54,21 @@ sub ObjectPlayerInteraction
 	TempValue0 = Object.XPos
 	TempValue1 = 0
 	TempValue2 = 0
-	Object.XPos -= 0x600000	// 0x600000
+	Object.XPos -= 0x600000	
 	Object.XPos += Object.XVelocity
 
 	PlayerObjectCollision(C_BOX, -32, -32, 32, 32)
 	switch CheckResult
-	case FLOOR
+	case PLAYER_COL_FLOOR
 		if Object.State == BLOCKROWSB_MOVE_RIGHT
-			Player.XPos += 0x8000	// 0x8000
+			Player.XPos += 0x8000
 		else
-			Player.XPos -= 0x8000	// -0x8000
+			Player.XPos -= 0x8000
 		end if
 
 		if Player.Speed == 0
 			if Object.OnObject == false
-				Player.XPos &= 0xFFFF0000
+				Player.XPos		 &= 0xFFFF0000
 				Object.XVelocity &= 0xFFFF0000
 				Object.OnObject = true
 			end if
@@ -77,11 +77,11 @@ sub ObjectPlayerInteraction
 		end if
 		break
 
-	case LWALL
+	case PLAYER_COL_LWALL
 		TempValue1 = true
 		break
 
-	case RWALL
+	case PLAYER_COL_RWALL
 		TempValue2 = true
 		break
 
@@ -90,13 +90,13 @@ sub ObjectPlayerInteraction
 	Object.XPos = TempValue0
 	if Object.PropertyValue > 1
 		PlayerObjectCollision(C_BOX, -160, -32, -128, 32)
-		if CheckResult == RWALL
+		if CheckResult == PLAYER_COL_RWALL
 			TempValue2 = true
 		end if
 	end if
 
 	PlayerObjectCollision(C_BOX, 128, -32, 160, 32)
-	if CheckResult == LWALL
+	if CheckResult == PLAYER_COL_LWALL
 		TempValue1 = true
 	end if
 
@@ -113,8 +113,8 @@ end sub
 
 
 sub ObjectDraw
-	TempValue0 = Object.XPos
-	TempValue0 -= 0x600000	// 0x600000
+	TempValue0  = Object.XPos
+	TempValue0 -= 0x600000	
 	TempValue0 += Object.XVelocity
 	DrawSpriteXY(0, TempValue0, Object.YPos)
 	DrawSpriteXY(1, TempValue0, Object.YPos)
@@ -168,20 +168,20 @@ sub ObjectStartup
 			Object[ArrayPos0].Priority = PRIORITY_XBOUNDS
 			switch Object[ArrayPos0].PropertyValue
 			case 1
-				Object[ArrayPos0].XVelocity = 0x400000	// 0x400000
+				Object[ArrayPos0].XVelocity = 0x400000
 				break
 
 			case 2
-				Object[ArrayPos0].XVelocity = 0x800000	// 0x800000
+				Object[ArrayPos0].XVelocity = 0x800000
 				break
 
 			case 3
-				Object[ArrayPos0].XVelocity = 12582912	// 0xC00000
+				Object[ArrayPos0].XVelocity = 0xC00000
 				Object[ArrayPos0].State = BLOCKROWSB_MOVE_LEFT
 				break
 				
 			case 4
-				Object[ArrayPos0].XVelocity = 0x800000	// 0x800000
+				Object[ArrayPos0].XVelocity = 0x800000
 				Object[ArrayPos0].State = BLOCKROWSB_MOVE_LEFT
 				break
 

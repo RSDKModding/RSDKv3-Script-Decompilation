@@ -19,10 +19,10 @@
 #alias 0	:	PRIORITY_BOUNDS
 
 // Collision
-#alias 1	:	FLOOR
-#alias 2	:	LWALL
-#alias 3	:	RWALL
-#alias 4	:	ROOF
+#alias 1	:	PLAYER_COL_FLOOR
+#alias 2	:	PLAYER_COL_LWALL
+#alias 3	:	PLAYER_COL_RWALL
+#alias 4	:	PLAYER_COL_ROOF
 
 // Gravity
 #alias 1	:	GRAVITY_AIR
@@ -45,7 +45,7 @@ sub ObjectPlayerInteraction
 	while TempValue1 < 3
 		PlayerObjectCollision(C_BOX, -64, -64, 64, -32)
 		switch CheckResult
-		case FLOOR
+		case PLAYER_COL_FLOOR
 			Player.XPos -= 0x20000
 			if Player.Speed == 0
 				if Object.OnObject == false
@@ -58,11 +58,11 @@ sub ObjectPlayerInteraction
 			end if
 			break
 
-		case LWALL
+		case PLAYER_COL_LWALL
 			TempValue2 = true
 			break
 
-		case RWALL
+		case PLAYER_COL_RWALL
 			TempValue3 = true
 			break
 
@@ -78,7 +78,7 @@ sub ObjectPlayerInteraction
 	while TempValue1 < 3
 		PlayerObjectCollision(C_BOX, -64, 32, 64, 64)
 		switch CheckResult
-		case FLOOR
+		case PLAYER_COL_FLOOR
 			Player.XPos += 0x20000
 			if Player.Speed == 0
 				if Object.OnObject == false
@@ -91,16 +91,16 @@ sub ObjectPlayerInteraction
 			end if
 			break
 
-		case LWALL
+		case PLAYER_COL_LWALL
 			TempValue2 = true
 			break
 
-		case RWALL
+		case PLAYER_COL_RWALL
 			TempValue3 = true
 			break
 
 		end switch
-		Object.XPos += 0x1000000	// 0x1000000
+		Object.XPos += 0x1000000
 		TempValue1++
 	loop
 
@@ -111,22 +111,22 @@ sub ObjectPlayerInteraction
 	Object.XPos = TempValue0
 	PlayerObjectCollision(C_BOX, -224, -128, -192, 128)
 	switch CheckResult
-	case LWALL
+	case PLAYER_COL_LWALL
 		TempValue2 = true
 		break
 
-	case RWALL
+	case PLAYER_COL_RWALL
 		TempValue3 = true
 		break
 
 	end switch
 	PlayerObjectCollision(C_BOX, 192, -128, 224, 128)
 	switch CheckResult
-	case LWALL
+	case PLAYER_COL_LWALL
 		TempValue2 = true
 		break
 
-	case RWALL
+	case PLAYER_COL_RWALL
 		TempValue3 = true
 		break
 
@@ -141,11 +141,11 @@ end sub
 
 
 sub ObjectDraw
-	TempValue0 = Object.XPos
+	TempValue0  = Object.XPos
 	TempValue0 -= 0x1000000
 	TempValue0 -= Object.XVelocity
 	
-	TempValue1 = Object.YPos
+	TempValue1  = Object.YPos
 	TempValue1 -= 0x300000
 
 	TempValue2 = 0
@@ -158,11 +158,11 @@ sub ObjectDraw
 		TempValue2++
 	loop
 
-	TempValue0 = Object.XPos
+	TempValue0  = Object.XPos
 	TempValue0 -= 0x1000000
 	TempValue0 += Object.XVelocity
 
-	TempValue1 = Object.YPos
+	TempValue1  = Object.YPos
 	TempValue1 += 0x300000
 
 	TempValue2 = 0

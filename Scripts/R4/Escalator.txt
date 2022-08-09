@@ -1,4 +1,4 @@
-//------------Sonic CD Escalator Script-------------//
+//----------------Sonic CD Escalator Script-------------------//
 //--------Scripted by Christian Whitehead 'The Taxman'--------//
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
@@ -16,6 +16,9 @@
 #alias 1	:	ESCALATOR_ASCEND
 #alias 2	:	ESCALATOR_STOPPED
 #alias 3	:	ESCALATOR_RESTORE
+
+// Player Collision
+#alias 1	:	PLAYER_COL_FLOOR
 
 // Time Periods
 #alias 0	:	PROPVAL_PRESENT
@@ -40,6 +43,7 @@ sub ObjectMain
 			Object.State++
 		end if
 		break
+		
 	case ESCALATOR_STOPPED
 		if Object.OutOfBounds == true
 			Object.State = ESCALATOR_RESTORE
@@ -50,7 +54,7 @@ sub ObjectMain
 
 	case ESCALATOR_RESTORE
 		if Object.OutOfBounds == true
-			Object.State = ESCALATOR_IDLE
+			Object.State	= ESCALATOR_IDLE
 			Object.Priority = PRIORITY_BOUNDS
 		end if
 		break
@@ -62,7 +66,7 @@ sub ObjectPlayerInteraction
 	switch Object.State
 	case ESCALATOR_IDLE
 		PlayerObjectCollision(C_BOX, -16, -16, 16, 16)
-		if CheckResult == true
+		if CheckResult == PLAYER_COL_FLOOR
 			Object.State    = ESCALATOR_ASCEND
 			Object.Timer    = Object.TimerSet
 			Object.Priority = PRIORITY_ACTIVE
@@ -81,7 +85,7 @@ sub ObjectPlayerInteraction
 
 	case ESCALATOR_ASCEND
 		PlayerObjectCollision(C_BOX, -16, -16, 16, 16)
-		if CheckResult == true
+		if CheckResult == PLAYER_COL_FLOOR
 			Player.XPos += Object.Speed
 
 			Player.TileCollisions = false
@@ -102,7 +106,7 @@ sub ObjectPlayerInteraction
 	case ESCALATOR_STOPPED
 		Player.Pushing = false
 		PlayerObjectCollision(C_BOX, -16, -16, 16, 16)
-		if CheckResult == true
+		if CheckResult == PLAYER_COL_FLOOR
 			Player.TileCollisions = false
 
 			Object.OnObject = true
@@ -119,7 +123,7 @@ end sub
 
 
 sub ObjectDraw
-	if Object.State < 3
+	if Object.State < ESCALATOR_RESTORE
 		DrawSprite(0)
 	end if
 end sub
@@ -149,11 +153,11 @@ sub ObjectStartup
 	while ArrayPos0 < 1056
 		if Object[ArrayPos0].Type == TypeName[Escalator]
 			if Hud.TimePeriod < PROPVAL_GOOD_FUTURE	// aka present or past
-				Object[ArrayPos0].Speed = 0x10000		// 0x10000
-				Object[ArrayPos0].TimerSet = 160
+				Object[ArrayPos0].Speed		= 0x10000
+				Object[ArrayPos0].TimerSet  = 160
 			else
-				Object[ArrayPos0].Speed = 0x20000	// 0x20000
-				Object[ArrayPos0].TimerSet = 80
+				Object[ArrayPos0].Speed		= 0x20000
+				Object[ArrayPos0].TimerSet  = 80
 			end if
 		end if
 		ArrayPos0++

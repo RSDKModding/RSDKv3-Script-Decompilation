@@ -1,14 +1,14 @@
-//------------Sonic CD Yago Script-------------//
+//-------------------Sonic CD Yago Script---------------------//
 //--------Scripted by Christian Whitehead 'The Taxman'--------//
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
 // Aliases
-#alias Object.Value0	:	Object.Timer
-#alias Object.Value1	:	Object.XVelocity
-#alias Object.Value2	:	Object.YVelocity
-#alias Object.Value3	:	Object.Speed
-#alias Object.Value4	:	Object.XOriginPos
-#alias Object.Value5	:	Object.YOriginPos
+#alias Object.Value0		:	Object.Timer
+#alias Object.Value1		:	Object.XVelocity
+#alias Object.Value2		:	Object.YVelocity
+#alias Object.Value3		:	Object.Speed
+#alias Object.Value4		:	Object.XOriginPos
+#alias Object.Value5		:	Object.YOriginPos
 #alias Object.PropertyValue	:	Object.Quality
 
 // States
@@ -39,13 +39,13 @@
 sub ObjectMain
 	switch Object.State
 	case YAGO_DESCEND
-		Object.YPos += 0x10000	// 0x10000
+		Object.YPos += 0x10000
 		ObjectTileCollision(CSIDE_FLOOR, 0, 17, 0)
 		if CheckResult == true
 			Object.Direction = FACING_RIGHT
-			Object.Speed = 0x500000		//  0x500000
-			Object.XVelocity = -0x4000	// -04000
-			Object.Priority = PRIORITY_ACTIVE
+			Object.Speed	 = 0x500000
+			Object.XVelocity = -0x4000
+			Object.Priority  = PRIORITY_ACTIVE
 			Object.State++
 		end if
 		break
@@ -54,9 +54,10 @@ sub ObjectMain
 		Object.Speed += Object.XVelocity
 		if Object.Speed >= 0
 			Object.XPos += Object.XVelocity
-			Object.YPos += 0x8000	// 0x8000
+			Object.YPos += 0x8000
 			ObjectTileCollision(CSIDE_FLOOR, 0, 17, 0)
 			if Object.Direction == FACING_RIGHT
+				// Yes, Roof is used, not RWall
 				ObjectTileCollision(CSIDE_ROOF, -20, 0, 0)
 			else
 				ObjectTileCollision(CSIDE_LWALL, 20, 0, 0)
@@ -67,13 +68,13 @@ sub ObjectMain
 				Object.Timer = 30
 			else
 				// Check distance between Yago and the player
-				TempValue0 = Object.XPos
+				TempValue0  = Object.XPos
 				TempValue0 -= Player.XPos
 				if TempValue0 < 0
 					FlipSign(TempValue0)
 				end if
 
-				if TempValue0 < 0x500000	// 0x500000
+				if TempValue0 < 0x500000
 					Object.State = YAGO_DASH_CHARGE
 					Object.Timer = 6
 				end if
@@ -117,26 +118,26 @@ sub ObjectMain
 		break
 
 	case YAGO_SET_DASH_PROPERTIES
-		Object.YPos += 0x2000	// 0x2000
+		Object.YPos += 0x2000
 		if Object.Timer > 0
 			Object.Timer--
 		else
 			if Object.Quality == PROPVAL_QUALITY_GOOD
 				if Object.Direction == FACING_RIGHT
-					Object.Speed = -294912	// -0x48000
+					Object.Speed = -0x48000
 				else
-					Object.Speed = 294912	//  0x48000
+					Object.Speed = 0x48000
 				end if
-				Object.YVelocity = -0x18000	// -0x18000
+				Object.YVelocity = -0x18000
 			else
 				if Object.Direction == FACING_RIGHT
-					Object.Speed = -0x10000	// -0x10000
+					Object.Speed = -0x10000
 				else
-					Object.Speed = 0x10000	//  0x10000
+					Object.Speed = 0x10000
 				end if
 			end if
 
-			Object.YVelocity = -0x18000		// -0x18000
+			Object.YVelocity = -0x18000
 			if Object.Quality == PROPVAL_QUALITY_GOOD
 				Object.State++
 			else
@@ -158,7 +159,7 @@ sub ObjectMain
 		else
 			Object.YPos += Object.YVelocity
 			if Object.YVelocity < 0
-				Object.YVelocity += 0x2000	// 0x2000
+				Object.YVelocity += 0x2000
 			end if
 		end if
 		break
@@ -175,11 +176,11 @@ sub ObjectMain
 			Object.State = YAGO_TURN_AROUND
 		else
 			Object.YPos += Object.YVelocity
-			Object.YVelocity += 0x1000	// 0x1000
+			Object.YVelocity += 0x1000
 			if Object.YVelocity > 0
 				ObjectTileCollision(CSIDE_FLOOR, 0, 17, 0)
 				if CheckResult == true
-					Object.Speed = 0x500000	// 0x500000
+					Object.Speed = 0x500000
 					Object.State = YAGO_ADVANCE
 				end if
 			end if
@@ -200,7 +201,7 @@ sub ObjectMain
 		Object.YPos = Object.YOriginPos
 
 		if Object.OutOfBounds == true
-			Object.State = YAGO_DESCEND
+			Object.State 	= YAGO_DESCEND
 			Object.Priority = PRIORITY_BOUNDS
 		else
 			Object.XPos = TempValue0
@@ -219,7 +220,7 @@ end sub
 
 
 sub ObjectDraw
-	TempValue0 = Object.AnimationTimer
+	TempValue0  = Object.AnimationTimer
 	TempValue0 /= 10
 	if Object.PropertyValue == PROPVAL_QUALITY_BAD
 		TempValue0 += 2

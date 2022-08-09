@@ -1,12 +1,24 @@
-//------------Sonic CD Vertical Wrap Script-------------//
+//---------------Sonic CD Vertical Wrap Script----------------//
 //--------Scripted by Christian Whitehead 'The Taxman'--------//
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
 // Aliases
 #alias Object.Value0	:	Object.WaterEntityPos
 #alias Object.Value1	:	Object.MinWaterHeight
-#alias Object.Value2	:	Object.ExitWrap	// Wild guess based on what happens when this is true
+#alias Object.Value2	:	Object.MoveWater
 
+// Property Values
+#alias 0	:	DISABLE_WATER
+#alias 1	:	DISABLE_WATER_PLAYER
+
+// This also disables water when conditions are met
+#alias 2	:	SWAP_WATER_HEIGHT
+#alias 3	:	SWAP_WATER_HEIGHT_PLAYER
+
+#alias 4	:	DISABLE_WATER_LOWER_MIN
+#alias 5	:	DISABLE_WATER_PLAYER_LOWER_MIN
+
+// Priority
 #alias 0	:	PRIORITY_BOUNDS
 #alias 1	:	PRIORITY_ACTIVE
 
@@ -21,10 +33,10 @@ sub ObjectMain
 		if Stage.NewWaterLevel > Object.MinWaterHeight
 			Stage.NewWaterLevel = Object.MinWaterHeight
 			ArrayPos0 = Object.WaterEntityPos
-			Object[ArrayPos0].YPos = Screen.YOffset
-			Object[ArrayPos0].YPos += 256
+			Object[ArrayPos0].YPos   = Screen.YOffset
+			Object[ArrayPos0].YPos  += 256
 			Object[ArrayPos0].YPos <<= 16
-			if Object.ExitWrap == 1
+			if Object.MoveWater == true
 				// this gets triggered once you leave the wrap section
 				if Object[ArrayPos0].YPos < Object.MinWaterHeight
 					Object[ArrayPos0].YPos = Object.MinWaterHeight
@@ -32,35 +44,35 @@ sub ObjectMain
 			end if
 		end if
 	else
-		if Object.PropertyValue == 0
-			// 0xC000000, Y - 3072 in map coords
-			if Stage.NewWaterLevel < 201326592
-				Stage.NewWaterLevel = 201326592
+		if Object.PropertyValue == DISABLE_WATER
+			// Y - 3072 in map coords
+			if Stage.NewWaterLevel < 0xC000000
+				Stage.NewWaterLevel = 0xC000000
 				ArrayPos0 = Object.WaterEntityPos
-				Object[ArrayPos0].YPos = 201326592
+				Object[ArrayPos0].YPos = 0xC000000
 			end if
 		else
 			if Player.YPos > Object.YPos
-				// 0xC000000, Y - 3072 in map coords
-				if Stage.NewWaterLevel < 201326592
-					Stage.NewWaterLevel = 201326592
+				// Y - 3072 in map coords
+				if Stage.NewWaterLevel < 0xC000000
+					Stage.NewWaterLevel = 0xC000000
 					ArrayPos0 = Object.WaterEntityPos
-					Object[ArrayPos0].YPos = 201326592
+					Object[ArrayPos0].YPos = 0xC000000
 				end if
 			end if
 		end if
 		
 		Stage.YBoundary2 = 2304
-		Object.Priority = PRIORITY_ACTIVE
+		Object.Priority  = PRIORITY_ACTIVE
 		if Player.YVelocity >= 0
 			if Screen.YOffset > 2047
-				Player.YPos -= 134217728	// 0x8000000, Y - 2048 in map coords
+				Player.YPos -= 0x8000000	// Y - 2048 in map coords
 				Screen.YOffset -= 2048
 			end if
 		end if
 		if Player.YVelocity <= 0
 			if Screen.YOffset < 1
-				Player.YPos += 134217728	// 0x8000000, Y - 2048 in map coords
+				Player.YPos += 0x8000000	// Y - 2048 in map coords
 				Screen.YOffset += 2048
 			end if
 		end if
@@ -82,29 +94,29 @@ sub ObjectStartup
 		if Object[ArrayPos0].Type == TypeName[VerticalWrap]
 			Object[ArrayPos0].WaterEntityPos = TempValue0
 			switch Object[ArrayPos0].PropertyValue
-			case 0
-			case 1
-				Object[ArrayPos0].MinWaterHeight = 87293952
-				Object[ArrayPos0].ExitWrap = 0
+			case DISABLE_WATER
+			case DISABLE_WATER_PLAYER
+				Object[ArrayPos0].MinWaterHeight = 0x5340000
+				Object[ArrayPos0].MoveWater = false
 				break
-			case 2
-			case 3
+			case SWAP_WATER_HEIGHT
+			case SWAP_WATER_HEIGHT_PLAYER
 				Object[ArrayPos0].PropertyValue -= 2
-				Object[ArrayPos0].MinWaterHeight = 94371840
-				Object[ArrayPos0].ExitWrap = 1
+				Object[ArrayPos0].MinWaterHeight = 0x5A00000
+				Object[ArrayPos0].MoveWater = true
 				break
-			case 4
-			case 5
+			case DISABLE_WATER_LOWER_MIN
+			case DISABLE_WATER_PLAYER_LOWER_MIN
 				Object[ArrayPos0].PropertyValue -= 2
 				Object[ArrayPos0].MinWaterHeight = 0x5100000
-				Object[ArrayPos0].ExitWrap = 0
+				Object[ArrayPos0].MoveWater = false
 				break
 			end switch
 		end if
 		ArrayPos0++
 	loop
 
-	if Player.XPos > 52428800
+	if Player.XPos > 0x3200000
 		Stage.YBoundary2 = 2048
 	end if
 end sub

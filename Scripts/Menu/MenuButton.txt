@@ -3,47 +3,47 @@
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
 // Aliases
-#alias Object.Value0				: Object.Timer
-#alias Object.Value1				: Object.ButtonXOffSet
-#alias Object.Value2				: Object.ButtonYOffSet
-#alias Object.Value3				: Object.ButtonLeaveXPos
-#alias Object.Value4				: Object.ButtonLeaveYPos
-#alias Object.Value5				: Object.ButtonYPos
+#alias Object.Value0			:	Object.Timer
+#alias Object.Value1			:	Object.ButtonXOffSet
+#alias Object.Value2			:	Object.ButtonYOffSet
+#alias Object.Value3			:	Object.ButtonLeaveXPos
+#alias Object.Value4			:	Object.ButtonLeaveYPos
+#alias Object.Value5			:	Object.ButtonYPos
 
 // Object[1] is a blank object just to share values
-#alias Object[1].Value1 			: Object.RecenterValue
-#alias Object[1].Value2				: Object.ButtonCount
-#alias Object[1].Value3 			: Object.DragLimit
+#alias Object[1].Value1 		:	Object.RecenterValue
+#alias Object[1].Value2			:	Object.ButtonCount
+#alias Object[1].Value3 		:	Object.DragLimit
 
-// Object[33] is MenuHeading
-#alias Object[33].State				: MenuHeading.State
-#alias Object[33].PropertyValue		: MenuHeading.Header
+// MenuHeading Aliases
+#alias Object[33].State			:	MenuHeading.State
+#alias Object[33].PropertyValue	:	MenuHeading.Header
 
 // Object[-1] and [+1] are MenuButton's
-#alias Object[-1].State				: Object.PrevMBState
-#alias Object[+1].State				: Object.NextMBState
+#alias Object[-1].State			:	Object.PrevMBState
+#alias Object[+1].State			:	Object.NextMBState
 
-// Object[0] is MenuControl
-#alias Object[0].State				: Object.MCState
-#alias Object[0].Value0				: Object.MCFade
-#alias Object[0].Value1				: Object.MCButtonYOffset
-#alias Object[0].Value2				: Object.MCDragCurrentSelection
-#alias Object[0].Value3				: Object.MCCurrentSelection
-#alias Object[0].Value7				: Object.MCDragSmooth
+// MenuControl Aliases
+#alias Object[0].State			:	MenuControl.State
+#alias Object[0].Value0			:	MenuControl.Fade
+#alias Object[0].Value1			:	MenuControl.ButtonYOffset
+#alias Object[0].Value2			:	MenuControl.CurrentDrag
+#alias Object[0].Value3			:	MenuControl.CurrentSelection
+#alias Object[0].Value7			:	MenuControl.SmoothDrag
 
-// Object[61] is MenuWindow
-#alias Object[61].State				: MenuWindow.State
-#alias Object[61].XPos				: Object.MWXPos
-#alias Object[61].YPos				: Object.MWYPos
-#alias Object[61].Value1			: Object.MWBaseWidth
-#alias Object[61].Value2			: Object.MWBaseHeight
-#alias Object[61].Value3			: Object.MWBaseXOffset
-#alias Object[61].Value4			: Object.MWBaseYOffset
-#alias Object[61].Value5			: Object.MWEntityPos
+// MenuWindow Aliases
+#alias Object[61].State			:	MenuWindow.State
+#alias Object[61].XPos			:	MenuWindow.XPos
+#alias Object[61].YPos			:	MenuWindow.YPos
+#alias Object[61].Value1		:	MenuWindow.BaseWidth
+#alias Object[61].Value2		:	MenuWindow.BaseHeight
+#alias Object[61].Value3		:	MenuWindow.BaseXOffset
+#alias Object[61].Value4		:	MenuWindow.BaseYOffset
+#alias Object[61].Value5		:	MenuWindow.EntityPos
 
 // Object[62] is whatever next menu is this object going to be set into
-#alias Object[62].InkEffect			: Object.NextObjectInkEffect
-#alias Object[62].Alpha				: Object.NextObjectAlpha
+#alias Object[62].InkEffect		:	Object.NextObjectInkEffect
+#alias Object[62].Alpha			:	Object.NextObjectAlpha
 
 // States
 #alias 0	:	MENUBUTTON_DELAY
@@ -67,12 +67,12 @@
 #alias 2	:	MENUHEADING_ENTER_SCREEN
 
 // Menu Heading Property Values
-#alias 5	:	PROPVAL_MAINMENU_HEADER
-#alias 6	:	PROPVAL_SAVESELECT_HEADER
-#alias 7	:	PROPVAL_HELP&OPTIONS_HEADER
-#alias 8	:	PROPVAL_EXTRAS_HEADER
-#alias 9	:	PROPVAL_SOUNDTRACK_HEADER
-#alias 10	:	PROPVAL_STAGESELECT_HEADER
+#alias 5	:	MAINMENU_HEADER
+#alias 6	:	SAVESELECT_HEADER
+#alias 7	:	HELP&OPTIONS_HEADER
+#alias 8	:	EXTRAS_HEADER
+#alias 9	:	SOUNDTRACK_HEADER
+#alias 10	:	STAGESELECT_HEADER
 
 // Menus
 #alias 1 	:	Menu_LoadSaveMenu
@@ -94,12 +94,12 @@
 #alias 1	:	PRIORITY_ACTIVE
 
 // Languages
-#alias 0	:	ENGLISH
-#alias 1	:	FRENCH
-#alias 2	:	ITALIAN
-#alias 3	:	DEUTSCH
-#alias 4	:	SPANISH
-#alias 5	:	JAPANESE
+#alias 0	:	LANG_ENGLISH
+#alias 1	:	LANG_FRENCH
+#alias 2	:	LANG_ITALIAN
+#alias 3	:	LANG_DEUTSCH
+#alias 4	:	LANG_SPANISH
+#alias 5	:	LANG_JAPANESE
 
 // Engine & Callbacks
 #alias 5 	:	CALLBACK_RETURNSTORE_SELECTED
@@ -113,12 +113,12 @@
 
 function MenuButton_SetupMenuWindow
 	ResetObjectEntity(61, TypeName[MenuWindow], 0, Object.XPos, Object.YPos)
-	Object.MWXPos += 0x480000
-	Object.MWBaseWidth = 144
-	Object.MWBaseHeight = 21
-	Object.MWBaseXOffset = Object.MWXPos
-	Object.MWBaseYOffset = Object.MWYPos
-	Object.MWEntityPos = Object.EntityNo
+	MenuWindow.XPos += 0x480000
+	MenuWindow.BaseWidth   = 144
+	MenuWindow.BaseHeight  = 21
+	MenuWindow.BaseXOffset = MenuWindow.XPos
+	MenuWindow.BaseYOffset = MenuWindow.YPos
+	MenuWindow.EntityPos   = Object.EntityNo
 end function
 
 
@@ -126,14 +126,14 @@ sub ObjectMain
 // While Origins script is somewhat similar to mobile, it still has quite the amount of changes to deserve being separated code
 #platform: Use_Standalone
 	#platform: Standard
-		Object.ButtonYOffSet = Object.ButtonYPos
+		Object.ButtonYOffSet  = Object.ButtonYPos
 		Object.ButtonYOffSet--
 		Object.ButtonYOffSet *= 60
 		Object.ButtonYOffSet += Object.MCButtonYOffSet
 
-		TempValue0 = Screen.CenterX
+		TempValue0  = Screen.CenterX
 		TempValue0 -= 160
-		Object.ButtonXOffSet = Object.ButtonYOffSet
+		Object.ButtonXOffSet  = Object.ButtonYOffSet
 		Object.ButtonXOffSet *= 54
 		Object.ButtonXOffSet /= 60
 		Object.ButtonXOffSet -= 16
@@ -150,15 +150,15 @@ sub ObjectMain
 			break
 
 		case MENUBUTTON_BUTTONS_IN
-			TempValue0 = Object.ButtonXOffSet
+			TempValue0   = Object.ButtonXOffSet
 			TempValue0 <<= 16
-			TempValue0 -= Object.XPos
+			TempValue0  -= Object.XPos
 			TempValue0 >>= 4
 			Object.XPos += TempValue0
 
-			TempValue0 = Object.ButtonYOffSet
+			TempValue0   = Object.ButtonYOffSet
 			TempValue0 <<= 16
-			TempValue0 -= Object.YPos
+			TempValue0  -= Object.YPos
 			TempValue0 >>= 4
 			Object.YPos += TempValue0
 
@@ -171,13 +171,13 @@ sub ObjectMain
 			break
 
 		case MENUBUTTON_CONFIRM_SELECTION
-			Object.XPos = Object.ButtonXOffSet
+			Object.XPos   = Object.ButtonXOffSet
 			Object.XPos <<= 16
 
-			Object.YPos = Object.ButtonYOffSet
+			Object.YPos   = Object.ButtonYOffSet
 			Object.YPos <<= 16
 
-			if Object.ButtonYPos == Object.MCCurrentSelection
+			if Object.ButtonYPos == MenuControl.CurrentSelection
 				CheckResult = false
 				if KeyPress[0].Start == true
 					CheckResult = true
@@ -188,7 +188,7 @@ sub ObjectMain
 				end if
 
 				if Object.PropertyValue == Menu_Achievements
-					if Engine.OnlineActive == 0
+					if Engine.OnlineActive == false
 						CheckResult = false
 					end if
 				end if
@@ -205,7 +205,7 @@ sub ObjectMain
 						end if
 					end if
 
-					Object.MCState = MENUCONTROL_BLANK
+					MenuControl.State = MENUCONTROL_BLANK
 					switch Object.PropertyValue
 					case Menu_LoadSaveMenu
 					case Menu_Help&Options
@@ -272,8 +272,8 @@ sub ObjectMain
 				switch Object.PropertyValue
 				case Menu_LoadSaveMenu
 					if Engine.TrialMode == false
-						MenuHeading.State = 1
-						MenuHeading.Header = 6
+						MenuHeading.State = MENUHEADING_LEAVE_SCREEN
+						MenuHeading.Header = SAVESELECT_HEADER
 						CallFunction(MenuButton_SetupMenuWindow)
 						ResetObjectEntity(62, TypeName[LoadSaveMenu], 0, 0, 0)
 						Object.NextObjectInkEffect = INK_ALPHA
@@ -286,8 +286,8 @@ sub ObjectMain
 						ReadSaveRAM()
 					else
 						Object.State = MENUBUTTON_BLANK
-						Object.MCState = 5
-						Object.MCFade= 0
+						MenuControl.State = 5
+						MenuControl.Fade= 0
 						Options.GameMode = 0
 						Player.Score = 0
 						Player.Lives = 3
@@ -301,11 +301,11 @@ sub ObjectMain
 				case Menu_TimeAttack
 					if Engine.TrialMode == false
 						Object.State = MENUBUTTON_BLANK
-						Object.MCState = 4
-						Object.MCFade = 0
+						MenuControl.State = 4
+						MenuControl.Fade = 0
 					else
 						Object.State = MENUBUTTON_CONFIRM_SELECTION
-						Object.MCState = 2
+						MenuControl.State = 2
 						EngineCallback(CALLBACK_FULL_VERSION_ONLY)
 					end if
 					break
@@ -313,13 +313,13 @@ sub ObjectMain
 				case Menu_LeaderBoards
 					LoadOnlineMenu(0)
 					Object.State = MENUBUTTON_CONFIRM_SELECTION
-					Object.MCState = 2
+					MenuControl.State = 2
 					break
 
 				case Menu_Achievements
 					LoadOnlineMenu(1)
 					Object.State = MENUBUTTON_CONFIRM_SELECTION
-					Object.MCState = 2
+					MenuControl.State = 2
 					break
 
 				case Menu_Help&Options
@@ -353,19 +353,19 @@ sub ObjectMain
 				case Menu_UnlockFullGame
 					EngineCallback(CALLBACK_BUY_FULL_GAME_SELECTED)
 					Object.State = MENUBUTTON_CONFIRM_SELECTION
-					Object.MCState = 2
+					MenuControl.State = 2
 					break
 
 				case Menu_Store
 					EngineCallback(CALLBACK_RETURNSTORE_SELECTED)
 					Object.State = MENUBUTTON_CONFIRM_SELECTION
-					Object.MCState = 2
+					MenuControl.State = 2
 					break
 
 				case Menu_Exit
 					EngineCallback(CALLBACK_EXIT_SELECTED)
 					Object.State = MENUBUTTON_CONFIRM_SELECTION
-					Object.MCState = 2
+					MenuControl.State = 2
 					break
 
 				case Menu_Soundtrack
@@ -415,12 +415,12 @@ sub ObjectMain
 			if Object.PropertyValue == Menu_Extras
 				if Object.PrevMBState == 2
 					Object.State = MENUBUTTON_CONFIRM_SELECTION
-					Object.MCState = 2
+					MenuControl.State = 2
 				end if
 			else
 				if Object.NextMBState == 2
 					Object.State = MENUBUTTON_CONFIRM_SELECTION
-					Object.MCState = 2
+					MenuControl.State = 2
 				end if
 			end if
 			break
@@ -492,20 +492,20 @@ sub ObjectMain
 				TempValue3 += 20
 				CheckTouchRect(TempValue0, TempValue2, TempValue1, TempValue3)
 				if CheckResult > -1
-					TempValue0 = Object.MCDragSmooth
+					TempValue0 = MenuControl.SmoothDrag
 					TempValue0 >>= 2
 					if TempValue0 == 0
 						if Object.RecenterValue == 0
-							Object.MCDragCurrentSelection = Object.ButtonYPos
+							MenuControl.CurrentDrag = Object.ButtonYPos
 						end if
 					end if
 				else
 					CheckTouchRect(0, 0, Screen.XSize, Screen.YSize)
 					if CheckResult < 0
-						if Object.MCDragCurrentSelection == Object.ButtonYPos
+						if MenuControl.CurrentDrag == Object.ButtonYPos
 							if Object.RecenterValue == 0
 								PlaySfx(27, 0)	//Select SFX
-								Object.MCState = MENUCONTROL_BLANK
+								MenuControl.State = MENUCONTROL_BLANK
 								switch Object.PropertyValue
 								case Menu_LoadSaveMenu
 								case Menu_Help&Options
@@ -569,13 +569,13 @@ sub ObjectMain
 							end if
 						end if
 					else
-						if Object.MCDragCurrentSelection == Object.ButtonYPos
-							Object.MCDragCurrentSelection = 0
+						if MenuControl.CurrentDrag == Object.ButtonYPos
+							MenuControl.CurrentDrag = 0
 						end if
 					end if
 				end if
 			else
-				if Object.ButtonYPos == Object.MCCurrentSelection
+				if Object.ButtonYPos == MenuControl.CurrentSelection
 					CheckResult = false
 					if KeyPress[0].Start == true
 						CheckResult = true
@@ -603,7 +603,7 @@ sub ObjectMain
 							end if
 						end if
 
-						Object.MCState = MENUCONTROL_BLANK
+						MenuControl.State = MENUCONTROL_BLANK
 						switch Object.PropertyValue
 						case Menu_LoadSaveMenu
 						case Menu_Help&Options
@@ -671,8 +671,8 @@ sub ObjectMain
 				if KeyPress[0].ButtonB == true
 					EngineCallback(CALLBACK_EXIT_SELECTED)
 					Object.State = MENUBUTTON_CONFIRM_SELECTION
-					Object.MCState = 2
-					Object.MCDragCurrentSelection = 0
+					MenuControl.State = 2
+					MenuControl.CurrentDrag = 0
 				end if
 			end if
 			break
@@ -717,13 +717,13 @@ sub ObjectMain
 				case Menu_TimeAttack
 					if Engine.TrialMode == false
 						Object.State = MENUBUTTON_BLANK
-						Object.MCState = 4
-						Object.MCFade = 0
+						MenuControl.State = 4
+						MenuControl.Fade = 0
 					else
 						Object.State = MENUBUTTON_CONFIRM_SELECTION
-						Object.MCState = 2
+						MenuControl.State = 2
 						EngineCallback(CALLBACK_FULL_VERSION_ONLY)
-						Object.MCDragCurrentSelection = 0
+						MenuControl.CurrentDrag = 0
 					end if
 					break
 
@@ -731,12 +731,12 @@ sub ObjectMain
 					if Engine.PlatformID < RETRO_WP7
 						LoadOnlineMenu(0)
 						Object.State = MENUBUTTON_CONFIRM_SELECTION
-						Object.MCState = 2
-						Object.MCDragCurrentSelection = 0
+						MenuControl.State = 2
+						MenuControl.CurrentDrag = 0
 					else
 						Object.State = MENUBUTTON_BLANK
-						Object.MCState = 7
-						Object.MCFade = 0
+						MenuControl.State = 7
+						MenuControl.Fade = 0
 					end if
 					break
 
@@ -744,18 +744,18 @@ sub ObjectMain
 					if Engine.PlatformID != RETRO_WP7
 						LoadOnlineMenu(1)
 						Object.State = MENUBUTTON_CONFIRM_SELECTION
-						Object.MCState = 2
-						Object.MCDragCurrentSelection = 0
+						MenuControl.State = 2
+						MenuControl.CurrentDrag = 0
 					else
 						if Engine.TrialMode == false
 							Object.State = MENUBUTTON_BLANK
-							Object.MCState = 8
-							Object.MCFade = 0
+							MenuControl.State = 8
+							MenuControl.Fade = 0
 						else
 							Object.State = MENUBUTTON_CONFIRM_SELECTION
-							Object.MCState = 2
+							MenuControl.State = 2
 							EngineCallback(CALLBACK_FULL_VERSION_ONLY)
-							Object.MCDragCurrentSelection = 0
+							MenuControl.CurrentDrag = 0
 						end if
 					end if
 					break
@@ -795,22 +795,22 @@ sub ObjectMain
 				case Menu_UnlockFullGame
 					EngineCallback(CALLBACK_BUY_FULL_GAME_SELECTED)
 					Object.State = MENUBUTTON_CONFIRM_SELECTION
-					Object.MCState = 2
-					Object.MCDragCurrentSelection = 0
+					MenuControl.State = 2
+					MenuControl.CurrentDrag = 0
 					break
 
 				case Menu_Store
 					EngineCallback(CALLBACK_BUY_FULL_GAME_SELECTED)
 					Object.State = MENUBUTTON_CONFIRM_SELECTION
-					Object.MCState = 2
-					Object.MCDragCurrentSelection = 0
+					MenuControl.State = 2
+					MenuControl.CurrentDrag = 0
 					break
 
 				case Menu_Exit
 					EngineCallback(CALLBACK_EXIT_SELECTED)
 					Object.State = MENUBUTTON_CONFIRM_SELECTION
-					Object.MCState = 2
-					Object.MCDragCurrentSelection = 0
+					MenuControl.State = 2
+					MenuControl.CurrentDrag = 0
 					break
 
 				case Menu_Soundtrack
@@ -831,8 +831,8 @@ sub ObjectMain
 				case Menu_MoreGames
 					EngineCallback(CALLBACK_MOREGAMES)
 					Object.State = MENUBUTTON_CONFIRM_SELECTION
-					Object.MCState = 2
-					Object.MCDragCurrentSelection = 0
+					MenuControl.State = 2
+					MenuControl.CurrentDrag = 0
 					break
 
 				end switch
@@ -867,14 +867,14 @@ sub ObjectMain
 			if Object.PropertyValue == Menu_Extras
 				if Object.PrevMBState == 2
 					Object.State = MENUBUTTON_CONFIRM_SELECTION
-					Object.MCState = 2
-					Object.MCDragCurrentSelection = 0
+					MenuControl.State = 2
+					MenuControl.CurrentDrag = 0
 				end if
 			else
 				if Object.NextMBState== 2
 					Object.State = MENUBUTTON_CONFIRM_SELECTION
-					Object.MCState = 2
-					Object.MCDragCurrentSelection = 0
+					MenuControl.State = 2
+					MenuControl.CurrentDrag = 0
 				end if
 			end if
 			break
@@ -887,7 +887,7 @@ sub ObjectMain
 	Object.ButtonYOffSet  = Object.ButtonYPos
 	Object.ButtonYOffSet--
 	Object.ButtonYOffSet *= 60
-	Object.ButtonYOffSet += Object.MCButtonYOffset
+	Object.ButtonYOffSet += MenuControl.ButtonYOffset
 
 	TempValue0  = Screen.CenterX
 	TempValue0 -= 160
@@ -943,20 +943,20 @@ sub ObjectMain
 			CheckTouchRect(TempValue0, TempValue2, TempValue1, TempValue3)
 
 			if CheckResult>-1
-				TempValue0   = Object.MCDragSmooth
+				TempValue0   = MenuControl.SmoothDrag
 				TempValue0 >>= 2
 				if TempValue0 == 0
 					if Object.RecenterValue == 0
-						Object.MCDragCurrentSelection = Object.ButtonYPos
+						MenuControl.CurrentDrag = Object.ButtonYPos
 					endif
 				endif
 			else
 				CheckTouchRect(0, 0, Screen.XSize, Screen.YSize)
 				if CheckResult < 0
-					if Object.MCDragCurrentSelection == Object.ButtonYPos
+					if MenuControl.CurrentDrag == Object.ButtonYPos
 						if Object.RecenterValue == 0
 							PlaySfx(27,0)
-							Object.MCState = MENUCONTROL_BLANK
+							MenuControl.State = MENUCONTROL_BLANK
 							switch Object.PropertyValue
 							case Menu_LoadSaveMenu
 							case Menu_Help&Options
@@ -1015,13 +1015,13 @@ sub ObjectMain
 						endif
 					endif
 				else
-					if Object.MCDragCurrentSelection == Object.ButtonYPos
-						Object.MCDragCurrentSelection = 0
+					if MenuControl.CurrentDrag == Object.ButtonYPos
+						MenuControl.CurrentDrag = 0
 					endif
 				endif
 			endif
 		else
-			if Object.ButtonYPos == Object.MCCurrentSelection
+			if Object.ButtonYPos == MenuControl.CurrentSelection
 				CheckResult = false
 				if KeyPress[0].Start == true
 					CheckResult = true
@@ -1049,7 +1049,7 @@ sub ObjectMain
 							StopMusic()
 						endif
 					endif
-					Object.MCState = MENUCONTROL_BLANK
+					MenuControl.State = MENUCONTROL_BLANK
 					switch Object.PropertyValue
 					case Menu_LoadSaveMenu
 					case Menu_Help&Options
@@ -1109,8 +1109,8 @@ sub ObjectMain
 			if KeyPress[0].ButtonB == true
 				EngineCallback(7)
 				Object.State = MENUBUTTON_CONFIRM_SELECTION
-				Object.MCState = 2
-				Object.MCDragCurrentSelection = 0
+				MenuControl.State = 2
+				MenuControl.CurrentDrag = 0
 			endif
 		endif
 		break
@@ -1137,8 +1137,8 @@ sub ObjectMain
 					ReadSaveRAM()
 				else
 					Object.State = 5
-					Object.MCState = 5
-					Object.MCFade = 0
+					MenuControl.State = 5
+					MenuControl.Fade = 0
 					Options.GameMode = 0
 					Player.Score = 0
 					Player.Lives = 3
@@ -1152,11 +1152,11 @@ sub ObjectMain
 			case Menu_TimeAttack
 				if Engine.TrialMode == false
 					Object.State   = 5
-					Object.MCState = 4
-					Object.MCFade  = 0
+					MenuControl.State = 4
+					MenuControl.Fade  = 0
 				else
 					Object.State   = 2
-					Object.MCState = 2
+					MenuControl.State = 2
 					EngineCallback(14)
 				endif
 				break
@@ -1165,11 +1165,11 @@ sub ObjectMain
 				if Engine.PlatformID != RETRO_WP7
 					LoadOnlineMenu(0)
 					Object.State   = 2
-					Object.MCState = 2
+					MenuControl.State = 2
 				else
 					Object.State   = 5
-					Object.MCState = 7
-					Object.MCFade  = 0
+					MenuControl.State = 7
+					MenuControl.Fade  = 0
 				endif
 				break
 
@@ -1177,15 +1177,15 @@ sub ObjectMain
 				if Engine.PlatformID!=RETRO_WP7
 					LoadOnlineMenu(1)
 					Object.State   = 2
-					Object.MCState = 2
+					MenuControl.State = 2
 				else
 					if Engine.TrialMode == false
 						Object.State   = 5
-						Object.MCState = 8
-						Object.MCFade  = 0
+						MenuControl.State = 8
+						MenuControl.Fade  = 0
 					else
 						Object.State  = 2
-						Object.MCState = 2
+						MenuControl.State = 2
 						EngineCallback(14)
 					endif
 				endif
@@ -1226,19 +1226,19 @@ sub ObjectMain
 			case Menu_UnlockFullGame
 				EngineCallback(8)
 				Object.State = MENUBUTTON_CONFIRM_SELECTION
-				Object.MCState = 2
+				MenuControl.State = 2
 				break
 
 			case Menu_Store
 				EngineCallback(8)
 				Object.State = MENUBUTTON_CONFIRM_SELECTION
-				Object.MCState = 2
+				MenuControl.State = 2
 				break
 
 			case Menu_Exit
 				EngineCallback(7)
 				Object.State = MENUBUTTON_CONFIRM_SELECTION
-				Object.MCState = 2
+				MenuControl.State = 2
 				break
 
 			case Menu_Soundtrack
@@ -1259,7 +1259,7 @@ sub ObjectMain
 			case Menu_MoreGames
 				EngineCallback(16)
 				Object.State = MENUBUTTON_CONFIRM_SELECTION
-				Object.MCState = 2
+				MenuControl.State = 2
 				break
 
 			endswitch
@@ -1289,12 +1289,12 @@ sub ObjectMain
 		if Object.PropertyValue == 6
 			if Object.PrevMBState == MENUBUTTON_CONFIRM_SELECTION
 				Object.State = MENUBUTTON_CONFIRM_SELECTION
-				Object.MCState = 2
+				MenuControl.State = 2
 			endif
 		else
 			if Object.NextMBState == MENUBUTTON_CONFIRM_SELECTION
 				Object.State = MENUBUTTON_CONFIRM_SELECTION
-				Object.MCState = 2
+				MenuControl.State = 2
 			endif
 		endif
 		break
@@ -1313,7 +1313,7 @@ sub ObjectDraw
 	case MENUBUTTON_BUTTONS_OUT
 	case MENUBUTTON_BLANK
 	case MENUBUTTON_RESET
-		if Object.ButtonYPos == Object.MCCurrentSelection
+		if Object.ButtonYPos == MenuControl.CurrentSelection
 			TempValue0 = Object.PropertyValue
 			TempValue0 += 11
 			DrawSprite(TempValue0)
@@ -1340,22 +1340,22 @@ end sub
 
 sub ObjectStartup
 	switch Engine.Language
-	case ENGLISH
+	case LANG_ENGLISH
 		LoadSpriteSheet("Menu/MenuGfx2_EN.gif")
 		break
-	case FRENCH
+	case LANG_FRENCH
 		LoadSpriteSheet("Menu/MenuGfx2_FR.gif")
 		break
-	case ITALIAN
+	case LANG_ITALIAN
 		LoadSpriteSheet("Menu/MenuGfx2_IT.gif")
 		break
-	case DEUTSCH
+	case LANG_DEUTSCH
 		LoadSpriteSheet("Menu/MenuGfx2_DE.gif")
 		break
-	case SPANISH
+	case LANG_SPANISH
 		LoadSpriteSheet("Menu/MenuGfx2_ES.gif")
 		break
-	case JAPANESE
+	case LANG_JAPANESE
 		LoadSpriteSheet("Menu/MenuGfx2_JP.gif")
 		break
 	end switch
@@ -1570,15 +1570,15 @@ sub ObjectStartup
 	case RETRO_WIN
 	case RETRO_ANDROID
 		switch Engine.Language
-		case ENGLISH
-		case FRENCH
-		case SPANISH
-		case JAPANESE
+		case LANG_ENGLISH
+		case LANG_FRENCH
+		case LANG_SPANISH
+		case LANG_JAPANESE
 			SpriteFrame(19, -7, 128, 16, 1, TempValue1)
 			break
 
-		case ITALIAN
-		case DEUTSCH
+		case LANG_ITALIAN
+		case LANG_DEUTSCH
 			SpriteFrame(19, -7, 128, 16, 1, 770)
 			break
 
@@ -1687,7 +1687,7 @@ sub ObjectStartup
 		Object[43].Timer = 0
 		if game.mainMenuMode == MAINMENUMODE_VISUALMODE
 			MenuHeading.State = MENUHEADING_IDLE
-			MenuHeading.Header = PROPVAL_EXTRAS_HEADER
+			MenuHeading.Header = EXTRAS_HEADER
 			CallFunction(MenuButton_SetupMenuWindow)
 			ResetObjectEntity(62, TypeName[ExtrasMenu], 0, 0, 0)
 			Object.NextObjectInkEffect = INK_ALPHA
@@ -1700,7 +1700,7 @@ sub ObjectStartup
 		else
 			if game.mainMenuMode == MAINMENUMODE_SOUNDTRACK
 				MenuHeading.State = MENUHEADING_IDLE
-				MenuHeading.Header = PROPVAL_SOUNDTRACK_HEADER
+				MenuHeading.Header = SOUNDTRACK_HEADER
 
 				CallFunction(MenuButton_SetupMenuWindow)
 				MenuWindow.State = MENUWINDOW_SOUNDTRACK_EXPAND
@@ -1717,7 +1717,7 @@ sub ObjectStartup
 			else
 				if game.mainMenuMode == MAINMENUMODE_CHARASELECT
 					MenuHeading.State = MENUHEADING_IDLE
-					MenuHeading.Header = PROPVAL_SAVESELECT_HEADER
+					MenuHeading.Header = SAVESELECT_HEADER
 
 					CallFunction(MenuButton_SetupMenuWindow)
 					ResetObjectEntity(62,TypeName[LoadSaveMenu],0,0,0)
@@ -1733,7 +1733,7 @@ sub ObjectStartup
 				else
 					if game.mainMenuMode =  = MAINMENUMODE_HELPOPTION
 						MenuHeading.State = MENUHEADING_LEAVE_SCREEN
-						MenuHeading.Header = PROPVAL_HELP&OPTIONS_HEADER
+						MenuHeading.Header = HELP&OPTIONS_HEADER
 
 						CallFunction(MenuButton_SetupMenuWindow)
 						if Options.DevMenuFlag == true
@@ -1753,7 +1753,7 @@ sub ObjectStartup
 					else
 						if game.mainMenuMode == MAINMENUMODE_EXTRAS
 							MenuHeading.State = MENUHEADING_LEAVE_SCREEN
-							MenuHeading.Header = PROPVAL_EXTRAS_HEADER
+							MenuHeading.Header = EXTRAS_HEADER
 
 							CallFunction(MenuButton_SetupMenuWindow)
 							ResetObjectEntity(62,TypeName[ExtrasMenu],0,0,0)
@@ -1768,8 +1768,8 @@ sub ObjectStartup
 							Object.Type = TypeName[Blank Object]
 						else
 							if game.mainMenuMode =  = MAINMENUMODE_SETTINGS
-								MenuHeading.State = MENUHEADING_LEAVE_SCREEN
-								MenuHeading.Header = PROPVAL_HELP&OPTIONS_HEADER
+								MenuHeading.State  = MENUHEADING_LEAVE_SCREEN
+								MenuHeading.Header = HELP&OPTIONS_HEADER
 
 								CallFunction(MenuButton_SetupMenuWindow)
 								ResetObjectEntity(62,TypeName[OptionsMenu],0,0,0)

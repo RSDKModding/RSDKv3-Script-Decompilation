@@ -11,9 +11,18 @@
 #alias Object.Value6	:	Object.BounceFloorAnim
 #alias Object.Value7	:	Object.BounceFloorTile
 #alias Object.Scale		:	Object.BounceFloorFlag
+#alias Object.Direction	:	Object.WebDirection
 
 // Player Aliases
 #alias Player.Value4	:	Player.InvincibleTimer
+
+// States
+#alias 2	:	R6D_SETUP_WEB_SHOCK	// Unused in boss stages
+
+// Web Directions
+#alias 0	:	VERTICAL_WEB
+#alias 1	:	HORIZONTAL_WEB
+#alias 2	:	DIAGONAL_WEB
 
 // Gravity
 #alias 1	:	GRAVITY_AIR
@@ -155,6 +164,8 @@ sub ObjectPlayerInteraction
 	TempValue2 -= Player.CollisionLeft
 	TempValue3 -= Player.CollisionBottom
 	TempValue3 -= 2
+	// You will see constant checks for R6D_SETUP_WEB_SHOCK state
+	// but the code to reach that state is removed, since there are no shock webs on the boss stage
 	Get16x16TileInfo(TempValue0, TempValue2, TempValue3, 8)
 	switch TempValue0
 	case 2
@@ -168,7 +179,7 @@ sub ObjectPlayerInteraction
 		end if
 		break
 	case 5
-		if Object.State == 2
+		if Object.State == R6D_SETUP_WEB_SHOCK
 			if Player.InvincibleTimer == 0
 				Player.State = Player_State_GotHit
 				if Player.Direction == FACING_LEFT
@@ -180,8 +191,8 @@ sub ObjectPlayerInteraction
 		end if
 		break
 	case 6
-		if Object.State == 2
-			if Object.Direction == FACING_RIGHT
+		if Object.State == R6D_SETUP_WEB_SHOCK
+			if Object.WebDirection == VERTICAL_WEB
 				if Player.InvincibleTimer == 0
 					Player.State = Player_State_GotHit
 					if Player.Direction == FACING_LEFT
@@ -194,8 +205,8 @@ sub ObjectPlayerInteraction
 		end if
 		break
 	case 7
-		if Object.State == 2
-			if Object.Direction == FACING_LEFT
+		if Object.State == R6D_SETUP_WEB_SHOCK
+			if Object.WebDirection == HORIZONTAL_WEB
 				if Player.InvincibleTimer == 0
 					Player.State = Player_State_GotHit
 					if Player.Direction == FACING_LEFT
@@ -208,8 +219,8 @@ sub ObjectPlayerInteraction
 		end if
 		break
 	case 8
-		if Object.State == 2
-			if Object.Direction == 2
+		if Object.State == R6D_SETUP_WEB_SHOCK
+			if Object.WebDirection == DIAGONAL_WEB
 				if Player.InvincibleTimer == 0
 					Player.State = Player_State_GotHit
 					if Player.Direction == FACING_LEFT
@@ -237,7 +248,7 @@ sub ObjectPlayerInteraction
 		end if
 		break
 	case 5
-		if Object.State == 2
+		if Object.State == R6D_SETUP_WEB_SHOCK
 			if Player.InvincibleTimer == 0
 				Player.State = Player_State_GotHit
 				if Player.Direction == FACING_LEFT
@@ -249,8 +260,8 @@ sub ObjectPlayerInteraction
 		end if
 		break
 	case 6
-		if Object.State == 2
-			if Object.Direction == FACING_RIGHT
+		if Object.State == R6D_SETUP_WEB_SHOCK
+			if Object.WebDirection == VERTICAL_WEB
 				if Player.InvincibleTimer == 0
 					Player.State = Player_State_GotHit
 					if Player.Direction == FACING_LEFT
@@ -263,8 +274,8 @@ sub ObjectPlayerInteraction
 		end if
 		break
 	case 7
-		if Object.State == 2
-			if Object.Direction == FACING_LEFT
+		if Object.State == R6D_SETUP_WEB_SHOCK
+			if Object.WebDirection == HORIZONTAL_WEB
 				if Player.InvincibleTimer == 0
 					Player.State = Player_State_GotHit
 					if Player.Direction == FACING_LEFT
@@ -277,8 +288,8 @@ sub ObjectPlayerInteraction
 		end if
 		break
 	case 8
-		if Object.State == 2
-			if Object.Direction == 2
+		if Object.State == R6D_SETUP_WEB_SHOCK
+			if Object.WebDirection == DIAGONAL_WEB
 				if Player.InvincibleTimer == 0
 					Player.State = Player_State_GotHit
 					if Player.Direction == FACING_LEFT

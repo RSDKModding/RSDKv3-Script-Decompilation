@@ -1,4 +1,4 @@
-//------------Sonic CD Water Burst Script-------------//
+//-----------------Sonic CD Water Burst Script----------------//
 //--------Scripted by Christian Whitehead 'The Taxman'--------//
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
@@ -8,26 +8,33 @@
 #alias Object.Value1	:	BurstSplash.XVelocity
 #alias Object.Value2	:	BurstSplash.YVelocity
 
+// Control Mode
+#alias -1	:	CONTROL_DISABLED
+#alias 0	:	CONTROL_ENABLED
+
+// Priority
+#alias 3	:	PRIORITY_XBOUNDS
+
 
 sub ObjectMain
 	Object.Timer++
 	if Object.Timer == 8
 		Rand(TempValue0, 80)
-		TempValue0 -= 40
+		TempValue0  -= 40
 		TempValue0 <<= 16
-		TempValue0 += Object.XPos
+		TempValue0  += Object.XPos
 
 		Rand(TempValue1, 16)
-		TempValue1 -= 8
+		TempValue1  -= 8
 		TempValue1 <<= 16
-		TempValue1 += Object.YPos
-		TempValue1 -= 0x300000	// 0x300000
+		TempValue1  += Object.YPos
+		TempValue1  -= 0x300000
 
 		CreateTempObject(TypeName[BurstSplash], 0, TempValue0, TempValue1)
 		Rand(BurstSplash[TempObjectPos].XVelocity, 10)
-		BurstSplash[TempObjectPos].XVelocity -= 5
+		BurstSplash[TempObjectPos].XVelocity  -= 5
 		BurstSplash[TempObjectPos].XVelocity <<= 13
-		BurstSplash[TempObjectPos].YVelocity = -0x20000	// -0x20000
+		BurstSplash[TempObjectPos].YVelocity   = -0x20000
 
 		Object.Timer = 0
 	end if
@@ -37,39 +44,37 @@ end sub
 sub ObjectPlayerInteraction
 	PlayerObjectCollision(C_PLATFORM, -48, -66, 48, -32)
 	if CheckResult == true
-		Player.YPos += 0x20000	// 0x20000
+		Player.YPos += 0x20000
 	end if
 
 	PlayerObjectCollision(C_TOUCH, -128, -24, 128, 400)
 	if CheckResult == true
 		if Player.State != Player_State_Death
 			if Player.State != Player_State_Drown
-				Player.State = Player_State_WaterCurrent
+				Player.State	 = Player_State_WaterCurrent
 				Player.Animation = ANI_FANROTATE
 
-				Player.ControlMode = -1
-				Player.Left = false
-				Player.Right = false
-				Player.Up = false
-				Player.Down = false
+				Player.ControlMode = CONTROL_DISABLED
+				Player.Left		= false
+				Player.Right	= false
+				Player.Up		= false
+				Player.Down		= false
 
-				Player.YVelocity = -0x100000	// -0x100000
+				Player.YVelocity = -0x100000
 				Player.Timer = 0
 			end if
 		end if
 
 		PlayerObjectCollision(C_TOUCH, -128, 48, 128, 332)
 		if CheckResult == true
-			TempValue0 = Object.XPos
-			TempValue0 -= Player.XPos
+			TempValue0   = Object.XPos
+			TempValue0  -= Player.XPos
 			TempValue0 >>= 2
 
-			//-0x100000
 			if TempValue0 > 0x100000
 				TempValue0 = 0x100000
 			end if
 
-			// -0x100000
 			if TempValue0 < -0x100000
 				TempValue0 = -0x100000
 			end if
@@ -79,35 +84,35 @@ sub ObjectPlayerInteraction
 	else
 		if Player.State == Player_State_WaterCurrent
 			
-
 #platform: Use_Origins
-				Player.State = Player_State_Air_NoDropDash
+			Player.State = Player_State_Air_NoDropDash
 #endplatform
 
 #platform: Use_Standalone
-				Player.State = Player_State_Air
+			Player.State = Player_State_Air
 #endplatform
-			Player.ControlMode = 0
-			Player.Animation = ANI_BOUNCING
+
+			Player.ControlMode = CONTROL_ENABLED
+			Player.Animation   = ANI_BOUNCING
 
 			Player.XVelocity = 0
-			Player.Speed = 0
+			Player.Speed	 = 0
 		end if
 	end if
 end sub
 
 
 sub ObjectDraw
-	Object.YPos = Stage.NewWaterLevel
-	Object.YPos -= 0x300000	// 0x300000, Y - 48 in map coords
+	Object.YPos  = Stage.NewWaterLevel
+	Object.YPos -= 0x300000 // Y - 48 in map coords
 
-	TempValue0 = Oscillation
+	TempValue0   = Oscillation
 	TempValue0 <<= 2
 	Sin(TempValue1, TempValue0)
 	TempValue1 <<= 9
 	Object.YPos += TempValue1
 
-	TempValue0 = Object.FrameTimer
+	TempValue0  = Object.FrameTimer
 	TempValue0 /= 3
 	TempValue0 += 8
 	DrawSprite(TempValue0)
@@ -125,7 +130,7 @@ sub ObjectDraw
 	Object.FrameTimer %= 12
 	DrawSprite(Object.Frame)
 
-	TempValue0 = Object.Frame
+	TempValue0  = Object.Frame
 	TempValue0 += 4
 	DrawSprite(TempValue0)
 	
@@ -136,6 +141,7 @@ end sub
 
 sub ObjectStartup
 	LoadSpriteSheet("R4/Objects3.gif")
+
 	SpriteFrame(-56, -80, 112, 32, 143, 46)		// #0  - Water Burst frame 0
 	SpriteFrame(-56, -80, 112, 32, 143, 79)		// #1  - Water Burst frame 1
 	SpriteFrame(-56, -80, 112, 32, 143, 112)	// #2  - Water Burst frame 2
@@ -170,7 +176,7 @@ sub ObjectStartup
 	while ArrayPos0 < 1056
 		if Object[ArrayPos0].Type == TypeName[WaterBurst]
 			Object[ArrayPos0].DrawOrder = 4
-			Object[ArrayPos0].Priority = 3
+			Object[ArrayPos0].Priority = PRIORITY_XBOUNDS
 		end if
 		ArrayPos0++
 	loop

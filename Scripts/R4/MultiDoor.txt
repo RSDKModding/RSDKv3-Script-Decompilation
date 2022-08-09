@@ -1,4 +1,4 @@
-//------------Sonic CD Multi Door Script-------------//
+//-----------------Sonic CD Multi Door Script-----------------//
 //--------Scripted by Christian Whitehead 'The Taxman'--------//
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
@@ -6,38 +6,35 @@
 #alias Object.Value0			:	Object.Timer
 #alias Object.Value1			:	Object.YOffset
 
-// States
-#alias 0			:	MULTIDOOR_INACTIVE
-#alias 1			:	MULTIDOOR_OPEN
+// Push Button alias
+#alias Object.PropertyValue		:	PushButton.Pressed
 
 // HUD alias
 #alias Object[24].PropertyValue	:	Hud.TimePeriod
 
-// Push Button alias
-#alias Object.PropertyValue		:	PushButton.PropertyValue
-
-// Push Button Property Values
-#alias 1			:	PUSHBUTTON_PRESSED
-
-// Time Periods
-#alias 0			:	PROPVAL_PRESENT
-#alias 1			:	PROPVAL_PAST
-#alias 2			:	PROPVAL_GOOD_FUTURE
-#alias 3			:	PROPVAL_BAD_FUTURE
+// States
+#alias 0	:	MULTIDOOR_INACTIVE
+#alias 1	:	MULTIDOOR_OPEN
 
 // Collision
-#alias 1			:	FLOOR
+#alias 1	:	PLAYER_COL_FLOOR
+
+// Time Periods
+#alias 0	:	PROPVAL_PRESENT
+#alias 1	:	PROPVAL_PAST
+#alias 2	:	PROPVAL_GOOD_FUTURE
+#alias 3	:	PROPVAL_BAD_FUTURE
 
 
 sub ObjectMain
 	switch Object.State
 	case MULTIDOOR_INACTIVE
-		Object.Value1 = Object.YPos
+		Object.YOffset = Object.YPos
 		// Check if the previous or next button got pressed
-		if PushButton[-1].PropertyValue == PUSHBUTTON_PRESSED
+		if PushButton[-1].Pressed == true
 			Object.State++
 		end if
-		if PushButton[+1].PropertyValue == PUSHBUTTON_PRESSED
+		if PushButton[+1].Pressed == true
 			Object.State++
 		end if
 		break
@@ -45,8 +42,8 @@ sub ObjectMain
 	case MULTIDOOR_OPEN
 		if Object.Timer < 128
 			Object.Timer++
-			Object.YPos += 0x10000	// 0x10000
-			Object.YOffset -= 0x10000	// 0x10000
+			Object.YPos += 0x10000
+			Object.YOffset -= 0x10000
 		else
 			Object.State++
 		end if
@@ -58,13 +55,13 @@ end sub
 
 sub ObjectPlayerInteraction
 	PlayerObjectCollision(C_BOX, -32, -65, 0, 64)
-	if CheckResult == FLOOR
-		Player.YPos += 0x10000	// 0x10000
+	if CheckResult == PLAYER_COL_FLOOR
+		Player.YPos += 0x10000
 	end if
 	
 	PlayerObjectCollision(C_BOX, 32, -65, 64, 64)
-	if CheckResult == FLOOR
-		Player.YPos += 0x10000	// 0x10000
+	if CheckResult == PLAYER_COL_FLOOR
+		Player.YPos += 0x10000
 	end if
 
 	TempValue0 = Object.YPos
@@ -77,25 +74,25 @@ end sub
 
 sub ObjectDraw
 	TempValue0 = Object.XPos
-	TempValue0 -= 0x300000	// 0x300000
+	TempValue0 -= 0x300000
 	DrawSpriteXY(0, TempValue0, Object.YOffset)
 	DrawSpriteXY(1, TempValue0, Object.YOffset)
 	DrawSpriteXY(2, TempValue0, Object.YOffset)
 	DrawSpriteXY(3, TempValue0, Object.YOffset)
 
-	TempValue0 += 0x200000	// 0x200000
+	TempValue0 += 0x200000	
 	DrawSpriteXY(4, TempValue0, Object.YPos)
 	DrawSpriteXY(5, TempValue0, Object.YPos)
 	DrawSpriteXY(6, TempValue0, Object.YPos)
 	DrawSpriteXY(7, TempValue0, Object.YPos)
 
-	TempValue0 += 0x200000	// 0x200000
+	TempValue0 += 0x200000	
 	DrawSpriteXY(0, TempValue0, Object.YOffset)
 	DrawSpriteXY(1, TempValue0, Object.YOffset)
 	DrawSpriteXY(2, TempValue0, Object.YOffset)
 	DrawSpriteXY(3, TempValue0, Object.YOffset)
 
-	TempValue0 += 0x200000	// 0x200000
+	TempValue0 += 0x200000	
 	DrawSpriteXY(4, TempValue0, Object.YPos)
 	DrawSpriteXY(5, TempValue0, Object.YPos)
 	DrawSpriteXY(6, TempValue0, Object.YPos)

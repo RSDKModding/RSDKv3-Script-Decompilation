@@ -1,4 +1,4 @@
-//------------Sonic CD Water Stream D Script-------------//
+//---------------Sonic CD Water Stream D Script---------------//
 //--------Scripted by Christian Whitehead 'The Taxman'--------//
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
@@ -6,8 +6,12 @@
 #alias Object.Value1	:	Object.HitboxUp
 #alias Object.Value2	:	Object.HitboxBottom
 
+// Control Mode
+#alias 0	:	CONTROL_ENABLED
+
 
 sub ObjectPlayerInteraction
+	// Water streams are activated through a chain, originated from a push button
 	if Object[-1].PropertyValue == 1
 		Object.PropertyValue = 1
 		PlayerObjectCollision(C_TOUCH, -32, Object.HitboxUp, 32, Object.HitboxBottom)
@@ -22,15 +26,15 @@ sub ObjectPlayerInteraction
 							if Player.Left == false
 								if Player.Right == false
 									if Player.XPos < Object.XPos
-										Player.XPos += 0x10000	// 0x10000
+										Player.XPos += 0x10000
 									end if
 									if Player.XPos > Object.XPos
-										Player.XPos -= 0x10000	// 0x10000
+										Player.XPos -= 0x10000
 									end if
 								end if
 							end if
 
-							Player.YVelocity = 0x40000	// 0x40000
+							Player.YVelocity = 0x40000
 							if Player.WaterStream == false
 								Player.XVelocity = 0
 								Player.Speed = 0
@@ -45,13 +49,14 @@ sub ObjectPlayerInteraction
 				if Player.WaterStream == 0
 
 #platform: Use_Origins
-				Player.State = Player_State_Air_NoDropDash
+					Player.State = Player_State_Air_NoDropDash
 #endplatform
 
 #platform: Use_Standalone
-				Player.State = Player_State_Air
+					Player.State = Player_State_Air
 #endplatform
-					Player.ControlMode = 0
+
+					Player.ControlMode = CONTROL_ENABLED
 					Player.Animation = ANI_WALKING
 				end if
 			end if
@@ -64,8 +69,8 @@ sub ObjectStartup
 	ArrayPos0 = 32
 	while ArrayPos0 < 1056
 		if Object[ArrayPos0].Type == TypeName[WaterStreamD]
-			Object[ArrayPos0].HitboxUp = Object[ArrayPos0].PropertyValue
-			Object[ArrayPos0].HitboxUp <<= 3
+			Object[ArrayPos0].HitboxUp     = Object[ArrayPos0].PropertyValue
+			Object[ArrayPos0].HitboxUp   <<= 3
 			Object[ArrayPos0].HitboxBottom = Object[ArrayPos0].HitboxUp
 			FlipSign(Object[ArrayPos0].HitboxUp)
 			Object[ArrayPos0].PropertyValue = 0

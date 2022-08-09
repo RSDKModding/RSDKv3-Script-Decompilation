@@ -11,12 +11,18 @@
 #alias 0	:	ATTRACTMODE_SETUP
 #alias 1	:	ATTRACTMODE_HANDLE_INPUT
 
+// Control Modes
+#alias  0	:	CONTROL_ENABLED
+
 // Demo ID Aliases
 #alias 0	:	DEMO_R11A
 #alias 1	:	DEMO_SS1
 #alias 2	:	DEMO_R43C
 #alias 3	:	DEMO_SS6
 #alias 4	:	DEMO_R82A
+
+// Priority
+#alias 1	:	PRIORITY_ACTIVE
 
 // Engine & CallBacks
 #alias 2	:	MESSAGE_LOSTFOCUS
@@ -28,9 +34,9 @@
 sub ObjectMain
 	switch Object.State
 	case ATTRACTMODE_SETUP
-		if Player.ControlMode == 0
+		if Player.ControlMode == CONTROL_ENABLED
 			Object.State++
-			Object.DemoInput = Object.DemoLength
+			Object.DemoInput  = Object.DemoLength
 			Object.DemoInput -= 60
 		end if
 		break
@@ -54,10 +60,10 @@ sub ObjectMain
 			StopMusic()
 			Options.AttractMode = false
 			Stage.ActiveList = PRESENTATION_STAGE
-			Stage.ListPos = 0		// Title Screen
+			Stage.ListPos		  = 0	// Title Screen
 			Transporter_Destroyed = 0
-			MetalSonic_Destroyed = 0
-			Good_Future = 0
+			MetalSonic_Destroyed  = 0
+			Good_Future 		  = 0
 			LoadStage()
 			LampPost.Check = 0
 			
@@ -71,8 +77,8 @@ sub ObjectMain
 			
 			Screen.CameraEnabled = false
 			
-			TempValue0 = Object.DemoTime
-			TempValue0 -= Object.DemoInput
+			TempValue0   = Object.DemoTime
+			TempValue0  -= Object.DemoInput
 			TempValue0 <<= 3
 			if TempValue0 > 255
 				TempValue0 = 255
@@ -160,7 +166,7 @@ sub ObjectStartup
 			if Options.AttractMode == true
 				
 				// Make the Object always active, regardless of where it's located in the stage
-				Object[ArrayPos0].Priority = 1
+				Object[ArrayPos0].Priority = PRIORITY_ACTIVE
 				
 				// Give it a high Draw Order as well... though nothing's ever really drawn by this Object
 				Object[ArrayPos0].DrawOrder = 6

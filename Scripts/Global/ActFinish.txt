@@ -61,7 +61,7 @@
 #alias 0	:	PLAYER_SONIC
 
 // Hud Aliases
-#alias Object[24].PropertyValue	: HUD.TimePeriod
+#alias Object[24].PropertyValue	:	HUD.TimePeriod
 
 // Time Period Aliases
 #alias 0	:	PROPVAL_PRESENT
@@ -75,7 +75,7 @@
 #alias 19	:	SFX_SPECIALWARP
 
 // Soundtrack Aliases
-#alias 0	:	SOUNDTRACK_JP
+#alias 0	:	JP_OST
 
 // How long the Zone Complete jingle for each soundtrack is
 #alias 299	:	JP_ZONECOMPLETE_LENGTH
@@ -85,7 +85,7 @@
 #alias 11	:	CALLBACK_TRIAL_ENDED
 
 // Game Modes
-#alias 1	:	GAMEMODE_MAINGAME
+#alias 1	:	GAMEMODE_SAVEGAME
 #alias 2	:	GAMEMODE_TIMEATTACK
 #alias 3	:	GAMEMODE_TRIALGAME
 
@@ -322,7 +322,7 @@ sub ObjectMain
 		Object.Timer++
 		
 		// The two soundtracks have different Zone Complete lengths
-		if Options.Soundtrack == SOUNDTRACK_JP
+		if Options.Soundtrack == JP_OST
 			if Object.Timer > JP_ZONECOMPLETE_LENGTH
 				
 				// Proceed, now that the Jingle's over
@@ -480,7 +480,7 @@ sub ObjectMain
 				Fade_Colour += 224
 				
 				// Reset more stuff
-				Player.Direction = 0
+				Player.Direction = FACING_RIGHT
 				Object.Timer = 0
 				LampPost.Check = 0
 				Good_Future_Count += Good_Future
@@ -518,7 +518,7 @@ sub ObjectMain
 					
 				end switch
 				
-				if Options.GameMode == GAMEMODE_MAINGAME
+				if Options.GameMode == GAMEMODE_SAVEGAME
 					ArrayPos1 = Options.SaveSlot
 					ArrayPos1 <<= 3
 					SaveRAM[ArrayPos1] = Stage.PlayerListPos
@@ -554,7 +554,8 @@ sub ObjectMain
 #platform: Use_Origins
 				recScore = Player.Score
 				SpecialStage.NextZone = Stage.ListPos
-				Stage.ActiveList = SPECIAL_STAGE
+				// Origins got the SPECIAL_STAGE alias swapped with BONUS_STAGE
+				Stage.ActiveList = 3
 				Stage.ListPos = SpecialStage.ListPos
 				
 				if game.oneStageFlag != false
@@ -572,7 +573,7 @@ sub ObjectMain
 					else
 						Stage.ActiveList = PRESENTATION_STAGE
 						Stage.ListPos = STAGE_P_TITLE
-						Engine.State = 8
+						Engine.State = ENGINE_WAIT
 					end if
 				end if
 
@@ -613,7 +614,7 @@ sub ObjectMain
 				// Reset some cool values
 				Object.Timer = 0
 				LampPost.Check = 0
-				Player.Direction = 0
+				Player.Direction = FACING_RIGHT
 				Good_Future_Count += Good_Future
 				Good_Future = 0
 				Transporter_Destroyed = 0
@@ -649,7 +650,7 @@ sub ObjectMain
 					
 				end switch
 				
-				if Options.GameMode == GAMEMODE_MAINGAME
+				if Options.GameMode == GAMEMODE_SAVEGAME
 					ArrayPos1 = Options.SaveSlot
 					ArrayPos1 <<= 3
 					SaveRAM[ArrayPos1] = Stage.PlayerListPos

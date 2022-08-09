@@ -12,20 +12,26 @@
 #alias Object.Value6	:	Object.BounceFloorAnim
 #alias Object.Value7	:	Object.BounceFloorTile
 #alias Object.Scale		:	Object.BounceFloorFlag
+#alias Object.Direction	:	Object.WebDirection
 
 // Player Aliases
 #alias Player.Value4	:	Player.InvincibleTimer
+
+// States
+#alias 0	:	R6_SETUP_PREPARE_CHARGE
+#alias 1	:	R6_SETUP_WEB_CHARGE
+#alias 2	:	R6_SETUP_WEB_SHOCK
+
+// Web Directions
+#alias 0	:	VERTICAL_WEB
+#alias 1	:	HORIZONTAL_WEB
+#alias 2	:	DIAGONAL_WEB
 
 // Gravity
 #alias 1	:	GRAVITY_AIR
 
 // Priority
 #alias 1	:	PRIORITY_ACTIVE
-
-// States
-#alias 0	:	R6_SETUP_PREPARE_CHARGE
-#alias 1	:	R6_SETUP_WEB_CHARGE
-#alias 2	:	R6_SETUP_WEB_SHOCK
 
 
 sub ObjectMain
@@ -63,8 +69,8 @@ sub ObjectMain
 			Object.Timer = 0
 			Object.Frame = 0
 			Object.State = R6_SETUP_PREPARE_CHARGE
-			Object.Direction++
-			Object.Direction %= 3
+			Object.WebDirection++
+			Object.WebDirection %= 3
 		end if
 		break
 	end switch
@@ -107,26 +113,26 @@ sub ObjectMain
 			Copy16x16Tile(578, 800)
 			Copy16x16Tile(677, 800)
 			Object.AlarmTimer = 0
-			Object.AlarmTile = 0
+			Object.AlarmTile  = 0
 		end if
 		break
 	end switch
 
-	TempValue0 = Object.LightTile
+	TempValue0  = Object.LightTile
 	TempValue0 &= 1
 	if TempValue0 == 0
-		TempValue0 = Object.LightTile
+		TempValue0   = Object.LightTile
 		TempValue0 >>= 1
-		TempValue0 += 804
+		TempValue0  += 804
 		Copy16x16Tile(579, TempValue0)
 	end if
 	Object.LightTile++
 	Object.LightTile %= 24
 
-	TempValue0 = Object.ElectricTile
+	TempValue0  = Object.ElectricTile
 	TempValue0 %= 5
 	if TempValue0 == 0
-		TempValue0 = Object.ElectricTile
+		TempValue0  = Object.ElectricTile
 		TempValue0 /= 5
 		TempValue0 += 816
 		Copy16x16Tile(580, TempValue0)
@@ -235,7 +241,7 @@ sub ObjectPlayerInteraction
 		break
 	case 6
 		if Object.State == R6_SETUP_WEB_SHOCK
-			if Object.Direction == FACING_RIGHT
+			if Object.WebDirection == VERTICAL_WEB
 				if Player.InvincibleTimer == 0
 					Player.State = Player_State_GotHit
 					if Player.Direction == FACING_LEFT
@@ -249,7 +255,7 @@ sub ObjectPlayerInteraction
 		break
 	case 7
 		if Object.State == R6_SETUP_WEB_SHOCK
-			if Object.Direction == FACING_LEFT
+			if Object.WebDirection == HORIZONTAL_WEB
 				if Player.InvincibleTimer == 0
 					Player.State = Player_State_GotHit
 					if Player.Direction == FACING_LEFT
@@ -263,7 +269,7 @@ sub ObjectPlayerInteraction
 		break
 	case 8
 		if Object.State == R6_SETUP_WEB_SHOCK
-			if Object.Direction == 2
+			if Object.WebDirection == DIAGONAL_WEB
 				if Player.InvincibleTimer == 0
 					Player.State = Player_State_GotHit
 					if Player.Direction == FACING_LEFT
@@ -306,7 +312,7 @@ sub ObjectPlayerInteraction
 
 	case 6
 		if Object.State == R6_SETUP_WEB_SHOCK
-			if Object.Direction == FACING_RIGHT
+			if Object.WebDirection == VERTICAL_WEB
 				if Player.InvincibleTimer == 0
 					Player.State = Player_State_GotHit
 					if Player.Direction == FACING_LEFT
@@ -321,7 +327,7 @@ sub ObjectPlayerInteraction
 
 	case 7
 		if Object.State == R6_SETUP_WEB_SHOCK
-			if Object.Direction == FACING_LEFT
+			if Object.WebDirection == HORIZONTAL_WEB
 				if Player.InvincibleTimer == 0
 					Player.State = Player_State_GotHit
 					if Player.Direction == FACING_LEFT
@@ -336,7 +342,7 @@ sub ObjectPlayerInteraction
 
 	case 8
 		if Object.State == R6_SETUP_WEB_SHOCK
-			if Object.Direction == 2
+			if Object.WebDirection == DIAGONAL_WEB
 				if Player.InvincibleTimer == 0
 					Player.State = Player_State_GotHit
 					if Player.Direction == FACING_LEFT
@@ -404,7 +410,7 @@ end sub
 
 sub ObjectStartup
 	Object[19].Type = TypeName[R6Setup]
-	Object[19].Priority = PRIORITY_ACTIVE
+	Object[19].Priority  = PRIORITY_ACTIVE
 	Object[19].DrawOrder = 2
 
 	TempValue0 = 1

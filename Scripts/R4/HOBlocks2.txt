@@ -1,57 +1,63 @@
-//------------Sonic CD HOBlocks2 Script-------------//
+//-------------Sonic CD Horizontal Blocks 2 Script------------//
 //--------Scripted by Christian Whitehead 'The Taxman'--------//
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
 // Aliases
-#alias OBject.Value1	:	Object.XDrawPos
-#alias OBject.Value2	:	Object.XOffSet
-#alias OBject.Value3	:	Object.Angle
-#alias OBject.Value4	:	Object.AgainstBlock
+#alias OBject.Value1			:	Object.XDrawPos
+#alias OBject.Value2			:	Object.XOffSet
+#alias OBject.Value3			:	Object.Angle
+#alias OBject.Value4			:	Object.AgainstBlock
+
 // HUD alias
 #alias Object[24].PropertyValue	:	Hud.TimePeriod
 
 // Time Periods
-#alias 0			:	PROPVAL_PRESENT
-#alias 1			:	PROPVAL_PAST
-#alias 2			:	PROPVAL_GOOD_FUTURE
-#alias 3			:	PROPVAL_BAD_FUTURE
+#alias 0	:	PROPVAL_PRESENT
+#alias 1	:	PROPVAL_PAST
+#alias 2	:	PROPVAL_GOOD_FUTURE
+#alias 3	:	PROPVAL_BAD_FUTURE
 
 // Collision
-#alias 1	:	FLOOR
-#alias 2	:	LWALL
-#alias 3	:	RWALL
+#alias 1	:	PLAYER_COL_FLOOR
+#alias 2	:	PLAYER_COL_LWALL
+#alias 3	:	PLAYER_COL_RWALL
 
 
 sub ObjectMain
-	Object.Angle = Oscillation
-	Object.Angle += Object.PropertyValue
+	Object.Angle   = Oscillation
+	Object.Angle  += Object.PropertyValue
 	Object.Angle <<= 1
+
 	Cos(Object.XOffSet, Object.Angle)
 	Object.XOffSet <<= 12
-	Object.XOffSet += Object.XPos
-	Object.XOffSet &= 0xFFFF0000
-	Object.XOffSet -= Object.XDrawPos
+	Object.XOffSet  += Object.XPos
+	Object.XOffSet  &= 0xFFFF0000
+	Object.XOffSet  -= Object.XDrawPos
 	Object.AgainstBlock = false
 end sub
 
 
 sub ObjectPlayerInteraction
-	TempValue0 = Object.XPos
+	TempValue0  = Object.XPos
 	Object.XPos = Object.XDrawPos
+
 	PlayerObjectCollision(C_BOX, -48, -16, 48, 16)
 	switch CheckResult
-	case FLOOR
+	case PLAYER_COL_FLOOR
 		Player.XPos += Object.XOffSet
 		break
-	case LWALL
+
+	case PLAYER_COL_LWALL
 		if Object[-1].AgainstBlock == true
 			CallFunction(Player_Kill)
 		end if
 		break
-	case RWALL
+
+	case PLAYER_COL_RWALL
 		Object.AgainstBlock = true
 		break
 	end switch
+
 	Object.XPos = TempValue0
 end sub
 
@@ -59,8 +65,8 @@ end sub
 sub ObjectDraw
 	Cos(Object.XDrawPos, Object.Angle)
 	Object.XDrawPos <<= 12
-	Object.XDrawPos += Object.XPos
-	Object.XDrawPos &= 0xFFFF0000
+	Object.XDrawPos  += Object.XPos
+	Object.XDrawPos  &= 0xFFFF0000
 	DrawSpriteXY(0, Object.XDrawPos, Object.YPos)
 	DrawSpriteXY(1, Object.XDrawPos, Object.YPos)
 	DrawSpriteXY(2, Object.XDrawPos, Object.YPos)

@@ -1,18 +1,20 @@
-//------------Sonic CD Horizontal Door Script-------------//
+//---------------Sonic CD Horizontal Door Script--------------//
 //--------Scripted by Christian Whitehead 'The Taxman'--------//
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
 // Aliases
-#alias Object.Value0	:	Object.Timer
+#alias Object.Value0			:	Object.Timer
+
 // HUD alias
 #alias Object[24].PropertyValue	:	Hud.TimePeriod
 
 // Push Button alias
-#alias Object[-1].PropertyValue :	PushButton.PropertyValue
+#alias Object[-1].PropertyValue :	PushButton.Pressed
 
 // Property Values
-#alias 0	:	HORIZONTALDOOR_CLOSED
-#alias 1	:	HORIZONTALDOOR_OPEN
+// At startup is used to set it's direction, so 0 is facing right, 1 facing left
+#alias 0	:	CLOSED_DOOR
+#alias 1	:	OPEN_DOOR
 
 // Push Button Property Values
 #alias 1	:	PUSHBUTTON_PRESSED
@@ -20,36 +22,47 @@
 // Time Periods
 #alias 2	:	PROPVAL_GOOD_FUTURE
 
+// Player Collision
+#alias 0	:	PLAYER_COL_NONE
+
+// Collision Modes
+#alias 0	:	CMODE_FLOOR
+
+// Priority
+#alias 3	:	PRIORITY_XBOUNDS
+
 
 sub ObjectMain
 	switch Object.PropertyValue
-	case HORIZONTALDOOR_CLOSED
+	case CLOSED_DOOR
 		if Object.Timer > 0
-			Object.Timer -= 0x80000	// 0x80000
+			Object.Timer -= 0x80000
 			if Object.Direction == FACING_RIGHT
-				Object.XPos += 0x80000	// 0x80000
+				Object.XPos += 0x80000
 			else
-				Object.XPos -= 0x80000	// 0x80000
+				Object.XPos -= 0x80000
 			end if
 		end if
-		if PushButton.PropertyValue == PUSHBUTTON_PRESSED
-			Object.PropertyValue = HORIZONTALDOOR_OPEN
+
+		if PushButton.Pressed == true
+			Object.PropertyValue = OPEN_DOOR
 		end if
 		break
 		
-	case HORIZONTALDOOR_OPEN
-		if Object.Value0 < 0x800000	// 0x800000
-			Object.Value0 += 0x80000	// 0x80000
+	case OPEN_DOOR
+		if Object.Timer < 0x800000
+			Object.Timer += 0x80000
 			if Object.Direction == FACING_RIGHT
-				Object.XPos -= 0x80000	// 0x80000
+				Object.XPos -= 0x80000
 			else
-				Object.XPos += 0x80000	// 0x80000
+				Object.XPos += 0x80000
 			end if
 		end if
-		TempValue0 = Object.YPos
-		TempValue0 -= 0x300000	// 0x300000
+
+		TempValue0  = Object.YPos
+		TempValue0 -= 0x300000
 		if Player.YPos < TempValue0
-			Object.PropertyValue = HORIZONTALDOOR_CLOSED
+			Object.PropertyValue = CLOSED_DOOR
 		end if
 		break
 	end switch
@@ -58,8 +71,8 @@ end sub
 
 sub ObjectPlayerInteraction
 	PlayerObjectCollision(C_BOX, -64, -8, 64, 8)
-	if CheckResult > 0
-		Player.CollisionMode = 0
+	if CheckResult > PLAYER_COL_NONE
+		Player.CollisionMode = CMODE_FLOOR
 	end if
 end sub
 
@@ -70,22 +83,20 @@ end sub
 
 
 sub ObjectStartup
-	if Hud.TimePeriod < PROPVAL_GOOD_FUTURE	// aka past or present
+	if Hud.TimePeriod < PROPVAL_GOOD_FUTURE	// Past or Present?
 		LoadSpriteSheet("R4/Objects.gif")
-
 		SpriteFrame(-64, -8, 128, 16, 18, 69)	// Horizontal Door
 	else
 		LoadSpriteSheet("R4/Objects3.gif")
-
 		SpriteFrame(-64, -8, 128, 16, 62, 211)	// Horizontal Door
 	end if
 
 	ArrayPos0 = 32
 	while ArrayPos0 < 1056
 		if Object[ArrayPos0].Type == TypeName[HorizontalDoor]
-			Object[ArrayPos0].Priority = 3
+			Object[ArrayPos0].Priority  = PRIORITY_XBOUNDS
 			Object[ArrayPos0].Direction = Object[ArrayPos0].PropertyValue
-			Object[ArrayPos0].PropertyValue = 0
+			Object[ArrayPos0].PropertyValue = CLOSED_DOOR
 		end if
 		ArrayPos0++
 	loop

@@ -8,7 +8,7 @@
 #alias Object.Value3			:	Object.MaxHeight
 
 // Push Button aliases
-#alias Object[+1].PropertyValue	:	PushButton.PropertyValue
+#alias Object[+1].PropertyValue	:	PushButton.Pressed
 #alias Object[+1].XPos			:	PushButton.XPos
 #alias Object[+1].YPos			:	PushButton.YPos
 
@@ -16,26 +16,23 @@
 #alias Object[24].PropertyValue	:	Hud.TimePeriod
 
 // Gravity
-#alias 0			:	GRAVITY_GROUND
+#alias 0	:	GRAVITY_GROUND
 
-// Collision
-#alias 1			:	FLOOR
-#alias 4			:	ROOF
+// Player Collision
+#alias 1	:	PLAYER_COL_FLOOR
+#alias 4	:	PLAYER_COL_ROOF
 
 // Time Periods
-#alias 0			:	PROPVAL_PRESENT
-#alias 1			:	PROPVAL_PAST
-#alias 2			:	PROPVAL_GOOD_FUTURE
-#alias 3			:	PROPVAL_BAD_FUTURE
-
-// Push Button Property Values
-#alias 1			:	PUSHBUTTON_PRESSED
+#alias 0	:	PROPVAL_PRESENT
+#alias 1	:	PROPVAL_PAST
+#alias 2	:	PROPVAL_GOOD_FUTURE
+#alias 3	:	PROPVAL_BAD_FUTURE
 
 
 sub ObjectMain
-	if PushButton.PropertyValue == PUSHBUTTON_PRESSED
-		if Object.YVelocity > -0x10000	// -0x10000
-			Object.YVelocity -= 512		//  0x200
+	if PushButton.Pressed == true
+		if Object.YVelocity > -0x10000
+			Object.YVelocity -= 0x200
 		end if
 		Object.YPos += Object.YVelocity
 
@@ -44,8 +41,8 @@ sub ObjectMain
 			Object.YVelocity = 0
 		end if
 	else
-		if Object.YVelocity < 0x10000	// 0x10000
-			Object.YVelocity += 512	// 0x200
+		if Object.YVelocity < 0x10000
+			Object.YVelocity += 0x200
 		end if
 		Object.YPos += Object.YVelocity
 
@@ -55,22 +52,22 @@ sub ObjectMain
 		end if
 	end if
 
-	PushButton.XPos = Object.XPos
-	PushButton.XPos += 0x100000		// 0x100000
+	PushButton.XPos  = Object.XPos
+	PushButton.XPos += 0x100000
 
-	PushButton.YPos = Object.YPos
-	PushButton.YPos -= 0x480000		// 0x480000
+	PushButton.YPos  = Object.YPos
+	PushButton.YPos -= 0x480000	
 end sub
 
 
 sub ObjectPlayerInteraction
 	PlayerObjectCollision(C_BOX, -32, -1, 0, 64)
 	switch CheckResult
-	case FLOOR
-		Player.YPos += 0x10000	// 0x10000
+	case PLAYER_COL_FLOOR
+		Player.YPos += 0x10000
 		break
 
-	case ROOF
+	case PLAYER_COL_ROOF
 		if Player.Gravity == GRAVITY_GROUND
 			CallFunction(Player_Kill)
 		end if
@@ -79,11 +76,11 @@ sub ObjectPlayerInteraction
 
 	PlayerObjectCollision(C_BOX, 0, -73, 32, 64)
 	switch CheckResult
-	case FLOOR
-		Player.YPos += 0x10000	// 0x10000
+	case PLAYER_COL_FLOOR
+		Player.YPos += 0x10000
 		break
 
-	case ROOF
+	case PLAYER_COL_ROOF
 		if Player.Gravity == GRAVITY_GROUND
 			CallFunction(Player_Kill)
 		end if
@@ -146,8 +143,8 @@ sub ObjectStartup
 	ArrayPos0 = 32
 	while ArrayPos0 < 1056
 		if Object[ArrayPos0].Type == TypeName[ButtonBlocks1]
-			Object[ArrayPos0].MinHeight = Object[ArrayPos0].YPos
-			Object[ArrayPos0].MaxHeight = Object[ArrayPos0].YPos
+			Object[ArrayPos0].MinHeight  = Object[ArrayPos0].YPos
+			Object[ArrayPos0].MaxHeight  = Object[ArrayPos0].YPos
 			Object[ArrayPos0].MaxHeight -= 0x800000
 		end if
 		ArrayPos0++

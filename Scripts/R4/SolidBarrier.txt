@@ -1,17 +1,18 @@
-//------------Sonic CD Solid Barrier Script-------------//
+//----------------Sonic CD Solid Barrier Script---------------//
 //--------Scripted by Christian Whitehead 'The Taxman'--------//
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
 // Aliases
-#alias Object.Value0	:	Object.Timer
-// Property Values
-#alias 0	:	SOLIDBARRIER_INACTIVE
-#alias 1	:	SOLIDBARRIER_CLOSE_CHECK
-#alias 2	:	SOLIDBARRIER_CLOSE_AUTO
-#alias 3	:	SOLIDBARRIER_CLOSE_EGGMAN
+#alias Object.Value0			:	Object.Timer
 
 // HUD aliases
 #alias Object[24].PropertyValue	:	HUD.TimePeriod
+
+// Property Values
+#alias 0	:	INACTIVE
+#alias 1	:	CLOSE_CHECK
+#alias 2	:	CLOSE_AUTO
+#alias 3	:	OPEN_EGGMAN
 
 // Time Periods
 #alias 0	:	PROPVAL_PRESENT
@@ -22,28 +23,28 @@
 
 sub ObjectMain
 	switch Object.PropertyValue
-	case SOLIDBARRIER_CLOSE_CHECK
+	case CLOSE_CHECK
 		PlayerObjectCollision(C_TOUCH, 112, -64, 256, 256)
 		if CheckResult == true
-			Object.PropertyValue = SOLIDBARRIER_CLOSE_AUTO
+			Object.PropertyValue = CLOSE_AUTO
 		end if
 		break
 
-	case SOLIDBARRIER_CLOSE_AUTO
+	case CLOSE_AUTO
 		if Object.Timer < 64
 			Object.Timer += 4
-			Object.YPos += 0x40000	// 0x40000
+			Object.YPos  += 0x40000
 		else
-			Object.PropertyValue = SOLIDBARRIER_INACTIVE
+			Object.PropertyValue = INACTIVE
 		end if
 		break
 
-	case SOLIDBARRIER_CLOSE_EGGMAN
+	case OPEN_EGGMAN
 		if Object.Timer < 128
 			Object.Timer += 4
-			Object.YPos += 0x40000	// 0x40000
+			Object.YPos  += 0x40000
 		else
-			Object.PropertyValue = SOLIDBARRIER_INACTIVE
+			Object.PropertyValue = INACTIVE
 		end if
 		break
 
@@ -52,17 +53,11 @@ end sub
 
 
 sub ObjectPlayerInteraction
-#platform: Mobile
-	if Object.PropertyValue > SOLIDBARRIER_CLOSE_CHECK
+	if Object.PropertyValue > CLOSE_CHECK
 		PlayerObjectCollision(C_BOX, -64, -64, 64, 128)
 	else
 		PlayerObjectCollision(C_BOX, -64, -64, 64, 64)
 	end if 
-#endplatform
-
-#platform: Standard
-	PlayerObjectCollision(C_BOX, -64, -64, 64, 64)
-#endplatform
 end sub
 
 
@@ -110,7 +105,7 @@ sub ObjectStartup
 			SpriteFrame(TempValue0, TempValue1, 32, 32, TempValue2, TempValue3)
 			TempValue0 += 32
 		loop
-		TempValue0 = -64
+		TempValue0  = -64
 		TempValue1 += 32
 	loop
 end sub

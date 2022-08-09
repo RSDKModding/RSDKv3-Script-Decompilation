@@ -1,4 +1,4 @@
-//------------Sonic CD Water Skimmer Script-------------//
+//----------------Sonic CD Water Skimmer Script---------------//
 //--------Scripted by Christian Whitehead 'The Taxman'--------//
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
@@ -8,25 +8,26 @@
 #alias Object.Value2		:	Object.BulletTimer
 #alias Object.PropertyValue	:	Object.Quality
 
-#alias 0		:	WATERSKIMMER_DASH_LEFT
-#alias 1		:	WATERSKIMMER_FLOAT_LEFT
-#alias 2		:	WATERSKIMMER_TURN_TO_RIGHT
-#alias 3		:	WATERSKIMMER_CHARGE_RIGHT
-#alias 4		:	WATERSKIMMER_DASH_RIGHT
-#alias 5		:	WATERSKIMMER_FLOAT_RIGHT
-#alias 6		:	WATERSKIMMER_TURN_TO_LEFT
-#alias 7		:	WATERSKIMMER_CHARGE_LEFT
+#alias 0	:	WATERSKIMMER_DASH_LEFT
+#alias 1	:	WATERSKIMMER_FLOAT_LEFT
+#alias 2	:	WATERSKIMMER_TURN_TO_RIGHT
+#alias 3	:	WATERSKIMMER_CHARGE_RIGHT
+#alias 4	:	WATERSKIMMER_DASH_RIGHT
+#alias 5	:	WATERSKIMMER_FLOAT_RIGHT
+#alias 6	:	WATERSKIMMER_TURN_TO_LEFT
+#alias 7	:	WATERSKIMMER_CHARGE_LEFT
 
 // Badnik Quality / Property Value
-#alias 0		:	PROPVAL_QUALITY_GOOD
-#alias 1		:	PROPVAL_QUALITY_BAD
+#alias 0	:	PROPVAL_QUALITY_GOOD
+#alias 1	:	PROPVAL_QUALITY_BAD
+
 
 sub ObjectMain
 	if Object.PropertyValue == PROPVAL_QUALITY_GOOD
 		switch Object.State
 		case WATERSKIMMER_DASH_LEFT
-			if Object.XVelocity > -0x18000	// -0x18000
-				Object.XVelocity -= 1024	//  0x400
+			if Object.XVelocity > -0x18000
+				Object.XVelocity -= 0x400
 				Object.XPos += Object.XVelocity
 			else
 				Object.State++
@@ -37,7 +38,7 @@ sub ObjectMain
 
 		case WATERSKIMMER_FLOAT_LEFT
 			if Object.XVelocity < 0
-				Object.XVelocity += 280	// 0x118
+				Object.XVelocity += 0x118
 				Object.XPos += Object.XVelocity
 			else
 				Object.XVelocity = 0
@@ -65,8 +66,8 @@ sub ObjectMain
 			break
 
 		case WATERSKIMMER_DASH_RIGHT
-			if Object.XVelocity < 0x18000		// 0x18000
-				Object.XVelocity += 1024	// 0x400
+			if Object.XVelocity < 0x18000
+				Object.XVelocity += 0x400
 				Object.XPos += Object.XVelocity
 			else
 				Object.State++
@@ -77,7 +78,7 @@ sub ObjectMain
 
 		case WATERSKIMMER_FLOAT_RIGHT
 			if Object.XVelocity > 0
-				Object.XVelocity -= 280	// 0x118
+				Object.XVelocity -= 0x118
 				Object.XPos += Object.XVelocity
 			else
 				Object.XVelocity = 0
@@ -112,17 +113,17 @@ sub ObjectMain
 				PlayStageSfx(1, 0)
 				CreateTempObject(TypeName[SkimmerBullet], 0, Object.XPos, Object.YPos)
 				if Object.Direction == FACING_RIGHT
-					Object[TempObjectPos].XVelocity = -0x20000	// -0x20000
+					Object[TempObjectPos].XVelocity = -0x20000
 				else
-					Object[TempObjectPos].XVelocity = 0x20000	//  0x20000
+					Object[TempObjectPos].XVelocity =  0x20000
 				end if
 			end if
 		end if
 	else
 		switch Object.State
 		case WATERSKIMMER_DASH_LEFT
-			if Object.XVelocity > -0x10000	// -0x10000
-				Object.XVelocity -= 1024	//  0x400
+			if Object.XVelocity > -0x10000
+				Object.XVelocity -= 0x400
 				Object.XPos += Object.XVelocity
 			else
 				Object.State++
@@ -133,7 +134,7 @@ sub ObjectMain
 
 		case WATERSKIMMER_FLOAT_LEFT
 			if Object.XVelocity < 0
-				Object.XVelocity += 280	// 0x118
+				Object.XVelocity += 0x118
 				Object.XPos += Object.XVelocity
 			else
 				Object.XVelocity = 0
@@ -161,8 +162,8 @@ sub ObjectMain
 			break
 
 		case WATERSKIMMER_DASH_RIGHT
-			if Object.XVelocity < 0x10000		// 0x10000
-				Object.XVelocity += 1024	// 0x400
+			if Object.XVelocity < 0x10000
+				Object.XVelocity += 0x400
 				Object.XPos += Object.XVelocity
 			else
 				Object.State++
@@ -173,7 +174,7 @@ sub ObjectMain
 
 		case WATERSKIMMER_FLOAT_RIGHT
 			if Object.XVelocity > 0
-				Object.XVelocity -= 280	// 0x118
+				Object.XVelocity -= 0x118
 				Object.XPos += Object.XVelocity
 			else
 				Object.XVelocity = 0
@@ -202,8 +203,8 @@ sub ObjectMain
 		end switch
 	end if
 
-	Object.YPos = Stage.WaterLevel
-	Object.YPos -= 10
+	Object.YPos   = Stage.WaterLevel
+	Object.YPos  -= 10
 	Object.YPos <<= 16
 
 	CallFunction(StageSetup_CheckGoodFuture)	// Check if this should be a flower
@@ -234,11 +235,11 @@ end sub
 
 sub ObjectDraw
 	if Object.Quality == PROPVAL_QUALITY_GOOD
-		TempValue0 = Object.Frame
+		TempValue0  = Object.Frame
 		TempValue0 /= 11
 		DrawSpriteFX(TempValue0, FX_FLIP, Object.XPos, Object.YPos)
 	else
-		TempValue0 = Object.Frame
+		TempValue0  = Object.Frame
 		TempValue0 /= 11
 		TempValue0 += 2
 		DrawSpriteFX(TempValue0, FX_FLIP, Object.XPos, Object.YPos)
@@ -248,8 +249,10 @@ end sub
 
 sub ObjectStartup
 	LoadSpriteSheet("R4/Objects.gif")
+
 	SpriteFrame(-20, -12, 32, 24, 67, 231)	// #0 - Water Skimmer frame 0
 	SpriteFrame(-20, -12, 32, 24, 100, 231)	// #1 - Water Skimmer frame 1
+	
 	SpriteFrame(-20, -12, 32, 24, 1, 231)	// #2 - Broken Water Skimmer frame 0
 	SpriteFrame(-20, -12, 32, 24, 34, 231)	// #3 - Broken Water Skimmer frame 1
 end sub

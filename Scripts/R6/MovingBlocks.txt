@@ -11,6 +11,7 @@
 #alias Object.Value5	:	Object.BlockYPos_3	
 #alias Object.Value6	:	Object.BlockXPos_4	
 #alias Object.Value7	:	Object.BlockYPos_4
+#alias Object.Direction	:	Object.BlockState
 
 // Function declarations
 #function MovingBlocks_MoveType_1
@@ -20,7 +21,7 @@
 
 
 function MovingBlocks_MoveType_1
-	switch Object.Direction
+	switch Object.BlockState
 	case 0
 		Object.BlockYPos_1 -= 0x8000
 		if Object.AnimationTimer == 64
@@ -473,9 +474,9 @@ sub ObjectMain
 		else
 			Object.AnimationTimer = 0
 			Object.State = 1
-			Object.Direction++
-			if Object.Direction > 14
-				Object.Direction = 3
+			Object.BlockState++
+			if Object.BlockState > 14
+				Object.BlockState = 3
 			end if
 		end if
 	else
@@ -533,7 +534,9 @@ end sub
 
 sub ObjectStartup
 	LoadSpriteSheet("R6/Objects.gif")
+
 	SpriteFrame(-16, -16, 32, 32, 173, 1)
+	
 	ArrayPos0 = 32
 	while ArrayPos0 < 1056
 		if Object[ArrayPos0].Type == TypeName[MovingBlocks]

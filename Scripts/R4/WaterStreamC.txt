@@ -1,4 +1,4 @@
-//------------Sonic CD Water Stream C Script-------------//
+//---------------Sonic CD Water Stream C Script---------------//
 //--------Scripted by Christian Whitehead 'The Taxman'--------//
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
@@ -9,7 +9,12 @@
 #alias Object.Value4	:	Object.HitboxRight
 #alias Object.Value5	:	Object.HitboxBottom
 
+// Control Mode
+#alias 0	:	CONTROL_ENABLED
+
+
 sub ObjectPlayerInteraction
+	// Water streams are activated through a chain, originated from a push button
 	if Object[-1].PropertyValue == 1
 		Object.PropertyValue = 1
 		PlayerObjectCollision(C_TOUCH, Object.HitboxLeft, Object.HitboxRight, Object.HitboxUp, Object.HitboxBottom)
@@ -22,10 +27,10 @@ sub ObjectPlayerInteraction
 							Player.State = Player_State_WaterCurrent
 							Player.Animation = ANI_FANROTATE
 
-							TempValue0 = Player.XPos
+							TempValue0  = Player.XPos
 							TempValue0 -= Object.XPos
 
-							TempValue1 = Player.YPos
+							TempValue1  = Player.YPos
 							TempValue1 -= Object.YPos
 							ATan2(TempValue2, TempValue0, TempValue1)
 							TempValue2 += Object.Oscillation
@@ -43,22 +48,22 @@ sub ObjectPlayerInteraction
 			if Player.State == Player_State_WaterCurrent
 				if Player.WaterStream == false
 					if Player.Left == true
-						Player.XVelocity = -0x20000	// -0x20000
+						Player.XVelocity = -0x20000
 					end if
 					if Player.Right == true
-						Player.XVelocity = 0x20000	//  0x20000
+						Player.XVelocity =  0x20000
 					end if
 					Player.Speed = Player.XVelocity
 					
-
 #platform: Use_Origins
-				Player.State = Player_State_Air_NoDropDash
+					Player.State = Player_State_Air_NoDropDash
 #endplatform
 
 #platform: Use_Standalone
-				Player.State = Player_State_Air
+					Player.State = Player_State_Air
 #endplatform
-					Player.ControlMode = 0
+
+					Player.ControlMode = CONTROL_ENABLED
 					Player.Animation = ANI_WALKING
 				end if
 			end if
