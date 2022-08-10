@@ -18,10 +18,13 @@
 // Camera
 #alias 4	:	CAMERA_HLOCK
 
+// Control Mode
+#alias -1	:	CONTROL_DISABLED
+
 // Collision Sides
 #alias 0	:	CSIDE_FLOOR
 
-// Priorities
+// Priority
 #alias 1	:	PRIORITY_ACTIVE
 
 
@@ -53,7 +56,8 @@ sub ObjectMain
 
 	case FALLSIGNPOST_AIR_FLIP
 		Object.IdleTimer++
-		Object.YPos += Object.YVelocity
+
+		Object.YPos		 += Object.YVelocity
 		Object.YVelocity += 0xC00
 		ObjectTileCollision(CSIDE_FLOOR, 0, 8, 0)
 		if CheckResult == true
@@ -80,20 +84,23 @@ sub ObjectMain
 			if Object.Frame == 5
 				Rand(TempValue0,48)
 				TempValue0 <<= 16
-				TempValue0 += Object.XPos
-				TempValue0 -= 0x180000
+				TempValue0  += Object.XPos
+				TempValue0  -= 0x180000
+
 				Rand(TempValue1,32)
 				TempValue1 <<= 16
-				TempValue1 += Object.YPos
-				TempValue1 -= 0x140000
+				TempValue1  += Object.YPos
+				TempValue1  -= 0x140000
 				CreateTempObject(TypeName[RingSparkle], 0, TempValue0, TempValue1)
 			end if
+
 			if Object.Frame == 9
 				Object.Frame = 1
 				Rand(TempValue0, 48)
 				TempValue0 <<= 16
 				TempValue0  += Object.XPos
 				TempValue0  -= 0x180000
+
 				Rand(TempValue1, 32)
 				TempValue1 <<= 16
 				TempValue1  += Object.YPos
@@ -108,6 +115,7 @@ sub ObjectMain
 		if Stage.TimeEnabled == true
 			Music.Volume -= 2
 		end if
+
 		Object.FrameTimer++
 		if Object.FrameTimer == 2
 			Object.FrameTimer = 0
@@ -117,6 +125,7 @@ sub ObjectMain
 				TempValue0 <<= 16
 				TempValue0  += Object.XPos
 				TempValue0  -= 0x180000
+
 				Rand(TempValue1, 32)
 				TempValue1 <<= 16
 				TempValue1  += Object.YPos
@@ -129,6 +138,7 @@ sub ObjectMain
 				TempValue0 <<= 16
 				TempValue0  += Object.XPos
 				TempValue0  -= 0x180000
+
 				Rand(TempValue1, 32)
 				TempValue1 <<= 16
 				TempValue1  += Object.YPos
@@ -158,16 +168,16 @@ sub ObjectMain
 		TempValue0 |= CheckResult
 		if TempValue0 == true
 			Player.State = Player_State_Ground
-			Player.ControlMode = -1
-			Player.JumpHold = false
-			Player.Right	= false
-			Player.Left		= false
-			Player.Up		= false
-			Player.Down		= false
+			Player.ControlMode	= CONTROL_DISABLED
+			Player.JumpHold		= false
+			Player.Right		= false
+			Player.Left			= false
+			Player.Up			= false
+			Player.Down			= false
 
-			Player.XVelocity = 0
-			Player.YVelocity = 0
-			Player.Speed	 = 0
+			Player.XVelocity 	= 0
+			Player.YVelocity	= 0
+			Player.Speed		= 0
 			
 			Screen.CameraEnabled = false
 		end if
@@ -183,9 +193,9 @@ sub ObjectMain
 		Stage.TimeEnabled = false
 		PlayMusic(1)
 
-		Object[30].Type=TypeName[ActFinish]
+		Object[30].Type		 = TypeName[ActFinish]
 		Object[30].DrawOrder = 6
-		Object[30].Priority = PRIORITY_ACTIVE
+		Object[30].Priority	 = PRIORITY_ACTIVE
 	end if
 
 	if Stage.TimeEnabled == false
@@ -218,9 +228,9 @@ sub ObjectStartup
 	ArrayPos0 = 32
 	while ArrayPos0 < 1056
 		if Object[ArrayPos0].Type == TypeName[FallSignPost]
-			Object[ArrayPos0].Frame = 1
-			Object[ArrayPos0].Timer = 16
-			Object[ArrayPos0].Priority = PRIORITY_ACTIVE
+			Object[ArrayPos0].Frame		= 1
+			Object[ArrayPos0].Timer		= 16
+			Object[ArrayPos0].Priority	= PRIORITY_ACTIVE
 		end if
 		ArrayPos0++
 	loop

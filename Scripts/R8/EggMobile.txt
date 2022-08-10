@@ -65,6 +65,10 @@
 // Ink Effects
 #alias 0	:	INK_BLEND
 
+// Control Mode
+#alias -1	:	CONTROL_DISABLED
+#alias  0	:	CONTROL_ENABLED
+
 // Priority
 #alias 1	:	PRIORITY_ACTIVE
 
@@ -1297,12 +1301,14 @@ function EggMobile_Destroyed
 			Object.Timer = 0
 			Object.XVelocity = 0x14000
 			Helper1.TargetPos = Object.YPos
-			Player.ControlMode = -1
-			Player.JumpHold = 0
-			Player.Right = 1
-			Player.Left = 0
-			Player.Up = 0
-			Player.Down = 0
+
+			Player.ControlMode	= CONTROL_DISABLED
+			Player.JumpHold		= false
+			Player.Right		= true
+			Player.Left			= false
+			Player.Up			= false
+			Player.Down 		= false
+
 			Helper2.SecondaryState++
 			if Stage.PlayerListPos == 0
 				if Stage.DebugMode == 0
@@ -1407,34 +1413,35 @@ function EggMobile_Destroyed_NoAmy
 			Helper2.SecondaryState++
 			Object.Timer = 0
 			Helper2.CutsceneRightBound += 64
-			Player.ControlMode = -1
-			Player.JumpHold = 0
-			Player.Right = 1
-			Player.Left = 0
-			Player.Up = 0
-			Player.Down = 0
+			Player.ControlMode	= CONTROL_DISABLED
+			Player.JumpHold		= false
+			Player.Right		= true
+			Player.Left			= false
+			Player.Up			= false
+			Player.Down 		= false
 		end if
 		break
 	case 2
 		Player.Right = 1
 		Object.Timer++
 		if Object.Timer == 120
-			Object[+5].Type = TypeName[FadeScreen]
+			Object[+5].Type			 = TypeName[FadeScreen]
 			Object[+5].PropertyValue = CUTSCENE_SKIP
 		end if
 		break
 	end switch
-	TempValue0 = Object.AnimationTimer
+	TempValue0  = Object.AnimationTimer
 	TempValue0 &= 3
 	if TempValue0 == 0
 		Rand(TempValue0, 64)
-		TempValue0 -= 32
+		TempValue0  -= 32
 		TempValue0 <<= 16
-		TempValue0 += Object.XPos
+		TempValue0  += Object.XPos
+
 		Rand(TempValue1, 64)
-		TempValue1 -= 32
+		TempValue1  -= 32
 		TempValue1 <<= 16
-		TempValue1 += Object.YPos
+		TempValue1  += Object.YPos
 		CreateTempObject(TypeName[Explosion], 0, TempValue0, TempValue1)
 		if Object.AnimationTimer == 0
 			if Object[+5].Type == TypeName[Blank Object]

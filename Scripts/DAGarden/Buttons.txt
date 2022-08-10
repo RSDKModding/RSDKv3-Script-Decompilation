@@ -3,7 +3,6 @@
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
 // Aliases
-#alias 5: TYPE_TOUCHBUTTONS
 #alias Object.Value1			:	Object.ButtonPressed
 #alias Object.PropertyValue		:	Object.ButtonID
 
@@ -13,18 +12,18 @@
 #alias Object[37].PropertyValue	:	Object.Button3Value
 
 // Little Planet Aliases
-#alias Object[32].Value1		:	Object.LPZoomDepth
-#alias Object[32].Value3		:	Object.RotationSpeed
+#alias Object[32].Value1		:	LittlePlanet.ZoomDepth
+#alias Object[32].Value3		:	LittlePlanet.RotationSpeed
 
 // Music Selector Aliases
-#alias Object[33].Frame			:	Object.MSFrame
-#alias Object[33].XPos			:	Object.MSXPos
-#alias Object[33].State			:	Object.MSState
-#alias Object[33].DrawOrder		:	Object.MSDrawOrder
-#alias Object[33].Priority		:	Object.MSPriority
+#alias Object[33].Frame			:	MusicSelector.Frame
+#alias Object[33].XPos			:	MusicSelector.XPos
+#alias Object[33].State			:	MusicSelector.State
+#alias Object[33].DrawOrder		:	MusicSelector.DrawOrder
+#alias Object[33].Priority		:	MusicSelector.Priority
 
 // MenuControl Aliases
-#alias Object[0].State			:	Object.MCState
+#alias Object[0].State			:	MenuControl.State
 
 // Music Selector States
 #alias 1	:	MUSICSELECTOR_STOP_MOVE_L
@@ -32,6 +31,7 @@
 #alias 4	:	MUSICSELECTOR_MOVE_R
 
 // MenuControl States
+#alias 1	:	MENUCONTROL_FADE_IN
 #alias 3	:	MENUCONTROL_MUSIC_CONTROLS
 #alias 4	:	MENUCONTROL_SET_MUSIC
 #alias 6	:	MENUCONTROL_EXIT
@@ -39,43 +39,49 @@
 //Engine & CallBacks
 #alias 2	:	MESSAGE_LOSTFOCUS
 
+// Priority
+#alias 1	:	PRIORITY_ACTIVE
+
 
 sub ObjectMain
-	if Object.MCState > 1
-		if Object.MCState < 4
+	if MenuControl.State > MENUCONTROL_FADE_IN
+		if MenuControl.State < MENUCONTROL_SET_MUSIC
 			if Engine.Message == MESSAGE_LOSTFOCUS
 				Object.ButtonPressed = 0
 			end if
-			TempValue0 = Object.XPos
+
+			TempValue0   = Object.XPos
 			TempValue0 >>= 16
-			TempValue1 = TempValue0
-			TempValue0 -= 32
-			TempValue0 -= Screen.XOffset
-			TempValue1 += 32
-			TempValue1 -= Screen.XOffset
+			TempValue1   = TempValue0
+
+			TempValue0  -= 32
+			TempValue0  -= Screen.XOffset
+
+			TempValue1  += 32
+			TempValue1  -= Screen.XOffset
 			CheckTouchRect(TempValue0, 0, TempValue1, 32)
 			if CheckResult > -1
 				Object.ButtonPressed = Object.ButtonID
 				Object.ButtonPressed++
 				switch Object.ButtonID
 				case 0
-					if Object.LPZoomDepth < 0x4000
-						Object.LPZoomDepth += 8
+					if LittlePlanet.ZoomDepth < 0x4000
+						LittlePlanet.ZoomDepth += 8
 					end if
 					break
 				case 1
-					if Object.LPZoomDepth > 48
-						Object.LPZoomDepth -= 8
+					if LittlePlanet.ZoomDepth > 48
+						LittlePlanet.ZoomDepth -= 8
 					end if
 					break
 				case 2
-					if Object.RotationSpeed < 256
-						Object.RotationSpeed += 2
+					if LittlePlanet.RotationSpeed < 256
+						LittlePlanet.RotationSpeed += 2
 					end if
 					break
 				case 3
-					if Object.RotationSpeed > -256
-						Object.RotationSpeed -= 2
+					if LittlePlanet.RotationSpeed > -256
+						LittlePlanet.RotationSpeed -= 2
 					end if
 					break
 				end switch
@@ -87,14 +93,14 @@ sub ObjectMain
 					case 0
 						if Object.ButtonPressed == 1
 							Object.ButtonPressed = 0
-							Object.Button1Value = 1
+							Object.Button1Value	 = 1
 						end if
 						break
 
 					case 1
 						if Object.ButtonPressed == 2
 							Object.ButtonPressed = 0
-							Object.Button1Value = 0
+							Object.Button1Value  = 0
 						end if
 						break
 					// Rotation
@@ -113,15 +119,17 @@ sub ObjectMain
 					case 4
 						if Object.ButtonPressed == 5
 							Object.ButtonPressed = 0
+							
 							PlaySfx(23, 0) 	//Menu Button SFX
-							Object.MSState = MUSICSELECTOR_MOVE_R
+
+							MusicSelector.State = MUSICSELECTOR_MOVE_R
 						end if
 						break
 
 					case 5
 						if Object.ButtonPressed == 6
 							Object.ButtonPressed = 0
-							Object.MCState = MENUCONTROL_SET_MUSIC
+							MenuControl.State	 = MENUCONTROL_SET_MUSIC
 							StopMusic()
 						end if
 						break
@@ -129,23 +137,28 @@ sub ObjectMain
 					case 6
 						if Object.ButtonPressed == 7
 							Object.ButtonPressed = 0
+
 							PlaySfx(23, 0) 	//Menu Button SFX
-							Object.MSState = MUSICSELECTOR_MOVE_L
+
+							MusicSelector.State = MUSICSELECTOR_MOVE_L
 						end if
 						break
 
 					case 7
 						if Object.ButtonPressed == 8
 							Object.ButtonPressed = 0
-							PlaySfx(27, 0)	//Select SFX
-							Object.MCState = MENUCONTROL_MUSIC_CONTROLS
-							Object.MSXPos = Screen.XSize
-							Object.MSXPos += 96
-							Object.MSXPos <<= 16
 
-							Object.MSState = MUSICSELECTOR_STOP_MOVE_L
-							Object.MSDrawOrder = 5
-							Object.MSPriority = 1
+							PlaySfx(27, 0)	//Select SFX
+
+							MenuControl.State	 = MENUCONTROL_MUSIC_CONTROLS
+							MusicSelector.XPos	 = Screen.XSize
+							MusicSelector.XPos	+= 96
+							MusicSelector.XPos <<= 16
+
+							MusicSelector.State		= MUSICSELECTOR_STOP_MOVE_L
+							MusicSelector.DrawOrder = 5
+							MusicSelector.Priority  = PRIORITY_ACTIVE
+
 							Object.Button1Value = 4
 							Object.Button2Value = 5
 							Object.Button3Value = 6
@@ -157,7 +170,7 @@ sub ObjectMain
 							Object.ButtonPressed = 0
 							StopMusic()
 							PlaySfx(27, 0)	//Select SFX
-							Object.MCState = MENUCONTROL_EXIT
+							MenuControl.State = MENUCONTROL_EXIT
 						end if
 						break
 					end switch
@@ -217,7 +230,7 @@ end sub
 
 
 sub ObjectDraw
-	TempValue0 = Object.ButtonID
+	TempValue0   = Object.ButtonID
 	TempValue0 <<= 1
 
 	TempValue1 = Object.ButtonID

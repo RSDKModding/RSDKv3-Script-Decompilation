@@ -3,16 +3,16 @@
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
 // Aliases
-#alias Object.Value7	:	Object.CurrentPeriod
-#alias Object.Value1	:	Object.Timer
+#alias Object.Value7			:	Object.CurrentPeriod
+#alias Object.Value1			:	Object.Timer
+
+// Player Aliases
+#alias Player.Value0			:	Player.Rings
+#alias Player.Value4			:	Player.InvincibleTimer
+#alias Player.Value6			:	Player.MinRollSpeed
 
 // HUD aliases
 #alias Object[24].PropertyValue	:	HUD.TimePeriod
-
-// Player Aliases
-#alias Player.Value0	:	Player.Rings
-#alias Player.Value4	:	Player.InvincibleTimer
-#alias Player.Value6	:	Player.MinRollSpeed
 
 // States
 #alias 0	:	TIMEWARP_SETUP
@@ -21,6 +21,9 @@
 #alias 3	:	TIMEWARP_BLANK
 #alias 4	:	TIMEWARP_LEAVING
 #alias 5	:	TIMEWARP_TRAVEL
+
+// Control Mode
+#alias -1	:	CONTROL_DISABLED
 
 // Warp Destination
 #alias 1	:	WARPDEST_PAST
@@ -40,13 +43,13 @@ sub ObjectDraw
 				Warp.XPos = Player.XPos
 				Warp.YPos = Player.YPos
 
-				Warp.XVelocity = Player.XVelocity
-				Warp.YVelocity = Player.YVelocity
-				Warp.Speed = Player.Speed
-				Warp.MinRollSpeed = Player.MinRollSpeed
+				Warp.XVelocity 		= Player.XVelocity
+				Warp.YVelocity		= Player.YVelocity
+				Warp.Speed 			= Player.Speed
+				Warp.MinRollSpeed	= Player.MinRollSpeed
 
-				Warp.CollisionMode = Player.CollisionMode
-				Warp.Gravity = Player.Gravity
+				Warp.CollisionMode	= Player.CollisionMode
+				Warp.Gravity		= Player.Gravity
 
 				if Player.State == Player_State_Static
 					Warp.State = Player_State_Air
@@ -62,13 +65,13 @@ sub ObjectDraw
 					endif
 				endif
 
-				Warp.Animation = Player.Animation
-				Warp.Angle = Player.Angle
+				Warp.Animation	 = Player.Animation
+				Warp.Angle		 = Player.Angle
 				Warp.PlayerFrame = Player.Frame
 
-				Player.InvincibleTimer = 1000
-				Player.ControlMode = -1
-				Player.Visible = false
+				Player.InvincibleTimer	= 1000
+				Player.ControlMode		= CONTROL_DISABLED
+				Player.Visible			= false
 			end if
 			Music.Volume -= 8
 			SetScreenFade(208, 255, 224, Object.Timer)
@@ -93,10 +96,11 @@ sub ObjectDraw
 			// Saves everything
 			CallFunction(StageSetup_SaveStageState)
 			Rec_Milliseconds = Stage.MilliSeconds
-			Rec_Seconds = Stage.Seconds
-			Rec_Minutes = Stage.Minutes
-			Warp.Rings = Player.Rings
-			TempValue2 = HUD.TimePeriod
+			Rec_Seconds		 = Stage.Seconds
+			Rec_Minutes		 = Stage.Minutes
+
+			Warp.Rings  = Player.Rings
+			TempValue2  = HUD.TimePeriod
 
 			// Sets every object as a blank object in the current period
 			//(likely to avoid the player's death during the cutscene)
@@ -115,10 +119,10 @@ sub ObjectDraw
 			ArrayPos0 = 0
 
 			// Sets the fade in
-			Object[ArrayPos0].Type = TypeName[TimeWarp]
-			Object[ArrayPos0].State = TIMEWARP_FADE_IN
-			Object[ArrayPos0].Timer = 320
-			Object[ArrayPos0].CurrentPeriod = TempValue2
+			Object[ArrayPos0].Type			 = TypeName[TimeWarp]
+			Object[ArrayPos0].State			 = TIMEWARP_FADE_IN
+			Object[ArrayPos0].Timer			 = 320
+			Object[ArrayPos0].CurrentPeriod	 = TempValue2
 			ArrayPos0++
 
 			// Creates the background
@@ -126,15 +130,15 @@ sub ObjectDraw
 			while TempValue0 < 256
 				TempValue1 = 0
 				while TempValue1 < Screen.XSize
-					Object[ArrayPos0].Type = TypeName[TimeWarp]
+					Object[ArrayPos0].Type  = TypeName[TimeWarp]
 					Object[ArrayPos0].State = TIMEWARP_BACKGROUND
 					Rand(Object[ArrayPos0].Frame, 27)
 					Object[ArrayPos0].Frame >>= 2
 					Object[ArrayPos0].Frame <<= 2
-					Object[ArrayPos0].iXPos = TempValue1
-					Object[ArrayPos0].iYPos = TempValue0
-					Object[ArrayPos0].iXPos += 16
-					Object[ArrayPos0].iYPos += 16
+					Object[ArrayPos0].iXPos   = TempValue1
+					Object[ArrayPos0].iYPos   = TempValue0
+					Object[ArrayPos0].iXPos  += 16
+					Object[ArrayPos0].iYPos  += 16
 					Rand(Object[ArrayPos0].Direction, 15)
 					Object[ArrayPos0].Direction >>= 2
 					ArrayPos0++
@@ -143,7 +147,7 @@ sub ObjectDraw
 				TempValue0 += 32
 			loop
 			// And of course, the star of the show appears
-			Object[ArrayPos0].Type = TypeName[WarpSonic]
+			Object[ArrayPos0].Type  = TypeName[WarpSonic]
 			Object[ArrayPos0].iXPos = Screen.CenterX
 			Object[ArrayPos0].iYPos = 480
 			SetScreenFade(208, 255, 224, 255)
@@ -156,16 +160,18 @@ sub ObjectDraw
 			SetScreenFade(208, 255, 224, Object.Timer)
 			Object.Timer -= 10
 		else
+
 #platform: Use_Origins
 			game.callbackParam0=Object.PropertyValue
 			EngineCallback(NOTIFY_FUTURE_PAST)
 #endplatform
+
 			Object.State = TIMEWARP_BLANK
 		end if
 		break
 
 	case TIMEWARP_BACKGROUND
-		TempValue0 = Object.Frame
+		TempValue0   = Object.Frame
 		TempValue0 >>= 1
 		DrawSpriteFX(TempValue0, FX_FLIP, Object.XPos, Object.YPos)
 		Object.Frame++
@@ -224,6 +230,7 @@ sub ObjectDraw
 
 			case PROPVAL_BAD_FUTURE
 				Stage.ListPos -= 3
+
 #platform: Use_Origins
 				if game.playMode != BOOT_PLAYMODE_MISSION
 					Stage.ListPos -= 3
@@ -231,22 +238,25 @@ sub ObjectDraw
 					Stage.ListPos -= 2
 				endif
 #endplatform
+
 				Object.CurrentPeriod = PROPVAL_PRESENT
 				break
 
 			end switch
-			Fade_Colour = 208
+			Fade_Colour   = 208
 			Fade_Colour <<= 16
-			TempValue0 = 255
-			TempValue0 <<= 8
-			Fade_Colour += TempValue0
-			Fade_Colour += 224
+			TempValue0    = 255
+			TempValue0  <<= 8
+			Fade_Colour  += TempValue0
+			Fade_Colour  += 224
+
 #platform: Use_Origins
 			game.callbackParam0 = 1
 			EngineCallback(NOTIFY_STATS_PARAM_1)
 			game.callbackParam0 = Object.CurrentPeriod
 			EngineCallback(NOTIFY_GOTO_FUTURE_PAST)
 #endplatform
+
 			LoadStage()
 		end if
 		break
@@ -256,6 +266,7 @@ end sub
 
 sub ObjectStartup
 	LoadSpriteSheet("Global/Items3.gif")
+
 	SpriteFrame(-16, -16, 32, 32, 83, 0)	// #0  - Time Travel BG Chunk 0
 	SpriteFrame(-16, -16, 32, 32, 83, 32)	// #1  - Time Travel BG Chunk 1
 	SpriteFrame(-16, -16, 32, 32, 83, 64)	// #2  - Time Travel BG Chunk 2

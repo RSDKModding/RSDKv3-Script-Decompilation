@@ -14,8 +14,8 @@
 #alias Object[24].PropertyValue	:	HUD.TimePeriod
 
 // States
-#alias 0	:	DEATHEVENT_CLASSIC_TIMEOVER
-#alias 1	:	DEATHEVENT_GAMEOVER
+#alias 0	:	DEATHEVENT_GAMEOVER
+#alias 1	:	DEATHEVENT_TIMEOVER
 #alias 2	:	DEATHEVENT_FADEOUT
 #alias 3	:	DEATHEVENT_TIMEATTACK
 #alias 4	:	DEATHEVENT_HOLDOVERRESTART
@@ -39,8 +39,9 @@
 
 sub ObjectMain
 	switch Object.State
-	case DEATHEVENT_CLASSIC_TIMEOVER
+	case DEATHEVENT_GAMEOVER
 #platform: Use_Origins
+		// they handle the time over of Classic Mode through here
 		if game.playMode == BOOT_PLAYMODE_CLASSIC
 			CheckEqual(Object.TimeOver, false)
 			TempValue0 = CheckResult
@@ -61,7 +62,7 @@ sub ObjectMain
 		// No break is here, so fall through
 #endplatform
 
-	case DEATHEVENT_GAMEOVER
+	case DEATHEVENT_TIMEOVER
 
 #platform: Use_Origins
 		Object.TimeOver |= Object.State
@@ -72,7 +73,7 @@ sub ObjectMain
 		end if
 #endplatform
 
-		TempValue0 = Screen.CenterX
+		TempValue0  = Screen.CenterX
 		TempValue0 -= 40
 		if Object.Text1Pos < TempValue0
 			Object.Text1Pos += 16
@@ -96,25 +97,26 @@ sub ObjectMain
 			if Object.TimeOver == true
 				if LampPost.Check > 0
 					Rec_Milliseconds = 99
-					Rec_Seconds = 59
-					Rec_Minutes = 9
+					Rec_Seconds		 = 59
+					Rec_Minutes		 = 9
 					game.timeOver = true
 				else
 					Rec_Milliseconds = 0
-					Rec_Seconds = 0
-					Rec_Minutes = 0
+					Rec_Seconds		 = 0
+					Rec_Minutes		 = 0
 				end if
 			end if
 #endplatform
-			if Object.State == DEATHEVENT_CLASSIC_TIMEOVER
-				Stage.ActiveList=PRESENTATION_STAGE
-				Stage.ListPos = 0
-				LampPost.Check = 0
+			if Object.State == DEATHEVENT_GAMEOVER
+				Stage.ActiveList	= PRESENTATION_STAGE
+				Stage.ListPos		= 0
+				LampPost.Check		= 0
+
 				Transporter_Destroyed = 0
-				MetalSonic_Destroyed = 0
+				MetalSonic_Destroyed  = 0
 				
 				if Options.GameMode == GAMEMODE_SAVEGAME
-					ArrayPos1 = Options.SaveSlot
+					ArrayPos1   = Options.SaveSlot
 					ArrayPos1 <<= 3
 					ArrayPos1++
 					if SaveRAM[ArrayPos1] < 3
@@ -126,21 +128,21 @@ sub ObjectMain
 			end if
 
 #platform: Use_Origins
-			if Object.State == DEATHEVENT_CLASSIC_TIMEOVER
+			if Object.State == DEATHEVENT_GAMEOVER
 				game.callbackParam0 = game.timeOver
 				EngineCallback(NOTIFY_TIME_OVER)
 			end if
 			
-			if Object.State == DEATHEVENT_GAMEOVER
+			if Object.State == DEATHEVENT_TIMEOVER
 				Player.deadResetRings = true
 			end if
 #endplatform
 
 #platform: Use_Standalone
-			if Object.State == DEATHEVENT_CLASSIC_TIMEOVER
-				Rec_Milliseconds = 0
-				Rec_Seconds = 0
-				Rec_Minutes = 0
+			if Object.State == DEATHEVENT_GAMEOVER
+				Rec_Milliseconds	= 0
+				Rec_Seconds			= 0
+				Rec_Minutes			= 0
 			end if
 #endplatform
 			LoadStage()
@@ -171,13 +173,14 @@ sub ObjectMain
 	case DEATHEVENT_FADEOUT
 #platform: Use_Origins
 		CheckNotEqual(game.playMode, BOOT_PLAYMODE_BOSSRUSH)
-		TempValue0 = CheckResult
+		TempValue0   = CheckResult
 		CheckNotEqual(game.oneStageFlag, false)
 		CheckResult &= TempValue0
 		
 		if CheckResult != 0
-			LampPost.Check = 0
-			Object.StagePosP = Stage.ListPos
+			LampPost.Check		= 0
+			Object.StagePosP	= Stage.ListPos
+
 			game.callbackResult = -1
 			game.callbackParam0 = 0
 			game.callbackParam1 = Object.StagePosP
@@ -239,10 +242,10 @@ sub ObjectMain
 			Music.Volume -= 2
 			Object.Timer += 4
 		else
-			TimeAttack.Result = 0
-			LampPost.Check = 0
-			Stage.ActiveList = PRESENTATION_STAGE
-			Stage.ListPos = 2
+			TimeAttack.Result	= 0
+			LampPost.Check		= 0
+			Stage.ActiveList	= PRESENTATION_STAGE
+			Stage.ListPos		= 2
 			LoadStage()
 		end if
 		
@@ -302,7 +305,7 @@ end sub
 sub ObjectDraw
 	
 	switch Object.State
-	case 0
+	case DEATHEVENT_TIMEOVER
 #platform: Use_Origins
 		// In Mirror Mode, draw the sprites in reverse so that it'll look correct when mirrored
 		if game.playMode == BOOT_PLAYMODE_MIRRORING

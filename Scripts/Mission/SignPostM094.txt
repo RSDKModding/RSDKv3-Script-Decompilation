@@ -1,4 +1,4 @@
-//------------Sonic CD SignPostM094 Script-------------//
+//---------------Sonic CD SignPost M094 Script----------------//
 //--------Scripted by Christian Whitehead 'The Taxman'--------//
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
@@ -20,6 +20,9 @@
 #alias 3	:	SIGNPOSTM094_STOP_PLAYER
 #alias 4	:	SIGNPOSTM094_BLANK
 
+// Control Mode
+#alias -1	:	CONTROL_DISABLED
+
 // Priorities
 #alias 1	:	PRIORITY_ACTIVE
 #alias 3	:	PRIORITY_XBOUNDS
@@ -29,8 +32,9 @@ sub ObjectMain
 	switch Object.State
 	case SIGNPOSTM094_IDLE
 		Object.Frame = 1
-		TempValue0 = Object.YPos
-		TempValue0 += 0x600000
+
+		TempValue0   = Object.YPos
+		TempValue0  += 0x600000
 		if Player.YPos < TempValue0	// Makes sure the player triggers the signpost no matter the height
 			if Player.XPos > Object.XPos
 				Stage.NewXBoundary1   = Object.XPos
@@ -39,10 +43,13 @@ sub ObjectMain
 				Stage.NewXBoundary2   = Object.XPos
 				Stage.NewXBoundary2 >>= 16
 				Stage.NewXBoundary2  += Screen.CenterX
+
 				EngineCallback(NOTIFY_TOUCH_SIGNPOST)
+				
 				Stage.TimeEnabled = false
-				Object.State = SIGNPOSTM094_FLIP
-				Object.Timer = 8
+				Object.State	  = SIGNPOSTM094_FLIP
+				Object.Timer	  = 8
+
 				PlaySfx(15, 0)
 			end if
 		end if
@@ -59,13 +66,13 @@ sub ObjectMain
 				// Spawn a ring sparkle at random location close to the sign post
 				Rand(TempValue0, 48)
 				TempValue0 <<= 16
-				TempValue0 += Object.XPos
-				TempValue0 -= 0x180000
+				TempValue0  += Object.XPos
+				TempValue0  -= 0x180000
 
 				Rand(TempValue1, 32)
 				TempValue1 <<= 16
-				TempValue1 += Object.YPos
-				TempValue1 -= 0x1C0000
+				TempValue1  += Object.YPos
+				TempValue1  -= 0x1C0000
 				CreateTempObject(TypeName[RingSparkle], 0, TempValue0, TempValue1)
 
 				Object.Timer--
@@ -78,17 +85,17 @@ sub ObjectMain
 							PlayMusic(1)
 						end if
 
-						Object[30].Type = TypeName[ActFinish]
+						Object[30].Type		= TypeName[ActFinish]
 						ActFinish.DrawOrder = 6
-						ActFinish.Priority = PRIORITY_ACTIVE
+						ActFinish.Priority	= PRIORITY_ACTIVE
 					else	// Otherwise the signpost will do it itself.
-						Player.ControlMode = -1
+						Player.ControlMode  = CONTROL_DISABLED
 						Player.Up 			= false
 						Player.Down 		= false
 						Player.Left 		= false
 						Player.JumpPress 	= false
 						Player.JumpHold 	= false
-						Object.State = SIGNPOSTM094_MOVE_PLAYER
+						Object.State		= SIGNPOSTM094_MOVE_PLAYER
 					end if
 
 				end if
@@ -99,13 +106,13 @@ sub ObjectMain
 				// Spawn a ring sparkle at random location close to the sign post
 				Rand(TempValue0, 48)
 				TempValue0 <<= 16
-				TempValue0 += Object.XPos
-				TempValue0 -= 0x180000
+				TempValue0  += Object.XPos
+				TempValue0  -= 0x180000
 				
 				Rand(TempValue1, 32)
 				TempValue1 <<= 16
-				TempValue1 += Object.YPos
-				TempValue1 -= 0x1C0000
+				TempValue1  += Object.YPos
+				TempValue1  -= 0x1C0000
 				CreateTempObject(TypeName[RingSparkle], 0, TempValue0, TempValue1)
 				// Resets the animation cycle
 				Object.Frame = 1
@@ -118,8 +125,8 @@ sub ObjectMain
 		TempValue0 <<= 16
 		TempValue0  += Object.XPos
 		if Player.XPos > TempValue0
-			Player.XPos = TempValue0
-			Player.Speed = 0
+			Player.XPos		 = TempValue0
+			Player.Speed	 = 0
 			Player.XVelocity = 0
 		end if
 		break
@@ -135,7 +142,7 @@ sub ObjectMain
 			ActFinish.Priority  = PRIORITY_ACTIVE
 		end if
 
-		if Player.ControlMode == -1
+		if Player.ControlMode == CONTROL_DISABLED
 			Player.Right = true
 		end if
 
@@ -150,21 +157,21 @@ sub ObjectMain
 			Object.State = SIGNPOSTM094_STOP_PLAYER
 			Object[30].Type = TypeName[ActFinish]
 			ActFinish.DrawOrder = 6
-			ActFinish.Priority = PRIORITY_ACTIVE
+			ActFinish.Priority  = PRIORITY_ACTIVE
 		end if
 		break
 		
 	case SIGNPOSTM094_STOP_PLAYER
-		if Player.ControlMode == -1
+		if Player.ControlMode == CONTROL_DISABLED
 			Player.Right = true
 		end if
-		TempValue0 = 40
-		TempValue0 += Screen.CenterX
+		TempValue0   = 40
+		TempValue0  += Screen.CenterX
 		TempValue0 <<= 16
-		TempValue0 += Object.XPos
+		TempValue0  += Object.XPos
 		if Player.XPos > TempValue0
-			Player.XPos = TempValue0
-			Player.Speed = 0
+			Player.XPos		 = TempValue0
+			Player.Speed	 = 0
 			Player.XVelocity = 0
 		end if
 		break

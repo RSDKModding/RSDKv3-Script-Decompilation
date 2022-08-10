@@ -18,12 +18,18 @@
 #alias 6	:	EGGSIGNPOST_TRIGGER_ACTFINISH
 #alias 7	:	EGGSIGNPOST_STOP_PLAYER
 
+// Eggman Jetpack States
+#alias 2	:	R1_EGGMAN_ESCAPE
+
 // Priorities
 #alias 1	:	PRIORITY_ACTIVE
 #alias 3	:	PRIORITY_XBOUNDS
 
 // Collision Sides
 #alias 0	:	CSIDE_FLOOR
+
+// Control Mode
+#alias -1	:	CONTROL_DISABLED
 
 
 sub ObjectMain
@@ -34,7 +40,8 @@ sub ObjectMain
 		while ArrayPos0 < 1056
 			if Object[ArrayPos0].Type == TypeName[EggmanJetpack]
 				Object.JetpackEntity = ArrayPos0
-				Object.State = EGGSIGNPOST_CHECK_BOSS_LEAVE
+				Object.State		 = EGGSIGNPOST_CHECK_BOSS_LEAVE
+
 				ArrayPos0 = 2000
 			end if
 			
@@ -45,10 +52,10 @@ sub ObjectMain
 	case EGGSIGNPOST_CHECK_BOSS_LEAVE
 		ArrayPos0 = Object.JetpackEntity
 		if Object[ArrayPos0].Type == TypeName[BlankObject]
-			Object.Frame = 1
-			Object.Timer = 16
-			Object.State = EGGSIGNPOST_SET_SPAWN
-			Object.Priority = PRIORITY_XBOUNDS
+			Object.Frame	 = 1
+			Object.Timer	 = 16
+			Object.State	 = EGGSIGNPOST_SET_SPAWN
+			Object.Priority	 = PRIORITY_XBOUNDS
 		end if
 		break
 		
@@ -62,7 +69,7 @@ sub ObjectMain
 		break
 		
 	case EGGSIGNPOST_AIR_FLIP
-		Object.YPos += Object.YVelocity
+		Object.YPos		 += Object.YVelocity
 		Object.YVelocity += 0xC00
 		ObjectTileCollision(CSIDE_FLOOR,0,8,0)
 		if CheckResult == true
@@ -90,12 +97,12 @@ sub ObjectMain
 				Object.Frame = 1
 				Rand(TempValue0, 48)
 				TempValue0 <<= 16
-				TempValue0 += Object.XPos
-				TempValue0 -= 0x180000
+				TempValue0  += Object.XPos
+				TempValue0  -= 0x180000
 				Rand(TempValue1, 32)
 				TempValue1 <<= 16
-				TempValue1 += Object.YPos
-				TempValue1 -= 0x140000
+				TempValue1  += Object.YPos
+				TempValue1  -= 0x140000
 				CreateTempObject(TypeName[RingSparkle], 0, TempValue0, TempValue1)
 			end if
 		end if
@@ -143,20 +150,20 @@ sub ObjectMain
 	case EGGSIGNPOST_RESET
 		ResetObjectEntity(Object.Value3,TypeName[SignPost], 0, Object.XPos, Object.YPos)
 		Object.YVelocity = 1
-		Object.Frame = 1
-		Object.Timer = 16
-		Object.Priority = PRIORITY_XBOUNDS
-		Object.State = EGGSIGNPOST_TRIGGER_ACTFINISH
+		Object.Frame	 = 1
+		Object.Timer	 = 16
+		Object.Priority	 = PRIORITY_XBOUNDS
+		Object.State	 = EGGSIGNPOST_TRIGGER_ACTFINISH
 		break
 		
 	case EGGSIGNPOST_TRIGGER_ACTFINISH
-		if Object[ArrayPos0].State == 2
+		if Object[ArrayPos0].State == R1_EGGMAN_ESCAPE
 			PlayMusic(1)
-			Object.State = EGGSIGNPOST_FLIP
-			Object[30].Type = TypeName[ActFinish]
+			Object.State		 = EGGSIGNPOST_FLIP
+			Object[30].Type		 = TypeName[ActFinish]
 			Object[30].DrawOrder = 6
-			Object[30].Priority = PRIORITY_ACTIVE
-			Object.State = EGGSIGNPOST_STOP_PLAYER
+			Object[30].Priority	 = PRIORITY_ACTIVE
+			Object.State		 = EGGSIGNPOST_STOP_PLAYER
 		end if
 		break
 		
@@ -165,23 +172,24 @@ sub ObjectMain
 		TempValue0 = CheckResult
 		CheckEqual(Player.OutOfBounds, true)
 		TempValue0 |= CheckResult
-		TempValue1 = Screen.XOffset
+
+		TempValue1  = Screen.XOffset
 		TempValue1 += Screen.XSize
 		TempValue1 += 32
 		CheckGreater(Player.iXPos, TempValue1)
 		TempValue0 |= CheckResult
 		if TempValue0 == true
-			Player.State = Player_State_Ground
-			Player.ControlMode = -1
-			Player.JumpHold = false
-			Player.Right	= false
-			Player.Left		= false
-			Player.Up		= false
-			Player.Down		= false
+			Player.State		= Player_State_Ground
+			Player.ControlMode 	= CONTROL_DISABLED
+			Player.JumpHold 	= false
+			Player.Right		= false
+			Player.Left			= false
+			Player.Up			= false
+			Player.Down			= false
 
-			Player.XVelocity = 0
-			Player.YVelocity = 0
-			Player.Speed	 = 0
+			Player.XVelocity	= 0
+			Player.YVelocity	= 0
+			Player.Speed		= 0
 			
 			Screen.CameraEnabled = false
 		end if

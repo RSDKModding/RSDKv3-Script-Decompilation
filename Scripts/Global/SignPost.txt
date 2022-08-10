@@ -20,7 +20,10 @@
 #alias 3	:	SIGNPOST_STOP_PLAYER
 #alias 4	:	SIGNPOST_BLANK
 
-// Priorities
+// Control Mode
+#alias -1	:	CONTROL_DISABLED
+
+// Priority
 #alias 1	:	PRIORITY_ACTIVE
 #alias 3	:	PRIORITY_XBOUNDS
 
@@ -29,28 +32,31 @@ sub ObjectMain
 	switch Object.State
 	case SIGNPOST_IDLE
 		Object.Frame = 1
-		TempValue0 = Object.YPos
+
+		TempValue0  = Object.YPos
 		TempValue0 += 0x600000
 		if Player.YPos < TempValue0	// Makes sure the player triggers the signpost no matter the height
-			Stage.NewXBoundary1 = Object.XPos
+			Stage.NewXBoundary1   = Object.XPos
 			Stage.NewXBoundary1 >>= 16
-			Stage.NewXBoundary1 -= Screen.CenterX
-			Stage.NewXBoundary1 -= Screen.CenterX
+			Stage.NewXBoundary1  -= Screen.CenterX
+			Stage.NewXBoundary1  -= Screen.CenterX
 
-			Stage.NewXBoundary2 = Object.XPos
+			Stage.NewXBoundary2   = Object.XPos
 			Stage.NewXBoundary2 >>= 16
-			Stage.NewXBoundary2 += Screen.CenterX
+			Stage.NewXBoundary2  += Screen.CenterX
 
 			if Player.XPos > Object.XPos	// Check that the player crossed the sign post
-				Stage.NewXBoundary1 = Object.XPos
+				Stage.NewXBoundary1   = Object.XPos
 				Stage.NewXBoundary1 >>= 16
-				Stage.NewXBoundary1 -= Screen.CenterX
+				Stage.NewXBoundary1  -= Screen.CenterX
 #platform: Use_Origins
 				EngineCallback(NOTIFY_TOUCH_SIGNPOST)
 #endplatform
 				Stage.TimeEnabled = false
+
 				Object.State = SIGNPOST_FLIP
 				Object.Timer = 8
+
 				PlaySfx(15, 0)
 				
 #platform: Use_Haptics
@@ -72,13 +78,13 @@ sub ObjectMain
 				// Spawn a ring sparkle at random location close to the sign post
 				Rand(TempValue0, 48)
 				TempValue0 <<= 16
-				TempValue0 += Object.XPos
-				TempValue0 -= 0x180000
+				TempValue0  += Object.XPos
+				TempValue0  -= 0x180000
 
 				Rand(TempValue1, 32)
 				TempValue1 <<= 16
-				TempValue1 += Object.YPos
-				TempValue1 -= 0x1C0000
+				TempValue1  += Object.YPos
+				TempValue1  -= 0x1C0000
 				CreateTempObject(TypeName[RingSparkle], 0, TempValue0, TempValue1)
 
 				Object.Timer--
@@ -96,9 +102,9 @@ sub ObjectMain
 
 						Object[30].Type = TypeName[ActFinish]
 						ActFinish.DrawOrder = 6
-						ActFinish.Priority = PRIORITY_ACTIVE
+						ActFinish.Priority	= PRIORITY_ACTIVE
 					else	// Otherwise the signpost will do it itself.
-						Player.ControlMode = -1
+						Player.ControlMode 	= CONTROL_DISABLED
 						Player.Up 			= false
 						Player.Down 		= false
 						Player.Left 		= false
@@ -115,13 +121,13 @@ sub ObjectMain
 				// Spawn a ring sparkle at random location close to the sign post
 				Rand(TempValue0, 48)
 				TempValue0 <<= 16
-				TempValue0 += Object.XPos
-				TempValue0 -= 0x180000
+				TempValue0  += Object.XPos
+				TempValue0  -= 0x180000
 				
 				Rand(TempValue1, 32)
 				TempValue1 <<= 16
-				TempValue1 += Object.YPos
-				TempValue1 -= 0x1C0000
+				TempValue1  += Object.YPos
+				TempValue1  -= 0x1C0000
 				CreateTempObject(TypeName[RingSparkle], 0, TempValue0, TempValue1)
 				// Resets the animation cycle
 				Object.Frame = 1
@@ -129,13 +135,13 @@ sub ObjectMain
 
 		end if
 		// Freezes the player after leaving the screen
-		TempValue0 = 40
-		TempValue0 += Screen.CenterX
+		TempValue0   = 40
+		TempValue0  += Screen.CenterX
 		TempValue0 <<= 16
-		TempValue0 += Object.XPos
+		TempValue0  += Object.XPos
 		if Player.XPos > TempValue0
-			Player.XPos = TempValue0
-			Player.Speed = 0
+			Player.XPos		 = TempValue0
+			Player.Speed	 = 0
 			Player.XVelocity = 0
 		end if
 		break
@@ -150,18 +156,18 @@ sub ObjectMain
 					PlayMusic(1)
 				end if
 			end if
-			Object[30].Type = TypeName[ActFinish]
+			Object[30].Type		= TypeName[ActFinish]
 			ActFinish.DrawOrder = 6
-			ActFinish.Priority = PRIORITY_ACTIVE
+			ActFinish.Priority	= PRIORITY_ACTIVE
 		end if
 
-		if Player.ControlMode == -1
+		if Player.ControlMode == CONTROL_DISABLED
 			Player.Right = true
 		end if
 
-		TempValue0 = Screen.CenterX
+		TempValue0   = Screen.CenterX
 		TempValue0 <<= 16
-		TempValue0 += Object.XPos
+		TempValue0  += Object.XPos
 
 		if Player.XPos > TempValue0
 			if Object.PropertyValue < 3
@@ -172,23 +178,24 @@ sub ObjectMain
 				end if
 			end if
 			Object.State = SIGNPOST_STOP_PLAYER
-			Object[30].Type = TypeName[ActFinish]
+
+			Object[30].Type		= TypeName[ActFinish]
 			ActFinish.DrawOrder = 6
-			ActFinish.Priority = PRIORITY_ACTIVE
+			ActFinish.Priority	= PRIORITY_ACTIVE
 		end if
 		break
 
 	case SIGNPOST_STOP_PLAYER
-		if Player.ControlMode == -1
+		if Player.ControlMode == CONTROL_DISABLED
 			Player.Right = true
 		end if
-		TempValue0 = 40
-		TempValue0 += Screen.CenterX
+		TempValue0   = 40
+		TempValue0  += Screen.CenterX
 		TempValue0 <<= 16
-		TempValue0 += Object.XPos
+		TempValue0  += Object.XPos
 		if Player.XPos > TempValue0
-			Player.XPos = TempValue0
-			Player.Speed = 0
+			Player.XPos		 = TempValue0
+			Player.Speed	 = 0
 			Player.XVelocity = 0
 		end if
 		break
@@ -236,12 +243,12 @@ sub ObjectStartup
 		if Object[ArrayPos0].Type == TypeName[SignPost]
 			Object[ArrayPos0].Priority = PRIORITY_XBOUNDS
 			if Object[ArrayPos0].PropertyValue < 2
-				TempValue0 = TileLayer[0].XSize
+				TempValue0  = TileLayer[0].XSize
 				TempValue0 -= 2
 
-				TempValue1 = TileLayer[0].XSize
-				TempValue2 = Object[ArrayPos0].iYPos
-				TempValue2 += 64
+				TempValue1   = TileLayer[0].XSize
+				TempValue2   = Object[ArrayPos0].iYPos
+				TempValue2  += 64
 				TempValue2 >>= 7
 
 				GetTileLayerEntry(TempValue3, 0, TempValue0, TempValue2)

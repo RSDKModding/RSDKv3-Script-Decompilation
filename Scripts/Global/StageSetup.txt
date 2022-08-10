@@ -37,6 +37,9 @@
 #alias 0	:	PROPVAL_PRESENT
 #alias 2	:	PROPVAL_GOOD_FUTURE
 
+// Control Mode
+#alias -1	:	CONTROL_DISABLED
+
 // OST
 #alias 0	:	OST_JP
 
@@ -51,12 +54,12 @@ function StageSetup_CheckGoodFuture
 		if Object.PropertyValue > 0
 			ResetObjectEntity(Object.EntityNo, Flower_TypeNo, 0, Object.XPos, Object.YPos)
 			Object.DrawOrder = 4
-			Object.State = FLOWER_SEED_FALL
+			Object.State	 = FLOWER_SEED_FALL
 		else
 			if HUD.TimePeriod > PROPVAL_PRESENT
 				ResetObjectEntity(Object.EntityNo, Flower_TypeNo, 0, Object.XPos, Object.YPos)
 				Object.DrawOrder = 4
-				Object.State = FLOWER_SEED_FALL
+				Object.State	 = FLOWER_SEED_FALL
 			end if
 		end if
 	end if
@@ -66,7 +69,8 @@ end function
 function StageSetup_SaveStageState
 	ArrayPos0 = 32
 	ArrayPos1 = 7168
-	TempValue1 = HUD.TimePeriod
+
+	TempValue1  = HUD.TimePeriod
 	TempValue1 += 4
 	// Checks and saves:
 	// Anything that doesn't exist anymore
@@ -113,7 +117,8 @@ end function
 function StageSetup_LoadStageState
 	ArrayPos0 = 32
 	ArrayPos1 = 7168
-	TempValue1 = HUD.TimePeriod
+
+	TempValue1  = HUD.TimePeriod
 	TempValue1 += 4
 	// Checks and loads:
 	// Anything that doesn't exist anymore
@@ -170,11 +175,12 @@ sub ObjectMain
 
 	if Options.GameMode != GAMEMODE_TIMEATTACK
 		if Player.Score >= Player.ScoreBonus
+
 #platform: Use_Origins
-			if game.coinMode==0
+			if game.coinMode == false
 				Player.Lives++
 			else
-				game.callbackParam0=1
+				game.callbackParam0 = 1
 				EngineCallback(NOTIFY_ADD_COIN)
 			endif
 #endplatform
@@ -204,10 +210,10 @@ sub ObjectMain
 			TempValue0 &= CheckResult
 			if TempValue0 != false
 				if game.playMode == BOOT_PLAYMODE_CLASSIC
-					Stage.Minutes = 9
-					Stage.Seconds = 59
-					Stage.MilliSeconds = 99
-					Stage.TimeEnabled = false
+					Stage.Minutes		 = 9
+					Stage.Seconds		 = 59
+					Stage.MilliSeconds	 = 99
+					Stage.TimeEnabled	 = false
 				end if
 
 				if game.playMode != BOOT_PLAYMODE_BOSSRUSH
@@ -221,9 +227,9 @@ sub ObjectMain
 	if game.forceKillPlayer == true
 		game.forceKillPlayer = false
 		CheckEqual(Player.State, Player_State_Death)
-		TempValue0 = CheckResult
+		TempValue0  = CheckResult
 		CheckEqual(Player.State, Player_State_Drown)
-		CheckResult|=TempValue0
+		CheckResult |= TempValue0
 		if CheckResult == false
 			Object[0].Type=TypeName[PlayerObject]
 			CallFunction(Player_Kill)
@@ -234,11 +240,11 @@ sub ObjectMain
 #platform: Use_Standalone
 	if Stage.TimeEnabled == true
 		if Stage.Minutes == 10
-			Stage.Minutes = 9
-			Stage.Seconds = 59
-			Stage.MilliSeconds = 99
-			Stage.TimeEnabled = 0
-			Object[0].Type = TypeName[PlayerObject]
+			Stage.Minutes		 = 9
+			Stage.Seconds		 = 59
+			Stage.MilliSeconds	 = 99
+			Stage.TimeEnabled	 = false
+			Object[0].Type		 = TypeName[PlayerObject]
 			CallFunction(Player_Kill)
 		end if
 	end if
@@ -247,29 +253,29 @@ end sub
 
 
 sub ObjectPlayerInteraction
-	TempValue0 = Player.CollisionLeft
+	TempValue0   = Player.CollisionLeft
 	TempValue0 <<= 16
-	TempValue0 += Player.XPos
+	TempValue0  += Player.XPos
 	
-	TempValue1 = Stage.XBoundary1
+	TempValue1   = Stage.XBoundary1
 	TempValue1 <<= 16
 	if TempValue0 < TempValue1
 		if Player.Right == true
 			Player.XVelocity = 0x10000
-			Player.Speed = 0x10000
+			Player.Speed	 = 0x10000
 		else
 			Player.XVelocity = 0
-			Player.Speed = 0
+			Player.Speed	 = 0
 		end if
-		Player.XPos = TempValue1
-		TempValue0 = Player.CollisionLeft
+		Player.XPos  = TempValue1
+		TempValue0   = Player.CollisionLeft
 		TempValue0 <<= 16
 		Player.XPos -= TempValue0
 	end if
 	// Death Boundary
-	TempValue0 = Player.CollisionBottom
+	TempValue0   = Player.CollisionBottom
 	TempValue0 <<= 16
-	TempValue0 += Player.YPos
+	TempValue0  += Player.YPos
 	if TempValue0 > Stage.DeathBoundary
 		CallFunction(Player_Kill)
 	end if
@@ -291,11 +297,11 @@ sub ObjectStartup
 		SetMusicTrack("US/GameOver.ogg", 5, 0)
 	end if
 	
-	Stage.PauseEnabled = false
-	Screen.CameraStyle = Options.OriginalControls
+	Stage.PauseEnabled  = false
+	Screen.CameraStyle  = Options.OriginalControls
 	Screen.CameraTarget = 0
 
-	Stage.DeathBoundary = Stage.YBoundary2
+	Stage.DeathBoundary   = Stage.YBoundary2
 	Stage.DeathBoundary <<= 16
 	Object[23].Type = TypeName[StageSetup]
 	StageSetup.Priority = PRIORITY_ACTIVE
@@ -324,26 +330,25 @@ sub ObjectStartup
 	if Warp.XPos > 0	// if the player comes from a time travel, load the warp values
 		Player.XPos = Warp.XPos
 		Player.YPos = Warp.YPos
+
 		Player.XVelocity = Warp.XVelocity
 		Player.YVelocity = Warp.YVelocity
-		Player.Speed = Warp.Speed
+		Player.Speed	 = Warp.Speed
 
 		Player.CollisionMode = Warp.CollisionMode
-		Player.Gravity = Warp.Gravity
+		Player.Gravity		 = Warp.Gravity
 
-		Player.State = Warp.State
+		Player.State 		= Warp.State
 
-		Player.Animation = Warp.Animation
-		Player.Frame = Warp.PlayerFrame
-		Player.Angle = Warp.Angle
-
-		Player.Rings = Warp.Rings
-
+		Player.Animation 	= Warp.Animation
+		Player.Frame	 	= Warp.PlayerFrame
+		Player.Angle	 	= Warp.Angle
+		Player.Rings	 	= Warp.Rings
 		Player.MinRollSpeed = Warp.MinRollSpeed
 
-		Stage.MilliSeconds = Rec_Milliseconds
-		Stage.Seconds = Rec_Seconds
-		Stage.Minutes = Rec_Minutes
+		Stage.MilliSeconds	= Rec_Milliseconds
+		Stage.Seconds		= Rec_Seconds
+		Stage.Minutes		= Rec_Minutes
 
 		CallFunction(StageSetup_LoadStageState)
 	else
@@ -352,27 +357,27 @@ sub ObjectStartup
 			SaveRAM[ArrayPos0] = 0
 			ArrayPos0++
 		loop
-		Player.Direction = FACING_RIGHT
-		Player.Left = false
-		Player.Right = true
-		Player.ControlMode = -1
-		Player.Speed = 0
-		Player.Animation = 0
+		Player.Direction	= FACING_RIGHT
+		Player.Left			= false
+		Player.Right		= true
+		Player.ControlMode	= CONTROL_DISABLED
+		Player.Speed		= 0
+		Player.Animation	= ANI_STOPPED
 	end if
 
 	if HUD.TimePeriod == PROPVAL_GOOD_FUTURE
-		Good_Future = true
-		Transporter_Destroyed = true
+		Good_Future				= true
+		Transporter_Destroyed	= true
 	end if
 
 	if SpecialStage.TimeStones == 127
-		Good_Future = true
-		Transporter_Destroyed = true
+		Good_Future				= true
+		Transporter_Destroyed	= true
 	end if
 
-	Warp.Destination = WARP_NONE
-	Ring.ExtraLife = 100
-	Player.RoofBarrier = false
+	Warp.Destination 	= WARP_NONE
+	Ring.ExtraLife		= 100
+	Player.RoofBarrier	= false
 end sub
 
 // ========================

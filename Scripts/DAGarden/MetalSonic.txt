@@ -9,6 +9,7 @@
 #alias Object.Value3	:	Object.XOffSet
 #alias Object.Value4	:	Object.Speed
 
+// States
 #alias 0	:	METALSONIC_SETUP
 #alias 1	:	METALSONIC_GOTO_CENTER
 #alias 2	:	METALSONIC_SET_DIRECTION
@@ -19,7 +20,7 @@
 sub ObjectMain
 	switch Object.State
 	case METALSONIC_SETUP
-		Object.XOffSet = Screen.CenterX
+		Object.XOffSet   = Screen.CenterX
 		Object.XOffSet <<= 16
 		if Object.XPos < Object.XOffSet
 			Object.Direction = FACING_RIGHT
@@ -30,12 +31,12 @@ sub ObjectMain
 		break
 		
 	case METALSONIC_GOTO_CENTER
-		TempValue0 = Object.XOffSet
-		TempValue0 -= Object.XPos
+		TempValue0   = Object.XOffSet
+		TempValue0  -= Object.XPos
 		TempValue0 >>= 5
 
-		TempValue1 = 0x780000
-		TempValue1 -= Object.YPos
+		TempValue1   = 0x780000
+		TempValue1  -= Object.YPos
 		TempValue1 >>= 5
 
 		Object.XPos += TempValue0
@@ -56,12 +57,13 @@ sub ObjectMain
 		Object.Wobble &= 511
 		Sin(Object.YPos, Object.Wobble)
 		Object.YPos <<= 9
-		Object.YPos += Object.YOffSet
+		Object.YPos  += Object.YOffSet
 
 		Object.Timer++
 		if Object.Timer == 100
-			Object.Timer = 0
-			Object.YOffSet = Object.YPos
+			Object.Timer	= 0
+			Object.YOffSet	= Object.YPos
+
 			Object.Direction++
 			Object.Direction &= FACING_LEFT
 			Object.State++
@@ -74,8 +76,8 @@ sub ObjectMain
 		Object.Wobble += 64
 		Object.Wobble &= 511
 		Sin(Object.YPos, Object.Wobble)
-		Object.YPos <<= 7
-		Object.YPos += Object.YOffSet
+		Object.YPos  <<= 7
+		Object.YPos   += Object.YOffSet
 
 		if Object.Direction == FACING_LEFT
 			Object.XPos += 0x8000
@@ -116,7 +118,7 @@ end sub
 
 sub ObjectDraw
 	// Jet Flame
-	TempValue0 = Object.AnimationTimer
+	TempValue0   = Object.AnimationTimer
 	TempValue0 >>= 1
 	TempValue0++
 	DrawSpriteFX(TempValue0, FX_FLIP, Object.XPos, Object.YPos)

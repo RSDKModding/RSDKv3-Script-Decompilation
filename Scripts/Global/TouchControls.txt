@@ -14,6 +14,9 @@
 // Ink Effects
 #alias 2	:	INK_ALPHA
 
+// Control Mode
+#alias 0	:	CONTROL_ENABLED
+
 // Priority
 #alias 1	:	PRIORITY_ACTIVE
 #alias 4	:	PRIORITY_BOUNDS_DESTROY
@@ -49,17 +52,17 @@ function DebugMode_ChangeItem
 	case 23
 	case 24
 	case 25
-		Object.Frame = Object.CurrentSelection
+		Object.Frame		= Object.CurrentSelection
 		Object.HelperSprite = 0
 		break
 
 	case 26
-		Object.Frame = 26
+		Object.Frame		= 26
 		Object.HelperSprite = 27
 		break
 
 	case 27
-		Object.Frame = 28
+		Object.Frame		= 28
 		Object.HelperSprite = 29
 		break
 	end switch
@@ -105,10 +108,10 @@ sub ObjectMain
 		Object.HelperSprite = 0
 		Object.Type = TypeName[PlayerObject]
 		// THEY #FIXED HIM!!!
-		if Stage.PlayerListPos == 1	// PlayerName[TAILS]
+		if Stage.PlayerListPos == 1	// Tails
 			Object[+1].Type = TypeName[TailsObject]
 		endif
-		Player.Speed = 0
+		Player.Speed	 = 0
 		Player.Rotation  = 0
 		Player.XVelocity = 0
 		Player.YVelocity = 0
@@ -123,10 +126,11 @@ sub ObjectMain
 #endplatform
 
 #platform: Standard
-		Player.Animation = ANI_WALKING
+		Player.Animation	  = ANI_WALKING
 		Player.AnimationSpeed = 0
-		Player.Frame = 0
-		Player.ControlMode = 0
+		Player.Frame		  = 0
+
+		Player.ControlMode		 = CONTROL_ENABLED
 		Player.ObjectInteraction = true
 #endplatform
 	else
@@ -145,6 +149,7 @@ sub ObjectMain
 				Object.CurrentSelection++
 			end if
 #endplatform
+
 			if Object.CurrentSelection > 27
 				Object.CurrentSelection = 0
 			end if
@@ -198,7 +203,7 @@ sub ObjectMain
 				case 14
 				case 15
 				case 16
-					TempValue0 = Object.CurrentSelection
+					TempValue0  = Object.CurrentSelection
 					TempValue0 -= 9
 					CreateTempObject(TypeName[RedSpring], TempValue0, Player.XPos, Player.YPos)
 					break
@@ -211,7 +216,7 @@ sub ObjectMain
 				case 22
 				case 23
 				case 24
-					TempValue0 = Object.CurrentSelection
+					TempValue0  = Object.CurrentSelection
 					TempValue0 -= 17
 					CreateTempObject(TypeName[YellowSpring], TempValue0, Player.XPos, Player.YPos)
 					break
@@ -258,7 +263,7 @@ sub ObjectDraw
 		if Stage.State != STAGE_PAUSED
 			if Object.Fade < 160
 				Object.Fade += 4
-				Object.PauseFade = Object.Fade
+				Object.PauseFade   = Object.Fade
 				Object.PauseFade <<= 1
 			end if
 			
@@ -316,7 +321,7 @@ sub ObjectDraw
 		end if
 	else
 		if Object.Fade > 0
-			Object.Fade -= 4
+			Object.Fade		 -= 4
 			Object.PauseFade -= 8
 		end if
 
@@ -350,6 +355,7 @@ end sub
 sub ObjectStartup
 #platform: Standard
 	LoadSpriteSheet("Global/Items.gif")
+
 	SpriteFrame(-8, -8, 16, 16, 1, 1)			// #0  - Ring
 	// Monitors
 	SpriteFrame(-16, -16, 32, 32, 18, 1)		// #1  - Ring Monitor
@@ -411,24 +417,25 @@ sub ObjectStartup
 #platform: Mobile
 	if Options.AttractMode == false
 		LoadSpriteSheet("Global/DPad.gif")
+
 		Object[25].Type = TypeName[Debug Mode]
-		Object[25].Priority = PRIORITY_ACTIVE
-		Object[25].DrawOrder = 6
-		Object[25].InkEffect = INK_ALPHA
-		Object[25].Fade = 0
-		Object[25].PauseFade = 0
-		Object[25].PauseXPos = Screen.XSize
-		Object[25].PauseXPos -= 68
-		Object[25].AButtonXPos = Screen.XSize
+		Object[25].Priority		 = PRIORITY_ACTIVE
+		Object[25].DrawOrder	 = 6
+		Object[25].InkEffect	 = INK_ALPHA
+		Object[25].Fade 		 = 0
+		Object[25].PauseFade	 = 0
+		Object[25].PauseXPos	 = Screen.XSize
+		Object[25].PauseXPos	-= 68
+		Object[25].AButtonXPos	 = Screen.XSize
 
 		if Engine.PlatformID == RETRO_WP7
-			Object[25].AButtonXPos -= 69
-			Object[25].DPadXPos = 24
-			Options.DPadX = 56
+			Object[25].AButtonXPos  -= 69
+			Object[25].DPadXPos		 = 24
+			Options.DPadX			 = 56
 		else
-			Object[25].AButtonXPos -= 61
-			Object[25].DPadXPos = 16
-			Options.DPadX = 48
+			Object[25].AButtonXPos  -= 61
+			Object[25].DPadXPos		 = 16
+			Options.DPadX			 = 48
 		end if
 
 		// This script is only ever used in normal stages, Special Stages have their own TouchControls script

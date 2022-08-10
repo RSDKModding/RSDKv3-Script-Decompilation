@@ -11,11 +11,14 @@
 #alias Object.Value6	:	Object.Drag
 #alias Object.Value7	:	Object.TouchInput
 
+// MenuControl Alias
+#alias Object[0].State	:	MenuControl.State
+
 // MenuControl States
-#alias Object[0].State	:	Object.MCState
+#alias 2	:	MENUCONTROL_IDLE
 
 sub ObjectMain
-	if Object.MCState == 2
+	if MenuControl.State == MENUCONTROL_IDLE
 		// Update Little Planet control
 		// Most of the things here are for physical controllers - touch input is handled in the Touch Buttons object
 
@@ -93,26 +96,26 @@ sub ObjectMain
 				Object[1].XPos = Object.XPos
 				Object[1].YPos = Object.YPos
 			else
-				TempValue0 = TouchScreen[ArrayPos0].XPos
-				TempValue0 -= Object[0].XPos
-				TempValue0 *= Object.ZoomDepth
+				TempValue0   = TouchScreen[ArrayPos0].XPos
+				TempValue0  -= Object[0].XPos
+				TempValue0  *= Object.ZoomDepth
 				TempValue0 >>= 11
-				TempValue0 += Object[1].XPos
-				TempValue1 = TempValue0
-				TempValue1 -= Object.XPos
+				TempValue0  += Object[1].XPos
+				TempValue1   = TempValue0
+				TempValue1  -= Object.XPos
 				if TempValue1 < 0
 					FlipSign(TempValue1)
 				end if
 				if TempValue1 < 14
 					Object.XPos = TempValue0
 				end if
-				TempValue0 = TouchScreen[ArrayPos0].YPos
-				TempValue0 -= Object[0].YPos
-				TempValue0 *= Object.ZoomDepth
+				TempValue0   = TouchScreen[ArrayPos0].YPos
+				TempValue0  -= Object[0].YPos
+				TempValue0  *= Object.ZoomDepth
 				TempValue0 >>= 11
-				TempValue0 += Object[1].YPos
-				TempValue1 = TempValue0
-				TempValue1 -= Object.YPos
+				TempValue0  += Object[1].YPos
+				TempValue1   = TempValue0
+				TempValue1  -= Object.YPos
 				if TempValue1 < 0
 					FlipSign(TempValue1)
 				end if
@@ -131,7 +134,7 @@ sub ObjectMain
 	end if
 	Object.RotationLimit &= 0x1FFF
 
-	Object.Rotation = Object.RotationLimit
+	Object.Rotation   = Object.RotationLimit
 	Object.Rotation >>= 4
 end sub
 
@@ -142,23 +145,23 @@ sub ObjectDraw
 	end if
 
 	if Object.ZoomDepth > 0
-		TempValue0 = Object.XPos
+		TempValue0   = Object.XPos
 		TempValue0 <<= 11
-		TempValue0 /= Object.ZoomDepth
-		TempValue0 += Screen.CenterX
+		TempValue0  /= Object.ZoomDepth
+		TempValue0  += Screen.CenterX
 
-		TempValue1 = Object.YPos
+		TempValue1   = Object.YPos
 		TempValue1 <<= 11
-		TempValue1 /= Object.ZoomDepth
-		TempValue1 += 120
+		TempValue1  /= Object.ZoomDepth
+		TempValue1  += 120
 
-		Object.Scale = 0x20000
+		Object.Scale  = 0x20000
 		Object.Scale /= Object.ZoomDepth
 		DrawSpriteScreenFX(Object.Frame, FX_ROTOZOOM, TempValue0, TempValue1)
 
-		TempValue2 = Object.AnimationTimer
+		TempValue2   = Object.AnimationTimer
 		TempValue2 >>= 3
-		TempValue3 = Object.Frame
+		TempValue3   = Object.Frame
 		switch TempValue2
 		case 0
 			TempValue3++
@@ -259,7 +262,7 @@ sub ObjectStartup
 		if Object[ArrayPos0].Type == TypeName[LittlePlanet]
 			Object[ArrayPos0].XPos = 0
 			Object[ArrayPos0].YPos = 0
-			Object[ArrayPos0].ZoomDepth = 384
+			Object[ArrayPos0].ZoomDepth		= 384
 			Object[ArrayPos0].RotationSpeed = -8
 		end if
 		ArrayPos0++

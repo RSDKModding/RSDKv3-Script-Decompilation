@@ -30,6 +30,10 @@
 #alias 0	:	PRIORITY_BOUNDS
 #alias 1	:	PRIORITY_ACTIVE
 
+// Control Mode
+#alias -1	:	CONTROL_DISABLED
+#alias  0	:	CONTROL_ENABLED
+
 
 sub ObjectPlayerInteraction
 	switch Object.PropertyValue
@@ -42,11 +46,11 @@ sub ObjectPlayerInteraction
 				if Player.State != Player_State_Static
 					Player.State = Player_State_Static
 
-					Player.TrackScroll = true
+					Player.TrackScroll	  = true
 					Player.TileCollisions = false
 
-					Player.Speed = 0
-					Player.XVelocity = 0
+					Player.Speed	 =  0
+					Player.XVelocity =  0
 					Player.YVelocity = -0xC0000
 
 					Player.AnimationSpeed = 0
@@ -60,21 +64,20 @@ sub ObjectPlayerInteraction
 		if CheckResult == true
 			
 #platform: Use_Origins
-				Player.State = Player_State_Air_NoDropDash
+			Player.State = Player_State_Air_NoDropDash
 #endplatform
 
 #platform: Use_Standalone
-				Player.State = Player_State_Air
+			Player.State = Player_State_Air
 #endplatform
 			
 			Player.TileCollisions = true
 
-			Player.Speed = 0x80000
-			Player.XVelocity = 0x80000
+			Player.Speed	 =  0x80000
+			Player.XVelocity =  0x80000
 			Player.YVelocity = -0xE0000
 
-			Player.Gravity = GRAVITY_AIR
-			
+			Player.Gravity  = GRAVITY_AIR
 			Player.Rotation = 384
 
 			Stage.NewYBoundary2 = 1280
@@ -88,9 +91,10 @@ sub ObjectPlayerInteraction
 				end if
 			end if
 
-			Object[15].Type = TypeName[BackgroundFX]
-			Object[15].Priority = PRIORITY_ACTIVE
+			Object[15].Type		 = TypeName[BackgroundFX]
+			Object[15].Priority	 = PRIORITY_ACTIVE
 			Object[15].DrawOrder = 0
+
 			ArrayPos0 = 0
 			while ArrayPos0 < 2
 				HParallax[ArrayPos0].ScrollPos = 0
@@ -114,12 +118,11 @@ sub ObjectPlayerInteraction
 
 				Player.TileCollisions = true
 
-				Player.Speed = 0x40000
-				Player.XVelocity = 0x40000
+				Player.Speed	 =  0x40000
+				Player.XVelocity =  0x40000
 				Player.YVelocity = -0xC0000
 
-				Player.Gravity = GRAVITY_AIR
-
+				Player.Gravity  = GRAVITY_AIR
 				Player.Rotation = 384
 
 				Stage.NewYBoundary2 = 1280
@@ -145,11 +148,8 @@ sub ObjectPlayerInteraction
 
 	case RAMP3D_ENTER
 		if Player.XPos > Object.XPos
-
 			if Player.Gravity == GRAVITY_GROUND
-
 				if Player.State != Player_State_Static
-
 					if Player.State == Player_State_Roll
 
 						if Player.Angle > 216
@@ -177,12 +177,9 @@ sub ObjectPlayerInteraction
 			BoostSpinner.XOriginPos /= 3
 
 			StarBush1.XOriginPos >>= 1
-
-			StarBush2.XOriginPos  = StarBush1.XOriginPos
-
-			StarBush1.XOriginPos += StarBush1.XPos
-
-			StarBush2.XOriginPos += StarBush2.XPos
+			StarBush2.XOriginPos   = StarBush1.XOriginPos
+			StarBush1.XOriginPos  += StarBush1.XPos
+			StarBush2.XOriginPos  += StarBush2.XPos
 
 			BoostSpinner.XOriginPos += BoostSpinner.XPos
 
@@ -190,15 +187,15 @@ sub ObjectPlayerInteraction
 			TempValue0 -= Player.YPos
 			if TempValue0 < 0xE00000
 			
-				TempValue0 = Player.XPos
+				TempValue0  = Player.XPos
 				TempValue0 -= Player.XOriginPos
 				HParallax[0].ScrollPos += TempValue0
 
-				ArrayPos0 = 13
+				ArrayPos0  = 13
 				TempValue2 = 128
 				while ArrayPos0 < 141
-					TempValue1 = TempValue0
-					TempValue1 *= TempValue2
+					TempValue1   = TempValue0
+					TempValue1  *= TempValue2
 					TempValue1 >>= 7
 					HParallax[ArrayPos0].ScrollPos += TempValue1
 
@@ -218,11 +215,9 @@ sub ObjectPlayerInteraction
 			BoostSpinner.XOriginPos = BoostSpinner.XPos
 
 			if Player.Gravity == GRAVITY_GROUND
-
 				if Player.State == Player_State_Ramp3D
 					Player.State = Player_State_Ground
 				end if
-
 			end if
 
 		end if
@@ -250,38 +245,31 @@ sub ObjectPlayerInteraction
 			end if
 
 			if Player.Animation == ANI_DROPPING
-				Player.Speed = 0
+				Player.Speed	 = 0
 				Player.XVelocity = 0
-				Player.XPos = Player.XOriginPos
+				Player.XPos		 = Player.XOriginPos
 			end if
-
 		end if
 		break
 
 	case RAMP3D_SET_YBOUND2
 		if Player.YPos < Object.YPos
-
 			if Player.XPos > Object.XPos
 				Stage.YBoundary2 = 792
 			else
 				Stage.YBoundary2 = 1024
 			end if
-
 		end if
 		break
 
 	case RAMP3D_RUN_FROM_TOP
 		if Player.XPos > Object.XPos
-
 			Stage.YBoundary2 = 1024
 			if Player.Gravity == GRAVITY_GROUND
-
 				if Player.State == Player_State_Ramp3D
 					Player.State = Player_State_Ground
 				end if
-
 			end if
-
 		else
 			Stage.YBoundary2 = 792
 		end if
@@ -293,21 +281,20 @@ sub ObjectPlayerInteraction
 			Player.Timer = 0
 
 #platform: Use_Origins
-				Player.State = Player_State_Air_NoDropDash
+			Player.State = Player_State_Air_NoDropDash
 #endplatform
 
 #platform: Use_Standalone
-				Player.State = Player_State_Air
+			Player.State = Player_State_Air
 #endplatform
 
 			Player.TileCollisions = true
 
-			Player.Speed = 0x80000
-			Player.XVelocity = 0x80000
+			Player.Speed	 =  0x80000
+			Player.XVelocity =  0x80000
 			Player.YVelocity = -0xE0000
 
-			Player.Gravity = GRAVITY_AIR
-
+			Player.Gravity  = GRAVITY_AIR
 			Player.Rotation = 384
 
 			Stage.NewYBoundary2 = 1280
@@ -332,13 +319,13 @@ sub ObjectPlayerInteraction
 		end if
 
 		if Player.YVelocity < 0
-			Player.ControlMode = -1
-			Player.Left = false
-			Player.Right = false
-			Object.Priority = PRIORITY_ACTIVE
+			Player.ControlMode  = CONTROL_DISABLED
+			Player.Left			= false
+			Player.Right		= false
+			Object.Priority 	= PRIORITY_ACTIVE
 		else
-			Player.ControlMode = 0
-			Object.Priority = PRIORITY_BOUNDS
+			Player.ControlMode  = CONTROL_ENABLED
+			Object.Priority		= PRIORITY_BOUNDS
 		end if
 		
 		break
@@ -349,8 +336,8 @@ end sub
 sub ObjectStartup
 	if Player.XPos > 0x7D00000
 		Stage.YBoundary2 = 1280
-		Object[15].Type = TypeName[BackgroundFX]
-		Object[15].Priority = PRIORITY_ACTIVE
+		Object[15].Type		 = TypeName[BackgroundFX]
+		Object[15].Priority	 = PRIORITY_ACTIVE
 		Object[15].DrawOrder = 0
 	end if
 

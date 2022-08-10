@@ -7,6 +7,9 @@
 #alias Object.Value1	:	Object.SpawnList
 #alias Object.Value2	:	Object.SpawnType		// Set by BGAnimation
 
+// Blue Bird/ Slow Bird Alias
+#alias Object.Value2		:	Object.Wobble
+
 // Spawn List
 // 0		- Blue Bird
 // 1, 4, 10	- Tornado
@@ -33,13 +36,13 @@ function CharacterSpawn_SpawnBlueBird
 	while TempValue1 > 1
 		// Random XPos
 		Rand(TempValue2, 64)
-		TempValue2 -= 32
-		TempValue2 += TempValue0
+		TempValue2  -= 32
+		TempValue2  += TempValue0
 		TempValue2 <<= 16
 		// Random YPos
 		Rand(TempValue3, 96)
-		TempValue3 -= 48
-		TempValue3 += TempValue4
+		TempValue3  -= 48
+		TempValue3  += TempValue4
 		TempValue3 <<= 16
 
 		CreateTempObject(TypeName[BlueBird], 0, TempValue2, TempValue3)
@@ -48,7 +51,7 @@ function CharacterSpawn_SpawnBlueBird
 		else
 			Object[TempObjectPos].Direction = FACING_LEFT
 		end if
-		Object[TempObjectPos].Value2 = TempValue5	// Set the base wobble value
+		Object[TempObjectPos].Wobble = TempValue5	// Set the base wobble value
 		TempValue5 += 8
 		// Set the wobble increment value
 		Rand(Object[TempObjectPos].PropertyValue, 10)
@@ -58,13 +61,13 @@ function CharacterSpawn_SpawnBlueBird
 	// Spawn one slower blue bird
 	// Random XPos
 	Rand(TempValue2, 64)
-	TempValue2 -= 32
-	TempValue2 += TempValue0
+	TempValue2  -= 32
+	TempValue2  += TempValue0
 	TempValue2 <<= 16
 	// Random YPos
 	Rand(TempValue3, 96)
-	TempValue3 -= 48
-	TempValue3 += TempValue4
+	TempValue3  -= 48
+	TempValue3  += TempValue4
 	TempValue3 <<= 16
 
 	CreateTempObject(TypeName[SlowBird], 0, TempValue2, TempValue3)
@@ -73,7 +76,7 @@ function CharacterSpawn_SpawnBlueBird
 	else
 		Object[TempObjectPos].Direction = FACING_LEFT
 	end if
-	Object[TempObjectPos].Value2 = TempValue5	// Set the base wobble value
+	Object[TempObjectPos].Wobble = TempValue5	// Set the base wobble value
 	TempValue5 += 8
 	// Set the wobble increment value
 	Rand(Object[TempObjectPos].PropertyValue, 10)
@@ -86,13 +89,13 @@ function CharacterSpawn_SpawnShootStar
 	while TempValue1 > 0
 		// Random XPos
 		Rand(TempValue2, 256)
-		TempValue2 -= 64
-		TempValue2 += Screen.CenterX
+		TempValue2  -= 64
+		TempValue2  += Screen.CenterX
 		TempValue2 <<= 16
 
 		// Random YPos
 		Rand(TempValue3, 80)
-		TempValue3 -= 96
+		TempValue3  -= 96
 		TempValue3 <<= 16
 
 		// Define the color of the shooting star
@@ -111,17 +114,17 @@ function CharacterSpawn_SpawnSetup
 	switch Object.SpawnList
 	case 0
 		// Set Base XPos
-		TempValue0 = Screen.XSize
+		TempValue0  = Screen.XSize
 		TempValue0 += 96
-		TempValue1 = 8
+		TempValue1  = 8
 		CallFunction(CharacterSpawn_SpawnBlueBird)
 		Object.SpawnList++
 		break
 
 	case 1
 		// Set Base XPos
-		TempValue0 = Screen.XSize
-		TempValue0 += 48
+		TempValue0   = Screen.XSize
+		TempValue0  += 48
 		TempValue0 <<= 16
 		CreateTempObject(TypeName[TailsBiplane], 0, TempValue0, Object.YPos)
 		Object[TempObjectPos].Direction = FACING_LEFT
@@ -131,9 +134,9 @@ function CharacterSpawn_SpawnSetup
 	case 2
 		if Object.SpawnType == 0
 			// Set Base XPos
-			TempValue0 = 0
+			TempValue0  = 0
 			TempValue0 -= 96
-			TempValue1 = 6
+			TempValue1  = 6
 			CallFunction(CharacterSpawn_SpawnBlueBird)
 		else
 			TempValue1 = 3	// Set the amount of stars to spawn
@@ -145,8 +148,8 @@ function CharacterSpawn_SpawnSetup
 	case 3
 		// Set XPos
 		Rand(TempValue0, 320)
-		TempValue0 -= 160
-		TempValue0 += Screen.CenterX
+		TempValue0  -= 160
+		TempValue0  += Screen.CenterX
 		TempValue0 <<= 16
 		// Determine if spawns from the top or bottom of the screen
 		Rand(TempValue1, 64)
@@ -166,9 +169,9 @@ function CharacterSpawn_SpawnSetup
 	case 5
 		if Object.SpawnType == 0
 			// Set Base XPos
-			TempValue0 = 0
+			TempValue0  = 0
 			TempValue0 -= 96
-			TempValue1 = 4
+			TempValue1  = 4
 			CallFunction(CharacterSpawn_SpawnBlueBird)
 		else
 			TempValue1 = 4	// Set the amount of stars to spawn
@@ -179,8 +182,8 @@ function CharacterSpawn_SpawnSetup
 
 	case 6
 		// Set Base XPos
-		TempValue0 = Screen.XSize
-		TempValue0 += 48
+		TempValue0   = Screen.XSize
+		TempValue0  += 48
 		TempValue0 <<= 16
 		CreateTempObject(TypeName[UFO], 0, TempValue0, Object.YPos)
 		Object[TempObjectPos].Direction = FACING_LEFT
@@ -189,8 +192,8 @@ function CharacterSpawn_SpawnSetup
 		
 	case 7
 		// Set Base XPos
-		TempValue0 = Screen.XSize
-		TempValue0 += 48
+		TempValue0   = Screen.XSize
+		TempValue0  += 48
 		TempValue0 <<= 16
 		CreateTempObject(TypeName[DrEggman], 6, TempValue0, 0xC00000)
 		Object[TempObjectPos].Direction = FACING_RIGHT
@@ -200,8 +203,8 @@ function CharacterSpawn_SpawnSetup
 	case 8
 		// Set Base XPos
 		Rand(TempValue0, 320)
-		TempValue0 -= 160
-		TempValue0 += Screen.CenterX
+		TempValue0  -= 160
+		TempValue0  += Screen.CenterX
 		TempValue0 <<= 16
 		// Determine if spawns from the top or bottom of the screen
 		Rand(TempValue1, 64)
@@ -216,9 +219,9 @@ function CharacterSpawn_SpawnSetup
 	case 9
 		if Object.SpawnType == 0
 			// Set Base XPos
-			TempValue0 = Screen.XSize
+			TempValue0  = Screen.XSize
 			TempValue0 += 96
-			TempValue1 = 8
+			TempValue1  = 8
 			CallFunction(CharacterSpawn_SpawnBlueBird)
 		else
 			TempValue1 = 2	// Set the amount of stars to spawn
@@ -229,8 +232,8 @@ function CharacterSpawn_SpawnSetup
 
 	case 10
 		// Set Base XPos
-		TempValue0 = Screen.XSize
-		TempValue0 += 48
+		TempValue0   = Screen.XSize
+		TempValue0  += 48
 		TempValue0 <<= 16
 		CreateTempObject(TypeName[TailsBiplane], 0, TempValue0, Object.YPos)
 		Object[TempObjectPos].Direction = FACING_LEFT
@@ -245,7 +248,7 @@ function CharacterSpawn_SpawnSetup
 
 	case 12
 		// Set Base XPos
-		TempValue0 = -48
+		TempValue0   = -48
 		TempValue0 <<= 16
 		CreateTempObject(TypeName[DrEggman], 6, TempValue0, 0xC00000)
 		Object[TempObjectPos].Direction = FACING_LEFT
