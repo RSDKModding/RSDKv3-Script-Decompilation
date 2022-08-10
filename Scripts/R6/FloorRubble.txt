@@ -1,4 +1,4 @@
-//------------Sonic CD FloorRubble Script-------------//
+//---------------Sonic CD Floor Rubble Script-----------------//
 //--------Scripted by Christian Whitehead 'The Taxman'--------//
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
@@ -8,43 +8,54 @@
 #alias Object.Value2	:	Object.YVelocity
 #alias Object.Value3	:	Object.FallSpeed
 
+// Property Values
+#alias 0	:	BIG_RUBBLE
+#alias 1	:	BIG_RUBBLE_ALT
+#alias 2	:	RUBBLE_CHUNK_1
+#alias 3	:	RUBBLE_CHUNK_2
+#alias 4	:	RUBBLE_CHUNK_3
+#alias 5	:	RUBBLE_CHUNK_4
+
+// Collision Sides
+#alias 0	:	CSIDE_FLOOR
+
 
 sub ObjectMain
-	Object.XPos += Object.XVelocity
+	Object.XPos		 += Object.XVelocity
 	Object.YVelocity += Object.FallSpeed
-	Object.YPos += Object.YVelocity
+	Object.YPos		 += Object.YVelocity
 
-	if Object.PropertyValue == 0
-		ObjectTileCollision(0, 0, 8, 0)
+	if Object.PropertyValue == BIG_RUBBLE
+		ObjectTileCollision(CSIDE_FLOOR, 0, 8, 0)
 		if CheckResult == true
 			Object.Type = TypeName[Blank Object]
-			CreateTempObject(TypeName[FloorRubble], 2, Object.XPos, Object.YPos)
-			Object[TempObjectPos].XPos -= 0x40000
-			Object[TempObjectPos].YPos -= 0x40000
-			Object[TempObjectPos].XVelocity = -0x10000
-			Object[TempObjectPos].YVelocity = -0x28000
-			Object[TempObjectPos].FallSpeed = 0x3000
+			CreateTempObject(TypeName[FloorRubble], RUBBLE_CHUNK_1, Object.XPos, Object.YPos)
+			Object[TempObjectPos].XPos		-=  0x40000
+			Object[TempObjectPos].YPos		-=  0x40000
+			Object[TempObjectPos].XVelocity	 = -0x10000
+			Object[TempObjectPos].YVelocity  = -0x28000
+			Object[TempObjectPos].FallSpeed  =  0x3000
 
-			CreateTempObject(TypeName[FloorRubble], 3, Object.XPos, Object.YPos)
-			Object[TempObjectPos].XPos += 0x40000
-			Object[TempObjectPos].YPos -= 0x40000
-			Object[TempObjectPos].XVelocity = 0x10000
-			Object[TempObjectPos].YVelocity = -0x28000
-			Object[TempObjectPos].FallSpeed = 0x3000
+			CreateTempObject(TypeName[FloorRubble], RUBBLE_CHUNK_2, Object.XPos, Object.YPos)
+			Object[TempObjectPos].XPos		+=  0x40000
+			Object[TempObjectPos].YPos		-=  0x40000
+			Object[TempObjectPos].XVelocity  =  0x10000
+			Object[TempObjectPos].YVelocity  = -0x28000
+			Object[TempObjectPos].FallSpeed  =  0x3000
 
-			CreateTempObject(TypeName[FloorRubble], 4, Object.XPos, Object.YPos)
-			Object[TempObjectPos].XPos -= 0x40000
-			Object[TempObjectPos].YPos += 0x40000
-			Object[TempObjectPos].XVelocity = -0x20000
-			Object[TempObjectPos].YVelocity = -0x1C000
-			Object[TempObjectPos].FallSpeed = 0x3000
+			CreateTempObject(TypeName[FloorRubble], RUBBLE_CHUNK_3, Object.XPos, Object.YPos)
+			Object[TempObjectPos].XPos		-=  0x40000
+			Object[TempObjectPos].YPos		+=  0x40000
+			Object[TempObjectPos].XVelocity  = -0x20000
+			Object[TempObjectPos].YVelocity  = -0x1C000
+			Object[TempObjectPos].FallSpeed  =  0x3000
 
-			CreateTempObject(TypeName[FloorRubble], 5, Object.XPos, Object.YPos)
-			Object[TempObjectPos].XPos += 0x40000
-			Object[TempObjectPos].YPos += 0x40000
-			Object[TempObjectPos].XVelocity = 0x20000
-			Object[TempObjectPos].YVelocity = -0x1C000
-			Object[TempObjectPos].FallSpeed = 0x3000
+			CreateTempObject(TypeName[FloorRubble], RUBBLE_CHUNK_4, Object.XPos, Object.YPos)
+			Object[TempObjectPos].XPos		+=  0x40000
+			Object[TempObjectPos].YPos		+=  0x40000
+			Object[TempObjectPos].XVelocity  =  0x20000
+			Object[TempObjectPos].YVelocity  = -0x1C000
+			Object[TempObjectPos].FallSpeed  =  0x3000
 		end if
 	else
 		if Object.OutOfBounds == true
@@ -55,8 +66,8 @@ end sub
 
 
 sub ObjectDraw
-	if Object.PropertyValue == 0
-		TempValue0 = Object.RubbleType
+	if Object.PropertyValue == BIG_RUBBLE
+		TempValue0  = Object.RubbleType
 		TempValue0 /= 10
 		DrawSprite(TempValue0)
 
@@ -73,6 +84,7 @@ sub ObjectStartup
 
 	SpriteFrame(-8, -8, 16, 16, 165, 191)	// #0 - Big rubble
 	SpriteFrame(-8, -8, 16, 16, 181, 191)	// #1 - Big rubble alt
+	
 	SpriteFrame(-4, -4, 8, 8, 165, 191)		// #2 - Rubble chunk 1
 	SpriteFrame(-4, -4, 8, 8, 173, 191)		// #3 - Rubble chunk 2
 	SpriteFrame(-4, -4, 8, 8, 165, 199)		// #4 - Rubble chunk alt 1

@@ -1,4 +1,4 @@
-//------------Sonic CD Moving Blocks Script-------------//
+//----------------Sonic CD Moving Blocks Script---------------//
 //--------Scripted by Christian Whitehead 'The Taxman'--------//
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
@@ -12,6 +12,19 @@
 #alias Object.Value6	:	Object.BlockXPos_4	
 #alias Object.Value7	:	Object.BlockYPos_4
 #alias Object.Direction	:	Object.BlockState
+#alias Object.Rotation	:	Object.MovePattern
+
+#alias 0	:	FORMATION_L_AND_LINES
+#alias 1	:	FORMATION_TETRIS_PIECES_LEFT
+#alias 3	:	FORMATION_L_AND_LINES_CCW
+#alias 4	:	FORMATION_TETRIS_PIECES_RIGHT
+
+// States
+#alias 0	:	MOVINGBLOCKS_MOVE
+#alias 1	:	MOVINGBLOCKS_CHANGE_PATTERN
+
+// Player Collision
+#alias 1	:	PLAYER_COL_FLOOR
 
 // Function declarations
 #function MovingBlocks_MoveType_1
@@ -28,12 +41,14 @@ function MovingBlocks_MoveType_1
 			Object.BlockYPos_2 = Object.BlockYPos_1
 		end if
 		break
+
 	case 1
 		Object.BlockYPos_1 -= 0x8000
 		if Object.AnimationTimer == 64
 			Object.BlockYPos_3 = Object.BlockYPos_1
 		end if
 		break
+
 	case 2
 		Object.BlockYPos_1 -= 0x8000
 		if Object.AnimationTimer == 64
@@ -41,6 +56,7 @@ function MovingBlocks_MoveType_1
 			Object.BlockYPos_1 = Object.YPos
 		end if
 		break
+
 	case 3
 		Object.BlockXPos_1 += 0x8000
 		Object.BlockYPos_4 += 0x8000
@@ -49,6 +65,7 @@ function MovingBlocks_MoveType_1
 			Object.BlockYPos_3 = Object.BlockYPos_1
 		end if
 		break
+
 	case 4
 		Object.BlockXPos_1 += 0x8000
 		Object.BlockYPos_4 += 0x8000
@@ -57,6 +74,7 @@ function MovingBlocks_MoveType_1
 			Object.BlockYPos_2 = Object.BlockYPos_1
 		end if
 		break
+
 	case 5
 		Object.BlockXPos_1 += 0x8000
 		Object.BlockYPos_4 += 0x8000
@@ -65,6 +83,7 @@ function MovingBlocks_MoveType_1
 			Object.BlockXPos_1 = Object.XPos
 		end if
 		break
+
 	case 6
 		Object.BlockYPos_1 += 0x8000
 		Object.BlockXPos_4 -= 0x8000
@@ -73,6 +92,7 @@ function MovingBlocks_MoveType_1
 			Object.BlockYPos_2 = Object.BlockYPos_1
 		end if
 		break
+
 	case 7
 		Object.BlockYPos_1 += 0x8000
 		Object.BlockXPos_4 -= 0x8000
@@ -81,6 +101,7 @@ function MovingBlocks_MoveType_1
 			Object.BlockYPos_3 = Object.BlockYPos_1
 		end if
 		break
+
 	case 8
 		Object.BlockYPos_1 += 0x8000
 		Object.BlockXPos_4 -= 0x8000
@@ -89,6 +110,7 @@ function MovingBlocks_MoveType_1
 			Object.BlockYPos_1 = Object.YPos
 		end if
 		break
+
 	case 9
 		Object.BlockXPos_1 -= 0x8000
 		Object.BlockYPos_4 -= 0x8000
@@ -97,6 +119,7 @@ function MovingBlocks_MoveType_1
 			Object.BlockYPos_3 = Object.BlockYPos_1
 		end if
 		break
+
 	case 10
 		Object.BlockXPos_1 -= 0x8000
 		Object.BlockYPos_4 -= 0x8000
@@ -105,6 +128,7 @@ function MovingBlocks_MoveType_1
 			Object.BlockYPos_2 = Object.BlockYPos_1
 		end if
 		break
+
 	case 11
 		Object.BlockXPos_1 -= 0x8000
 		Object.BlockYPos_4 -= 0x8000
@@ -114,6 +138,7 @@ function MovingBlocks_MoveType_1
 			Object.BlockXPos_1 = Object.XPos
 		end if
 		break
+		
 	case 12
 		Object.BlockYPos_1 -= 0x8000
 		Object.BlockXPos_4 += 0x8000
@@ -122,6 +147,7 @@ function MovingBlocks_MoveType_1
 			Object.BlockYPos_2 = Object.BlockYPos_1
 		end if
 		break
+
 	case 13
 		Object.BlockYPos_1 -= 0x8000
 		Object.BlockXPos_4 += 0x8000
@@ -130,6 +156,7 @@ function MovingBlocks_MoveType_1
 			Object.BlockYPos_3 = Object.BlockYPos_1
 		end if
 		break
+
 	case 14
 		Object.BlockYPos_1 -= 0x8000
 		Object.BlockXPos_4 += 0x8000
@@ -150,12 +177,14 @@ function MovingBlocks_MoveType_2
 			Object.BlockYPos_2 = Object.BlockYPos_1
 		end if
 		break
+
 	case 1
 		Object.BlockYPos_1 -= 0x8000
 		if Object.AnimationTimer == 64
 			Object.BlockYPos_3 = Object.BlockYPos_1
 		end if
 		break
+
 	case 2
 		Object.BlockYPos_1 -= 0x8000
 		if Object.AnimationTimer == 64
@@ -171,6 +200,7 @@ function MovingBlocks_MoveType_2
 			Object.BlockYPos_3 = Object.BlockYPos_1
 		end if
 		break
+
 	case 4
 		Object.BlockXPos_1 -= 0x8000
 		Object.BlockYPos_4 += 0x8000
@@ -179,6 +209,7 @@ function MovingBlocks_MoveType_2
 			Object.BlockYPos_2 = Object.BlockYPos_1
 		end if
 		break
+
 	case 5
 		Object.BlockXPos_1 -= 0x8000
 		Object.BlockYPos_4 += 0x8000
@@ -188,6 +219,7 @@ function MovingBlocks_MoveType_2
 			Object.BlockXPos_1 = Object.XPos
 		end if
 		break
+
 	case 6
 		Object.BlockYPos_1 += 0x8000
 		Object.BlockXPos_4 += 0x8000
@@ -196,6 +228,7 @@ function MovingBlocks_MoveType_2
 			Object.BlockYPos_2 = Object.BlockYPos_1
 		end if
 		break
+
 	case 7
 		Object.BlockYPos_1 += 0x8000
 		Object.BlockXPos_4 += 0x8000
@@ -204,6 +237,7 @@ function MovingBlocks_MoveType_2
 			Object.BlockYPos_3 = Object.BlockYPos_1
 		end if
 		break
+
 	case 8
 		Object.BlockYPos_1 += 0x8000
 		Object.BlockXPos_4 += 0x8000
@@ -212,6 +246,7 @@ function MovingBlocks_MoveType_2
 			Object.BlockYPos_1 = Object.YPos
 		end if
 		break
+
 	case 9
 		Object.BlockXPos_1 += 0x8000
 		Object.BlockYPos_4 -= 0x8000
@@ -220,6 +255,7 @@ function MovingBlocks_MoveType_2
 			Object.BlockYPos_3 = Object.BlockYPos_1
 		end if
 		break
+
 	case 10
 		Object.BlockXPos_1 += 0x8000
 		Object.BlockYPos_4 -= 0x8000
@@ -228,6 +264,7 @@ function MovingBlocks_MoveType_2
 			Object.BlockYPos_2 = Object.BlockYPos_1
 		end if
 		break
+
 	case 11
 		Object.BlockXPos_1 += 0x8000
 		Object.BlockYPos_4 -= 0x8000
@@ -236,6 +273,7 @@ function MovingBlocks_MoveType_2
 			Object.BlockXPos_1 = Object.XPos
 		end if
 		break
+
 	case 12
 		Object.BlockYPos_1 -= 0x8000
 		Object.BlockXPos_4 -= 0x8000
@@ -244,6 +282,7 @@ function MovingBlocks_MoveType_2
 			Object.BlockYPos_2 = Object.BlockYPos_1
 		end if
 		break
+
 	case 13
 		Object.BlockYPos_1 -= 0x8000
 		Object.BlockXPos_4 -= 0x8000
@@ -252,6 +291,7 @@ function MovingBlocks_MoveType_2
 			Object.BlockYPos_3 = Object.BlockYPos_1
 		end if
 		break
+		
 	case 14
 		Object.BlockYPos_1 -= 0x8000
 		Object.BlockXPos_4 -= 0x8000
@@ -272,15 +312,18 @@ function MovingBlocks_MoveType_3
 			Object.BlockYPos_2 = Object.BlockYPos_1
 		end if
 		break
+
 	case 1
 		Object.BlockYPos_1 -= 0x8000
 		if Object.AnimationTimer == 64
 			Object.BlockYPos_3 = Object.BlockYPos_1
 		end if
 		break
+		
 	case 2
 		Object.BlockXPos_1 += 0x8000
 		break
+
 	case 3
 		Object.BlockXPos_1 -= 0x8000
 		Object.BlockXPos_4 += 0x8000
@@ -289,6 +332,7 @@ function MovingBlocks_MoveType_3
 			Object.BlockYPos_3 = Object.BlockYPos_4
 		end if
 		break
+
 	case 4
 		Object.BlockYPos_1 += 0x8000
 		Object.BlockYPos_4 -= 0x8000
@@ -297,10 +341,12 @@ function MovingBlocks_MoveType_3
 			Object.BlockYPos_2 = Object.BlockYPos_4
 		end if
 		break
+
 	case 5
 		Object.BlockYPos_1 += 0x8000
 		Object.BlockXPos_4 += 0x8000
 		break
+
 	case 6
 		Object.BlockYPos_1 += 0x8000
 		Object.BlockXPos_4 -= 0x8000
@@ -309,6 +355,7 @@ function MovingBlocks_MoveType_3
 			Object.BlockYPos_2 = Object.BlockYPos_1
 		end if
 		break
+
 	case 7
 		Object.BlockYPos_1 += 0x8000
 		Object.BlockYPos_4 += 0x8000
@@ -317,10 +364,12 @@ function MovingBlocks_MoveType_3
 			Object.BlockYPos_3 = Object.BlockYPos_1
 		end if
 		break
+
 	case 8
 		Object.BlockXPos_1 += 0x8000
 		Object.BlockXPos_4 -= 0x8000
 		break
+		
 	case 9
 		Object.BlockXPos_1 -= 0x8000
 		Object.BlockXPos_4 -= 0x8000
@@ -329,6 +378,7 @@ function MovingBlocks_MoveType_3
 			Object.BlockYPos_3 = Object.BlockYPos_4
 		end if
 		break
+		
 	case 10
 		Object.BlockYPos_1 -= 0x8000
 		Object.BlockXPos_4 -= 0x8000
@@ -337,10 +387,12 @@ function MovingBlocks_MoveType_3
 			Object.BlockYPos_2 = Object.BlockYPos_4
 		end if
 		break
+
 	case 11
 		Object.BlockYPos_1 -= 0x8000
 		Object.BlockXPos_4 -= 0x8000
 		break
+
 	case 12
 		Object.BlockYPos_1 -= 0x8000
 		Object.BlockXPos_4 += 0x8000
@@ -349,6 +401,7 @@ function MovingBlocks_MoveType_3
 			Object.BlockYPos_2 = Object.BlockYPos_1
 		end if
 		break
+
 	case 13
 		Object.BlockYPos_1 -= 0x8000
 		Object.BlockXPos_4 += 0x8000
@@ -357,6 +410,7 @@ function MovingBlocks_MoveType_3
 			Object.BlockYPos_3 = Object.BlockYPos_1
 		end if
 		break
+
 	case 14
 		Object.BlockXPos_1 += 0x8000
 		Object.BlockXPos_4 += 0x8000
@@ -373,12 +427,14 @@ function MovingBlocks_MoveType_4
 			Object.BlockXPos_2 = Object.BlockXPos_1
 		end if
 		break
+
 	case 1
 		Object.BlockXPos_1 += 0x8000
 		if Object.AnimationTimer == 64
 			Object.BlockXPos_3 = Object.BlockXPos_1
 		end if
 		break
+
 	case 2
 		Object.BlockYPos_1 -= 0x8000
 		break
@@ -390,6 +446,7 @@ function MovingBlocks_MoveType_4
 			Object.BlockYPos_3 = Object.BlockYPos_4
 		end if
 		break
+
 	case 4
 		Object.BlockXPos_1 -= 0x8000
 		Object.BlockXPos_4 -= 0x8000
@@ -398,10 +455,12 @@ function MovingBlocks_MoveType_4
 			Object.BlockYPos_2 = Object.BlockYPos_4
 		end if
 		break
+
 	case 5
 		Object.BlockXPos_1 -= 0x8000
 		Object.BlockXPos_4 -= 0x8000
 		break
+
 	case 6
 		Object.BlockXPos_1 -= 0x8000
 		Object.BlockXPos_4 += 0x8000
@@ -410,6 +469,7 @@ function MovingBlocks_MoveType_4
 			Object.BlockYPos_2 = Object.BlockYPos_1
 		end if
 		break
+
 	case 7
 		Object.BlockYPos_1 -= 0x8000
 		Object.BlockXPos_4 += 0x8000
@@ -418,10 +478,12 @@ function MovingBlocks_MoveType_4
 			Object.BlockYPos_3 = Object.BlockYPos_1
 		end if
 		break
+
 	case 8
 		Object.BlockXPos_1 -= 0x8000
 		Object.BlockYPos_4 -= 0x8000
 		break
+
 	case 9
 		Object.BlockXPos_1 += 0x8000
 		Object.BlockYPos_4 -= 0x8000
@@ -430,6 +492,7 @@ function MovingBlocks_MoveType_4
 			Object.BlockYPos_3 = Object.BlockYPos_4
 		end if
 		break
+
 	case 10
 		Object.BlockYPos_1 += 0x8000
 		Object.BlockXPos_4 += 0x8000
@@ -438,10 +501,12 @@ function MovingBlocks_MoveType_4
 			Object.BlockYPos_2 = Object.BlockYPos_4
 		end if
 		break
+
 	case 11
 		Object.BlockXPos_1 += 0x8000
 		Object.BlockYPos_4 -= 0x8000
 		break
+
 	case 12
 		Object.BlockXPos_1 += 0x8000
 		Object.BlockYPos_4 += 0x8000
@@ -450,6 +515,7 @@ function MovingBlocks_MoveType_4
 			Object.BlockYPos_2 = Object.BlockYPos_1
 		end if
 		break
+
 	case 13
 		Object.BlockXPos_1 += 0x8000
 		Object.BlockXPos_4 -= 0x8000
@@ -458,6 +524,7 @@ function MovingBlocks_MoveType_4
 			Object.BlockYPos_3 = Object.BlockYPos_1
 		end if
 		break
+		
 	case 14
 		Object.BlockYPos_1 -= 0x8000
 		Object.BlockYPos_4 += 0x8000
@@ -467,13 +534,13 @@ end function
 
 
 sub ObjectMain
-	if Object.State == 0
+	if Object.State == MOVINGBLOCKS_MOVE
 		if Object.AnimationTimer < 64
 			Object.AnimationTimer++
-			CallFunction(Object.Rotation)
+			CallFunction(Object.MovePattern)
 		else
 			Object.AnimationTimer = 0
-			Object.State = 1
+			Object.State = MOVINGBLOCKS_CHANGE_PATTERN
 			Object.BlockState++
 			if Object.BlockState > 14
 				Object.BlockState = 3
@@ -484,7 +551,7 @@ sub ObjectMain
 			Object.AnimationTimer++
 		else
 			Object.AnimationTimer = 0
-			Object.State = 0
+			Object.State = MOVINGBLOCKS_MOVE
 		end if
 	end if
 end sub
@@ -493,30 +560,35 @@ end sub
 sub ObjectPlayerInteraction
 	TempValue0 = Object.XPos
 	TempValue1 = Object.YPos
+
 	Object.XPos = Object.BlockXPos_1
 	Object.YPos = Object.BlockYPos_1
 	PlayerObjectCollision(C_BOX, -16, -17, 16, 16)
-	if CheckResult == 1
+	if CheckResult == PLAYER_COL_FLOOR
 		Player.YPos += 0x10000
 	end if
+
 	Object.XPos = Object.BlockXPos_2
 	Object.YPos = Object.BlockYPos_2
 	PlayerObjectCollision(C_BOX, -16, -17, 16, 16)
-	if CheckResult == 1
+	if CheckResult == PLAYER_COL_FLOOR
 		Player.YPos += 0x10000
 	end if
+
 	Object.XPos = Object.BlockXPos_3
 	Object.YPos = Object.BlockYPos_3
 	PlayerObjectCollision(C_BOX, -16, -17, 16, 16)
-	if CheckResult == 1
+	if CheckResult == PLAYER_COL_FLOOR
 		Player.YPos += 0x10000
 	end if
+
 	Object.XPos = Object.BlockXPos_4
 	Object.YPos = Object.BlockYPos_4
 	PlayerObjectCollision(C_BOX, -16, -17, 16, 16)
-	if CheckResult == 1
+	if CheckResult == PLAYER_COL_FLOOR
 		Player.YPos += 0x10000
 	end if
+
 	Object.XPos = TempValue0
 	Object.YPos = TempValue1
 	PlayerObjectCollision(C_BOX, -16, -16, 16, 16)
@@ -528,6 +600,7 @@ sub ObjectDraw
 	DrawSpriteXY(0, Object.BlockXPos_4, Object.BlockYPos_4)
 	DrawSpriteXY(0, Object.BlockXPos_2, Object.BlockYPos_2)
 	DrawSpriteXY(0, Object.BlockXPos_3, Object.BlockYPos_3)
+
 	DrawSprite(0)
 end sub
 
@@ -535,7 +608,7 @@ end sub
 sub ObjectStartup
 	LoadSpriteSheet("R6/Objects.gif")
 
-	SpriteFrame(-16, -16, 32, 32, 173, 1)
+	SpriteFrame(-16, -16, 32, 32, 173, 1)	// #0 - Block
 	
 	ArrayPos0 = 32
 	while ArrayPos0 < 1056
@@ -548,18 +621,19 @@ sub ObjectStartup
 			Object[ArrayPos0].BlockYPos_3 = Object[ArrayPos0].YPos
 			Object[ArrayPos0].BlockXPos_4 = Object[ArrayPos0].XPos
 			Object[ArrayPos0].BlockYPos_4 = Object[ArrayPos0].YPos
+
 			switch Object[ArrayPos0].PropertyValue
-			case 0
-				Object[ArrayPos0].Rotation = MovingBlocks_MoveType_1
+			case FORMATION_L_AND_LINES
+				Object[ArrayPos0].MovePattern = MovingBlocks_MoveType_1
 				break
-			case 1
-				Object[ArrayPos0].Rotation = MovingBlocks_MoveType_4
+			case FORMATION_TETRIS_PIECES_LEFT
+				Object[ArrayPos0].MovePattern = MovingBlocks_MoveType_4
 				break
-			case 3
-				Object[ArrayPos0].Rotation = MovingBlocks_MoveType_2
+			case FORMATION_L_AND_LINES_CCW
+				Object[ArrayPos0].MovePattern = MovingBlocks_MoveType_2
 				break
-			case 4
-				Object[ArrayPos0].Rotation = MovingBlocks_MoveType_3
+			case FORMATION_TETRIS_PIECES_RIGHT
+				Object[ArrayPos0].MovePattern = MovingBlocks_MoveType_3
 				break
 			end switch
 		end if

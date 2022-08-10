@@ -49,11 +49,11 @@ sub ObjectMain
 	switch Object.State
 	case PAUSEMENU_START_PAUSE
 		PauseMusic()
-		Object.XPos = Screen.XSize
-		Object.BlackBarXPos = 0
-		Object.Timer = 0
-		Object.InkEffect = INK_ALPHA
-		Object.Alpha = 0
+		Object.XPos			 = Screen.XSize
+		Object.BlackBarXPos	 = 0
+		Object.Timer		 = 0
+		Object.InkEffect	 = INK_ALPHA
+		Object.Alpha		 = 0
 		switch Engine.Language
 		case LANG_ENGLISH
 		case LANG_JAPANESE
@@ -81,6 +81,7 @@ sub ObjectMain
 				Object.BlockRestart = false
 			end if
 		end if
+
 #platform: Use_Origins
 		Options.PhysicalControls = true
 #endplatform
@@ -102,27 +103,27 @@ sub ObjectMain
 		break
 
 	case PAUSEMENU_SLIDE_IN
-		Object.BlackBarXPos = Object.Timer
+		Object.BlackBarXPos  = Object.Timer
 		Object.BlackBarXPos *= Screen.XSize
 		Object.BlackBarXPos /= 12
 
-		Object.BlackBarYPos = Object.Timer
+		Object.BlackBarYPos  = Object.Timer
 		Object.BlackBarYPos *= 240
 		Object.BlackBarYPos /= 12
 		
-		TempValue0 = Object.Timer
+		TempValue0   = Object.Timer
 		TempValue0 <<= 7
-		TempValue0 /= 12
-		Object.XPos = Screen.XSize
+		TempValue0  /= 12
+		Object.XPos  = Screen.XSize
 		Object.XPos -= TempValue0
 
 		if Object.Timer < Object.TimerThreshold
 			Object.Timer++
 		else
 			PauseMusic()
-			Object.SpritesXPos = Object.XPos
+			Object.SpritesXPos  = Object.XPos
 			Object.SpritesXPos += 48
-			Object.Timer = 0
+			Object.Timer		= 0
 			Object.State++
 		end if
 		break
@@ -150,20 +151,22 @@ sub ObjectMain
 
 #platform: Use_Standalone
 	#platform: Mobile
-			CheckEqual(Options.PhysicalControls, true)
+		CheckEqual(Options.PhysicalControls, true)
 	#endplatform
 
 	#platform: Standard
-			CheckResult = true
+		CheckResult = true
 	#endplatform
 #endplatform
+
 		if CheckResult == true
 			if KeyPress[0].Up == true
 				PlaySfx(23, 0) 	//Menu Button SFX
-				Object.Timer = 0
+
+				Object.Timer		  = 0
 				Object.AnimationTimer = 0
-				Object.Frame = 0
-				Object.SpritesXPos = Screen.XSize
+				Object.Frame		  = 0
+				Object.SpritesXPos	  = Screen.XSize
 				Object.SelectedButton--
 
 				if Options.DevMenuFlag == true
@@ -189,10 +192,11 @@ sub ObjectMain
 
 			if KeyPress[0].Down == true
 				PlaySfx(23, 0) 	//Menu Button SFX
-				Object.Timer = 0
+
+				Object.Timer		  = 0
 				Object.AnimationTimer = 0
-				Object.Frame = 0
-				Object.SpritesXPos = Screen.XSize
+				Object.Frame		  = 0
+				Object.SpritesXPos	  = Screen.XSize
 				Object.SelectedButton++
 
 				if Options.DevMenuFlag == true
@@ -219,7 +223,8 @@ sub ObjectMain
 			end if
 
 			if KeyPress[0].Start == true
-				PlaySfx(27, 0)	//Select SFX
+				PlaySfx(27, 0)	//Select 
+				
 				Object.State = PAUSEMENU_CONFIRMED
 				Object.Alpha = 248
 				Object.Timer = 0
@@ -227,6 +232,7 @@ sub ObjectMain
 
 			if KeyPress[0].ButtonA == true
 				PlaySfx(27, 0)	//Select SFX
+
 				Object.State = PAUSEMENU_CONFIRMED
 				Object.Alpha = 248
 				Object.Timer = 0
@@ -234,6 +240,7 @@ sub ObjectMain
 
 			CheckTouchRect(0, 0, Screen.XSize, Screen.YSize)
 			if CheckResult > -1
+
 #platform: Use_Origins
 				Options.PhysicalControls = false
 #endplatform
@@ -258,6 +265,7 @@ sub ObjectMain
 				if TempValue3 < 0
 					if Object.SelectedButton == 0
 						PlaySfx(27, 0)	//Select SFX
+
 						Object.State = PAUSEMENU_CONFIRMED
 						Object.Alpha = 248
 						Object.Timer = 0
@@ -277,6 +285,7 @@ sub ObjectMain
 					if TempValue3 < 0
 						if Object.SelectedButton == 1
 							PlaySfx(27, 0)	//Select SFX
+
 							Object.State = PAUSEMENU_CONFIRMED
 							Object.Alpha = 248
 							Object.Timer = 0
@@ -296,6 +305,7 @@ sub ObjectMain
 				if TempValue3 < 0
 					if Object.SelectedButton == 2
 						PlaySfx(27, 0)	//Select SFX
+
 						Object.State = PAUSEMENU_CONFIRMED
 						Object.Alpha = 248
 						Object.Timer = 0
@@ -315,6 +325,7 @@ sub ObjectMain
 					if TempValue3 < 0
 						if Object.SelectedButton == 3
 							PlaySfx(27, 0)	//Select SFX
+
 							Object.State = PAUSEMENU_CONFIRMED
 							Object.Alpha = 248
 							Object.Timer = 0
@@ -335,6 +346,7 @@ sub ObjectMain
 					if TempValue3 < 0
 						if Object.SelectedButton == 3
 							PlaySfx(27, 0)	//Select SFX
+
 							Object.State = PAUSEMENU_CONFIRMED
 							Object.Alpha = 248
 							Object.Timer = 0
@@ -353,22 +365,28 @@ sub ObjectMain
 				else
 					Object.SelectedButton = 2
 				end if
+
 #platform: Use_Origins
 				Options.PhysicalControls = true
 #endplatform
+
 #platform: Mobile
 				Options.PhysicalControls = true
 #endplatform
+
 			end if
 
 			if KeyPress[0].Down == true
 				Object.SelectedButton = 0
+
 #platform: Use_Origins
 				Options.PhysicalControls = true
 #endplatform
+
 #platform: Mobile
 				Options.PhysicalControls = true
 #endplatform
+
 			end if
 		end if
 
@@ -403,6 +421,7 @@ sub ObjectMain
 				Object.State = PAUSEMENU_RESUME_GAME
 				Stage.State  = STAGE_RUNNING
 			else
+
 #platform: Standard
 				Object.SpritesXPos  = Object.XPos
 				Object.SpritesXPos += 48
@@ -421,19 +440,22 @@ sub ObjectMain
 						break
 					case 3
 						if Engine.TrialMode == false
-							Object.SpritesXPos = Object.XPos
+							Object.SpritesXPos  = Object.XPos
 							Object.SpritesXPos += 48
+
 							StopMusic()
 							Object.State = PAUSEMENU_EXIT_LEVEL	// Dev Menu
 						else
 							EngineCallback(CALLBACK_BUY_FULL_GAME_SELECTED)	// Demo End
-							Object.Timer = 0
+							Object.Timer		  = 0
 							Object.AnimationTimer = 0
-							Object.Frame = 0
-							Object.SpritesXPos = Screen.XSize
+							Object.Frame		  = 0
+							Object.SpritesXPos	  = Screen.XSize
+
 							if Options.PhysicalControls == false
 								Object.SelectedButton = -1
 							end if
+
 							Object.State = PAUSEMENU_CONTROLS
 							Object.Alpha = 255
 						end if
@@ -441,18 +463,21 @@ sub ObjectMain
 					end switch
 				else
 					if Engine.Message == MESSAGE_NO_SELECTED
-						Object.Timer = 0
+						Object.Timer		  = 0
 						Object.AnimationTimer = 0
-						Object.Frame = 0
-						Object.SpritesXPos = Screen.XSize
+						Object.Frame		  = 0
+						Object.SpritesXPos	  = Screen.XSize
+
 						if Options.PhysicalControls == false
 							Object.SelectedButton = -1
 						end if
+
 						Object.State = PAUSEMENU_CONTROLS
 						Object.Alpha = 255
 					else
-						Object.SpritesXPos = Object.XPos
+						Object.SpritesXPos  = Object.XPos
 						Object.SpritesXPos += 48
+
 						StopMusic()
 						Object.State = PAUSEMENU_EXIT_LEVEL
 					end if
@@ -465,8 +490,8 @@ sub ObjectMain
 	case PAUSEMENU_RESUME_GAME
 		if Object.Alpha > 0
 			Object.Alpha -= 8
-			Object.XPos += 16
-			Object.SpritesXPos += 16
+			Object.XPos  += 16
+			Object.SpritesXPos  += 16
 			Object.BlackBarYPos += 16
 		else
 			ResumeMusic()
@@ -502,21 +527,24 @@ sub ObjectMain
 				LoadStage()
 				break
 			case 2		// Exit
-				Good_Future_Count = 0
-				Good_Future_List = 0
-				Good_Future = 0
+				Good_Future_Count	  = 0
+				Good_Future_List	  = 0
+				Good_Future			  = 0
 				Transporter_Destroyed = 0
-				MetalSonic_Destroyed = 0
+				MetalSonic_Destroyed  = 0
+
 				Stage.ActiveList = PRESENTATION_STAGE
-				LampPost.Check = 0
+				LampPost.Check	 = 0
+
 				if Options.GameMode == GAMEMODE_TIMEATTACK
-					Stage.ListPos = 2	// Time Attack
+					Stage.ListPos	  = 2	// Time Attack
 					TimeAttack.Result = 0
 				else
-					Stage.ListPos = 0	// Title Screen
+					Stage.ListPos	  = 0	// Title Screen
 				end if
 				LoadStage()
 				break
+
 			case 3		// Dev Menu
 				TimeAttack.Round = -1
 				Engine.State = RESET_GAME
@@ -538,7 +566,7 @@ sub ObjectDraw
 		// Pause White BG
 		if Object.BlackBarHeight < 240
 			if Object.BlackBarYPos > Object.BlackBarHeight
-				TempValue0 = Object.BlackBarYPos
+				TempValue0  = Object.BlackBarYPos
 				TempValue0 -= Object.BlackBarHeight
 				DrawRect(0, Object.BlackBarHeight, 384, TempValue0, 255, 255, 255, 128)
 				Object.BlackBarHeight = Object.BlackBarYPos
@@ -555,7 +583,7 @@ sub ObjectDraw
 
 	case PAUSEMENU_EXIT_LEVEL
 		// Screen Cover
-		TempValue0 = Screen.XSize
+		TempValue0  = Screen.XSize
 		TempValue0 -= 96
 		DrawRect(TempValue0, 0, 96, 240, 0, 0, 0, 255)
 		break
@@ -572,7 +600,7 @@ sub ObjectDraw
 	DrawSpriteScreenXY(3, Object.XPos, 224)
 
 	// Pause Black Bar
-	TempValue0 = Object.XPos
+	TempValue0  = Object.XPos
 	TempValue0 += 128
 	DrawRect(TempValue0, 0, 128, Screen.YSize, 0, 0, 0, 255)
 
@@ -583,7 +611,7 @@ sub ObjectDraw
 	case PAUSEMENU_CONTROLS
 	case PAUSEMENU_CONFIRMED
 		DrawRect(0, 202, Object.BlackBarXPos, 13, 0, 0, 0, 255)
-		if Object.State < 4
+		if Object.State < PAUSEMENU_CONFIRMED
 			DrawSpriteScreenFX(4, FX_INK, 0, 202)
 		else
 			DrawSpriteScreenXY(4, 0, 202)
@@ -597,8 +625,8 @@ sub ObjectDraw
 		endswitch
 	
 	// Text Sprite Slide
-	if Object.State < 5
-		TempValue0 = Object.XPos
+	if Object.State < PAUSEMENU_RESUME_GAME
+		TempValue0  = Object.XPos
 		TempValue0 += 48
 	end if
 	
@@ -609,8 +637,8 @@ sub ObjectDraw
 	case PAUSEMENU_CONTROLS
 
 		if Object.SpritesXPos > TempValue0
-			TempValue1 = TempValue0
-			TempValue1 -= Object.SpritesXPos
+			TempValue1   = TempValue0
+			TempValue1  -= Object.SpritesXPos
 			TempValue1 >>= 3
 			Object.SpritesXPos += TempValue1
 		end if
@@ -630,7 +658,7 @@ sub ObjectDraw
 		if Object.BlockRestart == 0
 			DrawSpriteScreenFX(7, FX_INK, TempValue0, TempValue1)
 		else
-			TempValue2 = Object.Alpha
+			TempValue2	   = Object.Alpha
 			Object.Alpha >>= 1
 			DrawSpriteScreenFX(7, FX_INK, TempValue0, TempValue1)
 			Object.Alpha = TempValue2

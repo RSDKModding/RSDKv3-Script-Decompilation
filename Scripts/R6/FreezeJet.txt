@@ -1,4 +1,4 @@
-//------------Sonic CD Freeze Jet Script-------------//
+//-----------------Sonic CD Freeze Jet Script-----------------//
 //--------Scripted by Christian Whitehead 'The Taxman'--------//
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
@@ -12,6 +12,9 @@
 #alias 1	:	FREEZEJET_SHOT_BEAM
 #alias 2	:	FREEZEJET_STOPPING_BEAM
 #alias 3	:	FREEZEJET_COOLDOWN
+
+// Warp Destination
+#alias 0	:	WARPDEST_NONE
 
 
 sub ObjectMain
@@ -29,7 +32,7 @@ sub ObjectMain
 
 	case FREEZEJET_SHOT_BEAM
 		if Object.Timer < 160
-			TempValue0 = Object.Timer
+			TempValue0  = Object.Timer
 			TempValue0 &= 1
 			if TempValue0 == 0
 				Object.Frame++
@@ -49,7 +52,7 @@ sub ObjectMain
 
 	case FREEZEJET_STOPPING_BEAM
 		if Object.Timer < 24
-			TempValue0 = Object.Timer
+			TempValue0  = Object.Timer
 			TempValue0 &= 3
 			if TempValue0 == 0
 				Object.Frame++
@@ -69,7 +72,7 @@ sub ObjectMain
 
 	case FREEZEJET_COOLDOWN
 		if Object.Timer < 120
-			TempValue0 = Object.Timer
+			TempValue0  = Object.Timer
 			TempValue0 &= Object.TimerResetFreq
 			if TempValue0 == 0
 				Object.Frame++
@@ -99,20 +102,20 @@ sub ObjectPlayerInteraction
 		PlayerObjectCollision(C_TOUCH, -16, 0, 16, 60)
 		if CheckResult == true
 			if Player.InvincibleTimer == 0
-				if Warp.Destination > 0
+				if Warp.Destination > WARPDEST_NONE
 					if Warp.Timer > 99
 						if Warp.Timer < 220
-							Warp.Destination = 0
+							Warp.Destination = WARPDEST_NONE
 						end if
 					end if
 					Warp.Timer = 0
 				end if
 				Player.State = Player_State_Static
 
-				Player.Visible = false
+				Player.Visible			 = false
 				Player.ObjectInteraction = false
 
-				Player.Speed = 0
+				Player.Speed	 = 0
 				Player.XVelocity = 0
 				Player.YVelocity = 0
 
@@ -126,6 +129,7 @@ end sub
 
 sub ObjectDraw
 	DrawSpriteFX(Object.Frame, FX_FLIP, Object.XPos, Object.YPos)
+
 	DrawSprite(0)
 end sub
 

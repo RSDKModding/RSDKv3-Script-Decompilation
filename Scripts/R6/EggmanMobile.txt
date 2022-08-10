@@ -22,40 +22,43 @@
 // Boss Barrier 2 alias
 #alias Object[-1].State		:	BossBarrier2.State
 
+// Fade Screen aliases
+#alias Object.Value1		:	FadeScreen.EggMobileEntityNo
+
 // Steam Cloud aliases
 #alias Object.YPos			:	SteamCloud.YPos
 #alias Object.Value1		:	SteamCloud.XVelocity
 #alias Object.Value2		:	SteamCloud.YVelocity
 
 // States
-#alias 0		:	R6_EGG_IDLE
-#alias 1		:	R6_EGG_START
-#alias 2		:	R6_EGG_INTRO
-#alias 3		:	R6_EGG_SET_ROUTE_1
-#alias 4		:	R6_EGG_ASCEND_1
-#alias 5		:	R6_EGG_SET_ROUTE_2
-#alias 6		:	R6_EGG_ASCEND_2
-#alias 7		:	R6_EGG_SET_ROUTE_3
-#alias 8		:	R6_EGG_ASCEND_3
-#alias 9		:	R6_EGG_ROOF_DRILL
-#alias 10		:	R6_EGG_DESTROYED
-#alias 11		:	R6_EGG_PANICKING
-#alias 12		:	R6_EGG_ESCAPE
+#alias 0	:	R6_EGG_IDLE
+#alias 1	:	R6_EGG_START
+#alias 2	:	R6_EGG_INTRO
+#alias 3	:	R6_EGG_SET_ROUTE_1
+#alias 4	:	R6_EGG_ASCEND_1
+#alias 5	:	R6_EGG_SET_ROUTE_2
+#alias 6	:	R6_EGG_ASCEND_2
+#alias 7	:	R6_EGG_SET_ROUTE_3
+#alias 8	:	R6_EGG_ASCEND_3
+#alias 9	:	R6_EGG_ROOF_DRILL
+#alias 10	:	R6_EGG_DESTROYED
+#alias 11	:	R6_EGG_PANICKING
+#alias 12	:	R6_EGG_ESCAPE
 
 // FloorControl States
-#alias 0		:	FLOORCONTROL_INACTIVE
-#alias 1		:	FLOORCONTROL_SETUP_CRUMBLE
-#alias 3		:	FLOORCONTROL_ELEC_ARC
-#alias 4		:	FLOORCONTROL_TILE_SWAP
+#alias 0	:	FLOORCONTROL_INACTIVE
+#alias 1	:	FLOORCONTROL_SETUP_CRUMBLE
+#alias 3	:	FLOORCONTROL_ELEC_ARC
+#alias 4	:	FLOORCONTROL_TILE_SWAP
 
 // Boss Barrier States
-#alias 2		:	BOSSBARRIER2_OPEN
+#alias 2	:	BOSSBARRIER2_OPEN
 
 // Eggman Animations
-#alias 0		:	EGG_ANI_IDLE
-#alias 1		:	EGG_ANI_HURT
-#alias 2		:	EGG_ANI_DEFEAT
-#alias 3		:	EGG_ANI_PANIC
+#alias 0	:	EGG_ANI_IDLE
+#alias 1	:	EGG_ANI_HURT
+#alias 2	:	EGG_ANI_DEFEAT
+#alias 3	:	EGG_ANI_PANIC
 
 
 // Function declarations
@@ -67,7 +70,7 @@
 
 
 function R6_EGG_DESCEND
-	Object.YPos += Object.YVelocity
+	Object.YPos		 += Object.YVelocity
 	Object.YVelocity -= 256
 	if Object.YPos >= Object.TargetYPos
 		Object.YPos = Object.TargetYPos
@@ -82,15 +85,15 @@ end function
 
 
 function R6_EGG_MOVE
-	Object.YPos += Object.YVelocity
+	Object.YPos		 += Object.YVelocity
 	Object.YVelocity -= 0x1000
 	if Object.YPos <= Object.TargetYPos
-		Object.YPos = Object.TargetYPos
+		Object.YPos		 = Object.TargetYPos
 		Object.YVelocity = 0
 
 		Object.ThrusterAnimation = 0
-		Object.FrameTimer = 0
-		Object.SpikesAnimation = 0
+		Object.FrameTimer 		 = 0
+		Object.SpikesAnimation	 = 0
 
 		Object.AnimationTimer = 0
 		Object.AnimationSpeed = 0
@@ -101,7 +104,7 @@ end function
 
 
 function R6_EGG_ROUTE_1ST_FLOOR
-	TempValue0 = Object.YPos
+	TempValue0  = Object.YPos
 	TempValue0 += 0x780000
 
 	if Player.YPos < TempValue0
@@ -127,17 +130,17 @@ function R6_EGG_ROUTE_1ST_FLOOR
 			end if
 
 			Object.Timer += 4
-			TempValue0 = Object.Timer
+			TempValue0  = Object.Timer
 			TempValue0 &= 511
 			Sin(Object.YPos, TempValue0)
 			Object.YPos <<= 9
-			Object.YPos += Object.TargetYPos
+			Object.YPos  += Object.TargetYPos
 		else
-			Object.Timer = 0
+			Object.Timer	 = 0
 			Object.YVelocity = -0x10000
 			
 			Object.ThrusterAnimation = 1
-			Object.FrameTimer = 0
+			Object.FrameTimer		 = 0
 
 			FloorControl.State = FLOORCONTROL_SETUP_CRUMBLE
 			Object.State++
@@ -147,7 +150,7 @@ end function
 
 
 function R6_EGG_ROUTE_2ST_FLOOR
-	TempValue0 = Object.YPos
+	TempValue0  = Object.YPos
 	TempValue0 += 0x780000
 
 	if Player.YPos < TempValue0
@@ -174,19 +177,20 @@ function R6_EGG_ROUTE_2ST_FLOOR
 			end if
 
 			Object.Timer += 4
-			TempValue0 = Object.Timer
+			TempValue0  = Object.Timer
 			TempValue0 &= 511
 			Sin(Object.YPos, TempValue0)
 			Object.YPos <<= 9
-			Object.YPos += Object.TargetYPos
+			Object.YPos  += Object.TargetYPos
 		else
-			Object.Timer = 0
+			Object.Timer	 = 0
 			Object.YVelocity = -0x10000
 
 			Object.ThrusterAnimation = 1
-			Object.FrameTimer = 0
+			Object.FrameTimer		 = 0
 
 			FloorControl.State = FLOORCONTROL_SETUP_CRUMBLE
+
 			Object.TriggerElecArc = false
 			Object.State++
 		end if
@@ -194,8 +198,8 @@ function R6_EGG_ROUTE_2ST_FLOOR
 
 		if Object.OutOfBounds == true
 			Object.SpikesAnimation = 0
-			Object.AnimationTimer = 0
-			Object.AnimationSpeed = 0
+			Object.AnimationTimer  = 0
+			Object.AnimationSpeed  = 0
 		end if
 
 		if FloorControl.State < FLOORCONTROL_ELEC_ARC
@@ -219,11 +223,11 @@ function R6_EGG_STEAM
 		SteamCloud[TempObjectPos].YPos -= 0x480000
 
 		Rand(SteamCloud[TempObjectPos].XVelocity, 512)
-		SteamCloud[TempObjectPos].XVelocity -= 256
+		SteamCloud[TempObjectPos].XVelocity  -= 256
 		SteamCloud[TempObjectPos].XVelocity <<= 10
 
 		Rand(SteamCloud[TempObjectPos].YVelocity, 256)
-		SteamCloud[TempObjectPos].YVelocity *= -1024
+		SteamCloud[TempObjectPos].YVelocity  *= -1024
 	end if
 end function
 
@@ -241,11 +245,12 @@ sub ObjectMain
 		Object.Timer++
 		if Object.Timer == 120
 			Object.Timer = 0
-			Object.YVelocity = 0x30000
+
+			Object.YVelocity  = 0x30000
 			Object.TargetYPos = 0x6200000
 
 			Object.ThrusterAnimation = 1
-			Object.FrameTimer = 0
+			Object.FrameTimer		 = 0
 
 			Object.State++
 		end if
@@ -257,7 +262,7 @@ sub ObjectMain
 
 	case R6_EGG_SET_ROUTE_1
 		CallFunction(R6_EGG_ROUTE_1ST_FLOOR)
-		if Object.State > 3
+		if Object.State > R6_EGG_SET_ROUTE_1
 			Object.TargetYPos = 0x4280000
 		end if
 		break
@@ -268,7 +273,7 @@ sub ObjectMain
 
 	case R6_EGG_SET_ROUTE_2
 		CallFunction(R6_EGG_ROUTE_2ST_FLOOR)
-		if Object.State > 5
+		if Object.State > R6_EGG_SET_ROUTE_2
 			Object.TargetYPos = 0x2280000
 		end if
 		break
@@ -279,7 +284,7 @@ sub ObjectMain
 
 	case R6_EGG_SET_ROUTE_3
 		CallFunction(R6_EGG_ROUTE_2ST_FLOOR)
-		if Object.State > 7
+		if Object.State > R6_EGG_SET_ROUTE_3
 			Object.TargetYPos = 0x1300000
 		end if
 		break
@@ -299,8 +304,9 @@ sub ObjectMain
 		break
 
 	case R6_EGG_DESTROYED
-		Object.YPos += Object.YVelocity
+		Object.YPos		 += Object.YVelocity
 		Object.YVelocity += 0x1000
+
 		Player.Speed = 0
 
 		if Object.Timer == 0
@@ -312,8 +318,8 @@ sub ObjectMain
 		Object.Timer &= 1
 
 		if Object.YPos >= 0x2A00000
-			Object.YPos = 0x2A00000
-			Object.Timer = 0
+			Object.YPos 	 = 0x2A00000
+			Object.Timer	 = 0
 			Object.YVelocity = 0
 
 			Object.EggmanAnimation = EGG_ANI_PANIC
@@ -326,10 +332,10 @@ sub ObjectMain
 		end if
 
 		if Player.XPos > Object.TargetYPos
-			Player.XPos = Object.TargetYPos
+			Player.XPos  = Object.TargetYPos
 			Player.XPos += 0x500000
 		else
-			Player.XPos = Object.TargetYPos
+			Player.XPos  = Object.TargetYPos
 			Player.XPos -= 0x500000
 		end if
 
@@ -339,10 +345,10 @@ sub ObjectMain
 	case R6_EGG_PANICKING
 		Player.Speed = 0
 		if Player.XPos > Object.XPos
-			Player.XPos = Object.XPos
+			Player.XPos  = Object.XPos
 			Player.XPos += 0x500000
 		else
-			Player.XPos = Object.XPos
+			Player.XPos  = Object.XPos
 			Player.XPos -= 0x500000
 		end if
 
@@ -357,17 +363,17 @@ sub ObjectMain
 			Object.State++
 			Object.SpikesAnimation = 3
 			CreateTempObject(TypeName[FadeScreen], 0, Object.XPos, Object.YPos)
-			Object[TempObjectPos].Value1 = Object.EntityNo
+			FadeScreen[TempObjectPos].EggMobileEntityNo = Object.EntityNo
 		end if
 		break
 
 	case R6_EGG_ESCAPE
 		Player.Speed = 0
 		if Player.XPos > Object.XPos
-			Player.XPos = Object.XPos
+			Player.XPos  = Object.XPos
 			Player.XPos += 0x500000
 		else
-			Player.XPos = Object.XPos
+			Player.XPos  = Object.XPos
 			Player.XPos -= 0x500000
 		end if
 		break
@@ -385,7 +391,7 @@ sub ObjectPlayerInteraction
 	if Player.Animation != ANI_HURT
 		if Object.FaceTimer == 0
 			PlayerObjectCollision(C_TOUCH, -64, -48, 64, 16)
-			TempValue0 = CheckResult
+			TempValue0  = CheckResult
 			PlayerObjectCollision(C_TOUCH, -32, 16, 32, 32)
 			TempValue0 |= CheckResult
 			if TempValue0 == true
@@ -401,12 +407,12 @@ sub ObjectPlayerInteraction
 
 					FlipSign(Player.YVelocity)
 					Player.YVelocity >>= 1
-					Player.XVelocity = Player.Speed
+					Player.XVelocity   = Player.Speed
 
 					if Object.State < R6_EGG_ROOF_DRILL
 						PlayStageSfx(11, 0)
 						Object.EggmanAnimation = EGG_ANI_HURT
-						Object.Frame = 0
+						Object.Frame		   = 0
 					else
 
 #platform: Use_Origins
@@ -419,11 +425,12 @@ sub ObjectPlayerInteraction
 #endplatform
 
 						Object.State = R6_EGG_DESTROYED
+
 						Object.SpikesAnimation = 2
-						Object.AnimationTimer = 0
+						Object.AnimationTimer  = 0
 						Object.EggmanAnimation = EGG_ANI_DEFEAT
-						Object.FaceFrame = 0
-						Object.Frame = 0
+						Object.FaceFrame	   = 0
+						Object.Frame		   = 0
 
 						Object.TargetYPos = Object.XPos
 
@@ -447,14 +454,14 @@ sub ObjectDraw
 
 	switch Object.EggmanAnimation
 	case EGG_ANI_IDLE
-		TempValue0 = Object.FaceFrame
+		TempValue0  = Object.FaceFrame
 		TempValue0 /= 10
 		TempValue0 += 2
 
 		Object.FaceFrame++
 		Object.FaceFrame %= 20
 
-		Object.Direction = Object.Frame
+		Object.Direction  = Object.Frame
 		Object.Direction /= 25
 
 		Object.Frame++
@@ -463,7 +470,7 @@ sub ObjectDraw
 		break
 
 	case EGG_ANI_HURT
-		Object.Direction = Object.Frame
+		Object.Direction  = Object.Frame
 		Object.Direction /= 10
 		Object.Frame++
 		Object.Frame %= 20
@@ -472,8 +479,8 @@ sub ObjectDraw
 			Object.FaceTimer--
 		else
 			Object.EggmanAnimation = EGG_ANI_IDLE
-			Object.FaceFrame = 0
-			Object.Frame = 0
+			Object.FaceFrame	   = 0
+			Object.Frame		   = 0
 		end if
 		break
 
@@ -482,7 +489,7 @@ sub ObjectDraw
 		break
 
 	case EGG_ANI_PANIC
-		Object.Direction = Object.Frame
+		Object.Direction  = Object.Frame
 		Object.Direction /= 25
 
 		Object.Frame++
@@ -498,9 +505,9 @@ sub ObjectDraw
 		break
 
 	case 1
-		TempValue0 = Object.AnimationTimer
+		TempValue0   = Object.AnimationTimer
 		TempValue0 >>= 7
-		TempValue0 += 7
+		TempValue0  += 7
 		DrawSprite(TempValue0)
 
 		Object.AnimationTimer += Object.AnimationSpeed
@@ -512,7 +519,7 @@ sub ObjectDraw
 		break
 
 	case 2
-		TempValue0 = Object.AnimationTimer
+		TempValue0  = Object.AnimationTimer
 		TempValue0 /= 3
 		if TempValue0 < 4
 			TempValue0 += 11
@@ -535,7 +542,7 @@ sub ObjectDraw
 		break
 
 	case 1
-		TempValue0 = Object.FrameTimer
+		TempValue0  = Object.FrameTimer
 		TempValue0 /= 3
 		TempValue0 += 15
 		DrawSprite(TempValue0)

@@ -19,10 +19,12 @@
 // Floor Control aliases
 #alias 4	:	FLOORCONTROL_TILE_SWAP
 
-// Collision
-#alias 1	:	CSIDE_FLOOR
-#alias 4	:	CSIDE_ROOF
+// Collision Sides
+#alias 0	:	CSIDE_FLOOR
 
+// Player Collision
+#alias 1	:	PLAYER_COL_FLOOR
+#alias 4	:	PLAYER_COL_ROOF
 
 // Time Periods
 #alias 2	:	PROPVAL_GOOD_FUTURE
@@ -35,9 +37,9 @@ sub ObjectMain
 		Object.YVelocity += Object.FallSpeed
 		Object.YPos += Object.YVelocity
 
-		ObjectTileCollision(0, -16, 16, 0)
-		TempValue0 = CheckResult
-		ObjectTileCollision(0, 16, 16, 0)
+		ObjectTileCollision(CSIDE_FLOOR, -16, 16, 0)
+		TempValue0  = CheckResult
+		ObjectTileCollision(CSIDE_FLOOR, 16, 16, 0)
 		TempValue0 |= CheckResult
 		if TempValue0 == true
 			PlayStageSfx(3, 0)
@@ -70,7 +72,7 @@ sub ObjectMain
 
 	end if
 
-	Object.FloorYPos = Object.YPos
+	Object.FloorYPos  = Object.YPos
 	Object.FloorYPos -= Object.YOriginPos
 	
 	if Object.IntangibleTime > 0
@@ -81,16 +83,16 @@ end sub
 
 sub ObjectPlayerInteraction
 	if Object.IntangibleTime == 0
-		TempValue0 = Object.YPos
+		TempValue0  = Object.YPos
 		Object.YPos = Object.YOriginPos
 
 		PlayerObjectCollision(C_BOX, -16, -18, 16, 16)
-		if CheckResult == CSIDE_FLOOR
+		if CheckResult == PLAYER_COL_FLOOR
 			Player.YPos += Object.FloorYPos
 			Player.YPos += 0x20000
 		else
 			if Object.FallSpeed > 0
-				if CheckResult == CSIDE_ROOF
+				if CheckResult == PLAYER_COL_ROOF
 					CallFunction(Player_Hit)
 					if Player.State == Player_State_GotHit
 						Object.IntangibleTime = 20
@@ -102,8 +104,8 @@ sub ObjectPlayerInteraction
 			if CheckResult == true
 				if Player.YVelocity < -0x40000
 					if Player.JumpPress == true
-						TempValue1 = Object.YVelocity
-						TempValue1 >>= 1
+						TempValue1 		  = Object.YVelocity
+						TempValue1		>>= 1
 						Player.YVelocity += TempValue1
 					end if
 				end if

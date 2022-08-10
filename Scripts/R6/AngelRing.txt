@@ -6,13 +6,13 @@
 #alias Object.Value3	:	Object.Timer
 #alias Object.Value2	:	Object.RingTimer
 
-// States
-#alias 0	:	ANGELRING_INACTIVE
-#alias 1	:	ANGELRING_RING_SHOWER
-
 // Lose Ring Aliases
 #alias Object.Value0	:	Object.XVelocity
 #alias Object.Value1	:	Object.YVelocity
+
+// States
+#alias 0	:	ANGELRING_INACTIVE
+#alias 1	:	ANGELRING_RING_SHOWER
 
 // Priority
 #alias 0	:	PRIORITY_BOUNDS
@@ -24,7 +24,7 @@ sub ObjectMain
 		Object.State = ANGELRING_INACTIVE
 		Object.Timer = 0
 		Object.RingTimer = 0
-		Object.Priority = PRIORITY_BOUNDS
+		Object.Priority  = PRIORITY_BOUNDS
 	end if
 
 	if Object.Timer > 0
@@ -34,10 +34,10 @@ sub ObjectMain
 			Object.RingTimer = 0
 			CreateTempObject(TypeName[LoseRing], 0, Object.XPos, Object.YPos)
 			Rand(Object[TempObjectPos].XVelocity, 8)
-			Object[TempObjectPos].XVelocity <<= 15
-			Object[TempObjectPos].XVelocity -= 0x14000	//  0x14000
+			Object[TempObjectPos].XVelocity <<=  15
+			Object[TempObjectPos].XVelocity  -=  0x14000
 
-			Object[TempObjectPos].YVelocity = -0x20000
+			Object[TempObjectPos].YVelocity   = -0x20000
 			
 			Object[TempObjectPos].AnimationSpeed = 256
 			Object.RingTimer--
@@ -52,9 +52,10 @@ sub ObjectPlayerInteraction
 		if CheckResult == true
 			Object.State = ANGELRING_RING_SHOWER
 			Object.Timer = 60
-			Object.Priority = PRIORITY_ACTIVE
+			Object.Priority  = PRIORITY_ACTIVE
 			Object.RingTimer = 0
 
+			// Statue Saviour
 			if Stage.PlayerListPos == 0
 				if Stage.DebugMode == false
 					SetAchievement(5, 100)

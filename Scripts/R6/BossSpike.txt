@@ -5,13 +5,18 @@
 // Aliases
 #alias Object.Value0	:	Object.Timer
 
+// States
 #alias 0	:	BOSSSPIKE_FALLING
 #alias 1	:	BOSSSPIKE_DESPAWN
+
+// Collision Sides
+#alias 0	:	CSIDE_FLOOR
+
 
 sub ObjectMain
 	if Object.State == BOSSSPIKE_FALLING
 		Object.YPos += 0x38000
-		ObjectTileCollision(0, 0, 12, 0)
+		ObjectTileCollision(CSIDE_FLOOR, 0, 12, 0)
 		if CheckResult == true
 			Object.State = BOSSSPIKE_DESPAWN
 		end if
@@ -35,7 +40,7 @@ end sub
 
 
 sub ObjectDraw
-	TempValue0 = Object.Timer
+	TempValue0  = Object.Timer
 	TempValue0 &= 7
 	
 	if TempValue0 < 4

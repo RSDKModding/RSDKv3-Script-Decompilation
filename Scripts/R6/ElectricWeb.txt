@@ -16,13 +16,18 @@
 // States
 #alias 0	:	R6_SETUP_PREPARE_CHARGE
 
+// Property Values
+#alias 0	:	WEB_PARENT_OBJECT
+#alias 1	:	WEB_CHILD_OBJECT
+#alias 2	:	WEB_DELAYER
+
 // Directions
 #alias 2	:	FACING_UPEND_RIGHT
 
 
 sub ObjectDraw
 	switch Object.PropertyValue
-	case 0
+	case WEB_PARENT_OBJECT
 		DrawSprite(R6Setup.Frame)
 		TempValue0  = Object.XPos
 		TempValue1  = Object.YPos
@@ -35,9 +40,10 @@ sub ObjectDraw
 		if R6Setup.State > R6_SETUP_PREPARE_CHARGE
 			switch R6Setup.Direction
 			case 0
-				Object.HWebFrame = 9
+				Object.HWebFrame  = 9
 				Object.HWebFrame += R6Setup.Frame
 				DrawSprite(Object.HWebFrame)
+				
 				Object.Direction = FACING_UPEND_RIGHT
 				DrawSpriteXY(Object.HWebFrame, Object.XPos, TempValue1)
 				break
@@ -46,13 +52,15 @@ sub ObjectDraw
 				Object.VWebFrame  = 18
 				Object.VWebFrame += R6Setup.Frame
 				DrawSprite(Object.VWebFrame)
+				
 				Object.Direction = FACING_LEFT
-				TempValue0 += 0x800000
+				TempValue0		+= 0x800000
 				DrawSpriteXY(Object.VWebFrame, TempValue0, Object.YPos)
 				break
 				
 			case 2
 				TempValue0 += 0x800000
+
 				Object.DWebFrame  = 27
 				Object.DWebFrame += R6Setup.Frame
 				Object.Direction  = FACING_LEFT
@@ -87,11 +95,11 @@ sub ObjectDraw
 		end if
 		break
 
-	case 1
+	case WEB_CHILD_OBJECT
 		DrawSprite(R6Setup.Frame)
 		break
 
-	case 2
+	case WEB_DELAYER
 		if R6Setup.State == R6_SETUP_PREPARE_CHARGE
 			R6Setup.Timer = 0
 		end if

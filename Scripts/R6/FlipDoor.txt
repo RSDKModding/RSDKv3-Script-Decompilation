@@ -5,6 +5,12 @@
 // Aliases
 #alias Object.Value0	:	Object.Timer
 
+#alias 0	:	FLIPDOOR_CLOSED
+#alias 1	:	FLIPDOOR_HALF_OPEN
+#alias 2	:	FLIPDOOR_OPEN
+#alias 3	:	FLIPDOOR_HALF_CLOSED
+
+
 sub ObjectMain
 
 	if Object.Frame == 0
@@ -16,77 +22,80 @@ sub ObjectMain
 	if Object.Direction == FACING_RIGHT
 
 		switch Object.State
-		case 0
+		case FLIPDOOR_CLOSED
 			Object.Frame = 0
 			PlayerObjectCollision(C_TOUCH, -48, -32, 0, 32)
 			if CheckResult == true
-				Object.State = 1
+				Object.State = FLIPDOOR_HALF_OPEN
 				PlayStageSfx(9, 0)
 			end if
 			break
 
-		case 1
+		case FLIPDOOR_HALF_OPEN
 			if Object.Timer < 4
 				Object.Timer++
 				Object.Frame = 1
 			else
 				Object.Timer = 0
-				Object.State = 2
+				Object.State = FLIPDOOR_OPEN
 			end if
 			break
 
-		case 2
+		case FLIPDOOR_OPEN
 			Object.Frame = 2
 			PlayerObjectCollision(C_TOUCH, -48, -32, 64, 64)
 			if CheckResult == false
-				Object.State = 3
+				Object.State = FLIPDOOR_HALF_CLOSED
 			end if
 			break
 
-		case 3
+		case FLIPDOOR_HALF_CLOSED
 			if Object.Timer < 4
 				Object.Timer++
 				Object.Frame = 1
 			else
 				Object.Timer = 0
-				Object.State = 0
+				Object.State = FLIPDOOR_CLOSED
 			end if
 			break
 		end switch
 	else
 
 		switch Object.State
-		case 0
+		case FLIPDOOR_CLOSED
 			Object.Frame = 0
 			PlayerObjectCollision(C_TOUCH, 0, -32, 48, 32)
 			if CheckResult == true
-				Object.State = 1
+				Object.State = FLIPDOOR_HALF_OPEN
 				PlayStageSfx(9, 0)
 			end if
 			break
-		case 1
+
+		case FLIPDOOR_HALF_OPEN
 			if Object.Timer < 4
 				Object.Timer++
 				Object.Frame = 1
 			else
 				Object.Timer = 0
-				Object.State = 2
+				Object.State = FLIPDOOR_OPEN
 			end if
 			break
-		case 2
+
+		case FLIPDOOR_OPEN
 			Object.Frame = 2
 			PlayerObjectCollision(C_TOUCH, -64, -32, 48, 64)
 			if CheckResult == false
-				Object.State = 3
+				Object.State = FLIPDOOR_HALF_CLOSED
 			end if
 			break
-		case 3
+
+		case FLIPDOOR_HALF_CLOSED
 			if Object.Timer < 4
 				Object.Timer++
 				Object.Frame = 1
 			else
 				Object.Timer = 0
-				Object.State = 0
+				Object.State = FLIPDOOR_CLOSED
 			end if
 			break
 		end switch
@@ -107,7 +116,7 @@ sub ObjectStartup
 	SpriteFrame(-4, -32, 48, 48, 83, 34)	// #1 - FlipDoor Half-Open
 	SpriteFrame(-4, -32, 64, 8, 132, 34)	// #2 - FlipDoor Open
 
-	// Setup all FlipDoor objects
+
 	ArrayPos0 = 32
 	while ArrayPos0 < 1056
 		if Object[ArrayPos0].Type == TypeName[FlipDoor]

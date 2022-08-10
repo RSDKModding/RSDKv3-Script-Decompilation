@@ -27,6 +27,13 @@
 #alias 0	:	PRIORITY_BOUNDS
 #alias 1	:	PRIORITY_ACTIVE
 
+// Warp Destination
+#alias 0	:	WARPDEST_NONE
+
+// Collision Sides
+#alias 0	:	CSIDE_FLOOR
+
+
 sub ObjectMain
 	switch Object.State
 	case 0
@@ -40,7 +47,7 @@ sub ObjectMain
 			Object.State = SCARAB_STOP
 		end if
 
-		ObjectTileGrip(0, 0, 12, 0)
+		ObjectTileGrip(CSIDE_FLOOR, 0, 12, 0)
 		if Object.XVelocity > 0
 			TempValue0  = Object.XPos
 			TempValue0 -= Object.XOriginPos
@@ -155,10 +162,10 @@ sub ObjectPlayerInteraction
 						
 						Player.Direction = FACING_RIGHT
 
-						if Warp.Destination > 0
+						if Warp.Destination > WARPDEST_NONE
 							if Warp.Timer > 99
 								if Warp.Timer < 220	// They forgot to fix the warp timer here
-									Warp.Destination = 0
+									Warp.Destination = WARPDEST_NONE
 								end if
 							end if
 							Warp.Timer = 0
@@ -194,10 +201,10 @@ sub ObjectPlayerInteraction
 
 						Player.Direction = FACING_LEFT
 
-						if Warp.Destination > 0
+						if Warp.Destination > WARPDEST_NONE
 							if Warp.Timer > 99
 								if Warp.Timer < 220	// They forgot to fix the warp timer here
-									Warp.Destination = 0
+									Warp.Destination = WARPDEST_NONE
 								end if
 							end if
 							Warp.Timer = 0

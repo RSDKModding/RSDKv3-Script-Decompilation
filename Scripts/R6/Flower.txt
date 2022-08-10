@@ -20,6 +20,10 @@
 #alias 8	:	FLOWER_ANIM_2
 #alias 9	:	FLOWER_ANIM_3
 
+// Collision Sides
+#alias 0	:	CSIDE_FLOOR
+
+
 sub ObjectMain
 	switch Object.State
 	case FLOWER_SEED_SPAWN
@@ -32,12 +36,14 @@ sub ObjectMain
 		break
 
 	case FLOWER_SEED_FALL
-		Object.Frame = Object.Timer
+		Object.Frame   = Object.Timer
 		Object.Frame >>= 2
+
 		Object.Timer++
 		Object.Timer &= 7
-		Object.YPos += 0x20000
-		ObjectTileCollision(0, 0, 8, 0)	// Check if it touched the ground
+
+		Object.YPos  += 0x20000
+		ObjectTileCollision(CSIDE_FLOOR, 0, 8, 0)
 		if CheckResult == true
 			Object.YPos += 0x80000
 			Object.State++

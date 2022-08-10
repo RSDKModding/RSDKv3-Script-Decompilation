@@ -76,8 +76,11 @@
 #alias 1 : FADEMUSIC_FADE_TO_LEVEL
 #alias 2 : FADEMUSIC_SSZEGGMAN
 
+// Collision Sides
+#alias 0	:	CSIDE_FLOOR
+
 // Soundtrack Aliases
-#alias 0 : JP_OST
+#alias 0 : OST_JP
 
 
 // Function declarations
@@ -89,17 +92,17 @@ function R7Eggman_FollowGround
 	
 	// First move Robotnik 32 pixels up and attempt to find ground
 	Object.YPos -= 0x200000
-	ObjectTileGrip(0, 6, 176, 0)
+	ObjectTileGrip(CSIDE_FLOOR, 6, 176, 0)
 	if CheckResult == false
 		
 		// No ground was found, so move Robotnik 16 pixels down and try again
 		Object.YPos += 0x100000
-		ObjectTileGrip(0, 6, 176, 0)
+		ObjectTileGrip(CSIDE_FLOOR, 6, 176, 0)
 		if CheckResult == false
 			
 			// Still no collision, try once more
 			Object.YPos += 0x100000
-			ObjectTileGrip(0, 6, 176, 0)
+			ObjectTileGrip(CSIDE_FLOOR, 6, 176, 0)
 			if CheckResult == false
 				
 				// Give up - move Eggman but don't try to follow the ground anymore
@@ -281,7 +284,7 @@ sub ObjectMain
 		else
 			if Object[24].PropertyValue == 2
 				// In the Bad Future nothing needs to happen, but if in the Good Future then start playing the Bad Future music
-				if Options.Soundtrack == JP_OST
+				if Options.Soundtrack == OST_JP
 					SetMusicTrack("JP/R7D.ogg", 0, true)
 				else
 					SetMusicTrack("US/R7D.ogg", 0, 92324)
@@ -501,7 +504,7 @@ sub ObjectMain
 			
 			if Object[24].PropertyValue == 2
 				// In the Bad Future nothing needs to change, but in the Good Future start playing the normal Good Future music again
-				if Options.Soundtrack == JP_OST
+				if Options.Soundtrack == OST_JP
 					SetMusicTrack("JP/R7C.ogg", 0, 103060)
 				else
 					SetMusicTrack("US/R7C.ogg", 0, 136670)

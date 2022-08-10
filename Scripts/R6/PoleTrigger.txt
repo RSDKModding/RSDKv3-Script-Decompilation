@@ -1,4 +1,4 @@
-//------------Sonic CD Pole Trigger Script-------------//
+//---------------Sonic CD Pole Trigger Script-----------------//
 //--------Scripted by Christian Whitehead 'The Taxman'--------//
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
@@ -8,6 +8,7 @@
 #alias Object.Value2	:	Object.Angle
 #alias Object.Value3	:	Object.JumpCheck
 
+// States
 #alias 0	:	POLETRIGGER_IDLE
 #alias 1	:	POLETRIGGER_PLAYER_ROT
 
@@ -19,12 +20,14 @@ sub ObjectPlayerInteraction
 			if Player.State != Player_State_Hurt
 				Object.State = POLETRIGGER_PLAYER_ROT
 				Object.JumpCheck = false
-				Player.State = Player_State_Static
+
+				Player.State	 = Player_State_Static
 				Player.Animation = ANI_JUMPING
-				Player.XPos = Object.XPos
+				Player.XPos		 = Object.XPos
 				Player.XVelocity = 0
-				Player.Speed = 0
+				Player.Speed 	 = 0
 				Player.DrawOrder = 5
+
 				if Player.YVelocity > 0
 					Player.YVelocity = 0x20000
 				else
@@ -52,8 +55,8 @@ sub ObjectPlayerInteraction
 				Player.DrawOrder = 5
 			end if
 
-			TempValue0 = Player.YPos
-			TempValue0 -= Object.YPos
+			TempValue0   = Player.YPos
+			TempValue0  -= Object.YPos
 			TempValue0 >>= 16
 			if TempValue0 < 0
 				if TempValue0 < Object.CollisionTop
@@ -70,13 +73,14 @@ sub ObjectPlayerInteraction
 					Player.DrawOrder = 4
 
 #platform: Use_Origins
-				Player.State = Player_State_Air_NoDropDash
+					Player.State = Player_State_Air_NoDropDash
 #endplatform
 
 #platform: Use_Standalone
-				Player.State = Player_State_Air
+					Player.State = Player_State_Air
 #endplatform
-					Player.Speed = -0xC0000
+
+					Player.Speed	 = -0xC0000
 					Player.XVelocity = -0xC0000
 					Object.State = POLETRIGGER_IDLE
 				end if
@@ -84,13 +88,14 @@ sub ObjectPlayerInteraction
 					Player.DrawOrder = 4
 
 #platform: Use_Origins
-				Player.State = Player_State_Air_NoDropDash
+					Player.State = Player_State_Air_NoDropDash
 #endplatform
 
 #platform: Use_Standalone
-				Player.State = Player_State_Air
+					Player.State = Player_State_Air
 #endplatform
-					Player.Speed = 0xC0000
+
+					Player.Speed	 = 0xC0000
 					Player.XVelocity = 0xC0000
 					Object.State = POLETRIGGER_IDLE
 				end if
@@ -111,11 +116,11 @@ sub ObjectStartup
 		if Object[ArrayPos0].Type == TypeName[PoleTrigger]
 			ArrayPos1 = ArrayPos0
 			ArrayPos1++
-			Object[ArrayPos0].CollisionTop = Object[ArrayPos0].PropertyValue
-			Object[ArrayPos0].CollisionTop <<= 3
-			Object[ArrayPos0].CollisionBottom = Object[ArrayPos0].CollisionTop
+			Object[ArrayPos0].CollisionTop    = Object[ArrayPos0].PropertyValue
+			Object[ArrayPos0].CollisionTop  <<= 3
+			Object[ArrayPos0].CollisionBottom  = Object[ArrayPos0].CollisionTop
 			FlipSign(Object[ArrayPos0].CollisionTop)
-			Object[ArrayPos0].CollisionTop -= 8
+			Object[ArrayPos0].CollisionTop	  -= 8
 			Object[ArrayPos0].CollisionBottom += 8
 		end if
 		ArrayPos0++

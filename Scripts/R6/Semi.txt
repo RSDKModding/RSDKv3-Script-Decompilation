@@ -1,4 +1,4 @@
-//------------Sonic CD Semi Script-------------//
+//-------------------Sonic CD Semi Script---------------------//
 //--------Scripted by Christian Whitehead 'The Taxman'--------//
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
@@ -11,24 +11,25 @@
 #alias Object.PropertyValue :	Object.Quality
 
 // States
-#alias 0		:	SEMI_IDLE
-#alias 1		:	SEMI_START_FLY
-#alias 2		:	SEMI_BOMB_THROW
-#alias 3		:	SEMI_RESET
+#alias 0	:	SEMI_IDLE
+#alias 1	:	SEMI_START_FLY
+#alias 2	:	SEMI_BOMB_THROW
+#alias 3	:	SEMI_RESET
 
 // Badnik Quality
-#alias 0		:	PROPVAL_QUALITY_GOOD
-#alias 1		:	PROPVAL_QUALITY_BAD
+#alias 0	:	PROPVAL_QUALITY_GOOD
+#alias 1	:	PROPVAL_QUALITY_BAD
 
 // Priority
-#alias 0		:	PRIORITY_BOUNDS
-#alias 1		:	PRIORITY_ACTIVE
+#alias 0	:	PRIORITY_BOUNDS
+#alias 1	:	PRIORITY_ACTIVE
 
 
 sub ObjectMain
 	if Object.OutOfBounds == true
 		Object.State = SEMI_RESET
 		Object.Timer = 0
+
 		Object.XPos = Object.XOriginPos
 		Object.YPos = Object.YOriginPos
 	end if
@@ -36,8 +37,10 @@ sub ObjectMain
 	switch Object.State
 	case SEMI_START_FLY
 		Object.Priority = PRIORITY_ACTIVE
+
 		Object.XPos += Object.XVelocity
 		Object.YPos += Object.YVelocity
+
 		if Object.Timer < 96
 			Object.Timer++
 		else
@@ -61,11 +64,12 @@ sub ObjectMain
 
 	case SEMI_RESET
 		if Object.OutOfBounds == true
-			Object.State = SEMI_IDLE
+			Object.State	= SEMI_IDLE
 			Object.Priority = PRIORITY_BOUNDS
 		end if
 		break
 	end switch
+
 	// Check if this badnik should be a flower
 	CallFunction(StageSetup_CheckGoodFuture)
 end sub
@@ -116,7 +120,7 @@ sub ObjectDraw
 
 	case SEMI_START_FLY
 	case SEMI_BOMB_THROW
-		TempValue0 = Object.Frame
+		TempValue0   = Object.Frame
 		TempValue0 >>= 2
 
 		if Object.Quality == PROPVAL_QUALITY_GOOD
@@ -141,27 +145,30 @@ end sub
 
 sub ObjectStartup
 	LoadSpriteSheet("R6/Objects.gif")
+
 	// Good
-	SpriteFrame(-16, -16, 32, 32, 1, 224)	// #0 - Semi
+	SpriteFrame(-16, -16, 32, 32, 1, 224)	// #0  - Semi
 	// Bad
-	SpriteFrame(-16, -16, 32, 32, 158, 166)	// #1 - Semi
-	// Good
-	SpriteFrame(-16, -16, 32, 32, 34, 224)	// #2 - Semi Good 
-	SpriteFrame(-20, -16, 40, 32, 67, 224)
-	SpriteFrame(-16, -16, 32, 32, 34, 224)
-	SpriteFrame(-20, -16, 40, 32, 67, 224)
-	// Bad
-	SpriteFrame(-16, -16, 32, 32, 108, 224)
-	SpriteFrame(-20, -16, 40, 32, 141, 224)
-	SpriteFrame(-16, -16, 32, 32, 108, 224)
-	SpriteFrame(-20, -16, 40, 32, 141, 224)
+	SpriteFrame(-16, -16, 32, 32, 158, 166)	// #1  - Semi
+
+	// Good Rotation
+	SpriteFrame(-16, -16, 32, 32, 34, 224)	// #2  - Semi Good Rotating frame 0
+	SpriteFrame(-20, -16, 40, 32, 67, 224)	// #3  - Semi Good Rotating frame 1
+	SpriteFrame(-16, -16, 32, 32, 34, 224)	// #4  - Semi Good Rotating frame 2
+	SpriteFrame(-20, -16, 40, 32, 67, 224)	// #5  - Semi Good Rotating frame 3
+
+	// Bad Rotation
+	SpriteFrame(-16, -16, 32, 32, 108, 224)	// #7  - Semi Bad Rotating frame 0
+	SpriteFrame(-20, -16, 40, 32, 141, 224)	// #8  - Semi Bad Rotating frame 1
+	SpriteFrame(-16, -16, 32, 32, 108, 224)	// #9  - Semi Bad Rotating frame 2
+	SpriteFrame(-20, -16, 40, 32, 141, 224)	// #10 - Semi Bad Rotating frame 3
 
 	ArrayPos0 = 32
 	while ArrayPos0 < 1056
 		if Object[ArrayPos0].Type == TypeName[Semi]
 			Object[ArrayPos0].XOriginPos = Object[ArrayPos0].XPos
 			Object[ArrayPos0].YOriginPos = Object[ArrayPos0].YPos
-			Object[ArrayPos0].DrawOrder = 5
+			Object[ArrayPos0].DrawOrder  = 5
 		end if
 		ArrayPos0++
 	loop

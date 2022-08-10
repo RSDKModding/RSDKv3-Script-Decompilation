@@ -1,4 +1,4 @@
-//------------Sonic CD ElectricArc Script-------------//
+//----------------Sonic CD Electric Arc Script----------------//
 //--------Scripted by Christian Whitehead 'The Taxman'--------//
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
@@ -9,14 +9,14 @@
 #alias Object[24].PropertyValue	:	HUD.TimePeriod
 
 // States
-#alias 0			:	ELECTRICARC_POWERING
-#alias 1			:	ELECTRICARC_EXTEND_1
-#alias 2			:	ELECTRICARC_EXTEND_2
-#alias 3			:	ELECTRICARC_EXTEND_3
-#alias 4			:	ELECTRICARC_SWAP_TO_TILES
+#alias 0	:	ELECTRICARC_POWERING
+#alias 1	:	ELECTRICARC_EXTEND_1
+#alias 2	:	ELECTRICARC_EXTEND_2
+#alias 3	:	ELECTRICARC_EXTEND_3
+#alias 4	:	ELECTRICARC_SWAP_TO_TILES
 
 // Time Periods
-#alias 2			:	PROPVAL_GOOD_FUTURE
+#alias 2	:	PROPVAL_GOOD_FUTURE
 
 
 sub ObjectMain
@@ -43,22 +43,22 @@ sub ObjectMain
 		Object.Timer++
 		if Object.Timer == 3
 			Object.Timer = 0
-			Object.Type = TypeName[Blank Object]
-			TempValue1 = Object.XPos
+			Object.Type  = TypeName[Blank Object]
+			TempValue1   = Object.XPos
 			TempValue1 >>= 23
 			TempValue1--
-			TempValue2 = Object.YPos
+			TempValue2   = Object.YPos
 			TempValue2 >>= 23
 			GetTileLayerEntry(TempValue0, 0, TempValue1, TempValue2)
-			TempValue0 += 3
+			TempValue0  += 3
 			SetTileLayerEntry(TempValue0, 0, TempValue1, TempValue2)
 			TempValue1++
 			GetTileLayerEntry(TempValue0, 0, TempValue1, TempValue2)
-			TempValue0 += 3
+			TempValue0  += 3
 			SetTileLayerEntry(TempValue0, 0, TempValue1, TempValue2)
 			TempValue1++
 			GetTileLayerEntry(TempValue0, 0, TempValue1, TempValue2)
-			TempValue0 += 3
+			TempValue0  += 3
 			SetTileLayerEntry(TempValue0, 0, TempValue1, TempValue2)
 		end if
 		break
@@ -72,14 +72,14 @@ end sub
 sub ObjectDraw
 	switch Object.State
 	case ELECTRICARC_POWERING
-		TempValue0 = Object.Frame
+		TempValue0  = Object.Frame
 		TempValue0 /= 5
 		DrawSprite(TempValue0)
 		DrawSpriteFX(TempValue0, FX_FLIP, Object.XPos, Object.YPos)
 		break
 
 	case ELECTRICARC_EXTEND_1
-		TempValue0 = Object.Frame
+		TempValue0  = Object.Frame
 		TempValue0 /= 5
 		TempValue0 += 3
 		DrawSprite(TempValue0)
@@ -87,7 +87,7 @@ sub ObjectDraw
 		break
 
 	case ELECTRICARC_EXTEND_2
-		TempValue0 = Object.Frame
+		TempValue0  = Object.Frame
 		TempValue0 /= 5
 		TempValue0 += 6
 		DrawSprite(TempValue0)
@@ -95,7 +95,7 @@ sub ObjectDraw
 		break
 
 	case ELECTRICARC_EXTEND_3
-		TempValue0 = Object.Frame
+		TempValue0  = Object.Frame
 		TempValue0 /= 5
 		TempValue0 += 9
 		DrawSprite(TempValue0)
@@ -103,7 +103,7 @@ sub ObjectDraw
 		break
 
 	case ELECTRICARC_SWAP_TO_TILES
-		TempValue0 = Object.Frame
+		TempValue0  = Object.Frame
 		TempValue0 /= 5
 		TempValue0 += 9
 		DrawSprite(TempValue0)
@@ -119,6 +119,7 @@ end sub
 
 sub ObjectStartup
 	LoadSpriteSheet("R6/Objects3.gif")
+
 	if HUD.TimePeriod == PROPVAL_GOOD_FUTURE
 		SpriteFrame(-176, -8, 16, 16, 1, 1)		// #0  - Electric Arc frame 0
 		SpriteFrame(-176, -8, 16, 16, 1, 18)	// #1  - Electric Arc frame 1

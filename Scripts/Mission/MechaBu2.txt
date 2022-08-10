@@ -21,6 +21,9 @@
 // SFX Aliases
 #alias 1	:	SFX_BUZZSAW
 
+// Collision Sides
+#alias 0	:	CSIDE_FLOOR
+
 // Badnik Quality
 #alias 0	:	PROPVAL_QUALITY_GOOD
 #alias 1	:	PROPVAL_QUALITY_BAD
@@ -30,7 +33,7 @@ sub ObjectMain
 	switch Object.State
 	case MECHABU2_FINDGROUND
 		// See if there's any ground to be found at the Bu's current position
-		ObjectTileCollision(0, 0, 15, 0)
+		ObjectTileCollision(CSIDE_FLOOR, 0, 15, 0)
 		
 		if CheckResult == true
 			// Floor detected, go to the normal movement states now
@@ -98,7 +101,7 @@ sub ObjectMain
 		end if
 		
 		// Stay with the ground even when going backwards, quite the fancy moonwalk!
-		ObjectTileGrip(0, 0, 15, 0)
+		ObjectTileGrip(CSIDE_FLOOR, 0, 15, 0)
 		break
 		
 	case MECHABU2_ADVANCE
@@ -115,7 +118,7 @@ sub ObjectMain
 		end if
 		
 		// Track the ground, the Bu should always be grounded
-		ObjectTileGrip(0, 0, 15, 0)
+		ObjectTileGrip(CSIDE_FLOOR, 0, 15, 0)
 		break
 		
 	end switch

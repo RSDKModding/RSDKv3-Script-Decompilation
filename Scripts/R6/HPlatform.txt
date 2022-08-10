@@ -7,24 +7,30 @@
 #alias Object.Value2	:	Object.XVelocity
 #alias Object.Value3	:	Object.Angle
 
+// Property Values
+// This property values only cover the starting position
+#alias 0	:	START_FROM_BEGINNING
+#alias 1	:	START_HALFWAY_THROUGH
+
+
 sub ObjectMain
-	Object.Angle = Oscillation
+	Object.Angle   = Oscillation
 	Object.Angle <<= 1
 
-	if Object.PropertyValue == 1
+	if Object.PropertyValue == START_HALFWAY_THROUGH
 		Object.Angle += 256
 	end if
 	
 	Sin(Object.XVelocity, Object.Angle)
 	Object.XVelocity <<= 13
-	Object.XVelocity += Object.XPos
-	Object.XVelocity &= -0x10000
-	Object.XVelocity -= Object.OffSetXPos
+	Object.XVelocity  += Object.XPos
+	Object.XVelocity  &= -0x10000
+	Object.XVelocity  -= Object.OffSetXPos
 end sub
 
 
 sub ObjectPlayerInteraction
-	TempValue0 = Object.XPos
+	TempValue0  = Object.XPos
 	Object.XPos = Object.OffSetXPos
 
 	PlayerObjectCollision(C_PLATFORM, -24, -12, 24, 8)
@@ -41,8 +47,8 @@ end sub
 sub ObjectDraw
 	Sin(Object.OffSetXPos, Object.Angle)
 	Object.OffSetXPos <<= 13
-	Object.OffSetXPos += Object.XPos
-	Object.OffSetXPos &= -0x10000
+	Object.OffSetXPos  += Object.XPos
+	Object.OffSetXPos  &= -0x10000
 
 	DrawSpriteXY(0, Object.OffSetXPos, Object.YPos)
 	DrawSpriteXY(1, Object.OffSetXPos, Object.YPos)

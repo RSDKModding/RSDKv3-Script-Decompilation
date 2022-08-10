@@ -31,6 +31,9 @@
 #alias 0	:	PROPVAL_MOVING_BOMB
 #alias 1	:	PROPVAL_STATIC_BOMB
 
+// Collision Sides
+#alias 0	:	CSIDE_FLOOR
+
 // Priority
 #alias 1	:	PRIORITY_ACTIVE
 
@@ -42,7 +45,7 @@ sub ObjectMain
 	switch Object.State
 	case BIGBOMB_SETUP
 		Object.Priority = PRIORITY_ACTIVE
-		ObjectTileCollision(0, 0, 27, 0)
+		ObjectTileCollision(CSIDE_FLOOR, 0, 27, 0)
 		if CheckResult == true
 			if Object.PropertyValue == PROPVAL_STATIC_BOMB
 				Object.State = BIGBOMB_WAIT_PLAYER
@@ -72,7 +75,7 @@ sub ObjectMain
 			Object.State = BIGBOMB_MOVE_RIGHT
 		end if
 
-		ObjectTileGrip(0, 0, 27, 0)
+		ObjectTileGrip(CSIDE_FLOOR, 0, 27, 0)
 		PlayerObjectCollision(C_TOUCH, -96, -128, 96, 27)
 		if CheckResult == true
 			Object.State = BIGBOMB_START_FUSE
@@ -87,7 +90,7 @@ sub ObjectMain
 			Object.State = BIGBOMB_MOVE_LEFT
 		end if
 
-		ObjectTileGrip(0, 0, 27, 0)
+		ObjectTileGrip(CSIDE_FLOOR, 0, 27, 0)
 		PlayerObjectCollision(C_TOUCH, -96, -128, 96, 27)
 		if CheckResult == true
 			Object.State = BIGBOMB_START_FUSE
@@ -105,7 +108,7 @@ sub ObjectMain
 
 	case BIGBOMB_PREPARE_FUSE
 		Object.XPos += 0x20000
-		ObjectTileGrip(0, 24, 27, 0)
+		ObjectTileGrip(CSIDE_FLOOR, 24, 27, 0)
 		if CheckResult == false
 			Object.State = BIGBOMB_START_FUSE
 			Object.Animation = BOMBANI_SPOTTED

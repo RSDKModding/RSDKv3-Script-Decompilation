@@ -1,4 +1,4 @@
-//------------Sonic CD Poh Bee Script-------------//
+//------------------Sonic CD Poh Bee Script-------------------//
 //--------Scripted by Christian Whitehead 'The Taxman'--------//
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
@@ -18,33 +18,36 @@
 #alias Object.Value2		:	PohBeeBullet.YVelocity
 
 // States
-#alias 0		:	POHBEE_MOVING_LEFT
-#alias 1		:	POHBEE_TURN_RIGHT
-#alias 2		:	POHBEE_MOVING_RIGHT
-#alias 3		:	POHBEE_TURN_LEFT
-#alias 4		:	POHBEE_SHOOTING_LEFT
-#alias 5		:	POHBEE_SHOOTING_RIGHT
-#alias 6		:	POHBEE_RESET
+#alias 0	:	POHBEE_MOVING_LEFT
+#alias 1	:	POHBEE_TURN_RIGHT
+#alias 2	:	POHBEE_MOVING_RIGHT
+#alias 3	:	POHBEE_TURN_LEFT
+#alias 4	:	POHBEE_SHOOTING_LEFT
+#alias 5	:	POHBEE_SHOOTING_RIGHT
+#alias 6	:	POHBEE_RESET
 
 // Priority
-#alias 0		:	PRIORITY_BOUNDS
-#alias 1		:	PRIORITY_ACTIVE
+#alias 0	:	PRIORITY_BOUNDS
+#alias 1	:	PRIORITY_ACTIVE
 
 // Badnik Quality
 #alias 0	:	PROPVAL_QUALITY_GOOD
 #alias 1	:	PROPVAL_QUALITY_BAD
+// Origins added a new one, say hi to the stationary PohBee
 #alias 2	:	PROPVAL_STATIONARY	// This PohBee is also good quality
 
 
 sub ObjectMain
 	if Object.OutOfBounds == true
-		Object.State = POHBEE_RESET
-		Object.Timer = 0
+		Object.State	 = POHBEE_RESET
+		Object.Timer	 = 0
 		Object.Direction = FACING_RIGHT
+
 		Object.XPos = Object.XOriginPos
-		Object.CurrentFrame = 0
+
+		Object.CurrentFrame		= 0
 		Object.ShootingCooldown = 0
-		Object.FrameIncrease = 0
+		Object.FrameIncrease	= 0
 	end if
 
 	if Object.Quality == PROPVAL_QUALITY_GOOD
@@ -116,15 +119,15 @@ sub ObjectMain
 				end if
 				if Object.ShootingCooldown == 64
 					CreateTempObject(TypeName[PohBeeBullet], 0, Object.XPos, Object.YPos)
-					PohBeeBullet[TempObjectPos].XPos -= 0xF0000
-					PohBeeBullet[TempObjectPos].YPos += 0x1B0000
+					PohBeeBullet[TempObjectPos].XPos	 -=  0xF0000
+					PohBeeBullet[TempObjectPos].YPos	 +=  0x1B0000
 					PohBeeBullet[TempObjectPos].XVelocity = -0x20000
-					PohBeeBullet[TempObjectPos].YVelocity = 0x20000
+					PohBeeBullet[TempObjectPos].YVelocity =  0x20000
 					PlayStageSfx(7, 0)
 				end if
 			else
 				Object.State = POHBEE_MOVING_LEFT
-				Object.FrameIncrease = 0
+				Object.FrameIncrease	= 0
 				Object.ShootingCooldown = 60
 			end if
 			break
@@ -139,15 +142,15 @@ sub ObjectMain
 				if Object.ShootingCooldown == 64
 					CreateTempObject(TypeName[PohBeeBullet], 0, Object.XPos, Object.YPos)
 					PohBeeBullet[TempObjectPos].Direction = FACING_LEFT
-					PohBeeBullet[TempObjectPos].XPos += 0xF0000
-					PohBeeBullet[TempObjectPos].YPos += 0x1B0000
+					PohBeeBullet[TempObjectPos].XPos	 += 0xF0000
+					PohBeeBullet[TempObjectPos].YPos	 += 0x1B0000
 					PohBeeBullet[TempObjectPos].XVelocity = 0x20000
 					PohBeeBullet[TempObjectPos].YVelocity = 0x20000
 					PlayStageSfx(7, 0)
 				end if
 			else
 				Object.State = POHBEE_MOVING_RIGHT
-				Object.FrameIncrease = 0
+				Object.FrameIncrease	= 0
 				Object.ShootingCooldown = 60
 			end if
 			break
@@ -219,8 +222,8 @@ sub ObjectMain
 
 #platform: Use_Origins
 	CheckEqual(game.playMode, BOOT_PLAYMODE_MISSION)
-	TempValue0 = CheckResult
-	CheckEqual(Object.PropertyValue, 2)
+	TempValue0  = CheckResult
+	CheckEqual(Object.PropertyValue, PROPVAL_STATIONARY)
 	TempValue0 &= CheckResult
 	if TempValue0 == true
 		switch Object.State
@@ -289,21 +292,22 @@ sub ObjectMain
 				end if
 				if Object.ShootingCooldown == 64
 					CreateTempObject(TypeName[PohBeeBullet], 0, Object.XPos, Object.YPos)
-					PohBeeBullet[TempObjectPos].XPos -= 0xF0000
-					PohBeeBullet[TempObjectPos].YPos += 0x1B0000
+					PohBeeBullet[TempObjectPos].XPos	 -=  0xF0000
+					PohBeeBullet[TempObjectPos].YPos	 +=  0x1B0000
 					PohBeeBullet[TempObjectPos].XVelocity = -0x20000
 					PohBeeBullet[TempObjectPos].YVelocity =  0x20000
 					PlayStageSfx(7, 0)
 				end if
 			else
 				Object.State = POHBEE_MOVING_LEFT
-				Object.FrameIncrease = 0
+				Object.FrameIncrease	= 0
 				Object.ShootingCooldown = 60
 			end if
 			break
 
 		case POHBEE_SHOOTING_RIGHT
 			Object.Priority = PRIORITY_ACTIVE
+
 			if Object.ShootingCooldown < 92
 				Object.ShootingCooldown++
 				if Object.ShootingCooldown == 30
@@ -312,15 +316,15 @@ sub ObjectMain
 				if Object.ShootingCooldown == 64
 					CreateTempObject(TypeName[PohBeeBullet], 0, Object.XPos, Object.YPos)
 					PohBeeBullet[TempObjectPos].Direction = FACING_LEFT
-					PohBeeBullet[TempObjectPos].XPos += 0xF0000
-					PohBeeBullet[TempObjectPos].YPos += 0x1B0000
+					PohBeeBullet[TempObjectPos].XPos	 += 0xF0000
+					PohBeeBullet[TempObjectPos].YPos	 += 0x1B0000
 					PohBeeBullet[TempObjectPos].XVelocity = 0x20000
 					PohBeeBullet[TempObjectPos].YVelocity = 0x20000
 					PlayStageSfx(7, 0)
 				end if
 			else
 				Object.State = POHBEE_MOVING_RIGHT
-				Object.FrameIncrease = 0
+				Object.FrameIncrease	= 0
 				Object.ShootingCooldown = 60
 			end if
 			break

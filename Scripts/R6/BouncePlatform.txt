@@ -1,4 +1,4 @@
-//------------Sonic CD Bounce Platform Script-------------//
+//---------------Sonic CD Bounce Platform Script--------------//
 //--------Scripted by Christian Whitehead 'The Taxman'--------//
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
@@ -11,37 +11,40 @@
 // R6 Setup alias
 #alias Object[19].Scale :	R6Setup.BounceFloorFlag
 
+// Collision Sides
+#alias 0	:	CSIDE_FLOOR
+
 
 sub ObjectMain
 	Object.YOriginPos = Object.YPos
 
 	Object.YVelocity += Object.FallSpeed
-	Object.YPos += Object.YVelocity
+	Object.YPos		 += Object.YVelocity
 
-	ObjectTileCollision(0, 0, 16, 0)
+	ObjectTileCollision(CSIDE_FLOOR, 0, 16, 0)
 	if CheckResult == true
 		if Object.FallSpeed == 0x1000
 			PlayStageSfx(3, 0)
 		end if
 		if R6Setup.BounceFloorFlag == true
 			Object.YVelocity = -0x60000
-			Object.FallSpeed = 0x1000
+			Object.FallSpeed =  0x1000
 		else
 			Object.YVelocity = -0x20000
-			Object.FallSpeed = 5256
+			Object.FallSpeed =  0x1488
 		end if
 	end if
 
-	Object.FloorYPos = Object.YPos
+	Object.FloorYPos  = Object.YPos
 	Object.FloorYPos -= Object.YOriginPos
 end sub
 
 
 sub ObjectPlayerInteraction
-	TempValue0 = Object.YPos
+	TempValue0  = Object.YPos
 	Object.YPos = Object.YOriginPos
 
-	TempValue1 = Object.XPos
+	TempValue1  = Object.XPos
 	TempValue1 -= Player.XPos
 	if TempValue1 < 0
 		FlipSign(TempValue1)

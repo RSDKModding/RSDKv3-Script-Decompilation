@@ -20,27 +20,33 @@
 #alias 7 : DANGO_UNCURLED
 #alias 8 : DANGO_OFFSCREEN // Unused
 
-// Badnik Conditions
-#alias 0 : CONDITION_GOOD
-#alias 1 : CONDITION_BAD
+// Collision Sides
+#alias 0	:	CSIDE_FLOOR
+#alias 1	:	CSIDE_LWALL
+#alias 2	:	CSIDE_RWALL
 
+// Badnik Conditions
+#alias 0	:	CONDITION_GOOD
+#alias 1	:	CONDITION_BAD
+
+#alias 1	:	PRIORITY_ACTIVE
 
 sub ObjectMain
 	
 	if Object.PropertyValue == CONDITION_GOOD
 		switch Object.State
 		case DANGO_WALK
-			Object.Priority = 1
-			Object.Frame = Object.Timer
+			Object.Priority = PRIORITY_ACTIVE
+			Object.Frame  = Object.Timer
 			Object.Frame /= 10
 			Object.Timer++
 			Object.Timer %= 20
 			Object.XPos += Object.XVelocity
 			
 			if Object.Direction == FACING_RIGHT
-				ObjectTileGrip(0, -5, 15, 0)
+				ObjectTileGrip(CSIDE_FLOOR, -5, 15, 0)
 			else
-				ObjectTileGrip(0, 5, 15, 0)
+				ObjectTileGrip(CSIDE_FLOOR, 5, 15, 0)
 			end if
 			
 			if CheckResult == false
@@ -50,7 +56,7 @@ sub ObjectMain
 				Object.ChaseChain = 0
 			else
 				if Object.XVelocity > 0
-					ObjectTileCollision(1, 16, 8, 0)
+					ObjectTileCollision(CSIDE_LWALL, 16, 8, 0)
 					if CheckResult == true
 						FlipSign(Object.XVelocity)
 						Object.Direction++
@@ -58,7 +64,7 @@ sub ObjectMain
 						Object.ChaseChain = 0
 					end if
 				else
-					ObjectTileCollision(2, -16, 8, 0)
+					ObjectTileCollision(CSIDE_RWALL, -16, 8, 0)
 					if CheckResult == true
 						FlipSign(Object.XVelocity)
 						Object.Direction++
@@ -90,7 +96,7 @@ sub ObjectMain
 			break
 			
 		case DANGO_CHARGEROLL
-			Object.Frame = Object.AnimationTimer
+			Object.Frame  = Object.AnimationTimer
 			Object.Frame /= 5
 			Object.Frame += 6
 			Object.AnimationTimer++
@@ -103,13 +109,13 @@ sub ObjectMain
 				if Object.Direction == FACING_RIGHT
 					Object.XVelocity = -0x40000
 				else
-					Object.XVelocity = 0x40000
+					Object.XVelocity =  0x40000
 				end if
 			end if
 			break
 			
 		case DANGO_ROLLING
-			Object.Frame = Object.AnimationTimer
+			Object.Frame  = Object.AnimationTimer
 			Object.Frame /= 5
 			Object.Frame += 6
 			Object.AnimationTimer++
@@ -117,9 +123,9 @@ sub ObjectMain
 			Object.XPos += Object.XVelocity
 			
 			if Object.Direction == FACING_RIGHT
-				ObjectTileGrip(0, -5, 15, 0)
+				ObjectTileGrip(CSIDE_FLOOR, -5, 15, 0)
 			else
-				ObjectTileGrip(0, 5, 15, 0)
+				ObjectTileGrip(CSIDE_FLOOR, 5, 15, 0)
 			end if
 			
 			if CheckResult == false
@@ -127,13 +133,13 @@ sub ObjectMain
 				Object.ChaseChain++
 			else
 				if Object.XVelocity > 0
-					ObjectTileCollision(1, 16, 8, 0)
+					ObjectTileCollision(CSIDE_LWALL, 16, 8, 0)
 					if CheckResult == true
 						Object.State++
 						Object.ChaseChain++
 					end if
 				else
-					ObjectTileCollision(2, -16, 8, 0)
+					ObjectTileCollision(CSIDE_RWALL, -16, 8, 0)
 					if CheckResult == true
 						Object.State++
 						Object.ChaseChain++
@@ -207,9 +213,9 @@ sub ObjectMain
 			Object.XPos += Object.XVelocity
 			
 			if Object.Direction == FACING_RIGHT
-				ObjectTileGrip(0, -5, 15, 0)
+				ObjectTileGrip(CSIDE_FLOOR, -5, 15, 0)
 			else
-				ObjectTileGrip(0, 5, 15, 0)
+				ObjectTileGrip(CSIDE_FLOOR, 5, 15, 0)
 			end if
 			
 			if CheckResult == false
@@ -219,7 +225,7 @@ sub ObjectMain
 				Object.ChaseChain = 0
 			else
 				if Object.XVelocity > 0
-					ObjectTileCollision(1, 16, 8, 0)
+					ObjectTileCollision(CSIDE_LWALL, 16, 8, 0)
 					if CheckResult == true
 						FlipSign(Object.XVelocity)
 						Object.Direction++
@@ -227,7 +233,7 @@ sub ObjectMain
 						Object.ChaseChain = 0
 					end if
 				else
-					ObjectTileCollision(2, -16, 8, 0)
+					ObjectTileCollision(CSIDE_RWALL, -16, 8, 0)
 					if CheckResult == true
 						FlipSign(Object.XVelocity)
 						Object.Direction++
@@ -286,9 +292,9 @@ sub ObjectMain
 			Object.XPos += Object.XVelocity
 			
 			if Object.Direction == FACING_RIGHT
-				ObjectTileGrip(0, -5, 15, 0)
+				ObjectTileGrip(CSIDE_FLOOR, -5, 15, 0)
 			else
-				ObjectTileGrip(0, 5, 15, 0)
+				ObjectTileGrip(CSIDE_FLOOR, 5, 15, 0)
 			end if
 			
 			if CheckResult == false
@@ -296,13 +302,13 @@ sub ObjectMain
 				Object.ChaseChain++
 			else
 				if Object.XVelocity > 0
-					ObjectTileCollision(1, 16, 8, 0)
+					ObjectTileCollision(CSIDE_LWALL, 16, 8, 0)
 					if CheckResult == true
 						Object.State++
 						Object.ChaseChain++
 					end if
 				else
-					ObjectTileCollision(2, -16, 8, 0)
+					ObjectTileCollision(CSIDE_RWALL, -16, 8, 0)
 					if CheckResult == true
 						Object.State++
 						Object.ChaseChain++

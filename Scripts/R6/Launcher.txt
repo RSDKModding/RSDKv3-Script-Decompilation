@@ -13,6 +13,9 @@
 #alias 3	:	LAUNCHER_RECOIL
 #alias 4	:	LAUNCHER_RESET
 
+// Collision Sides
+#alias 0	:	CSIDE_FLOOR
+
 // Priority
 #alias 0	:	PRIORITY_BOUNDS
 #alias 1	:	PRIORITY_ACTIVE
@@ -30,14 +33,14 @@ sub ObjectMain
 	switch Object.State
 	case LAUNCHER_DASH
 		Object.XPos += 0xC0000
-		Player.XPos = Object.XPos
+		Player.XPos  = Object.XPos
 
 		Player.iYPos = Player.CollisionBottom
 		FlipSign(Player.YPos)
 		Player.YPos -= 0x30000
 		Player.YPos += Object.YPos
 
-		ObjectTileGrip(0, 32, 4, 0)
+		ObjectTileGrip(CSIDE_FLOOR, 32, 4, 0)
 		if CheckResult == false
 			Object.State++
 		end if
@@ -59,17 +62,17 @@ sub ObjectMain
 		end if
 
 #platform: Use_Origins
-				Player.State = Player_State_Air_NoDropDash
+		Player.State = Player_State_Air_NoDropDash
 #endplatform
 
 #platform: Use_Standalone
-				Player.State = Player_State_Air
+		Player.State = Player_State_Air
 #endplatform
 
 		Player.Animation = ANI_WALKING
 
-		Player.Speed = 794624
-		Player.XVelocity = 794624
+		Player.Speed	 = 0xC2000
+		Player.XVelocity = 0xC2000
 
 		Player.iYPos = Player.CollisionBottom
 		FlipSign(Player.YPos)
@@ -84,30 +87,30 @@ sub ObjectMain
 
 		Object.XPos -= 0x40000
 		if Object.XPos < Object.OriginXPos
-			Object.XPos = Object.OriginXPos
+			Object.XPos		= Object.OriginXPos
 			Object.Priority = PRIORITY_BOUNDS
-			Object.State = LAUNCHER_IDLE
+			Object.State	= LAUNCHER_IDLE
 		end if
 
 		if Object.OutOfBounds == true
-			Object.XPos = Object.OriginXPos
+			Object.XPos		= Object.OriginXPos
 			Object.Priority = PRIORITY_BOUNDS
-			Object.State = LAUNCHER_IDLE
+			Object.State	= LAUNCHER_IDLE
 		end if
 		break
 
 	case LAUNCHER_RESET
 		Object.XPos -= 0x40000
 		if Object.XPos < Object.OriginXPos
-			Object.XPos = Object.OriginXPos
+			Object.XPos		= Object.OriginXPos
 			Object.Priority = PRIORITY_BOUNDS
-			Object.State = LAUNCHER_IDLE
+			Object.State	= LAUNCHER_IDLE
 		end if
 		
 		if Object.OutOfBounds == true
-			Object.XPos = Object.OriginXPos
+			Object.XPos		= Object.OriginXPos
 			Object.Priority = PRIORITY_BOUNDS
-			Object.State = LAUNCHER_IDLE
+			Object.State	= LAUNCHER_IDLE
 		end if
 		break
 	end switch
@@ -125,7 +128,7 @@ sub ObjectPlayerInteraction
 			Player.Animation = ANI_LAUNCHER
 			Player.Direction = FACING_RIGHT
 
-			Player.XPos = Object.XPos
+			Player.XPos  = Object.XPos
 			Player.iYPos = Player.CollisionBottom
 			FlipSign(Player.YPos)
 			Player.YPos -= 0x30000
@@ -133,9 +136,11 @@ sub ObjectPlayerInteraction
 
 			Player.YVelocity = 0
 
-			Object.Priority = PRIORITY_ACTIVE
-			Player.TrackScroll = false
-			Player.Gravity = GRAVITY_AIR
+			Object.Priority	= PRIORITY_ACTIVE
+
+			Player.TrackScroll	= false
+			Player.Gravity		= GRAVITY_AIR
+
 			PlayStageSfx(6, 0)
 			
 #platform: Use_Haptics
@@ -161,7 +166,7 @@ sub ObjectStartup
 	while ArrayPos0 < 1056
 		if Object[ArrayPos0].Type == TypeName[Launcher]
 			Object[ArrayPos0].OriginXPos = Object[ArrayPos0].XPos
-			Object[ArrayPos0].DrawOrder = 4
+			Object[ArrayPos0].DrawOrder  = 4
 		end if
 		ArrayPos0++
 	loop

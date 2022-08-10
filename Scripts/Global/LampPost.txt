@@ -20,7 +20,6 @@
 #alias 1	:	CSIDE_LWALL
 #alias 2	:	CSIDE_RWALL
 
-
 // Time Periods
 #alias 0	:	PROPVAL_PRESENT
 
@@ -56,7 +55,7 @@ sub ObjectPlayerInteraction
 #platform: Use_Origins
 			recStage = Stage.ListPos
 			recScore = Player.Score
-			recRing = Player.Rings
+			recRing  = Player.Rings
 			
 			StatsUsabilityParam1 = StageStatsUsabilityParam1
 			StatsUsabilityParam2 = StageStatsUsabilityParam2
@@ -66,8 +65,8 @@ sub ObjectPlayerInteraction
 #endplatform
 
 			Rec_Milliseconds = Stage.MilliSeconds
-			Rec_Seconds = Stage.Seconds
-			Rec_Minutes = Stage.Minutes
+			Rec_Seconds		 = Stage.Seconds
+			Rec_Minutes		 = Stage.Minutes
 			
 			Object.State = LAMPPOST_ROTATE
 			Object.Timer = 384
@@ -113,7 +112,7 @@ sub ObjectDraw
 		Object.Timer += 16
 		if Object.Timer > 896
 			Object.Timer = 0
-			Object.State = 2
+			Object.State = LAMPPOST_USED
 		end if
 		break
 
@@ -124,7 +123,7 @@ sub ObjectDraw
 			Object.Timer = 0
 		end if
 
-		TempValue0 = Object.YPos
+		TempValue0  = Object.YPos
 		TempValue0 -= 0x200000
 		if Object.Timer > 3
 			DrawSpriteXY(4, Object.XPos, TempValue0)
@@ -149,12 +148,15 @@ sub ObjectStartup
 #platform: Use_Origins
 	if game.playMode == BOOT_PLAYMODE_BOSSRUSH
 		if LampPost.Check > 31
-			ArrayPos0 = LampPost.Check
-			Player.XPos = Object[ArrayPos0].XPos
+			ArrayPos0	 = LampPost.Check
+			Player.XPos  = Object[ArrayPos0].XPos
 			Player.XPos += LampPost.Side
-			Player.YPos = Object[ArrayPos0].YPos
+			Player.YPos  = Object[ArrayPos0].YPos
+
 			Object[ArrayPos0].State = LAMPPOST_USED
+
 			Player.Score = recScore
+
 			if Player.deadResetRings == true
 				Player.Rings = 0
 				Player.deadResetRings = false
@@ -162,49 +164,56 @@ sub ObjectStartup
 				Player.Rings = recRing
 			end if
 			
-			Ring.ExtraLife = 100
-			Ring.ExtraLife += Player.Value0
-			TempValue0 = Player.Value0
+			Ring.ExtraLife  = 100
+			Ring.ExtraLife += Player.Rings
+
+			TempValue0  = Player.Rings
 			TempValue0 %= 100
+
 			Ring.ExtraLife -= TempValue0
 			if Ring.ExtraLife > 300
 				Ring.ExtraLife = 1000
 			end if
-			Stage.MilliSeconds = Rec_Milliseconds
-			Stage.Seconds = Rec_Seconds
-			Stage.Minutes = Rec_Minutes
+
+			Stage.MilliSeconds	= Rec_Milliseconds
+			Stage.Seconds		= Rec_Seconds
+			Stage.Minutes		= Rec_Minutes
 		end if
 	else
 		if Warp.XPos == 0
 			if HUD.TimePeriod == PROPVAL_PRESENT
 				if LampPost.Check > 31
-					ArrayPos0 = LampPost.Check
-					Player.XPos = Object[ArrayPos0].XPos
+					ArrayPos0	 = LampPost.Check
+					Player.XPos  = Object[ArrayPos0].XPos
 					Player.XPos += LampPost.Side
-					Player.YPos = Object[ArrayPos0].YPos
+					Player.YPos  = Object[ArrayPos0].YPos
+
 					Object[ArrayPos0].State = LAMPPOST_USED
+
 					Player.Score = recScore
 					if Player.deadResetRings == true
 						Player.Rings = 0
 						Player.deadResetRings = false
 					else
-						Player.Value0 = recRing
+						Player.Rings = recRing
 					end if
 					
-					Ring.ExtraLife = 100
-					Ring.ExtraLife += Player.Value0
-					TempValue0 = Player.Value0
+					Ring.ExtraLife  = 100
+					Ring.ExtraLife += Player.Rings
+
+					TempValue0  = Player.Rings
 					TempValue0 %= 100
+
 					Ring.ExtraLife -= TempValue0
 					if Ring.ExtraLife > 300
 						Ring.ExtraLife = 1000
 					end if
 					
-					Stage.MilliSeconds = Rec_Milliseconds
-					Stage.Seconds = Rec_Seconds
-					Stage.Minutes = Rec_Minutes
+					Stage.MilliSeconds	= Rec_Milliseconds
+					Stage.Seconds		= Rec_Seconds
+					Stage.Minutes		= Rec_Minutes
 				else
-					game.timeOver = 0
+					game.timeOver = false
 				end if
 			end if
 		end if
@@ -224,14 +233,16 @@ sub ObjectStartup
 	if Warp.XPos == 0
 		if HUD.TimePeriod == PROPVAL_PRESENT
 			if LampPost.Check > 31
-				ArrayPos0 = LampPost.Check
-				Player.XPos = Object[ArrayPos0].XPos
+				ArrayPos0	 = LampPost.Check
+				Player.XPos  = Object[ArrayPos0].XPos
 				Player.XPos += LampPost.Side
-				Player.YPos = Object[ArrayPos0].YPos
+				Player.YPos  = Object[ArrayPos0].YPos
+
 				Object[ArrayPos0].State = LAMPPOST_USED
-				Stage.MilliSeconds = Rec_Milliseconds
-				Stage.Seconds = Rec_Seconds
-				Stage.Minutes = Rec_Minutes
+
+				Stage.MilliSeconds	= Rec_Milliseconds
+				Stage.Seconds		= Rec_Seconds
+				Stage.Minutes		= Rec_Minutes
 			end if
 		end if
 	end if

@@ -51,6 +51,7 @@ sub ObjectMain
 		else
 			Object.State = MOVINGSPIKES_REVEAL
 			Object.Timer = 0
+			
 			PlayStageSfx(4, 0)
 		end if
 		break
@@ -68,11 +69,11 @@ end sub
 
 
 sub ObjectPlayerInteraction
-	TempValue0 = Object.OffSet
+	TempValue0   = Object.OffSet
 	TempValue0 >>= 16
-	TempValue0 -= 16
-	TempValue1 = TempValue0
-	TempValue1 += 32
+	TempValue0  -= 16
+	TempValue1   = TempValue0
+	TempValue1  += 32
 	
 	switch Object.PropertyValue
 	case PROPVAL_FACING_UP
@@ -85,11 +86,10 @@ sub ObjectPlayerInteraction
 				if Player.InvincibleTimer == 0
 					PlayerObjectCollision(C_TOUCH, -15, -18, 15, -12)
 					if CheckResult == true
-						Player.State = Player_State_GotHit
+						Player.State	 = Player_State_GotHit
+						Player.Gravity	 = GRAVITY_AIR
 
-						Player.Gravity = GRAVITY_AIR
-
-						Player.YPos -= 0x10000
+						Player.YPos		-= 0x10000
 						if Player.XPos > Object.XPos
 							Player.Speed =  0x20000
 						else
@@ -104,9 +104,11 @@ sub ObjectPlayerInteraction
 	case PROPVAL_FACING_RIGHT
 		FlipSign(TempValue0)
 		FlipSign(TempValue1)
+
 		PlayerObjectCollision(C_BOX, TempValue1, -16, TempValue0, 16)
 		if Object.State != MOVINGSPIKES_HIDE
 			if Player.InvincibleTimer == 0
+
 				PlayerObjectCollision(C_TOUCH, 8, -15, 18, 15)
 				if CheckResult == true
 					Player.State = Player_State_GotHit
@@ -121,6 +123,7 @@ sub ObjectPlayerInteraction
 		PlayerObjectCollision(C_BOX, TempValue0, -16, TempValue1, 16)
 		if Object.State != MOVINGSPIKES_HIDE
 			if Player.InvincibleTimer == 0
+
 				PlayerObjectCollision(C_TOUCH, -18, -15, -8, 15)
 				if CheckResult == true
 					Player.State = Player_State_GotHit
@@ -138,6 +141,7 @@ sub ObjectPlayerInteraction
 		if Object.State != MOVINGSPIKES_HIDE
 			if Player.YVelocity < 1
 				if Player.InvincibleTimer == 0
+
 					PlayerObjectCollision(C_TOUCH, -14, 12, 14, 18)
 					if CheckResult == true
 						Player.State = Player_State_GotHit
@@ -158,25 +162,25 @@ end sub
 sub ObjectDraw
 	switch Object.PropertyValue
 	case PROPVAL_FACING_UP
-		TempValue0 = Object.YPos
+		TempValue0  = Object.YPos
 		TempValue0 += Object.OffSet
 		DrawSpriteXY(Object.PropertyValue, Object.XPos, TempValue0)
 		break
 
 	case PROPVAL_FACING_RIGHT
-		TempValue0 = Object.XPos
+		TempValue0  = Object.XPos
 		TempValue0 -= Object.OffSet
 		DrawSpriteXY(Object.PropertyValue, TempValue0, Object.YPos)
 		break
 
 	case PROPVAL_FACING_LEFT
-		TempValue0 = Object.XPos
+		TempValue0  = Object.XPos
 		TempValue0 += Object.OffSet
 		DrawSpriteXY(Object.PropertyValue, TempValue0, Object.YPos)
 		break
 
 	case PROPVAL_FACING_DOWN
-		TempValue0 = Object.YPos
+		TempValue0  = Object.YPos
 		TempValue0 -= Object.OffSet
 		DrawSpriteXY(Object.PropertyValue, Object.XPos, TempValue0)
 		break

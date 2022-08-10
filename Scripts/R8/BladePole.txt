@@ -10,11 +10,14 @@
 #alias 1	:	BLADEPOLE_MOVE_RIGHT
 #alias 2	:	BLADEPOLE_MOVE_LEFT
 
+// Collision Sides
+#alias 0	:	CSIDE_FLOOR
+
 
 sub ObjectMain
 	switch Object.State
 	case BLADEPOLE_SETUP
-		ObjectTileGrip(0, 0, 48, 0)	// Search for collision with floor
+		ObjectTileGrip(CSIDE_FLOOR, 0, 48, 0)
 		if CheckResult == true
 			Object.State = BLADEPOLE_MOVE_RIGHT
 			Object.Timer = -64
@@ -27,7 +30,7 @@ sub ObjectMain
 		if Object.Timer < 96
 			Object.Timer++
 			Object.XPos += 0x10000
-			ObjectTileGrip(0, 0, 48, 0)
+			ObjectTileGrip(CSIDE_FLOOR, 0, 48, 0)
 			if CheckResult == false
 				Object.State = BLADEPOLE_MOVE_LEFT
 				Object.Timer = -64
@@ -42,7 +45,7 @@ sub ObjectMain
 		if Object.Timer < 96
 			Object.Timer++
 			Object.XPos -= 0x10000
-			ObjectTileGrip(0, 0, 48, 0)
+			ObjectTileGrip(CSIDE_FLOOR, 0, 48, 0)
 			if CheckResult == false
 				Object.State = BLADEPOLE_MOVE_RIGHT
 				Object.Timer = -64

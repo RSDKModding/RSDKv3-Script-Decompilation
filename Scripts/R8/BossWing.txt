@@ -23,6 +23,12 @@
 // Eggman Animations
 #alias 2	:	EGGANI_LAUGH
 
+// Collision Sides
+#alias 0	:	CSIDE_FLOOR
+
+// Priority
+#alias 0	:	PRIORITY_BOUNDS
+
 
 sub ObjectMain
 	switch Object.State
@@ -37,9 +43,9 @@ sub ObjectMain
 			Object.XPos += Object.XVelocity
 		else
 			if Object.Rotation == 0
-				ObjectTileCollision(0, 0, 32, 0)
+				ObjectTileCollision(CSIDE_FLOOR, 0, 32, 0)
 			else
-				ObjectTileCollision(0, 0, 16, 0)
+				ObjectTileCollision(CSIDE_FLOOR, 0, 16, 0)
 			end if
 			if CheckResult == true
 				Object.State = BOSSWING_DROP_GROUNDED
@@ -95,7 +101,7 @@ sub ObjectMain
 		if Object.Timer < 120
 			Object.Timer++
 		else
-			Object.Priority = 0
+			Object.Priority = PRIORITY_BOUNDS
 			Object.Timer    = 0
 			Object.State    = BOSSWING_BLANK
 			Object.Type     = TypeName[Blank Object]

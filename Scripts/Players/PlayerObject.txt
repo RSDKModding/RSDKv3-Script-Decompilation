@@ -489,7 +489,7 @@ function Player_ProcessUpdate
 			if Object[+2].Type == TypeName[Invincibility]
 				switch Object[+2].PropertyValue
 				case 0
-					TempValue0 = Player.EntityNo
+					TempValue0  = Player.EntityNo
 					TempValue0 += 2
 					ResetObjectEntity(TempValue0, TypeName[Blank Object], 0, 0, 0)
 					break
@@ -500,12 +500,12 @@ function Player_ProcessUpdate
 					ResetObjectEntity(TempValue0, TypeName[Blank Object], 0, 0, 0)
 					Object[+2].Type = TypeName[BlueShield]
 					Object[+2].PropertyValue = 1
-					Object[+2].Priority = 1
-					Object[+2].DrawOrder = 4
-					Object[+2].InkEffect = INK_ALPHA
-					Object[+2].Alpha = 160
-					Object[+2].XPos = Player.XPos
-					Object[+2].YPos = Player.YPos
+					Object[+2].Priority 	 = PRIORITY_ACTIVE
+					Object[+2].DrawOrder	 = 4
+					Object[+2].InkEffect	 = INK_ALPHA
+					Object[+2].Alpha		 = 160
+					Object[+2].XPos			 = Player.XPos
+					Object[+2].YPos			 = Player.YPos
 					break
 
 				end switch
@@ -621,7 +621,7 @@ function Player_State_Ground
 		CallFunction(Player_HandleOnGround)
 		if Player.Speed == 0
 			// Consumes the warp if you stop too late during warping run
-			if Warp.Destination > 0
+			if Warp.Destination > WARPDEST_NONE
 				if Warp.Timer > 99
 					if Warp.Timer < 204
 						Warp.Destination = WARPDEST_NONE
@@ -1056,14 +1056,14 @@ function Player_State_Air
 		if Player.DropDashCharge >= 20
 			CallFunction(Player_Action_Spindash_S2)
 		else
-			Player.State = Player_State_Ground
+			Player.State	= Player_State_Ground
 			CallFunction(Player_HandleOnGround)
 			Player.Skidding = 0
 		end if
 #endplatform
 
 #platform: Use_Standalone
-		Player.State = Player_State_Ground
+		Player.State	= Player_State_Ground
 		CallFunction(Player_HandleOnGround)
 		Player.Skidding = 0
 #endplatform
@@ -1074,8 +1074,8 @@ end function
 function Player_HandleAirFriction
 	if Player.YVelocity > -0x40000
 		if Player.YVelocity < 0
-			TempValue0 = Player.Speed
-			TempValue0 >>= 5
+			TempValue0    = Player.Speed
+			TempValue0  >>= 5
 			Player.Speed -= TempValue0
 		end if
 	end if

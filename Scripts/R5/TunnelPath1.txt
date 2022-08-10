@@ -3,12 +3,15 @@
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
 // Aliases
-#alias 62: TYPE_TUNNELPATH1
-
 #alias Object.Value0	:	Object.Timer
 
+// States
 #alias 0	:	TUNNELPATH_IDLE
 #alias 1	:	TUNNELPATH_ACTIVE
+
+// Priority
+#alias 0	:	PRIORITY_BOUNDS
+#alias 1	:	PRIORITY_ACTIVE
 
 
 sub ObjectMain
@@ -21,8 +24,9 @@ sub ObjectMain
 		TempValue0 = Object.Timer
 		
 		Object.Timer++
-		Player.Speed = Player.XPos
-		Player.Animation = ANI_JUMPING
+
+		Player.Speed		  = Player.XPos
+		Player.Animation	  = ANI_JUMPING
 		Player.AnimationSpeed = 240
 		switch TempValue0
 		case 0
@@ -284,26 +288,29 @@ sub ObjectMain
 		case 64
 			Player.XPos = 3463680
 			Player.YPos = 15233536
-			Object.State = 0
-			Object.Priority = 0
+
+			Object.State	 = TUNNELPATH_IDLE
+			Object.Priority	 = PRIORITY_BOUNDS
+
 			Player.XVelocity = 0xA0000
-			Player.Speed = 0xA0000
+			Player.Speed	 = 0xA0000
 			Player.YVelocity = 0x60000
 
 #platform: Use_Origins
-				Player.State = Player_State_Air_NoDropDash
+			Player.State	 = Player_State_Air_NoDropDash
 #endplatform
 
 #platform: Use_Standalone
-				Player.State = Player_State_Air
+			Player.State	 = Player_State_Air
 #endplatform
+
 			Player.ObjectInteraction = true
 			break
 		end switch
 
 		Player.XPos += Object.XPos
 		Player.YPos += Object.YPos
-		if Object.State > 0
+		if Object.State > TUNNELPATH_IDLE
 			Player.Speed -= Player.XPos
 			FlipSign(Player.Speed)
 		end if
@@ -320,14 +327,15 @@ sub ObjectPlayerInteraction
 			if CheckResult == true
 				// Engage the Player with the Tunnel
 				
-				Player.State = Player_State_Static
+				Player.State			 = Player_State_Static
 				Player.ObjectInteraction = false
-				Object.State = TUNNELPATH_ACTIVE
-				Object.Timer = 0
-				
+
+				Object.State	= TUNNELPATH_ACTIVE
+				Object.Timer	= 0
 				// Make this Object always active, as if it ever stops running,
 				// then the Player will be stuck in the Tube forever
-				Object.Priority = 1
+				Object.Priority = PRIORITY_ACTIVE
+
 				PlaySfx(7, 0)
 			end if
 		end if

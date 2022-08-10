@@ -6,6 +6,9 @@
 #alias Object.Value0	:	Object.MoveTimer
 #alias Object.Value1	:	Object.CannonTimer
 
+// Sasuri Bullet (SBullet) Aliases
+#alias Object.Value1	:	Object.XVelocity
+
 #alias 0	:	SASURI_FINDGROUND
 #alias 1	:	SASURI_CRAWLLEFT
 #alias 2	:	SASURI_CRAWLRIGHT
@@ -17,8 +20,8 @@
 #alias 0	:	PROPVAL_QUALITY_GOOD
 #alias 1	:	PROPVAL_QUALITY_BAD
 
-// Sasuri Bullet (SBullet) Aliases
-#alias Object.Value1	:	Object.XVelocity
+// Collision Sides
+#alias 0	:	CSIDE_FLOOR
 
 
 sub ObjectMain
@@ -32,7 +35,7 @@ sub ObjectMain
 		case SASURI_FINDGROUND
 			// See if there's any ground for the Sasuri to stand on
 			// Note - is this an error? Should it be ObjectTileGrip instead? That's what all the other stuff around here uses...
-			ObjectTileCollision(0, 0, 13, 0)
+			ObjectTileCollision(CSIDE_FLOOR, 0, 13, 0)
 			
 			if CheckResult == true
 				// If there is, then start crawling
@@ -57,7 +60,7 @@ sub ObjectMain
 			
 			// Also, see if the Sasuri is still on ground
 			// -> If it isn't, then turn around as well
-			ObjectTileGrip(0, 0, 13, 0)
+			ObjectTileGrip(CSIDE_FLOOR, 0, 13, 0)
 			if CheckResult == false
 				Object.State = SASURI_CRAWLRIGHT
 				Object.MoveTimer = 0
@@ -78,7 +81,7 @@ sub ObjectMain
 			end if
 			
 			// Also like above, see if the Sasuri's still on ground and if it isn't, then turn around
-			ObjectTileGrip(0, 0, 13, 0)
+			ObjectTileGrip(CSIDE_FLOOR, 0, 13, 0)
 			if CheckResult == false
 				Object.State = SASURI_CRAWLLEFT
 				Object.MoveTimer = 0
@@ -157,7 +160,7 @@ sub ObjectMain
 			// See if there's any ground for the Sasuri to stand on
 			// (Interestingly, the Good version of this state uses ObjectTileCollision instead,
 			//  but I believe the error lies in the Good version rather than here)
-			ObjectTileGrip(0, 0, 13, 0)
+			ObjectTileGrip(CSIDE_FLOOR, 0, 13, 0)
 			
 			if CheckResult == true
 				// If the Sasuri foung ground collision, then start prowling around
@@ -181,7 +184,7 @@ sub ObjectMain
 			end if
 			
 			// In addition to the timer condition, the Sasuri can also run out of ground as another condition for turning around
-			ObjectTileGrip(0, 0, 13, 0)
+			ObjectTileGrip(CSIDE_FLOOR, 0, 13, 0)
 			if CheckResult == false
 				Object.State = SASURI_CRAWLRIGHT
 				Object.MoveTimer = 0
@@ -203,7 +206,7 @@ sub ObjectMain
 			end if
 			
 			// And also like before, another condition for turning around is reached the end of the ground as well
-			ObjectTileGrip(0, 0, 13, 0)
+			ObjectTileGrip(CSIDE_FLOOR, 0, 13, 0)
 			if CheckResult == false
 				Object.State = SASURI_CRAWLLEFT
 				Object.MoveTimer = 0

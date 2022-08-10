@@ -18,6 +18,9 @@
 #alias 3	:	CENTRAL_CHUNK_ICEBLOCK // Used, but it doesn't do anything
 #alias 4	:	SMALL_CHUNK_ICEBLOCK
 
+// Collision Sides
+#alias 0	:	CSIDE_FLOOR
+
 // Directions
 #alias 2	:	FACING_UPEND_RIGHT
 #alias 3	:	FACING_UPEND_LEFT
@@ -28,52 +31,52 @@
 
 function IceBlock_CreateIceChunks
 	CreateTempObject(TypeName[IceBlock], BIG_CHUNK_ICEBLOCK, Object.XPos, Object.YPos)
-	Object[TempObjectPos].DrawOrder = 4
-	Object[TempObjectPos].XPos -= 0x110000
-	Object[TempObjectPos].YPos -= 0xD0000
-	Object[TempObjectPos].XVelocity = -0x10000
-	Object[TempObjectPos].YVelocity = -0x10000
-	Object[TempObjectPos].Direction = FACING_RIGHT
+	Object[TempObjectPos].DrawOrder  =  4
+	Object[TempObjectPos].XPos		-=  0x110000
+	Object[TempObjectPos].YPos		-=  0xD0000
+	Object[TempObjectPos].XVelocity  = -0x10000
+	Object[TempObjectPos].YVelocity  = -0x10000
+	Object[TempObjectPos].Direction  =  FACING_RIGHT
 
 	CreateTempObject(TypeName[IceBlock], BIG_CHUNK_ICEBLOCK, Object.XPos, Object.YPos)
-	Object[TempObjectPos].DrawOrder = 4
-	Object[TempObjectPos].XPos += 0x110000
-	Object[TempObjectPos].YPos -= 0xD0000
-	Object[TempObjectPos].XVelocity = 0x10000
-	Object[TempObjectPos].YVelocity = -0x10000
-	Object[TempObjectPos].Direction = FACING_LEFT
+	Object[TempObjectPos].DrawOrder  =  4
+	Object[TempObjectPos].XPos		+=  0x110000
+	Object[TempObjectPos].YPos		-=  0xD0000
+	Object[TempObjectPos].XVelocity  =  0x10000
+	Object[TempObjectPos].YVelocity  = -0x10000
+	Object[TempObjectPos].Direction  =  FACING_LEFT
 
 	CreateTempObject(TypeName[IceBlock], BIG_CHUNK_ICEBLOCK, Object.XPos, Object.YPos)
-	Object[TempObjectPos].DrawOrder = 4
-	Object[TempObjectPos].XPos -= 0x110000
-	Object[TempObjectPos].YPos += 0xD0000
-	Object[TempObjectPos].XVelocity = -0x10000
-	Object[TempObjectPos].YVelocity = 0x10000
-	Object[TempObjectPos].Direction = FACING_UPEND_RIGHT
+	Object[TempObjectPos].DrawOrder  =  4
+	Object[TempObjectPos].XPos		-=  0x110000
+	Object[TempObjectPos].YPos		+=  0xD0000
+	Object[TempObjectPos].XVelocity  = -0x10000
+	Object[TempObjectPos].YVelocity  =  0x10000
+	Object[TempObjectPos].Direction  =  FACING_UPEND_RIGHT
 
 	CreateTempObject(TypeName[IceBlock], BIG_CHUNK_ICEBLOCK, Object.XPos, Object.YPos)
-	Object[TempObjectPos].DrawOrder = 4
-	Object[TempObjectPos].XPos += 0x110000
-	Object[TempObjectPos].YPos += 0xD0000
-	Object[TempObjectPos].XVelocity = 0x10000
-	Object[TempObjectPos].YVelocity = 0x10000
-	Object[TempObjectPos].Direction = FACING_UPEND_LEFT
+	Object[TempObjectPos].DrawOrder  = 4
+	Object[TempObjectPos].XPos		+= 0x110000
+	Object[TempObjectPos].YPos		+= 0xD0000
+	Object[TempObjectPos].XVelocity  = 0x10000
+	Object[TempObjectPos].YVelocity  = 0x10000
+	Object[TempObjectPos].Direction  = FACING_UPEND_LEFT
 
 	CreateTempObject(TypeName[IceBlock], CENTRAL_CHUNK_ICEBLOCK, Object.XPos, Object.YPos)
 	Object[TempObjectPos].DrawOrder = 4
 	Object[TempObjectPos].Direction = FACING_RIGHT
 
 	CreateTempObject(TypeName[IceBlock], MEDIUM_CHUNK_ICEBLOCK, Object.XPos, Object.YPos)
-	Object[TempObjectPos].DrawOrder = 4
-	Object[TempObjectPos].YPos -= 0x110000
-	Object[TempObjectPos].YVelocity = -0x10000
-	Object[TempObjectPos].Direction = FACING_LEFT
+	Object[TempObjectPos].DrawOrder  =  4
+	Object[TempObjectPos].YPos		-=  0x110000
+	Object[TempObjectPos].YVelocity  = -0x10000
+	Object[TempObjectPos].Direction  =  FACING_LEFT
 
 	CreateTempObject(TypeName[IceBlock], MEDIUM_CHUNK_ICEBLOCK, Object.XPos, Object.YPos)
-	Object[TempObjectPos].DrawOrder = 4
-	Object[TempObjectPos].YPos += 0x110000
-	Object[TempObjectPos].YVelocity = 0x10000
-	Object[TempObjectPos].Direction = FACING_UPEND_LEFT
+	Object[TempObjectPos].DrawOrder  = 4
+	Object[TempObjectPos].YPos		+= 0x110000
+	Object[TempObjectPos].YVelocity  = 0x10000
+	Object[TempObjectPos].Direction  = FACING_UPEND_LEFT
 	
 			
 #platform: Use_Haptics
@@ -93,7 +96,7 @@ sub ObjectMain
 				Object.YVelocity = 0x140000
 			end if
 
-			ObjectTileCollision(0, 0, 24, 0)
+			ObjectTileCollision(CSIDE_FLOOR, 0, 24, 0)
 			if CheckResult == true
 				Object.State = ICEBLOCK_BREAKICE
 				Object.YVelocity = 0
@@ -143,14 +146,14 @@ sub ObjectMain
 		else
 			Object.Type = TypeName[Blank Object]
 			CreateTempObject(TypeName[IceBlock], SMALL_CHUNK_ICEBLOCK, Object.XPos, Object.YPos)
-			Object[TempObjectPos].DrawOrder = 4
-			Object[TempObjectPos].XVelocity = 0
+			Object[TempObjectPos].DrawOrder =  4
+			Object[TempObjectPos].XVelocity =  0
 			Object[TempObjectPos].YVelocity = -0x10000
 
 			CreateTempObject(TypeName[IceBlock], SMALL_CHUNK_ICEBLOCK, Object.XPos, Object.YPos)
-			Object[TempObjectPos].DrawOrder = 4
+			Object[TempObjectPos].DrawOrder =  4
 			Object[TempObjectPos].XVelocity = -0x10000
-			Object[TempObjectPos].YVelocity = 0
+			Object[TempObjectPos].YVelocity =  0
 
 			CreateTempObject(TypeName[IceBlock], SMALL_CHUNK_ICEBLOCK, Object.XPos, Object.YPos)
 			Object[TempObjectPos].DrawOrder = 4
@@ -172,14 +175,14 @@ sub ObjectMain
 		else
 			Object.Type = TypeName[Blank Object]
 			CreateTempObject(TypeName[IceBlock], SMALL_CHUNK_ICEBLOCK, Object.XPos, Object.YPos)
-			Object[TempObjectPos].DrawOrder = 4
-			Object[TempObjectPos].XVelocity = 0
+			Object[TempObjectPos].DrawOrder =  4
+			Object[TempObjectPos].XVelocity =  0
 			Object[TempObjectPos].YVelocity = -0x10000
 
 			CreateTempObject(TypeName[IceBlock], SMALL_CHUNK_ICEBLOCK, Object.XPos, Object.YPos)
-			Object[TempObjectPos].DrawOrder = 4
+			Object[TempObjectPos].DrawOrder =  4
 			Object[TempObjectPos].XVelocity = -0x10000
-			Object[TempObjectPos].YVelocity = 0x10000
+			Object[TempObjectPos].YVelocity =  0x10000
 
 			CreateTempObject(TypeName[IceBlock], SMALL_CHUNK_ICEBLOCK, Object.XPos, Object.YPos)
 			Object[TempObjectPos].DrawOrder = 4
@@ -217,6 +220,7 @@ end sub
 sub ObjectStartup
 	if Stage.PlayerListPos == 0	// Sonic
 		LoadSpriteSheet("R6/Objects.gif")
+
 		SpriteFrame(-24, -24, 48, 48, 34, 18)	// #0 - Sonic Ice Block
 		SpriteFrame(-8, -12, 16, 24, 206, 1)	// #1 - Ice Chunk (Big)
 		SpriteFrame(-8, -8, 16, 16, 66, 1)		// #2 - Ice Chunk (Medium)
@@ -224,6 +228,7 @@ sub ObjectStartup
 		SpriteFrame(-4, -4, 8, 8, 34, 67)		// #4 - Ice Chunk (Small)
 	else
 		LoadSpriteSheet("R6/Objects3.gif")
+		
 		SpriteFrame(-24, -24, 48, 48, 1, 101)	// #0 - Sonic Ice Block
 		SpriteFrame(-8, -12, 16, 24, 50, 86)	// #1 - Ice Chunk (Big)
 		SpriteFrame(-8, -8, 16, 16, 50, 111)	// #2 - Ice Chunk (Medium)

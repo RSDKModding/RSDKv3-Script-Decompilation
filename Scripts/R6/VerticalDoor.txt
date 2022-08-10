@@ -1,4 +1,4 @@
-//------------Sonic CD Vertical Door Script-------------//
+//---------------Sonic CD Vertical Door Script----------------//
 //--------Scripted by Christian Whitehead 'The Taxman'--------//
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
@@ -6,36 +6,41 @@
 #alias Object.Value0			:	Object.DoorHeight
 
 // Push Button Aliases
-#alias Object[+1].PropertyValue	:	PushButton.Active
+#alias Object[+1].PropertyValue	:	PushButton.Pressed
 
 // States
 #alias 0	:	VERTICALDOOR_CLOSED
 #alias 1	:	VERTICALDOOR_OPEN
 
+// Property Values
+#alias 0	:	CHECK_FROM_LEFT
+#alias 1	:	CHECK_FROM_RIGHT
+
 
 sub ObjectMain
 	if Object.State == VERTICALDOOR_CLOSED
-		if PushButton.Active == true
+		if PushButton.Pressed == true
 			Object.State = VERTICALDOOR_OPEN
 		end if
 
 		if Object.DoorHeight > 0
 			Object.DoorHeight -= 0x40000
-			Object.YPos += 0x40000
+			Object.YPos		  += 0x40000
 		end if
 	else
 		if Object.DoorHeight < 0x400000
 			Object.DoorHeight += 0x40000
-			Object.YPos -= 0x40000
+			Object.YPos		  -= 0x40000
 		end if
 	end if
 end sub
 
 
 sub ObjectPlayerInteraction
-	if Object.PropertyValue == 0
+	if Object.PropertyValue == CHECK_FROM_LEFT
 		if Object.State == VERTICALDOOR_OPEN
 			PlayerObjectCollision(C_BOX, -8, -32, 8, 32)
+
 			PlayerObjectCollision(C_TOUCH, -64, -128, -32, 128)
 			if CheckResult == true
 				Object.State = VERTICALDOOR_CLOSED
@@ -46,6 +51,7 @@ sub ObjectPlayerInteraction
 	else
 		if Object.State == VERTICALDOOR_OPEN
 			PlayerObjectCollision(C_BOX, -8, -32, 8, 32)
+
 			PlayerObjectCollision(C_TOUCH, 32, -128, 64, 128)
 			if CheckResult == true
 				Object.State = VERTICALDOOR_CLOSED

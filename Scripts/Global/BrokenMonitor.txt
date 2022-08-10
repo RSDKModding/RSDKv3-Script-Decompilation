@@ -15,7 +15,7 @@
 #alias 0	:	PLAYER_SONIC
 
 // Soundtrack Aliases
-#alias 0	:	JP_OST
+#alias 0	:	OST_JP
 
 // Priorities
 #alias 0	:	PRIORITY_BOUNDS
@@ -34,6 +34,7 @@
 #alias 2	:	BROKENMONITOR_BLANK
 
 // Property Values
+#alias 0	:	MONITOR_BLANK
 #alias 1	:	MONITOR_RINGS
 #alias 2	:	MONITOR_SHIELD
 #alias 3	:	MONITOR_INVINCIBILITY
@@ -52,13 +53,13 @@ sub ObjectMain
 	case BROKENMONITOR_SPAWN_POWERUP
 		if Object.Timer < 0
 			Object.PowerupPos += Object.Timer
-			Object.Timer += 0x1800
+			Object.Timer	  += 0x1800
 		else
 			Object.Timer = 0
 		end if
 		
 		if Object.Timer == 0
-			Object.State = BROKENMONITOR_FADE_POWERUP
+			Object.State	 = BROKENMONITOR_FADE_POWERUP
 			Object.InkEffect = INK_ALPHA
 			switch Object.PropertyValue
 			case MONITOR_RINGS
@@ -77,21 +78,24 @@ sub ObjectMain
 				
 				if Player.Rings >= Ring.ExtraLife
 					if Options.GameMode != GAMEMODE_TIMEATTACK
+
 #platform: Use_Origins
 						if game.coinMode == false
 							Player.Lives++
 						else
 							
 							// With Coin Mode active, we of course use Coins rather than lives
-							// -> Needless to say, this is new to Origins of course
+							// -> Needless to say, this is new to Origins
 							game.callbackParam0 = true
 							EngineCallback(NOTIFY_ADD_COIN)
 							
 						endif
 #endplatform
+
 #platform: Use_Standalone
 						Player.Lives++
 #endplatform
+
 						if Stage.PlayerListPos == PLAYER_SONIC
 							PlaySfx(20, false)
 						else
@@ -120,41 +124,44 @@ sub ObjectMain
 				PlaySfx(10, 0)
 				Object[2].PropertyValue = 1
 				if Object[2].Type != TypeName[Invincibility]
-					Object[2].Type = TypeName[BlueShield]
-					Object[2].Priority = PRIORITY_ACTIVE
+					Object[2].Type		= TypeName[BlueShield]
+					Object[2].Priority	= PRIORITY_ACTIVE
 					Object[2].DrawOrder = 4
 					Object[2].InkEffect = INK_ALPHA
-					Object[2].Alpha = 160
-					Object[2].XPos = Player.XPos
-					Object[2].YPos = Player.YPos
+					Object[2].Alpha		= 160
+					Object[2].XPos		= Player.XPos
+					Object[2].YPos		= Player.YPos
 				end if
 				break
 				
 			case MONITOR_INVINCIBILITY
-				Object[2].Type = TypeName[Invincibility]
-				Object[2].Priority = PRIORITY_ACTIVE
+				Object[2].Type		= TypeName[Invincibility]
+				Object[2].Priority	= PRIORITY_ACTIVE
 				Object[2].DrawOrder = 4
-				Object[2].XPos = Player.XPos
-				Object[2].YPos = Player.YPos
-				if Options.Soundtrack == JP_OST
+				Object[2].XPos		= Player.XPos
+				Object[2].YPos		= Player.YPos
+
+				if Options.Soundtrack == OST_JP
 					Player.InvincibleTimer = 0x4EC
 				else
 					Player.InvincibleTimer = 0x528
 				end if
+
 				Player.BlinkTimer = 0
-				Player.Visible = true
+				Player.Visible	  = true
 				PlayMusic(2)
 				break
 				
 			case MONITOR_POWER_SNEAKERS
 				PlayMusic(3)
-				Player.Acceleration = 0x1800
-				Player.AirAcceleration = 0x3000
-				Player.TopSpeed = 0xC0000
-				Player.SpeedShoesTimer = 0x528
+				Player.Acceleration		= 0x1800
+				Player.AirAcceleration	= 0x3000
+				Player.TopSpeed			= 0xC0000
+				Player.SpeedShoesTimer	= 0x528
 				break
 				
 			case MONITOR_SONIC1UP
+
 #platform: Use_Origins
 				if game.coinMode == false
 					Player.Lives++
@@ -167,6 +174,7 @@ sub ObjectMain
 #platform: Use_Standalone
 				Player.Lives++
 #endplatform
+
 				PlaySfx(20, 0)
 				break
 				
@@ -174,6 +182,7 @@ sub ObjectMain
 				break
 				
 			case MONITOR_TAILS1UP
+
 #platform: Use_Origins
 				if game.coinMode == false
 					Player.Lives++
@@ -186,22 +195,24 @@ sub ObjectMain
 #platform: Use_Standalone
 				Player.Lives++
 #endplatform
+
 				PlaySfx(21, 0)
 				break
 				
 			case MONITOR_SUPER
-				Object[2].Type = TypeName[Invincibility]
-				Object[2].Priority = PRIORITY_ACTIVE
+				Object[2].Type		= TypeName[Invincibility]
+				Object[2].Priority	= PRIORITY_ACTIVE
 				Object[2].DrawOrder = 4
-				Object[2].XPos = Player.XPos
-				Object[2].YPos = Player.YPos
-				Player.InvincibleTimer = 0x528
-				Player.BlinkTimer = 0
-				Player.Visible = true
-				Player.Acceleration = 0x1800
-				Player.AirAcceleration = 0x3000
-				Player.TopSpeed = 0xC0000
-				Player.SpeedShoesTimer = 0x528
+				Object[2].XPos		= Player.XPos
+				Object[2].YPos		= Player.YPos
+
+				Player.InvincibleTimer	= 0x528
+				Player.BlinkTimer		= 0
+				Player.Visible			= true
+				Player.Acceleration		= 0x1800
+				Player.AirAcceleration	= 0x3000
+				Player.TopSpeed			= 0xC0000
+				Player.SpeedShoesTimer	= 0x528
 				break
 				
 			end switch
@@ -213,8 +224,9 @@ sub ObjectMain
 		if Object.Timer == 30
 			Object.Timer = 0
 			Object.State = BROKENMONITOR_BLANK
-			Object.PropertyValue = 0
-			Object.Priority = PRIORITY_BOUNDS
+			
+			Object.PropertyValue = MONITOR_BLANK
+			Object.Priority		 = PRIORITY_BOUNDS
 		else
 			if Object.Timer > 14
 				Object.Alpha -= 16
@@ -233,7 +245,7 @@ end sub
 sub ObjectDraw
 	DrawSprite(0)
 	
-	if Object.PropertyValue > 0
+	if Object.PropertyValue > MONITOR_BLANK
 		DrawSpriteFX(Object.PropertyValue, FX_INK, Object.XPos, Object.PowerupPos)
 	end if
 end sub
@@ -254,9 +266,9 @@ sub ObjectStartup
 
 #platform: Use_Origins
 	if game.coinMode == false
-		SpriteFrame(-8, -8, 16, 16, 26, 139)		// #5 - Sonic
+		SpriteFrame(-8, -8, 16, 16, 26, 139)	// #5 - Sonic
 	else
-		SpriteFrame(-8, -8, 16, 16, 92, 206)		// #5 - Coins
+		SpriteFrame(-8, -8, 16, 16, 92, 206)	// #5 - Coins
 	endif
 #endplatform
 
@@ -268,9 +280,9 @@ sub ObjectStartup
 	
 #platform: Use_Origins
 	if game.coinMode == false
-		SpriteFrame(-8, -8, 16, 16, 59, 106)		// #7 - Tails
+		SpriteFrame(-8, -8, 16, 16, 59, 106)	// #7 - Tails
 	else
-		SpriteFrame(-8, -8, 16, 16, 92, 206)		// #7 - Coins
+		SpriteFrame(-8, -8, 16, 16, 92, 206)	// #7 - Coins
 	endif
 #endplatform
 

@@ -22,13 +22,19 @@
 #alias 6	:	BATAPYON_BAD_BOUNCE
 #alias 7	:	BATAPYON_RESET
 
-// Priority
-#alias 0		:	PRIORITY_BOUNDS
-#alias 1		:	PRIORITY_ACTIVE
-
 // Property Values
 #alias 0	:	PROPVAL_QUALITY_GOOD
 #alias 1	:	PROPVAL_QUALITY_BAD
+
+// Collision Sides
+#alias 0	:	CSIDE_FLOOR
+#alias 1	:	CSIDE_LWALL
+#alias 2	:	CSIDE_RWALL
+#alias 3	:	CSIDE_ROOF
+
+// Priority
+#alias 0	:	PRIORITY_BOUNDS
+#alias 1	:	PRIORITY_ACTIVE
 
 
 sub ObjectMain
@@ -49,13 +55,13 @@ sub ObjectMain
 		Object.YPos		 += Object.YVelocity
 		Object.YVelocity += 0x2000
 
-		ObjectTileCollision(3, 0, -18, 0)
+		ObjectTileCollision(CSIDE_ROOF, 0, -18, 0)
 		if CheckResult == true
 			Object.YVelocity = 0
 		end if
 
 		if Object.YVelocity > 0
-			ObjectTileCollision(0, 0, 20, 0)
+			ObjectTileCollision(CSIDE_FLOOR, 0, 20, 0)
 			if CheckResult == true
 				if Object.Quality == PROPVAL_QUALITY_GOOD
 					Object.State	= BATAPYON_BOUNCE
@@ -82,14 +88,14 @@ sub ObjectMain
 		end if
 
 		if Object.XVelocity > 0
-			ObjectTileCollision(1, 16, 0, 0)
+			ObjectTileCollision(CSIDE_LWALL, 16, 0, 0)
 			if CheckResult == true
 				Object.TurnTimer = 0
 				Object.Direction = FACING_RIGHT
 				FlipSign(Object.XVelocity)
 			end if
 		else
-			ObjectTileCollision(2, -16, 0, 0)
+			ObjectTileCollision(CSIDE_RWALL, -16, 0, 0)
 			if CheckResult == true
 				Object.TurnTimer = 0
 				Object.Direction = FACING_LEFT
