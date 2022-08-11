@@ -190,6 +190,14 @@ function Player_BadnikBreak
 		TempValue0 |= CheckResult
 	end if
 
+#platform: Use_Origins
+	if game.playMode == BOOT_PLAYMODE_MISSION
+		if Stage.TimeEnabled == false
+			TempValue0 = false
+		end if
+	end if
+#endplatform
+
 	if TempValue0 == true
 		ResetObjectEntity(Object.EntityNo, Flower_TypeNo, 0, Object.XPos, Object.YPos)
 		Object.DrawOrder = 4
@@ -1990,6 +1998,18 @@ end function
 
 // Player Damage
 function Player_State_GotHit
+#platform: Use_Origins
+	TempValue1 = false
+	if game.playMode == BOOT_PLAYMODE_MISSION
+		if game.missionFunctionNo == 8
+			if game.missionValue == true
+				game.missionValue = false
+				TempValue1 = true
+			end if
+		end if
+	end if
+#endplatform
+
 	ArrayPos0  = Player.EntityNo
 	ArrayPos0 += 2
 	// if you had a shield, remove it
@@ -2007,9 +2027,14 @@ function Player_State_GotHit
 		end if
 	end if
 
+#platform: Use_Origins
+	if TempValue1 != false
+		TempValue0 = DAMAGE_DEATH
+	end if
+#endplatform
+
 	switch TempValue0
 	case DAMAGE_SHIELDED
-				
 #platform: Use_Haptics
 		HapticEffect(16, 0, 0, 0)
 #endplatform
@@ -2028,7 +2053,6 @@ function Player_State_GotHit
 		break
 
 	case DAMAGE_HURT
-				
 #platform: Use_Haptics
 		HapticEffect(16, 0, 0, 0)
 #endplatform
@@ -2121,7 +2145,6 @@ function Player_State_GotHit
 		break
 
 	case DAMAGE_DEATH
-				
 #platform: Use_Haptics
 		HapticEffect(28, 0, 0, 0)
 #endplatform

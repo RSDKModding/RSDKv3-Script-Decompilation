@@ -98,86 +98,101 @@ end function
 
 
 sub ObjectMain
-	if Object.PropertyValue == PROPVAL_PARENT_OBJECT
-		switch Object.State
-		case HOTARU_SPAWNER_CHECK_BOUNDS
-			TempValue0  = Object.XPos
-			TempValue0 -= 0x300000
+#platform: Use_Origins
+	if game.playMode == BOOT_PLAYMODE_BOSSRUSH
+		Object.Type = TypeName[Blank Object]
+	else
+#endplatform
+		if Object.PropertyValue == PROPVAL_PARENT_OBJECT
+			switch Object.State
+			case HOTARU_SPAWNER_CHECK_BOUNDS
+				TempValue0  = Object.XPos
+				TempValue0 -= 0x300000
 
-			if Player.XPos > TempValue0
-				Object.State++
-			end if
-			break
-
-		case HOTARU_SPAWNER_SPAWN_CHILD_1
-			if Object.Timer < 60
-				Object.Timer++
-			else
-				Object.Timer = 0
-				
-				Object[+1].Type  = TypeName[Hotaru]
-				Object[+1].XPos  = Object.XPos
-				Object[+1].XPos -= 0x500000
-				Object[+1].YPos  = Object.YPos
-				Object[+1].YPos += 0x300000
-				Object.State++
-			end if
-			break
-
-		case HOTARU_SPAWNER_CHECK_CHILD_1
-			// Check if the first Hotaru got destroyed
-			if Object[+1].Type != TypeName[Hotaru]
-				Object.State++
-			else
-				if Object[+1].State < HOTARU_CHARGE_LASER
-					TempValue0 = 176
-				else
-					TempValue0 = 0
+				if Player.XPos > TempValue0
+					Object.State++
 				end if
-				TempValue0  -= Object.Alpha
-				TempValue0 >>= 3
-				Object.Alpha += TempValue0
-			end if
-			break
+				break
 
-		case HOTARU_SPAWNER_SPAWN_CHILD_2
-			if Object.Timer < 60
-				Object.Timer++
-			else
-				Object.Timer = 0
-				Object[+2].Type = TypeName[Hotaru]
-				Object[+2].CheckBounds = true
+			case HOTARU_SPAWNER_SPAWN_CHILD_1
+				if Object.Timer < 60
+					Object.Timer++
+				else
+					Object.Timer = 0
+					
+					Object[+1].Type  = TypeName[Hotaru]
+					Object[+1].XPos  = Object.XPos
+					Object[+1].XPos -= 0x500000
+					Object[+1].YPos  = Object.YPos
+					Object[+1].YPos += 0x300000
+					Object.State++
+				end if
+				break
 
-				Object[+2].XPos = Object.XPos
-				Object[+2].XPos -= 0x500000
-
-				Object[+2].YPos = Object.YPos
-				Object[+2].YPos += 0x280000
-
-				Object[+3].Type = TypeName[Hotaru]
-				Object[+3].CheckBounds = false
-
-				Object[+3].XPos = Object.XPos
-				Object[+3].XPos += 0x500000
-
-				Object[+3].YPos = Object.YPos
-				Object[+3].YPos += 0x280000
-				Object.State++
-			end if
-			break
-
-		case HOTARU_SPAWNER_CHECK_CHILD_2
-			if Object[+2].Type != TypeName[Hotaru]
-				if Object[+3].Type != TypeName[Hotaru]
-					TempValue0 = 3840
-					TempValue0 -= Screen.CenterX
-					Stage.NewXBoundary1 = TempValue0
-					TempValue0 += Screen.XSize
-					Stage.NewXBoundary2 = TempValue0
-					Object.Priority = PRIORITY_ACTIVE
+			case HOTARU_SPAWNER_CHECK_CHILD_1
+				// Check if the first Hotaru got destroyed
+				if Object[+1].Type != TypeName[Hotaru]
 					Object.State++
 				else
-					if Object[+3].State < HOTARU_CHARGE_LASER
+					if Object[+1].State < HOTARU_CHARGE_LASER
+						TempValue0 = 176
+					else
+						TempValue0 = 0
+					end if
+					TempValue0  -= Object.Alpha
+					TempValue0 >>= 3
+					Object.Alpha += TempValue0
+				end if
+				break
+
+			case HOTARU_SPAWNER_SPAWN_CHILD_2
+				if Object.Timer < 60
+					Object.Timer++
+				else
+					Object.Timer = 0
+					Object[+2].Type = TypeName[Hotaru]
+					Object[+2].CheckBounds = true
+
+					Object[+2].XPos = Object.XPos
+					Object[+2].XPos -= 0x500000
+
+					Object[+2].YPos = Object.YPos
+					Object[+2].YPos += 0x280000
+
+					Object[+3].Type = TypeName[Hotaru]
+					Object[+3].CheckBounds = false
+
+					Object[+3].XPos = Object.XPos
+					Object[+3].XPos += 0x500000
+
+					Object[+3].YPos = Object.YPos
+					Object[+3].YPos += 0x280000
+					Object.State++
+				end if
+				break
+
+			case HOTARU_SPAWNER_CHECK_CHILD_2
+				if Object[+2].Type != TypeName[Hotaru]
+					if Object[+3].Type != TypeName[Hotaru]
+						TempValue0 = 3840
+						TempValue0 -= Screen.CenterX
+						Stage.NewXBoundary1 = TempValue0
+						TempValue0 += Screen.XSize
+						Stage.NewXBoundary2 = TempValue0
+						Object.Priority = PRIORITY_ACTIVE
+						Object.State++
+					else
+						if Object[+3].State < HOTARU_CHARGE_LASER
+							TempValue0 = 176
+						else
+							TempValue0 = 0
+						end if
+						TempValue0   -= Object.Alpha
+						TempValue0  >>= 3
+						Object.Alpha += TempValue0
+					end if
+				else
+					if Object[+2].State < HOTARU_CHARGE_LASER
 						TempValue0 = 176
 					else
 						TempValue0 = 0
@@ -186,106 +201,99 @@ sub ObjectMain
 					TempValue0  >>= 3
 					Object.Alpha += TempValue0
 				end if
-			else
-				if Object[+2].State < HOTARU_CHARGE_LASER
-					TempValue0 = 176
+				break
+
+			case HOTARU_SPAWNER_OPEN_DOORS
+				if Object[+2].State > HOTARU_MOVE
+					if Object[+3].State > HOTARU_MOVE
+						Object[+5].State = 1
+					end if
+				end if
+
+				if HUD.TimePeriod == PROPVAL_BAD_FUTURE
+					if Object.Alpha < 176
+						Object.Alpha++
+					end if
 				else
-					TempValue0 = 0
+					if Object.Alpha > 0
+						Object.Alpha--
+					end if
 				end if
-				TempValue0   -= Object.Alpha
-				TempValue0  >>= 3
-				Object.Alpha += TempValue0
-			end if
-			break
+				
+				PlayerObjectCollision(C_TOUCH, -192, -256, 420, 256)
+				if CheckResult == false
+					ResetObjectEntity(Object.EntityNo, TypeName[Blank Object], 0, 0, 0)
+				end if
+				break
+			end switch
+		else
+			switch Object.State
+			case HOTARU_FADE_IN
+				if Object.Timer < 60
+					Object.Timer++
+				else
+					Object.Timer = 32
+					CallFunction(Hotaru_Set_Destination)
+					Object.State++
+				end if
+				Object.Alpha = Object.Timer
+				Object.Alpha <<= 2
+				break
 
-		case HOTARU_SPAWNER_OPEN_DOORS
-			if Object[+2].State > HOTARU_MOVE
-				if Object[+3].State > HOTARU_MOVE
-					Object[+5].State = 1
-				end if
-			end if
+			case HOTARU_MOVE
+				Object.XPos += Object.XVelocity
+				Object.YPos += Object.YVelocity
 
-			if HUD.TimePeriod == PROPVAL_BAD_FUTURE
-				if Object.Alpha < 176
-					Object.Alpha++
+				TempValue0  = Object.Timer
+				TempValue0 &= 3
+				if TempValue0 == 0
+					CreateTempObject(TypeName[HotaruTrail], 0, Object.XPos, Object.YPos)
+					Object[TempObjectPos].InkEffect = INK_ALPHA
+					Object[TempObjectPos].Alpha		= 248
 				end if
-			else
-				if Object.Alpha > 0
-					Object.Alpha--
+
+				Object.Timer--
+				if Object.Timer == 0
+					Object.State++
 				end if
-			end if
-			
-			PlayerObjectCollision(C_TOUCH, -192, -256, 420, 256)
-			if CheckResult == false
-				ResetObjectEntity(Object.EntityNo, TypeName[Blank Object], 0, 0, 0)
-			end if
-			break
-		end switch
-	else
-		switch Object.State
-		case HOTARU_FADE_IN
-			if Object.Timer < 60
+				break
+
+			case HOTARU_CHARGE_LASER
 				Object.Timer++
-			else
-				Object.Timer = 32
-				CallFunction(Hotaru_Set_Destination)
-				Object.State++
-			end if
-			Object.Alpha = Object.Timer
-			Object.Alpha <<= 2
-			break
+				if Object.Timer == 32
+					Object.Timer = 0
+					Object.State++
+					PlayStageSfx(4, 0)
+				end if
+				break
 
-		case HOTARU_MOVE
-			Object.XPos += Object.XVelocity
-			Object.YPos += Object.YVelocity
+			case HOTARU_SHOT_LASER
+				TempValue0  = Object.Timer
+				TempValue0 &= 1
+				if TempValue0 == 0
+					CreateTempObject(TypeName[HotaruLaser], 0, Object.XPos, Object.YPos)
+					Object[TempObjectPos].HotaruEntity = Object.EntityNo
+				end if
+				Object.Timer++
+				if Object.Timer == 20
+					Object.Timer = 0
+					Object.State++
+				end if
+				break
 
-			TempValue0  = Object.Timer
-			TempValue0 &= 3
-			if TempValue0 == 0
-				CreateTempObject(TypeName[HotaruTrail], 0, Object.XPos, Object.YPos)
-				Object[TempObjectPos].InkEffect = INK_ALPHA
-				Object[TempObjectPos].Alpha		= 248
-			end if
-
-			Object.Timer--
-			if Object.Timer == 0
-				Object.State++
-			end if
-			break
-
-		case HOTARU_CHARGE_LASER
-			Object.Timer++
-			if Object.Timer == 32
-				Object.Timer = 0
-				Object.State++
-				PlayStageSfx(4, 0)
-			end if
-			break
-
-		case HOTARU_SHOT_LASER
-			TempValue0  = Object.Timer
-			TempValue0 &= 1
-			if TempValue0 == 0
-				CreateTempObject(TypeName[HotaruLaser], 0, Object.XPos, Object.YPos)
-				Object[TempObjectPos].HotaruEntity = Object.EntityNo
-			end if
-			Object.Timer++
-			if Object.Timer == 20
-				Object.Timer = 0
-				Object.State++
-			end if
-			break
-
-		case HOTARU_SET_NEW_DESTINATION
-			Object.Timer++
-			if Object.Timer == 16
-				Object.Timer = 32
-				CallFunction(Hotaru_Set_Destination)
-				Object.State = HOTARU_MOVE
-			end if
-			break
-		end switch
+			case HOTARU_SET_NEW_DESTINATION
+				Object.Timer++
+				if Object.Timer == 16
+					Object.Timer = 32
+					CallFunction(Hotaru_Set_Destination)
+					Object.State = HOTARU_MOVE
+				end if
+				break
+			end switch
+		end if
+#platform: Use_Origins
 	end if
+#endplatform
 end sub
 
 
