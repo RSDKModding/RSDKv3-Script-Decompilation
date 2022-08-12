@@ -393,11 +393,11 @@ sub ObjectMain
 
 #platform: Use_Standalone
 	#platform: Mobile
-			CheckEqual(Options.PhysicalControls, true)
+		CheckEqual(Options.PhysicalControls, true)
 	#endplatform
 
 	#platform: Standard
-			CheckResult = true
+		CheckResult = true
 	#endplatform
 #endplatform
 
@@ -720,6 +720,11 @@ sub ObjectMain
 				SpecialStage.NextZone	= Stage.ListPos
 				SpecialStage.NextZone  -= 80
 				Stage.ActiveList		= SPECIAL_STAGE
+
+#platform: Use_Origins
+				Stage.ActiveList = 3
+#endplatform
+
 				Stage.ListPos			= SpecialStage.ListPos
 
 				TempValue0   = SpecialStage.NextZone
@@ -1037,23 +1042,16 @@ sub ObjectMain
 			LoadStage()
 			
 			if Stage.PlayerListPos == CHARACTER_SONIC
-#platform: Use_Origins
 				LoadVideo("Opening")
-#endplatform
 
-#platform: Use_Standalone
-	#platform: Standard
-				LoadVideo("Opening")
-	#endplatform
+//	#platform: Mobile
+//				if Options.Soundtrack == OST_JP
+//					LoadVideo("Opening")
+//				else
+//					LoadVideo("OpeningUS")
+//				end if
+//	#endplatform
 
-	#platform: Mobile
-				if Options.Soundtrack == OST_JP
-					LoadVideo("Opening")
-				else
-					LoadVideo("OpeningUS")
-				end if
-	#endplatform
-#endplatform
 			end if
 		end if
 		SetScreenFade(0, 0, 0, Object.FadeValue)
@@ -1061,7 +1059,7 @@ sub ObjectMain
 		
 	case STATE_FADEOUT_CHARACTERSELECT
 		if Object.FadeValue > 0
-			Object.Alpha = Object.FadeValue
+			Object.Alpha	  = Object.FadeValue
 			Object.FadeValue -= 8
 		else
 			Object.Alpha = 0
@@ -1070,7 +1068,7 @@ sub ObjectMain
 		break
 		
 	case STATE_RETURN_TO_SAVESEL
-		TempValue0 = Object.SelectedOption
+		TempValue0  = Object.SelectedOption
 		TempValue0 *= 40
 		TempValue0 += Screen.CenterY
 		TempValue0 -= 87

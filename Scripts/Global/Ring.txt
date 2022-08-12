@@ -34,7 +34,19 @@ sub ObjectPlayerInteraction
 				
 				if Player.Rings >= Ring.ExtraLife
 					if Options.GameMode != GAMEMODE_TIMEATTACK
+#platform: Use_Origins
+						if game.coinMode == false
+							Player.Lives++
+						else
+							game.callbackParam0 = 1
+							EngineCallback(NOTIFY_ADD_COIN)
+						end if
+#endplatform
+
+#platform: Use_Standalone
 						Player.Lives++
+#endplatform
+
 						if Stage.PlayerListPos == 0		// Sonic
 							PlaySfx(20, 0)
 						else

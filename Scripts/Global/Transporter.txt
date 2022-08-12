@@ -14,10 +14,10 @@
 #alias 2	:	TRANSPORTER_EXPLODE
 
 // Property Values
-#alias 0	:	PROPVAL_OPERATIVE
-#alias 1	:	PROPVAL_OLD
-#alias 2	:	PROPVAL_DESTROYED
-#alias 3	:	PROPVAL_OLD_DESTROYED
+#alias 0	:	OPERATIVE
+#alias 1	:	OLD
+#alias 2	:	DESTROYED
+#alias 3	:	OLD_DESTROYED
 
 // Priority
 #alias 0	:	PRIORITY_BOUNDS
@@ -28,7 +28,7 @@
 
 
 sub ObjectMain
-	if Object.PropertyValue == PROPVAL_OPERATIVE
+	if Object.PropertyValue == OPERATIVE
 		switch Object.State
 		case TRANSPORTER_HOVER_DOWN
 			Object.Timer++
@@ -51,18 +51,18 @@ sub ObjectMain
 		case TRANSPORTER_EXPLODE
 			// Explosion code
 			Rand(TempValue0, 80)
-			TempValue0 -= 40
+			TempValue0  -= 40
 			TempValue0 <<= 16
-			TempValue0 += Object.XPos
+			TempValue0  += Object.XPos
 
 			Rand(TempValue1, 64)
-			TempValue1 -= 32
+			TempValue1  -= 32
 			TempValue1 <<= 16
-			TempValue1 += Object.YPos
+			TempValue1  += Object.YPos
 
 			CreateTempObject(TypeName[Explosion], 0, TempValue0, TempValue1)
 
-			TempValue0 = Object.Timer
+			TempValue0  = Object.Timer
 			TempValue0 &= 3
 			if TempValue0 == 0
 				PlaySfx(22, 0)
@@ -70,10 +70,11 @@ sub ObjectMain
 
 			Object.Timer++
 			if Object.Timer == 60
-				Object.Priority = PRIORITY_BOUNDS
-				Object.Timer = 0
-				Object.State = TRANSPORTER_HOVER_DOWN
-				Object.PropertyValue = PROPVAL_DESTROYED
+				Object.Priority		 = PRIORITY_BOUNDS
+				Object.Timer		 = 0
+				Object.State		 = TRANSPORTER_HOVER_DOWN
+				Object.PropertyValue = DESTROYED
+
 				Object.iYPos += 16
 				PlaySfx(21, 0)
 			end if
@@ -84,20 +85,24 @@ end sub
 
 
 sub ObjectPlayerInteraction
-	if Object.PropertyValue == PROPVAL_OPERATIVE
+	if Object.PropertyValue == OPERATIVE
 		if Object.State < TRANSPORTER_EXPLODE
 			if Player.Animation == ANI_JUMPING
 				PlayerObjectCollision(C_TOUCH, -38, -32, 38, 32)
 				if CheckResult == true
 					Object.State = TRANSPORTER_EXPLODE
-					Object.YPos = Object.YOriginPos
+
+					Object.YPos	= Object.YOriginPos
+
 					Transporter_Destroyed = true
-					Good_Future = true
+					Good_Future			  = true
+
 					Object.Priority = PRIORITY_ACTIVE
+
 					Player.Score += 1500
 					if Stage.ActNo < 3
-						TempValue0 = Stage.ListPos
-						TempValue0 /= 10
+						TempValue0   = Stage.ListPos
+						TempValue0  /= 10
 						TempValue0 <<= 1
 						TempValue0 += Stage.ActNo
 						TempValue0--
@@ -136,14 +141,14 @@ end sub
 
 sub ObjectDraw
 	switch Object.PropertyValue
-	case PROPVAL_OPERATIVE
+	case OPERATIVE
 		if Object.State < TRANSPORTER_EXPLODE
 			Object.YPos += Object.Oscillation
 			DrawSprite(Object.Frame)
 			DrawSpriteFX(Object.Frame, FX_FLIP, Object.XPos, Object.YPos)
 
 			// Electricity
-			TempValue0 = Object.Frame
+			TempValue0  = Object.Frame
 			TempValue0 += 4
 			DrawSprite(TempValue0)
 			TempValue0 += 4
@@ -163,16 +168,16 @@ sub ObjectDraw
 		end if
 		break
 
-	case PROPVAL_OLD
+	case OLD
 		DrawSprite(17)
 		DrawSpriteFX(17, FX_FLIP, Object.XPos, Object.YPos)
 		break
 
-	case PROPVAL_DESTROYED
+	case DESTROYED
 		DrawSprite(16)
 		break
 
-	case PROPVAL_OLD_DESTROYED
+	case OLD_DESTROYED
 		DrawSprite(18)
 		break
 	end switch
@@ -208,18 +213,18 @@ sub ObjectStartup
 			Object[ArrayPos0].Direction = FACING_UPEND_RIGHT
 			if Transporter_Destroyed == true
 				switch Object[ArrayPos0].PropertyValue
-				case PROPVAL_OPERATIVE
-					Object[ArrayPos0].PropertyValue = PROPVAL_DESTROYED
+				case OPERATIVE
+					Object[ArrayPos0].PropertyValue = DESTROYED
 					break
-				case PROPVAL_OLD
-					Object[ArrayPos0].PropertyValue = PROPVAL_OLD_DESTROYED
+				case OLD
+					Object[ArrayPos0].PropertyValue = OLD_DESTROYED
 					break
 				end switch
 			else
-				if Object[ArrayPos0].PropertyValue == PROPVAL_OPERATIVE
+				if Object[ArrayPos0].PropertyValue == OPERATIVE
 					Object[ArrayPos0].iYPos -= 16
 				end if
-				Object[ArrayPos0].YOriginPos = Object[ArrayPos0].YPos
+				Object[ArrayPos0].YOriginPos  = Object[ArrayPos0].YPos
 				Object[ArrayPos0].Oscillation = -0x2000
 			end if
 		end if

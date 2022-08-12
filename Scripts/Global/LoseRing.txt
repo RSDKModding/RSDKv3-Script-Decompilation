@@ -22,6 +22,9 @@
 #alias 0	:	PROPVAL_PLANEA
 #alias 1	:	PROPVAL_PLANEB
 
+// Game Modes
+#alias 2	:	GAMEMODE_TIMEATTACK
+
 
 sub ObjectMain
 	Object.YVelocity += 0x1800
@@ -47,7 +50,7 @@ sub ObjectMain
 		Object.Type = TypeName[Blank Object]
 		Object.XVelocity = 0
 		Object.YVelocity = 0
-		Object.Timer = 0
+		Object.Timer	 = 0
 	else
 		Object.AnimationTimer += Object.AnimationSpeed
 		if Object.AnimationTimer > 255
@@ -94,8 +97,21 @@ sub ObjectPlayerInteraction
 
 				if Player.Rings >= Ring.ExtraLife
 
-					if Options.GameMode != 2
+					if Options.GameMode != GAMEMODE_TIMEATTACK
+
+#platform: Use_Origins
+						if game.coinMode == false
+							Player.Lives++
+						else
+							game.callbackParam0 = 1
+							EngineCallback(NOTIFY_ADD_COIN)
+						end if
+#endplatform
+
+#platform: Use_Standalone
 						Player.Lives++
+#endplatform
+
 						Ring.ExtraLife += 100
 						if Ring.ExtraLife > 300
 							Ring.ExtraLife = 1000

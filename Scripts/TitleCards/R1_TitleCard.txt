@@ -1,4 +1,4 @@
-//------------Sonic CD TitleCard Script-------------//
+//-----------------Sonic CD Title Card Script-----------------//
 //--------Scripted by Christian Whitehead 'The Taxman'--------//
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
@@ -19,22 +19,26 @@
 #alias Object[0].Value4			:	Player.InvincibleTimer
 
 // States
-#alias 0			:	TITLECARD_FADEIN
-#alias 1			:	TITLECARD_SLIDEIN
-#alias 2			:	TITLECARD_DISPLAY
-#alias 3			:	TITLECARD_SLIDEOUT
+#alias 0	:	TITLECARD_FADEIN
+#alias 1	:	TITLECARD_SLIDEIN
+#alias 2	:	TITLECARD_DISPLAY
+#alias 3	:	TITLECARD_SLIDEOUT
 
 // OST
-#alias 0			:	OST_JP
+#alias 0	:	OST_JP
 
 // Time Periods
-#alias 0			:	PROPVAL_PRESENT
-#alias 1			:	PROPVAL_PAST
-#alias 2			:	PROPVAL_GOOD_FUTURE
-#alias 3			:	PROPVAL_BAD_FUTURE
+#alias 0	:	PROPVAL_PRESENT
+#alias 1	:	PROPVAL_PAST
+#alias 2	:	PROPVAL_GOOD_FUTURE
+#alias 3	:	PROPVAL_BAD_FUTURE
+
+// Control Mode
+#alias -1	:	CONTROL_DISABLED
+#alias 0	:	CONTROL_ENABLED
 
 // Priority
-#alias 1			:	PRIORITY_ACTIVE
+#alias 1	:	PRIORITY_ACTIVE
 
 
 sub ObjectPlayerInteraction
@@ -45,7 +49,7 @@ end sub
 sub ObjectDraw
 	switch Object.State
 	case TITLECARD_FADEIN
-		Player.ControlMode	= -1
+		Player.ControlMode	= CONTROL_DISABLED
 		Player.Up			= false
 		Player.Down			= false
 		Player.Left			= false
@@ -65,13 +69,13 @@ sub ObjectDraw
 					
 					Player.XVelocity = Warp.XVelocity
 					Player.YVelocity = Warp.YVelocity
-					Player.Speed = Warp.XVelocity
+					Player.Speed	 = Warp.XVelocity
 
 					Player.State = Warp.State
 
 					Stage.MilliSeconds = Rec_Milliseconds
-					Stage.Seconds = Rec_Seconds
-					Stage.Minutes = Rec_Minutes
+					Stage.Seconds	   = Rec_Seconds
+					Stage.Minutes	   = Rec_Minutes
 
 					Player.InvincibleTimer = 8000
 				end if
@@ -85,14 +89,14 @@ sub ObjectDraw
 			Fade_Colour = 0
 
 			CheckEqual(Warp.XPos, 0)
-			TempValue0 = CheckResult
+			TempValue0  = CheckResult
 			CheckLower(LampPost.Check, 32)
 			TempValue0 &= CheckResult
 			if TempValue0 == true
 				Object.State = TITLECARD_SLIDEIN
 				Object.FadeA = 0
 			else
-				Player.ControlMode = 0
+				Player.ControlMode = CONTROL_ENABLED
 				Stage.TimeEnabled = true
 				ResetObjectEntity(20, TypeName[Blank Object], 0, 0, 0)
 				Warp.XPos = 0
@@ -101,8 +105,9 @@ sub ObjectDraw
 		break
 
 	case TITLECARD_SLIDEIN
-		TempValue0 = 144
+		TempValue0  = 144
 		TempValue0 += Object.CharPos
+
 		if Object.TextPos > TempValue0
 			Object.TextPos -= 8
 		else
@@ -110,6 +115,7 @@ sub ObjectDraw
 				Object.State = TITLECARD_DISPLAY
 			end if
 		end if
+
 		if Object.BarPos < 0
 			Object.BarPos += 8
 		end if
@@ -128,7 +134,7 @@ sub ObjectDraw
 			Object.TextPos += 16
 			Object.BarPos  -= 16
 		else
-			Player.ControlMode = 0
+			Player.ControlMode = CONTROL_ENABLED
 			Stage.TimeEnabled = true
 			ResetObjectEntity(20, TypeName[Blank Object], 0, 0, 0)
 			Warp.XPos = 0
@@ -137,7 +143,7 @@ sub ObjectDraw
 	end switch
 
 	if Object.Type > TypeName[Blank Object]
-		TempValue0 = 136
+		TempValue0  = 136
 		TempValue0 += Object.CharPos
 		DrawSpriteScreenXY(0, TempValue0, Object.BarPos)
 		DrawSpriteScreenXY(Stage.ActNo, Object.TextPos, 80)
@@ -146,7 +152,7 @@ sub ObjectDraw
 		DrawSpriteScreenXY(6, Object.TextPos, 80)
 
 #platform: Use_Decomp	// Creates a black rectangle that fills the empty space on wider resolutions
-		Tempvalue0 = Object.TextPos
+		Tempvalue0  = Object.TextPos
 		TempValue0 += 220
 		DrawRect(TempValue0,163,Screen.XSize,9,0,0,0,255)
 #endplatform
@@ -200,7 +206,7 @@ sub ObjectStartup
 		end switch
 	end if
 
-	Flower_TypeNo = TypeName[Flower]
+	Flower_TypeNo	= TypeName[Flower]
 	Object[20].Type = TypeName[TitleCard]
 	if Warp.XPos > 0
 		Object[20].FadeA = 256
@@ -212,8 +218,7 @@ sub ObjectStartup
 		Player.RoofBarrier = true
 	end if
 
-	Object[20].Priority = PRIORITY_ACTIVE
-
+	Object[20].Priority  = PRIORITY_ACTIVE
 	Object[20].DrawOrder = 6
 
 	Object[20].BarPos   = -216
@@ -290,10 +295,12 @@ sub ObjectStartup
 	
 	if TempValue0 != false
 		PlayMusic(0)
-		game.missionCondition = 0
-		game.missionEnd = false
-		Player.ControlMode = 0
-		Stage.TimeEnabled = true
+		game.missionCondition	= 0
+		game.missionEnd			= false
+
+		Player.ControlMode = CONTROL_ENABLED
+		Stage.TimeEnabled  = true
+
 		ResetObjectEntity(20, TypeName[Blank Object], 0, 0, 0)
 		Warp.XPos = 0
 	end if

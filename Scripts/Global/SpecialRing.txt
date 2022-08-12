@@ -41,13 +41,19 @@ sub ObjectMain
 
 				Object.State = SPECIALRING_BLANK
 
+#platform: Use_Origins
 				Object.Frame = 32
+#endplatform
+
 #platform: Use_Standalone
 				// reduce the frame amount for steam datafiles
 				if Object.CheckVersion != UPDATED_VERSION
-					Object.Frame -= 16
+					Object.Frame = 16
+				else
+					Object.Frame = 32
 				end if
 #endplatform
+
 				StopSfx(24)
 				StopSfx(25)
 				PlaySfx(18, 0)
@@ -117,13 +123,14 @@ sub ObjectDraw
 
 		if Object.CheckVersion != UPDATED_VERSION
 			// Old Steam vanish animation
+			TempValue0   = Object.Frame
+			TempValue0 >>= 2
 			DrawSpriteFX(TempValue0, FX_FLIP, Object.XPos, Object.YPos)
-			Object.Frame++
-			CheckGreater(Object.Frame, 31)
-			if CheckResult == true
-				Object.Direction = FACING_LEFT
-			end if
 
+			Object.Frame++
+			if Object.Frame > 31
+				Object.Direction = FACING_LEFT
+			endif
 			if Object.Frame > 47
 				ResetObjectEntity(Object.EntityNo, TypeName[Blank Object], 0, 0, 0)
 			end if
@@ -137,7 +144,7 @@ sub ObjectDraw
 
 			DrawSpriteFX(TempValue0, FX_FLIP, Object.XPos, Object.YPos)
 
-			CheckEqual(TempValue0,11)
+			CheckEqual(TempValue0, 11)
 			if CheckResult == true
 				Object.Direction = FACING_LEFT
 					DrawSpriteFX(TempValue0, FX_FLIP, Object.XPos, Object.YPos)
@@ -210,7 +217,7 @@ sub ObjectStartup
 	SpriteFrame(-24, -32, 56, 64, 150, 66)	// #12 - Ring Vanishing Frame 4
 	SpriteFrame(-16, -32, 48, 64, 101, 66)	// #13 - Ring Vanishing Frame 5
 	SpriteFrame(0, -32, 32, 64, 222, 1)		// #14 - Ring Vanishing Frame 6
-	SpriteFrame(-32, -32, 64, 64, 124, 131)	// #15 - Ring Vanishing Frame 7
+	SpriteFrame(-32, -32, 32, 64, 124, 131)	// #15 - Ring Vanishing Frame 7
 #endplatform
 
 
@@ -253,7 +260,7 @@ sub ObjectStartup
 				SpriteFrame(-24, -32, 56, 64, 150, 66)	// #12 - Ring Vanishing Frame 4
 				SpriteFrame(-16, -32, 48, 64, 101, 66)	// #13 - Ring Vanishing Frame 5
 				SpriteFrame(0, -32, 32, 64, 222, 1)		// #14 - Ring Vanishing Frame 6
-				SpriteFrame(-32, -32, 64, 64, 124, 131)	// #15 - Ring Vanishing Frame 7
+				SpriteFrame(-32, -32, 32, 64, 124, 131)	// #15 - Ring Vanishing Frame 7
 			else
 				// Special Ring Frames Steam
 				SpriteFrame(-32, -32, 64, 64, 83, 1)	// #0  - Special Ring Frame 0

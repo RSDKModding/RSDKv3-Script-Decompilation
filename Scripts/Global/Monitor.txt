@@ -26,22 +26,22 @@
 #alias 0	:	CSIDE_FLOOR
 
 // Hit Values
-#alias 4	:	HIT_ROOF
+#alias 4	:	PLAYER_COL_ROOF
 
 // GameModes
 #alias 2	:	GAMEMODE_TIMEATTACK
 
 // Property Values
-#alias 1	:	PROPVAL_RING
-#alias 2	:	PROPVAL_SHIELD
-#alias 3	:	PROPVAL_INVINCIBILITY
-#alias 4	:	PROPVAL_POWER_SNEAKERS
-#alias 5	:	PROPVAL_SONIC
-#alias 6	:	PROPVAL_TIME
-#alias 7	:	PROPVAL_TAILS
-#alias 8	:	PROPVAL_S_MONITOR
-#alias 9	:	PROPVAL_STATIC_1
-#alias 10	:	PROPVAL_STATIC_2
+#alias 1	:	SCREEN_RING
+#alias 2	:	SCREEN_SHIELD
+#alias 3	:	SCREEN_INVINCIBILITY
+#alias 4	:	SCREEN_POWER_SNEAKERS
+#alias 5	:	SCREEN_SONIC
+#alias 6	:	SCREEN_TIME
+#alias 7	:	SCREEN_TAILS
+#alias 8	:	SCREEN_S_MONITOR
+#alias 9	:	SCREEN_STATIC_1
+#alias 10	:	SCREEN_STATIC_2
 
 // Collision Plane
 #alias 1	:	COLLISION_PLANE_B
@@ -51,7 +51,7 @@ sub ObjectMain
 	if Object.State == MONITOR_FALLING
 
 		Object.GravityStrength += 0x3800
-		Object.YPos += Object.GravityStrength
+		Object.YPos			   += Object.GravityStrength
 		if Object.GravityStrength >= 0
 			ObjectTileCollision(CSIDE_FLOOR, 0, 16, 0)
 			if CheckResult == true
@@ -104,7 +104,7 @@ sub ObjectPlayerInteraction
 			end if
 		else
 			PlayerObjectCollision(C_BOX, -15, -16, 15, 16)
-			if CheckResult == HIT_ROOF
+			if CheckResult == PLAYER_COL_ROOF
 				Object.State = MONITOR_FALLING
 				Object.GravityStrength = -0x20000
 				Player.YVelocity = 0x20000
@@ -155,12 +155,10 @@ sub ObjectStartup
 	SpriteFrame(-16, -16, 32, 32, 18, 100)		// #4  - Power Sneakers Monitor
 #platform: Use_Origins
 	if game.coinMode == false
-#endplatform
 		SpriteFrame(-16, -16, 32, 32, 18, 133)	// #5  - Sonic Monitor
 		SpriteFrame(-16, -16, 32, 32, 18, 166)	// #6  - Time Monitor
 		SpriteFrame(-16, -16, 32, 32, 51, 100)	// #7  - Tails Monitor
 		SpriteFrame(-16, -16, 32, 32, 51, 133)	// #8  - S Monitor
-#platform: Use_Origins
 	else
 		SpriteFrame(-16,-16,32,32,84,200)		// #5  - Coin Monitor (Sonic)
 		SpriteFrame(-16,-16,32,32,18,166)		// #6  - Time Monitor
@@ -168,13 +166,21 @@ sub ObjectStartup
 		SpriteFrame(-16,-16,32,32,51,133)		// #8  - S Monitor
 	end if
 #endplatform
+
+#platform: Use_Standalone
+	SpriteFrame(-16, -16, 32, 32, 18, 133)		// #5  - Sonic Monitor
+	SpriteFrame(-16, -16, 32, 32, 18, 166)		// #6  - Time Monitor
+	SpriteFrame(-16, -16, 32, 32, 51, 100)		// #7  - Tails Monitor
+	SpriteFrame(-16, -16, 32, 32, 51, 133)		// #8  - S Monitor
+#endplatform
+
 	SpriteFrame(-16, -16, 32, 32, 51, 1)		// #9  - Monitor Static 1
 	SpriteFrame(-16, -16, 32, 32, 51, 34)		// #10 - Monitor Static 2
 
 	ArrayPos0 = 32
 	while ArrayPos0 < 1056
 		if Object[ArrayPos0].Type == TypeName[Monitor]
-			if Object[ArrayPos0].PropertyValue > PROPVAL_STATIC_1
+			if Object[ArrayPos0].PropertyValue > SCREEN_STATIC_1
 				Object[ArrayPos0].PropertyValue -= 10
 				Object[ArrayPos0].DrawOrder = 1
 				Object[ArrayPos0].CollisionPlane = COLLISION_PLANE_B
@@ -183,12 +189,12 @@ sub ObjectStartup
 		ArrayPos0++
 	loop
 
-	if Stage.PlayerListPos == 1		// PlayerName[TAILS]
+	if Stage.PlayerListPos == 1		// Tails
 		ArrayPos0 = 32
 		while ArrayPos0 < 1056
 			if Object[ArrayPos0].Type == TypeName[Monitor]
-				if Object[ArrayPos0].PropertyValue == PROPVAL_SONIC
-					Object[ArrayPos0].PropertyValue = PROPVAL_TAILS
+				if Object[ArrayPos0].PropertyValue == SCREEN_SONIC
+					Object[ArrayPos0].PropertyValue = SCREEN_TAILS
 				end if
 			end if
 			ArrayPos0++
@@ -199,7 +205,7 @@ sub ObjectStartup
 		ArrayPos0 = 32
 		while ArrayPos0 < 1056
 			if Object[ArrayPos0].Type == TypeName[Monitor]
-				if Object[ArrayPos0].PropertyValue == PROPVAL_SONIC
+				if Object[ArrayPos0].PropertyValue == SCREEN_SONIC
 					Object[ArrayPos0].Type = TypeName[Blank Object]
 				end if
 			end if

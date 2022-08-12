@@ -3,12 +3,12 @@
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
 // Aliases
-#alias Object.Value1	:	Object.Text1Pos
-#alias Object.Value2	:	Object.Text2Pos
+#alias Object.Value1			:	Object.Text1Pos
+#alias Object.Value2			:	Object.Text2Pos
 
-#alias Object.Value3	:	Object.Timer
-#alias Object.Value5	:	Object.StagePosP
-#alias Object.Value6	:	Object.TimeOver
+#alias Object.Value3			:	Object.Timer
+#alias Object.Value5			:	Object.StagePosP
+#alias Object.Value6			:	Object.TimeOver
 
 // HUD alias
 #alias Object[24].PropertyValue	:	HUD.TimePeriod
@@ -44,7 +44,7 @@ sub ObjectMain
 		// they handle the time over of Classic Mode through here
 		if game.playMode == BOOT_PLAYMODE_CLASSIC
 			CheckEqual(Object.TimeOver, false)
-			TempValue0 = CheckResult
+			TempValue0  = CheckResult
 			CheckEqual(Stage.Minutes, 9)
 			TempValue0 &= CheckResult
 			CheckEqual(Stage.Seconds, 59)
@@ -93,13 +93,14 @@ sub ObjectMain
 		if Object.Timer < 288
 			Object.Timer += 4
 		else
+
 #platform: Use_Origins
 			if Object.TimeOver == true
 				if LampPost.Check > 0
 					Rec_Milliseconds = 99
 					Rec_Seconds		 = 59
 					Rec_Minutes		 = 9
-					game.timeOver = true
+					game.timeOver	 = true
 				else
 					Rec_Milliseconds = 0
 					Rec_Seconds		 = 0
@@ -107,6 +108,7 @@ sub ObjectMain
 				end if
 			end if
 #endplatform
+
 			if Object.State == DEATHEVENT_GAMEOVER
 				Stage.ActiveList	= PRESENTATION_STAGE
 				Stage.ListPos		= 0
@@ -139,7 +141,7 @@ sub ObjectMain
 #endplatform
 
 #platform: Use_Standalone
-			if Object.State == DEATHEVENT_GAMEOVER
+			if Object.State == DEATHEVENT_TIMEOVER
 				Rec_Milliseconds	= 0
 				Rec_Seconds			= 0
 				Rec_Minutes			= 0
@@ -250,6 +252,7 @@ sub ObjectMain
 		end if
 		
 		SetScreenFade(0, 0, 0, Object.Timer)
+
 #platform: Use_Origins		
 		game.callbackParam0 = StageStatsUsabilityParam1
 		game.callbackParam1 = StageStatsUsabilityParam2
@@ -271,6 +274,7 @@ sub ObjectMain
 		StatsUsabilityParam3 = 0
 		StatsUsabilityParam4 = 0
 #endplatform
+
 		break
 		
 #platform: Use_Origins		
@@ -305,7 +309,7 @@ end sub
 sub ObjectDraw
 	
 	switch Object.State
-	case DEATHEVENT_TIMEOVER
+	case DEATHEVENT_GAMEOVER
 #platform: Use_Origins
 		// In Mirror Mode, draw the sprites in reverse so that it'll look correct when mirrored
 		if game.playMode == BOOT_PLAYMODE_MIRRORING
@@ -324,7 +328,7 @@ sub ObjectDraw
 #endplatform
 		break
 		
-	case 1
+	case DEATHEVENT_TIMEOVER
 #platform: Use_Origins
 		// Mirror Mode's gonna flip everything, so let's flip ourselves first!
 		if game.playMode == BOOT_PLAYMODE_MIRRORING

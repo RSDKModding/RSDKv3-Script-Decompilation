@@ -113,6 +113,7 @@ sub ObjectMain
 		Object.LineXPos2 = 0x4E7
 		Object.LineXPos3 = 0x527
 		Object.LineXPos4 = 0x57A
+
 #platform:	Use_Standalone
 		Object.State = ACTFINISH_SLIDEIN
 #endplatform
@@ -170,13 +171,13 @@ sub ObjectMain
 		
 #platform: Use_Origins
 		// If you Time Over'd, no Time Bonus either of course
-		if game.timeOver != 0
+		if game.timeOver != false
 			Object.TimeBonus = 0
 		end if
 #endplatform
 		
 		// Ring Bonus calculation is far easier - just take the Player's ring count and multiply that by 100
-		Object.RingBonus = Player[0].Rings
+		Object.RingBonus  = Player[0].Rings
 		Object.RingBonus *= 100
 
 #platform: Use_Origins
@@ -417,7 +418,7 @@ sub ObjectMain
 		
 		if Object.Timer == 160
 #platform: Use_Origins
-			if game.oneStageFlag != 0
+			if game.oneStageFlag != false
 				
 				// If needed, let the Player retry the stage
 				Object.StagePosP = Stage.ListPos
@@ -577,6 +578,7 @@ sub ObjectMain
 						Engine.State = ENGINE_WAIT
 					end if
 				end if
+#endplatform
 
 #platform: Use_Standalone
 				SpecialStage.NextZone = Stage.ListPos
@@ -596,6 +598,7 @@ sub ObjectMain
 					LoadStage()
 				end if
 #endplatform
+
 			end if
 		else
 			// We didn't enter a Special Ring, we're staying in normal stages
