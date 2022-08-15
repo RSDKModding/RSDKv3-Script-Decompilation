@@ -111,6 +111,9 @@
 // Warp Destination
 #alias 0	:	WARPDEST_NONE
 
+// Mission Functions
+#alias 8	:	RULE_MERCY_BADNIKS
+
 // Function declarations
 #function Player_BadnikBreak
 #function Player_Hit
@@ -251,7 +254,8 @@ function Player_BadnikBreak
 		StageStatsUsabilityParam1 += 1
 		EngineCallback(NOTIFY_KILL_ENEMY)
 		if game.playMode == BOOT_PLAYMODE_MISSION
-			if game.missionFunctionNo == 8
+			// Set during "M097 - Mercy"
+			if game.missionFunctionNo == RULE_MERCY_BADNIKS
 				game.forceKillPlayer = true
 			end if
 		end if
@@ -261,7 +265,8 @@ function Player_BadnikBreak
 			Player.State = Player_State_GotHit
 #platform: Use_Origins
 			if game.playMode == BOOT_PLAYMODE_MISSION
-				if game.missionFunctionNo == 8
+				// Set during "M097 - Mercy"
+				if game.missionFunctionNo == RULE_MERCY_BADNIKS
 					game.forceKillPlayer = true
 				end if
 			end if
@@ -2001,7 +2006,7 @@ function Player_State_GotHit
 #platform: Use_Origins
 	TempValue1 = false
 	if game.playMode == BOOT_PLAYMODE_MISSION
-		if game.missionFunctionNo == 8
+		if game.missionFunctionNo == RULE_MERCY_BADNIKS
 			if game.missionValue == true
 				game.missionValue = false
 				TempValue1 = true

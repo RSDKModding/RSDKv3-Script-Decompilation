@@ -1,15 +1,16 @@
 //-------------Sonic CD Mission Past Post Script--------------//
 //--------Scripted by Christian Whitehead 'The Taxman'--------//
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
+//----Used on Mission "M100 - Reverse Time Traveler Redux"----//
 
 // Aliases
 #alias Object.Value0	:	Object.Timer
 #alias Object.Value1	:	Object.CollisionPlane
 
 // States
-#alias 0	:	PASTPOST_IDLE
-#alias 1	:	PASTPOST_ROTATE
-#alias 2	:	PASTPOST_USED
+#alias 0	:	MPASTPOST_IDLE
+#alias 1	:	MPASTPOST_ROTATE
+#alias 2	:	MPASTPOST_USED
 
 // Warp Destination
 #alias 1	:	WARPDEST_PAST
@@ -30,20 +31,22 @@
 
 sub ObjectPlayerInteraction
 	switch Object.State
-	case PASTPOST_IDLE
+	case MPASTPOST_IDLE
 		if Player.CollisionPlane == Object.CollisionPlane
 			PlayerObjectCollision(C_TOUCH,-8,-24,8,32)
 			if CheckResult == true
 				Warp.Destination = WARPDEST_PAST
-				Object.State = PASTPOST_ROTATE
-				Object.Priority = PRIORITY_ACTIVE
-				Object.Frame = 1
-				PlaySfx(12,0)
+
+				Object.State	= MPASTPOST_ROTATE
+				Object.Priority	= PRIORITY_ACTIVE
+				Object.Frame	= 1
+
+				PlaySfx(13,0)
 			end if
 		end if
 		break
 
-	case PASTPOST_USED
+	case MPASTPOST_USED
 		if Object.OutOfBounds == true
 			TempValue0  = Stage.Minutes
 			TempValue0 *= 60
@@ -55,8 +58,8 @@ sub ObjectPlayerInteraction
 			else
 				if TempValue0 >= Object.Timer
 					// Reset the post
-					Object.State = PASTPOST_IDLE
-					Object.Timer = 0
+					Object.State	= MPASTPOST_IDLE
+					Object.Timer	= 0
 					Object.Priority = PRIORITY_BOUNDS
 				end if
 			end if
@@ -68,29 +71,30 @@ end sub
 
 sub ObjectDraw
 	switch Object.State
-	case PASTPOST_IDLE
+	case MPASTPOST_IDLE
 		DrawSprite(0)
 		DrawSprite(1)
 		break
 
-	case PASTPOST_ROTATE
+	case MPASTPOST_ROTATE
 		DrawSprite(0)
 		Object.Timer++
 		if Object.Timer == 64
 			Object.Timer = 0
-			Object.State = PASTPOST_USED
+			Object.State = MPASTPOST_USED
 		end if
 		DrawSprite(Object.Frame)
 
-		TempValue0 = Object.Timer
+		TempValue0  = Object.Timer
 		TempValue0 &= 1
+
 		Object.Frame += TempValue0
 		if Object.Frame > 8
 			Object.Frame = 1
 		end if
 		break
 
-	case PASTPOST_USED
+	case MPASTPOST_USED
 		DrawSprite(0)
 		DrawSprite(5)
 		break

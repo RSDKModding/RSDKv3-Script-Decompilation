@@ -4,6 +4,7 @@
 
 // Aliases
 #alias Object.Value0	:	Object.Timer
+#alias Object.Value1	:	Object.RectAlpha
 #alias Object.Value3	:	Object.Unused
 
 // States
@@ -25,6 +26,13 @@
 
 #alias 5	:	ENGINE_ENTER_HIRESMODE
 
+// game.titleMode Aliases
+#alias 0	:	DONT_SKIP_LOGOS
+#alias 1	:	SKIP_LOGOS				// this is set by HE2
+
+// game.mainMenuMode Aliases
+#alias 0	:	MAINMENUMODE_NONE		// Starts with this, but gets swapped on MenuButton
+
 
 sub ObjectMain
 	
@@ -33,22 +41,19 @@ sub ObjectMain
 		// Setup not only the Object, but some other useful game values as well
 		
 		ReadSaveRAM()
-		
 		// First, restore the Soundtrack setting to what it should be
 		Options.Soundtrack = SaveRAM[38]
 		
 		// Some more initialisation code follows, varies between platforms
 		
 #platform: Use_Origins
-		if game.titleMode != 0
+		if game.titleMode != DONT_SKIP_LOGOS
 			
-			// TODO: idk what this var even is lol this is the first script i'm looking at so come back to this later
-			
-			game.titleMode = 0
+			game.titleMode = DONT_SKIP_LOGOS
 			Object.State = SEGA_END
 			
 		else
-			if game.mainMenuMode != 0
+			if game.mainMenuMode != MAINMENUMODE_NONE
 				
 				// If returning from another Menu (ie Soundtrack) then just skip to the end
 				// and don't play the Sega screen again
@@ -91,7 +96,7 @@ sub ObjectMain
 		Object.iXPos = Screen.CenterX
 
 #platform: Use_Origins
-		game.mainMenuMode = 0
+		game.mainMenuMode = MAINMENUMODE_NONE
 #endplatform
 		break
 
@@ -129,21 +134,26 @@ sub ObjectMain
 	case SEGA_FADEOUT
 		// Do note - this state is kinda messed up, they forget a break at the end so
 		// this state doesn't reallly fade out
-		if Object.Value1<256
-			Object.Value1+=8
+#platform: Use_Standalone
+		if Object.RectAlpha < 256
+			Object.RectAlpha += 8
 		endif
+#endplatform
 		
 		if Object.Alpha > 7
 			Object.Alpha -= 8
 		else
 			if Object.Timer == 16
+
 #platform: Use_Standalone
 				ResetObjectEntity(Object.EntityNo, TypeName[CWLogo], 0, Object.XPos, Object.YPos)
 				Object.Unused = 96
 #endplatform
+
 #platform: Use_Origins
 				ResetObjectEntity(Object.EntityNo, TypeName[Sonic], 0, Object.XPos, Object.YPos)
 #endplatform
+
 				Object.InkEffect = INK_ALPHA
 				Object.Alpha = 0
 				Object.Timer = 0
@@ -186,20 +196,38 @@ end sub
 sub ObjectDraw
 	
 	DrawRect(0, 0, Screen.XSize, Screen.YSize, 0, 0, 96, 255)
+
+#platform: Use_Origins
 	if Object.Alpha > 8
 		DrawSpriteFX(0, FX_INK, Object.XPos, Object.YPos)
 	end if
+#endplatform
+
+#platform: Use_Standalone
+	Object.Scale = 128
+	DrawSpriteFX(0, FX_SCALE, Object.XPos, Object.YPos)
+	DrawRect(0, 0, Screen.XSize, Screen.YSize, 0, 0, 96, Object.RectAlpha)
+#endplatform
 	
 end sub
 
 
 sub ObjectStartup
-	
+
+#platform: Use_Origins
 	LoadSpriteSheet("Title/Title.gif")
 	
 	// Sega sprite
 	SpriteFrame(-49,-16,98,31,106,1)
-	
+#endplatform
+
+#platform: Use_Standalone
+	LoadSpriteSheet("Title/Sega.gif")
+
+	// Sega sprite
+	SpriteFrame(-255, -87, 510, 174, 1, 1)
+#endplatform
+
 end sub
 
 
