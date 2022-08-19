@@ -8,11 +8,21 @@
 
 // Note - Object.Alpha is used for the actual lightning sprites, while Object.Flash is used for the screen-wide lightning flash
 
+// States
+#alias 0	:	LIGHTNING_WAIT
+#alias 1	:	LIGHTNING_FALL
+
+// Priority
+#alias 1	:	PRIORITY_ACTIVE
+
+// Ink Effects
+#alias 2	:	INK_ALPHA
+
 
 sub ObjectMain
 	
 	switch Object.State
-	case 0
+	case LIGHTNING_WAIT
 		if Object.Timer < 256
 			Object.Timer++
 		else
@@ -23,11 +33,11 @@ sub ObjectMain
 		end if
 		break
 		
-	case 1
+	case LIGHTNING_FALL
 		if Object.Alpha > 0
 			Object.Alpha -= 2
 		else
-			Object.State = 0
+			Object.State = LIGHTNING_WAIT
 			Object.Frame++
 			Object.Frame &= 3
 		end if
@@ -44,23 +54,26 @@ end sub
 
 sub ObjectDraw
 	
-	if Object.State > 0
+	if Object.State > LIGHTNING_WAIT
 		if Object.DrawOrder == 1
 			// In this Draw Order, we're in the BG
 			
-			Object.YPos = Screen.YOffset
-			Object.YPos *= Object.PropertyValue
+			Object.YPos   = Screen.YOffset
+			Object.YPos  *= Object.PropertyValue
 			Object.YPos >>= 7
 			FlipSign(Object.YPos)
 			Object.YPos += 312
-			TempValue0 = Object.Flash
+
+			TempValue0   = Object.Flash
 			TempValue0 >>= 1
 			DrawRect(0, 0, Screen.XSize, Screen.YSize, 224, 192, 128, TempValue0)
-			TempValue0 = Screen.XOffset
+
+			TempValue0   = Screen.XOffset
 			TempValue0 >>= 3
-			TempValue0 &= 511
+			TempValue0  &= 511
 			FlipSign(TempValue0)
-			TempValue1 = Object.Frame
+
+			TempValue1  = Object.Frame
 			TempValue0 += 64
 			if TempValue0 < -64
 				TempValue0 += 512
@@ -135,13 +148,13 @@ sub ObjectStartup
 			
 			// Lightning never stops, make it always active
 			// (In terms of the actual object layout, normally this object is far out of bounds!)
-			Object[ArrayPos0].Priority = 1
+			Object[ArrayPos0].Priority = PRIORITY_ACTIVE
 			
 			// The lightning should be in the BG, so give it a low draw order
 			Object[ArrayPos0].DrawOrder = 1
 			
 			// Lightning flashes and pulses, so give it the INK_ALPHA effect
-			Object[ArrayPos0].InkEffect = 2
+			Object[ArrayPos0].InkEffect = INK_ALPHA
 			
 		end if
 		

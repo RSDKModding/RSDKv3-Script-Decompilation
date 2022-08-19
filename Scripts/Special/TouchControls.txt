@@ -21,10 +21,14 @@
 #alias Player.ControlMode : SSSonic.ControlMode
 
 // ControlMode Aliases
-#alias -1 : CONTROLMODE_NONE
-#alias  0 : CONTROLMODE_NORMAL
+#alias -1 : CONTROL_DISABLED
+#alias  0 : CONTROL_ENABLED
 
-#alias 2 : INK_ALPHA
+// Ink Effects
+#alias 2	:	INK_ALPHA
+
+// Priority
+#alias 1	:	PRIORITY_ACTIVE
 
 
 sub ObjectDraw
@@ -35,14 +39,14 @@ sub ObjectDraw
 	if Options.TouchControls == false
 		// If Touch Controls aren't currently active, then hide
 		
-		TempValue0 = CONTROLMODE_NONE
+		TempValue0 = CONTROL_DISABLED
 	else
 		// Otherwise, match the Player's current Control Mode
 		
 		TempValue0 = Player.ControlMode
 	end if
 
-	if TempValue0 == CONTROLMODE_NORMAL
+	if TempValue0 == CONTROL_ENABLED
 		// The Player's up and ready to control, so let's show their inputs!
 		
 		// Wait for the stage to be active too, before doing anything
@@ -180,7 +184,7 @@ sub ObjectStartup
 		Object[25].Type = TypeName[Touch Controls]
 		
 		// Make sure it's always active, and give it a high draw order since it should be above everything else
-		Object[25].Priority = 1
+		Object[25].Priority = PRIORITY_ACTIVE
 		Object[25].DrawOrder = 6
 		
 		// The Controls are to fade in, so set up use of Alpha

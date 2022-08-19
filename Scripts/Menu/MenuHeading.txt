@@ -1,4 +1,4 @@
-//------------Sonic CD Menu Heading Script-------------//
+//----------------Sonic CD Menu Heading Script----------------//
 //--------Scripted by Christian Whitehead 'The Taxman'--------//
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
@@ -15,7 +15,7 @@
 #alias Object[1].Value2		:	Object.MaxButtonCount
 
 //MenuHeading_CheckTouchBack Specific Values
-#alias Object.Value1		:	Object.CMButtonPressed	//Current Menu Button Pressed
+#alias Object.Value1		:	CurrentMenu.ButtonPressed	//Current Menu Button Pressed
 #alias Object[1].Value4		:	Object.BackTouchPress
 
 // States
@@ -45,30 +45,33 @@
 //Engine & CallBacks
 #alias 2	:	MESSAGE_LOSTFOCUS
 
+// Device Type
+#alias 0	:	RETRO_STANDARD
+
 // Function declarations
 #function MenuHeading_CheckTouchBack
 
 
 function MenuHeading_CheckTouchBack	//This is used by other scripts to check if the back touch button is pressed
 	if Engine.Message == MESSAGE_LOSTFOCUS
-		Object.CMButtonPressed = -1
+		CurrentMenu.ButtonPressed = -1
 	end if
 
-	TempValue0 = Screen.XSize
+	TempValue0  = Screen.XSize
 	TempValue0 -= 76
 	CheckTouchRect(TempValue0, 192, Screen.XSize, Screen.YSize)
 	if CheckResult > -1
-		Object.CMButtonPressed = 5
+		CurrentMenu.ButtonPressed = 5
 		Object.BackTouchPress = true
 	else
 		Object.BackTouchPress = false
 		if TempValue3 < 0
-			if Object.CMButtonPressed == 5
+			if CurrentMenu.ButtonPressed == 5
 				KeyPress[0].ButtonB = true
 			end if
 		else
-			if Object.CMButtonPressed == 5
-				Object.CMButtonPressed = -1
+			if CurrentMenu.ButtonPressed == 5
+				CurrentMenu.ButtonPressed = -1
 			end if
 		end if
 	end if
@@ -135,16 +138,16 @@ sub ObjectDraw
 	DrawRect(TempValue0, 20, screen.XSize, 9, 0, 0, 0, 255)
 #endplatform
 
-	TempValue0 = Screen.CenterX
+	TempValue0  = Screen.CenterX
 	TempValue0 += 12
 	DrawRect(0, 212, TempValue0, 13, 0, 0, 0, 255)
 
 	//Draw Menu Header
 	Object.SpriteSheet = Object.GFX2
-	TempValue0 = Screen.CenterX
-	TempValue0 -= 160
+	TempValue0   = Screen.CenterX
+	TempValue0  -= 160
 	TempValue0 >>= 2
-	TempValue0 += Object.XOffset
+	TempValue0  += Object.XOffset
 	DrawSpriteScreenXY(Object.Frame, TempValue0, 194)
 
 	//Draw Detail Arrows (Standard) / Drag Arrows (Mobile)
@@ -153,13 +156,13 @@ sub ObjectDraw
 	Object.Angle += 4
 	Object.Angle &= 511
 
-	TempValue0 = Screen.XSize
+	TempValue0  = Screen.XSize
 	TempValue0 -= 40
 	//Check if the menu needs dragging to reach all the buttons
 	if Object.MaxButtonCount > 4
 		Sin(TempValue1, Object.Angle)
 		TempValue1 >>= 6
-		TempValue1 += 96
+		TempValue1  += 96
 		DrawSpriteScreenFX(3, FX_INK, TempValue0, TempValue1)
 
 		Sin(TempValue1, Object.Angle)
@@ -177,30 +180,30 @@ sub ObjectStartup
 		if Object[ArrayPos0].Type == TypeName[MenuHeading]
 #platform: Use_Origins
 			if game.continueFlag == false	// they really duped the whole thing
-				Object[ArrayPos0].Frame = 5
-				Object[ArrayPos0].Alpha = 255
-				Object[ArrayPos0].Header = MAINMENU_HEADER
-				Object[ArrayPos0].InkEffect = INK_ALPHA
-				Object[ArrayPos0].XOffset = -256
-				Object[ArrayPos0].State = MENUHEADING_ENTER_SCREEN
+				Object[ArrayPos0].Frame		 = 5
+				Object[ArrayPos0].Alpha		 = 255
+				Object[ArrayPos0].Header	 = MAINMENU_HEADER
+				Object[ArrayPos0].InkEffect	 = INK_ALPHA
+				Object[ArrayPos0].XOffset	 = -256
+				Object[ArrayPos0].State		 = MENUHEADING_ENTER_SCREEN
 			else
-				Object[ArrayPos0].Frame = 6
-				Object[ArrayPos0].Alpha = 255
-				Object[ArrayPos0].Header = SAVESELECT_HEADER
-				Object[ArrayPos0].InkEffect = INK_ALPHA
-				Object[ArrayPos0].XOffset = -256
-				Object[ArrayPos0].State = MENUHEADING_ENTER_SCREEN
+				Object[ArrayPos0].Frame		 = 6
+				Object[ArrayPos0].Alpha		 = 255
+				Object[ArrayPos0].Header	 = SAVESELECT_HEADER
+				Object[ArrayPos0].InkEffect	 = INK_ALPHA
+				Object[ArrayPos0].XOffset	 = -256
+				Object[ArrayPos0].State		 = MENUHEADING_ENTER_SCREEN
 			endif
 			
 #endplatform
 
 #platform: Use_Standalone
-			Object[ArrayPos0].Frame = 5
-			Object[ArrayPos0].Alpha = 255
-			Object[ArrayPos0].Header = MAINMENU_HEADER
-			Object[ArrayPos0].InkEffect = INK_ALPHA
-			Object[ArrayPos0].XOffset = -256
-			Object[ArrayPos0].State = MENUHEADING_ENTER_SCREEN
+			Object[ArrayPos0].Frame		 = 5
+			Object[ArrayPos0].Alpha		 = 255
+			Object[ArrayPos0].Header	 = MAINMENU_HEADER
+			Object[ArrayPos0].InkEffect	 = INK_ALPHA
+			Object[ArrayPos0].XOffset	 = -256
+			Object[ArrayPos0].State		 = MENUHEADING_ENTER_SCREEN
 #endplatform
 
 			LoadSpriteSheet("Menu/MenuGfx1_EN.gif")
@@ -235,9 +238,9 @@ sub ObjectStartup
 	SpriteFrame(8, 0, 8, 240, 503, 1)		// #1 Vertical Line 1
 	SpriteFrame(8, 240, 8, 240, 503, 1)		// #2 Vertical Line 
 
-// Slight modification, in origins this was a normal "if Engine.DeviceType == false", written like this to help with compatibility
+// Slight modification, in origins this was a normal "if Engine.DeviceType == RETRO_STANDARD", written like this to help with compatibility
 #platform: Use_Origins
-	CheckEqual(Engine.DeviceType, false)
+	CheckEqual(Engine.DeviceType, RETRO_STANDARD)
 #endplatform
 
 #platform: Use_Standalone

@@ -75,7 +75,7 @@
 #alias 17	:	SFX_SCORETOTAL
 #alias 19	:	SFX_SPECIALWARP
 
-// Soundtrack Aliases
+// Soundtrack
 #alias 0	:	OST_JP
 
 // How long the Zone Complete jingle for each soundtrack is
@@ -418,14 +418,15 @@ sub ObjectMain
 		
 		if Object.Timer == 160
 #platform: Use_Origins
+			// Check if the player is replaying the stage from My Data & Rankings
 			if game.oneStageFlag != false
 				
 				// If needed, let the Player retry the stage
 				Object.StagePosP = Stage.ListPos
-				game.callbackResult = -1
-				game.callbackParam0 = 1
-				game.callbackParam1 = Object.StagePosP	// Set the current stage
-				game.callbackParam2 = 0
+				game.callbackResult = -1				// Reset any callback result
+				game.callbackParam0 =  1				// 0 - Normal Retry, anything else - Show current and best time
+				game.callbackParam1 =  Object.StagePosP	// Get current stage
+				game.callbackParam2 =  0				// Unknown
 				EngineCallback(NOTIFY_STAGE_RETRY)
 				
 				Object.Timer = 0
@@ -560,6 +561,7 @@ sub ObjectMain
 				Stage.ActiveList = 3
 				Stage.ListPos = SpecialStage.ListPos
 				
+				// Check if the player is replaying the stage from My Data & Rankings
 				if game.oneStageFlag != false
 					Stage.ActiveList = REGULAR_STAGE
 					Stage.ListPos = Object.StagePosP
@@ -689,6 +691,7 @@ sub ObjectMain
 #platform: Use_Origins
 				recScore = Player.Score
 				
+				// Check if the player is replaying the stage from My Data & Rankings
 				if game.oneStageFlag != false
 					Stage.ActiveList = REGULAR_STAGE
 					Stage.ListPos = Object.StagePosP

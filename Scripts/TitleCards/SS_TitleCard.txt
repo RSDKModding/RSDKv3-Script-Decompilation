@@ -3,15 +3,23 @@
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
 // Aliases
-#alias Object.Value0	:	Object.BarPos
-#alias Object.Value1	:	Object.TextPos
-#alias Object.Value2	:	Object.TextSize
-#alias Object.Value3	:	Object.Timer
-#alias Object.Value4	:	Object.FadeR
-#alias Object.Value5	:	Object.FadeG
-#alias Object.Value6	:	Object.FadeB
-#alias Object.Value7	:	Object.CharPos
+#alias Object.Value0		:	Object.BarPos
+#alias Object.Value1		:	Object.TextPos
+#alias Object.Value2		:	Object.TextSize
+#alias Object.Value3		:	Object.Timer
+#alias Object.Value4		:	Object.FadeR
+#alias Object.Value5		:	Object.FadeG
+#alias Object.Value6		:	Object.FadeB
+#alias Object.Value7		:	Object.CharPos
 
+// SS Sonic aliases
+#alias Player.ControlMode	:	SSSonic.ControlMode
+
+// HUD Aliases
+#alias Object.Value1		:	HUD.TimeSeconds
+#alias Object.Value2		:	HUD.TimeFrames
+
+// States
 #alias 0	:	TITLECARD_FADEIN
 #alias 1	:	TITLECARD_SLIDEIN
 #alias 2	:	TITLECARD_DISPLAY
@@ -25,19 +33,15 @@
 #alias 4	:	LANG_SPANISH
 #alias 5	:	LANG_JAPANESE
 
-// SS Sonic aliases
-#alias Player.ControlMode	:	SSSonic.ControlMode
-
 // ControlMode Aliases
-#alias -1	:	CONTROLMODE_NONE
-#alias  0	:	CONTROLMODE_NORMAL
-
-// HUD Aliases
-#alias Object.Value1	:	HUD.Time.Seconds
-#alias Object.Value2	:	HUD.Time.Frames
+#alias -1	:	CONTROL_DISABLED
+#alias  0	:	CONTROL_ENABLED
 
 // Game modes
 #alias 2	:	GAMEMODE_TIMEATTACK
+
+// Priority
+#alias 1	:	PRIORITY_ACTIVE
 
 
 sub ObjectDraw
@@ -45,8 +49,8 @@ sub ObjectDraw
 	// Set the starting time values
 	// (Rather than disabling the HUD timer while the title card is active,
 	//  its values are simply reset here every frame until no longer needed)
-	HUD[4].Time.Seconds = 100
-	HUD[4].Time.Frames  = 0
+	HUD[4].TimeSeconds = 100
+	HUD[4].TimeFrames  = 0
 	
 	switch Object.State
 	case TITLECARD_FADEIN
@@ -57,7 +61,7 @@ sub ObjectDraw
 				
 				// Free Sonic's control
 				// (But, it gets locked again right after anyways...)
-				SSSonic.ControlMode = CONTROLMODE_NORMAL
+				SSSonic.ControlMode = CONTROL_ENABLED
 			end if
 			
 			SetScreenFade(Object.FadeR, Object.FadeG, Object.FadeB, Object.Timer)
@@ -70,11 +74,11 @@ sub ObjectDraw
 		end if
 		
 		// Lock Sonic's control
-		SSSonic.ControlMode = CONTROLMODE_NONE
+		SSSonic.ControlMode = CONTROL_DISABLED
 		break
 		
 	case TITLECARD_SLIDEIN
-		TempValue0 = 144
+		TempValue0  = 144
 		TempValue0 += Object.CharPos
 		if Object.TextPos > TempValue0
 			// Slide the text to the left
@@ -126,7 +130,7 @@ sub ObjectDraw
 			ResetObjectEntity(20, TypeName[Blank Object], 0, 0, 0)
 			
 			// Free Sonic's control, for real this time
-			SSSonic.ControlMode = CONTROLMODE_NORMAL
+			SSSonic.ControlMode = CONTROL_ENABLED
 			
 			if Options.GameMode == GAMEMODE_TIMEATTACK
 				// If in time attack, start proper time progression
@@ -140,7 +144,7 @@ sub ObjectDraw
 	// Before drawing, make sure this object hasn't been blanked already
 	// (Under certain circumstances, this can otherwise cause major graphical issues!!)
 	if Object.Type > TypeName[Blank Object]
-		TempValue0 = 136
+		TempValue0  = 136
 		TempValue0 += Object.CharPos
 		
 		// Draw the Title Card Bar
@@ -151,7 +155,7 @@ sub ObjectDraw
 #platform: Use_Decomp
 		// Extension of the black Sonic CD bar, since the base sprite isn't wide enough on Steam data files
 		
-		TempValue0 = Object.TextPos
+		TempValue0  = Object.TextPos
 		TempValue0 += 150
 		DrawRect(TempValue0, 147, 180, 9, 0, 0, 0, 255)
 #endplatform
@@ -204,18 +208,17 @@ sub ObjectStartup
 	end switch
 	
 	// Place the Title Card object into the level and setup its values
-	Object[20].Type = TypeName[TitleCard]
-	
+	Object[20].Type  = TypeName[TitleCard]
 	Object[20].Timer = 384
 	
 	// The Title Card is a HUD object, so it should always be active and draw above other sprites
-	Object[20].Priority = 1
+	Object[20].Priority  = PRIORITY_ACTIVE
 	Object[20].DrawOrder = 6
 	
 	Object[20].BarPos  = -216
 	Object[20].TextPos =  336
 	
-	Object[20].CharPos = Screen.CenterX
+	Object[20].CharPos  = Screen.CenterX
 	Object[20].CharPos -= 160
 	if Object[20].CharPos > 3
 		Object[20].CharPos -= 4
@@ -233,11 +236,11 @@ sub ObjectStartup
 	
 	// Preserve the colour used from the last fade
 	
-	Object[20].FadeR = Fade_Colour
+	Object[20].FadeR   = Fade_Colour
 	Object[20].FadeR >>= 16
 	
-	Object[20].FadeG = Fade_Colour
-	Object[20].FadeG &= 65280 // 0x00FF00, limiting it to the middle 2 green bytes of the value
+	Object[20].FadeG   = Fade_Colour
+	Object[20].FadeG  &= 0x00FF00
 	Object[20].FadeG >>= 8
 	
 	Object[20].FadeB = Fade_Colour
@@ -314,10 +317,13 @@ sub ObjectStartup
 	
 	if TempValue0 != false
 		PlayMusic(0)
+		
 		game.missionCondition = 0
-		game.missionEnd = false
-		Player.ControlMode = 0
-		Stage.TimeEnabled = true
+		game.missionEnd		  = false
+
+		Player.ControlMode	  = CONTROL_ENABLED
+		Stage.TimeEnabled	  = true
+
 		ResetObjectEntity(20, TypeName[Blank Object], 0, 0, 0)
 		Warp.XPos = 0
 	end if

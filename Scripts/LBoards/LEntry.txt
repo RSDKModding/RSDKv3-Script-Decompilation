@@ -8,6 +8,8 @@
 #alias Object.Value3	:	Object.Index
 #alias Object.Value4	:	Object.VTimer
 #alias Object.Value5	:	Object.SavedXPos
+
+// Menu Control Alias
 #alias Object[0].State	:	MenuControl.State
 
 // States
@@ -31,6 +33,7 @@
 // Priority
 #alias 1	:	PRIORITY_ACTIVE
 
+// Ink Effect
 #alias 2	:	INK_ALPHA
 
 
@@ -41,7 +44,7 @@ sub ObjectMain
 
 	case LENTRY_MOVE_RIGHT
 		Object.SavedXPos = Object.XPos
-		Object.Priority = PRIORITY_ACTIVE
+		Object.Priority  = PRIORITY_ACTIVE
 		Object.State++
 		break
 
@@ -51,7 +54,7 @@ sub ObjectMain
 			Object.HTimer++
 			if Object.PropertyValue < 4
 				if Object.HTimer == 5
-					Object[+1].State = 1
+					Object[+1].State = LENTRY_MOVE_RIGHT
 					if Object.PropertyValue == 2
 						Leaderboard.ID++
 						Leaderboard.ID %= 22
@@ -61,8 +64,8 @@ sub ObjectMain
 			end if
 		else
 			Object.HTimer = 0
-			Object.iXPos = Screen.XSize
-			Object.XPos += 0x100000
+			Object.iXPos  = Screen.XSize
+			Object.XPos  += 0x100000
 			Object.State++
 		end if
 		break
@@ -71,7 +74,7 @@ sub ObjectMain
 		Object.XPos -= 0x300000
 		if Object.XPos < Object.SavedXPos
 			Object.XPos = Object.SavedXPos
-			Object.State = 0
+			Object.State = LENTRY_BLANK
 			if Object.PropertyValue == 4
 				MenuControl.State = MENUCONTROL_CONTROLS
 			end if
@@ -80,7 +83,7 @@ sub ObjectMain
 
 	case LENTRY_MOVE_LEFT
 		Object.SavedXPos = Object.XPos
-		Object.Priority = PRIORITY_ACTIVE
+		Object.Priority  = PRIORITY_ACTIVE
 		Object.State++
 		break
 
@@ -90,7 +93,7 @@ sub ObjectMain
 			Object.HTimer++
 			if Object.PropertyValue < 4
 				if Object.HTimer == 5
-					Object[+1].State = 4
+					Object[+1].State = LENTRY_MOVE_LEFT
 					if Object.PropertyValue == 2
 						Leaderboard.ID--
 						if Leaderboard.ID < 0
@@ -102,8 +105,8 @@ sub ObjectMain
 			end if
 		else
 			Object.HTimer = 0
-			Object.iXPos = -232
-			Object.XPos -= 0x100000
+			Object.iXPos  = -232
+			Object.XPos  -= 0x100000
 			Object.State++
 		end if
 		break
@@ -138,7 +141,7 @@ sub ObjectMain
 			Object.Alpha -= 32
 			if Object.PropertyValue < 4
 				if Object.Alpha == 128
-					Object[+1].State = 7
+					Object[+1].State = LENTRY_MOVE_DOWN
 				end if
 			end if
 		else
@@ -168,7 +171,7 @@ sub ObjectMain
 			Object.Alpha -= 32
 			if Object.PropertyValue < 4
 				if Object.Alpha == 128
-					Object[+1].State = 10
+					Object[+1].State = LENTRY_MOVE_UP
 				end if
 			end if
 		else
@@ -185,13 +188,13 @@ end sub
 
 sub ObjectDraw
 	DrawSprite(142)
-	Object.Index = Object.PropertyValue
+	Object.Index  = Object.PropertyValue
 	Object.Index += Object.VTimer
 	ArrayPos0 = 0
 	GetTextInfo(TempValue1, MENU_1, 1, Object.Index, 0)
-	TempValue2 = Object.XPos
+	TempValue2  = Object.XPos
 	TempValue2 += 0x80000
-	TempValue3 = 0
+	TempValue3  = 0
 	while TempValue3 < 4
 		GetTextInfo(TempValue0, MENU_1, 0, Object.Index, ArrayPos0)
 		switch TempValue0
@@ -199,10 +202,11 @@ sub ObjectDraw
 			Object.Frame = 0
 			if TempValue0 > 47
 				if TempValue0 < 58
-					Object.Frame = TempValue0
+					Object.Frame  = TempValue0
 					Object.Frame -= 15
 				end if
 			end if
+
 			if Object.Frame > 0
 				Object.Frame += 71
 				DrawSpriteXY(Object.Frame, TempValue2, Object.YPos)
@@ -234,22 +238,25 @@ sub ObjectDraw
 			Object.Frame = 0
 			if TempValue0 > 64
 				if TempValue0 < 91
-					Object.Frame = TempValue0
+					Object.Frame  = TempValue0
 					Object.Frame -= 64
 				end if
 			end if
+
 			if TempValue0 > 96
 				if TempValue0 < 123
-					Object.Frame = TempValue0
+					Object.Frame  = TempValue0
 					Object.Frame -= 54
 				end if
 			end if
+
 			if TempValue0 > 47
 				if TempValue0 < 58
-					Object.Frame = TempValue0
+					Object.Frame  = TempValue0
 					Object.Frame -= 15
 				end if
 			end if
+
 			if Object.Frame > 0
 				DrawSpriteXY(Object.Frame, TempValue2, Object.YPos)
 			end if

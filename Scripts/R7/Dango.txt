@@ -29,7 +29,10 @@
 #alias 0	:	CONDITION_GOOD
 #alias 1	:	CONDITION_BAD
 
+// Priority
+#alias 0	:	PRIORITY_BOUNDS
 #alias 1	:	PRIORITY_ACTIVE
+
 
 sub ObjectMain
 	
@@ -196,7 +199,7 @@ sub ObjectMain
 			// This state is unused, but it serves just about the same buffer purpose as it does with other badniks
 			if Object.OutOfBounds == true
 				Object.State = DANGO_WALK
-				Object.Priority = 0
+				Object.Priority = PRIORITY_BOUNDS
 			end if
 			break
 			
@@ -204,7 +207,7 @@ sub ObjectMain
 	else
 		switch Object.State
 		case DANGO_WALK
-			Object.Priority = 1
+			Object.Priority = PRIORITY_ACTIVE
 			Object.Frame = Object.Timer
 			Object.Frame /= 30
 			Object.Frame += 2
@@ -365,7 +368,7 @@ sub ObjectMain
 			// This state is unused as Dango uses a simpler OOB process instead
 			if Object.OutOfBounds == true
 				Object.State = DANGO_WALK
-				Object.Priority = 0
+				Object.Priority = PRIORITY_BOUNDS
 			end if
 			break
 			
@@ -386,7 +389,7 @@ sub ObjectMain
 		if Object.OutOfBounds == true
 			
 			// It is too, so in that case it's clear to restore the Dango to its original spot
-			Object.Priority = 0
+			Object.Priority = PRIORITY_BOUNDS
 			Object.State = DANGO_WALK
 			Object.Timer = 0
 			Object.Direction = FACING_RIGHT

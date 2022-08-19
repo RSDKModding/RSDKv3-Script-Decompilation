@@ -6,12 +6,12 @@
 #alias Object.Value1	:	Object.YOffset
 
 // States
-#alias 0	:	ONEWAYDOOR_OPEN
-#alias 1	:	ONEWAYDOOR_CLOSE
+#alias 0	:	ONEWAYDOOR_CLOSE
+#alias 1	:	ONEWAYDOOR_OPEN
 
 
 sub ObjectMain
-	if Object.State == ONEWAYDOOR_OPEN
+	if Object.State == ONEWAYDOOR_CLOSE
 		if Object.YOffset > 0
 			Object.YOffset -= 0x20000
 		end if
@@ -24,15 +24,15 @@ end sub
 
 
 sub ObjectPlayerInteraction
-	TempValue0 = Object.YPos
-	TempValue1 = Player.YPos
+	TempValue0   = Object.YPos
+	TempValue1   = Player.YPos
 	Object.YPos -= Object.YOffset
 	PlayerObjectCollision(C_BOX, -8, -48, 8, -16)
 	if CheckResult > 1
 		Player.YPos = TempValue1
 	end if
 
-	Object.YPos = TempValue0
+	Object.YPos  = TempValue0
 	Object.YPos += Object.YOffset
 	PlayerObjectCollision(C_BOX, -8, -16, 8, 16)
 	if CheckResult > 1
@@ -51,7 +51,7 @@ end sub
 
 
 sub ObjectDraw
-	Object.Frame = Object.AnimationTimer
+	Object.Frame  = Object.AnimationTimer
 	Object.Frame /= 3
 	switch Object.PropertyValue
 	case 1

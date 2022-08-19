@@ -18,15 +18,19 @@
 #alias 3 : AMY2_RECOIL
 #alias 4 : AMY2_WAITNG_R
 #alias 5 : AMY2_WAITNG_L
+#alias 7 : AMY2_UNUSED
 
 // Collision Sides
 #alias 0	:	CSIDE_FLOOR
 
 // Player Aliases
-#alias -1 : CONTROLMODE_NONE
+#alias -1 : CONTROL_DISABLED
 
 // Fade Music Aliases
 #alias 3 : FADEMUSIC_SSZAMY
+
+// Ink Effect
+#alias 2	:	INK_ALPHA
 
 
 sub ObjectMain
@@ -52,7 +56,7 @@ sub ObjectMain
 			Player.Right = false
 			Player.Up    = false
 			Player.Down  = false
-			Player.ControlMode = CONTROLMODE_NONE
+			Player.ControlMode = CONTROL_DISABLED
 			
 			CreateTempObject(TypeName[Fade Music], FADEMUSIC_SSZAMY, Object.XPos, Object.YPos)
 		end if
@@ -112,7 +116,7 @@ sub ObjectMain
 									Player.Right = false
 									Player.Up    = false
 									Player.Down  = false
-									Player.ControlMode = CONTROLMODE_NONE
+									Player.ControlMode = CONTROL_DISABLED
 									
 									CreateTempObject(TypeName[Fade Music], FADEMUSIC_SSZAMY, Object.XPos, Object.YPos)
 								end if
@@ -184,7 +188,7 @@ sub ObjectMain
 									Player.Right = false
 									Player.Up    = false
 									Player.Down  = false
-									Player.ControlMode = CONTROLMODE_NONE
+									Player.ControlMode = CONTROL_DISABLED
 									
 									CreateTempObject(TypeName[Fade Music], FADEMUSIC_SSZAMY, Object.XPos, Object.YPos)
 								end if
@@ -333,13 +337,12 @@ sub ObjectMain
 	// Wait what? State 7? Where'd that come from? This object's states end at 5!
 	// But I digress, spawn hearts at a faster rate while in state 7
 	// (Perhaps it was the hugging state? It is for PPZ's Amy, which is what this object seems to be based on)
-	if Object.State == 7
+	if Object.State == AMY2_UNUSED
 		if Object.HeartsTimer > 15
 			CreateTempObject(TypeName[Love Heart], 0, Object.XPos, Object.YPos)
 			Object[TempObjectPos].iYPos -= 6
 			
-			// Give the Heart the INK_ALPHA effect and start it at full opacity
-			Object[TempObjectPos].InkEffect = 2
+			Object[TempObjectPos].InkEffect = INK_ALPHA
 			Object[TempObjectPos].Alpha = 255
 			
 			Object.HeartsTimer = 0
@@ -349,8 +352,7 @@ sub ObjectMain
 			CreateTempObject(TypeName[Love Heart], 0, Object.XPos, Object.YPos)
 			Object[TempObjectPos].iYPos -= 6
 			
-			// Start the Love Heart with the alpha effect and at full opacity
-			Object[TempObjectPos].InkEffect = 2
+			Object[TempObjectPos].InkEffect = INK_ALPHA
 			Object[TempObjectPos].Alpha = 255
 			
 			Object.HeartsTimer = 0

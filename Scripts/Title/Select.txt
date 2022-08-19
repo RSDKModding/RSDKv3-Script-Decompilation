@@ -1,4 +1,4 @@
-//------------Sonic CD Select Script-------------//
+//-------------------Sonic CD Select Script-------------------//
 //--------Scripted by Christian Whitehead 'The Taxman'--------//
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
@@ -7,28 +7,12 @@
 
 // Aliases
 
-#alias Object.Value2	:	Object.ArrowsPos
-
-#alias Object.Value3	:	Object.Timer
-
-// Value4 is unused
-
-// Selection Aliases
-
-// The current selection
 #alias Object.Value0	:	Object.CurrentSelection
-
-// Change of the current selection
 #alias Object.Value1	:	Object.SelectionChange
-
-// A bitfield for all the selections allowed currentlu
-// Bit indexes follow the SELECTION_* Aliases
-#alias Object.Value5	:	Object.ActiveSelections
-
-// The X Position of the selection
+#alias Object.Value2	:	Object.ArrowsPos
+#alias Object.Value3	:	Object.Timer
+#alias Object.Value5	:	Object.ActiveSelections	// A bitfield for all the selections allowed currentlu
 #alias Object.Value6	:	Object.SelectionPos
-
-// The displayed Selection, it only differs from CurrentSelection when changing selections
 #alias Object.Value7	:	Object.DisplaySelection
 
 // States
@@ -93,6 +77,9 @@
 
 // game.mainMenuMode Aliases
 #alias -1	:	MAINMENUMODE_NULL		// Starts with this, but gets swapped on MenuButton
+
+// Game Modes
+#alias 1	:	GAMEMODE_SAVEGAME
 
 
 sub ObjectMain
@@ -269,41 +256,39 @@ sub ObjectMain
 	case SELECT_CONTINUE
 		ArrayPos1 = 0
 		
-		Options.GameMode = 1
+		Options.GameMode = GAMEMODE_SAVEGAME
 		Options.SaveSlot = 0
 		
 		Stage.ActiveList = REGULAR_STAGE
 		
-		Stage.PlayerListPos = SaveRAM[ArrayPos1]
+		Stage.PlayerListPos		= SaveRAM[ArrayPos1]
 		ArrayPos1++
 		
-		Player.Lives = SaveRAM[ArrayPos1]
+		Player.Lives			= SaveRAM[ArrayPos1]
 		ArrayPos1++
 		
-		Player.Score = SaveRAM[ArrayPos1]
+		Player.Score			= SaveRAM[ArrayPos1]
 		ArrayPos1++
 		
-		Stage.ListPos = SaveRAM[ArrayPos1]
+		Stage.ListPos			= SaveRAM[ArrayPos1]
 		ArrayPos1++
 		
-		SpecialStage.TimeStones = SaveRAM[ArrayPos1]
+		SpecialStage.TimeStones	= SaveRAM[ArrayPos1]
 		ArrayPos1++
 		
-		SpecialStage.ListPos = SaveRAM[ArrayPos1]
+		SpecialStage.ListPos	= SaveRAM[ArrayPos1]
 		ArrayPos1++
 		
-		Player.ScoreBonus = SaveRAM[ArrayPos1]
+		Player.ScoreBonus		= SaveRAM[ArrayPos1]
 		ArrayPos1++
 		
-		Good_Future_List = SaveRAM[ArrayPos1]
+		Good_Future_List		= SaveRAM[ArrayPos1]
 		ArrayPos1++
 		
 		Good_Future_List &= 65535
 		Good_Future_Count = 0
 		Good_Future = false
 		
-		// Unless I'm misinterpretting, won't this cause MetalSonic_List to always be 0?
-		// (SaveRAM[7] & 0xffff) >> 16, that'll never give any proper results I believe?
 		MetalSonic_List = Good_Future_List
 		MetalSonic_List >>= 16
 		
@@ -315,8 +300,8 @@ sub ObjectMain
 			// If in the negatives, then go back to 0 - STAGE_R_R11A
 			
 			Stage.ListPos = STAGE_R_R11A
-			Player.Lives = 3
-			Player.Score = 0
+			Player.Lives  = 3
+			Player.Score  = 0
 		end if
 		
 		// If it's beyond the normal stage length, then that means the save is
@@ -389,7 +374,7 @@ sub ObjectMain
 		
 		// Load the Time Attack Menu
 		Stage.ActiveList = PRESENTATION_STAGE
-		Stage.ListPos = STAGE_P_TIMEATTACK
+		Stage.ListPos	 = STAGE_P_TIMEATTACK
 		
 		LoadStage()
 		
@@ -402,8 +387,8 @@ sub ObjectMain
 		// -> Despite its general name, it's really only the Spindash option...
 		
 		game.mainMenuMode = MAINMENUMODE_SETTINGS
-		Stage.ActiveList = PRESENTATION_STAGE
-		Stage.ListPos = STAGE_P_MENU
+		Stage.ActiveList  = PRESENTATION_STAGE
+		Stage.ListPos	  = STAGE_P_MENU
 		
 		LoadStage()
 		
@@ -414,8 +399,8 @@ sub ObjectMain
 		
 		// Load the Menu, but this time for the Soundtrack menu
 		game.mainMenuMode = MAINMENUMODE_SOUNDTRACK
-		Stage.ActiveList = PRESENTATION_STAGE
-		Stage.ListPos = STAGE_P_MENU
+		Stage.ActiveList  = PRESENTATION_STAGE
+		Stage.ListPos	  = STAGE_P_MENU
 		
 		LoadStage()
 		
@@ -426,8 +411,8 @@ sub ObjectMain
 		
 		// Yup it's the Menu again, but now the Extras tab!
 		game.mainMenuMode = MAINMENUMODE_EXTRAS
-		Stage.ActiveList = PRESENTATION_STAGE
-		Stage.ListPos = STAGE_P_MENU
+		Stage.ActiveList  = PRESENTATION_STAGE
+		Stage.ListPos	  = STAGE_P_MENU
 		
 		LoadStage()
 		
@@ -445,9 +430,9 @@ sub ObjectMain
 	case SELECT_CHARSELECT
 		
 		// Prompt the HE2 side of things to bring up the character menu
-		game.continueFlag = 0
-		game.callbackResult = -1
-		game.callbackParam0 = 0
+		game.continueFlag	= false
+		game.callbackResult = -1	// Reset Callback result
+		game.callbackParam0 =  0	// 0 - Character Select, anything else defaults to load the current player
 		EngineCallback(NOTIFY_CHARACTER_SELECT)
 		
 		Object.State = SELECT_RECIEVERESULT
@@ -457,7 +442,7 @@ sub ObjectMain
 		if game.callbackResult > 0
 			
 			// Based on the result, either exit or actually follow the selected option
-			if game.continueFlag != 0
+			if game.continueFlag != false
 				Object.CurrentSelection = SELECTION_CONTINUE
 				Object.State = SELECT_FADEOUT_E
 			else

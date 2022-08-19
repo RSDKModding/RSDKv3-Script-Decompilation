@@ -5,15 +5,19 @@
 // Aliases
 // Not all of these are used here in the HUD script, some are just used as a way for other objects to globally transmit values
 #alias Object.Value0 : Object.UFOsCount     // Initially set via a loop in the UFO script
-#alias Object.Value1 : Object.Time.Seconds  // Displayed time
-#alias Object.Value2 : Object.Time.Frames   // Hidden and used for time processing, this value is managed by Special Setup instead of here
+#alias Object.Value1 : Object.TimeSeconds  // Displayed time
+#alias Object.Value2 : Object.TimeFrames   // Hidden and used for time processing, this value is managed by Special Setup instead of here
 #alias Object.Value3 : Object.Rings
 #alias Object.Value4 : Object.LastUFOType   // Used by UFOs for ring streak bonus
 #alias Object.Value5 : Object.SpeedShoes    // Used to transmit between player and UFO
 #alias Object.Value6 : Object.BonusUFOPos   // "Pos" akin to entity pos, not as in X or Y Position
 #alias Object.Value7 : Object.WaterTimer    // Used in making time deplete faster when wet
 
-#alias 2 : GAMEMODE_TIMEATTACK
+// Game Modes
+#alias 2	:	GAMEMODE_TIMEATTACK
+
+// Priority
+#alias 1	:	PRIORITY_ACTIVE
 
 
 sub ObjectDraw
@@ -45,20 +49,20 @@ sub ObjectDraw
 		// In one of the normal game modes, where this object is the one keeping track of the time
 		
 		// First digit of time
-		TempValue0 = Object.Time.Seconds
+		TempValue0 = Object.TimeSeconds
 		TempValue0 /= 100
 		TempValue1 += 40
 		DrawSpriteScreenXY(TempValue0, TempValue1, 11)
 		
 		// Second digit of time
-		TempValue0 = Object.Time.Seconds
+		TempValue0 = Object.TimeSeconds
 		TempValue0 %= 100
 		TempValue0 /= 10
 		TempValue1 += 8
 		DrawSpriteScreenXY(TempValue0, TempValue1, 11)
 		
 		// Last digit of time
-		TempValue0 = Object.Time.Seconds
+		TempValue0 = Object.TimeSeconds
 		TempValue0 %= 10
 		TempValue1 += 8
 		DrawSpriteScreenXY(TempValue0, TempValue1, 11)
@@ -136,7 +140,7 @@ sub ObjectStartup
 	Object[4].Type = TypeName[HUD]
 	
 	// The object should always be run, regardless if it's within camera bounds or not
-	Object[4].Priority = 1
+	Object[4].Priority = PRIORITY_ACTIVE
 	
 	// Make the HUD draw ontop of all other sprites, too
 	Object[4].DrawOrder = 6

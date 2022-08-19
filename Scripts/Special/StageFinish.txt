@@ -17,6 +17,13 @@
 #alias Object.Value3 : Object.LineXPos3
 #alias Object.Value4 : Object.LineXPos4
 
+// HUD Aliases
+#alias Object.Value1 : HUD.TimeSeconds
+#alias Object.Value3 : HUD.Rings
+
+// Property Value - Results Type
+#alias Object.PropertyValue : Object.ResultsType
+
 // States
 #alias 0 : STAGEFINISH_INIT
 #alias 1 : STAGEFINISH_FADEOUT
@@ -28,9 +35,8 @@
 #alias 7 : STAGEFINISH_LOADNORMAL
 #alias 8 : STAGEFINISH_LOADTIMEATTACK
 #alias 9 : STAGEFINISH_LOADLEVELSELECT
-
-// Property Value - Results Type
-#alias Object.PropertyValue : Object.ResultsType
+#alias 10: STAGEFINISH_CHECKRETRYCOND
+#alias 11: STAGEFINISH_SAVE
 
 #alias 0 : RESULTSTYPE_FAILURE
 #alias 1 : RESULTSTYPE_STONEOBTAINED
@@ -38,10 +44,6 @@
 
 // Player Aliases
 #alias 0 : PLAYER_SONIC
-
-// HUD Aliases
-#alias Object.Value1 : HUD.Time.Seconds
-#alias Object.Value3 : HUD.Rings
 
 // Game modes
 #alias 2 : GAMEMODE_TIMEATTACK
@@ -64,7 +66,7 @@
 // Ink Effect Aliases
 #alias 2 : INK_ALPHA
 
-// Soundtrack Aliases
+// Soundtrack
 #alias 0 : OST_JP
 
 // Stage Aliases
@@ -72,6 +74,12 @@
 #alias 2 : STAGE_P_TIMEATTACK
 #alias 4 : STAGE_P_SOUNDTEST
 #alias 7 : STAGE_P_CREDITS
+
+// Game Modes
+#alias 1	:	GAMEMODE_SAVEGAME
+
+// Control Mode
+#alias 0	:	CONTROL_ENABLED
 
 
 sub ObjectMain
@@ -102,7 +110,7 @@ sub ObjectMain
 		if Object.ResultsType > RESULTSTYPE_FAILURE
 			
 			// Setup the Time Bonus
-			Object.TimeBonus = HUD[4].Time.Seconds
+			Object.TimeBonus = HUD[4].TimeSeconds
 			Object.TimeBonus *= 200
 			
 			// Set the corresponding Time Stone bit for this stage
@@ -206,7 +214,7 @@ sub ObjectMain
 			
 			// More Origins changes
 #platform: Use_Origins
-			Object.State = 10
+			Object.State = STAGEFINISH_CHECKRETRYCOND
 #endplatform
 			
 #platform: Use_Standalone
@@ -249,7 +257,7 @@ sub ObjectMain
 				Stage.ActiveLayer[3] = 9
 				
 				// Lock the player from doing stuff too
-				Player.ControlMode = 0
+				Player.ControlMode = CONTROL_ENABLED
 				KeyDown[1].Left  = false
 				KeyDown[1].Right = false
 				Player.Direction = FACING_RIGHT
@@ -454,7 +462,7 @@ sub ObjectMain
 			if game.coinMode == false
 				Player.Lives++
 			else
-				game.callbackParam0 = 1
+				game.callbackParam0 = 1	// Set the amount of coins to add
 				EngineCallback(NOTIFY_ADD_COIN)
 			end if
 #endplatform
@@ -516,7 +524,7 @@ sub ObjectMain
 			SetScreenFade(208, 255, 224, Object.Timer)
 			
 			if Object.Timer == 1024
-				if Options.GameMode == 1
+				if Options.GameMode == GAMEMODE_SAVEGAME
 					
 					// Save the Player's progress
 					// This used to be useless, because the Player's progress was already saved previously in the Object,
@@ -660,11 +668,9 @@ sub ObjectMain
 		// This code never hits anyways, so I guess it's fine?
 		break
 		
-	case 10
+	case STAGEFINISH_CHECKRETRYCOND
 		
-		// TODO: document these, once it's learned how origins callbacks exactly work
-		
-		game.callbackResult = -1
+		game.callbackResult = -1	// Reset the Callback result
 		
 		if Object.ResultsType == RESULTSTYPE_FAILURE
 			// We've failed getting the Stone, so we're able to retry the Special Stage
@@ -681,17 +687,17 @@ sub ObjectMain
 		game.callbackParam2 = BackupTimeStones
 		EngineCallback(NOTIFY_SPECIAL_RETRY)
 		
-		Object.State = 11
+		Object.State = STAGEFINISH_SAVE
 		
 		SetScreenFade(208, 255, 224, 255)
 		break
 		
-	case 11
+	case STAGEFINISH_SAVE
 		if game.callbackResult >= false
 			SpecialStage.ListPos = BackupSpecialStageListPos
 			SpecialStage.TimeStones = BackupTimeStones
 			
-			if Options.GameMode == 1
+			if Options.GameMode == GAMEMODE_SAVEGAME
 				ArrayPos1 = Options.SaveSlot
 				ArrayPos1 <<= 3
 				
@@ -740,7 +746,7 @@ sub ObjectMain
 				
 				LoadStage()
 			else
-				Object.State = 2
+				Object.State = STAGEFINISH_FADEIN
 				Object.Timer = 256
 				if SpecialStage.TimeStones > 126
 					// Got 'em all!

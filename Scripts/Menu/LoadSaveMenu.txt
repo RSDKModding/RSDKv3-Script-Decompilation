@@ -1,4 +1,4 @@
-//------------Sonic CD LoadSaveMenu Script-------------//
+//---------------Sonic CD Load Save Menu Script---------------//
 //--------Scripted by Christian Whitehead 'The Taxman'--------//
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
@@ -9,15 +9,41 @@
 #alias Object[+4].Rotation 			:	Object.SaveMode
 #alias Object[+4].Value1  			:	DeleteConfirm.Highlight
 
-//Object[33] is MenuHeading
+// Menu Heading Aliases
 #alias Object[33].State				:	MenuHeading.State
 #alias Object[33].PropertyValue		:	MenuHeading.Header
-//Object[-1] is MenuWindow
+
+// Menu Window Aliases
 #alias Object[-1].State				:	MenuWindow.State
 
+// Back Touch
 #alias Object[1].Value4				:	Object.BackTouchPress
 
+// Save File State
+#alias Object.Rotation    			:	Object.SaveStatus // Meant to be used with [+ArrayPos0]
+#alias Object.Rotation    			:	Object.SaveOneStatus
+#alias Object[+1].Rotation			:	Object.SaveTwoStatus
+#alias Object[+2].Rotation			:	Object.SaveThreeStatus
+#alias Object[+3].Rotation			:	Object.SaveFourStatus
+
+// Save File Info
+#alias Object.Value3       			:	Object.PlayerListPos
+#alias Object.Value6      		 	:	Object.Lives
+#alias Object.Value5       			:	Object.Score
+#alias Object.Value2      		 	:	Object.StageListPos
+#alias Object.Value4       			:	Object.TimeStones
+#alias Object.PropertyValue			:	Object.SpecialListPos
+#alias Object.Scale        			:	Object.ScoreBonus
+#alias Object.Value7       			:	Object.GoodFutureList
+
+// Delete Button
+#alias Object[+1].XPos				:	Delete.XPos
+#alias Object[+1].YPos				:	Delete.YPos
+
+// Soundtrack
 #alias 0	:	OST_JP
+
+// Game Mode
 #alias 1	:	GAMEMODE_SAVEGAME
 
 // Save Modes
@@ -39,26 +65,6 @@
 #alias 1	:	SAVE_NORMAL_SELECTED
 #alias 2	:	SAVE_DELETE
 #alias 3	:	SAVE_DELETE_SELECTED
-
-#alias Object.Rotation    	:	Object.SaveStatus // Meant to be used with [+ArrayPos0]
-#alias Object.Rotation    	:	Object.SaveOneStatus
-#alias Object[+1].Rotation	:	Object.SaveTwoStatus
-#alias Object[+2].Rotation	:	Object.SaveThreeStatus
-#alias Object[+3].Rotation	:	Object.SaveFourStatus
-
-// Save File Info
-#alias Object.Value3       	:	Object.PlayerListPos
-#alias Object.Value6       	:	Object.Lives
-#alias Object.Value5       	:	Object.Score
-#alias Object.Value2       	:	Object.StageListPos
-#alias Object.Value4       	:	Object.TimeStones
-#alias Object.PropertyValue	:	Object.SpecialListPos
-#alias Object.Scale        	:	Object.ScoreBonus
-#alias Object.Value7       	:	Object.GoodFutureList
-
-// Delete Button
-#alias Object[+1].XPos	:	Delete.XPos
-#alias Object[+1].YPos	:	Delete.YPos
 
 // Character Select Options
 #alias -1	:	CHARACTER_NONE // Touching nothing on mobile
@@ -169,8 +175,8 @@ function LoadSaveMenu_DrawSaveFiles
 					TempValue0 = 8
 					TempValue1 = Object[+ArrayPos0].SpecialListPos
 				else
-					TempValue2   = TempValue0
-					TempValue2  *= 10
+					TempValue2  = TempValue0
+					TempValue2 *= 10
 
 					TempValue1   = Object[+ArrayPos0].StageListPos
 					TempValue1--
@@ -209,8 +215,8 @@ function LoadSaveMenu_DrawSaveFiles
 
 					TempValue1 = Object[+ArrayPos0].SpecialListPos
 				else
-					TempValue2   = TempValue0
-					TempValue2  *= 10
+					TempValue2  = TempValue0
+					TempValue2 *= 10
 
 					TempValue1   = Object[+ArrayPos0].StageListPos
 					TempValue1--
@@ -295,9 +301,9 @@ function LoadSaveMenu_CheckTouchSave
 	TempValue0 *= 40
 	TempValue0 += Screen.CenterY
 	TempValue0 -= 87
-	TempValue1 = TempValue0
+	TempValue1  = TempValue0
 	TempValue1 += 37
-	TempValue2 = Object.XPos
+	TempValue2  = Object.XPos
 	TempValue2 += 250
 	CheckTouchRect(Object.XPos, TempValue0, TempValue2, TempValue1)
 end function
@@ -331,7 +337,8 @@ sub ObjectMain
 			Object.SelectedOption = BUTTON_NONE
 		end if
 #endplatform
-		Object.XPos = Screen.CenterX
+
+		Object.XPos  = Screen.CenterX
 		Object.XPos -= 126
 		
 		if Object.FadeValue == 0
@@ -341,22 +348,23 @@ sub ObjectMain
 			ArrayPos0 = 0
 			ArrayPos1 = 0
 			while ArrayPos0 < 4
-				Object[+ArrayPos0].PlayerListPos = SaveRAM[ArrayPos1]
+				Object[+ArrayPos0].PlayerListPos  = SaveRAM[ArrayPos1]
 				ArrayPos1++
-				Object[+ArrayPos0].Lives = SaveRAM[ArrayPos1]
+				Object[+ArrayPos0].Lives		  = SaveRAM[ArrayPos1]
 				ArrayPos1++
-				Object[+ArrayPos0].Score = SaveRAM[ArrayPos1]
+				Object[+ArrayPos0].Score		  = SaveRAM[ArrayPos1]
 				ArrayPos1++
-				Object[+ArrayPos0].StageListPos = SaveRAM[ArrayPos1]
+				Object[+ArrayPos0].StageListPos	  = SaveRAM[ArrayPos1]
 				ArrayPos1++
-				Object[+ArrayPos0].TimeStones = SaveRAM[ArrayPos1]
+				Object[+ArrayPos0].TimeStones	  = SaveRAM[ArrayPos1]
 				ArrayPos1++
 				Object[+ArrayPos0].SpecialListPos = SaveRAM[ArrayPos1]
 				ArrayPos1++
-				Object[+ArrayPos0].ScoreBonus = SaveRAM[ArrayPos1]
+				Object[+ArrayPos0].ScoreBonus	  = SaveRAM[ArrayPos1]
 				ArrayPos1++
 				Object[+ArrayPos0].GoodFutureList = SaveRAM[ArrayPos1]
 				ArrayPos1++
+
 				if Object[+ArrayPos0].StageListPos > 0 // Is this save used?
 					Object.ShowDeleteButton = true
 				end if
@@ -364,17 +372,17 @@ sub ObjectMain
 			loop
 		end if
 		
-		Delete.XPos = Screen.CenterX
+		Delete.XPos  = Screen.CenterX
 		Delete.XPos -= 120
-		Delete.YPos = 32
+		Delete.YPos  = 32
 		
 		if Object.FadeValue < 256
-			Object.Alpha = Object.FadeValue
+			Object.Alpha	  = Object.FadeValue
 			Object.FadeValue += 6
 		else
 			Object.FadeValue = 0
-			Object.Alpha = 255
-			Object.State = STATE_MAIN_SAVE_MENU
+			Object.Alpha	 = 255
+			Object.State	 = STATE_MAIN_SAVE_MENU
 		end if
 		break
 		
@@ -454,9 +462,9 @@ sub ObjectMain
 			
 			// Check if the delete button is touched
 			if Object.ShowDeleteButton == true
-				TempValue0 = Delete.XPos
+				TempValue0  = Delete.XPos
 				TempValue0 -= 4
-				TempValue1 = TempValue0
+				TempValue1  = TempValue0
 				TempValue1 += 72
 				CheckTouchRect(TempValue0, 0, TempValue1, 32)
 			else
@@ -612,21 +620,23 @@ sub ObjectMain
 				case MODE_DELETE
 					ArrayPos0 = Object.SelectedOption
 					if Object[+ArrayPos0].StageListPos > 0 // Is this save used?
-						Object.ShowDeleteButton = false
-						Object.State = STATE_SAVE_SELECTED_DELETE
-						Object.SaveOneStatus = SAVE_NORMAL
-						Object.SaveTwoStatus = SAVE_NORMAL
-						Object.SaveThreeStatus = SAVE_NORMAL
-						Object.SaveFourStatus = SAVE_NORMAL
+						Object.ShowDeleteButton		  = false
+						Object.State				  = STATE_SAVE_SELECTED_DELETE
+						Object.SaveOneStatus		  = SAVE_NORMAL
+						Object.SaveTwoStatus		  = SAVE_NORMAL
+						Object.SaveThreeStatus		  = SAVE_NORMAL
+						Object.SaveFourStatus		  = SAVE_NORMAL
 						Object[+ArrayPos0].SaveStatus = SAVE_DELETE_SELECTED
+
 						Object.SaveMode = MODE_NORMAL
 						PlaySfx(9, 0)
 					else
-						Object.SaveOneStatus = SAVE_NORMAL
-						Object.SaveTwoStatus = SAVE_NORMAL
-						Object.SaveThreeStatus = SAVE_NORMAL
-						Object.SaveFourStatus = SAVE_NORMAL
+						Object.SaveOneStatus	 = SAVE_NORMAL
+						Object.SaveTwoStatus	 = SAVE_NORMAL
+						Object.SaveThreeStatus	 = SAVE_NORMAL
+						Object.SaveFourStatus	 = SAVE_NORMAL
 						Object.SaveMode = MODE_NORMAL
+
 #platform: Use_Origins
 						if Options.PhysicalControls == false
 							Object.SelectedOption = BUTTON_NONE
@@ -651,7 +661,8 @@ sub ObjectMain
 		
 		if KeyPress[0].ButtonB == true
 			Object.ShowDeleteButton = false
-			Object.FadeValue = 248
+			Object.FadeValue		= 248
+
 			Object.State = STATE_EXIT
 			PlayStageSfx(1, 0)
 		end if
@@ -697,7 +708,7 @@ sub ObjectMain
 			Good_Future_List  = Object[+ArrayPos0].GoodFutureList
 			Good_Future_List &= 65535	// 0b1111111111111111
 			Good_Future_Count = 0
-			Good_Future = 0
+			Good_Future		  = 0
 
 			MetalSonic_List   = Object[+ArrayPos0].GoodFutureList
 			MetalSonic_List >>= 16
@@ -750,17 +761,19 @@ sub ObjectMain
 				end if
 			end if
 			Stage.PlayerListPos = Object[+ArrayPos0].PlayerListPos
+
 #platform: Use_Origins
 			game.callbackParam0 = Object.SelectedOption
 			EngineCallback(NOTIFY_SAVESLOT_SELECT)
 #endplatform
+
 			LoadStage()
 		end if
 		SetScreenFade(0, 0, 0, Object.FadeValue)
 		break
 		
 	case STATE_NEW_GAME_SELECTED
-		TempValue0 = Screen.CenterY
+		TempValue0  = Screen.CenterY
 		TempValue0 -= 87
 		if Object.YPos > TempValue0
 			Object.YPos -= 8
@@ -790,12 +803,12 @@ sub ObjectMain
 		
 	case STATE_FADEIN_CHARACTERSELECT
 		if Object.FadeValue < 256
-			Object.Alpha = Object.FadeValue
+			Object.Alpha	  = Object.FadeValue
 			Object.FadeValue += 8
 		else
 			Object.FadeValue = 0
-			Object.Alpha = 255
-			Object.State = STATE_CHARACTER_SELECT
+			Object.Alpha	 = 255
+			Object.State	 = STATE_CHARACTER_SELECT
 		end if
 		break
 		
@@ -808,11 +821,11 @@ sub ObjectMain
 
 #platform: Use_Standalone
 	#platform: Mobile
-			CheckEqual(Options.PhysicalControls, true)
+		CheckEqual(Options.PhysicalControls, true)
 	#endplatform
 
 	#platform: Standard
-			CheckResult = true
+		CheckResult = true
 	#endplatform
 #endplatform
 
@@ -896,7 +909,7 @@ sub ObjectMain
 			end if
 			
 			// Check if the back button is pressed
-			TempValue0 = Screen.XSize
+			TempValue0  = Screen.XSize
 			TempValue0 -= 76
 			CheckTouchRect(TempValue0, 192, Screen.XSize, Screen.YSize)
 			if CheckResult > -1
@@ -922,6 +935,7 @@ sub ObjectMain
 #platform: Mobile
 				Options.PhysicalControls = true
 #endplatform
+
 #platform: Use_Origins
 				Options.PhysicalControls = true
 #endplatform
@@ -933,6 +947,7 @@ sub ObjectMain
 #platform: Mobile
 				Options.PhysicalControls = true
 #endplatform
+
 #platform: Use_Origins
 				Options.PhysicalControls = true
 #endplatform
@@ -966,7 +981,7 @@ sub ObjectMain
 		end if
 		
 		if KeyPress[0].ButtonB == true
-			Object.State = STATE_FADEOUT_CHARACTERSELECT
+			Object.State	 = STATE_FADEOUT_CHARACTERSELECT
 			Object.FadeValue = 248
 			PlayStageSfx(1, 0)
 		end if
@@ -985,8 +1000,8 @@ sub ObjectMain
 		if Object.FadeValue < 256
 			Object.FadeValue += 8
 		else
-			ArrayPos0 = Object.SelectedOption
-			ArrayPos1 = Object.SelectedOption
+			ArrayPos0	= Object.SelectedOption
+			ArrayPos1 	= Object.SelectedOption
 			ArrayPos1 <<= 3
 			SaveRAM[ArrayPos1] = Object[+ArrayPos0].PlayerListPos	// Character
 			ArrayPos1++
@@ -1023,7 +1038,7 @@ sub ObjectMain
 			SpecialStage.TimeStones	= 0
 			SpecialStage.ListPos	= 0
 
-			LampPost.Check = 0
+			LampPost.Check   = 0
 			Stage.ActiveList = REGULAR_STAGE
 
 			ArrayPos0 = Object.SelectedOption
@@ -1035,10 +1050,12 @@ sub ObjectMain
 			end if
 
 			Stage.PlayerListPos = Object[+ArrayPos0].PlayerListPos
+
 #platform: Use_Origins
 			game.callbackParam0 = Object.SelectedOption
 			EngineCallback(NOTIFY_SAVESLOT_SELECT)
 #endplatform
+
 			LoadStage()
 			
 			if Stage.PlayerListPos == CHARACTER_SONIC
@@ -1094,21 +1111,21 @@ sub ObjectMain
 
 			Object.State = STATE_MAIN_SAVE_MENU
 			Object.Alpha = 255
-			Object.SaveOneStatus = SAVE_NORMAL
-			Object.SaveTwoStatus = SAVE_NORMAL
+			Object.SaveOneStatus   = SAVE_NORMAL
+			Object.SaveTwoStatus   = SAVE_NORMAL
 			Object.SaveThreeStatus = SAVE_NORMAL
-			Object.SaveFourStatus = SAVE_NORMAL
-			Object.SaveMode = MODE_NORMAL
+			Object.SaveFourStatus  = SAVE_NORMAL
+			Object.SaveMode		   = MODE_NORMAL
 			CallFunction(LoadSaveMenu_SetShowDelete)
 		end if
 		break
 		
 	case STATE_EXIT
 		if Object.FadeValue > 0
-			Object.Alpha = Object.FadeValue
+			Object.Alpha	  = Object.FadeValue
 			Object.FadeValue -= 8
 		else
-			// Tell the other objects the menu is being exited
+			// Tell the other objects that you're leaving the menu
 			Object.Type = TypeName[Blank Object]
 			MenuWindow.State = MENUWINDOW_SHRINK	// Reset the window
 			//All of this is MenuButton Objects
@@ -1121,8 +1138,9 @@ sub ObjectMain
 			Object[40].State = MENUBUTTON_BUTTONS_IN
 			Object[41].State = MENUBUTTON_BUTTONS_IN
 			Object[42].State = MENUBUTTON_BUTTONS_IN
+
 			MenuHeading.State  = MENUHEADING_LEAVE_SCREEN
-			MenuHeading.Header = MAINMENU_HEADER	// Swap header
+			MenuHeading.Header = MAINMENU_HEADER
 		end if
 		break
 		
@@ -1132,6 +1150,7 @@ sub ObjectMain
 		else
 			Object.FadeValue = 0
 			Object.State = STATE_MAIN_SAVE_MENU
+
 #platform: Use_Origins
 			if Options.PhysicalControls == true
 				Object.SelectedOption = BUTTON_SAVE_ONE
@@ -1158,17 +1177,17 @@ sub ObjectMain
 #endplatform	
 
 			if Object.SaveMode >= SAVE_DELETE
-				Object.SaveOneStatus = SAVE_NORMAL
-				Object.SaveTwoStatus = SAVE_NORMAL
-				Object.SaveThreeStatus = SAVE_NORMAL
-				Object.SaveFourStatus = SAVE_NORMAL
-				Object.SaveMode = MODE_NORMAL
+				Object.SaveOneStatus	= SAVE_NORMAL
+				Object.SaveTwoStatus	= SAVE_NORMAL
+				Object.SaveThreeStatus	= SAVE_NORMAL
+				Object.SaveFourStatus	= SAVE_NORMAL
+				Object.SaveMode			= MODE_NORMAL
 			else
-				Object.SaveOneStatus = SAVE_DELETE
-				Object.SaveTwoStatus = SAVE_DELETE
-				Object.SaveThreeStatus = SAVE_DELETE
-				Object.SaveFourStatus = SAVE_DELETE
-				Object.SaveMode = MODE_DELETE
+				Object.SaveOneStatus	= SAVE_DELETE
+				Object.SaveTwoStatus	= SAVE_DELETE
+				Object.SaveThreeStatus	= SAVE_DELETE
+				Object.SaveFourStatus	= SAVE_DELETE
+				Object.SaveMode			= MODE_DELETE
 			end if
 		end if
 		break
@@ -1178,10 +1197,12 @@ sub ObjectMain
 			Object.FadeValue++
 		else
 			Object.FadeValue = 0
-			ArrayPos0 = Object.SelectedOption
+			ArrayPos0					  = Object.SelectedOption
 			Object[+ArrayPos0].SaveStatus = SAVE_DELETE
+
 			Object.State = STATE_SLIDE_DELETE_SAVE
-			Object.YPos = 40
+
+			Object.YPos  = 40
 			Object.YPos *= Object.SelectedOption
 			Object.YPos += Screen.CenterY
 			Object.YPos -= 87
@@ -1189,7 +1210,7 @@ sub ObjectMain
 		break
 		
 	case STATE_SLIDE_DELETE_SAVE
-		TempValue0 = Screen.CenterY
+		TempValue0  = Screen.CenterY
 		TempValue0 -= 87
 		if Object.YPos > TempValue0
 			Object.YPos -= 8
@@ -1228,12 +1249,12 @@ sub ObjectMain
 		
 	case STATE_FADEIN_DELETECONFIRM
 		if Object.FadeValue < 256
-			Object.Alpha = Object.FadeValue
+			Object.Alpha	  = Object.FadeValue
 			Object.FadeValue += 8
 		else
 			Object.FadeValue = 0
-			Object.Alpha = 255
-			Object.State = STATE_DELETE_CONFIRM
+			Object.Alpha	 = 255
+			Object.State	 = STATE_DELETE_CONFIRM
 		end if
 		break
 		
@@ -1293,10 +1314,10 @@ sub ObjectMain
 			
 			// Check if YES is touched
 			CheckTouchRect(0, 0, Screen.XSize, Screen.YSize)
-			TempValue3 = CheckResult
-			TempValue0 = Screen.CenterX
+			TempValue3  = CheckResult
+			TempValue0  = Screen.CenterX
 			TempValue0 -= 34
-			TempValue1 = Screen.CenterX
+			TempValue1  = Screen.CenterX
 			TempValue1 += 34
 			CheckTouchRect(TempValue0, 110, TempValue1, 135)
 			if CheckResult > -1
@@ -1330,7 +1351,7 @@ sub ObjectMain
 			end if
 			
 			// Check if the back button is touched
-			TempValue0 = Screen.XSize
+			TempValue0  = Screen.XSize
 			TempValue0 -= 76
 			CheckTouchRect(TempValue0, 192, Screen.XSize, Screen.YSize)
 			if CheckResult > -1
@@ -1359,6 +1380,7 @@ sub ObjectMain
 				Options.PhysicalControls = true
 #endplatform
 			end if
+
 			if KeyPress[0].Down == true
 				DeleteConfirm.Highlight = DELETE_YES
 #platform: Mobile
@@ -1388,15 +1410,19 @@ sub ObjectMain
 				PlaySfx(27, 0)	//Select SFX
 			end if
 			Object.AnimationTimer = 0
+
 			Object.State = STATE_DELETECONFIRM_SELECTED
 		end if
 		
 		if KeyPress[0].ButtonB == true
-			ArrayPos0 = Object.SelectedOption
+			ArrayPos0					  = Object.SelectedOption
 			Object[+ArrayPos0].SaveStatus = SAVE_NORMAL
+
 			Object.State = STATE_FADEOUT_DELETECONFIRM
-			Object.FadeValue = 248
+
+			Object.FadeValue	  = 248
 			Object.AnimationTimer = 0
+
 			PlayStageSfx(1, 0)
 		end if
 		break
@@ -1405,25 +1431,26 @@ sub ObjectMain
 		if Object.FadeValue < 30
 			Object.FadeValue++
 		else
-			Object.State = STATE_FADEOUT_DELETECONFIRM
+			Object.State	 = STATE_FADEOUT_DELETECONFIRM
 			Object.FadeValue = 248
-			ArrayPos0 = Object.SelectedOption
+
+			ArrayPos0					  = Object.SelectedOption
 			Object[+ArrayPos0].SaveStatus = SAVE_NORMAL
 			
 			if DeleteConfirm.Highlight == DELETE_YES
 				// Delete this save in the menu
-				Object[+ArrayPos0].PlayerListPos = 0
+				Object[+ArrayPos0].PlayerListPos  = 0
 
-				Object[+ArrayPos0].Lives = 3
-				Object[+ArrayPos0].Score = 0
+				Object[+ArrayPos0].Lives		  = 3
+				Object[+ArrayPos0].Score		  = 0
 
-				Object[+ArrayPos0].StageListPos = 0
+				Object[+ArrayPos0].StageListPos   = 0
 
-				Object[+ArrayPos0].TimeStones = 0
+				Object[+ArrayPos0].TimeStones	  = 0
 
 				Object[+ArrayPos0].SpecialListPos = 0
 
-				Object[+ArrayPos0].ScoreBonus = 50000
+				Object[+ArrayPos0].ScoreBonus	  = 50000
 
 				Object[+ArrayPos0].GoodFutureList = 0
 				
@@ -1453,7 +1480,7 @@ sub ObjectMain
 		
 	case STATE_FADEOUT_DELETECONFIRM
 		if Object.FadeValue > 0
-			Object.Alpha = Object.FadeValue
+			Object.Alpha	  = Object.FadeValue
 			Object.FadeValue -= 8
 		else
 			Object.Alpha = 0
@@ -1476,7 +1503,7 @@ sub ObjectDraw
 			CallFunction(LoadSaveMenu_DrawDeleteNoSave)
 		end if
 		
-		Object.YPos = Screen.CenterY
+		Object.YPos  = Screen.CenterY
 		Object.YPos -= 87
 		ArrayPos0 = 0
 		CallFunction(LoadSaveMenu_DrawSaveFiles)
@@ -1504,7 +1531,7 @@ sub ObjectDraw
 	case STATE_FADEOUT_CHARACTERSELECT
 	case STATE_RETURN_TO_SAVESEL
 		DrawSpriteScreenFX(30, FX_INK, Screen.CenterX, 84)
-		TempValue0 = Screen.CenterX
+		TempValue0  = Screen.CenterX
 		TempValue0 -= 32
 		ArrayPos0 = Object.SelectedOption
 		if Object[+ArrayPos0].PlayerListPos == CHARACTER_SONIC
@@ -1530,13 +1557,13 @@ sub ObjectDraw
 		
 	case STATE_CHARACTER_SELECTED
 		DrawSpriteScreenFX(30, FX_INK, Screen.CenterX, 84)
-		TempValue0 = Screen.CenterX
+		TempValue0  = Screen.CenterX
 		TempValue0 -= 32
 		ArrayPos0 = Object.SelectedOption
 		
 		// Flash the border for the selected character
-		TempValue1 = Object.FadeValue
-		TempValue1 &= 3
+		TempValue1   = Object.FadeValue
+		TempValue1  &= 3
 		TempValue1 >>= 1
 		
 		if Object[+ArrayPos0].PlayerListPos == CHARACTER_SONIC
@@ -1566,8 +1593,8 @@ sub ObjectDraw
 		
 	case STATE_TOGGLE_DELETE_MODE
 		// Flash the delete button
-		TempValue0 = Object.FadeValue
-		TempValue0 &= 3
+		TempValue0   = Object.FadeValue
+		TempValue0  &= 3
 		TempValue0 >>= 1
 		
 		if Object.SaveOneStatus == SAVE_DELETE
@@ -1584,7 +1611,7 @@ sub ObjectDraw
 			end if
 		end if
 		
-		Object.YPos = Screen.CenterY
+		Object.YPos  = Screen.CenterY
 		Object.YPos -= 87
 		ArrayPos0 = 0
 		CallFunction(LoadSaveMenu_DrawSaveFiles)
@@ -1620,8 +1647,8 @@ sub ObjectDraw
 		
 	case STATE_DELETECONFIRM_SELECTED
 		// Flash the selected button
-		TempValue0 = Object.FadeValue
-		TempValue0 &= 3
+		TempValue0   = Object.FadeValue
+		TempValue0  &= 3
 		TempValue0 >>= 1
 		
 		DrawSpriteScreenFX(57, FX_INK, Screen.CenterX, 84)

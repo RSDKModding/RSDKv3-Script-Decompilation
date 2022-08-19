@@ -133,11 +133,15 @@
 #alias 6 : SFX_FAN
 
 // ControlMode Aliases
-#alias -1 : CONTROLMODE_NONE
-#alias  0 : CONTROLMODE_NORMAL
+#alias -1 : CONTROL_DISABLED
+#alias  0 : CONTROL_ENABLED
 
 // Engine Callback Aliases
 #alias 13 : CALLBACK_PAUSE_REQUESTED
+
+// Priority
+#alias 1	:	PRIORITY_ACTIVE
+#alias 2	:	PRIORITY_ALWAYS
 
 
 function Sonic_ProcessPlayer
@@ -147,7 +151,7 @@ function Sonic_ProcessPlayer
 		// Mobile has a lot more checks here than standard, especially because of the touchscreen, so it's just its own separate part here
 		
 		if Options.TouchControls == true
-			if SSSonic.ControlMode == CONTROLMODE_NORMAL
+			if SSSonic.ControlMode == CONTROL_ENABLED
 				CheckTouchRect(0, 96, Screen.CenterX, Screen.YSize)
 				if CheckResult > -1
 					
@@ -230,7 +234,7 @@ function Sonic_ProcessPlayer
 						Object[9].DrawOrder = 6
 						
 						// Give the Pause Menu object the special PRIORITY_ALWAYS priority in order to keep it running while the stage is paused
-						Object[9].Priority = 2
+						Object[9].Priority = PRIORITY_ALWAYS
 						
 						// Disable Frame Skip here, not too much is happening while paused anyways
 						if Engine.FrameSkipTimer > -1
@@ -268,7 +272,7 @@ function Sonic_ProcessPlayer
 						Object[9].DrawOrder = 6
 						
 						// Give the Pause Menu object the special PRIORITY_ALWAYS priority in order to keep it running while the stage is paused
-						Object[9].Priority = 2
+						Object[9].Priority = PRIORITY_ALWAYS
 						
 						// Disable Frame Skip, it's not like much is happening while paused anyways
 						if Engine.FrameSkipTimer > -1
@@ -284,7 +288,7 @@ function Sonic_ProcessPlayer
 		else
 			// Using physical controls
 			
-			if SSSonic.ControlMode == CONTROLMODE_NORMAL
+			if SSSonic.ControlMode == CONTROL_ENABLED
 				
 				// Check that no Pause Menu object exists yet
 				if Object[9].Type == TypeName[Blank Object]
@@ -318,7 +322,7 @@ function Sonic_ProcessPlayer
 						Object[9].DrawOrder = 6
 						
 						// And give the Pause Menu a special priority to make sure it'll keep on running while the stage is paused
-						Object[9].Priority = 2
+						Object[9].Priority = PRIORITY_ALWAYS
 						
 						// Disable frame skip, pausing doesn't have much activity anyways
 						if Engine.FrameSkipTimer > -1
@@ -354,7 +358,7 @@ function Sonic_ProcessPlayer
 						Object[9].DrawOrder = 6
 						
 						// And give is a special update priority too, to make sure it'll persist during the stage's paused state
-						Object[9].Priority = 2
+						Object[9].Priority = PRIORITY_ALWAYS
 						
 						// No frame skip here, no siree!
 						if Engine.FrameSkipTimer > -1
@@ -375,7 +379,7 @@ function Sonic_ProcessPlayer
 		// Standard doesn't need nearly as much code as mobile to handle its inputs,
 		// thanks to the lack of a touchscreen and other mobile things
 		
-		if SSSonic.ControlMode == CONTROLMODE_NORMAL
+		if SSSonic.ControlMode == CONTROL_ENABLED
 			
 			// Make sure no Pause Menu object exists already
 			if Object[9].Type == TypeName[Blank Object]
@@ -407,7 +411,7 @@ function Sonic_ProcessPlayer
 						Object[9].DrawOrder = 6
 						
 						// Give it a special priority so that it runs even during pauses, or else it'll just be frozen
-						Object[9].Priority = 2
+						Object[9].Priority = PRIORITY_ALWAYS
 						
 						// The floor should already be 3d, this is actually a form of exiting High Quality mode
 						TileLayer[0].Type = 3
@@ -440,7 +444,7 @@ function Sonic_HandlePause
 	
 	if Options.AttractMode == false
 #platform: Mobile
-		if SSSonic.ControlMode == CONTROLMODE_NORMAL
+		if SSSonic.ControlMode == CONTROL_ENABLED
 			
 			// Make sure the Pause Menu doesn't already exist
 			if Object[9].Type == TypeName[Blank Object]
@@ -467,7 +471,7 @@ function Sonic_HandlePause
 					// - Priority of PRIORITY_ALWAYS, since the Object should continue running even while the stage is paused
 					Object[9].Type = TypeName[Pause Menu]
 					Object[9].DrawOrder = 6
-					Object[9].Priority = 2
+					Object[9].Priority = PRIORITY_ALWAYS
 					
 					// Disable frameskip when paused
 					if Engine.FrameSkipTimer > -1
@@ -496,7 +500,7 @@ function Sonic_HandlePause
 					// Place the Pause Menu in reserved object slot 9
 					Object[9].Type = TypeName[Pause Menu]
 					Object[9].DrawOrder = 6
-					Object[9].Priority = 2
+					Object[9].Priority = PRIORITY_ALWAYS
 					
 					// No frame skip needed when paused, not much really happens then anyways
 					if Engine.FrameSkipTimer > -1
@@ -512,7 +516,7 @@ function Sonic_HandlePause
 #endplatform
 		
 #platform: Standard
-		if SSSonic.ControlMode == CONTROLMODE_NORMAL
+		if SSSonic.ControlMode == CONTROL_ENABLED
 			
 			// Make sure the game isn't already paused via checking if the Pause Menu object exists or not
 			if Object[9].Type == TypeName[Blank Object]
@@ -539,7 +543,7 @@ function Sonic_HandlePause
 						// Create the Pause Menu and set it up as needed
 						Object[9].Type = TypeName[Pause Menu]
 						Object[9].DrawOrder = 6
-						Object[9].Priority = 2
+						Object[9].Priority = PRIORITY_ALWAYS
 						
 						// Turn the floor into low-quality 3d
 						TileLayer[0].Type = 3
@@ -876,7 +880,7 @@ function Sonic_HandleTileInteractions
 			// Create all the dropped rings
 			while TempValue0 > 0
 				CreateTempObject(TypeName[Ring], 0, SSSonic.XPos, 0)
-				Object[TempObjectPos].Priority = 1
+				Object[TempObjectPos].Priority = PRIORITY_ACTIVE
 				
 				// Move the Ring to Sonic
 				// (XPos is matched already via object spawning function)
@@ -1322,7 +1326,7 @@ sub ObjectMain
 					SSSonic.FrameTimer = 0
 				end if
 			else
-				SSSonic.ControlMode = CONTROLMODE_NONE
+				SSSonic.ControlMode = CONTROL_DISABLED
 				SSSonic.State = SSSONIC_FINISHSTAND
 				Stage.TimeEnabled = false
 			end if
@@ -1434,7 +1438,7 @@ sub ObjectMain
 				end if
 			else
 				SSSonic.State = SSSONIC_FINISHSTAND
-				SSSonic.ControlMode = CONTROLMODE_NONE
+				SSSonic.ControlMode = CONTROL_DISABLED
 				Stage.TimeEnabled = false
 			end if
 		end if
@@ -1566,7 +1570,7 @@ sub ObjectMain
 				// Spawn the Time Stone and place it 24 pixels above the screen
 				ResetObjectEntity(3, TypeName[Time Stone], 0, 0, -0x180000)
 				Object[3].iXPos = Screen.CenterX
-				Object[3].Priority = 1
+				Object[3].Priority = PRIORITY_ACTIVE
 			end if
 		end if
 		
@@ -1632,7 +1636,7 @@ sub ObjectMain
 					SSSonic.FrameTimer = 0
 				end if
 			else
-				SSSonic.ControlMode = CONTROLMODE_NONE
+				SSSonic.ControlMode = CONTROL_DISABLED
 				SSSonic.State = SSSONIC_FINISHSTAND
 			end if
 		end if
@@ -1774,7 +1778,7 @@ sub ObjectStartup
 	SSSonic[2].Type = TypeName[Sonic]
 	
 	// Make Sonic always active
-	SSSonic[2].Priority = 1
+	SSSonic[2].Priority = PRIORITY_ACTIVE
 	
 	// Give him a standard draw order, since he's just about in the middle of the screen
 	SSSonic[2].ScreenDepth = 0x5800

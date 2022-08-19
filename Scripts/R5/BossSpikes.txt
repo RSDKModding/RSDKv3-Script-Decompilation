@@ -5,15 +5,21 @@
 // Aliases
 #alias Object.Value0	:	Object.Timer
 
+// Boss Top Aliases
+#alias Object.Value1	:	Object.BoundsR
+#alias Object.Value2	:	Object.OldBoundsR
+
+// States
 #alias 0	:	BOSSSPIKES_AWAITPLAYER
 #alias 1	:	BOSSSPIKES_AWAITARENAENTER
 #alias 2	:	BOSSSPIKES_RAISE
 #alias 3	:	BOSSSPIKES_ADVANCE
 #alias 4	:	BOSSSPIKES_STAND
 
-// Boss Top Aliases
-#alias Object.Value1	:	Object.BoundsR
-#alias Object.Value2	:	Object.OldBoundsR
+
+// Priority
+#alias 0	:	PRIORITY_BOUNDS
+#alias 1	:	PRIORITY_ACTIVE
 
 
 sub ObjectMain
@@ -37,14 +43,14 @@ sub ObjectMain
 			Stage.NewXBoundary2 += Screen.CenterX
 			
 			// Set the Boss Top's
-			Object[+3].BoundsR = Stage.NewXBoundary2
-			Object[+3].BoundsR += 160
+			Object[+3].BoundsR   = Stage.NewXBoundary2
+			Object[+3].BoundsR  += 160
 			Object[+3].BoundsR <<= 16
 			
 			Stage.NewXBoundary2 += Screen.CenterX
-			Stage.NewYBoundary2 = Object.iYPos
+			Stage.NewYBoundary2  = Object.iYPos
 			Object.State = BOSSSPIKES_AWAITARENAENTER
-			Object.Priority = 1
+			Object.Priority = PRIORITY_ACTIVE
 			
 			// Remove the Conveyer Belts controller Object
 			ResetObjectEntity(19, TypeName[Blank Object], 0, 0, 0)
@@ -79,7 +85,7 @@ sub ObjectMain
 		else
 			Object.Timer = 0
 			Object.State = BOSSSPIKES_STAND
-			Object.Priority = 0
+			Object.Priority = PRIORITY_BOUNDS
 		end if
 		break
 		

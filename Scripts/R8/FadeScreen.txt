@@ -18,6 +18,7 @@
 #alias 1	:	CUTSCENE_SKIP
 
 // Game modes
+#alias 1	:	GAMEMODE_SAVEGAME
 #alias 2	:	GAMEMODE_TIMEATTACK
 
 #alias 0	:	OST_JP
@@ -62,13 +63,14 @@ sub ObjectMain
 			if game.playMode == BOOT_PLAYMODE_BOSSRUSH
 				TempValue0 = true
 			else
-				if game.oneStageFlag != 0
+				// Check if the player is replaying the stage from My Data & Rankings
+				if game.oneStageFlag != false
 					TempValue0 = true
 					EngineCallback(NOTIFY_ACT_FINISH)
-					game.callbackResult = -1
-					game.callbackParam0 = 1
-					game.callbackParam1 = Stage.ListPos
-					game.callbackParam2 = 0
+					game.callbackResult = -1				// Reset any callback result
+					game.callbackParam0 =  1				// 0 - Normal Retry, anything else - Show current and best time
+					game.callbackParam1 =  Stage.ListPos	// Get current stage
+					game.callbackParam2 =  0				// Unknown
 					EngineCallback(NOTIFY_STAGE_RETRY)
 				end if
 			end if
@@ -105,26 +107,31 @@ sub ObjectMain
 				else
 					EngineCallback(4)
 					if Player.Score > 0
-						if Options.GameMode == 1
+						if Options.GameMode == GAMEMODE_SAVEGAME
 							if Stage.DebugMode == false
 								SetLeaderboard(0, Player.Score)
 							end if
 						end if
 					end if
 #platform: Use_Origins
-					game.callbackParam0 = StageStatsUsabilityParam1
-					game.callbackParam1 = StageStatsUsabilityParam2
+					game.callbackParam0 = StageStatsUsabilityParam1	// Enemies destroyed by any means
+					game.callbackParam1 = StageStatsUsabilityParam2	// Enemies destroyed by rolling
 					game.callbackParam2 = 0
 					EngineCallback(NOTIFY_STATS_ENEMY)
-					game.callbackParam0 = Object[0].Value0
+
+					game.callbackParam0 = Object[0].Value0			// Player Rings
 					EngineCallback(NOTIFY_STATS_RING)
-					game.callbackParam0 = StageStatsUsabilityParam5
+
+					game.callbackParam0 = StageStatsUsabilityParam5	// Lamp Post related
 					EngineCallback(NOTIFY_STATS_PARAM_1)
-					game.callbackParam0 = 0
-					game.callbackParam1 = StageStatsUsabilityParam4
-					game.callbackParam2 = 0
+
+					game.callbackParam0 = 0							// Unknown
+					game.callbackParam1 = StageStatsUsabilityParam4	// Unknown
+					game.callbackParam2 = 0							// Unknown
 					EngineCallback(NOTIFY_STATS_CHARA_ACTION)
+
 					EngineCallback(NOTIFY_ACT_FINISH)
+
 					StageStatsUsabilityParam1 = 0
 					StageStatsUsabilityParam2 = 0
 					StageStatsUsabilityParam3 = 0

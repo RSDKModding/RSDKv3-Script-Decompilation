@@ -1,7 +1,7 @@
-//------------Sonic CD Trophies Menu Script-------------//
+//----------------Sonic CD Trophies Menu Script---------------//
 //--------Scripted by Christian Whitehead 'The Taxman'--------//
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
-//---This Object is normally only used by WP7 Data files---//
+//-----This Object is normally only used by WP7 Data files----//
 
 // Aliases
 #alias Object.Value0 	:	Object.Fade
@@ -23,8 +23,11 @@
 #alias 2	:	TROPHIES_CONTROLS
 #alias 5	:	TROPHIES_EXIT
 
-// OST
+// Soundtrack
 #alias 0	:	OST_JP
+
+// Priority
+#alias 1	:	PRIORITY_ACTIVE
 
 // Callbacks & Engine States
 #alias 0	:	CALLBACK_DISPLAYLOGOS
@@ -33,11 +36,11 @@
 #alias 5	:	ENGINE_ENTER_HIRESMODE
 #alias 6	:	ENGINE_EXIT_HIRESMODE
 
+
 sub ObjectMain
-#platform: Mobile
 	switch Object.State
 	case TROPHIES_SETUP
-		TempValue0 = 256
+		TempValue0  = 256
 		TempValue0 -= Screen.CenterX
 		Screen.XOffset = TempValue0
 		PlayMusic(1)
@@ -59,8 +62,8 @@ sub ObjectMain
 		if Options.PhysicalControls == true
 			if KeyDown[0].Down == true
 				Object.SelectionPos += 0x40000
-				if Object.SelectionPos > 25165824
-					Object.SelectionPos = 25165824
+				if Object.SelectionPos > 0x1800000
+					Object.SelectionPos = 0x1800000
 				end if
 			end if
 
@@ -79,31 +82,35 @@ sub ObjectMain
 			CheckTouchRect(0, 48, Screen.XSize, Screen.YSize)
 			if CheckResult > -1
 				ArrayPos0 = CheckResult
-				if Object.DragEnabled == 0
-					Object.DragEnabled = 1
-					Object.DragPos = Object.SelectionPos
-					Object.DragPos >>= 16
+				if Object.DragEnabled == false
+					Object.DragEnabled = true
+					Object.DragPos     = Object.SelectionPos
+					Object.DragPos   >>= 16
+
 					Object.TouchYPos = TouchScreen[ArrayPos0].YPos
 				else
-					TempValue0 = Object.TouchYPos
+					TempValue0  = Object.TouchYPos
 					TempValue0 -= TouchScreen[ArrayPos0].YPos
 					TempValue0 += Object.DragPos
+
 					Object.YOffSet3 = Object.YOffSet2
 					Object.YOffSet2 = Object.YOffSet1
 					Object.YOffSet1 = Object.DragYOffset
-					Object.DragYOffset = TempValue0
-					TempValue1 = Object.SelectionPos
-					TempValue1 >>= 16
+
+					Object.DragYOffset  = TempValue0
+					TempValue1  		= Object.SelectionPos
+					TempValue1 		  >>= 16
 					Object.DragYOffset -= TempValue1
-					Object.SelectionPos = TempValue0
+
+					Object.SelectionPos   = TempValue0
 					Object.SelectionPos <<= 16
 				end if
 			else
-				if Object.DragEnabled == 1
-					Object.DragEnabled = 0
-					Object.DragYOffset += Object.YOffSet1
-					Object.DragYOffset += Object.YOffSet2
-					Object.DragYOffset += Object.YOffSet3
+				if Object.DragEnabled == true
+					Object.DragEnabled   = false
+					Object.DragYOffset  += Object.YOffSet1
+					Object.DragYOffset  += Object.YOffSet2
+					Object.DragYOffset  += Object.YOffSet3
 					Object.DragYOffset >>= 2
 					Object.DragYOffset <<= 16
 				end if
@@ -114,7 +121,7 @@ sub ObjectMain
 						Object.DragYOffset = 0
 					end if
 
-					if Object.SelectionPos > 25165824
+					if Object.SelectionPos > 0x1800000
 						Object.DragYOffset = 0
 					end if
 
@@ -131,15 +138,15 @@ sub ObjectMain
 					end if
 				else
 					if Object.SelectionPos < 0
-						Object.SelectionPos *= 224
+						Object.SelectionPos  *= 224
 						Object.SelectionPos >>= 8
 					end if
 
-					if Object.SelectionPos > 25165824
-						Object.SelectionPos -= 25165824
-						Object.SelectionPos *= 224
+					if Object.SelectionPos > 0x1800000
+						Object.SelectionPos  -= 0x1800000
+						Object.SelectionPos  *= 224
 						Object.SelectionPos >>= 8
-						Object.SelectionPos += 25165824
+						Object.SelectionPos  += 0x1800000
 					end if
 				end if
 			end if
@@ -171,20 +178,18 @@ sub ObjectMain
 		break
 
 	end switch
-#endplatform
 end sub
 
 
 sub ObjectDraw
-#platform: Mobile
 	Object.TrophyTimer--
 	if Object.TrophyTimer < -31
 		Object.TrophyTimer += 32
 	end if
-	TempValue1 = Object.TrophyTimer
+	TempValue1   = Object.TrophyTimer
 	TempValue1 >>= 1
 	while TempValue1 < Screen.YSize
-		TempValue0 = Object.TrophyTimer
+		TempValue0   = Object.TrophyTimer
 		TempValue0 >>= 1
 		while TempValue0 < Screen.XSize
 			DrawSpriteScreenXY(0, TempValue0, TempValue1)
@@ -192,11 +197,11 @@ sub ObjectDraw
 		loop
 		TempValue1 += 64
 	loop
-	TempValue0 = Screen.XSize
+	TempValue0  = Screen.XSize
 	TempValue0 -= 16
 	DrawRect(TempValue0, 56, 4, 176, 128, 128, 128, 128)
 	
-	TempValue1 = Object.SelectionPos
+	TempValue1   = Object.SelectionPos
 	TempValue1 >>= 16
 	if TempValue1 < 0
 		TempValue1 = 0
@@ -208,29 +213,31 @@ sub ObjectDraw
 	TempValue1 /= 384
 	TempValue1 += 56
 	DrawRect(TempValue0, TempValue1, 4, 16, 0, 0, 0, 255)
-#endplatform
 end sub
 
 
 sub ObjectStartup
-#platform: Mobile
 	LoadSpriteSheet("Menu/Trophies.gif")
 	SpriteFrame(0, 0, 64, 64, 385, 385)		// #0 - White Space
+
 	LoadPalette("Trophies.act", 0, 0, 0, 256)
 	LoadPalette("HelpPal1.act", 0, 0, 0, 32)
 	LoadTextFont("Data/Game/HelpText.bin")
+
 	if Options.Soundtrack == OST_JP
 		SetMusicTrack("JP/DAGarden.ogg", 1, 1)
 	else
 		SetMusicTrack("US/DAGarden.ogg", 1, 117382)
 	end if
-	Engine.State = ENGINE_ENTER_HIRESMODE
-	Screen.CameraEnabled = 0
-	Object[0].Type = TypeName[TrophiesMenu]
-	Object[0].Priority = 1
+	
+	Engine.State		 = ENGINE_ENTER_HIRESMODE
+	Screen.CameraEnabled = false
+
+	Object[0].Type		= TypeName[TrophiesMenu]
+	Object[0].Priority  = PRIORITY_ACTIVE
 	Object[0].DrawOrder = 0
+
 	LoadTextFile(MENU_1, "Data/Game/Trophies.txt", 1)
-#endplatform
 end sub
 
 // ========================

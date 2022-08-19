@@ -8,6 +8,14 @@
 #alias Object.Value3	:	Object.HelpPage
 #alias Object.Value4	:	Object.PageTimer
 
+// States
+#alias 0	:	HELPMENU_SETUP
+#alias 1	:	HELPMENU_FADEIN
+#alias 2	:	HELPMENU_CONTROLS
+#alias 3	:	HELPMENU_PAGEDOWN
+#alias 4	:	HELPMENU_PAGEUP
+#alias 5	:	HELPMENU_LEAVE
+
 // Languages
 #alias 0	:	LANG_ENGLISH
 #alias 1	:	LANG_FRENCH
@@ -16,13 +24,15 @@
 #alias 4	:	LANG_SPANISH
 #alias 5	:	LANG_JAPANESE
 
-// OST
+// Soundtrack
 #alias 0	:	OST_JP
 
 // Engine & Callbacks
 #alias 5	:	ENGINE_ENTER_HIRESMODE
 #alias 6	:	ENGINE_EXIT_HIRESMODE
 
+// Priority
+#alias 1	:	PRIORITY_ACTIVE
 
 // Function declarations
 #function HelpMenu_PageLoad
@@ -233,10 +243,10 @@ end function
 
 sub ObjectMain
 	switch Object.State
-	case 0
-		TempValue0 = 256
+	case HELPMENU_SETUP
+		TempValue0  = 256
 		TempValue0 -= Screen.CenterX
-		Screen.XOffset = TempValue0
+		Screen.XOffset  = TempValue0
 		Object.HelpPage = 0
 		CallFunction(HelpMenu_PageLoad)
 		PlayMusic(1)
@@ -245,7 +255,7 @@ sub ObjectMain
 		SetScreenFade(0, 0, 0, 255)
 		break
 
-	case 1
+	case HELPMENU_FADEIN
 		if Object.Timer > 0
 			Object.Timer -= 8
 		else
@@ -254,37 +264,38 @@ sub ObjectMain
 		SetScreenFade(0, 0, 0, Object.Timer)
 		break
 
-	case 2
+	case HELPMENU_CONTROLS
 		if KeyPress[0].Down == true
 			if Object.HelpPage < 8
 				PlaySfx(27, 0)	//Select SFX
 				Object.Timer = 256
-				Object.State = 3
+				Object.State = HELPMENU_PAGEDOWN
 			end if
 		end if
 
 		if KeyPress[0].Up == true
 			if Object.HelpPage > 0
 				PlaySfx(27, 0)	//Select SFX
-				Object.State = 4
+				Object.State = HELPMENU_PAGEUP
 			end if
 		end if
 		
 		if KeyPress[0].ButtonB == true
 			PlaySfx(26, 0)
-			Object.State = 5
+			Object.State = HELPMENU_LEAVE
 		end if
 		break
 
-	case 3
+	case HELPMENU_PAGEDOWN
 		if Object.Timer > 0
 			Cos(TempValue0, Object.Timer)
-			TempValue0 >>= 1
-			TempValue0 += 256
-			TempValue1 = Object.YOffset
-			TempValue1 += TempValue0
+			TempValue0 	 >>= 1
+			TempValue0 	  += 256
+			TempValue1	   = Object.YOffset
+			TempValue1	  += TempValue0
 			Screen.YOffset = TempValue1
-			TempValue1 += 256
+
+			TempValue1  += 256
 			TempValue1 >>= 9
 			if TempValue1 > Object.HelpPage
 				Object.HelpPage++
@@ -303,19 +314,20 @@ sub ObjectMain
 		else
 			Object.YOffset += 512
 			Screen.YOffset = Object.YOffset
-			Object.State = 2
+			Object.State = HELPMENU_CONTROLS
 		end if
 		break
 
-	case 4
+	case HELPMENU_PAGEUP
 		if Object.Timer < 256
 			Cos(TempValue0, Object.Timer)
-			TempValue0 >>= 1
-			TempValue0 -= 256
-			TempValue1 = Object.YOffset
-			TempValue1 += TempValue0
+			TempValue0   >>= 1
+			TempValue0 	  -= 256
+			TempValue1 	   = Object.YOffset
+			TempValue1	  += TempValue0
 			Screen.YOffset = TempValue1
-			TempValue1 += 256
+
+			TempValue1  += 256
 			TempValue1 >>= 9
 			if TempValue1 < Object.HelpPage
 				Object.HelpPage--
@@ -333,13 +345,14 @@ sub ObjectMain
 			end if
 		else
 			Object.YOffset -= 512
-			Screen.YOffset = Object.YOffset
+			Screen.YOffset  = Object.YOffset
+
 			Object.Timer = 0
-			Object.State = 2
+			Object.State = HELPMENU_CONTROLS
 		end if
 		break
 
-	case 5
+	case HELPMENU_LEAVE
 		if Object.Timer < 348
 			Object.Timer += 8
 		else
@@ -375,7 +388,9 @@ end sub
 
 sub ObjectStartup
 	LoadSpriteSheet("Menu/HelpBG.gif")
+
 	SpriteFrame(0, 0, 128, 128, 1, 1)
+
 	if Engine.Language == LANG_JAPANESE
 		Object[59].XPos -= 0x100000
 		Object[60].XPos -= 0x100000
@@ -390,18 +405,22 @@ sub ObjectStartup
 		Object[63].YPos += 0x180000
 		Object[64].YPos -= 3080192
 	end if
+
 	LoadPalette("HelpPal1.act", 0, 0, 0, 256)
 	LoadPalette("HelpPal2.act", 1, 0, 0, 256)
 	LoadTextFont("Data/Game/HelpText.bin")
+
 	if Options.Soundtrack == OST_JP
 		SetMusicTrack("JP/DAGarden.ogg", 1, 1)
 	else
 		SetMusicTrack("US/DAGarden.ogg", 1, 117382)
 	end if
-	Engine.State = ENGINE_ENTER_HIRESMODE
-	Screen.CameraEnabled = 0
-	Object[0].Type = TypeName[HelpMenu]
-	Object[0].Priority = 1
+
+	Engine.State		 = ENGINE_ENTER_HIRESMODE
+	Screen.CameraEnabled = false
+
+	Object[0].Type		= TypeName[HelpMenu]
+	Object[0].Priority  = PRIORITY_ACTIVE	
 	Object[0].DrawOrder = 0
 end sub
 

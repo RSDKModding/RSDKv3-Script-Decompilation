@@ -50,6 +50,10 @@
 #alias 0 : CONDITION_GOOD
 #alias 1 : CONDITION_BAD
 
+// Priority
+#alias 0	:	PRIORITY_BOUNDS
+#alias 1	:	PRIORITY_ACTIVE
+
 
 // Function declarations
 #function Hotaru_HotaruBreak
@@ -190,7 +194,7 @@ sub ObjectMain
 	if Object.PropertyValue == CONDITION_GOOD
 		switch Object.State
 		case HOTARU_IDLE1
-			Object.Priority = 1
+			Object.Priority = PRIORITY_ACTIVE
 			
 			// Right range of 43 pixels for Hotaru 1
 			if Object.Hotaru1X < 2818048
@@ -379,7 +383,7 @@ sub ObjectMain
 			// This state is here so that, if the Hotarus' start position is within bounds, they won't just suddently teleport in front of the player
 			if Object.OutOfBounds == true
 				Object.State = HOTARU_IDLE1
-				Object.Priority = 0
+				Object.Priority = PRIORITY_BOUNDS
 				Object.Frame = 0
 			end if
 			break
@@ -388,7 +392,7 @@ sub ObjectMain
 	else
 		switch Object.State
 		case HOTARU_IDLE1
-			Object.Priority = 1
+			Object.Priority = PRIORITY_ACTIVE
 			
 			Object.Frame = 3
 			
@@ -575,7 +579,7 @@ sub ObjectMain
 			// This state is here so that, if the Hotarus' start position is within bounds, they won't just suddently teleport in front of the player
 			if Object.OutOfBounds == true
 				Object.State = HOTARU_IDLE1
-				Object.Priority = 0
+				Object.Priority = PRIORITY_BOUNDS
 				Object.Frame = 0
 			end if
 			break

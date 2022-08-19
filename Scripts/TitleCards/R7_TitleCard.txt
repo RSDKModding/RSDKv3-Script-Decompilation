@@ -3,17 +3,20 @@
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
 // Aliases
-#alias Object.Value0	:	Object.BarPos
-#alias Object.Value1	:	Object.TextPos
-#alias Object.Value2	:	Object.TextSize
-#alias Object.Value3	:	Object.Timer
-#alias Object.Value4	:	Object.FadeR
-#alias Object.Value5	:	Object.FadeG
-#alias Object.Value6	:	Object.FadeB
-#alias Object.Value7	:	Object.CharPos
+#alias Object.Value0			:	Object.BarPos
+#alias Object.Value1			:	Object.TextPos
+#alias Object.Value2			:	Object.TextSize
+#alias Object.Value3			:	Object.Timer
+#alias Object.Value4			:	Object.FadeR
+#alias Object.Value5			:	Object.FadeG
+#alias Object.Value6			:	Object.FadeB
+#alias Object.Value7			:	Object.CharPos
 
-// Player aliases
-#alias Object.Value4	:	Player.InvincibleTimer
+// Player Aliases
+#alias Object[0].Value4			:	Player.InvincibleTimer
+
+// HUD Aliases
+#alias Object[24].PropertyValue	:	HUD.TimePeriod
 
 // States
 #alias 0	:	TITLECARD_FADEIN
@@ -25,20 +28,20 @@
 #alias 0	:	PLAYER_SONIC
 
 // ControlMode Aliases
-#alias -1	:	CONTROLMODE_NONE
-#alias  0	:	CONTROLMODE_NORMAL
+#alias -1	:	CONTROL_DISABLED
+#alias  0	:	CONTROL_ENABLED
 
-// OST
+// Soundtrack
 #alias 0	:	OST_JP
 
-// HUD aliases
-#alias Object[24].PropertyValue	:	HUD.TimePeriod
-
 // Time Periods
-#alias 0			:	PROPVAL_PRESENT
-#alias 1			:	PROPVAL_PAST
-#alias 2			:	PROPVAL_GOOD_FUTURE
-#alias 3			:	PROPVAL_BAD_FUTURE
+#alias 0	:	PROPVAL_PRESENT
+#alias 1	:	PROPVAL_PAST
+#alias 2	:	PROPVAL_GOOD_FUTURE
+#alias 3	:	PROPVAL_BAD_FUTURE
+
+// Priority
+#alias 1	:	PRIORITY_ACTIVE
 
 
 sub ObjectPlayerInteraction
@@ -47,68 +50,72 @@ end sub
 
 
 sub ObjectDraw
-	
 	switch Object.State
 	case TITLECARD_FADEIN
-		// Lock Player Control
-		Player.ControlMode = CONTROLMODE_NONE
-		
-		// Just in case, manually clear each and every one of the Player's Control values too
-		Player.Up		 = false
-		Player.Down		 = false
-		Player.Left		 = false
-		Player.Right	 = false
-		Player.JumpPress = false
-		Player.JumpHold	 = false
-		
-		// If the Player isn't warping, then reset their Speed
+		Player.ControlMode	= CONTROL_DISABLED
+		Player.Up			= false
+		Player.Down			= false
+		Player.Left			= false
+		Player.Right		= false
+		Player.JumpPress	= false
+		Player.JumpHold		= false
+
+		// Check if the player comes from warping, if not, blank speed
 		if Warp.XPos < 1
 			Player.Speed = 0
 		end if
-		
-		if Object.Timer > 0
-			if Object.Timer == 256
+
+		if Object.FadeA > 0
+			if Object.FadeA == 256
 				PlayMusic(0)
 				if Warp.XPos > 0
+					// Restore values post-warp
 					Player.XPos = Warp.XPos
 					Player.YPos = Warp.YPos
+					
 					Player.XVelocity = Warp.XVelocity
 					Player.YVelocity = Warp.YVelocity
-					Player.Speed = Warp.XVelocity
+					Player.Speed	 = Warp.XVelocity
+
 					Player.State = Warp.State
+
 					Stage.MilliSeconds = Rec_Milliseconds
-					Stage.Seconds = Rec_Seconds
-					Stage.Minutes = Rec_Minutes
-					Player[0].InvincibleTimer = 8000
+					Stage.Seconds	   = Rec_Seconds
+					Stage.Minutes	   = Rec_Minutes
+
+					Player.InvincibleTimer = 8000
 				end if
-				
 				Warp.Timer = 0
 				Warp.Frame = 0
 			end if
-			
-			SetScreenFade(Object.FadeR, Object.FadeG, Object.FadeB, Object.Timer)
-			Object.Timer -= 8
+
+			SetScreenFade(Object.FadeR, Object.FadeG, Object.FadeB, Object.FadeA)
+			Object.FadeA -= 8
 		else
 			Fade_Colour = 0
+
+			// the title card animation doesn't play out if you come from a warp or restarted from a checkpoint
 			CheckEqual(Warp.XPos, 0)
-			TempValue0 = CheckResult
+			TempValue0  = CheckResult
 			CheckLower(LampPost.Check, 32)
 			TempValue0 &= CheckResult
 			if TempValue0 == true
-				Object.State =  TITLECARD_SLIDEIN
-				Object.Timer = 0
+				Object.State = TITLECARD_SLIDEIN
+				Object.FadeA = 0
 			else
-				Player.ControlMode = CONTROLMODE_NORMAL
-				Stage.TimeEnabled = true
+				Player.ControlMode = CONTROL_ENABLED
+				Stage.TimeEnabled  = true
+
 				ResetObjectEntity(20, TypeName[Blank Object], 0, 0, 0)
 				Warp.XPos = 0
 			end if
 		end if
 		break
-		
+
 	case TITLECARD_SLIDEIN
-		TempValue0 = 144
+		TempValue0  = 144
 		TempValue0 += Object.CharPos
+
 		if Object.TextPos > TempValue0
 			Object.TextPos -= 8
 		else
@@ -116,50 +123,57 @@ sub ObjectDraw
 				Object.State = TITLECARD_DISPLAY
 			end if
 		end if
-		
+
 		if Object.BarPos < 0
 			Object.BarPos += 8
 		end if
 		break
-		
+
 	case TITLECARD_DISPLAY
-		if Object.Timer == 90
+		if Object.FadeA == 90
 			Object.State = TITLECARD_SLIDEOUT
 		else
-			Object.Timer++
+			Object.FadeA++
 		end if
 		break
-		
+
 	case TITLECARD_SLIDEOUT
 		if Object.TextPos < 408
 			Object.TextPos += 16
-			Object.BarPos -= 16
+			Object.BarPos  -= 16
 		else
-			Player.ControlMode = CONTROLMODE_NORMAL
-			Stage.TimeEnabled = true
+			Player.ControlMode = CONTROL_ENABLED
+			Stage.TimeEnabled  = true
+
 			ResetObjectEntity(20, TypeName[Blank Object], 0, 0, 0)
 			Warp.XPos = 0
 		end if
 		break
-		
 	end switch
-	
+
+	// Make sure that this object isn't already blanked, before drawing
 	if Object.Type > TypeName[Blank Object]
-		TempValue0 = 136
+		TempValue0  = 136
 		TempValue0 += Object.CharPos
+		// Draw the Red Bar
 		DrawSpriteScreenXY(0, TempValue0, Object.BarPos)
+
+		// And then, draw the act number
 		DrawSpriteScreenXY(Stage.ActNo, Object.TextPos, 80)
+		
+		// And then draw the Zone text, the Sonic CD bar, and the weird three lines
 		DrawSpriteScreenXY(4, Object.TextPos, 80)
 		DrawSpriteScreenXY(5, Object.TextPos, 80)
 		DrawSpriteScreenXY(6, Object.TextPos, 80)
+		DrawSpriteScreenXY(7, Object.TextPos, 80)
 
 #platform: Use_Decomp	// Creates a black rectangle that fills the empty space on wider resolutions
-		Tempvalue0 = Object.TextPos
+		Tempvalue0  = Object.TextPos
 		TempValue0 += 220
 		DrawRect(TempValue0,163,Screen.XSize,9,0,0,0,255)
 #endplatform
 
-		DrawSpriteScreenXY(7, Object.TextPos, 80)
+		// Draw the Round Name
 		TempValue0 = 8
 		while TempValue0 < Object.TextSize
 			DrawSpriteScreenXY(TempValue0, Object.TextPos, 80)
@@ -208,10 +222,7 @@ sub ObjectStartup
 		end switch
 	end if
 	
-	// Set the Flower Object Type No
-	Flower_TypeNo = TypeName[Flower]
-	
-	// Create the Title Card Object
+	Flower_TypeNo	= TypeName[Flower]
 	Object[20].Type = TypeName[TitleCard]
 	
 	// Different Fade-In times depending on if this is a new level load or if the Player is warping in
@@ -227,8 +238,7 @@ sub ObjectStartup
 	end if
 	
 	// Set the Title Card to always be active
-	Object[20].Priority = 1
-	
+	Object[20].Priority  = PRIORITY_ACTIVE	
 	Object[20].DrawOrder = 6
 	
 	// Set initial Bar & Text Positions
@@ -236,29 +246,37 @@ sub ObjectStartup
 	Object[20].TextPos = 336
 	
 	// And then since 
-	Object[20].CharPos = Screen.CenterX
+	Object[20].CharPos  = Screen.CenterX
 	Object[20].CharPos -= 160
 	
 	if Object[20].CharPos > 3
 		Object[20].CharPos -= 4
 	end if
 	Object[20].CharPos &= 248
-	Object[20].TextPos += Object[20].CharPos
-	Object[20].TextPos += Object[20].CharPos
-	Object[20].TextSize = 16
+
+	Object[20].TextPos  += Object[20].CharPos
+	Object[20].TextPos  += Object[20].CharPos
+	// "Stardust Speedway" is 16 letters long
+	Object[20].TextSize  = 16
+	// Bump the value by 8 to correspond with the order of the Sprite Frames
 	Object[20].TextSize += 8
-	Object[20].FadeR = Fade_Colour
+
+	// Fade_Colour is stored as RRGGBB, in hex
+	Object[20].FadeR   = Fade_Colour
 	Object[20].FadeR >>= 16
-	Object[20].FadeG = Fade_Colour
-	Object[20].FadeG &= 65280
+
+	Object[20].FadeG   = Fade_Colour
+	Object[20].FadeG  &= 0x00FF00
 	Object[20].FadeG >>= 8
-	Object[20].FadeB = Fade_Colour
-	Object[20].FadeB &= 255
-	SpriteFrame(0, 0, 32, 200, 223, 1)
-	SpriteFrame(96, 96, 48, 48, 41, 1)
-	SpriteFrame(96, 96, 48, 48, 90, 1)
-	SpriteFrame(96, 96, 48, 48, 139, 1)
-	SpriteFrame(64, 97, 48, 16, 41, 67)
+
+	Object[20].FadeB   = Fade_Colour
+	Object[20].FadeB  &= 0x0000FF
+
+	SpriteFrame(0, 0, 32, 200, 223, 1)		// #0  - Bar
+	SpriteFrame(96, 96, 48, 48, 41, 1)		// #1  - Zone 1 Circle
+	SpriteFrame(96, 96, 48, 48, 90, 1)		// #2  - Zone 2 Circle
+	SpriteFrame(96, 96, 48, 48, 139, 1)		// #3  - Zone 3 Circle
+	SpriteFrame(64, 97, 48, 16, 41, 67)		// #4  - Zone Text
 	
 	// Workaround for steam datafile to show this sprite correctly
 #platform: Use_Origins
@@ -307,10 +325,13 @@ sub ObjectStartup
 	
 	if TempValue0 != false
 		PlayMusic(0)
+		
 		game.missionCondition = 0
-		game.missionEnd = false
-		Player.ControlMode = 0
-		Stage.TimeEnabled = true
+		game.missionEnd		  = false
+
+		Player.ControlMode	  = CONTROL_ENABLED
+		Stage.TimeEnabled	  = true
+
 		ResetObjectEntity(20, TypeName[Blank Object], 0, 0, 0)
 		Warp.XPos = 0
 	end if

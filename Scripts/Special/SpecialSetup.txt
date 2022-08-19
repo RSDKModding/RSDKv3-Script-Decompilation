@@ -9,8 +9,8 @@
 
 // HUD Aliases
 #alias Object.Value0 : HUD.UFOsCount
-#alias Object.Value1 : HUD.Time.Seconds
-#alias Object.Value2 : HUD.Time.Frames
+#alias Object.Value1 : HUD.TimeSeconds
+#alias Object.Value2 : HUD.TimeFrames
 #alias Object.Value6 : HUD.BonusUFOPos
 #alias Object.Value7 : HUD.WaterTimer
 
@@ -21,7 +21,7 @@
 #alias Player.ControlMode : SSSonic.ControlMode
 
 // ControlMode Aliases
-#alias -1 : CONTROLMODE_NONE
+#alias -1 : CONTROL_DISABLED
 
 // Stage Finish State Aliases
 #alias 9 : STAGEFINISH_LOADLEVELSELECT
@@ -33,8 +33,11 @@
 #alias 5 : SFX_TIMEUFO
 #alias 7 : SFX_DROWNALERT
 
-// Soundtrack Aliases
+// Soundtrack
 #alias 0 : OST_JP
+
+// Priority
+#alias 1	:	PRIORITY_ACTIVE
 
 
 sub ObjectMain
@@ -57,19 +60,19 @@ sub ObjectMain
 		if Stage.TimeEnabled == true
 			
 			// Progress the timer
-			HUD[4].Time.Frames++
-			if HUD[4].Time.Frames == 60
-				HUD[4].Time.Frames = 0
+			HUD[4].TimeFrames++
+			if HUD[4].TimeFrames == 60
+				HUD[4].TimeFrames = 0
 				
-				if HUD[4].Time.Seconds > 0
+				if HUD[4].TimeSeconds > 0
 					
-					if HUD[4].Time.Seconds < 6
+					if HUD[4].TimeSeconds < 6
 						// Time's almost up, play a jingle to alert the player
 						PlayStageSfx(SFX_DROWNALERT, false)
 					end if
 					
-					HUD[4].Time.Seconds--
-					if HUD[4].Time.Seconds < 20
+					HUD[4].TimeSeconds--
+					if HUD[4].TimeSeconds < 20
 						
 						// Less than 20 seconds left, quickly, spawn a time UFO to help the player!
 						ArrayPos0 = HUD[4].BonusUFOPos
@@ -82,7 +85,7 @@ sub ObjectMain
 							ArrayPos1++
 							
 							Object[ArrayPos0].Type = TypeName[UFO]
-							Object[ArrayPos0].Priority = 1
+							Object[ArrayPos0].Priority = PRIORITY_ACTIVE
 							Object[ArrayPos0].PropertyValue = 2
 							Object[ArrayPos0].XPos = Object[ArrayPos1].XPos
 							Object[ArrayPos0].ZPos = Object[ArrayPos1].ZPos
@@ -111,7 +114,7 @@ sub ObjectMain
 							
 						end if
 						
-						SSSonic.ControlMode = CONTROLMODE_NONE
+						SSSonic.ControlMode = CONTROL_DISABLED
 					end if
 				end if
 			end if
@@ -119,11 +122,11 @@ sub ObjectMain
 			if HUD[4].WaterTimer > 0
 				if HUD[4].WaterTimer > 1
 					if HUD[4].WaterTimer > 20
-						TempValue0 = HUD[4].Time.Frames
+						TempValue0 = HUD[4].TimeFrames
 						TempValue0 &= 1
 						
-						if HUD[4].Time.Seconds > 0
-							HUD[4].Time.Seconds -= TempValue0
+						if HUD[4].TimeSeconds > 0
+							HUD[4].TimeSeconds -= TempValue0
 						else
 							
 							// In Time Attack, you can't run out of time
@@ -147,7 +150,7 @@ sub ObjectMain
 									
 								end if
 								
-								SSSonic.ControlMode = CONTROLMODE_NONE
+								SSSonic.ControlMode = CONTROL_DISABLED
 							end if
 							
 						end if
@@ -162,11 +165,11 @@ sub ObjectMain
 					if Object[3].Type != TypeName[WaterSplash]
 						HUD[4].WaterTimer = 0
 					else
-						TempValue0 = HUD[4].Time.Frames
+						TempValue0 = HUD[4].TimeFrames
 						TempValue0 &= 1
 						
-						if HUD[4].Time.Seconds > 0
-							HUD[4].Time.Seconds -= TempValue0
+						if HUD[4].TimeSeconds > 0
+							HUD[4].TimeSeconds -= TempValue0
 						else
 							
 							// In Time Attack, you can't muddle your time up and time out
@@ -190,7 +193,7 @@ sub ObjectMain
 									
 								end if
 								
-								SSSonic.ControlMode = CONTROLMODE_NONE
+								SSSonic.ControlMode = CONTROL_DISABLED
 							end if
 							
 						end if
@@ -264,7 +267,7 @@ sub ObjectStartup
 	endif
 	
 	Object[23].Type = TypeName[Special Setup]
-	Object[23].Priority = 1
+	Object[23].Priority = PRIORITY_ACTIVE
 	
 	// Give it a draw order lower than the rest to make sure it can sort all other entities correctly
 	Object[23].DrawOrder = 2

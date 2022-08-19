@@ -12,7 +12,7 @@
 
 //Object[33] is MenuHeading
 #alias Object[33].State			:	MenuHeading.State
-#alias Object[33].PropertyValue	:	MenuHeading.PropertyValue
+#alias Object[33].PropertyValue	:	MenuHeading.Header
 
 //Object[-1] is MenuWindow
 #alias Object[-1].State			:	MenuWindow.State
@@ -36,6 +36,7 @@
 
 // Menu Heading States
 #alias 1	:	MENUHEADING_LEAVE_SCREEN
+
 // Menu Heading Property Values
 #alias 5	:	MAINMENU_HEADER
 
@@ -70,23 +71,23 @@ function ExtrasMenu_DrawUnlocks
 	case false
 		if ArrayPos0 == Object.CurrentButton
 			DrawSpriteScreenFX(9, FX_INK, Object.XPos, Object.YPos)
-			TempValue0 = ArrayPos0
+			TempValue0  = ArrayPos0
 			TempValue0 += 14
 			DrawSpriteScreenFX(TempValue0, FX_INK, Object.XPos, Object.YPos)
 		else
-			TempValue0 = ArrayPos0
+			TempValue0  = ArrayPos0
 			TempValue0 += 10
 			DrawSpriteScreenFX(TempValue0, FX_INK, Object.XPos, Object.YPos)
 		end if
 		break
 
 	case true
-		TempValue0 = Object.Timer
-		TempValue0 &= 3
+		TempValue0   = Object.Timer
+		TempValue0  &= 3
 		TempValue0 >>= 1
 		DrawSpriteScreenFX(9, FX_INK, Object.XPos, Object.YPos)
 		if TempValue0 == 0
-			TempValue0 = ArrayPos0
+			TempValue0  = ArrayPos0
 			TempValue0 += 14
 			DrawSpriteScreenFX(TempValue0, FX_INK, Object.XPos, Object.YPos)
 		end if
@@ -141,18 +142,16 @@ sub ObjectMain
 		end if
 #endplatform
 
-#platform: Use_Standalone
-	#platform: Mobile
+#platform: Mobile
 		if Options.PhysicalControls == false
 			Object.CurrentButton = -1
 		end if
-	#endplatform
 #endplatform
 
-		Object.XPos = Screen.CenterX
+		Object.XPos  = Screen.CenterX
 		Object.XPos -= 126
 		if Object.Timer < 256
-			Object.Alpha = Object.Timer
+			Object.Alpha  = Object.Timer
 			Object.Timer += 6
 		else
 			Object.Timer = 0
@@ -318,16 +317,19 @@ sub ObjectMain
 						StopMusic()
 						PlaySfx(27, 0)	//Select SFX
 					else
+
 #platform: Use_Origins
 						if Options.PhysicalControls == false
 							Object.CurrentButton = -1
 						end if
 #endplatform
+
 #platform: Mobile
 						if Options.PhysicalControls == false
 							Object.CurrentButton = -1
 						end if
 #endplatform
+
 					end if
 					break
 
@@ -338,17 +340,20 @@ sub ObjectMain
 						Object.State++
 						PlaySfx(27, 0)	//Select SFX
 					else
+
 #platform: Use_Origins
 						if Options.PhysicalControls == false
 							Object.CurrentButton = -1
 						end if
 #endplatform
+
 #platform: Mobile
 						if Options.PhysicalControls == false
 							Object.CurrentButton = -1
 						end if
 #endplatform
 					end if
+
 					break
 
 				case 2
@@ -359,16 +364,19 @@ sub ObjectMain
 						StopMusic()
 						PlaySfx(27, 0)	//Select SFX
 					else
+					
 #platform: Use_Origins
 						if Options.PhysicalControls == false
 							Object.CurrentButton = -1
 						end if
 #endplatform
+
 #platform: Mobile
 						if Options.PhysicalControls == false
 							Object.CurrentButton = -1
 						end if
 #endplatform
+
 					end if
 					break
 
@@ -380,16 +388,19 @@ sub ObjectMain
 						StopMusic()
 						PlaySfx(27, 0)	//Select SFX
 					else
+
 #platform: Use_Origins
 						if Options.PhysicalControls == false
 							Object.CurrentButton = -1
 						end if
 #endplatform
+
 #platform: Mobile
 						if Options.PhysicalControls == false
 							Object.CurrentButton = -1
 						end if
 #endplatform
+
 					end if
 					break
 
@@ -429,7 +440,7 @@ sub ObjectMain
 
 			case 1
 				Object.State = EXTRASMENU_LOAD_VISUALMODE
-				Object.YPos = 40
+				Object.YPos  = 40
 				Object.YPos *= Object.CurrentButton
 				Object.YPos += Screen.CenterY
 				Object.YPos -= 87
@@ -451,6 +462,7 @@ sub ObjectMain
 		if Object.Timer < 320
 			Object.Timer += 8
 		else
+
 #platform: Use_Origins
 			game.callbackParam0 = 1
 			EngineCallback(NOTIFY_LEVEL_SELECT_MENU)
@@ -458,6 +470,7 @@ sub ObjectMain
 			EngineCallback(NOTIFY_PLAYER_SET)
 			Stage.PlayerListPos = 0
 #endplatform
+
 			switch Object.CurrentButton
 			case 0
 				Stage.ListPos = 5	//D.A Garden
@@ -476,6 +489,7 @@ sub ObjectMain
 
 			end switch
 		end if
+
 		TempValue0 = Object.Timer
 		if TempValue0 > 255
 			TempValue0 = 255
@@ -484,7 +498,7 @@ sub ObjectMain
 		break
 
 	case EXTRASMENU_LOAD_VISUALMODE
-		TempValue0 = Screen.CenterY
+		TempValue0  = Screen.CenterY
 		TempValue0 -= 87
 		if Object.YPos > TempValue0
 			Object.YPos -= 8
@@ -507,7 +521,7 @@ sub ObjectMain
 		
 	case EXTRASMENU_VISUALMODE_FADEIN
 		if Object.Timer < 256
-			Object.Alpha = Object.Timer
+			Object.Alpha  = Object.Timer
 			Object.Timer += 8
 		else
 			Object.Timer = 0
@@ -522,12 +536,14 @@ sub ObjectMain
 		CheckEqual(Options.PhysicalControls,true)
 #endplatform
 
-#platform: Mobile
+#platform: Use_Standalone
+	#platform: Mobile
 		CheckEqual(Options.PhysicalControls,true)
-#endplatform
+	#endplatform
 
-#platform: Standard
+	#platform: Standard
 		CheckResult = true
+	#endplatform
 #endplatform
 
 		if CheckResult == true
@@ -581,9 +597,9 @@ sub ObjectMain
 			CheckTouchRect(0, 0, Screen.XSize, Screen.YSize)		//Touch Input Reset
 			TempValue3 = CheckResult
 
-			TempValue0 = Screen.CenterX
+			TempValue0  = Screen.CenterX
 			TempValue0 -= 88
-			TempValue1 = Screen.CenterX
+			TempValue1  = Screen.CenterX
 			TempValue1 -= 40
 			CheckTouchRect(TempValue0, 72, TempValue1, 120)			//Opening Touch Press
 			if CheckResult > -1
@@ -615,9 +631,9 @@ sub ObjectMain
 				end if
 			end if
 			
-			TempValue0 = Screen.CenterX
+			TempValue0  = Screen.CenterX
 			TempValue0 += 40
-			TempValue1 = Screen.CenterX
+			TempValue1  = Screen.CenterX
 			TempValue1 += 88
 			CheckTouchRect(TempValue0, 72, TempValue1, 120)			//Pencil Test Touch Press
 			if CheckResult > -1
@@ -649,7 +665,7 @@ sub ObjectMain
 				end if
 			end if
 
-			TempValue0 = Screen.XSize
+			TempValue0  = Screen.XSize
 			TempValue0 -= 96
 			CheckTouchRect(TempValue0, 192, Screen.XSize, Screen.YSize)		//Back Touch Press
 			if CheckResult > -1
@@ -733,6 +749,7 @@ sub ObjectMain
 			game.callbackParam0 = 1
 			EngineCallback(NOTIFY_EXTRAS_MODE)
 #endplatform
+
 			switch Helper.VMCurrentButtom
 			case 0
 				LoadVideo("Opening")
@@ -785,6 +802,7 @@ sub ObjectMain
 //				break
 //
 //			end switch
+
 #platform: Use_Origins
 			game.callbackParam0 = 0
 			EngineCallback(NOTIFY_EXTRAS_MODE)
@@ -802,7 +820,7 @@ sub ObjectMain
 
 	case EXTRASMENU_VISUALMODE_FADEOUT
 		if Object.Timer > 0
-			Object.Alpha = Object.Timer
+			Object.Alpha  = Object.Timer
 			Object.Timer -= 8
 		else
 			Object.Alpha = 0
@@ -811,7 +829,7 @@ sub ObjectMain
 		break
 
 	case EXTRASMENU_VISUALMODE_RETURN
-		TempValue0 = Object.CurrentButton
+		TempValue0  = Object.CurrentButton
 		TempValue0 *= 40
 		TempValue0 += Screen.CenterY
 		TempValue0 -= 87
@@ -822,16 +840,19 @@ sub ObjectMain
 			end if
 			Object.Alpha = 0
 		else
+
 #platform: Use_Origins
 			if Options.PhysicalControls == false
 				Object.CurrentButton = -1
 			end if
 #endplatform
+
 #platform: Mobile
 			if Options.PhysicalControls == false
 				Object.CurrentButton = -1
 			end if
 #endplatform
+
 			Object.State = EXTRASMENU_CONTROLS
 			Object.Alpha = 255
 		end if
@@ -839,7 +860,7 @@ sub ObjectMain
 
 	case EXTRASMENU_EXIT_MENU
 		if Object.Timer > 0
-			Object.Alpha = Object.Timer
+			Object.Alpha  = Object.Timer
 			Object.Timer -= 8
 		else
 			Object.Type = TypeName[Blank Object]
@@ -855,8 +876,8 @@ sub ObjectMain
 			Object[41].State = MENUBUTTON_BUTTONS_IN
 			Object[42].State = MENUBUTTON_BUTTONS_IN
 			//End
-			MenuHeading.State = MENUHEADING_LEAVE_SCREEN
-			MenuHeading.PropertyValue = MAINMENU_HEADER
+			MenuHeading.State  = MENUHEADING_LEAVE_SCREEN
+			MenuHeading.Header = MAINMENU_HEADER
 		end if
 		break
 
@@ -878,7 +899,7 @@ sub ObjectMain
 		Object.Timer += 4
 		if Object.Timer == 384
 			Stage.ActiveList = PRESENTATION_STAGE
-			Stage.ListPos = 0
+			Stage.ListPos	 = 0	// Title Screen
 			LoadStage()
 		endif
 		SetScreenFade(0, 0, 0, Object.Timer)
@@ -896,7 +917,7 @@ sub ObjectDraw
 	case EXTRASMENU_LOAD_EXTRA_STAGE
 	case EXTRASMENU_EXIT_MENU
 	case EXTRASMENU_RETURN_TO_TITLE
-		Object.YPos = Screen.CenterY
+		Object.YPos  = Screen.CenterY
 		Object.YPos -= 87
 		ArrayPos0 = 0
 		CallFunction(ExtrasMenu_DrawUnlocks)		//Draw DA Garden
@@ -925,7 +946,7 @@ sub ObjectDraw
 	case EXTRASMENU_VISUALMODE_FADEOUT
 	case EXTRASMENU_VISUALMODE_RETURN
 	case EXTRASMENU_FADEIN
-		TempValue0 = Screen.CenterX
+		TempValue0  = Screen.CenterX
 		TempValue0 -= 64
 		DrawSpriteScreenFX(4, FX_INK, TempValue0, 96)
 
@@ -966,10 +987,11 @@ sub ObjectDraw
 		break
 
 	case EXTRASMENU_VISUALMODE_SELECTED
-		TempValue1 = Object.Timer
-		TempValue1 &= 3
+		TempValue1   = Object.Timer
+		TempValue1  &= 3
 		TempValue1 >>= 1
-		TempValue0 = Screen.CenterX
+
+		TempValue0  = Screen.CenterX
 		TempValue0 -= 64
 		if Helper.VMCurrentButtom == 0
 			if TempValue1 == 0
@@ -1070,11 +1092,11 @@ sub ObjectStartup
 		TempValue0 += SaveRAM[ArrayPos1]
 		ArrayPos1++
 		TempValue1 += SaveRAM[ArrayPos1]
-		ArrayPos1 += 5
+		ArrayPos1  += 5
 		TempValue0 += SaveRAM[ArrayPos1]
-		ArrayPos1 += 6
+		ArrayPos1  += 6
 		TempValue0 += SaveRAM[ArrayPos1]
-		ArrayPos1 += 6
+		ArrayPos1  += 6
 		ArrayPos0++
 	loop
 

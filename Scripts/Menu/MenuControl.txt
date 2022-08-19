@@ -1,4 +1,4 @@
-//------------Sonic CD Menu Control Script-------------//
+//----------------Sonic CD Menu Control Script----------------//
 //--------Scripted by Christian Whitehead 'The Taxman'--------//
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
@@ -22,6 +22,9 @@
 #alias Object[1].Value5	:	Object.YOffSet2
 #alias Object[1].Value6	:	Object.YOffSet3
 
+// Menu Button Aliases
+#alias Object[34].State	:	MenuButton.State
+
 // States
 #alias 0	:	MENUCONTROL_SETUP
 #alias 1	:	MENUCONTROL_BUTTONS_MOVEIN
@@ -33,21 +36,25 @@
 #alias 7	:	MENUCONTROL_ENTER_TROPHIES
 #alias 8	:	MENUCONTROL_ENTER_LEADERBOARS
 
+// MenuButton States
+#alias 2	:	MENUBUTTON_CONFIRM_SELECTION
+
 // Device Type
 #alias 0	:	RETRO_STANDARD
 
-// OST
+// Soundtrack
 #alias 0	:	OST_JP
 
 // Engine & CallBacks
 #alias 2	:	MESSAGE_LOSTFOCUS
+
 
 sub ObjectMain
 
 	switch Object.State
 	case MENUCONTROL_SETUP
 		Object.State = MENUCONTROL_BUTTONS_MOVEIN
-		Object.Fade = 384
+		Object.Fade  = 384
 		SetScreenFade(0, 0, 0, 255)
 		PlayMusic(Options.Soundtrack)
 		if Engine.FrameSkipTimer > -1
@@ -71,7 +78,6 @@ sub ObjectMain
 #endplatform
 
 #platform: Use_Standalone
-		// workaround for steam
 		#platform: Mobile
 			CheckEqual(Options.PhysicalControls,true)
 		#endplatform
@@ -103,7 +109,7 @@ sub ObjectMain
 				end if
 			end if
 
-			TempValue0 = Object.CurrentSelection
+			TempValue0  = Object.CurrentSelection
 			TempValue0 -= Object.ButtonScroll
 			if TempValue0 < 1
 				Object.ButtonScroll--
@@ -116,20 +122,21 @@ sub ObjectMain
 			end if
 			
 			//Button Movement across the screen 
-			TempValue0 = Object.ButtonYOffset
+			TempValue0  = Object.ButtonYOffset
 			TempValue0 -= 32
-			TempValue1 = Object.ButtonScroll
-			TempValue1 *= -60
-			TempValue1 -= TempValue0
-			TempValue1 += Object.YOffsetCorrection
+
+			TempValue1   = Object.ButtonScroll
+			TempValue1  *= -60
+			TempValue1  -= TempValue0
+			TempValue1  += Object.YOffsetCorrection
 			TempValue1 >>= 2
 			Object.ButtonYOffset += TempValue1
 
 #platform: Use_Origins
 			CheckTouchRect(0, 0, Screen.XSize, Screen.YSize)
 			if CheckResult > -1
-				Options.PhysicalControls = false
-				Object.CurrentSelection = 0
+				Options.PhysicalControls	= false
+				Object.CurrentSelection		= 0
 				Object.DragCurrentSelection = 0
 			end if
 #endplatform
@@ -137,15 +144,15 @@ sub ObjectMain
 #platform: Mobile
 			CheckTouchRect(0, 0, Screen.XSize, Screen.YSize)
 			if CheckResult > -1
-				Options.PhysicalControls = false
-				Object.CurrentSelection = 0
+				Options.PhysicalControls	= false
+				Object.CurrentSelection		= 0
 				Object.DragCurrentSelection = 0
 			end if
 #endplatform
 
 		else
 			if Engine.Message == MESSAGE_LOSTFOCUS
-				Object.CurrentSelection = 0
+				Object.CurrentSelection		= 0
 				Object.DragCurrentSelection = 0
 			end if
 
@@ -159,40 +166,44 @@ sub ObjectMain
 				CheckTouchRect(0, 0, Screen.XSize, Screen.YSize)
 				if CheckResult > -1
 					ArrayPos0 = CheckResult
-					if Object.DragEnabled == 0
-						Object.DragEnabled = 1
-						Object.DragPos = Object.ButtonYOffset
+					if Object.DragEnabled == false
+						Object.DragEnabled = true
+						Object.DragPos	   = Object.ButtonYOffset
 						Object.DragYOffset = TouchScreen[ArrayPos0].YPos
 					else
 						//Dragging of buttons based on input
-						TempValue0 = TouchScreen[ArrayPos0].YPos
+						TempValue0  = TouchScreen[ArrayPos0].YPos
 						TempValue0 -= Object.DragYOffset
 						TempValue0 += Object.DragPos
+
 						Object.YOffSet3 = Object.YOffSet2
 						Object.YOffSet2 = Object.YOffSet1
 						Object.YOffSet1 = Object.DragSmooth
-						Object.DragSmooth = TempValue0
-						Object.DragSmooth -= Object.ButtonYOffset
+
+						Object.DragSmooth    = TempValue0
+						Object.DragSmooth   -= Object.ButtonYOffset
 						Object.ButtonYOffset = TempValue0
 					end if
 
-					TempValue0 = Object.DragSmooth
+					TempValue0   = Object.DragSmooth
 					TempValue0 >>= 2
 					if TempValue0 != 0
-						Object.CurrentSelection = 0
+						Object.CurrentSelection		= 0
 						Object.DragCurrentSelection = 0
 					end if
 				else
-					if Object.DragEnabled == 1
+					if Object.DragEnabled == true
 						//Sets the position to where the buttons will go post-drag
-						Object.DragEnabled = 0
-						Object.DragYOffset = Object.ButtonYOffset
+						Object.DragEnabled   = false
+						Object.DragYOffset   = Object.ButtonYOffset
 						Object.DragYOffset <<= 8
-						Object.DragSmooth += Object.YOffSet1
-						Object.DragSmooth += Object.YOffSet2
-						Object.DragSmooth += Object.YOffSet3
+
+						Object.DragSmooth  += Object.YOffSet1
+						Object.DragSmooth  += Object.YOffSet2
+						Object.DragSmooth  += Object.YOffSet3
 						Object.DragSmooth >>= 2
 						Object.DragSmooth <<= 7
+
 						if Object.DragSmooth == 0
 							if Object.CurrentSelection == 0
 								Object.DragSmooth = 1		//Forces movement
@@ -205,11 +216,11 @@ sub ObjectMain
 						Object.DragYOffset += Object.DragSmooth
 						if Object.DragYOffset < Object.DragLimit
 							Object.DragYOffset = Object.DragLimit
-							Object.DragSmooth = 0
+							Object.DragSmooth  = 0
 						end if
 						if Object.DragYOffset > 0x5A00
 							Object.DragYOffset = 0x5A00
-							Object.DragSmooth = 0
+							Object.DragSmooth  = 0
 						end if
 
 						if Object.DragSmooth > 0
@@ -224,16 +235,17 @@ sub ObjectMain
 							end if
 						end if
 						
-						Object.ButtonYOffset = Object.DragYOffset
+						Object.ButtonYOffset   = Object.DragYOffset
 						Object.ButtonYOffset >>= 8
 						if Object.DragSmooth == 0
-							Object.ButtonScroll = Object.ButtonYOffset
+							Object.ButtonScroll  = Object.ButtonYOffset
 							Object.ButtonScroll -= 32
 							Object.ButtonScroll /= -60
 							if Object.ButtonScroll < 0
 								Object.ButtonScroll = 0
 							end if
-							TempValue0 = Object.MaxButtonCount
+
+							TempValue0  = Object.MaxButtonCount
 							TempValue0 -= 4
 							if Object.ButtonScroll > TempValue0
 								Object.ButtonScroll = TempValue0
@@ -241,11 +253,11 @@ sub ObjectMain
 						end if
 					else
 						//Drag screen re-centering
-						TempValue0 = Object.ButtonYOffset
+						TempValue0  = Object.ButtonYOffset
 						TempValue0 -= 32
-						Object.RecenterValue = Object.Value4
-						Object.RecenterValue *= -60
-						Object.RecenterValue -= TempValue0
+						Object.RecenterValue   = Object.Value4
+						Object.RecenterValue  *= -60
+						Object.RecenterValue  -= TempValue0
 						Object.RecenterValue >>= 2
 						if Object.RecenterValue < -4
 							Object.RecenterValue = -4
@@ -260,24 +272,24 @@ sub ObjectMain
 
 #platform: Use_Origins
 			if KeyPress[0].Up == true
-				Object.CurrentSelection = Object.MaxButtonCount
+				Object.CurrentSelection  = Object.MaxButtonCount
 				Options.PhysicalControls = true
 			end if
 
 			if KeyPress[0].Down == true
-				Object.CurrentSelection = 1
+				Object.CurrentSelection  = 1
 				Options.PhysicalControls = true
 			end if
 #endplatform
 
 #platform: Mobile
 			if KeyPress[0].Up == true
-				Object.CurrentSelection = Object.MaxButtonCount
+				Object.CurrentSelection  = Object.MaxButtonCount
 				Options.PhysicalControls = true
 			end if
 
 			if KeyPress[0].Down == true
-				Object.CurrentSelection = 1
+				Object.CurrentSelection  = 1
 				Options.PhysicalControls = true
 			end if
 #endplatform
@@ -302,29 +314,26 @@ sub ObjectMain
 		if Object.Fade < 320
 			Object.Fade += 8
 		else
-#platform: Use_Origins
 			LoadVideo("Opening")	// why they bothered with this? unless there IS a demo of origins cd....
-#endplatform
 
-#platform: Mobile
-			if Engine.PlatformID != RETRO_WP7
-				if Options.Soundtrack == OST_JP
-					LoadVideo("Opening")
-				else
-					LoadVideo("OpeningUS")
-				end if
-			end if
-#endplatform
+
+//			if Engine.PlatformID != RETRO_WP7
+//				if Options.Soundtrack == OST_JP
+//					LoadVideo("Opening")
+//				else
+//					LoadVideo("OpeningUS")
+//				end if
+//			end if
 
 			Stage.ActiveList = REGULAR_STAGE
-			Stage.ListPos = 0	//Palmtree Panic 1 Present
+			Stage.ListPos	 = 0	//Palmtree Panic 1 Present
 			LoadStage()
 		end if
 		SetScreenFade(0, 0, 0, Object.Fade)
 		break
 
 	case MENUCONTROL_MENUBUTTON_CHECK
-		if Object[34].State == 2
+		if MenuButton.State == MENUBUTTON_CONFIRM_SELECTION
 			Object.State = MENUCONTROL_CONTROLS
 		end if
 		break
@@ -364,9 +373,9 @@ sub ObjectStartup
 #platform: Use_Origins	// they have in mind a mobile release or this is for Switch?
 	if Engine.DeviceType == RETRO_STANDARD
 		Object[0].CurrentSelection = 1
-		Options.PhysicalControls = true
+		Options.PhysicalControls   = true
 	else
-		Options.PhysicalControls = false
+		Options.PhysicalControls   = false
 	endif
 #endplatform
 
@@ -375,7 +384,7 @@ sub ObjectStartup
 		Object[0].CurrentSelection = 1
 	#endplatform
 	#platform: Mobile
-		Options.PhysicalControls = false
+		Options.PhysicalControls   = false
 	#endplatform
 #endplatform
 

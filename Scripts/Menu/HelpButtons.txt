@@ -1,4 +1,4 @@
-//------------Sonic CD Help Buttons Script-------------//
+//----------------Sonic CD Help Buttons Script----------------//
 //--------Scripted by Christian Whitehead 'The Taxman'--------//
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
@@ -11,6 +11,9 @@
 //Engine & CallBacks
 #alias 2	:	MESSAGE_LOSTFOCUS
 
+// Device Type
+#alias 1	:	RETRO_MOBILE
+
 
 sub ObjectMain
 	if Object.HelpState == 2
@@ -18,9 +21,9 @@ sub ObjectMain
 			Object.ButtonPressed = 0
 		end if
 
-		TempValue0 = Object.XPos
+		TempValue0   = Object.XPos
 		TempValue0 >>= 16
-		TempValue1 = TempValue0
+		TempValue1   = TempValue0
 
 		TempValue0 -= 18
 		TempValue0 -= Screen.XOffset
@@ -123,16 +126,31 @@ end sub
 
 sub ObjectStartup
 	LoadSpriteSheet("Menu/Buttons.gif")
+
 	SpriteFrame(-63, -39, 126, 78, 1, 1)		// #0 - Down Button
 	SpriteFrame(-60, -37, 120, 74, 132, 3)		// #1 - Down Button Highlight
 	SpriteFrame(-63, -39, 126, 78, 1, 81)		// #2 - Up Button
 	SpriteFrame(-60, -37, 120, 74, 132, 83)		// #3 - Up Button Highlight
+	
+#platform: Use_Origins
+	if Engine.DeviceType == RETRO_MOBILE
+		SpriteFrame(-63, -39, 126, 78, 1, 161)	// #4 - Back Button
+		SpriteFrame(-60, -37, 120, 74, 132, 163)// #5 - Back Button Highlight
+	else
+		SpriteFrame(-63, -39, 0, 0, 0, 0)
+		SpriteFrame(-60, -37, 0, 0, 0, 0)
+	end if
+#endplatform
+
+#platform: Use_Standalone
 	SpriteFrame(-63, -39, 126, 78, 1, 161)		// #4 - Back Button
 	SpriteFrame(-60, -37, 120, 74, 132, 163)	// #5 - Back Button Highlight
+#endplatform
 
-	TempValue0 = Screen.CenterX
-	TempValue0 -= 160
+	TempValue0   = Screen.CenterX
+	TempValue0  -= 160
 	TempValue0 <<= 16
+
 	ArrayPos0 = 32
 	while ArrayPos0 < 1056
 		if Object[ArrayPos0].Type == TypeName[HelpButtons]

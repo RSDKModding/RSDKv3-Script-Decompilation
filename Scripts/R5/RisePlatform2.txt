@@ -18,6 +18,10 @@
 #alias 4	:	RISEPLATFORM2_HALT
 #alias 5	:	RISEPLATFORM2_ARRIVED
 
+// Priority
+#alias 1	:	PRIORITY_ACTIVE
+#alias 3	:	PRIORITY_XBOUNDS
+
 
 sub ObjectMain
 	
@@ -31,8 +35,7 @@ sub ObjectMain
 			// If the Player's stepped onto the Platform, then get ready to launch
 			Object.State = RISEPLATFORM2_PRELAUNCH
 			
-			// Give the Object the PRIORITY_ACTIVE Priority, as it should always be active from hereon
-			Object.Priority = 1
+			Object.Priority = PRIORITY_ACTIVE
 			
 			Object.YVelocity = 0
 			Object.Timer = 0
@@ -134,7 +137,7 @@ sub ObjectMain
 	
 		if Object.OutOfBounds == true
 			Object.PlatformY = 0
-			Object.State = 0
+			Object.State = RISEPLATFORM2_AWAITPLAYER
 		else
 			Object.YPos = TempValue0
 		end if
@@ -180,9 +183,8 @@ sub ObjectStartup
 		
 			// Store the Object's Starting Position
 			Object[ArrayPos0].StartPosY = Object[ArrayPos0].YPos
-			
-			// And give it the XBOUNDS Priority as well
-			Object[ArrayPos0].Priority = 3
+
+			Object[ArrayPos0].Priority = PRIORITY_XBOUNDS
 			
 		end if
 		

@@ -63,7 +63,7 @@
 #alias 0	:	CSIDE_FLOOR
 
 // Ink Effects
-#alias 0	:	INK_BLEND
+#alias 0	:	INK_NONE
 
 // Control Mode
 #alias -1	:	CONTROL_DISABLED
@@ -319,19 +319,19 @@ end function
 function EggMobile_WingThrowVertical
 	if Helper2.AnimSpeedState < Helper1.BossHealth
 		if Object.Timer == 0
-			ArrayPos0 = Object.EntityNo
+			ArrayPos0  = Object.EntityNo
 			ArrayPos0 -= 4
 			ArrayPos0 += Helper2.AnimSpeedState
 			Object[ArrayPos0].Type = TypeName[BossWing]
-			BossWing[ArrayPos0].State = BOSSWING_FALL_VERTICAL
+			BossWing[ArrayPos0].State	 = BOSSWING_FALL_VERTICAL
 			BossWing[ArrayPos0].Rotation = 0
-			BossWing[ArrayPos0].Timer = 0
+			BossWing[ArrayPos0].Timer	 = 0
 			if Helper1.BossHealth > 2
 				BossWing[ArrayPos0].Frame = 4
 			else
 				BossWing[ArrayPos0].Frame = 3
 			end if
-			BossWing[ArrayPos0].YPos = Object[+3].YPos
+			BossWing[ArrayPos0].YPos  = Object[+3].YPos
 			BossWing[ArrayPos0].YPos -= 0x800000
 			BossWing[ArrayPos0].XVelocity = 0
 			BossWing[ArrayPos0].YVelocity = 0x38000
@@ -413,7 +413,7 @@ end function
 function EggMobile_WingThrowDiagonal
 	if Helper2.AnimSpeedState < 1
 		Object[-1].Type = TypeName[BossWing]
-		Object[-1].State = 2
+		Object[-1].State = BOSSWING_FALL_VERTICAL
 		Object[-1].Value0 = 0
 		Object[-1].Frame = 3
 		if Player.XPos < Object[+3].XPos
@@ -1559,7 +1559,7 @@ sub ObjectMain
 				TempValue1 += Object.YPos
 
 				CreateTempObject(TypeName[BossSpark], 0, TempValue0, TempValue1)
-				Object[TempObjectPos].InkEffect = INK_BLEND
+				Object[TempObjectPos].InkEffect = INK_NONE
 				Object[TempObjectPos].Alpha = 248
 
 				Rand(TempValue0, 48)
@@ -1573,7 +1573,7 @@ sub ObjectMain
 				TempValue1 += Object.YPos
 
 				CreateTempObject(TypeName[BossSpark], 0, TempValue0, TempValue1)
-				Object[TempObjectPos].InkEffect = INK_BLEND
+				Object[TempObjectPos].InkEffect = INK_NONE
 				Object[TempObjectPos].Alpha = 248
 			end if
 		end if

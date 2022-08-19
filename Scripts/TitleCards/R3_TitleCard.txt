@@ -12,33 +12,33 @@
 #alias Object.Value6			:	Object.FadeB
 #alias Object.Value7			:	Object.CharPos
 
-// Player Alias
+// Player Aliases
 #alias Object[0].Value4			:	Player.InvincibleTimer
 
-// HUD aliases
+// HUD Aliases
 #alias Object[24].PropertyValue	:	HUD.TimePeriod
 
 // States
-#alias 0			:	TITLECARD_FADEIN
-#alias 1			:	TITLECARD_SLIDEIN
-#alias 2			:	TITLECARD_DISPLAY
-#alias 3			:	TITLECARD_SLIDEOUT
+#alias 0	:	TITLECARD_FADEIN
+#alias 1	:	TITLECARD_SLIDEIN
+#alias 2	:	TITLECARD_DISPLAY
+#alias 3	:	TITLECARD_SLIDEOUT
 
-// OST
-#alias 0			:	OST_JP
+// Soundtrack
+#alias 0	:	OST_JP
 
 // Time Periods
-#alias 0			:	PROPVAL_PRESENT
-#alias 1			:	PROPVAL_PAST
-#alias 2			:	PROPVAL_GOOD_FUTURE
-#alias 3			:	PROPVAL_BAD_FUTURE
+#alias 0	:	PROPVAL_PRESENT
+#alias 1	:	PROPVAL_PAST
+#alias 2	:	PROPVAL_GOOD_FUTURE
+#alias 3	:	PROPVAL_BAD_FUTURE
 
 // Control Mode
 #alias -1	:	CONTROL_DISABLED
 #alias 0	:	CONTROL_ENABLED
 
 // Priority
-#alias 1			:	PRIORITY_ACTIVE
+#alias 1	:	PRIORITY_ACTIVE
 
 
 sub ObjectPlayerInteraction
@@ -49,56 +49,70 @@ end sub
 sub ObjectDraw
 	switch Object.State
 	case TITLECARD_FADEIN
-		Player.ControlMode = -1
-		Player.Up = false
-		Player.Down = false
-		Player.Left = false
-		Player.Right = false
-		Player.JumpPress = false
-		Player.JumpHold = false
+		Player.ControlMode	= CONTROL_DISABLED
+		Player.Up			= false
+		Player.Down			= false
+		Player.Left			= false
+		Player.Right		= false
+		Player.JumpPress	= false
+		Player.JumpHold		= false
+
+		// Check if the player comes from warping, if not, blank speed
 		if Warp.XPos < 1
 			Player.Speed = 0
 		end if
+
 		if Object.FadeA > 0
 			if Object.FadeA == 256
 				PlayMusic(0)
 				if Warp.XPos > 0
+					// Restore values post-warp
 					Player.XPos = Warp.XPos
 					Player.YPos = Warp.YPos
+					
 					Player.XVelocity = Warp.XVelocity
 					Player.YVelocity = Warp.YVelocity
-					Player.Speed = Warp.XVelocity
+					Player.Speed	 = Warp.XVelocity
+
 					Player.State = Warp.State
+
 					Stage.MilliSeconds = Rec_Milliseconds
-					Stage.Seconds = Rec_Seconds
-					Stage.Minutes = Rec_Minutes
+					Stage.Seconds	   = Rec_Seconds
+					Stage.Minutes	   = Rec_Minutes
+
 					Player.InvincibleTimer = 8000
 				end if
 				Warp.Timer = 0
 				Warp.Frame = 0
 			end if
+
 			SetScreenFade(Object.FadeR, Object.FadeG, Object.FadeB, Object.FadeA)
 			Object.FadeA -= 8
 		else
 			Fade_Colour = 0
+
+			// the title card animation doesn't play out if you come from a warp or restarted from a checkpoint
 			CheckEqual(Warp.XPos, 0)
-			TempValue0 = CheckResult
+			TempValue0  = CheckResult
 			CheckLower(LampPost.Check, 32)
 			TempValue0 &= CheckResult
 			if TempValue0 == true
 				Object.State = TITLECARD_SLIDEIN
 				Object.FadeA = 0
 			else
-				Player.ControlMode = 0
-				Stage.TimeEnabled = true
+				Player.ControlMode = CONTROL_ENABLED
+				Stage.TimeEnabled  = true
+
 				ResetObjectEntity(20, TypeName[Blank Object], 0, 0, 0)
 				Warp.XPos = 0
 			end if
 		end if
 		break
+
 	case TITLECARD_SLIDEIN
-		TempValue0 = 144
+		TempValue0  = 144
 		TempValue0 += Object.CharPos
+
 		if Object.TextPos > TempValue0
 			Object.TextPos -= 8
 		else
@@ -106,6 +120,7 @@ sub ObjectDraw
 				Object.State = TITLECARD_DISPLAY
 			end if
 		end if
+
 		if Object.BarPos < 0
 			Object.BarPos += 8
 		end if
@@ -122,32 +137,40 @@ sub ObjectDraw
 	case TITLECARD_SLIDEOUT
 		if Object.TextPos < 408
 			Object.TextPos += 16
-			Object.BarPos -= 16
+			Object.BarPos  -= 16
 		else
-			Player.ControlMode = 0
-			Stage.TimeEnabled = true
+			Player.ControlMode = CONTROL_ENABLED
+			Stage.TimeEnabled  = true
+
 			ResetObjectEntity(20, TypeName[Blank Object], 0, 0, 0)
 			Warp.XPos = 0
 		end if
 		break
 	end switch
 
+	// Make sure that this object isn't already blanked, before drawing
 	if Object.Type > TypeName[Blank Object]
-		TempValue0 = 136
+		TempValue0  = 136
 		TempValue0 += Object.CharPos
+		// Draw the Red Bar
 		DrawSpriteScreenXY(0, TempValue0, Object.BarPos)
+
+		// And then, draw the act number
 		DrawSpriteScreenXY(Stage.ActNo, Object.TextPos, 80)
+		
+		// And then draw the Zone text, the Sonic CD bar, and the weird three lines
 		DrawSpriteScreenXY(4, Object.TextPos, 80)
 		DrawSpriteScreenXY(5, Object.TextPos, 80)
 		DrawSpriteScreenXY(6, Object.TextPos, 80)
+		DrawSpriteScreenXY(7, Object.TextPos, 80)
 
 #platform: Use_Decomp	// Creates a black rectangle that fills the empty space on wider resolutions
-		Tempvalue0 = Object.TextPos
+		Tempvalue0  = Object.TextPos
 		TempValue0 += 220
 		DrawRect(TempValue0,163,Screen.XSize,9,0,0,0,255)
 #endplatform
 
-		DrawSpriteScreenXY(7, Object.TextPos, 80)
+		// Draw the Round Name
 		TempValue0 = 8
 		while TempValue0 < Object.TextSize
 			DrawSpriteScreenXY(TempValue0, Object.TextPos, 80)
@@ -196,7 +219,7 @@ sub ObjectStartup
 		end switch
 	end if
 	
-	Flower_TypeNo = TypeName[Flower]
+	Flower_TypeNo   = TypeName[Flower]
 	Object[20].Type = TypeName[TitleCard]
 
 	if Warp.XPos > 0
@@ -209,29 +232,37 @@ sub ObjectStartup
 		Player.RoofBarrier = true
 	end if
 
-	Object[20].Priority = PRIORITY_ACTIVE
-
+	Object[20].Priority  = PRIORITY_ACTIVE
 	Object[20].DrawOrder = 6
 
-	Object[20].BarPos = -216
-	Object[20].TextPos = 336
-	Object[20].CharPos = Screen.CenterX
+	Object[20].BarPos   = -216
+	Object[20].TextPos  = 336
+	
+	Object[20].CharPos  = Screen.CenterX
 	Object[20].CharPos -= 160
 	if Object[20].CharPos > 3
 		Object[20].CharPos -= 4
 	end if
 	Object[20].CharPos &= 248
-	Object[20].TextPos += Object[20].CharPos
-	Object[20].TextPos += Object[20].CharPos
-	Object[20].TextSize = 14
+
+	Object[20].TextPos  += Object[20].CharPos
+	Object[20].TextPos  += Object[20].CharPos
+
+	// "Collision Chaos" is 14 letters long
+	Object[20].TextSize  = 14
+	// Bump the value by 8 to correspond with the order of the Sprite Frames
 	Object[20].TextSize += 8
-	Object[20].FadeR = Fade_Colour
+
+	// Fade_Colour is stored as RRGGBB, in hex
+	Object[20].FadeR   = Fade_Colour
 	Object[20].FadeR >>= 16
-	Object[20].FadeG = Fade_Colour
-	Object[20].FadeG &= 65280
+
+	Object[20].FadeG   = Fade_Colour
+	Object[20].FadeG  &= 0x00FF00
 	Object[20].FadeG >>= 8
-	Object[20].FadeB = Fade_Colour
-	Object[20].FadeB &= 255
+
+	Object[20].FadeB   = Fade_Colour
+	Object[20].FadeB  &= 0x0000FF
 
 	SpriteFrame(0, 0, 32, 200, 223, 1)		// #0  - Bar
 	SpriteFrame(96, 96, 48, 48, 41, 1)		// #1  - Zone 1 Circle
@@ -286,10 +317,13 @@ sub ObjectStartup
 	
 	if TempValue0 != false
 		PlayMusic(0)
+		
 		game.missionCondition = 0
-		game.missionEnd = false
-		Player.ControlMode = 0
-		Stage.TimeEnabled = true
+		game.missionEnd		  = false
+
+		Player.ControlMode	  = CONTROL_ENABLED
+		Stage.TimeEnabled	  = true
+
 		ResetObjectEntity(20, TypeName[Blank Object], 0, 0, 0)
 		Warp.XPos = 0
 	end if

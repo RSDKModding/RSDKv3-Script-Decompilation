@@ -19,6 +19,10 @@
 #alias 0 : CONDITION_GOOD
 #alias 1 : CONDITION_BAD
 
+// Priority
+#alias 0	:	PRIORITY_BOUNDS
+#alias 1	:	PRIORITY_ACTIVE
+
 
 sub ObjectMain
 	
@@ -38,7 +42,7 @@ sub ObjectMain
 		switch Object.State
 		case KANABUN_FLYL
 			// This Kanabun is initially given always-active priority, in order for its OOB state to work properly
-			Object.Priority = 1
+			Object.Priority = PRIORITY_ACTIVE
 			
 			// Move left at a rate of 0.25 pixels per frame
 			Object.XPos -= 0x4000
@@ -73,7 +77,7 @@ sub ObjectMain
 				Object.State = KANABUN_FLYL
 				
 				// It's safe to give it normal priority again
-				Object.Priority = 0
+				Object.Priority = PRIORITY_BOUNDS
 			end if
 			break
 			
@@ -94,7 +98,7 @@ sub ObjectMain
 		case KANABUN_FLYL
 			// Give the Kanabun active priority so that its offscreen state will work fine when needed
 			//(or else the object will go offscreen and immediately pause, not returning to its original position)
-			Object.Priority = 1
+			Object.Priority = PRIORITY_ACTIVE
 			
 			// Go left at a rate of 0.25 pixels per frame
 			Object.XPos -= 0x4000
@@ -127,7 +131,7 @@ sub ObjectMain
 				Object.State = KANABUN_FLYL
 				
 				// And give the object normal priority again, too
-				Object.Priority = 0
+				Object.Priority = PRIORITY_BOUNDS
 			end if
 			break
 

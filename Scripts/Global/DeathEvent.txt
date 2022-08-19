@@ -41,8 +41,8 @@ sub ObjectMain
 	switch Object.State
 	case DEATHEVENT_GAMEOVER
 #platform: Use_Origins
-		// they handle the time over of Classic Mode through here
-		if game.playMode == BOOT_PLAYMODE_CLASSIC
+		
+		if game.playMode == BOOT_PLAYMODE_CLASSIC // they handle the time over of Classic Mode through here
 			CheckEqual(Object.TimeOver, false)
 			TempValue0  = CheckResult
 			CheckEqual(Stage.Minutes, 9)
@@ -131,7 +131,7 @@ sub ObjectMain
 
 #platform: Use_Origins
 			if Object.State == DEATHEVENT_GAMEOVER
-				game.callbackParam0 = game.timeOver
+				game.callbackParam0 = game.timeOver // Tell HE2 that the time over state
 				EngineCallback(NOTIFY_TIME_OVER)
 			end if
 			
@@ -176,17 +176,18 @@ sub ObjectMain
 #platform: Use_Origins
 		CheckNotEqual(game.playMode, BOOT_PLAYMODE_BOSSRUSH)
 		TempValue0   = CheckResult
+		// Check if the player is replaying the stage from My Data & Rankings
 		CheckNotEqual(game.oneStageFlag, false)
 		CheckResult &= TempValue0
 		
-		if CheckResult != 0
+		if CheckResult != false
 			LampPost.Check		= 0
 			Object.StagePosP	= Stage.ListPos
 
-			game.callbackResult = -1
-			game.callbackParam0 = 0
-			game.callbackParam1 = Object.StagePosP
-			game.callbackParam2 = 0
+			game.callbackResult = -1				// Reset any callback result
+			game.callbackParam0 =  0				// 0 - Normal Retry, anything else - Show current and best time
+			game.callbackParam1 =  Object.StagePosP	// Get current stage
+			game.callbackParam2 =  0				// Unknown
 			EngineCallback(NOTIFY_STAGE_RETRY)
 			
 			Object.State = DEATHEVENT_HOLDOVERRESTART
@@ -254,15 +255,15 @@ sub ObjectMain
 		SetScreenFade(0, 0, 0, Object.Timer)
 
 #platform: Use_Origins		
-		game.callbackParam0 = StageStatsUsabilityParam1
-		game.callbackParam1 = StageStatsUsabilityParam2
+		game.callbackParam0 = StageStatsUsabilityParam1	// Enemies destroyed by any means
+		game.callbackParam1 = StageStatsUsabilityParam2	// Enemies destroyed by rolling
 		game.callbackParam2 = 0
 		EngineCallback(NOTIFY_STATS_ENEMY)
 		
-		game.callbackParam0 = StageStatsUsabilityParam3
+		game.callbackParam0 = StageStatsUsabilityParam3	// Get Lamp post check
 		EngineCallback(NOTIFY_STATS_PARAM_1)
 		
-		game.callbackParam0 = StageStatsUsabilityParam4
+		game.callbackParam0 = StageStatsUsabilityParam4	// Get player state?, Lamp Post related
 		EngineCallback(NOTIFY_STATS_CHARA_ACTION)
 		
 		StageStatsUsabilityParam1 = 0

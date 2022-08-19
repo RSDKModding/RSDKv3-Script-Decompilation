@@ -14,7 +14,7 @@
 
 // HUD Aliases
 #alias Object.Value0 : HUD.UFOsCount     // Initially set via a loop in the UFO script
-#alias Object.Value1 : HUD.Time.Seconds  // Displayed time
+#alias Object.Value1 : HUD.TimeSeconds  // Displayed time
 #alias Object.Value3 : HUD.Rings
 #alias Object.Value4 : HUD.LastUFOType   // Used by UFOs for ring streak bonus
 #alias Object.Value5 : HUD.SpeedShoesTimer    // Used to transmit between player and UFO
@@ -30,6 +30,14 @@
 
 // SFX Aliases
 #alias 1 : SFX_RING
+
+// Property Value
+#alias 0	:	RING_UFO
+#alias 1	:	SPEEDSHOE_UFO
+#alias 2	:	BONUSTIME_UFO
+
+// Priority
+#alias 1	:	PRIORITY_ACTIVE
 
 
 sub ObjectMain
@@ -140,8 +148,8 @@ sub ObjectMain
 #endplatform
 							
 							switch Object.PropertyValue
-							case 0
-								// Rings UFO - decrease the UFO count and give some bonus rings
+							case RING_UFO
+								// Decrease the UFO count and give some bonus rings
 								HUD[4].UFOsCount--
 								if HUD[4].LastUFOType == Object.PropertyValue
 									// If the last UFO caught was a rings variant too, then double the player's rings rather than adding 20
@@ -151,16 +159,16 @@ sub ObjectMain
 								end if
 								break
 								
-							case 1
-								// Speed Shoes UFO - decrease the UFO count and give the player some new faster shoes
+							case SPEEDSHOE_UFO
+								// Decrease the UFO count and give the player some new faster shoes
 								HUD[4].UFOsCount--
 								HUD[4].SpeedShoesTimer = 600
 								break
 								
-							case 2
-								// Bonus time UFO - add some time to the clock
+							case BONUSTIME_UFO
+								// Aadd some time to the clock
 								// (Not decreasing the UFO count because time UFOs don't count towards the whole)
-								HUD[4].Time.Seconds += 30
+								HUD[4].TimeSeconds += 30
 								break
 								
 							end switch
@@ -270,7 +278,7 @@ sub ObjectStartup
 		if Object[ArrayPos0].Type == TypeName[UFO]
 			
 			// Set the UFO to always be active
-			Object[ArrayPos0].Priority = 1
+			Object[ArrayPos0].Priority = PRIORITY_ACTIVE
 			
 			if Object[ArrayPos0].PropertyValue < 2
 				

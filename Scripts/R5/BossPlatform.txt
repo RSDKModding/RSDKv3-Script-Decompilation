@@ -86,6 +86,9 @@
 #alias 3	:	SFX_BOSSHIT
 #alias 4	:	SFX_IMPACT1
 
+// Ink Effect
+#alias 2	:	INK_ALPHA
+
 
 // Function declarations
 #function BossPlatform_Conveyor_Update
@@ -853,8 +856,7 @@ sub ObjectMain
 			// Poor Robotnik, I hope he's alright...
 			EngineCallback(NOTIFY_KILL_BOSS)
 			
-			// And then, as a separate callback, let the game know we've ended the boss as well
-			// No idea why this and the previous one are separate, they're pretty much the same
+			// Tell HE2 that the boss fight ended
 			game.callbackParam0 = true
 			EngineCallback(NOTIFY_BOSS_END)
 			
@@ -871,11 +873,9 @@ sub ObjectMain
 			Object.State++
 			Object.Timer = 0
 			
-			// Set this Object's Ink Effect to INK_ALPHA, for its red flashing
-			Object.InkEffect = 2
-			
-			// And set the Boss Top to be INK_ALPHA as well, for the same purpose
-			Object[-3].InkEffect = 2
+			// Both this object and BossTop uses alpha for it's red flashing
+			Object.InkEffect	 = INK_ALPHA			
+			Object[-3].InkEffect = INK_ALPHA
 			
 #platform: Use_Haptics
 			HapticEffect(97, 0, 0, 0)

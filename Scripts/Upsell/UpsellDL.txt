@@ -22,9 +22,12 @@
 #alias 4	:	LANG_SPANISH
 #alias 5	:	LANG_JAPANESE
 
+// Engine & Callbacks
+#alias 5	:	ENGINE_ENTER_HIRESMODE
+#alias 6	:	ENGINE_EXIT_HIRESMODE
+
 
 sub ObjectMain
-#platform: Mobile
 	switch Object.State
 	case UpsellDL_FADEIN
 		if Options.PhysicalControls == false
@@ -155,7 +158,7 @@ sub ObjectMain
 			Object.Fade += 8
 		else
 			// Going back to normal-quality graphics, signal the engine to exit high-res mode
-			Engine.State = 6
+			Engine.State = ENGINE_EXIT_HIRESMODE
 
 			// Load the menu
 			Stage.ActiveList = PRESENTATION_STAGE
@@ -170,12 +173,10 @@ sub ObjectMain
 		SetScreenFade(0, 0, 0, TempValue0)
 		break
 	end switch
-#endplatform
 end sub
 
 
 sub ObjectDraw
-#platform: Mobile
 	Object.Scale = 216
 	DrawSpriteScreenFX(0, FX_SCALE, Screen.CenterX, Screen.CenterY)
 	if Object.ButtonCount == 0
@@ -187,12 +188,10 @@ sub ObjectDraw
 		// The "Play again" button is selected, draw its selected sprite as well
 		DrawSpriteScreenFX(2, FX_SCALE, Screen.CenterX, 222)
 	end if
-#endplatform
 end sub
 
 
 sub ObjectStartup
-#platform: Mobile
 
 	// Cycle through all scene objects and find if there are any Upsell DL Objects
 	TempValue0 = false
@@ -237,7 +236,7 @@ sub ObjectStartup
 	end if
 	
 	// The gif is a high-res sprite, so signal to the Engine to start up High-Res mode
-	Engine.State = 5
+	Engine.State = ENGINE_ENTER_HIRESMODE
 
 	// Entire BG sprite
 	SpriteFrame(-512, -288, 1024, 576, 0, 0)
@@ -257,7 +256,6 @@ sub ObjectStartup
 		SpriteFrame(-91, -24, 183, 49, 420, 677)
 	end if
 
-#endplatform
 end sub
 
 // ========================

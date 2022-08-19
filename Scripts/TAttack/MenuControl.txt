@@ -50,7 +50,10 @@
 #alias 18	:	MENUCONTROL_SCROLL_UP
 #alias 19	:	MENUCONTROL_SCROLLING_2
 
-// OST
+// States
+#alias 1	:	ROUNDICON_SELECTED_ZONE
+
+// Soundtrack
 #alias 0	:	OST_JP
 
 // Engine & Callbacks
@@ -62,6 +65,9 @@
 
 // Device Type
 #alias 1	:	RETRO_MOBILE
+
+// Game Modes
+#alias 2	:	GAMEMODE_TIMEATTACK
 
 // SaveRAM[39] is how many zones are unlocked for Time Attack
 
@@ -423,7 +429,7 @@ sub ObjectMain
 			ArrayPos0 = 32
 			ArrayPos0 += Object.SavedRound
 			CheckResult = false
-			if Object[ArrayPos0].State != 1
+			if Object[ArrayPos0].State != ROUNDICON_SELECTED_ZONE
 				if KeyPress[0].Left == true
 					Object.SavedRound--
 					if Object.SavedRound < 0
@@ -475,7 +481,7 @@ sub ObjectMain
 				ArrayPos0 = 32
 				ArrayPos0 += Object.SavedRound
 				if Object[ArrayPos0].ZoneLocked == 0
-					Object[ArrayPos0].State = 1
+					Object[ArrayPos0].State = ROUNDICON_SELECTED_ZONE
 					switch Object.SavedRound
 					case -1
 						break
@@ -562,7 +568,7 @@ sub ObjectMain
 			ArrayPos0 = 32
 			ArrayPos0 += Object.SavedRound
 			//Telling to RoundIcon that we want to leave
-			Object[ArrayPos0].State = 1
+			Object[ArrayPos0].State = ROUNDICON_SELECTED_ZONE
 			Object.State++
 			StopMusic()
 			PlaySfx(27, 0)	//Select SFX
@@ -910,13 +916,13 @@ sub ObjectMain
 #platform: Use_Origins
 				Stage.ActiveList = 3
 #endplatform
-				Stage.ListPos = Object.LIconPortrait
+				Stage.ListPos	 = Object.LIconPortrait
 				TimeAttack.Round = Object.LIconPortrait
-				TimeAttack.Zone = 0
+				TimeAttack.Zone	 = 0
 			end if
-			Player.Lives = 1
-			Player.Score = 0
-			Options.GameMode = 2
+			Player.Lives	 = 1
+			Player.Score	 = 0
+			Options.GameMode = GAMEMODE_TIMEATTACK
 			LoadStage()
 		end if
 		SetScreenFade(0, 0, 0, Object.Timer)

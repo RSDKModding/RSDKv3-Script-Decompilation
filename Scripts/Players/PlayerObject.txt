@@ -25,9 +25,9 @@
 #alias 1	:	PLAYER_TAILS
 
 // Flailing states, v4 names explains this much better
-#alias Player.Flailing[0]	:	Player.FloorSensorL
-#alias Player.Flailing[1]	:	Player.FloorSensorC
-#alias Player.Flailing[2]	:	Player.FloorSensorR
+#alias Player[0].Flailing	:	Player.FloorSensorL
+#alias Player[1].Flailing	:	Player.FloorSensorC
+#alias Player[2].Flailing	:	Player.FloorSensorR
 
 // LoseRing Aliases
 #alias Object.Value0		:	Object.XVelocity
@@ -45,7 +45,7 @@
 #alias Object[9].Priority	:	PauseMenu.Priority
 
 // Debug Mode Alias
-#alias Object[25].Value7	:	DebugMode.APress
+#alias Object[25].Value7	:	DebugMode.ButtonA
 
 // Death Event Aliases
 #alias Object.Value1	:	DeathEvent.Text1XPos	// Game or Time
@@ -113,6 +113,10 @@
 
 // Mission Functions
 #alias 8	:	RULE_MERCY_BADNIKS
+
+// Engine Callbacks
+#alias 13	:	CALLBACK_PAUSE_REQUESTED
+
 
 // Function declarations
 #function Player_BadnikBreak
@@ -263,14 +267,15 @@ function Player_BadnikBreak
 	else
 		if Player.InvincibleTimer == 0
 			Player.State = Player_State_GotHit
+
 #platform: Use_Origins
 			if game.playMode == BOOT_PLAYMODE_MISSION
-				// Set during "M097 - Mercy"
 				if game.missionFunctionNo == RULE_MERCY_BADNIKS
-					game.forceKillPlayer = true
+					game.missionValue = 1
 				end if
 			end if
 #endplatform
+
 			if Player.XPos > Object.XPos
 				Player.Speed = 0x20000
 			else
@@ -335,7 +340,7 @@ function Player_ProcessUpdate
 						PauseMenu.DrawOrder = 7
 						PauseMenu.Priority	= PRIORITY_ALWAYS
 					else
-						EngineCallback(13) // ask the engine to open the "native" pause menu
+						EngineCallback(CALLBACK_PAUSE_REQUESTED) // ask the engine to open the "native" pause menu
 					end if
 				end if
 			end if
@@ -385,11 +390,11 @@ function Player_ProcessUpdate
 					KeyDown[1].ButtonA = true
 				end if
 
-				if DebugMode.APress == false
+				if DebugMode.ButtonA == false
 					KeyPress[1].ButtonA |= KeyDown[1].ButtonA
 				end if
 
-				DebugMode.APress = KeyDown[1].ButtonA
+				DebugMode.ButtonA = KeyDown[1].ButtonA
 				if Object[9].Type == TypeName[Blank Object]
 
 					CheckTouchRect(240, 0, Screen.XSize, 40)
@@ -550,7 +555,7 @@ function Player_ProcessUpdate
 		if Warp.Timer == 204
 			Screen.CameraEnabled = false
 			CreateTempObject(TypeName[TimeWarp], 0, 0, 0)
-			Object[TempObjectPos].DrawOrder = 6
+			Object[TempObjectPos].DrawOrder = 7
 		end if
 	end if
 	
@@ -658,7 +663,7 @@ function Player_State_Ground
 					if Stage.PlayerListPos == PLAYER_SONIC
 						Player.Timer++
 #platform: Use_Origins
-						// In Origins, Sonic can only go Outta Here in Classic mode...
+						// Origins locks Outta Here to classic mode
 						
 						if game.playMode == BOOT_PLAYMODE_CLASSIC
 							if Player.Timer == 10620
@@ -683,8 +688,8 @@ function Player_State_Ground
 							Player.Animation = ANI_BORED
 						end if
 #endplatform
-					end if
 
+					end if
 				end if
 
 				if Player.FloorSensorC == false
@@ -1444,8 +1449,14 @@ function Player_Action_Jump
 		Player.CollisionMode = CMODE_FLOOR
 		Player.Timer		 = 1
 		CallFunction(Player_HandleRollAnimSpeed)
-		
-		Player.State = Player_State_Air
+
+#platform: Use_Origins
+			Player.State = Player_State_Air_NoDropDash
+#endplatform
+
+#platform: Use_Standalone
+			Player.State = Player_State_Air
+#endplatform
 
 		PlaySfx(0, 0)
 	end if
@@ -1526,9 +1537,9 @@ function Player_Action_DblJumpTails
 			Player.FlightVelocity = 0x800
 
 #platform: Use_Origins
-			game.callbackParam0 = 0
-			game.callbackParam1 = 1
-			game.callbackParam2 = 0
+			game.callbackParam0 = 0	// Unknown
+			game.callbackParam1 = 1	// Unknown
+			game.callbackParam2 = 0	// Unknown
 			EngineCallback(NOTIFY_STATS_CHARA_ACTION)
 #endplatform
 
@@ -2027,8 +2038,17 @@ function Player_State_GotHit
 			PlaySfx(5, 0)
 			TempValue0 = DAMAGE_DEATH
 		else
+#platform: Use_Origins
+			if TempValue1 == false
+				PlaySfx(4, 0)
+				TempValue0 = DAMAGE_HURT
+			end if
+#endplatform
+
+#platform: Use_Standalone
 			PlaySfx(4, 0)
 			TempValue0 = DAMAGE_HURT
+#endplatform
 		end if
 	end if
 
@@ -2246,17 +2266,10 @@ function Player_State_Death
 			else
 			
 #platform: Use_Origins
-				// In Origins, lives aren't used too often so make sure we're in a scenario where they are before we subtract some
-				
+				// Check that we are actually in a mode where we use lives
 				if game.coinMode == false
 					if game.playMode != BOOT_PLAYMODE_MISSION
-						CheckEqual(game.playMode, BOOT_PLAYMODE_BOSSRUSH)
-						TempValue0  = CheckResult
-						CheckEqual(game.oneStageFlag, false)
-						TempValue0 |= CheckResult
-						if TempValue0 != false
-							Player.Lives--
-						end if
+						Player.Lives--
 					end if
 				end if
 #endplatform
@@ -2275,6 +2288,7 @@ function Player_State_Death
 		TempValue0   = CheckResult
 		CheckNotEqual(Player.Lives, 0)
 		TempValue0  |= CheckResult
+		// Check if the player is replaying the stage from My Data & Rankings
 		CheckEqual(game.oneStageFlag, false)
 		CheckResult |= TempValue0
 #endplatform
@@ -2287,7 +2301,7 @@ function Player_State_Death
 		
 		// Again, this check is new to Origins and doesn't exist in Standalone
 		if CheckResult != false
-			Object.Type = TypeName[DeathEvent]
+			Object.Type = TypeName[Death Event]
 			DeathEvent.DrawOrder  = 7
 			DeathEvent.Text1XPos  = Screen.CenterX
 			DeathEvent.Text1XPos -= 232
@@ -2305,6 +2319,17 @@ function Player_State_Death
 				// *Technically it goes to the traditional game over in the same state
 				PlayMusic(5)
 				Stage.PauseEnabled = false
+
+#platform: Use_Origins
+				if game.oneStageFlag != false
+					game.callbackResult = -1				// Reset any callback result
+					game.callbackParam0 =  0				// 0 - Normal Retry, anything else - Show current and best time
+					game.callbackParam1 =  Stage.ListPos	// Get current stage
+					game.callbackParam2 =  0				// Unknown
+					EngineCallback(NOTIFY_STAGE_RETRY)
+				end if
+#endplatform
+
 			else
 				DeathEvent.Timer = 0
 				DeathEvent.State = DEATHEVENT_FADEOUT
@@ -2316,6 +2341,7 @@ function Player_State_Death
 					if game.playMode != BOOT_PLAYMODE_BOSSRUSH
 						if Stage.Minutes == 9
 							if Stage.Seconds == 59
+								// Check if the player is replaying the stage from My Data & Rankings
 								if game.oneStageFlag == false
 									DeathEvent.Timer = -2880
 									DeathEvent.State = DEATHEVENT_TIMEOVER
@@ -2358,14 +2384,8 @@ function Player_State_Drown
 		// We only subtract lives sometimes in Origins
 		if game.coinMode == false
 			if game.playMode != BOOT_PLAYMODE_MISSION
-				CheckEqual(game.playMode, BOOT_PLAYMODE_BOSSRUSH)
-				TempValue0  = CheckResult
-				CheckEqual(game.oneStageFlag, false)
-				TempValue0 |= CheckResult
-				if TempValue0 != false
-					if Player.Lives > 0
-						Player.Lives--
-					end if
+				if Player.Lives > 0
+					Player.Lives--
 				end if
 			end if
 		end if
@@ -3055,6 +3075,15 @@ end sub
 
 
 sub ObjectStartup
+
+#platform: Use_Origins
+	if Options.AttractMode == false
+		if Options.StageSelectFlag == false
+			ReadSaveRAM()
+		end if
+	end if
+#endplatform
+
 	ArrayPos0 = 32
 	while ArrayPos0 < 1056
 		if Object[ArrayPos0].Type == TypeName[Player Object]

@@ -1,4 +1,4 @@
-//------------Sonic CD Options Menu Haptics Script-------------//
+//------------Sonic CD Options Menu Haptics Script------------//
 //--------Scripted by Christian Whitehead 'The Taxman'--------//
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 //---This Object is normally only used by Mobile Data files---//
@@ -10,9 +10,13 @@
 #alias Object.Value4 				:	Object.BGMIncreaseTimer
 #alias Object.Value5 				:	Object.SFXDecreaseTimer
 #alias Object.Value6 				:	Object.SFXIncreaseTimer
+#alias Object.Value7 				:	Object.TouchDelay
 
 //Object[+ArrayPos0] can be the BlankObjects 63, 64, 65 and 66. Depending of the CurrentSelection value
 #alias Object[+ArrayPos0].Value2 	:	Object.FlickerText
+
+//Object[+4] is Empty, only used to set the Maximum amount of options for the controls
+#alias Object[+4].Value1			:	Object.OptionCount
 
 //Object[33] is MenuHeading
 #alias Object[33].State				:	MenuHeading.State
@@ -42,6 +46,18 @@
 #alias 14	:	OPTIONS_ABOUTMENU_CONTROLS
 #alias 15	:	OPTIONS_EXIT_ABOUTMENU
 
+// Menu Window States
+#alias 3	:	MENUWINDOW_SHRINK
+
+// Menu Button States
+#alias 1	:	MENUBUTTON_BUTTONS_IN
+
+// Menu Heading States
+#alias 1	:	MENUHEADING_LEAVE_SCREEN
+
+// Menu Heading Property Values
+#alias 5	:	MAINMENU_HEADER
+
 // Languages
 #alias 0	:	LANG_ENGLISH
 #alias 1	:	LANG_FRENCH
@@ -55,11 +71,12 @@
 
 // Ink Effects
 #alias 2	:	INK_ALPHA
+
 // SaveRAM Values
 // 32	:	SavedSettings
 // 33	:	BGM
 // 34	:	SFX
-// 35	:	Controls
+// 35	:	Control Type
 // 40	:	Haptic
 
 // Function declarations
@@ -69,26 +86,26 @@
 
 function OptionsMenuH_DrawOptions
 	switch Object.FlickerText
-	case 0	//Base
+	case false
 		if ArrayPos0 == Object.CurrentSelection
 			DrawSpriteScreenFX(9, FX_INK, Object.XPos, Object.YPos)
-			TempValue0 = ArrayPos0
+			TempValue0  = ArrayPos0
 			TempValue0 += 14
 			DrawSpriteScreenFX(TempValue0, FX_INK, Object.XPos, Object.YPos)
 		else
-			TempValue0 = ArrayPos0
+			TempValue0  = ArrayPos0
 			TempValue0 += 10
 			DrawSpriteScreenFX(TempValue0, FX_INK, Object.XPos, Object.YPos)
 		end if
 		break
 
-	case 1	//Selected option, start flicker
-		TempValue0 = Object.Timer
-		TempValue0 &= 3
+	case true
+		TempValue0   = Object.Timer
+		TempValue0  &= 3
 		TempValue0 >>= 1
 		DrawSpriteScreenFX(9, FX_INK, Object.XPos, Object.YPos)
 		if TempValue0 == 0
-			TempValue0 = ArrayPos0
+			TempValue0  = ArrayPos0
 			TempValue0 += 14
 			DrawSpriteScreenFX(TempValue0, FX_INK, Object.XPos, Object.YPos)
 		end if
@@ -107,10 +124,12 @@ sub ObjectMain
 		if Options.PhysicalControls == false
 			Object.CurrentSelection = -1
 		end if
-		Object.XPos = Screen.CenterX
+
+		Object.XPos  = Screen.CenterX
 		Object.XPos -= 126
+
 		if Object.Timer < 256
-			Object.Alpha = Object.Timer
+			Object.Alpha  = Object.Timer
 			Object.Timer += 6
 		else
 			Object.Timer = 0
@@ -213,11 +232,12 @@ sub ObjectMain
 			CallFunction(MenuHeading_CheckTouchBack)
 			
 			if KeyPress[0].Up == true
-				Object.CurrentSelection = 3
+				Object.CurrentSelection  = 3
 				Options.PhysicalControls = true
 			end if
+
 			if KeyPress[0].Down == true
-				Object.CurrentSelection = 0
+				Object.CurrentSelection  = 0
 				Options.PhysicalControls = true
 			end if
 		end if
@@ -271,6 +291,7 @@ sub ObjectMain
 			case 0
 				Object.State = OPTIONS_STAGE_LOAD
 				break
+
 			case 1
 				ReadSaveRAM()
 				if SaveRAM[32] == false
@@ -279,18 +300,22 @@ sub ObjectMain
 					SaveRAM[35] = 0
 					SaveRAM[40] = true	// Haptics
 				end if
+
 				Object.State = OPTIONS_SETTINGS_SETUP
-				Object.YPos = 40
+
+				Object.YPos  = 40
 				Object.YPos *= Object.CurrentSelection
 				Object.YPos += Screen.CenterY
 				Object.YPos -= 87
 				break
+
 			case 2
 				Object.State = OPTIONS_STAGE_LOAD
 				break
+
 			case 3
 				Object.State = OPTIONS_ENTER_ABOUT_MENU
-				Object.YPos = 40
+				Object.YPos  = 40
 				Object.YPos *= Object.CurrentSelection
 				Object.YPos += Screen.CenterY
 				Object.YPos -= 87
@@ -298,6 +323,7 @@ sub ObjectMain
 			end switch
 		end if
 		break
+
 	case OPTIONS_STAGE_LOAD
 		if Object.Timer < 320
 			Object.Timer += 8
@@ -315,15 +341,18 @@ sub ObjectMain
 					LoadStage()
 				end if
 				break
+
 			case 2
 				Stage.ListPos = 7			//Staff Credits
 				LoadStage()
 				break
+
 			case 3							//Unused
 				Engine.State = RESET_GAME
 				break
 			end switch
 		end if
+
 		TempValue0 = Object.Timer
 		if TempValue0 > 255
 			TempValue0 = 255
@@ -332,7 +361,7 @@ sub ObjectMain
 		break
 
 	case OPTIONS_SETTINGS_SETUP
-		TempValue0 = Screen.CenterY
+		TempValue0  = Screen.CenterY
 		TempValue0 -= 87
 		if Object.YPos > TempValue0
 			Object.YPos -= 8
@@ -342,17 +371,17 @@ sub ObjectMain
 		else
 			Object.State++
 			Object.Alpha = 0
-			Object[+4].Value1 = 0
+			Object.OptionCount = 0
 			if Options.PhysicalControls == false
 				ArrayPos0 = Object.CurrentSelection
-				Object[+4].Value1 = -1
+				Object.OptionCount = -1
 			end if
 		end if
 		break
 
 	case OPTIONS_SETTINGS_POPIN
 		if Object.Timer < 256
-			Object.Alpha = Object.Timer
+			Object.Alpha  = Object.Timer
 			Object.Timer += 8
 		else
 			Object.Timer = 0
@@ -364,21 +393,21 @@ sub ObjectMain
 		ArrayPos0 = Object.CurrentSelection
 		if Options.PhysicalControls == true
 			if KeyPress[0].Up == true
-				Object[+4].Value1--
+				Object.OptionCount--
 				PlaySfx(23, 0) 	//Menu Button SFX
-				if Object[+4].Value1 < 0
-					Object[+4].Value1 = 3
+				if Object.OptionCount < 0
+					Object.OptionCount = 3
 				end if
 			end if
 			if KeyPress[0].Down == true
-				Object[+4].Value1++
+				Object.OptionCount++
 				PlaySfx(23, 0) 	//Menu Button SFX
-				if Object[+4].Value1 > 3
-					Object[+4].Value1 = 0
+				if Object.OptionCount > 3
+					Object.OptionCount = 0
 				end if
 			end if
-			switch Object[+4].Value1
-			case 0
+			switch Object.OptionCount
+			case 0	// BGM
 				if KeyPress[0].Left == true
 					Object.BGMDecreaseTimer = 10
 					SaveRAM[33] -= 10
@@ -390,6 +419,7 @@ sub ObjectMain
 						PlaySfx(23, 0) 	//Menu Button SFX
 					end if
 				end if
+
 				if KeyPress[0].Right == true
 					Object.BGMIncreaseTimer = 10
 					SaveRAM[33] += 10
@@ -402,7 +432,8 @@ sub ObjectMain
 					end if
 				end if
 				break
-			case 1
+
+			case 1	// SFX
 				if KeyPress[0].Left == true
 					Object.SFXDecreaseTimer = 10
 					SaveRAM[34] -= 10
@@ -414,6 +445,7 @@ sub ObjectMain
 						Engine.SFXVolume = SaveRAM[34]
 					end if
 				end if
+
 				if KeyPress[0].Right == true
 					Object.SFXIncreaseTimer = 10
 					SaveRAM[34] += 10
@@ -425,7 +457,8 @@ sub ObjectMain
 					end if
 				end if
 				break
-			case 2
+
+			case 2	// Control Type
 				if KeyPress[0].Left == true
 					SaveRAM[35]--
 					if SaveRAM[35] < 0
@@ -433,6 +466,7 @@ sub ObjectMain
 					end if
 					PlaySfx(23, 0) 	//Menu Button SFX
 				end if
+
 				if KeyPress[0].Right == true
 					SaveRAM[35]++
 					if SaveRAM[35] > 1
@@ -441,7 +475,8 @@ sub ObjectMain
 					PlaySfx(23, 0) 	//Menu Button SFX
 				end if
 				break
-			case 3
+
+			case 3	// Haptics
 				if KeyPress[0].Left == true
 					SaveRAM[40]--
 					if SaveRAM[40] < false
@@ -450,6 +485,7 @@ sub ObjectMain
 					end if
 					PlaySfx(23, 0) 	//Menu Button SFX
 				end if
+
 				if KeyPress[0].Right == true
 					SaveRAM[40]++
 					if SaveRAM[40] > true
@@ -459,29 +495,31 @@ sub ObjectMain
 				end if
 				break
 			end switch
+
 			CheckTouchRect(0, 0, Screen.XSize, Screen.YSize)
 			if CheckResult > -1
 				Options.PhysicalControls = false
-				Object[+4].Value1 = -1
+				Object.OptionCount = -1
 			end if
 		else
 			CheckTouchRect(0, 0, Screen.XSize, Screen.YSize)
 			if CheckResult > -1
-				Object.Value7++
-				Object.Value7 %= 24
+				Object.TouchDelay++
+				Object.TouchDelay %= 24
 			else
-				Object.Value7 = 0
+				Object.TouchDelay = 0
 			end if
-			TempValue3 = CheckResult
-			TempValue0 = Screen.CenterX
+
+			TempValue3  = CheckResult
+			TempValue0  = Screen.CenterX
 			TempValue0 += 16
-			TempValue1 = Screen.CenterX
+			TempValue1  = Screen.CenterX
 			TempValue1 += 48
 			CheckTouchRect(TempValue0, 70, TempValue1, 97)
 			if CheckResult > -1
-				Object[+4].Value1 = 3
+				Object.OptionCount		= 3
 				Object.BGMDecreaseTimer = 10
-				if Object.Value7 == 23
+				if Object.TouchDelay == 23
 					SaveRAM[33] -= 10
 					if SaveRAM[33] < 0
 						SaveRAM[33] = 0
@@ -493,7 +531,7 @@ sub ObjectMain
 				end if
 			else
 				if TempValue3 < 0
-					if Object[+4].Value1 == 3
+					if Object.OptionCount == 3
 						Object.BGMDecreaseTimer = 0
 						SaveRAM[33] -= 10
 						if SaveRAM[33] < 0
@@ -503,19 +541,19 @@ sub ObjectMain
 							Engine.BGMVolume = SaveRAM[33]
 							PlaySfx(23, 0) 	//Menu Button SFX
 						end if
-						Object[+4].Value1 = -1
+						Object.OptionCount = -1
 					end if
 				else
-					if Object[+4].Value1 == 3
-						Object[+4].Value1 = -1
+					if Object.OptionCount == 3
+						Object.OptionCount = -1
 					end if
 				end if
 			end if
 			CheckTouchRect(TempValue0, 99, TempValue1, 126)
 			if CheckResult > -1
-				Object[+4].Value1 = 4
+				Object.OptionCount		= 4
 				Object.SFXDecreaseTimer = 10
-				if Object.Value7 == 23
+				if Object.TouchDelay == 23
 					SaveRAM[34] -= 10
 					if SaveRAM[34] < 0
 						SaveRAM[34] = 0
@@ -527,7 +565,7 @@ sub ObjectMain
 				end if
 			else
 				if TempValue3 < 0
-					if Object[+4].Value1 == 4
+					if Object.OptionCount == 4
 						Object.SFXDecreaseTimer = 0
 						SaveRAM[34] -= 10
 						if SaveRAM[34] < 0
@@ -537,24 +575,24 @@ sub ObjectMain
 							Engine.SFXVolume = SaveRAM[34]
 							PlaySfx(23, 0) 	//Menu Button SFX
 						end if
-						Object[+4].Value1 = -1
+						Object.OptionCount = -1
 					end if
 				else
-					if Object[+4].Value1 == 4
-						Object[+4].Value1 = -1
+					if Object.OptionCount == 4
+						Object.OptionCount = -1
 					end if
 				end if
 			end if
 
-			TempValue0 = Screen.CenterX
+			TempValue0  = Screen.CenterX
 			TempValue0 += 84
-			TempValue1 = Screen.CenterX
+			TempValue1  = Screen.CenterX
 			TempValue1 += 120
 			CheckTouchRect(TempValue0, 70, TempValue1, 97)
 			if CheckResult > -1
-				Object[+4].Value1 = 5
+				Object.OptionCount		= 5
 				Object.BGMIncreaseTimer = 10
-				if Object.Value7 == 23
+				if Object.TouchDelay == 23
 					SaveRAM[33] += 10
 					if SaveRAM[33] > 100
 						SaveRAM[33] = 100
@@ -566,7 +604,7 @@ sub ObjectMain
 				end if
 			else
 				if TempValue3 < 0
-					if Object[+4].Value1 == 5
+					if Object.OptionCount == 5
 						Object.BGMIncreaseTimer = 0
 						SaveRAM[33] += 10
 						if SaveRAM[33] > 100
@@ -576,20 +614,20 @@ sub ObjectMain
 							Engine.BGMVolume = SaveRAM[33]
 							PlaySfx(23, 0) 	//Menu Button SFX
 						end if
-						Object[+4].Value1 = -1
+						Object.OptionCount = -1
 					end if
 				else
-					if Object[+4].Value1 == 5
-						Object[+4].Value1 = -1
+					if Object.OptionCount == 5
+						Object.OptionCount = -1
 					end if
 				end if
 			end if
 
 			CheckTouchRect(TempValue0, 99, TempValue1, 126)
 			if CheckResult > -1
-				Object[+4].Value1 = 6
+				Object.OptionCount		= 6
 				Object.SFXIncreaseTimer = 10
-				if Object.Value7 == 23
+				if Object.TouchDelay == 23
 					SaveRAM[34] += 10
 					if SaveRAM[34] > 100
 						SaveRAM[34] = 100
@@ -601,7 +639,7 @@ sub ObjectMain
 				end if
 			else
 				if TempValue3 < 0
-					if Object[+4].Value1 == 6
+					if Object.OptionCount == 6
 						Object.SFXIncreaseTimer = 0
 						SaveRAM[34] += 10
 						if SaveRAM[34] > 100
@@ -611,137 +649,138 @@ sub ObjectMain
 							Engine.SFXVolume = SaveRAM[34]
 							PlaySfx(23, 0) 	//Menu Button SFX
 						end if
-						Object[+4].Value1 = -1
+						Object.OptionCount = -1
 					end if
 				else
-					if Object[+4].Value1 == 6
-						Object[+4].Value1 = -1
+					if Object.OptionCount == 6
+						Object.OptionCount = -1
 					end if
 				end if
 			end if
 
-			TempValue0 = Screen.CenterX
+			TempValue0  = Screen.CenterX
 			TempValue0 += 14
-			TempValue1 = Screen.CenterX
+			TempValue1  = Screen.CenterX
 			TempValue1 += 64
 			CheckTouchRect(TempValue0, 130, TempValue1, 158)
 			if CheckResult > -1
-				Object[+4].Value1 = 7
+				Object.OptionCount = 7
 			else
 				if TempValue3 < 0
-					if Object[+4].Value1 == 7
+					if Object.OptionCount == 7
 						SaveRAM[35] = 0
 						PlaySfx(23, 0) 	//Menu Button SFX
-						Object[+4].Value1 = -1
+						Object.OptionCount = -1
 					end if
 				else
-					if Object[+4].Value1 == 7
-						Object[+4].Value1 = -1
+					if Object.OptionCount == 7
+						Object.OptionCount = -1
 					end if
 				end if
 			end if
 
-			TempValue0 = Screen.CenterX
+			TempValue0  = Screen.CenterX
 			TempValue0 += 68
-			TempValue1 = Screen.CenterX
+			TempValue1  = Screen.CenterX
 			TempValue1 += 114
 			CheckTouchRect(TempValue0, 130, TempValue1, 158)
 			if CheckResult > -1
-				Object[+4].Value1 = 8
+				Object.OptionCount = 8
 			else
 				if TempValue3 < 0
-					if Object[+4].Value1 == 8
+					if Object.OptionCount == 8
 						SaveRAM[35] = 1
 						PlaySfx(23, 0) 	//Menu Button SFX
-						Object[+4].Value1 = -1
+						Object.OptionCount = -1
 					end if
 				else
-					if Object[+4].Value1 == 8
-						Object[+4].Value1 = -1
+					if Object.OptionCount == 8
+						Object.OptionCount = -1
 					end if
 				end if
 			end if
 
-			TempValue0 = Screen.CenterX
+			TempValue0  = Screen.CenterX
 			TempValue0 += 14
-			TempValue1 = Screen.CenterX
+			TempValue1  = Screen.CenterX
 			TempValue1 += 64
 			CheckTouchRect(TempValue0, 160, TempValue1, 188)
 			if CheckResult > -1
-				Object[+4].Value1 = 9
+				Object.OptionCount = 9
 			else
 				if TempValue3 < 0
-					if Object[+4].Value1 == 9
+					if Object.OptionCount == 9
 						SaveRAM[40] = true
 						Engine.HapticsEnabled = true
 						PlaySfx(23, 0) 	//Menu Button SFX
-						Object[+4].Value1 = -1
+						Object.OptionCount = -1
 						HapticEffect(30, 0, 0, 0)
 					end if
 				else
-					if Object[+4].Value1 == 9
-						Object[+4].Value1 = -1
+					if Object.OptionCount == 9
+						Object.OptionCount = -1
 					end if
 				end if
 			end if
 
-			TempValue0 = Screen.CenterX
+			TempValue0  = Screen.CenterX
 			TempValue0 += 68
-			TempValue1 = Screen.CenterX
+			TempValue1  = Screen.CenterX
 			TempValue1 += 114
 			CheckTouchRect(TempValue0, 160, TempValue1, 188)
 			if CheckResult > -1
-				Object[+4].Value1 = 10
+				Object.OptionCount = 10
 			else
 				if TempValue3 < 0
-					if Object[+4].Value1 == 10
+					if Object.OptionCount == 10
 						SaveRAM[40] = false
 						Engine.HapticsEnabled = false
 						PlaySfx(23, 0) 	//Menu Button SFX
-						Object[+4].Value1 = -1
+						Object.OptionCount = -1
 					end if
 				else
-					if Object[+4].Value1 == 10
-						Object[+4].Value1 = -1
+					if Object.OptionCount == 10
+						Object.OptionCount = -1
 					end if
 				end if
 			end if
 
-			TempValue0 = Screen.XSize
+			TempValue0  = Screen.XSize
 			TempValue0 -= 96
 			CheckTouchRect(TempValue0, 192, Screen.XSize, Screen.YSize)
 			if CheckResult > -1
-				Object[+4].Value1 = 11
+				Object.OptionCount = 11
 				Object.BackTouchPress = true
 			else
 				Object.BackTouchPress = false
 				if TempValue3 < 0
-					if Object[+4].Value1 == 11
+					if Object.OptionCount == 11
 						KeyPress[0].ButtonB = 1
 					end if
 				else
-					if Object[+4].Value1 == 11
-						Object[+4].Value1 = -1
+					if Object.OptionCount == 11
+						Object.OptionCount = -1
 					end if
 				end if
 			end if
 
 			if KeyPress[0].Up == true
-				Object[+4].Value1 = 2
+				Object.OptionCount = 2
 				Options.PhysicalControls = true
 			end if
 			
 			if KeyPress[0].Down == true
-				Object[+4].Value1 = 0
+				Object.OptionCount = 0
 				Options.PhysicalControls = true
 			end if
 		end if
+
 		if KeyPress[0].ButtonB == true
-			Object.State = 9
+			Object.State = OPTIONS_EXIT_SETTINGS
 			Object.Timer = 248
 			Options.OriginalControls = SaveRAM[35]
-			Engine.HapticsEnabled = SaveRAM[40]
-			SaveRAM[32] = 1
+			Engine.HapticsEnabled	 = SaveRAM[40]
+			SaveRAM[32] = true
 			WriteSaveRAM()
 			PlayStageSfx(1, 0)
 		end if
@@ -766,6 +805,7 @@ sub ObjectMain
 			Object.State = OPTIONS_CONTROLS
 			PlayMusic(0)
 		end if
+
 		TempValue0 = Object.Timer
 		if TempValue0 > 255
 			TempValue0 = 255
@@ -775,7 +815,7 @@ sub ObjectMain
 
 	case OPTIONS_EXIT_SETTINGS
 		if Object.Timer > 0
-			Object.Alpha = Object.Timer
+			Object.Alpha  = Object.Timer
 			Object.Timer -= 8
 		else
 			Object.Alpha = 0
@@ -784,10 +824,11 @@ sub ObjectMain
 		break
 
 	case OPTIONS_LEAVE_SUBMENU
-		TempValue0 = Object.CurrentSelection
+		TempValue0  = Object.CurrentSelection
 		TempValue0 *= 40
 		TempValue0 += Screen.CenterY
 		TempValue0 -= 87
+
 		if Object.YPos < TempValue0
 			Object.YPos += 8
 			if Object.YPos > TempValue0
@@ -805,29 +846,29 @@ sub ObjectMain
 
 	case OPTIONS_EXIT
 		if Object.Timer > 0
-			Object.Alpha = Object.Timer
+			Object.Alpha  = Object.Timer
 			Object.Timer -= 8
 		else
 			Object.Type = TypeName[Blank Object]
-			MenuWindow.State = 3
+			MenuWindow.State = MENUWINDOW_SHRINK
 			//All of this is MenuButton objects
-			Object[34].State = 1
-			Object[35].State = 1
-			Object[36].State = 1
-			Object[37].State = 1
-			Object[38].State = 1
-			Object[39].State = 1
-			Object[40].State = 1
-			Object[41].State = 1
-			Object[42].State = 1
+			Object[34].State = MENUBUTTON_BUTTONS_IN
+			Object[35].State = MENUBUTTON_BUTTONS_IN
+			Object[36].State = MENUBUTTON_BUTTONS_IN
+			Object[37].State = MENUBUTTON_BUTTONS_IN
+			Object[38].State = MENUBUTTON_BUTTONS_IN
+			Object[39].State = MENUBUTTON_BUTTONS_IN
+			Object[40].State = MENUBUTTON_BUTTONS_IN
+			Object[41].State = MENUBUTTON_BUTTONS_IN
+			Object[42].State = MENUBUTTON_BUTTONS_IN
 			//End
-			MenuHeading.State = 1
-			MenuHeading.Header = 5
+			MenuHeading.State  = MENUHEADING_LEAVE_SCREEN
+			MenuHeading.Header = MAINMENU_HEADER
 		end if
 		break
 
 	case OPTIONS_ABOUTMENU_SETUP
-		TempValue0 = Screen.CenterY
+		TempValue0  = Screen.CenterY
 		TempValue0 -= 87
 		if Object.YPos > TempValue0
 			Object.YPos -= 8
@@ -835,7 +876,7 @@ sub ObjectMain
 				Object.YPos = TempValue0
 			end if
 		else
-			TempValue0 = Object.EntityNo
+			TempValue0  = Object.EntityNo
 			TempValue0 += 10
 			ResetObjectEntity(TempValue0, TypeName[AboutMenuF], 0, 0, 0)
 			SetupMenu(MENU_1, 0, 3, 1)
@@ -843,17 +884,17 @@ sub ObjectMain
 			Object[+10].InkEffect = INK_ALPHA
 			Object.State++
 			Object.Alpha = 0
-			Object[+4].Value1 = 0
+			Object.OptionCount = 0
 			if Options.PhysicalControls == false
 				ArrayPos0 = Object.CurrentSelection
-				Object[+4].Value1 = -1
+				Object.OptionCount = -1
 			end if
 		end if
 		break
 
 	case OPTIONS_ENTER_ABOUTMENU
 		if Object.Timer < 256
-			Object.Alpha = Object.Timer
+			Object.Alpha  = Object.Timer
 			Object.Timer += 8
 		else
 			Object.Timer = 0
@@ -863,28 +904,29 @@ sub ObjectMain
 		break
 
 	case OPTIONS_ABOUTMENU_CONTROLS
-#platform: Use_Standalone	// Mobile only
+#platform: Mobile
 		CheckTouchRect(0, 0, Screen.XSize, Screen.YSize)
-		TempValue3 = CheckResult
-		TempValue0 = Screen.XSize
+		TempValue3  = CheckResult
+		TempValue0  = Screen.XSize
 		TempValue0 -= 96
 		CheckTouchRect(TempValue0, 192, Screen.XSize, Screen.YSize)
 		if CheckResult > -1
-			Object[+4].Value1 = 9
+			Object.OptionCount = 9
 			Object.BackTouchPress = true
 		else
 			Object.BackTouchPress = false
 			if TempValue3 < 0
-				if Object[+4].Value1 == 9
-					KeyPress[0].ButtonB = 1
+				if Object.OptionCount == 9
+					KeyPress[0].ButtonB = true
 				end if
 			else
-				if Object[+4].Value1 == 9
-					Object[+4].Value1 = -1
+				if Object.OptionCount == 9
+					Object.OptionCount = -1
 				end if
 			end if
 		end if
 #endplatform
+
 		if KeyPress[0].ButtonB == true
 			Object.State = OPTIONS_EXIT_ABOUTMENU
 			Object.Timer = 248
@@ -894,7 +936,7 @@ sub ObjectMain
 
 	case OPTIONS_EXIT_ABOUTMENU
 		if Object.Timer > 0
-			Object.Alpha = Object.Timer
+			Object.Alpha  = Object.Timer
 			Object.Timer -= 8
 		else
 			Object.Alpha = 0
@@ -914,7 +956,7 @@ sub ObjectDraw
 	case OPTIONS_STAGE_LOAD
 	case OPTIONS_UNUSED2
 	case OPTIONS_EXIT
-		Object.YPos = Screen.CenterY
+		Object.YPos  = Screen.CenterY
 		Object.YPos -= 87
 		ArrayPos0 = 0
 		CallFunction(OptionsMenuH_DrawOptions)
@@ -940,43 +982,43 @@ sub ObjectDraw
 	case OPTIONS_EXIT_SETTINGS
 	case OPTIONS_LEAVE_SUBMENU
 		ArrayPos0 = Object.CurrentSelection
-		TempValue0 = Screen.CenterX
+		TempValue0  = Screen.CenterX
 		TempValue0 += 23
-		if Object[+4].Value1 == 7
+		if Object.OptionCount == 7
 			DrawSpriteScreenFX(40, FX_INK, TempValue0, 135)
 		else
 			DrawSpriteScreenFX(29, FX_INK, TempValue0, 135)
 		end if
 		TempValue0 += 53
-		if Object[+4].Value1 == 8
+		if Object.OptionCount == 8
 			DrawSpriteScreenFX(41, FX_INK, TempValue0, 135)
 		else
 			DrawSpriteScreenFX(30, FX_INK, TempValue0, 135)
 		end if
 		TempValue0 = Screen.CenterX
 		TempValue0 += 23
-		if Object[+4].Value1 == 9
+		if Object.OptionCount == 9
 			DrawSpriteScreenFX(46, FX_INK, TempValue0, 164)
 		else
 			DrawSpriteScreenFX(44, FX_INK, TempValue0, 164)
 		end if
 		TempValue0 += 53
-		if Object[+4].Value1 == 10
+		if Object.OptionCount == 10
 			DrawSpriteScreenFX(47, FX_INK, TempValue0, 164)
 		else
 			DrawSpriteScreenFX(45, FX_INK, TempValue0, 164)
 		end if
 		TempValue0 = Screen.CenterX
-		if SaveRAM[40] == 1
+		if SaveRAM[40] == true
 			TempValue0 += 18
 		else
 			TempValue0 += 71
 		end if
 		DrawSpriteScreenFX(39, FX_INK, TempValue0, 161)
-		TempValue0 = Screen.CenterX
+		TempValue0  = Screen.CenterX
 		TempValue0 -= 117
 		if Options.PhysicalControls == true
-			switch Object[+4].Value1
+			switch Object.OptionCount
 			case 0
 				DrawSpriteScreenFX(32, FX_INK, TempValue0, 79)
 				DrawSpriteScreenFX(33, FX_INK, TempValue0, 108)
@@ -1012,6 +1054,7 @@ sub ObjectDraw
 			DrawSpriteScreenFX(35, FX_INK, TempValue0, 132)
 			DrawSpriteScreenFX(42, FX_INK, TempValue0, 167)
 		end if
+
 		//Controls Drawing
 		if SaveRAM[35] == 0
 			DrawSpriteScreenFX(37, FX_INK, TempValue0, 148)
@@ -1022,8 +1065,9 @@ sub ObjectDraw
 			TempValue0 += 188
 			DrawSpriteScreenFX(39, FX_INK, TempValue0, 132)
 		end if
+
 		//BGM Drawing
-		TempValue1 = Screen.CenterX
+		TempValue1  = Screen.CenterX
 		TempValue1 += 23
 		if Object.BGMDecreaseTimer > 0
 			Object.BGMDecreaseTimer--
@@ -1031,6 +1075,7 @@ sub ObjectDraw
 		else
 			DrawSpriteScreenFX(4, FX_INK, TempValue1, 74)
 		end if
+
 		TempValue1 += 66
 		if Object.BGMIncreaseTimer > 0
 			Object.BGMIncreaseTimer--
@@ -1038,14 +1083,16 @@ sub ObjectDraw
 		else
 			DrawSpriteScreenFX(6, FX_INK, TempValue1, 74)
 		end if
+
 		TempValue1 -= 42
 		DrawSpriteScreenFX(18, FX_INK, TempValue1, 74)
-		TempValue0 = SaveRAM[33]
+		TempValue0  = SaveRAM[33]
 		TempValue0 /= 10
 		TempValue0 += 18
 		DrawSpriteScreenFX(TempValue0, FX_INK, TempValue1, 74)
+
 		//SFX Drawing
-		TempValue1 = Screen.CenterX
+		TempValue1  = Screen.CenterX
 		TempValue1 += 23
 		if Object.SFXDecreaseTimer > 0
 			Object.SFXDecreaseTimer--
@@ -1062,7 +1109,7 @@ sub ObjectDraw
 		end if
 		TempValue1 -= 42
 		DrawSpriteScreenFX(18, FX_INK, TempValue1, 103)
-		TempValue0 = SaveRAM[34]
+		TempValue0  = SaveRAM[34]
 		TempValue0 /= 10
 		TempValue0 += 18
 		DrawSpriteScreenFX(TempValue0, FX_INK, TempValue1, 103)
@@ -1112,7 +1159,7 @@ sub ObjectStartup
 		SaveRAM[40] = true
 	end if
 	Options.OriginalControls = SaveRAM[35]
-	Engine.HapticsEnabled = SaveRAM[40]
+	Engine.HapticsEnabled	 = SaveRAM[40]
 	SpriteFrame(4, 2, 32, 32, 479, 34)				// #0 - Gear
 	SpriteFrame(4, 2, 32, 32, 479, 34)				// #1 - Gear Again
 	SpriteFrame(4, 2, 32, 32, 479, 34)				// #2 - Why is this a Gear again
@@ -1123,19 +1170,23 @@ sub ObjectStartup
 	SpriteFrame(0, 0, 20, 20, 189, 387)				// #7 - Increase button Highlight
 	SpriteFrame(45, 12, 13, 13, 488, 1)				// #8 - Triangle detail
 	SpriteFrame(0, 0, 250, 37, 259, 421)			// #9 - Selection Border
+
 	if Options.DevMenuFlag == true
 		SpriteFrame(64, 12, 66, 16, 259, 598)		// #10 - Dev Menu
 	else
 		SpriteFrame(64, 12, 128, 16, 1, 188)		// #10 - Instructions
 	end if
+
 	SpriteFrame(64, 12, 128, 16, 1, 205)			// #11 - Settings
 	SpriteFrame(64, 12, 128, 16, 1, 222)			// #12 - Staff Credits
 	SpriteFrame(64, 12, 128, 16, 1, 239)			// #13 - About
+
 	if Options.DevMenuFlag == true
 		SpriteFrame(64, 12, 66, 16, 326, 598)		// #14 - Dev Menu Highlight
 	else
 		SpriteFrame(64, 12, 128, 16, 130, 188)		// #14 - Instructions Highlight
 	end if
+
 	SpriteFrame(64, 12, 128, 16, 130, 205)			// #15 - Settings Highlight
 	SpriteFrame(64, 12, 128, 16, 130, 222)			// #16 - Staff Credits Highlight
 	SpriteFrame(64, 12, 128, 16, 130, 239)			// #17 - About Highlight

@@ -5,21 +5,24 @@
 // Aliases
 // Values 0-1 are unused...
 #alias Object.Value2 : Object.PrevAngle
-#alias Object.Value3 : Object.Fans.Timer
-#alias Object.Value4 : Object.Crunchers.Timer
-#alias Object.Value5 : Object.Fans.Sprite
-#alias Object.Value6 : Object.Crunchers.Sprite
+#alias Object.Value3 : Object.FansTimer
+#alias Object.Value4 : Object.CrunchersTimer
+#alias Object.Value5 : Object.FansSprite
+#alias Object.Value6 : Object.CrunchersSprite
+
+// Priority
+#alias 1	:	PRIORITY_ACTIVE
 
 
 sub ObjectDraw
 	
 	// Animate the fans that are in the level
-	Object.Fans.Timer++
-	if Object.Fans.Timer > 2
-		Object.Fans.Timer = 0
-		Object.Fans.Sprite++
-		Object.Fans.Sprite %= 3
-		switch Object.Fans.Sprite
+	Object.FansTimer++
+	if Object.FansTimer > 2
+		Object.FansTimer = 0
+		Object.FansSprite++
+		Object.FansSprite %= 3
+		switch Object.FansSprite
 		case 0
 			// Fans are 4x4 tiles, comprised of 8 unique tiles, so
 			// 8 tiles need to be updated to change the entire sprite
@@ -59,12 +62,12 @@ sub ObjectDraw
 	end if
 	
 	// Animate the hungry crunchers throughout the level, too
-	Object.Crunchers.Timer++
-	if Object.Crunchers.Timer > 5
-		Object.Crunchers.Timer = 0
-		Object.Crunchers.Sprite++
-		Object.Crunchers.Sprite &= 3
-		switch Object.Crunchers.Sprite
+	Object.CrunchersTimer++
+	if Object.CrunchersTimer > 5
+		Object.CrunchersTimer = 0
+		Object.CrunchersSprite++
+		Object.CrunchersSprite &= 3
+		switch Object.CrunchersSprite
 		case 0
 			// Crunchers are 2x2 tiles, so 4 tiles need to be updated
 			// in order to completely change their sprite
@@ -155,7 +158,7 @@ sub ObjectStartup
 		if Object[ArrayPos0].Type == TypeName[BGEffects]
 			
 			// Make the object always be run, since fans and tiles should be animated always
-			Object[ArrayPos0].Priority = 1
+			Object[ArrayPos0].Priority = PRIORITY_ACTIVE
 			
 			// Give it the lowest draw order as well, in order to make it run before other objects' draw events
 			Object[ArrayPos0].DrawOrder = 0

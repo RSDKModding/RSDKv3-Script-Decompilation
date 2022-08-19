@@ -1,16 +1,35 @@
-//------------Sonic CD HV Platform Script-------------//
+//--------Sonic CD Horizontal-Vertical Platform Script--------//
 //--------Scripted by Christian Whitehead 'The Taxman'--------//
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
 // Aliases
 #alias Object.Value0	:	Object.Timer
 
+// States
+#alias 0	:	V_PLAT_BASE
+#alias 1	:	V_PLAT_EXTEND_1
+#alias 2	:	V_PLAT_EXTEND_2
+#alias 3	:	V_PLAT_EXTEND_3
+#alias 4	:	V_PLAT_FULL_EXTEND
+#alias 5	:	V_PLAT_RETRACT_1
+#alias 6	:	V_PLAT_RETRACT_2
+#alias 7	:	V_PLAT_RETRACT_3
+
+#alias 8	:	H_PLAT_BASE
+#alias 9	:	H_PLAT_EXTEND_1
+#alias 10	:	H_PLAT_EXTEND_2
+#alias 11	:	H_PLAT_EXTEND_3
+#alias 12	:	H_PLAT_FULL_EXTEND
+#alias 13	:	H_PLAT_RETRACT_1
+#alias 14	:	H_PLAT_RETRACT_2
+#alias 15	:	H_PLAT_RETRACT_3
+
 
 sub ObjectMain
 	
 	switch Object.State
-	case 0
-	case 8
+	case V_PLAT_BASE
+	case H_PLAT_BASE
 		if Object.Timer < 30
 			Object.Timer++
 		else
@@ -19,12 +38,12 @@ sub ObjectMain
 		end if
 		break
 		
-	case 1
-	case 2
-	case 3
-	case 9
-	case 10
-	case 11
+	case V_PLAT_EXTEND_1
+	case V_PLAT_EXTEND_2
+	case V_PLAT_EXTEND_3
+	case H_PLAT_EXTEND_1
+	case H_PLAT_EXTEND_2
+	case H_PLAT_EXTEND_3
 		if Object.Timer < 5
 			Object.Timer++
 		else
@@ -33,8 +52,8 @@ sub ObjectMain
 		end if
 		break
 		
-	case 4
-	case 12
+	case V_PLAT_FULL_EXTEND
+	case H_PLAT_FULL_EXTEND
 		if Object.Timer < 120
 			Object.Timer++
 		else
@@ -43,12 +62,12 @@ sub ObjectMain
 		end if
 		break
 		
-	case 5
-	case 6
-	case 7
-	case 13
-	case 14
-	case 15
+	case V_PLAT_RETRACT_1
+	case V_PLAT_RETRACT_2
+	case V_PLAT_RETRACT_3
+	case H_PLAT_RETRACT_1
+	case H_PLAT_RETRACT_2
+	case H_PLAT_RETRACT_3
 		if Object.Timer < 5
 			Object.Timer++
 		else
@@ -67,41 +86,41 @@ sub ObjectPlayerInteraction
 	
 	// Use different hitboxes for the Platform's different sizes
 	switch Object.State
-	case 0
-	case 8
+	case V_PLAT_BASE
+	case H_PLAT_BASE
 		PlayerObjectCollision(C_BOX, -8, -8, 8, 8)
 		break
 		
-	case 1
-	case 7
+	case V_PLAT_EXTEND_1
+	case V_PLAT_RETRACT_3
 		PlayerObjectCollision(C_BOX, -24, -8, 24, 8)
 		break
 		
-	case 2
-	case 6
+	case V_PLAT_EXTEND_2
+	case V_PLAT_RETRACT_2
 		PlayerObjectCollision(C_BOX, -40, -8, 40, 8)
 		break
 		
-	case 3
-	case 4
-	case 5
+	case V_PLAT_EXTEND_3
+	case V_PLAT_FULL_EXTEND
+	case V_PLAT_RETRACT_1
 		// Tallest version
 		PlayerObjectCollision(C_BOX, -56, -8, 56, 8)
 		break
 		
-	case 9
-	case 15
+	case H_PLAT_BASE
+	case H_PLAT_RETRACT_3
 		PlayerObjectCollision(C_BOX, -8, -24, 8, 24)
 		break
 		
-	case 10
-	case 14
+	case H_PLAT_EXTEND_2
+	case H_PLAT_RETRACT_2
 		PlayerObjectCollision(C_BOX, -8, -40, 8, 40)
 		break
 		
-	case 11
-	case 12
-	case 13
+	case H_PLAT_EXTEND_3
+	case H_PLAT_FULL_EXTEND
+	case H_PLAT_RETRACT_1
 		// Widest version
 		PlayerObjectCollision(C_BOX, -8, -56, 8, 56)
 		break
@@ -203,7 +222,7 @@ sub ObjectStartup
 		if Object[ArrayPos0].Type == TypeName[HV Platform]
 			
 			// Start the Platform at fully extended horizontally
-			Object[ArrayPos0].State = 12
+			Object[ArrayPos0].State = H_PLAT_FULL_EXTEND
 			
 		end if
 		
