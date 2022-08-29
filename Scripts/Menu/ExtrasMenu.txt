@@ -61,8 +61,6 @@
 #alias 2	:	MESSAGE_LOSTFOCUS
 
 // Function declarations
-#function MenuHeading_CheckTouchBack
-#function LoadSaveMenu_CheckTouchSave
 #function ExtrasMenu_DrawUnlocks
 
 
@@ -162,22 +160,19 @@ sub ObjectMain
 
 	case EXTRASMENU_CONTROLS
 
+#platform: Standard
+		CheckResult = true
+#endplatform
+
+#platform: Mobile
+		CheckEqual(Options.PhysicalControls, true)
+#endplatform
+
 #platform: Use_Origins
 		CheckEqual(Options.PhysicalControls, true)
 #endplatform
-
-#platform: Use_Standalone
-	#platform: Mobile
-		CheckEqual(Options.PhysicalControls, true)
-	#endplatform
-
-	#platform: Standard
-		CheckResult = true
-	#endplatform
-#endplatform
-
 		
-		// Originally "if Options.PhysicalControls == true", changed to avoid syntax errors because of platform checks
+		// 2011 Steam lacks Options.PhysicalControls, so we force it here first and the other platforms can override it
 		if CheckResult == true
 			if KeyPress[0].Up == true
 				Object.CurrentButton--
@@ -317,7 +312,6 @@ sub ObjectMain
 						StopMusic()
 						PlaySfx(27, 0)	//Select SFX
 					else
-
 #platform: Use_Origins
 						if Options.PhysicalControls == false
 							Object.CurrentButton = -1
@@ -329,7 +323,6 @@ sub ObjectMain
 							Object.CurrentButton = -1
 						end if
 #endplatform
-
 					end if
 					break
 
@@ -364,7 +357,6 @@ sub ObjectMain
 						StopMusic()
 						PlaySfx(27, 0)	//Select SFX
 					else
-					
 #platform: Use_Origins
 						if Options.PhysicalControls == false
 							Object.CurrentButton = -1
@@ -376,7 +368,6 @@ sub ObjectMain
 							Object.CurrentButton = -1
 						end if
 #endplatform
-
 					end if
 					break
 
@@ -388,7 +379,6 @@ sub ObjectMain
 						StopMusic()
 						PlaySfx(27, 0)	//Select SFX
 					else
-
 #platform: Use_Origins
 						if Options.PhysicalControls == false
 							Object.CurrentButton = -1
@@ -400,12 +390,10 @@ sub ObjectMain
 							Object.CurrentButton = -1
 						end if
 #endplatform
-
 					end if
 					break
 
 				end switch
-
 			end if
 		end if
 
@@ -532,20 +520,19 @@ sub ObjectMain
 
 	case EXTRASMENU_VISUALMODE
 		ArrayPos0 = Object.CurrentButton
+#platform: Standard
+		CheckResult = true
+#endplatform
+
+#platform: Mobile
+		CheckEqual(Options.PhysicalControls,true)
+#endplatform
+
 #platform: Use_Origins
 		CheckEqual(Options.PhysicalControls,true)
 #endplatform
 
-#platform: Use_Standalone
-	#platform: Mobile
-		CheckEqual(Options.PhysicalControls,true)
-	#endplatform
-
-	#platform: Standard
-		CheckResult = true
-	#endplatform
-#endplatform
-
+		// 2011 Steam lacks Options.PhysicalControls, so we force it here first and the other platforms can override it
 		if CheckResult == true
 			if KeyPress[0].Left == true
 				Helper.VMCurrentButtom--
@@ -582,8 +569,8 @@ sub ObjectMain
 		end if
 
 #platform: Mobile
+		// Just to make it look neat, instead of continuing the code from an open if on another platform, we ask again for a check in the physical controls
 		if Options.PhysicalControls == true
-
 			CheckTouchRect(0, 0, Screen.XSize, Screen.YSize)		//Touch Behaviour Check
 			if CheckResult > -1
 				Options.PhysicalControls = false
@@ -729,8 +716,8 @@ sub ObjectMain
 			Object.Timer = 248
 			PlayStageSfx(1, 0)
 		end if
-
 		break
+
 	case EXTRASMENU_VISUALMODE_SELECTED
 		if Object.Timer < 30
 			Object.Timer++
@@ -840,7 +827,6 @@ sub ObjectMain
 			end if
 			Object.Alpha = 0
 		else
-
 #platform: Use_Origins
 			if Options.PhysicalControls == false
 				Object.CurrentButton = -1
@@ -852,7 +838,6 @@ sub ObjectMain
 				Object.CurrentButton = -1
 			end if
 #endplatform
-
 			Object.State = EXTRASMENU_CONTROLS
 			Object.Alpha = 255
 		end if

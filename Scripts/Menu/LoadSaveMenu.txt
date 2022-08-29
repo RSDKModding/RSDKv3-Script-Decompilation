@@ -125,11 +125,11 @@
 #alias 5	:	LANG_JAPANESE
 
 // Function declarations
-#function MenuHeading_CheckTouchBack
 #function LoadSaveMenu_DrawSaveFiles
 #function LoadSaveMenu_DrawDeleteNoSave
 #function LoadSaveMenu_CheckTouchSave
 #function LoadSaveMenu_SetShowDelete
+
 
 function LoadSaveMenu_DrawSaveFiles
 	switch Object[+ArrayPos0].SaveStatus
@@ -395,21 +395,20 @@ sub ObjectMain
 			Object.AnimationTimer = 0
 		end if
 		
+#platform: Standard
+		CheckResult = true
+#endplatform
+
+#platform: Mobile
+		CheckEqual(Options.PhysicalControls, true)
+#endplatform
+
 #platform: Use_Origins
 		CheckEqual(Options.PhysicalControls, true)
 #endplatform
 
-#platform: Use_Standalone
-	#platform: Mobile
-		CheckEqual(Options.PhysicalControls, true)
-	#endplatform
 
-	#platform: Standard
-		CheckResult = true
-	#endplatform
-#endplatform
-
-		// Originally "if Options.PhysicalControls == true", changed to avoid syntax errors because of platform checks
+		// 2011 Steam lacks Options.PhysicalControls, so we force it here first and the other platforms can override it
 		if CheckResult == true
 			if Object.ShowDeleteButton == false
 				if KeyPress[0].Up == true
@@ -448,6 +447,7 @@ sub ObjectMain
 #platform: Mobile
 				Options.PhysicalControls = false
 #endplatform
+
 #platform: Use_Origins
 				Options.PhysicalControls = false
 #endplatform
@@ -565,6 +565,7 @@ sub ObjectMain
 				Options.PhysicalControls = true
 #endplatform
 			end if
+
 			if KeyPress[0].Down == true
 				if Object.ShowDeleteButton == false
 					Object.SelectedOption = BUTTON_SAVE_ONE
@@ -636,7 +637,6 @@ sub ObjectMain
 						Object.SaveThreeStatus	 = SAVE_NORMAL
 						Object.SaveFourStatus	 = SAVE_NORMAL
 						Object.SaveMode = MODE_NORMAL
-
 #platform: Use_Origins
 						if Options.PhysicalControls == false
 							Object.SelectedOption = BUTTON_NONE
@@ -733,7 +733,7 @@ sub ObjectMain
 				Stage.ActiveList		= SPECIAL_STAGE
 
 #platform: Use_Origins
-				Stage.ActiveList = 3
+				Stage.ActiveList		= 3
 #endplatform
 
 				Stage.ListPos			= SpecialStage.ListPos
@@ -815,21 +815,19 @@ sub ObjectMain
 	case STATE_CHARACTER_SELECT
 		ArrayPos0 = Object.SelectedOption
 
+#platform: Standard
+		CheckResult = true
+#endplatform
+
+#platform: Mobile
+		CheckEqual(Options.PhysicalControls, true)
+#endplatform
+
 #platform: Use_Origins
 		CheckEqual(Options.PhysicalControls, true)
 #endplatform
 
-#platform: Use_Standalone
-	#platform: Mobile
-		CheckEqual(Options.PhysicalControls, true)
-	#endplatform
-
-	#platform: Standard
-		CheckResult = true
-	#endplatform
-#endplatform
-
-		// Originally "if Options.PhysicalControls == true", changed to avoid syntax errors because of platform checks
+		// 2011 Steam lacks Options.PhysicalControls, so we force it here first and the other platforms can override it
 		if CheckResult == true
 			if KeyPress[0].Left == true
 				Object[+ArrayPos0].PlayerListPos--
@@ -852,6 +850,7 @@ sub ObjectMain
 #platform: Mobile
 				Options.PhysicalControls = false
 #endplatform
+
 #platform: Use_Origins
 				Options.PhysicalControls = false
 #endplatform
@@ -931,7 +930,6 @@ sub ObjectMain
 			// Enable physical controls if a button is pressed
 			if KeyPress[0].Left == true
 				Object[+ArrayPos0].PlayerListPos = CHARACTER_TAILS
-
 #platform: Mobile
 				Options.PhysicalControls = true
 #endplatform
@@ -939,11 +937,10 @@ sub ObjectMain
 #platform: Use_Origins
 				Options.PhysicalControls = true
 #endplatform
-
 			end if
+
 			if KeyPress[0].Right == true
 				Object[+ArrayPos0].PlayerListPos = CHARACTER_SONIC
-
 #platform: Mobile
 				Options.PhysicalControls = true
 #endplatform
@@ -951,7 +948,6 @@ sub ObjectMain
 #platform: Use_Origins
 				Options.PhysicalControls = true
 #endplatform
-
 			end if
 		end if
 
@@ -1151,6 +1147,10 @@ sub ObjectMain
 			Object.FadeValue = 0
 			Object.State = STATE_MAIN_SAVE_MENU
 
+#platform: Standard		 
+			Object.SelectedOption = BUTTON_SAVE_ONE
+#endplatform
+
 #platform: Use_Origins
 			if Options.PhysicalControls == true
 				Object.SelectedOption = BUTTON_SAVE_ONE
@@ -1159,22 +1159,13 @@ sub ObjectMain
 			end if
 #endplatform
 
-#platform: Use_Standalone
-
-	#platform: Standard		 
-			Object.SelectedOption = BUTTON_SAVE_ONE
-	#endplatform
-
-
-	#platform: Mobile
+#platform: Mobile
 			if Options.PhysicalControls == true
 				Object.SelectedOption = BUTTON_SAVE_ONE
 			else
 				Object.SelectedOption = BUTTON_NONE
 			end if
-	#endplatform
-
-#endplatform	
+#endplatform
 
 			if Object.SaveMode >= SAVE_DELETE
 				Object.SaveOneStatus	= SAVE_NORMAL
@@ -1221,6 +1212,10 @@ sub ObjectMain
 			Object.State = STATE_FADEIN_DELETECONFIRM
 			Object.Alpha = 0
 
+#platform: Standard		 
+			DeleteConfirm.Highlight = DELETE_YES
+#endplatform
+
 #platform: Use_Origins
 			if Options.PhysicalControls == true
 				DeleteConfirm.Highlight = DELETE_YES
@@ -1229,21 +1224,14 @@ sub ObjectMain
 			end if
 #endplatform
 
-#platform: Use_Standalone
-
-	#platform: Standard		 
-			DeleteConfirm.Highlight = DELETE_YES
-	#endplatform
-
-	#platform: Mobile
+#platform: Mobile
 			if Options.PhysicalControls == true
 				DeleteConfirm.Highlight = DELETE_YES
 			else
 				DeleteConfirm.Highlight = DELETE_NONE
 			end if
-	#endplatform
-
 #endplatform
+
 		end if
 		break
 		
@@ -1263,21 +1251,20 @@ sub ObjectMain
 		Object.AnimationTimer++
 		Object.AnimationTimer &= 63
 		
+#platform: Standard
+		CheckResult = true
+#endplatform
+
+#platform: Mobile
+		CheckEqual(Options.PhysicalControls, true)
+#endplatform
+		
 #platform: Use_Origins
 		CheckEqual(Options.PhysicalControls, true)
 #endplatform
 
-#platform: Use_Standalone
-	#platform: Mobile
-		CheckEqual(Options.PhysicalControls, true)
-	#endplatform
 
-	#platform: Standard
-		CheckResult = true
-	#endplatform
-#endplatform
-		
-		// Originally "if Options.PhysicalControls == true", changed to avoid syntax errors because of platform checks
+		// 2011 Steam lacks Options.PhysicalControls, so we force it here first and the other platforms can override it
 		if CheckResult == true
 			if KeyPress[0].Up == true
 				DeleteConfirm.Highlight--
@@ -1286,6 +1273,7 @@ sub ObjectMain
 					DeleteConfirm.Highlight = DELETE_NO
 				end if
 			end if
+
 			if KeyPress[0].Down == true
 				DeleteConfirm.Highlight++
 				PlaySfx(23, 0) 	//Menu Button SFX
@@ -1297,12 +1285,15 @@ sub ObjectMain
 			// Enable touch controls if the screen is touched
 			CheckTouchRect(0, 0, Screen.XSize, Screen.YSize)
 			if CheckResult > -1
+
 #platform: Mobile
 				Options.PhysicalControls = false
 #endplatform
+
 #platform: Use_Origins
 				Options.PhysicalControls = false
 #endplatform
+
 				DeleteConfirm.Highlight = DELETE_NONE
 			end if
 		else

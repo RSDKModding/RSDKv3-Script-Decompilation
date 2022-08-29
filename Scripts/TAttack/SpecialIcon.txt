@@ -1,17 +1,19 @@
-//------------Sonic CD SpecialIcon Script-------------//
+//----------------Sonic CD Special Icon Script----------------//
 //--------Scripted by Christian Whitehead 'The Taxman'--------//
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
 // Aliases
-#alias Object.Value0	:	Object.Timer
-#alias Object.Value1	:	Object.Minutes
-#alias Object.Value2	:	Object.Seconds
-#alias Object.Value3	:	Object.Milliseconds
-#alias Object.Value4	:	Object.LockedZone
+#alias Object.Value0		:	Object.Timer
+#alias Object.Value1		:	Object.Minutes
+#alias Object.Value2		:	Object.Seconds
+#alias Object.Value3		:	Object.Milliseconds
+#alias Object.Value4		:	Object.LockedZone
+#alias Object.PropertyValue	:	Object.Portrait
 
-#alias Object[0].Value2	:	Object.MCSelectedButton			// Only used for Mobile
-#alias Object[0].Value3	:	Object.MCSavedRound				// This is used AFTER you play in time attack
-#alias Object[0].State	:	Object.MCState					// This is used AFTER you play in time attack
+// Menu Control Aliases
+#alias Object[0].Value2		:	MenuControl.SelectedButton			// Only used for Mobile
+#alias Object[0].Value3		:	MenuControl.SavedRound				// This is used AFTER you play in time attack
+#alias Object[0].State		:	MenuControl.State					// This is used AFTER you play in time attack
 
 // States
 #alias 0	:	ROUNDICON_BLANK
@@ -23,37 +25,46 @@
 #alias 4	:	MENUCONTROL_RETURN_TO_MENU
 #alias 5	:	MENUCONTROL_ENTER_SM
 
+// Property Values
+#alias 0	:	SPECIAL_STAGE_1_ICON
+#alias 1	:	SPECIAL_STAGE_2_ICON
+#alias 2	:	SPECIAL_STAGE_3_ICON
+#alias 3	:	SPECIAL_STAGE_4_ICON
+#alias 4	:	SPECIAL_STAGE_5_ICON
+#alias 5	:	SPECIAL_STAGE_6_ICON
+#alias 6	:	SPECIAL_STAGE_7_ICON
+#alias 7	:	EXIT_ICON
 
 
 sub ObjectMain
 #platform: Mobile
 	if Options.PhysicalControls == false
-		if Object.MCState == MENUCONTROL_CONTROLS
-			TempValue0 = Object.iXPos
+		if MenuControl.State == MENUCONTROL_CONTROLS
+			TempValue0  = Object.iXPos
 			TempValue0 -= 34
-			TempValue1 = Object.iXPos
+			TempValue1  = Object.iXPos
 			TempValue1 += 34
-			TempValue2 = Object.iYPos
+			TempValue2  = Object.iYPos
 			TempValue2 -= 45
-			TempValue3 = Object.iYPos
+			TempValue3  = Object.iYPos
 			TempValue3 += 45
 			CheckTouchRect(TempValue0, TempValue2, TempValue1, TempValue3)
 			if CheckResult > -1
-				Object.MCSelectedButton = Object.PropertyValue
+				MenuControl.SelectedButton = Object.PropertyValue
 			else
 				CheckTouchRect(0, 0, Screen.XSize, Screen.YSize)
 				if CheckResult < 0
-					if Object.MCSelectedButton == Object.PropertyValue
+					if MenuControl.SelectedButton == Object.PropertyValue
 						PlaySfx(27, 0)	//Select SFX
-						Object.MCState = MENUCONTROL_BLANK
-						Object.State = ROUNDICON_BLANK
-						if Object.PropertyValue == 7	// If touched the exit button
+						MenuControl.State = MENUCONTROL_BLANK
+						Object.State	  = ROUNDICON_SELECTED_ZONE
+						if Object.Portrait == EXIT_ICON
 							StopMusic()
 						end if
 					end if
 				else
-					if Object.MCSelectedButton == Object.PropertyValue
-						Object.MCSelectedButton = -1
+					if MenuControl.SelectedButton == Object.Portrait
+						MenuControl.SelectedButton = -1
 					end if
 				end if
 			end if
@@ -72,73 +83,76 @@ sub ObjectDraw
 	TempValue0 >>= 4
 	Sin(TempValue1, Object.Rotation)
 	TempValue1 >>= 4
-	switch Object.PropertyValue
-	case 0	// SS1
+	
+	switch Object.Portrait
+	case SPECIAL_STAGE_1_ICON
 		TempValue0 += 64
 		TempValue1 += 364
 		break
-	case 1	// SS2
+	case SPECIAL_STAGE_2_ICON
 		TempValue0 += 192
 		TempValue1 += 364
 		break
-	case 2	// SS3
+	case SPECIAL_STAGE_3_ICON
 		TempValue0 += 320
 		TempValue1 += 364
 		break
-	case 3	// SS4
+	case SPECIAL_STAGE_4_ICON
 		TempValue0 += 448
 		TempValue1 += 364
 		break
-	case 4	// SS5
+	case SPECIAL_STAGE_5_ICON
 		TempValue0 += 64
 		TempValue1 += 508
 		break
-	case 5	// SS6
+	case SPECIAL_STAGE_6_ICON
 		TempValue0 += 192
 		TempValue1 += 508
 		break
-	case 6	// SS7
+	case SPECIAL_STAGE_7_ICON
 		TempValue0 += 320
 		TempValue1 += 508
 		break
 	end switch
-	if Object.PropertyValue < 7	// Draw for all special stages
-		VertexBuffer[0].x = Object.XPos
+
+	if Object.Portrait < EXIT_ICON	// Draw for all special stages
+		VertexBuffer[0].x   = Object.XPos
 		VertexBuffer[0].x >>= 16
-		VertexBuffer[0].x -= 32
-		VertexBuffer[0].u = TempValue0
-		VertexBuffer[0].u -= 32
-		VertexBuffer[0].y = Object.YPos
+		VertexBuffer[0].x  -= 32
+		VertexBuffer[0].u   = TempValue0
+		VertexBuffer[0].u  -= 32
+		VertexBuffer[0].y   = Object.YPos
 		VertexBuffer[0].y >>= 16
-		VertexBuffer[0].y -= 43
-		VertexBuffer[0].v = TempValue1
-		VertexBuffer[0].v -= 43
-		VertexBuffer[1].x = Object.XPos
+		VertexBuffer[0].y  -= 43
+		VertexBuffer[0].v   = TempValue1
+		VertexBuffer[0].v  -= 43
+		VertexBuffer[1].x   = Object.XPos
 		VertexBuffer[1].x >>= 16
-		VertexBuffer[1].x += 31
-		VertexBuffer[1].u = TempValue0
-		VertexBuffer[1].u += 31
-		VertexBuffer[1].y = VertexBuffer[0].y
-		VertexBuffer[1].v = VertexBuffer[0].v
-		VertexBuffer[2].x = VertexBuffer[0].x
-		VertexBuffer[2].u = VertexBuffer[0].u
-		VertexBuffer[2].y = Object.YPos
+		VertexBuffer[1].x  += 31
+		VertexBuffer[1].u   = TempValue0
+		VertexBuffer[1].u  += 31
+		VertexBuffer[1].y   = VertexBuffer[0].y
+		VertexBuffer[1].v   = VertexBuffer[0].v
+		VertexBuffer[2].x   = VertexBuffer[0].x
+		VertexBuffer[2].u   = VertexBuffer[0].u
+		VertexBuffer[2].y   = Object.YPos
 		VertexBuffer[2].y >>= 16
-		VertexBuffer[2].y += 24
-		VertexBuffer[2].v = TempValue1
-		VertexBuffer[2].v += 24
-		VertexBuffer[3].x = VertexBuffer[1].x
-		VertexBuffer[3].u = VertexBuffer[1].u
-		VertexBuffer[3].y = VertexBuffer[2].y
-		VertexBuffer[3].v = VertexBuffer[2].v
+		VertexBuffer[2].y  += 24
+		VertexBuffer[2].v   = TempValue1
+		VertexBuffer[2].v  += 24
+		VertexBuffer[3].x   = VertexBuffer[1].x
+		VertexBuffer[3].u   = VertexBuffer[1].u
+		VertexBuffer[3].y   = VertexBuffer[2].y
+		VertexBuffer[3].v   = VertexBuffer[2].v
 		Draw3DScene()
 		DrawSprite(19)
-		TempValue0 = Object.XPos
+
+		TempValue0   = Object.XPos
 		TempValue0 >>= 16
-		TempValue0 -= 24
-		TempValue1 = Object.YPos
+		TempValue0  -= 24
+		TempValue1   = Object.YPos
 		TempValue1 >>= 16
-		TempValue1 += 34
+		TempValue1  += 34
 		// Zone specific time
 		DrawNumbers(0, TempValue0, TempValue1, Object.Minutes, 2, 6, 1)
 		TempValue0 += 16
@@ -147,12 +161,12 @@ sub ObjectDraw
 		DrawNumbers(0, TempValue0, TempValue1, Object.Milliseconds, 2, 6, 1)
 	else	// Draw the Exit
 		DrawSprite(20)
-		TempValue0 = Object.XPos
+		TempValue0   = Object.XPos
 		TempValue0 >>= 16
-		TempValue0 -= 18
-		TempValue1 = Object.YPos
+		TempValue0  -= 18
+		TempValue1   = Object.YPos
 		TempValue1 >>= 16
-		TempValue1 += 34
+		TempValue1  += 34
 		// Total Time
 		DrawNumbers(0, TempValue0, TempValue1, Object.Minutes, 3, 6, 1)
 		TempValue0 += 16
@@ -164,11 +178,11 @@ sub ObjectDraw
 
 	DrawSprite(Object.Frame)
 	if Object.State == ROUNDICON_SELECTED_ZONE
-		TempValue0 = Object.Timer
-		TempValue0 &= 3
+		TempValue0   = Object.Timer
+		TempValue0  &= 3
 		TempValue0 >>= 1
 		if TempValue0 == 0
-			if Object.MCSavedRound == Object.PropertyValue
+			if MenuControl.SavedRound == Object.Portrait
 				DrawSprite(21)
 			end if
 		end if
@@ -177,16 +191,16 @@ sub ObjectDraw
 		if Object.Timer == 30
 			Object.Timer = 0
 			Object.State = ROUNDICON_BLANK
-			if Object.PropertyValue == 7
-				Object.MCState = MENUCONTROL_RETURN_TO_MENU
+			if Object.Portrait == EXIT_ICON
+				MenuControl.State = MENUCONTROL_RETURN_TO_MENU
 			else
-				Object.MCState = MENUCONTROL_ENTER_SM
-				Object.MCSelectedButton = -1
+				MenuControl.State = MENUCONTROL_ENTER_SM
+				MenuControl.SelectedButton = -1
 			end if
 		end if
 	else
-		if Object.MCState == MENUCONTROL_CONTROLS
-			if Object.MCSavedRound == Object.PropertyValue
+		if MenuControl.State == MENUCONTROL_CONTROLS
+			if MenuControl.SavedRound == Object.PropertyValue
 				DrawSprite(21)
 			end if
 		end if
@@ -196,6 +210,7 @@ end sub
 
 sub ObjectStartup
 	LoadSpriteSheet("TAttack/TimeAttack.gif")
+
 	SpriteFrame(0, 0, 6, 8, 330, 577)		// #0  - 0
 	SpriteFrame(0, 0, 6, 8, 337, 577)		// #1  - 1
 	SpriteFrame(0, 0, 6, 8, 344, 577)		// #2  - 2
@@ -223,11 +238,13 @@ sub ObjectStartup
 	ArrayPos0 = 32
 	while ArrayPos0 < 1056
 		if Object[ArrayPos0].Type == TypeName[SpecialIcon]
-			Object[ArrayPos0].Frame = Object[ArrayPos0].PropertyValue
+			Object[ArrayPos0].Frame  = Object[ArrayPos0].Portrait
 			Object[ArrayPos0].Frame += 11
-			Object[ArrayPos0].Rotation = Object[ArrayPos0].PropertyValue
+
+			Object[ArrayPos0].Rotation   = Object[ArrayPos0].Portrait
 			Object[ArrayPos0].Rotation <<= 8
-			if Object[ArrayPos0].PropertyValue > 3
+
+			if Object[ArrayPos0].Portrait > 3
 				Object[ArrayPos0].Rotation += 256
 			end if
 		end if

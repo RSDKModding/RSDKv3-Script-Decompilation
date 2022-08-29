@@ -1,11 +1,14 @@
-//------------Sonic CD SLargeIcon Script-------------//
+//-------------Sonic CD Special Large Icon Script-------------//
 //--------Scripted by Christian Whitehead 'The Taxman'--------//
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
 // Aliases
-#alias Object[0].Value0	:	Object.MCTimer
-#alias Object[0].Value5	:	Object.MCSMCurrentButton
-#alias Object[0].State	:	Object.MCState
+#alias Object.PropertyValue	:	Object.Portrait
+
+// Menu Control Aliases
+#alias Object[0].Value0		:	MenuControl.Timer
+#alias Object[0].Value5		:	MenuControl.SMCurrentButton
+#alias Object[0].State		:	MenuControl.State
 
 // States
 #alias 0	:	SLARGEICON_BLANK
@@ -13,10 +16,21 @@
 #alias 2	:	SLARGEICON_LEAVE_SCREEN
 
 // Menu Control States
+// *SM = Sub Menu
 #alias 7	:	MENUCONTROL_SM_CONTROLS
 #alias 10	:	MENUCONTROL_SM_CONFIRMED
 #alias 11	:	MENUCONTROL_SM_LOAD_LEVEL
 #alias 13	:	MENUCONTROL_SM_COMFIRMED_LEAVE
+
+// Property Values
+#alias 0	:	SPECIAL_STAGE_1_LARGE_ICON
+#alias 1	:	SPECIAL_STAGE_2_LARGE_ICON
+#alias 2	:	SPECIAL_STAGE_3_LARGE_ICON
+#alias 3	:	SPECIAL_STAGE_4_LARGE_ICON
+#alias 4	:	SPECIAL_STAGE_5_LARGE_ICON
+#alias 5	:	SPECIAL_STAGE_6_LARGE_ICON
+#alias 6	:	SPECIAL_STAGE_7_LARGE_ICON
+
 
 sub ObjectMain
 	switch Object.State
@@ -24,8 +38,8 @@ sub ObjectMain
 		break
 
 	case SLARGEICON_ENTER_SCREEN
-		TempValue0 = Screen.CenterX
-		TempValue0 -= 72
+		TempValue0   = Screen.CenterX
+		TempValue0  -= 72
 		TempValue0 <<= 16
 		if Object.XPos < TempValue0
 			Object.XPos += 0x100000
@@ -54,25 +68,25 @@ end sub
 
 sub ObjectDraw
 	DrawSprite(8)
-	DrawSprite(Object.PropertyValue)
-	TempValue0 = Screen.CenterX
-	TempValue0 -= 72
+	DrawSprite(Object.Portrait)
+	TempValue0   = Screen.CenterX
+	TempValue0  -= 72
 	TempValue0 <<= 16
-	TempValue0 -= Object.XPos
+	TempValue0  -= Object.XPos
 	TempValue0 >>= 16
-	TempValue0 += Screen.CenterX
-	TempValue0 += 20
-	TempValue1 = TempValue0
-	TempValue1 += 68
+	TempValue0  += Screen.CenterX
+	TempValue0  += 20
+	TempValue1   = TempValue0
+	TempValue1  += 68
 #platform: Mobile
-	switch Object.MCState
+	switch MenuControl.State
 	default
 		DrawSprite(9)
 		DrawSpriteScreenXY(13, TempValue1, 11)
 		break
 
 	case MENUCONTROL_SM_CONTROLS
-		switch Object.MCSMCurrentButton
+		switch MenuControl.SMCurrentButton
 		default
 			DrawSprite(9)
 			DrawSpriteScreenXY(13, TempValue1, 11)
@@ -97,8 +111,8 @@ sub ObjectDraw
 		break
 
 	case MENUCONTROL_SM_CONFIRMED
-		TempValue2 = Object.MCTimer
-		TempValue2 &= 3
+		TempValue2   = MenuControl.Timer
+		TempValue2  &= 3
 		TempValue2 >>= 1
 		if TempValue2 == 0
 			DrawSpriteScreenXY(14, TempValue1, 11)
@@ -114,8 +128,8 @@ sub ObjectDraw
 		break
 
 	case MENUCONTROL_SM_COMFIRMED_LEAVE
-		TempValue2 = Object.MCTimer
-		TempValue2 &= 3
+		TempValue2   = MenuControl.Timer
+		TempValue2  &= 3
 		TempValue2 >>= 1
 		if TempValue2 == 0
 			DrawSprite(10)
@@ -132,16 +146,17 @@ end sub
 
 sub ObjectStartup
 	LoadSpriteSheet("TAttack/TimeAttack.gif")
-	SpriteFrame(-64, -72, 128, 144, 0, 288)		// #0 - Special Stage 1 Icon
-	SpriteFrame(-64, -72, 128, 144, 128, 288)	// #1 - Special Stage 2 Icon
-	SpriteFrame(-64, -72, 128, 144, 256, 288)	// #2 - Special Stage 3 Icon
-	SpriteFrame(-64, -72, 128, 144, 384, 288)	// #3 - Special Stage 4 Icon
-	SpriteFrame(-64, -72, 128, 144, 0, 432)		// #4 - Special Stage 5 Icon
-	SpriteFrame(-64, -72, 128, 144, 128, 432)	// #5 - Special Stage 6 Icon
-	SpriteFrame(-64, -72, 128, 144, 256, 432)	// #6 - Special Stage 7 Icon
-	SpriteFrame(-64, -72, 128, 144, 384, 432)	// #7 - Sonic The Hedgehog CD
-	SpriteFrame(-67, -75, 134, 150, 306, 873)	// #8 - Icon Border
-	SpriteFrame(-67, -95, 64, 20, 280, 680)		// #9 - Exit
+
+	SpriteFrame(-64, -72, 128, 144, 0, 288)		// #0  - Special Stage 1 Icon
+	SpriteFrame(-64, -72, 128, 144, 128, 288)	// #1  - Special Stage 2 Icon
+	SpriteFrame(-64, -72, 128, 144, 256, 288)	// #2  - Special Stage 3 Icon
+	SpriteFrame(-64, -72, 128, 144, 384, 288)	// #3  - Special Stage 4 Icon
+	SpriteFrame(-64, -72, 128, 144, 0, 432)		// #4  - Special Stage 5 Icon
+	SpriteFrame(-64, -72, 128, 144, 128, 432)	// #5  - Special Stage 6 Icon
+	SpriteFrame(-64, -72, 128, 144, 256, 432)	// #6  - Special Stage 7 Icon
+	SpriteFrame(-64, -72, 128, 144, 384, 432)	// #7  - Sonic The Hedgehog CD
+	SpriteFrame(-67, -75, 134, 150, 306, 873)	// #8  - Icon Border
+	SpriteFrame(-67, -95, 64, 20, 280, 680)		// #9  - Exit
 	SpriteFrame(-67, -95, 64, 20, 135, 617)		// #10 - Exit Highlight
 	SpriteFrame(0, 0, 64, 20, 280, 659)			// #11 - Next
 	SpriteFrame(0, 0, 64, 20, 200, 617)			// #12 - Next Highlight
