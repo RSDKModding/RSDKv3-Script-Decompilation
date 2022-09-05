@@ -3,22 +3,24 @@
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
 // Aliases
-#alias Object.PropertyValue	:	Object.Length
+#alias Object.PropertyValue : Object.Length
 
-#alias Object.Value0	:	Object.WalkedOn
-#alias Object.Value1	:	Object.Depress
-#alias Object.Value2	:	Object.MidPoint
-#alias Object.Value3	:	Object.MidHeight
-#alias Object.Value4	:	Object.MidYPos
-#alias Object.Value5	:	Object.PlayerNo
-#alias Object.Value6	:	Object.Left
-#alias Object.Value7	:	Object.Right
+#alias Object.Value0 : Object.WalkedOn
+#alias Object.Value1 : Object.Depress
+#alias Object.Value2 : Object.MidPoint
+#alias Object.Value3 : Object.MidHeight
+#alias Object.Value4 : Object.MidYPos
+#alias Object.Value5 : Object.PlayerNo
+#alias Object.Value6 : Object.Left
+#alias Object.Value7 : Object.Right
 
 // Time Period Aliases
-#alias 0	:	PERIOD_PRESENT
-#alias 1	:	PERIOD_PAST
-#alias 2	:	PERIOD_FUTURE_G
-#alias 3	:	PERIOD_FUTURE_B
+#alias Object.PropertyValue : Object.TimePeriod
+
+#alias 0 : PERIOD_PRESENT
+#alias 1 : PERIOD_PAST
+#alias 2 : PERIOD_FUTURE_G
+#alias 3 : PERIOD_FUTURE_B
 
 
 // Note: This Object supports multiple players, but CD's locked to 1 Player anyways so all that logic goes unused in a way
@@ -129,6 +131,7 @@ sub ObjectPlayerInteraction
 						Player.Gravity = 0
 						Player.YVelocity = 0
 						
+						// This check is always gonna be true, since CD only has P1 active ever
 						if Stage.ActivePlayer == 0
 							Object.PlayerNo = 0
 						end if
@@ -233,7 +236,7 @@ sub ObjectStartup
 	LoadSpriteSheet("R5/Objects.gif")
 
 	// Load different Sprite Frames for the different Time Periods
-	switch Object[24].PropertyValue
+	switch Object[24].TimePeriod
 	case PERIOD_PRESENT
 		SpriteFrame(-8, -8, 16, 16, 35, 1)
 		break
@@ -263,6 +266,7 @@ sub ObjectStartup
 			FlipSign(Object[ArrayPos0].Left)
 			Object[ArrayPos0].Left += Object[ArrayPos0].XPos
 			Object[ArrayPos0].Right += Object[ArrayPos0].XPos
+			
 			Object[ArrayPos0].PlayerNo = -1
 		end if
 		
