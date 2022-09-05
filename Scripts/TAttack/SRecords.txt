@@ -1,58 +1,68 @@
-//------------Sonic CD SRecords Script-------------//
+//--------------Sonic CD Special Records Script---------------//
 //--------Scripted by Christian Whitehead 'The Taxman'--------//
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
 // Aliases
-#alias Object.Value1	:	Object.Minutes
-#alias Object.Value2	:	Object.Seconds
-#alias Object.Value3	:	Object.MilliSeconds
+#alias Object.Value1		:	Object.Minutes
+#alias Object.Value2		:	Object.Seconds
+#alias Object.Value3		:	Object.MilliSeconds
+#alias Object.PropertyValue	:	Object.Record
+
+// Special Large Icon Aliases
+#alias Object.PropertyValue	:	SLargeIcon.Portrait
 
 // Menu Control Aliases
-#alias Object[0].Value0	:	Object.MCTimer
-#alias Object[0].Value4	:	Object.SMYPos
-#alias Object[0].Value5	:	Object.MCSMCurrentButton
-#alias Object[0].State	:	Object.MCState
+#alias Object[0].Value0		:	MenuControl.Timer
+#alias Object[0].Value4		:	MenuControl.SMYPos
+#alias Object[0].Value5		:	MenuControl.SMCurrentButton
+#alias Object[0].State		:	MenuControl.State
 
 // Menu Control States
+// *SM = Sub Menu
 #alias 7	:	MENUCONTROL_SM_CONTROLS
 #alias 10	:	MENUCONTROL_SM_CONFIRMED
 #alias 11	:	MENUCONTROL_SM_LOAD_LEVEL
 #alias 13	:	MENUCONTROL_SM_COMFIRMED_LEAVE
 
+// Property Values
+#alias 0	:	FIRST_RECORD
+#alias 1	:	SECOND_RECORD
+#alias 2	:	THIRD_RECORD
+
+
 // Function declarations
 #function SRecords_DrawRecords
 
 function SRecords_DrawRecords
-	Object.Minutes = SaveRAM[ArrayPos0]
+	Object.Minutes  = SaveRAM[ArrayPos0]
 	Object.Minutes /= 6000
 
-	Object.Seconds = SaveRAM[ArrayPos0]
+	Object.Seconds  = SaveRAM[ArrayPos0]
 	Object.Seconds /= 100
 	Object.Seconds %= 60
 
-	Object.MilliSeconds = SaveRAM[ArrayPos0]
+	Object.MilliSeconds  = SaveRAM[ArrayPos0]
 	Object.MilliSeconds %= 100
 
-	TempValue0 = Object.XPos
+	TempValue0   = Object.XPos
 	TempValue0 >>= 16
-	TempValue0 -= 16
+	TempValue0  -= 16
 	DrawNumbers(0, TempValue0, TempValue1, Object.Minutes, 2, 8, 1)
-	TempValue0 += 24
+	TempValue0  += 24
 	DrawNumbers(0, TempValue0, TempValue1, Object.Seconds, 2, 8, 1)
-	TempValue0 += 24
+	TempValue0  += 24
 	DrawNumbers(0, TempValue0, TempValue1, Object.MilliSeconds, 2, 8, 1)
 end function
 
 
 sub ObjectMain
-	Object.YPos = Object.PropertyValue
+	Object.YPos  = Object.Record
 	Object.YPos *= 192
-	Object.YPos -= Object.SMYPos
+	Object.YPos -= MenuControl.SMYPos
 	if Object.YPos < -384
 		Object.YPos += 576
 	end if
-	
-	Object.YPos += 224
+	Object.YPos  += 224
 	Object.YPos <<= 16
 end sub
 
@@ -60,37 +70,39 @@ end sub
 sub ObjectDraw
 	DrawSprite(18)
 	DrawSprite(10)
-	switch Object.PropertyValue
+	switch Object.Record
 	case 0
-		TempValue0 = Object[-1].PropertyValue
+		TempValue0  = SLargeIcon[-1].Portrait
 		TempValue0 += 11
 		DrawSprite(TempValue0)
 		break
 
 	case 1
-		TempValue0 = Object[-2].PropertyValue
+		TempValue0  = SLargeIcon[-2].Portrait
 		TempValue0 += 11
 		DrawSprite(TempValue0)
 		break
 
 	case 2
-		TempValue0 = Object[-3].PropertyValue
+		TempValue0 = SLargeIcon[-3].Portrait
 		TempValue0 += 11
 		DrawSprite(TempValue0)
 		break
 
 	end switch
-	ArrayPos0 = TempValue0
+	ArrayPos0  = TempValue0
 	ArrayPos0 -= 11
 	ArrayPos0 *= 18
-	TempValue0 = Object.PropertyValue
+
+	TempValue0  = Object.Record
 	TempValue0 *= 6
+
 	ArrayPos0 += TempValue0
 	ArrayPos0 += 49
 
-	TempValue1 = Object.YPos
+	TempValue1   = Object.YPos
 	TempValue1 >>= 16
-	TempValue1 += 97
+	TempValue1  += 97
 	CallFunction(SRecords_DrawRecords)
 
 	TempValue1 += 24
@@ -101,10 +113,11 @@ sub ObjectDraw
 	ArrayPos0 += 2
 	CallFunction(SRecords_DrawRecords)
 	DrawSprite(21)
+
 #platform: Standard
-	switch Object.MCState
+	switch MenuControl.State
 	case MENUCONTROL_SM_CONTROLS
-		switch Object.MCSMCurrentButton
+		switch MenuControl.SMCurrentButton
 		case 0
 			DrawSprite(19)
 			break
@@ -115,7 +128,7 @@ sub ObjectDraw
 		break
 
 	case MENUCONTROL_SM_CONFIRMED
-		TempValue0   = Object.MCTimer
+		TempValue0   = MenuControl.Timer
 		TempValue0  &= 3
 		TempValue0 >>= 1
 		if TempValue0 == 0
@@ -128,7 +141,7 @@ sub ObjectDraw
 		break
 
 	case MENUCONTROL_SM_COMFIRMED_LEAVE
-		TempValue0   = Object.MCTimer
+		TempValue0   = MenuControl.Timer
 		TempValue0  &= 3
 		TempValue0 >>= 1
 		if TempValue0 == 0
@@ -143,6 +156,7 @@ end sub
 
 sub ObjectStartup
 	LoadSpriteSheet("TAttack/TimeAttack.gif")
+
 	SpriteFrame(0, 0, 8, 16, 370, 638)			// #0  - 0
 	SpriteFrame(0, 0, 8, 16, 379, 638)			// #1  - 1
 	SpriteFrame(0, 0, 8, 16, 388, 638)			// #2  - 2
@@ -164,17 +178,18 @@ sub ObjectStartup
 	SpriteFrame(-60, 0, 224, 192, 81, 831)		// #18 - Record Menu
 	SpriteFrame(-36, 0, 44, 8, 306, 864)		// #19 - Exit
 	SpriteFrame(8, 0, 28, 8, 390, 864)			// #20 - Go
+
 #platform: Use_Origins
 	SpriteFrame(-60, 0, 112, 8, 306, 846)		// #21 - Unfocused Exit Go
 #endplatform
 
 #platform: Use_Standalone
 	#platform: Standard
-		SpriteFrame(-60, 0, 112, 8, 306, 846)		// #21 - Unfocused Exit Go
+		SpriteFrame(-60, 0, 112, 8, 306, 846)	// #21 - Unfocused Exit Go
 	#endplatform
 
 	#platform: Mobile
-		SpriteFrame(-60, 0, 112, 8, 306, 855)		// #21 - Black Rect
+		SpriteFrame(-60, 0, 112, 8, 306, 855)	// #21 - Black Rect
 	#endplatform
 #endplatform
 

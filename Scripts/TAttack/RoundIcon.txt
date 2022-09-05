@@ -1,59 +1,71 @@
-//------------Sonic CD Round Icon Script-------------//
+//-----------------Sonic CD Round Icon Script-----------------//
 //--------Scripted by Christian Whitehead 'The Taxman'--------//
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
 // Aliases
-#alias Object.Value0	:	Object.Timer
-#alias Object.Value1	:	Object.Minutes
-#alias Object.Value2	:	Object.Seconds
-#alias Object.Value3	:	Object.Milliseconds
-#alias Object.Value4	:	Object.LockedZone
+#alias Object.Value0		:	Object.Timer
+#alias Object.Value1		:	Object.Minutes
+#alias Object.Value2		:	Object.Seconds
+#alias Object.Value3		:	Object.Milliseconds
+#alias Object.Value4		:	Object.LockedZone
+#alias Object.PropertyValue	:	Object.Portrait
 
-#alias Object[0].Value2	:	Object.MCSelectedButton			// Only used for Mobile
-#alias Object[0].Value3	:	Object.MCSavedRound				// This is used AFTER you play in time attack
-#alias Object[0].State	:	Object.MCState					// This is used AFTER you play in time attack
+// Menu Control Aliases
+#alias Object[0].Value2		:	MenuControl.SelectedButton			// Only used for Mobile
+#alias Object[0].Value3		:	MenuControl.SavedRound				// This is used AFTER you play in time attack
+#alias Object[0].State		:	MenuControl.State					// This is used AFTER you play in time attack
 
 // States
 #alias 0	:	ROUNDICON_BLANK
 #alias 1	:	ROUNDICON_SELECTED_ZONE
 
-// MenuControl States
+// Menu Control States
 #alias 2	:	MENUCONTROL_CONTROLS
 #alias 3	:	MENUCONTROL_BLANK
 #alias 4	:	MENUCONTROL_RETURN_TO_MENU
 #alias 5	:	MENUCONTROL_ENTER_SM
 
+// Property Values
+#alias 0	:	PALMTREE_PANIC_ICON
+#alias 1	:	COLLISION_CHAOS_ICON
+#alias 2	:	TIDAL_TEMPEST_ICON
+#alias 3	:	QUARTZ_QUADRANT_ICON
+#alias 4	:	WACKY_WORKBENCH_ICON
+#alias 5	:	STARDUST_SPEEDWAY_ICON
+#alias 6	:	METRALLIC_MADNESS_ICON
+#alias 7	:	EXIT_ICON
+
 
 sub ObjectMain
 #platform: Mobile
 	if Options.PhysicalControls == false
-		if Object.MCState == MENUCONTROL_CONTROLS
+		if MenuControl.State == MENUCONTROL_CONTROLS
 			if Object.LockedZone == false
-				TempValue0 = Object.iXPos
+				TempValue0  = Object.iXPos
 				TempValue0 -= 34
-				TempValue1 = Object.iXPos
+				TempValue1  = Object.iXPos
 				TempValue1 += 34
-				TempValue2 = Object.iYPos
+				TempValue2  = Object.iYPos
 				TempValue2 -= 45
-				TempValue3 = Object.iYPos
+				TempValue3  = Object.iYPos
 				TempValue3 += 45
 				CheckTouchRect(TempValue0, TempValue2, TempValue1, TempValue3)
 				if CheckResult > -1
-					Object.MCSelectedButton = Object.PropertyValue
+					MenuControl.SelectedButton = Object.Portrait
 				else
 					CheckTouchRect(0, 0, Screen.XSize, Screen.YSize)
 					if CheckResult < 0
-						if Object.MCSelectedButton == Object.PropertyValue
+						if MenuControl.SelectedButton == Object.Portrait
 							PlaySfx(27, 0)	//Select SFX
-							Object.MCState = MENUCONTROL_BLANK
-							Object.State = ROUNDICON_BLANK
-							if Object.PropertyValue == 7	// If touched the exit button
+							MenuControl.State = MENUCONTROL_BLANK
+							Object.State	  = ROUNDICON_SELECTED_ZONE
+							if Object.Portrait == EXIT_ICON	// Exit button pressed?
 								StopMusic()
 							end if
 						end if
 					else
-						if Object.MCSelectedButton == Object.PropertyValue
-							Object.MCSelectedButton = -1
+						if MenuControl.SelectedButton == Object.Portrait
+							MenuControl.SelectedButton = -1
 						end if
 					end if
 				end if
@@ -73,44 +85,46 @@ sub ObjectDraw
 	TempValue0 >>= 4
 	Sin(TempValue1, Object.Rotation)
 	TempValue1 >>= 4
-	switch Object.PropertyValue
-	case 0	// Palmtree Panic
+
+	switch Object.Portrait
+	case PALMTREE_PANIC_ICON
 		TempValue0 += 64
 		TempValue1 += 76
 		break
 
-	case 1	// Collision Chaos
+	case COLLISION_CHAOS_ICON
 		TempValue0 += 320
 		TempValue1 += 76
 		break
 
-	case 2	// Tidal Tempest
+	case TIDAL_TEMPEST_ICON
 		TempValue0 += 448
 		TempValue1 += 76
 		break
 
-	case 3	// Quartz Quadrant
+	case QUARTZ_QUADRANT_ICON
 		TempValue0 += 64
 		TempValue1 += 220
 		break
 
-	case 4	// Wacky Workbench
+	case WACKY_WORKBENCH_ICON
 		TempValue0 += 192
 		TempValue1 += 220
 		break
 
-	case 5	// Stardust Speedway
+	case STARDUST_SPEEDWAY_ICON
 		TempValue0 += 320
 		TempValue1 += 220
 		break
 
-	case 6	// Metallic Madness
+	case METRALLIC_MADNESS_ICON
 		TempValue0 += 448
 		TempValue1 += 220
 		break
 
 	end switch
-	if Object.PropertyValue < 7	// Draw for all main stages
+
+	if Object.Portrait < EXIT_ICON	// Draw for all main stages
 		VertexBuffer[0].x   = Object.XPos
 		VertexBuffer[0].x >>= 16
 		VertexBuffer[0].x  -= 32
@@ -141,9 +155,11 @@ sub ObjectDraw
 		VertexBuffer[3].v   = VertexBuffer[2].v
 		Draw3DScene()
 		DrawSprite(19)
+
 		TempValue0   = Object.XPos
 		TempValue0 >>= 16
 		TempValue0  -= 24
+
 		TempValue1   = Object.YPos
 		TempValue1 >>= 16
 		TempValue1  += 34
@@ -172,11 +188,11 @@ sub ObjectDraw
 
 	DrawSprite(Object.Frame)
 	if Object.State == ROUNDICON_SELECTED_ZONE
-		TempValue0 = Object.Timer
-		TempValue0 &= 3
+		TempValue0   = Object.Timer
+		TempValue0  &= 3
 		TempValue0 >>= 1
 		if TempValue0 == 0
-			if Object.MCSavedRound == Object.PropertyValue
+			if MenuControl.SavedRound == Object.Portrait
 				DrawSprite(21)
 			end if
 		end if
@@ -185,16 +201,16 @@ sub ObjectDraw
 		if Object.Timer == 30
 			Object.Timer = 0
 			Object.State = ROUNDICON_BLANK
-			if Object.PropertyValue == 7
-				Object.MCState = MENUCONTROL_RETURN_TO_MENU
+			if Object.Portrait == EXIT_ICON
+				MenuControl.State = MENUCONTROL_RETURN_TO_MENU
 			else
-				Object.MCState = MENUCONTROL_ENTER_SM
-				Object.MCSelectedButton = -1
+				MenuControl.State = MENUCONTROL_ENTER_SM
+				MenuControl.SelectedButton = -1
 			end if
 		end if
 	else
-		if Object.MCState == MENUCONTROL_CONTROLS
-			if Object.MCSavedRound == Object.PropertyValue
+		if MenuControl.State == MENUCONTROL_CONTROLS
+			if MenuControl.SavedRound == Object.Portrait
 				DrawSprite(21)
 			end if
 		end if
@@ -208,6 +224,7 @@ end sub
 
 sub ObjectStartup
 	LoadSpriteSheet("TAttack/TimeAttack.gif")
+
 	SpriteFrame(0, 0, 6, 8, 330, 577)		// #0  - 0
 	SpriteFrame(0, 0, 6, 8, 337, 577)		// #1  - 1
 	SpriteFrame(0, 0, 6, 8, 344, 577)		// #2  - 2
@@ -236,11 +253,11 @@ sub ObjectStartup
 	ArrayPos0 = 32
 	while ArrayPos0 < 1056
 		if Object[ArrayPos0].Type == TypeName[RoundIcon]
-			Object[ArrayPos0].Frame = Object[ArrayPos0].PropertyValue
+			Object[ArrayPos0].Frame = Object[ArrayPos0].Portrait
 			Object[ArrayPos0].Frame += 11
-			Object[ArrayPos0].Rotation = Object[ArrayPos0].PropertyValue
+			Object[ArrayPos0].Rotation = Object[ArrayPos0].Portrait
 			Object[ArrayPos0].Rotation <<= 8
-			if Object[ArrayPos0].PropertyValue > 3
+			if Object[ArrayPos0].Portrait > 3
 				Object[ArrayPos0].Rotation += 256
 			end if
 		end if
@@ -248,11 +265,11 @@ sub ObjectStartup
 	loop
 
 	3DScene.NoVertices = 4
-	3DScene.NoFaces = 1
-	FaceBuffer[0].a = 0
-	FaceBuffer[0].b = 1
-	FaceBuffer[0].c = 2
-	FaceBuffer[0].d = 3
+	3DScene.NoFaces    = 1
+	FaceBuffer[0].a    = 0
+	FaceBuffer[0].b    = 1
+	FaceBuffer[0].c    = 2
+	FaceBuffer[0].d    = 3
 	FaceBuffer[0].Flag = 1
 end sub
 
@@ -264,35 +281,35 @@ sub RSDKEdit
 	if Editor.ReturnVariable == true
 		switch Editor.VariableID
 		case EDIT_VAR_PROPVAL // property value
-			CheckResult = Object.PropertyValue
+			CheckResult = Object.Portrait
 			CheckResult &= 7
 			break
 		case 0 // roundID
-			CheckResult = Object.PropertyValue
+			CheckResult = Object.Portrait
 			CheckResult &= 7
 			break
 		end switch
 	else
 		switch Editor.variableID
 		case EDIT_VAR_PROPVAL // property value
-			Object.PropertyValue = Editor.VariableValue
-			Object.PropertyValue &= 7
+			Object.Portrait = Editor.VariableValue
+			Object.Portrait &= 7
 			break
 		case 0 // roundID
-			Object.PropertyValue = Editor.VariableValue
-			Object.PropertyValue &= 7
+			Object.Portrait = Editor.VariableValue
+			Object.Portrait &= 7
 			break
 		end switch
 	end if
 end sub
 
 sub RSDKDraw
-	Object.Frame = Object.PropertyValue
+	Object.Frame = Object.Portrait
 	Object.Frame += 11
 
 	DrawSprite(10)
 
-	if Object.PropertyValue < 7	// Draw for all main stages
+	if Object.Portrait < 7	// Draw for all main stages
 		DrawSprite(19)
 	else	// Draw the Exit
 		DrawSprite(20)

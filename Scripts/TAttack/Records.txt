@@ -1,24 +1,33 @@
-//------------Sonic CD Records Script-------------//
+//------------------Sonic CD Records Script-------------------//
 //--------Scripted by Christian Whitehead 'The Taxman'--------//
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
 // Aliases
-#alias 5: TYPE_RECORDS
-#alias Object.Value1	:	Object.Minutes
-#alias Object.Value2	:	Object.Seconds
-#alias Object.Value3	:	Object.MilliSeconds
+#alias Object.Value1		:	Object.Minutes
+#alias Object.Value2		:	Object.Seconds
+#alias Object.Value3		:	Object.MilliSeconds
+#alias Object.PropertyValue	:	Object.Record
+
+// Large Icon Aliases
+#alias Object.PropertyValue	:	LargeIcon.Portrait
 
 // Menu Control Aliases
-#alias Object[0].Value0	:	Object.MCTimer
-#alias Object[0].Value4	:	Object.SMYPos
-#alias Object[0].Value5	:	Object.MCSMCurrentButton
-#alias Object[0].State	:	Object.MCState
+#alias Object[0].Value0	:	MenuControl.Timer
+#alias Object[0].Value4	:	MenuControl.SMYPos
+#alias Object[0].Value5	:	MenuControl.SMCurrentButton
+#alias Object[0].State	:	MenuControl.State
 
 // Menu Control States
+// *SM = Sub Menu
 #alias 7	:	MENUCONTROL_SM_CONTROLS
 #alias 10	:	MENUCONTROL_SM_CONFIRMED
 #alias 11	:	MENUCONTROL_SM_LOAD_LEVEL
 #alias 13	:	MENUCONTROL_SM_COMFIRMED_LEAVE
+
+// Property Values
+#alias 0	:	FIRST_RECORD
+#alias 1	:	SECOND_RECORD
+#alias 2	:	THIRD_RECORD
 
 // Priority
 #alias 1	:	PRIORITY_ACTIVE
@@ -27,35 +36,35 @@
 #function Records_DrawRecords
 
 function Records_DrawRecords
-	Object.Minutes = SaveRAM[ArrayPos0]
+	Object.Minutes  = SaveRAM[ArrayPos0]
 	Object.Minutes /= 6000
 
-	Object.Seconds = SaveRAM[ArrayPos0]
+	Object.Seconds  = SaveRAM[ArrayPos0]
 	Object.Seconds /= 100
 	Object.Seconds %= 60
 
-	Object.MilliSeconds = SaveRAM[ArrayPos0]
+	Object.MilliSeconds  = SaveRAM[ArrayPos0]
 	Object.MilliSeconds %= 100
 
-	TempValue0 = Object.XPos
+	TempValue0   = Object.XPos
 	TempValue0 >>= 16
-	TempValue0 -= 16
+	TempValue0  -= 16
 	DrawNumbers(26, TempValue0, TempValue1, Object.Minutes, 2, 8, 1)
-	TempValue0 += 24
+	TempValue0  += 24
 	DrawNumbers(26, TempValue0, TempValue1, Object.Seconds, 2, 8, 1)
-	TempValue0 += 24
+	TempValue0  += 24
 	DrawNumbers(26, TempValue0, TempValue1, Object.MilliSeconds, 2, 8, 1)
 end function
 
 
 sub ObjectMain
-	Object.YPos = Object.PropertyValue	// This comes from MenuControl apparently
+	Object.YPos  = Object.Record
 	Object.YPos *= 192
-	Object.YPos -= Object.SMYPos
+	Object.YPos -= MenuControl.SMYPos
 	if Object.YPos < -384
 		Object.YPos += 576
 	end if
-	Object.YPos += 224
+	Object.YPos  += 224
 	Object.YPos <<= 16
 end sub
 
@@ -63,53 +72,55 @@ end sub
 sub ObjectDraw
 	DrawSprite(47)
 	switch Object.PropertyValue
-	case 0
-		TempValue0 = Object[-1].PropertyValue
+	case FIRST_RECORD
+		TempValue0  = LargeIcon[-1].Portrait
 		TempValue0 += 36
 		DrawSprite(TempValue0)
 		DrawSprite(44)
 		break
 
-	case 1
-		TempValue0 = Object[-2].PropertyValue
+	case SECOND_RECORD
+		TempValue0  = LargeIcon[-2].Portrait
 		TempValue0 += 36
 		DrawSprite(TempValue0)
 		DrawSprite(45)
 		break
 
-	case 2
-		TempValue0 = Object[-3].PropertyValue
+	case THIRD_RECORD
+		TempValue0  = LargeIcon[-3].Portrait
 		TempValue0 += 36
 		DrawSprite(TempValue0)
 		DrawSprite(46)
 		break
 	end switch
 
-	ArrayPos0 = TempValue0
+	ArrayPos0  = TempValue0
 	ArrayPos0 -= 36
 	ArrayPos0 *= 18
-	TempValue0 = Object.PropertyValue
+
+	TempValue0  = Object.Record
 	TempValue0 *= 6
+
 	ArrayPos0 += TempValue0
 	ArrayPos0 += 48
 
-	TempValue1 = Object.YPos
+	TempValue1   = Object.YPos
 	TempValue1 >>= 16
-	TempValue1 += 97
+	TempValue1  += 97
 	CallFunction(Records_DrawRecords)
 
 	TempValue1 += 24
-	ArrayPos0 += 2
+	ArrayPos0  += 2
 	CallFunction(Records_DrawRecords)
 
 	TempValue1 += 24
-	ArrayPos0 += 2
+	ArrayPos0  += 2
 	CallFunction(Records_DrawRecords)
 	
 #platform: Standard
-	switch Object.MCState
+	switch MenuControl.State
 	case MENUCONTROL_SM_CONTROLS
-		switch Object.MCSMCurrentButton
+		switch MenuControl.SMCurrentButton
 		case 0
 			DrawSprite(48)
 			break
@@ -123,8 +134,8 @@ sub ObjectDraw
 		break
 
 	case MENUCONTROL_SM_CONFIRMED
-		TempValue0 = Object.MCTimer
-		TempValue0 &= 3
+		TempValue0   = MenuControl.Timer
+		TempValue0  &= 3
 		TempValue0 >>= 1
 		if TempValue0 == 0
 			DrawSprite(50)
@@ -136,8 +147,8 @@ sub ObjectDraw
 		break
 
 	case MENUCONTROL_SM_COMFIRMED_LEAVE
-		TempValue0 = Object.MCTimer
-		TempValue0 &= 3
+		TempValue0   = MenuControl.Timer
+		TempValue0  &= 3
 		TempValue0 >>= 1
 		if TempValue0 == 0
 			DrawSprite(48)
@@ -156,29 +167,16 @@ end sub
 sub ObjectStartup
 	LoadSpriteSheet("TAttack/TimeAttack.gif")
 
-	ArrayPos0 = 32
-	while ArrayPos0 < 1056
-		if Object[ArrayPos0].Type == TypeName[Records]
-			TempValue0 = Screen.CenterX
-			TempValue0 += 76
-			TempValue0 <<= 16
-			Object[ArrayPos0].XPos = TempValue0
-			Object[ArrayPos0].DrawOrder = 2
-			Object[ArrayPos0].Priority = PRIORITY_ACTIVE
-		end if
-		ArrayPos0++
-	loop
-
-	SpriteFrame(0, 0, 8, 16, 136, 638)			// #0 - A
-	SpriteFrame(0, 0, 8, 16, 145, 638)			// #1 - B
-	SpriteFrame(0, 0, 8, 16, 154, 638)			// #2 - C
-	SpriteFrame(0, 0, 8, 16, 163, 638)			// #3 - D
-	SpriteFrame(0, 0, 8, 16, 172, 638)			// #4 - E
-	SpriteFrame(0, 0, 8, 16, 181, 638)			// #5 - F
-	SpriteFrame(0, 0, 8, 16, 190, 638)			// #6 - G
-	SpriteFrame(0, 0, 8, 16, 199, 638)			// #7 - H
-	SpriteFrame(0, 0, 8, 16, 208, 638)			// #8 - I
-	SpriteFrame(0, 0, 8, 16, 217, 638)			// #9 - J
+	SpriteFrame(0, 0, 8, 16, 136, 638)			// #0  - A
+	SpriteFrame(0, 0, 8, 16, 145, 638)			// #1  - B
+	SpriteFrame(0, 0, 8, 16, 154, 638)			// #2  - C
+	SpriteFrame(0, 0, 8, 16, 163, 638)			// #3  - D
+	SpriteFrame(0, 0, 8, 16, 172, 638)			// #4  - E
+	SpriteFrame(0, 0, 8, 16, 181, 638)			// #5  - F
+	SpriteFrame(0, 0, 8, 16, 190, 638)			// #6  - G
+	SpriteFrame(0, 0, 8, 16, 199, 638)			// #7  - H
+	SpriteFrame(0, 0, 8, 16, 208, 638)			// #8  - I
+	SpriteFrame(0, 0, 8, 16, 217, 638)			// #9  - J
 	SpriteFrame(0, 0, 8, 16, 226, 638)			// #10 - K
 	SpriteFrame(0, 0, 8, 16, 235, 638)			// #11 - L
 	SpriteFrame(0, 0, 8, 16, 244, 638)			// #12 - M
@@ -221,6 +219,21 @@ sub ObjectStartup
 	SpriteFrame(-16, 0, 40, 8, 350, 864)		// #49 - Next
 	SpriteFrame(24, 0, 28, 8, 390, 864)			// #50 - Go
 	SpriteFrame(-60, 0, 112, 8, 306, 855)		// #51 - Black Rect
+
+	// Used to be below LoadSpriteSheet, moved here for consistency with the rest of scripts
+	ArrayPos0 = 32
+	while ArrayPos0 < 1056
+		if Object[ArrayPos0].Type == TypeName[Records]
+			TempValue0   = Screen.CenterX
+			TempValue0  += 76
+			TempValue0 <<= 16
+			Object[ArrayPos0].XPos		= TempValue0
+			Object[ArrayPos0].DrawOrder = 2
+			Object[ArrayPos0].Priority  = PRIORITY_ACTIVE
+		end if
+		ArrayPos0++
+	loop
+
 end sub
 
 // ========================

@@ -1,12 +1,14 @@
-//------------Sonic CD LargeIcon Script-------------//
+//-----------------Sonic CD Large Icon Script-----------------//
 //--------Scripted by Christian Whitehead 'The Taxman'--------//
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
 // Aliases
-#alias 4: TYPE_LARGEICON
-#alias Object[0].Value0	:	Object.MCTimer
-#alias Object[0].Value5	:	Object.MCSMCurrentButton
-#alias Object[0].State	:	Object.MCState
+#alias Object.PropertyValue	:	Object.Portrait
+
+// MenuControl Aliases
+#alias Object[0].Value0		:	MenuControl.Timer
+#alias Object[0].Value5		:	MenuControl.SMCurrentButton
+#alias Object[0].State		:	MenuControl.State
 
 // States
 #alias 0	:	LARGEICON_BLANK
@@ -14,18 +16,29 @@
 #alias 2	:	LARGEICON_LEAVE_SCREEN
 
 // Menu Control States
+// *SM = Sub Menu
 #alias 7	:	MENUCONTROL_SM_CONTROLS
 #alias 10	:	MENUCONTROL_SM_CONFIRMED
 #alias 11	:	MENUCONTROL_SM_LOAD_LEVEL
 #alias 13	:	MENUCONTROL_SM_COMFIRMED_LEAVE
+
+// Property Values
+#alias 0	:	PALMTREE_PANIC_LARGE_LARGE_ICON
+#alias 1	:	COLLISION_CHAOS_LARGE_ICON
+#alias 2	:	TIDAL_TEMPEST_LARGE_ICON
+#alias 3	:	QUARTZ_QUADRANT_LARGE_ICON
+#alias 4	:	WACKY_WORKBENCH_LARGE_ICON
+#alias 5	:	STARDUST_SPEEDWAY_LARGE_ICON
+#alias 6	:	METRALLIC_MADNESS_LARGE_ICON
+
 
 sub ObjectMain
 	switch Object.State
 	case LARGEICON_BLANK
 		break
 	case LARGEICON_ENTER_SCREEN
-		TempValue0 = Screen.CenterX
-		TempValue0 -= 72
+		TempValue0   = Screen.CenterX
+		TempValue0  -= 72
 		TempValue0 <<= 16
 		if Object.XPos < TempValue0
 			Object.XPos += 0x100000
@@ -54,18 +67,19 @@ end sub
 
 sub ObjectDraw
 	DrawSprite(15)
-	DrawSprite(Object.PropertyValue)
-	TempValue0 = Screen.CenterX
-	TempValue0 -= 72
+	DrawSprite(Object.Portrait)
+	TempValue0   = Screen.CenterX
+	TempValue0  -= 72
 	TempValue0 <<= 16
-	TempValue0 -= Object.XPos
+	TempValue0  -= Object.XPos
 	TempValue0 >>= 16
-	TempValue0 += Screen.CenterX
-	TempValue0 += 20
-	TempValue1 = TempValue0
-	TempValue1 += 68
+	TempValue0  += Screen.CenterX
+	TempValue0  += 20
+	TempValue1   = TempValue0
+	TempValue1  += 68
+
 #platform: Mobile
-	switch Object.MCState
+	switch MenuControl.State
 	default
 		DrawSprite(16)
 		DrawSpriteScreenXY(18, TempValue0, 11)
@@ -73,7 +87,7 @@ sub ObjectDraw
 		break
 
 	case MENUCONTROL_SM_CONTROLS
-		switch Object.MCSMCurrentButton
+		switch MenuControl.SMCurrentButton
 		default
 			DrawSprite(16)
 			DrawSpriteScreenXY(18, TempValue0, 11)
@@ -102,8 +116,8 @@ sub ObjectDraw
 		break
 
 	case MENUCONTROL_SM_CONFIRMED
-		TempValue2 = Object.MCTimer
-		TempValue2 &= 3
+		TempValue2   = MenuControl.Timer
+		TempValue2  &= 3
 		TempValue2 >>= 1
 		if TempValue2 == 0
 			DrawSpriteScreenXY(21, TempValue1, 11)
@@ -121,8 +135,8 @@ sub ObjectDraw
 		break
 
 	case MENUCONTROL_SM_COMFIRMED_LEAVE
-		TempValue2 = Object.MCTimer
-		TempValue2 &= 3
+		TempValue2   = MenuControl.Timer
+		TempValue2  &= 3
 		TempValue2 >>= 1
 		if TempValue2 == 0
 			DrawSprite(17)
@@ -140,6 +154,7 @@ end sub
 
 sub ObjectStartup
 	LoadSpriteSheet("TAttack/TimeAttack.gif")
+
 	SpriteFrame(-64, -72, 128, 144, 0, 0)		// #0  - Palmtree Panic Icon
 	SpriteFrame(-64, -72, 128, 144, 256, 0)		// #1  - Collision Chaos Icon
 	SpriteFrame(-64, -72, 128, 144, 384, 0)		// #2  - Tidal Tempest Icon

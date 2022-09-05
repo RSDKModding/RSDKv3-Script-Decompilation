@@ -1,21 +1,22 @@
-//------------Sonic CD BG Animation Script-------------//
+//----------------Sonic CD BG Animation Script----------------//
 //--------Scripted by Christian Whitehead 'The Taxman'--------//
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
 // Aliases
-#alias Object.Value1	:	Object.VLLYOffset 			// Vertical Line Right
+#alias Object.Value1	:	Object.VLLYOffset 			// Vertical Line Left
 #alias Object.Value2	:	Object.VLRYOffset 			// Vertical Line Right
 #alias Object.Value3	:	Object.ArrowXOffset
 
 // Menu Control Aliases
-#alias Object[0].State	:	Object.MCState
-#alias Object[0].Value3	:	Object.MCSavedRound		// This is used AFTER you play in time attack
-#alias Object[0].Value7	:	Object.MCSSUnlocked
+#alias Object[0].State	:	MenuControl.State
+#alias Object[0].Value3	:	MenuControl.SavedRound		// This is used AFTER you play in time attack
+#alias Object[0].Value7	:	MenuControl.SSUnlocked
 
 // Large Icon / Special Large Icon Aliases
 #alias Object[40].XPos	:	Object.LIconXPos
 
 // Menu Control States
+// *SM = Sub Menu
 #alias 0	:	MENUCONTROL_SETUP
 #alias 1	:	MENUCONTROL_FADEIN
 #alias 2	:	MENUCONTROL_CONTROLS
@@ -59,11 +60,12 @@ end sub
 sub ObjectDraw
 	if Object.DrawOrder == 3
 		DrawRect(0, 0, 2, Screen.YSize, 0, 0, 0, 255)
-		TempValue0 = Screen.CenterX
+		TempValue0  = Screen.CenterX
 		TempValue0 -= 32
 		DrawRect(0, 160, TempValue0, 2, 0, 0, 0, 255)
 		TempValue0 += 48
-		switch Object.MCState
+
+		switch MenuControl.State
 		case MENUCONTROL_SETUP
 		case MENUCONTROL_FADEIN
 		case MENUCONTROL_CONTROLS
@@ -99,37 +101,39 @@ sub ObjectDraw
 		DrawRect(2, 0, TempValue0, 160, 160, 160, 64, 255)
 		DrawRect(2, 162, TempValue0, 78, 0, 128, 0, 255)
 		
-		TempValue1 = Object.ArrowXOffset
+		TempValue1   = Object.ArrowXOffset
 		TempValue1 >>= 1
 		DrawSpriteScreenXY(3, TempValue1, 226)
 		DrawSpriteScreenXY(4, TempValue1, 226)
 		
-		TempValue0 += 2
-		TempValue1 = Object.VLLYOffset
+		TempValue0  += 2
+		TempValue1   = Object.VLLYOffset
 		TempValue1 >>= 1
 		DrawSpriteScreenXY(1, TempValue0, TempValue1)
 
-		TempValue1 = Object.VLRYOffset
+		TempValue1   = Object.VLRYOffset
 		TempValue1 >>= 1
 		DrawSpriteScreenXY(2, TempValue0, TempValue1)
+
 		SetDrawListEntityRef(Object.EntityNo, 4, Screen[4].DrawListSize)
 		Screen[4].DrawListSize++
 		Object.DrawOrder = 4
 	else
 		DrawRect(0, 213, Screen.XSize, 13, 0, 0, 0, 255)
 		DrawSpriteScreenXY(0, 24, 195)
-		TempValue0 = Screen.CenterX
+
+		TempValue0  = Screen.CenterX
 		TempValue0 += 19
 		DrawSpriteScreenXY(5, TempValue0, 213)
 
-		if Object.MCSSUnlocked == true
-			TempValue0 = Screen.XSize
-			TempValue0 -= 64
-			TempValue1 = Object.LIconXPos
-			TempValue1 -= -0x480000
+		if MenuControl.SSUnlocked == true
+			TempValue0   = Screen.XSize
+			TempValue0  -= 64
+			TempValue1   = Object.LIconXPos
+			TempValue1  -= -0x480000
 			TempValue1 >>= 17
-			TempValue0 += TempValue1
-			if Object.MCSavedRound == 8
+			TempValue0  += TempValue1
+			if MenuControl.SavedRound == 8
 				DrawSpriteScreenXY(7, TempValue0, 197)
 			else
 				DrawSpriteScreenXY(6, TempValue0, 197)
@@ -160,15 +164,16 @@ sub ObjectStartup
 #endplatform
 
 #platform: Use_Standalone
+	#platform: Mobile
+		SpriteFrame(0, 0, 64, 16, 326, 764)	// #6 - Next
+		SpriteFrame(0, 0, 64, 16, 326, 781)	// #7 - Next Highlight
+	#endplatform
+	
 	#platform: Standard
 		SpriteFrame(-16, 0, 80, 16, 326, 798)	// #6 - Next
 		SpriteFrame(-16, 0, 80, 16, 326, 815)	// #7 - Next Highlight
 	#endplatform
 
-	#platform: Mobile
-		SpriteFrame(0, 0, 64, 16, 326, 764)		// #6 - Next
-		SpriteFrame(0, 0, 64, 16, 326, 781)		// #7 - Next Highlight
-	#endplatform
 #endplatform
 	Object[31].Type = TypeName[BGAnimation]
 end sub

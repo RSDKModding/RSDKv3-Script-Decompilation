@@ -81,11 +81,10 @@
 // 40	:	Haptic
 
 // Function declarations
-#function LoadSaveMenu_CheckTouchSave
-#function MenuHeading_CheckTouchBack
 #function OptionsMenu_DrawOptions
 
 function OptionsMenu_DrawOptions
+	// Note: Technically, this function is from OptionsMenuH/OptionsMenuC function depending of the version played, replicated here for simplicity sake
 	switch Object.FlickerText
 	case false
 		if ArrayPos0 == Object.CurrentSelection
@@ -143,13 +142,13 @@ sub ObjectMain
 #endplatform
 
 // This is part of Standalone too
-	#platform: Mobile
+#platform: Mobile
 		if Options.PhysicalControls == false
 			Object.CurrentSelection = -1
 		end if
-	#endplatform
-#platform: Use_Standalone
+#endplatform
 
+#platform: Use_Standalone
 		Object.XPos  = Screen.CenterX
 		Object.XPos -= 126
 		if Object.Timer < 256
@@ -164,21 +163,19 @@ sub ObjectMain
 		break
 
 	case OPTIONS_CONTROLS
+#platform: Standard
+		CheckResult = true
+#endplatform
+
+#platform: Mobile
+		CheckEqual(Options.PhysicalControls, true)
+#endplatform
+
 #platform: Use_Origins
 		CheckEqual(Options.PhysicalControls, true)
 #endplatform
 
-#platform: Use_Standalone
-	#platform: Mobile
-		CheckEqual(Options.PhysicalControls, true)
-	#endplatform
-
-	#platform: Standard
-		CheckResult = true
-	#endplatform
-#endplatform
-
-		// Originally "if Options.PhysicalControls == true", changed to avoid syntax errors because of platform checks
+		// 2011 Steam lacks Options.PhysicalControls, so we force it here first and the other platforms can override it
 		if CheckResult == true
 			if KeyPress[0].Up == true
 				Object.CurrentSelection--
@@ -201,6 +198,7 @@ sub ObjectMain
 #platform: Mobile
 				Options.PhysicalControls = false
 #endplatform
+
 #platform: Use_Origins
 				Options.PhysicalControls = false
 #endplatform
@@ -302,6 +300,7 @@ sub ObjectMain
 			if KeyPress[0].Start == true
 				CheckResult = true
 			end if
+			
 			if KeyPress[0].ButtonA == true
 				CheckResult = true
 			end if
@@ -399,6 +398,7 @@ sub ObjectMain
 				if Options.DevMenuFlag == true
 					Engine.State = RESET_GAME
 				else
+
 #platform: Use_Origins
 					if Engine.DeviceType == RETRO_MOBILE
 						Stage.ListPos = 6
@@ -523,110 +523,109 @@ sub ObjectMain
 		endif
 #endplatform
 
-#platform: Use_Standalone
-	#platform: Mobile
-		CheckEqual(Options.PhysicalControls, true)
-	#endplatform
-
-	#platform: Standard
-		CheckResult = true
-	#endplatform
-#endplatform
-
-#platform: Use_Standalone
-		if CheckResult == true
-			if KeyPress[0].Up == true
-				Object.OptionCount--
-				PlaySfx(23, 0) 	//Menu Button SFX
-				if Object.OptionCount < 0
-					Object.OptionCount = 2
-				end if
-			end if
-
-			if KeyPress[0].Down == true
-				Object.OptionCount++
-				PlaySfx(23, 0) 	//Menu Button SFX
-				if Object.OptionCount > 2
-					Object.OptionCount = 0
-				end if
-			end if
-
-			switch Object.OptionCount
-			case 0	// BGM
-				if KeyPress[0].Left == true
-					Object.BGMDecreaseTimer = 10
-					SaveRAM[33] -= 10
-					if SaveRAM[33] < 0
-						SaveRAM[33] = 0
-						Engine.BGMVolume = SaveRAM[33]
-					else
-						Engine.BGMVolume = SaveRAM[33]
-						PlaySfx(23, 0) 	//Menu Button SFX
-					end if
-				end if
-
-				if KeyPress[0].Right == true
-					Object.BGMIncreaseTimer = 10
-					SaveRAM[33] += 10
-					if SaveRAM[33] > 100
-						SaveRAM[33] = 100
-						Engine.BGMVolume = SaveRAM[33]
-					else
-						Engine.BGMVolume = SaveRAM[33]
-						PlaySfx(23, 0) 	//Menu Button SFX
-					end if
-				end if
-				break
-
-			case 1	// SFX
-				if KeyPress[0].Left == true
-					Object.SFXDecreaseTimer = 10
-					SaveRAM[34] -= 10
-					if SaveRAM[34] < 0
-						SaveRAM[34] = 0
-						Engine.SFXVolume = SaveRAM[34]
-					else
-						PlaySfx(23, 0) 	//Menu Button SFX
-						Engine.SFXVolume = SaveRAM[34]
-					end if
-				end if
-
-				if KeyPress[0].Right == true
-					Object.SFXIncreaseTimer = 10
-					SaveRAM[34] += 10
-					if SaveRAM[34] > 100
-						SaveRAM[34] = 100
-					else
-						PlaySfx(23, 0) 	//Menu Button SFX
-						Engine.SFXVolume = SaveRAM[34]
-					end if
-				end if
-				break
-
-			case 2	// Control Type
-				if KeyPress[0].Left == true
-					SaveRAM[35]--
-					if SaveRAM[35] < 0
-						SaveRAM[35] = 1
-					end if
-					PlaySfx(23, 0) 	//Menu Button SFX
-				end if
-
-				if KeyPress[0].Right == true
-					SaveRAM[35]++
-					if SaveRAM[35] > 1
-						SaveRAM[35] = 0
-					end if
-					PlaySfx(23, 0) 	//Menu Button SFX
-				end if
-				break
-
-			end switch
-		end if
+#platform: Standard
+	CheckResult = true
 #endplatform
 
 #platform: Mobile
-	if Options.PhysicalControls == false
+	CheckEqual(Options.PhysicalControls, true)
+#endplatform
+
+#platform: Use_Standalone
+	if CheckResult == true
+		if KeyPress[0].Up == true
+			Object.OptionCount--
+			PlaySfx(23, 0) 	//Menu Button SFX
+			if Object.OptionCount < 0
+				Object.OptionCount = 2
+			end if
+		end if
+
+		if KeyPress[0].Down == true
+			Object.OptionCount++
+			PlaySfx(23, 0) 	//Menu Button SFX
+			if Object.OptionCount > 2
+				Object.OptionCount = 0
+			end if
+		end if
+
+		switch Object.OptionCount
+		case 0	// BGM
+			if KeyPress[0].Left == true
+				Object.BGMDecreaseTimer = 10
+				SaveRAM[33] -= 10
+				if SaveRAM[33] < 0
+					SaveRAM[33] = 0
+					Engine.BGMVolume = SaveRAM[33]
+				else
+					Engine.BGMVolume = SaveRAM[33]
+					PlaySfx(23, 0) 	//Menu Button SFX
+				end if
+			end if
+
+			if KeyPress[0].Right == true
+				Object.BGMIncreaseTimer = 10
+				SaveRAM[33] += 10
+				if SaveRAM[33] > 100
+					SaveRAM[33] = 100
+					Engine.BGMVolume = SaveRAM[33]
+				else
+					Engine.BGMVolume = SaveRAM[33]
+					PlaySfx(23, 0) 	//Menu Button SFX
+				end if
+			end if
+			break
+
+		case 1	// SFX
+			if KeyPress[0].Left == true
+				Object.SFXDecreaseTimer = 10
+				SaveRAM[34] -= 10
+				if SaveRAM[34] < 0
+					SaveRAM[34] = 0
+					Engine.SFXVolume = SaveRAM[34]
+				else
+					PlaySfx(23, 0) 	//Menu Button SFX
+					Engine.SFXVolume = SaveRAM[34]
+				end if
+			end if
+
+			if KeyPress[0].Right == true
+				Object.SFXIncreaseTimer = 10
+				SaveRAM[34] += 10
+				if SaveRAM[34] > 100
+					SaveRAM[34] = 100
+				else
+					PlaySfx(23, 0) 	//Menu Button SFX
+					Engine.SFXVolume = SaveRAM[34]
+				end if
+			end if
+			break
+
+		case 2	// Control Type
+			if KeyPress[0].Left == true
+				SaveRAM[35]--
+				if SaveRAM[35] < 0
+					SaveRAM[35] = 1
+				end if
+				PlaySfx(23, 0) 	//Menu Button SFX
+			end if
+
+			if KeyPress[0].Right == true
+				SaveRAM[35]++
+				if SaveRAM[35] > 1
+					SaveRAM[35] = 0
+				end if
+				PlaySfx(23, 0) 	//Menu Button SFX
+			end if
+			break
+
+		end switch
+	end if
+#endplatform
+
+#platform: Mobile
+	// Just to make it look neat, instead of continuing the code from an open if on another platform, we ask again for a check in the physical controls
+	if Options.PhysicalControls == true
 		CheckTouchRect(0, 0, Screen.XSize, Screen.YSize)
 		if CheckResult > -1
 			Options.PhysicalControls = false
@@ -1161,21 +1160,21 @@ sub ObjectDraw
 			DrawSpriteScreenFX(30, FX_INK, TempValue0, 134)
 		end if
 
+#endplatform
+
 		TempValue0  = Screen.CenterX
 		TempValue0 -= 117
+
+#platform: Standard
+	CheckResult = true
 #endplatform
 
 #platform: Mobile
 	CheckEqual(Options.PhysicalControls, true)
 #endplatform
 
-#platform: Standard
-	CheckResult = true
-#endplatform
-
 #platform: Use_Standalone
-
-		// Originally "if Options.PhysicalControls == true", changed to avoid syntax errors because of platform checks
+		// 2011 Steam lacks Options.PhysicalControls, so we force it here first and the other platforms can override it
 		if CheckResult == true
 			switch Object.OptionCount
 			case 0
@@ -1265,9 +1264,6 @@ sub ObjectDraw
 		TempValue0 /= 10
 		TempValue0 += 18
 		DrawSpriteScreenFX(TempValue0, FX_INK, TempValue1, 105)
-
-		Object.Alpha = 255
-		CallFunction(OptionsMenu_DrawOptions)
 #endplatform
 
 #platform: Use_Origins
@@ -1311,12 +1307,10 @@ sub ObjectDraw
 		else
 		end if
 		TempValue1  -= 42
-		TempValue0   = SaveRAM[34]
-		TempValue0  /= 10
-		TempValue0  += 18
+#endplatform
+
 		Object.Alpha = 255
 		CallFunction(OptionsMenu_DrawOptions)
-#endplatform
 		break
 
 	case OPTIONS_ENTER_ABOUTMENU
