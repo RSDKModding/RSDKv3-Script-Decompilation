@@ -2963,10 +2963,14 @@ end function
 
 
 sub ObjectMain
-	if Stage.DebugMode == true
-		if KeyPress[1].ButtonB == true	// Turn Debug Mode
-			// Only PC had access to debug mode
+	// Only PC had access to debug mode, so here's a hack to prevent it on mobile
+	TempValue0 = false
 #platform: Standard
+	TempValue0 = Stage.DebugMode
+#endplatform
+
+	if TempValue0 == true
+		if KeyPress[1].ButtonB == true	// Turn Debug Mode
 			Object.Type = TypeName[DebugMode]
 			if Stage.PlayerListPos == 1	// Tails
 				Object[+1].Type = TypeName[Blank Object]
@@ -2985,7 +2989,6 @@ sub ObjectMain
 
 			Screen.CameraEnabled = true
 			Screen.CameraStyle	 = Options.OriginalControls
-#endplatform
 		else
 			// Handle Player
 			CallFunction(Player_ProcessUpdate)
