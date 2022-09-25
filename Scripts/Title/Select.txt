@@ -7,79 +7,101 @@
 
 // Aliases
 
-#alias Object.Value0	:	Object.CurrentSelection
-#alias Object.Value1	:	Object.SelectionChange
-#alias Object.Value2	:	Object.ArrowsPos
-#alias Object.Value3	:	Object.Timer
-#alias Object.Value5	:	Object.ActiveSelections	// A bitfield for all the selections allowed currentlu
-#alias Object.Value6	:	Object.SelectionPos
-#alias Object.Value7	:	Object.DisplaySelection
+// The current Selection, front and centre!
+// It ranges from 0-6, see right down below
+#alias Object.Value0 : Object.CurrentSelection
+
+// Current Selection Aliases, to be paired with Object.CurrentSelection of course
+#alias 0 : SELECTION_GAMESTART
+#alias 1 : SELECTION_CONTINUE
+#alias 2 : SELECTION_TIMEATTACK
+#alias 3 : SELECTION_SETTINGS
+#alias 4 : SELECTION_SOUNDTRACK
+#alias 5 : SELECTION_EXTRAS
+#alias 6 : SELECTION_EXIT
+
+#alias 8 : SELECTION_MAX
+
+// A value that holds the direction of change in Selection, used when swapping selections
+#alias Object.Value1 : Object.SelectionChange
+
+// Selection Change Aliases, to be paired with Object.SelectionChange from right up above
+#alias 0 : SELECTIONCHANGE_LEFT
+#alias 1 : SELECTIONCHANGE_RIGHT
+
+// The position of the arrows, goes from 0 to 63, and then wraps around to 0
+#alias Object.Value2 : Object.ArrowsPos
+
+// Timer used for fading out
+#alias Object.Value3 : Object.Timer
+
+// A bitfield for all the selections allowed currently
+// Normally 0b01111101, where all selections except SELECTION_CONTINUE are enabled
+#alias Object.Value5 : Object.ActiveSelections
+
+// The position of the currently displayed Selection's text
+#alias Object.Value6 : Object.SelectionPos
+
+// Not to be confused with CurrentSelection, which holds the actual Selection value,
+// this value is used to store what Selection should be *displayed*
+// It normally matches CurrentSelection, with the exception of switching Selections where one goes off screen and another slides on in
+#alias Object.Value7 : Object.DisplaySelection
 
 // States
-#alias 0 	:	SELECT_INIT
-#alias 1 	:	SELECT_MAIN
-#alias 2 	:	SELECT_FADEOUT
 
-// Selection states
-#alias 3 	:	SELECT_GAMESTART
-#alias 4 	:	SELECT_CONTINUE
-#alias 5 	:	SELECT_TIMETTACK
-#alias 6 	:	SELECT_SETTINGS
-#alias 7 	:	SELECT_SOUNDTRACK
-#alias 8 	:	SELECT_EXTRAS
-#alias 9 	:	SELECT_WAIT
-#alias 10	:	SELECT_CHARSELECT
-#alias 11	:	SELECT_RECIEVERESULT
+#alias 0  : SELECT_INIT
+#alias 1  : SELECT_MAIN
+#alias 2  : SELECT_FADEOUT
+
+// Each Selection has its own load State to correspond with it, to tell the game what each Selection does
+#alias 3  : SELECT_GAMESTART
+#alias 4  : SELECT_CONTINUE
+#alias 5  : SELECT_TIMETTACK
+#alias 6  : SELECT_SETTINGS
+#alias 7  : SELECT_SOUNDTRACK
+#alias 8  : SELECT_EXTRAS
+#alias 9  : SELECT_EXIT
+
+#alias 10 : SELECT_CHARSELECT
+#alias 11 : SELECT_RECIEVERESULT
 
 // Selection changing is split into two states
 // - The first half, where the previous option is moving offscreen
 // - And then the second half, where the new option is moving onto the screen
-// For simplicity's sake, they're just labelled as 1 and 2 here, though they certainly could be named better...
 
-#alias 12	:	SELECT_LEFT_START
-#alias 13	:	SELECT_LEFT_END
+#alias 12 : SELECT_LEFT_START
+#alias 13 : SELECT_LEFT_END
 
-#alias 14	:	SELECT_RIGHT_START
-#alias 15	:	SELECT_RIGHT_END
+#alias 14 : SELECT_RIGHT_START
+#alias 15 : SELECT_RIGHT_END
 
 // Exiting states, no idea why it gets its own unique fade to be honest
-#alias 16	:	SELECT_FADEOUT_E
-#alias 17	:	SELECT_EXITGAME
-
-#alias 0	:	SELECTION_GAMESTART
-#alias 1	:	SELECTION_CONTINUE
-#alias 2	:	SELECTION_TIMEATTACK
-#alias 3	:	SELECTION_SETTINGS
-#alias 4	:	SELECTION_SOUNDTRACK
-#alias 5	:	SELECTION_EXTRAS
-#alias 6	:	SELECTION_EXIT
-
-#alias 0	:	SELECTIONCHANGE_LEFT
-#alias 1	:	SELECTIONCHANGE_RIGHT
+#alias 16 : SELECT_FADEOUT_E
+#alias 17 : SELECT_EXITGAME
 
 // Touch Start Aliases
-#alias 0	:	START_SETUP
+#alias 0 : START_SETUP
 
 // SFX Aliases
-#alias 27	:	SFX_SELECT
+#alias 27 : SFX_SELECT
 
 // Stage List Position Aliases
 
 // Presentation List Stages
-#alias 1	:	STAGE_P_MENU
-#alias 2	:	STAGE_P_TIMEATTACK
+#alias 1 : STAGE_P_MENU
+#alias 2 : STAGE_P_TIMEATTACK
 
 // Regular List Aliases
-#alias 0	:	STAGE_R_R11A
+#alias 0 : STAGE_R_R11A
 
 // Engine State Aliases
-#alias 8	:	ENGINE_WAIT
+#alias 8 : ENGINE_WAIT
 
 // game.mainMenuMode Aliases
-#alias -1	:	MAINMENUMODE_NULL		// Starts with this, but gets swapped on MenuButton
+#alias -1 : MAINMENUMODE_NULL		// Starts with this, but gets swapped on MenuButton
 
 // Game Modes
-#alias 1	:	GAMEMODE_SAVEGAME
+#alias 1 : GAMEMODE_SAVEGAME
 
 
 sub ObjectMain
@@ -87,6 +109,8 @@ sub ObjectMain
 	switch Object.State
 	case SELECT_INIT
 		Object.SelectionPos = Screen.CenterX
+		
+		// Game Stary is the default option
 		Object.DisplaySelection = SELECTION_GAMESTART
 		Object.CurrentSelection = SELECTION_GAMESTART
 		Object.State = SELECT_MAIN
@@ -101,6 +125,8 @@ sub ObjectMain
 		SetBit(Object.ActiveSelections, SELECTION_SOUNDTRACK, true)
 		SetBit(Object.ActiveSelections, SELECTION_EXTRAS, true)
 		SetBit(Object.ActiveSelections, SELECTION_EXIT, true)
+		
+		// We probably could fall-through here, but we don't want the player to be able to switch their Selection on the first frame
 		break
 		
 	case SELECT_MAIN
@@ -109,14 +135,14 @@ sub ObjectMain
 		TempValue0 = Object.CurrentSelection
 		
 		if KeyPress[0].Left == true
-			if TempValue0 > 0
+			if TempValue0 > SELECTION_GAMESTART
 				Object.SelectionChange = SELECTIONCHANGE_LEFT
 				
 				// Find the closest active selection in the left direction
 				TempValue1 = false
 				while TempValue1 == false
-					if TempValue0 == 0
-						// Hit the minimum, just break
+					if TempValue0 == SELECTION_GAMESTART
+						// Hit the minimum, just break with the Game Start Selection
 						
 						TempValue1 = true
 					else
@@ -135,8 +161,8 @@ sub ObjectMain
 			// Find the closest active selection in the right direction
 			TempValue1 = false
 			while TempValue1 == false
-				if TempValue0 >= 8
-					// Hit the max
+				if TempValue0 >= SELECTION_MAX
+					// Hit the maximum, just break with whatever the current Selection is
 					
 					TempValue1 = true
 					TempValue0 = Object.CurrentSelection
@@ -159,6 +185,8 @@ sub ObjectMain
 				Object.State = SELECT_RIGHT_START
 			end if
 		else
+			
+			// Touch Controls, in my Origins?
 			CheckTouchRect(0, 0, Screen.XSize, 240)
 			
 			if KeyPress[0].Start == true
@@ -178,14 +206,16 @@ sub ObjectMain
 					Object.State = SELECT_CHARSELECT
 				else
 					Object.State = SELECT_FADEOUT
+					
 					StopMusic()
 					PlaySfx(SFX_SELECT, false)
+					
 					HapticEffect(31, 0, 0, 0)
 				end if
 			else
 				if KeyPress[0].ButtonB == true
 					
-					// Hand over the rest of the setup to the Touch Start Object
+					// Go back a step, return to the Touch Start Object
 					Object[-1].State = START_SETUP
 					
 					Object.Type = TypeName[Blank Object]
@@ -285,7 +315,7 @@ sub ObjectMain
 		Good_Future_List		= SaveRAM[ArrayPos1]
 		ArrayPos1++
 		
-		Good_Future_List &= 65535
+		Good_Future_List &= 0xFFFF
 		Good_Future_Count = 0
 		Good_Future = false
 		
@@ -297,7 +327,7 @@ sub ObjectMain
 		Stage.ListPos--
 		
 		if Stage.ListPos < STAGE_R_R11A
-			// If in the negatives, then go back to 0 - STAGE_R_R11A
+			// If in the negatives somehow, then go back to 0 - STAGE_R_R11A
 			
 			Stage.ListPos = STAGE_R_R11A
 			Player.Lives  = 3
@@ -312,10 +342,21 @@ sub ObjectMain
 			SpecialStage.NextZone  = Stage.ListPos
 			SpecialStage.NextZone -= 80
 			
+			// Check down below, this doesn't really work
 			Stage.ActiveList = SPECIAL_STAGE
+			
 #platform: Use_Origins
+			// You may be thinking like "hey wait this script is already for Origins, why is this here?" and you'd be right, but
+			// Origins accidentally messed up the stage list order
+			// This makes "SPECIAL_STAGE" actually point to the Bonus Stage list instead, which isn't ideal
+			// Because of that, we have to set the Special Stage list ID based on a numeric value here instead, since the alias doesn't match
+			
 			Stage.ActiveList = 3
+			
+			// (also the reverse is true too;
+			//  BONUS_STAGE points to the Special Stage list as well)
 #endplatform
+			
 			Stage.ListPos = SpecialStage.ListPos
 			
 			// This is essentially a fancy way of checking if the Player's on the second act of a zone or not
@@ -369,7 +410,7 @@ sub ObjectMain
 	case SELECT_TIMETTACK
 		game.mainMenuMode = MAINMENUMODE_NULL
 		
-		// Unless this is explicitly set, the game will default to Touch Controls on the menu
+		// Unless this is explicitly set, the game will default to Touch Controls on the menu and we don't want that
 		Options.PhysicalControls = true
 		
 		// Load the Time Attack Menu
@@ -409,7 +450,7 @@ sub ObjectMain
 		
 	case SELECT_EXTRAS
 		
-		// Yup it's the Menu again, but now the Extras tab!
+		// Yup it's your favourite Menu again, but now the Extras tab!
 		game.mainMenuMode = MAINMENUMODE_EXTRAS
 		Stage.ActiveList  = PRESENTATION_STAGE
 		Stage.ListPos	  = STAGE_P_MENU
@@ -419,8 +460,8 @@ sub ObjectMain
 		SetScreenFade(0, 0, 0, 255)
 		break
 		
-	case SELECT_WAIT
-		// Hold for a moment...
+	case SELECT_EXIT
+		// Not much here...
 		
 		Engine.State = ENGINE_WAIT
 		
@@ -531,12 +572,14 @@ sub ObjectMain
 			// Now, back to the Main selection state!
 			Object.State = SELECT_MAIN
 			Object.ArrowsPos = 0
+			
 		end if
 		break
 		
 	case SELECT_FADEOUT_E
 		// This state is for fading out, exclusively for Exiting
 		// I have no idea why it has its own unique state, to be honest
+		
 		Object.Timer += 4
 		if Object.Timer >= 384
 			Object.State++
@@ -552,7 +595,7 @@ sub ObjectMain
 		SetScreenFade(0, 0, 0, 255)
 		break
 		
-	endswitch
+	end switch
 	
 end sub
 
@@ -682,13 +725,14 @@ sub ObjectStartup
 	
 	// 16-17 - Yellow Arrows
 	
-	// left Arrow
+	// Left Arrow
 	SpriteFrame(-66, 0, 9, 16, 279, 1)
 	
 	// Right Arrow
 	SpriteFrame( 56, 0, 9, 16, 289, 1)
 	
-	// Yup, nearly half the sprites on the sheet are unused!
+	// Yup, all the remaining sprites on the sheet are unused!
+	// That makes a nearly half unused sheet!
 	
 end sub
 

@@ -69,6 +69,7 @@ sub ObjectMain
 				
 			end if
 		end if
+		
 		Object.Timer = 480
 #endplatform
 		
@@ -121,6 +122,7 @@ sub ObjectMain
 		
 		if Object.Timer == 160
 			// Nope that's over, off we go again
+			
 			Object.Timer = 0
 			Object.State = SEGA_FADEOUT
 		end if
@@ -134,6 +136,7 @@ sub ObjectMain
 	case SEGA_FADEOUT
 		// Do note - this state is kinda messed up, they forget a break at the end so
 		// this state doesn't reallly fade out
+		
 #platform: Use_Standalone
 		if Object.RectAlpha < 256
 			Object.RectAlpha += 8
@@ -151,6 +154,8 @@ sub ObjectMain
 #endplatform
 
 #platform: Use_Origins
+				// this never even hits in origins and yet they changed it anyways lol
+				
 				ResetObjectEntity(Object.EntityNo, TypeName[Sonic], 0, Object.XPos, Object.YPos)
 #endplatform
 
@@ -161,13 +166,13 @@ sub ObjectMain
 				Object.Timer++
 			end if
 		end if
-#platform: Use_Standalone
-		break	// The break is needed if we want to see the good ol' CW Logo
-#endplatform
 		
-		// No break used here, so it falls through, meaning the Fade Out doesn't really happen...
+		// No break used here so it falls through
+		// On Origins, this means the Fade Out doesn't really happen...
+		// Standalone doesn't have the following state at all though so it doesn't need to worry about the missing break
 		
 	case SEGA_END
+#platform: Use_Origins
 		// The name's a bit odd - this Object is used to skip the sequence,
 		//  but it's also how the sequence ends, thanks to the missing break from above
 		
@@ -179,10 +184,14 @@ sub ObjectMain
 		Object.InkEffect = INK_ALPHA
 		Object.Alpha = 0
 		Object.Timer = 0
-		break
 		
-	endswitch
+		// There's even a break here, isn't that cool?
+		break
+#endplatform
+		
+	end switch
 	
+	// If you really wanna i guess
 	if Engine.PlatformID == RETRO_WP7
 		if KeyPress[0].ButtonB == true
 			EngineCallback(CALLBACK_EXIT_SELECTED)
@@ -195,17 +204,24 @@ end sub
 
 sub ObjectDraw
 	
+	// First, draw the background
 	DrawRect(0, 0, Screen.XSize, Screen.YSize, 0, 0, 96, 255)
-
+	
 #platform: Use_Origins
+	// Using the pixel art version of the sprite
+	
 	if Object.Alpha > 8
 		DrawSpriteFX(0, FX_INK, Object.XPos, Object.YPos)
 	end if
 #endplatform
-
+	
 #platform: Use_Standalone
+	// Using the High-Quality version of the sprite
+	
 	Object.Scale = 128
 	DrawSpriteFX(0, FX_SCALE, Object.XPos, Object.YPos)
+	
+	// Draw another blue layer on top of it, to give it a blue fade
 	DrawRect(0, 0, Screen.XSize, Screen.YSize, 0, 0, 96, Object.RectAlpha)
 #endplatform
 	
@@ -213,21 +229,22 @@ end sub
 
 
 sub ObjectStartup
-
-#platform: Use_Origins
-	LoadSpriteSheet("Title/Title.gif")
 	
-	// Sega sprite
-	SpriteFrame(-49,-16,98,31,106,1)
+#platform: Use_Origins
+	// Using the pixel version of the sprite
+	
+	LoadSpriteSheet("Title/Title.gif")
+	SpriteFrame(-49, -16, 98, 31, 106, 1)
+	
 #endplatform
-
+	
 #platform: Use_Standalone
+	// Using the High-Quality version of the sprite
+	
 	LoadSpriteSheet("Title/Sega.gif")
-
-	// Sega sprite
 	SpriteFrame(-255, -87, 510, 174, 1, 1)
 #endplatform
-
+	
 end sub
 
 
