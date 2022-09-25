@@ -65,8 +65,8 @@ sub ObjectDraw
 			Player.Speed = 0
 		end if
 
-		if Object.FadeA > 0
-			if Object.FadeA == 256
+		if Object.Timer > 0
+			if Object.Timer == 256
 				PlayMusic(0)
 				if Warp.XPos > 0
 					// Restore values post-warp
@@ -89,8 +89,8 @@ sub ObjectDraw
 				Warp.Frame = 0
 			end if
 
-			SetScreenFade(Object.FadeR, Object.FadeG, Object.FadeB, Object.FadeA)
-			Object.FadeA -= 8
+			SetScreenFade(Object.FadeR, Object.FadeG, Object.FadeB, Object.Timer)
+			Object.Timer -= 8
 		else
 			Fade_Colour = 0
 
@@ -101,7 +101,7 @@ sub ObjectDraw
 			TempValue0 &= CheckResult
 			if TempValue0 == true
 				Object.State = TITLECARD_SLIDEIN
-				Object.FadeA = 0
+				Object.Timer = 0
 			else
 				Player.ControlMode = CONTROL_ENABLED
 				Stage.TimeEnabled  = true
@@ -130,10 +130,10 @@ sub ObjectDraw
 		break
 
 	case TITLECARD_DISPLAY
-		if Object.FadeA == 90
+		if Object.Timer == 90
 			Object.State = TITLECARD_SLIDEOUT
 		else
-			Object.FadeA++
+			Object.Timer++
 		end if
 		break
 
