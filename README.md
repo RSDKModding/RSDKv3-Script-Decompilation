@@ -5,14 +5,14 @@
 A full decompilation for the scripts in Sonic CD's 2011 remake.
 
 These scripts have been manually reverted back to what the original scripts could've looked like. This means that:
-* Function IDs have been recoverted back to proper function names
+* Function IDs have been recovered back to proper function names
 * Functions are in the proper order
 * Default aliases have been re-added where possible
 * Origins/Haptic/Renderer code has been added into scripts via the use of `#platform:` markers
 
 To use these scripts in mods: 
-* RSDKv3 Decompilation: Extract the scripts folder to the exe's root directory: eg `[rootdir]/Scripts/`.
-* Steam (2011 Release): If you're using an up-to-date version of the mod loader, it will download and install these scripts automatically.
+* RSDKv3/RSDKv5U Decompilation: Extract the scripts folder to the exe's root directory: eg `[rootdir]/Scripts/`.
+* Standalone Steam release: If you're using an up-to-date version of the mod loader, it will download and install these scripts automatically.
 
 Mods are only required to include the scripts that have been changed.
 
