@@ -5,18 +5,25 @@
 // Aliases
 #alias Object.PropertyValue	:	Object.CollisionPlane
 
-// Player Aliase
+// Player Alias
 #alias Player.Value0		:	Player.Rings
 
 // Pan
 #alias 0	:	PAN_RIGHT
 #alias 1	:	PAN_LEFT
 
+// Player
+#alias 0	:	PLAYER_SONIC
+
 // GameModes
 #alias 2	:	GAMEMODE_TIMEATTACK
 
+// Global SFX
+#alias 20	:	SFX_G_1UP
+#alias 21	:	SFX_G_ACHIEVEMENT
+
 // Property Values
-#alias 0	:	PROPVAL_PLANEA
+#alias 0	:	PLANEA
 
 
 sub ObjectPlayerInteraction
@@ -47,10 +54,10 @@ sub ObjectPlayerInteraction
 						Player.Lives++
 #endplatform
 
-						if Stage.PlayerListPos == 0		// Sonic
-							PlaySfx(20, 0)
+						if Stage.PlayerListPos == PLAYER_SONIC
+							PlaySfx(SFX_G_1UP, 0)
 						else
-							PlaySfx(21, 0)
+							PlaySfx(SFX_G_ACHIEVEMENT, 0)
 						end if
 					end if
 
@@ -63,7 +70,7 @@ sub ObjectPlayerInteraction
 
 					// King of the Rings achievement criteria
 					if Player.Rings >= 200
-						if Stage.PlayerListPos == 0
+						if Stage.PlayerListPos == PLAYER_SONIC
 							if Stage.DebugMode == false
 								SetAchievement(4, 100)
 							end if
@@ -83,6 +90,7 @@ sub ObjectPlayerInteraction
 		end if
 
 	end if
+
 end sub
 
 
@@ -97,7 +105,7 @@ sub ObjectStartup
 	ArrayPos0 = 32
 	while ArrayPos0 < 1056
 		if Object[ArrayPos0].Type == TypeName[Ring]
-			if Object[ArrayPos0].CollisionPlane == PROPVAL_PLANEA
+			if Object[ArrayPos0].CollisionPlane == PLANEA
 				Object[ArrayPos0].DrawOrder = 4
 			else
 				Object[ArrayPos0].DrawOrder = 2

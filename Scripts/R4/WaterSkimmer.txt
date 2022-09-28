@@ -6,8 +6,10 @@
 #alias Object.Value0		:	Object.Timer
 #alias Object.Value1		:	Object.XVelocity
 #alias Object.Value2		:	Object.BulletTimer
+
 #alias Object.PropertyValue	:	Object.Quality
 
+// States
 #alias 0	:	WATERSKIMMER_DASH_LEFT
 #alias 1	:	WATERSKIMMER_FLOAT_LEFT
 #alias 2	:	WATERSKIMMER_TURN_TO_RIGHT
@@ -17,13 +19,16 @@
 #alias 6	:	WATERSKIMMER_TURN_TO_LEFT
 #alias 7	:	WATERSKIMMER_CHARGE_LEFT
 
-// Badnik Quality / Property Value
-#alias 0	:	PROPVAL_QUALITY_GOOD
-#alias 1	:	PROPVAL_QUALITY_BAD
+// Stage SFX
+#alias 1	:	SFX_S_SHOT
+
+// Badnik Quality / Property Values
+#alias 0	:	GOOD_QUALITY
+#alias 1	:	BAD_QUALITY
 
 
 sub ObjectMain
-	if Object.PropertyValue == PROPVAL_QUALITY_GOOD
+	if Object.Quality == GOOD_QUALITY
 		switch Object.State
 		case WATERSKIMMER_DASH_LEFT
 			if Object.XVelocity > -0x18000
@@ -110,7 +115,7 @@ sub ObjectMain
 		if Object.BulletTimer > 0
 			Object.BulletTimer--
 			if Object.BulletTimer == 0
-				PlayStageSfx(1, 0)
+				PlayStageSfx(SFX_S_SHOT, 0)
 				CreateTempObject(TypeName[SkimmerBullet], 0, Object.XPos, Object.YPos)
 				if Object.Direction == FACING_RIGHT
 					Object[TempObjectPos].XVelocity = -0x20000
@@ -234,7 +239,7 @@ end sub
 
 
 sub ObjectDraw
-	if Object.Quality == PROPVAL_QUALITY_GOOD
+	if Object.Quality == GOOD_QUALITY
 		TempValue0  = Object.Frame
 		TempValue0 /= 11
 		DrawSpriteFX(TempValue0, FX_FLIP, Object.XPos, Object.YPos)

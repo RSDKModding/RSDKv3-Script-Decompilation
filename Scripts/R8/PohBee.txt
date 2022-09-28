@@ -18,9 +18,9 @@
 #alias 0	:	POHBEE_MOVING_RIGHT
 #alias 1	:	POHBEE_MOVING_LEFT
 
-// Property Values
-#alias 0	:	PROPVAL_QUALITY_GOOD
-#alias 1	:	PROPVAL_QUALITY_BAD
+// Badnik Quality / Property Values
+#alias 0	:	GOOD_QUALITY
+#alias 1	:	BAD_QUALITY
 
 
 sub ObjectMain
@@ -33,7 +33,7 @@ sub ObjectMain
 	Object.Rotation += 9
 	Object.Rotation &= 2047
 
-	if Object.Quality == PROPVAL_QUALITY_GOOD
+	if Object.Quality == GOOD_QUALITY
 		SpikeBallN2.Rotation += 10
 		SpikeBallN2.Rotation &= 2047
 		switch Object.State
@@ -47,6 +47,7 @@ sub ObjectMain
 				Object.Timer = 0
 			end if
 			break
+
 		case POHBEE_MOVING_LEFT
 			Object.Direction = FACING_RIGHT
 			if Object.Timer < 128
@@ -77,8 +78,8 @@ sub ObjectMain
 		TempValue0 >>= 2
 		Sin(SpikeBallN2.Oscillation, TempValue0)
 		SpikeBallN2.Oscillation >>= 2
-		SpikeBallN2.Oscillation += 144
-		SpikeBallN2.Oscillation *= 112
+		SpikeBallN2.Oscillation  += 144
+		SpikeBallN2.Oscillation  *= 112
 		SpikeBallN2.Oscillation >>= 7
 	else
 		switch Object.State
@@ -149,7 +150,7 @@ sub ObjectPlayerInteraction
 		CallFunction(Player_Hit)
 	end if
 
-	if Object.Quality == PROPVAL_QUALITY_GOOD
+	if Object.Quality == GOOD_QUALITY
 		Cos(Object.XPos, SpikeBallN2.Oscillation)
 		Object.XPos *= 4608
 		Object.XPos += TempValue0
@@ -170,19 +171,19 @@ end sub
 
 
 sub ObjectDraw
-	if Object.Quality == PROPVAL_QUALITY_GOOD
+	if Object.Quality == GOOD_QUALITY
 		// First Spike Ball chain
 		TempValue0 = 0
 		TempValue1 = 4
 		while TempValue0 < 10
 			Cos(TempValue2, SpikeBallN1.Oscillation)
-			TempValue2 *= TempValue1
+			TempValue2  *= TempValue1
 			TempValue2 <<= 7
-			TempValue2 += Object.XPos
+			TempValue2  += Object.XPos
 			Sin(TempValue3, SpikeBallN1.Oscillation)
-			TempValue3 *= TempValue1
+			TempValue3  *= TempValue1
 			TempValue3 <<= 7
-			TempValue3 += Object.SBallDistance
+			TempValue3  += Object.SBallDistance
 			DrawSpriteXY(2, TempValue2, TempValue3)
 			TempValue0++
 			TempValue1 += 8
@@ -190,13 +191,13 @@ sub ObjectDraw
 		
 		// First Spike Ball
 		Cos(TempValue2, SpikeBallN1.Oscillation)
-		TempValue2 *= TempValue1
+		TempValue2  *= TempValue1
 		TempValue2 <<= 7
-		TempValue2 += Object.XPos
+		TempValue2  += Object.XPos
 		Sin(TempValue3, SpikeBallN1.Oscillation)
-		TempValue3 *= TempValue1
+		TempValue3  *= TempValue1
 		TempValue3 <<= 7
-		TempValue3 += Object.SBallDistance
+		TempValue3  += Object.SBallDistance
 		DrawSpriteXY(3, TempValue2, TempValue3)
 
 		// Second Spike Ball chain
@@ -204,13 +205,13 @@ sub ObjectDraw
 		TempValue1 = 4
 		while TempValue0 < 4
 			Cos(TempValue2, SpikeBallN2.Oscillation)
-			TempValue2 *= TempValue1
+			TempValue2  *= TempValue1
 			TempValue2 <<= 7
-			TempValue2 += Object.XPos
+			TempValue2  += Object.XPos
 			Sin(TempValue3, SpikeBallN2.Oscillation)
-			TempValue3 *= TempValue1
+			TempValue3  *= TempValue1
 			TempValue3 <<= 7
-			TempValue3 += Object.SBallDistance
+			TempValue3  += Object.SBallDistance
 			DrawSpriteXY(2, TempValue2, TempValue3)
 			TempValue0++
 			TempValue1 += 8
@@ -218,45 +219,45 @@ sub ObjectDraw
 
 		// Second Spike Ball
 		Cos(TempValue2, SpikeBallN2.Oscillation)
-		TempValue2 *= TempValue1
+		TempValue2  *= TempValue1
 		TempValue2 <<= 7
-		TempValue2 += Object.XPos
+		TempValue2  += Object.XPos
 		Sin(TempValue3, SpikeBallN2.Oscillation)
-		TempValue3 *= TempValue1
+		TempValue3  *= TempValue1
 		TempValue3 <<= 7
-		TempValue3 += Object.SBallDistance
+		TempValue3  += Object.SBallDistance
 		DrawSpriteXY(3, TempValue2, TempValue3)
 	else
 		TempValue0 = 0
 		TempValue1 = 4
 		while TempValue0 < 10
 			Cos(TempValue2, SpikeBallN1.Oscillation)
-			TempValue2 *= TempValue1
+			TempValue2  *= TempValue1
 			TempValue2 <<= 7
-			TempValue2 += Object.XPos
+			TempValue2  += Object.XPos
 			Sin(TempValue3, SpikeBallN1.Oscillation)
-			TempValue3 *= TempValue1
+			TempValue3  *= TempValue1
 			TempValue3 <<= 7
-			TempValue3 += Object.SBallDistance
+			TempValue3  += Object.SBallDistance
 			DrawSpriteXY(2, TempValue2, TempValue3)
 			TempValue0++
 			TempValue1 += 8
 		loop
 		Cos(TempValue2, SpikeBallN1.Oscillation)
-		TempValue2 *= TempValue1
+		TempValue2  *= TempValue1
 		TempValue2 <<= 7
-		TempValue2 += Object.XPos
+		TempValue2  += Object.XPos
 		Sin(TempValue3, SpikeBallN1.Oscillation)
-		TempValue3 *= TempValue1
+		TempValue3  *= TempValue1
 		TempValue3 <<= 7
-		TempValue3 += Object.SBallDistance
+		TempValue3  += Object.SBallDistance
 		DrawSpriteXY(4, TempValue2, TempValue3)
 	end if
 	
 	Object.AnimationTimer++
 	Object.AnimationTimer &= 3
 
-	Object.Frame = Object.AnimationTimer
+	Object.Frame   = Object.AnimationTimer
 	Object.Frame >>= 1
 	DrawSpriteFX(Object.Frame, FX_FLIP, Object.XPos, Object.YPos)
 end sub

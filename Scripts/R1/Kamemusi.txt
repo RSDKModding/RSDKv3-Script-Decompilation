@@ -5,6 +5,7 @@
 // Aliases
 #alias Object.Value0		:	Object.Timer
 #alias Object.Value1		:	Object.FireTimer
+
 #alias Object.PropertyValue	:	Object.Quality
 
 // Bullet Aliases
@@ -19,13 +20,16 @@
 // Collision Sides
 #alias 0	:	CSIDE_FLOOR
 
+// Stage SFX
+#alias 1	:	SFX_S_SHOT
+
 // Badnik Quality / Property Values
-#alias 0	:	PROPVAL_QUALITY_GOOD
-#alias 1	:	PROPVAL_QUALITY_BAD
+#alias 0	:	GOOD_QUALITY
+#alias 1	:	BAD_QUALITY
 
 
 sub ObjectMain
-	if Object.Quality == PROPVAL_QUALITY_GOOD
+	if Object.Quality == GOOD_QUALITY
 		switch Object.State
 		case KAMEMUSI_MOVE_LEFT
 			Object.Frame++
@@ -98,7 +102,7 @@ sub ObjectMain
 				CreateTempObject(TypeName[Bullet], 0, Object.XPos, Object.YPos)
 				Bullet[TempObjectPos].XVelocity = 0x20000
 				Bullet[TempObjectPos].YVelocity = -0x50000
-				PlayStageSfx(1, 0)
+				PlayStageSfx(SFX_S_SHOT, 0)
 			end if
 
 			if Object.FireTimer == 64
@@ -191,7 +195,7 @@ end sub
 
 
 sub ObjectDraw
-	if Object.Quality == PROPVAL_QUALITY_GOOD
+	if Object.Quality == GOOD_QUALITY
 		if Object.State < KAMEMUSI_SHOOT
 			TempValue0  = Object.Frame
 			TempValue0 /= 30
@@ -233,30 +237,30 @@ sub RSDKEdit
 	if Editor.ReturnVariable == true
 		switch Editor.VariableID
 		case EDIT_VAR_PROPVAL // property value
-			CheckResult = Object.PropertyValue
+			CheckResult = Object.Quality
 			CheckResult &= 1
 			break
 		case 0 // type
-			CheckResult = Object.PropertyValue
+			CheckResult = Object.Quality
 			CheckResult &= 1
 			break
 		end switch
 	else
 		switch Editor.variableID
 		case EDIT_VAR_PROPVAL // property value
-			Object.PropertyValue = Editor.VariableValue
-			Object.PropertyValue &= 1
+			Object.Quality = Editor.VariableValue
+			Object.Quality &= 1
 			break
 		case 0 // type
-			Object.PropertyValue = Editor.VariableValue
-			Object.PropertyValue &= 1
+			Object.Quality = Editor.VariableValue
+			Object.Quality &= 1
 			break
 		end switch
 	end if
 end sub
 
 sub RSDKDraw
-	DrawSprite(Object.PropertyValue)
+	DrawSprite(Object.Quality)
 end sub
 
 sub RSDKLoad

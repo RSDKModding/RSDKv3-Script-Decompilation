@@ -6,6 +6,10 @@
 #alias Object.Value0	:	Object.Timer
 #alias Object.Value1	:	Object.DrawOffsetX
 
+// Booster Cartridge Aliases
+#alias Object.Value1	:	Object.XVelocity
+#alias Object.Value2	:	Object.YVelocity
+
 // Base State
 #alias 0	:	SPEEDBOOSTER_IDLE
 
@@ -17,17 +21,16 @@
 #alias 3	:	SPEEDBOOSTER_RECOIL_L
 #alias 4	:	SPEEDBOOSTER_RECOVER_L
 
-// Booster Cartridge Aliases
-#alias Object.Value1	:	Object.XVelocity
-#alias Object.Value2	:	Object.YVelocity
-
 // Priority
 #alias 0	:	PRIORITY_BOUNDS
 #alias 1	:	PRIORITY_ACTIVE
 
+// Stage SFX
+#alias 0	:	SFX_S_LARGEBOOSTER	// In origins, this SFX is Launcher
+#alias 1	:	SFX_S_SWITCH
+
 
 sub ObjectMain
-
 	switch Object.State
 	case SPEEDBOOSTER_RECOIL_R
 		if Object.Timer < 6
@@ -85,7 +88,7 @@ sub ObjectPlayerInteraction
 				// Make the Speed Boster always active for the next few frames
 				Object.Priority = PRIORITY_ACTIVE
 
-				PlayStageSfx(0, 0)
+				PlayStageSfx(SFX_S_LARGEBOOSTER, 0)
 
 #platform: Use_Haptics
 				HapticEffect(30, 0, 0, 0)

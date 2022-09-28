@@ -1,9 +1,12 @@
-//------------------Sonic CD R7 Setup Script------------------//
+//--------------Sonic CD R7 C Boss Setup Script---------------//
 //--------Scripted by Christian Whitehead 'The Taxman'--------//
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
 // Priority
 #alias 1	:	PRIORITY_ACTIVE
+
+// Collision Mode
+#alias 0 : CMODE_FLOOR
 
 // Function declarations
 #function R7Setup_GetLoopTileInfo
@@ -33,7 +36,6 @@ end function
 
 
 sub ObjectPlayerInteraction
-	
 	// "Layers" are managed here
 	// (In reality, chunks are swapped on-the-fly in order to make it appear as if the player's moving behind/in front of them)
 
@@ -54,7 +56,7 @@ sub ObjectPlayerInteraction
 	case 19
 		// Loop chunks, open from left side
 		CallFunction(R7Setup_GetLoopTileInfo)
-		if Player.CollisionMode == 0
+		if Player.CollisionMode == CMODE_FLOOR
 			if TempValue0 == 1001
 				TempValue1 &= 1022
 				TempValue2 &= 1022
@@ -91,7 +93,7 @@ sub ObjectPlayerInteraction
 	case 23
 		// Loop chunks, open from right side
 		CallFunction(R7Setup_GetLoopTileInfo)
-		if Player.CollisionMode == 0
+		if Player.CollisionMode == CMODE_FLOOR
 			if TempValue0 == 1000
 				TempValue1 &= 1022
 				TempValue2 &= 1022

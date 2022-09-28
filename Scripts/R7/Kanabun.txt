@@ -3,29 +3,31 @@
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
 // Aliases
-#alias Object.Value0 : Object.Timer
-#alias Object.Value1 : Object.Angle
-#alias Object.Value2 : Object.StartPosX
-#alias Object.Value3 : Object.StartPosY
-#alias Object.Value4 : Object.Depth
-#alias Object.Value5 : Object.ReturnDrawOrder
+#alias Object.Value0		: Object.Timer
+#alias Object.Value1		: Object.Angle
+#alias Object.Value2		: Object.StartPosX
+#alias Object.Value3		: Object.StartPosY
+#alias Object.Value4		: Object.Depth
+#alias Object.Value5		: Object.ReturnDrawOrder
+
+#alias Object.PropertyValue : Object.Quality
 
 // States
 #alias 0 : KANABUN_FLYL
 #alias 1 : KANABUN_FLYR
 #alias 2 : KANABUN_OFFSCREEN
 
-// Badnik Conditions
-#alias 0 : CONDITION_GOOD
-#alias 1 : CONDITION_BAD
+// Badnik Quality / Property Values
+#alias 0 : GOOD_QUALITY
+#alias 1 : BAD_QUALITY
+#alias 2 : HIGH_LAYER_GOOD
 
 // Priority
-#alias 0	:	PRIORITY_BOUNDS
-#alias 1	:	PRIORITY_ACTIVE
+#alias 0 : PRIORITY_BOUNDS
+#alias 1 : PRIORITY_ACTIVE
 
 
 sub ObjectMain
-	
 	if Object.OutOfBounds == true
 		Object.State = KANABUN_OFFSCREEN
 		Object.Timer = 0
@@ -38,7 +40,7 @@ sub ObjectMain
 	// The different Kanabun types have their own main update routines
 	// However, their main State Switches are exactly the same
 
-	if Object.PropertyValue == CONDITION_GOOD		
+	if Object.Quality == GOOD_QUALITY		
 		switch Object.State
 		case KANABUN_FLYL
 			// This Kanabun is initially given always-active priority, in order for its OOB state to work properly
@@ -203,7 +205,6 @@ end sub
 
 
 sub ObjectPlayerInteraction
-	
 	if Object.State < KANABUN_OFFSCREEN
 		if Object.Depth == 0
 			// If in the Foreground, then act as a normal badnik
@@ -281,8 +282,8 @@ sub ObjectStartup
 			Object[ArrayPos0].StartPosY = Object[ArrayPos0].YPos
 			
 			// And setup where the Kanabun's gonna fly back to, only the Good variant can go back to the higher layer
-			if Object[ArrayPos0].PropertyValue == 2
-				Object[ArrayPos0].PropertyValue = CONDITION_GOOD
+			if Object[ArrayPos0].Quality == HIGH_LAYER_GOOD
+				Object[ArrayPos0].Quality = GOOD_QUALITY
 				Object[ArrayPos0].ReturnDrawOrder = 3
 			else
 				Object[ArrayPos0].ReturnDrawOrder = 2
@@ -303,19 +304,19 @@ sub RSDKEdit
 	if Editor.ReturnVariable == true
 		switch Editor.VariableID
 		case EDIT_VAR_PROPVAL // Property Value
-			CheckResult = Object.PropertyValue
+			CheckResult = Object.Quality
 			break
 		case 0 // Condition
-			CheckResult = Object.PropertyValue
+			CheckResult = Object.Quality
 			break
 		end switch
 	else
 		switch Editor.variableID
 		case EDIT_VAR_PROPVAL // Property Value
-			Object.PropertyValue = Editor.VariableValue
+			Object.Quality = Editor.VariableValue
 			break
 		case 0 // Condition
-			Object.PropertyValue = Editor.VariableValue
+			Object.Quality = Editor.VariableValue
 			break
 		end switch
 	end if
@@ -323,7 +324,7 @@ end sub
 
 
 sub RSDKDraw
-	DrawSprite(Object.PropertyValue)
+	DrawSprite(Object.Quality)
 end sub
 
 
@@ -335,7 +336,7 @@ sub RSDKLoad
 
 	AddEditorVariable("Condition")
 	SetActiveVariable("Condition")
-	AddEnumVariable("Good", CONDITION_GOOD)
-	AddEnumVariable("Bad", CONDITION_BAD)
+	AddEnumVariable("Good", GOOD_QUALITY)
+	AddEnumVariable("Bad", BAD_QUALITY)
 	AddEnumVariable("Good (Return to high layer)", 2)
 end sub

@@ -8,6 +8,7 @@
 #alias Object.Value2		:	Object.CurrentFrame
 #alias Object.Value3		:	Object.ShootingCooldown
 #alias Object.Value4		:	Object.FrameIncrease
+
 #alias Object.PropertyValue	:	Object.Quality
 
 // PohBee Bullet Aliases
@@ -26,15 +27,18 @@
 #alias 5	:	POHBEE_SHOOTING_RIGHT
 #alias 6	:	POHBEE_RESET
 
+// Stage SFX
+#alias 7	:	SFX_S_SHOT
+
 // Priority
 #alias 0	:	PRIORITY_BOUNDS
 #alias 1	:	PRIORITY_ACTIVE
 
-// Badnik Quality
-#alias 0	:	PROPVAL_QUALITY_GOOD
-#alias 1	:	PROPVAL_QUALITY_BAD
+// Badnik Quality / Property Values
+#alias 0	:	GOOD_QUALITY
+#alias 1	:	BAD_QUALITY
 // Origins added a new one, say hi to the stationary PohBee
-#alias 2	:	PROPVAL_STATIONARY	// This PohBee is also good quality
+#alias 2	:	STATIONARY	// This PohBee is also good quality
 
 
 sub ObjectMain
@@ -50,7 +54,7 @@ sub ObjectMain
 		Object.FrameIncrease	= 0
 	end if
 
-	if Object.Quality == PROPVAL_QUALITY_GOOD
+	if Object.Quality == GOOD_QUALITY
 		switch Object.State
 		case POHBEE_MOVING_LEFT
 			Object.Priority = PRIORITY_ACTIVE
@@ -123,7 +127,7 @@ sub ObjectMain
 					PohBeeBullet[TempObjectPos].YPos	 +=  0x1B0000
 					PohBeeBullet[TempObjectPos].XVelocity = -0x20000
 					PohBeeBullet[TempObjectPos].YVelocity =  0x20000
-					PlayStageSfx(7, 0)
+					PlayStageSfx(SFX_S_SHOT, 0)
 				end if
 			else
 				Object.State = POHBEE_MOVING_LEFT
@@ -146,7 +150,7 @@ sub ObjectMain
 					PohBeeBullet[TempObjectPos].YPos	 += 0x1B0000
 					PohBeeBullet[TempObjectPos].XVelocity = 0x20000
 					PohBeeBullet[TempObjectPos].YVelocity = 0x20000
-					PlayStageSfx(7, 0)
+					PlayStageSfx(SFX_S_SHOT, 0)
 				end if
 			else
 				Object.State = POHBEE_MOVING_RIGHT
@@ -223,8 +227,9 @@ sub ObjectMain
 #platform: Use_Origins
 	CheckEqual(game.playMode, BOOT_PLAYMODE_MISSION)
 	TempValue0  = CheckResult
-	CheckEqual(Object.PropertyValue, PROPVAL_STATIONARY)
+	CheckEqual(Object.Quality, STATIONARY)
 	TempValue0 &= CheckResult
+
 	if TempValue0 == true
 		switch Object.State
 		case POHBEE_MOVING_LEFT
@@ -232,6 +237,7 @@ sub ObjectMain
 			if Object.ShootingCooldown > 0
 				Object.ShootingCooldown--
 			end if
+
 			if Object.Timer < 512
 				Object.Timer++
 			else
@@ -245,6 +251,7 @@ sub ObjectMain
 			if Object.ShootingCooldown > 0
 				Object.ShootingCooldown--
 			end if
+
 			if Object.Timer < 60
 				if Object.Timer == 30
 					Object.Direction = FACING_LEFT
@@ -260,6 +267,7 @@ sub ObjectMain
 			if Object.ShootingCooldown > 0
 				Object.ShootingCooldown--
 			end if
+
 			if Object.Timer < 512
 				Object.Timer++
 			else
@@ -273,6 +281,7 @@ sub ObjectMain
 			if Object.ShootingCooldown > 0
 				Object.ShootingCooldown--
 			end if
+
 			if Object.Timer < 60
 				if Object.Timer == 30
 					Object.Direction = FACING_RIGHT
@@ -290,13 +299,14 @@ sub ObjectMain
 				if Object.ShootingCooldown == 30
 					Object.FrameIncrease = 4
 				end if
+
 				if Object.ShootingCooldown == 64
 					CreateTempObject(TypeName[PohBeeBullet], 0, Object.XPos, Object.YPos)
 					PohBeeBullet[TempObjectPos].XPos	 -=  0xF0000
 					PohBeeBullet[TempObjectPos].YPos	 +=  0x1B0000
 					PohBeeBullet[TempObjectPos].XVelocity = -0x20000
 					PohBeeBullet[TempObjectPos].YVelocity =  0x20000
-					PlayStageSfx(7, 0)
+					PlayStageSfx(SFX_S_SHOT, 0)
 				end if
 			else
 				Object.State = POHBEE_MOVING_LEFT
@@ -313,6 +323,7 @@ sub ObjectMain
 				if Object.ShootingCooldown == 30
 					Object.FrameIncrease = 4
 				end if
+
 				if Object.ShootingCooldown == 64
 					CreateTempObject(TypeName[PohBeeBullet], 0, Object.XPos, Object.YPos)
 					PohBeeBullet[TempObjectPos].Direction = FACING_LEFT
@@ -320,7 +331,7 @@ sub ObjectMain
 					PohBeeBullet[TempObjectPos].YPos	 += 0x1B0000
 					PohBeeBullet[TempObjectPos].XVelocity = 0x20000
 					PohBeeBullet[TempObjectPos].YVelocity = 0x20000
-					PlayStageSfx(7, 0)
+					PlayStageSfx(SFX_S_SHOT, 0)
 				end if
 			else
 				Object.State = POHBEE_MOVING_RIGHT
@@ -345,7 +356,7 @@ end sub
 
 
 sub ObjectPlayerInteraction
-	if Object.Quality != PROPVAL_QUALITY_BAD
+	if Object.Quality != BAD_QUALITY
 		if Object.State < POHBEE_SHOOTING_LEFT
 			if Object.ShootingCooldown == 0
 				PlayerObjectCollision(C_TOUCH, -96, -64, 96, 64)
@@ -373,7 +384,7 @@ end sub
 
 sub ObjectDraw
 	if Object.State < POHBEE_RESET
-		if Object.Quality != PROPVAL_QUALITY_BAD
+		if Object.Quality != BAD_QUALITY
 			Object.CurrentFrame++
 			Object.CurrentFrame &= 3
 

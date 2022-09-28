@@ -20,10 +20,18 @@
 #alias 7	:	LENTRY_MOVE_DOWN
 #alias 10	:	LENTRY_MOVE_UP
 
-// Engine & Callbacks
-#alias 3	:	CALLBACK_TIMEATTACK_NOTIFY_EXIT
+// Presentation Stages
+#alias 1	:	STAGE_P_MENU
 
+// Soundtrack
 #alias 0	:	OST_JP
+
+// Global SFX
+#alias 23	:	SFX_G_MENUBUTTON
+#alias 27	:	SFX_G_SELECT
+
+// Engine & Callbacks
+#alias 3	:	CALLBACK_TATTACK_NOTIFY_EXIT
 
 
 sub ObjectMain
@@ -49,31 +57,31 @@ sub ObjectMain
 		if KeyPress[0].Left == true
 			Object.State = MENUCONTROL_BLANK
 			LEntry.State = LENTRY_MOVE_LEFT
-			PlaySfx(23, 0) 	//Menu Button SFX
+			PlaySfx(SFX_G_MENUBUTTON, 0) 
 		end if
 
 		if KeyPress[0].Right == true
 			Object.State = MENUCONTROL_BLANK
 			LEntry.State = LENTRY_MOVE_RIGHT
-			PlaySfx(23, 0) 	//Menu Button SFX
+			PlaySfx(SFX_G_MENUBUTTON, 0) 
 		end if
 
 		if KeyPress[0].Up == true
 			Object.State = MENUCONTROL_BLANK
 			LEntry.State = LENTRY_MOVE_UP
-			PlaySfx(23, 0) 	//Menu Button SFX
+			PlaySfx(SFX_G_MENUBUTTON, 0) 
 		end if
 
 		if KeyPress[0].Down == true
 			Object.State = MENUCONTROL_BLANK
 			LEntry.State = LENTRY_MOVE_DOWN
-			PlaySfx(23, 0) 	//Menu Button SFX
+			PlaySfx(SFX_G_MENUBUTTON, 0) 
 		end if
 
 		if KeyPress[0].ButtonB == true
 			Object.State = MENUCONTROL_EXIT
 			StopMusic()
-			PlaySfx(27, 0)	//Select SFX
+			PlaySfx(SFX_G_SELECT, 0)
 		end if
 		break
 
@@ -85,11 +93,11 @@ sub ObjectMain
 			Object.Timer += 8
 			Object.Scale += 4096
 		else
-			Stage.ListPos = 1	// Menu
+			Stage.ListPos = STAGE_P_MENU
 			LoadStage()
 		end if
 		SetScreenFade(0, 0, 0, Object.Timer)
-		EngineCallback(CALLBACK_TIMEATTACK_NOTIFY_EXIT)
+		EngineCallback(CALLBACK_TATTACK_NOTIFY_EXIT)
 		break
 
 	end switch

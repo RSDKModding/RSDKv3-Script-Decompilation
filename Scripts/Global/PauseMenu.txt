@@ -24,6 +24,9 @@
 // Ink
 #alias 2	:	INK_ALPHA
 
+// Player
+#alias 0	:	PLAYER_SONIC
+
 // Languages
 #alias 0	:	LANG_ENGLISH
 #alias 1	:	LANG_FRENCH
@@ -34,6 +37,15 @@
 
 // Game modes
 #alias 2	:	GAMEMODE_TIMEATTACK
+
+// Presentation Stages
+#alias 0	:	STAGE_P_TITLE
+#alias 2	:	STAGE_P_TATTACK
+
+// Global SFX
+#alias 23	:	SFX_G_MENUBUTTON
+#alias 24	:	SFX_G_FLYING
+#alias 27	:	SFX_G_SELECT
 
 // Engine & Callbacks
 #alias 2	:	MESSAGE_LOSTFOCUS
@@ -171,7 +183,7 @@ sub ObjectMain
 
 		if CheckResult == true
 			if KeyPress[0].Up == true
-				PlaySfx(23, 0) 	//Menu Button SFX
+				PlaySfx(SFX_G_MENUBUTTON, 0)
 
 				Object.Timer		  = 0
 				Object.AnimationTimer = 0
@@ -201,7 +213,7 @@ sub ObjectMain
 			end if
 
 			if KeyPress[0].Down == true
-				PlaySfx(23, 0) 	//Menu Button SFX
+				PlaySfx(SFX_G_MENUBUTTON, 0)
 
 				Object.Timer		  = 0
 				Object.AnimationTimer = 0
@@ -233,7 +245,7 @@ sub ObjectMain
 			end if
 
 			if KeyPress[0].Start == true
-				PlaySfx(27, 0)	//Select 
+				PlaySfx(SFX_G_SELECT, 0)
 				
 				Object.State = PAUSEMENU_CONFIRMED
 				Object.Alpha = 248
@@ -241,7 +253,7 @@ sub ObjectMain
 			end if
 
 			if KeyPress[0].ButtonA == true
-				PlaySfx(27, 0)	//Select SFX
+				PlaySfx(SFX_G_SELECT, 0)
 
 				Object.State = PAUSEMENU_CONFIRMED
 				Object.Alpha = 248
@@ -274,7 +286,7 @@ sub ObjectMain
 			else
 				if TempValue3 < 0
 					if Object.SelectedButton == 0
-						PlaySfx(27, 0)	//Select SFX
+						PlaySfx(SFX_G_SELECT, 0)
 
 						Object.State = PAUSEMENU_CONFIRMED
 						Object.Alpha = 248
@@ -294,7 +306,7 @@ sub ObjectMain
 				else
 					if TempValue3 < 0
 						if Object.SelectedButton == 1
-							PlaySfx(27, 0)	//Select SFX
+							PlaySfx(SFX_G_SELECT, 0)
 
 							Object.State = PAUSEMENU_CONFIRMED
 							Object.Alpha = 248
@@ -314,7 +326,7 @@ sub ObjectMain
 			else
 				if TempValue3 < 0
 					if Object.SelectedButton == 2
-						PlaySfx(27, 0)	//Select SFX
+						PlaySfx(SFX_G_SELECT, 0)
 
 						Object.State = PAUSEMENU_CONFIRMED
 						Object.Alpha = 248
@@ -334,7 +346,7 @@ sub ObjectMain
 				else
 					if TempValue3 < 0
 						if Object.SelectedButton == 3
-							PlaySfx(27, 0)	//Select SFX
+							PlaySfx(SFX_G_SELECT, 0)
 
 							Object.State = PAUSEMENU_CONFIRMED
 							Object.Alpha = 248
@@ -355,7 +367,7 @@ sub ObjectMain
 				else
 					if TempValue3 < 0
 						if Object.SelectedButton == 3
-							PlaySfx(27, 0)	//Select SFX
+							PlaySfx(SFX_G_SELECT, 0)
 
 							Object.State = PAUSEMENU_CONFIRMED
 							Object.Alpha = 248
@@ -507,11 +519,11 @@ sub ObjectMain
 			ResumeMusic()
 			ResetObjectEntity(Object.EntityNo, TypeName[Blank Object], 0, 0, 0)
 			if Player.Animation == ANI_FLYING
-				PlaySfx(24, true)
+				PlaySfx(SFX_G_FLYING, 1)
 			end if
 
 			if Player.Animation == ANI_FLYINGTIRED
-				PlaySfx(24, true)
+				PlaySfx(SFX_G_FLYING, 1)
 			end if
 
 			if Engine.FrameSkipSetting > 0
@@ -547,10 +559,10 @@ sub ObjectMain
 				LampPost.Check	 = 0
 
 				if Options.GameMode == GAMEMODE_TIMEATTACK
-					Stage.ListPos	  = 2	// Time Attack
+					Stage.ListPos	  = STAGE_P_TATTACK
 					TimeAttack.Result = 0
 				else
-					Stage.ListPos	  = 0	// Title Screen
+					Stage.ListPos	  = STAGE_P_TITLE
 				end if
 				LoadStage()
 				break
@@ -838,7 +850,7 @@ sub ObjectStartup
 		break
 	end switch
 
-	if Stage.PlayerListPos == 0	// Sonic
+	if Stage.PlayerListPos == PLAYER_SONIC
 		SpriteFrame(-28, -14, 16, 24, 1, 103)	// #0  - Sonic
 		SpriteFrame(-28, -14, 16, 24, 18, 103)	// #1  - Sonic Waiting Frame 0
 		SpriteFrame(-28, -14, 16, 24, 35, 103)	// #2  - Sonic Waiting Frame 1

@@ -8,6 +8,9 @@
 #alias Object.Value2	:	Object.YVelocity
 #alias Object.Value3	:	Object.Gravity
 
+// Player Aliases
+#alias Object[0].Value0	:	Player.Rings
+
 // States
 #alias 0	:	BOSSBOMB_CARRIED
 #alias 1	:	BOSSBOMB_ACTIVE
@@ -15,13 +18,11 @@
 // Collision Sides
 #alias 0	:	CSIDE_FLOOR
 
-// SFX Aliases
-
 // Global SFX
-#alias 22	:	SFX_EXPLOSION
+#alias 22	:	SFX_G_EXPLOSION
 
 // Stage SFX
-#alias 4	:	SFX_IMPACT1
+#alias 4	:	SFX_S_IMPACT1
 
 
 sub ObjectMain
@@ -42,7 +43,7 @@ sub ObjectMain
 					// There's a short delay between hitting the ground and actually exploding
 					Object.Timer++
 				else
-					PlayStageSfx(SFX_IMPACT1, false)
+					PlayStageSfx(SFX_S_IMPACT1, 0)
 					
 					// Now that the Bomb's supposed to explode, create all of the Bomb Fragments
 					
@@ -149,7 +150,7 @@ sub ObjectPlayerInteraction
 			// Explode if the Player has zero rings... except I think this is bugged?
 			// This check always returns true, regardless of how many rings the Player has,
 			// so the bomb always disappears...
-			if Object[0].Value0 == 0
+			if Player.Rings == 0
 				Object.State = BOSSBOMB_CARRIED
 				
 				// Explode, creating the Explosion as a Temp Object rather than in this Object
@@ -160,7 +161,7 @@ sub ObjectPlayerInteraction
 				Object.XPos = Object[+2].XPos
 				Object.YPos = Object[+2].YPos
 				
-				PlaySfx(SFX_EXPLOSION, false)
+				PlaySfx(SFX_G_EXPLOSION, 0)
 			end if
 			
 			// And now, only after checking the Player's rings, see if we should hurt the Player
@@ -183,11 +184,11 @@ sub ObjectPlayerInteraction
 				
 				// Similarly to above, I believe this check against the Player's Rings
 				// may actually be a bit bugged...
-				if Object[0].Value0 == 0
+				if Player.Rings == 0
 					Object.State = BOSSBOMB_CARRIED
 					CreateTempObject(TypeName[Explosion], 0, Object.XPos, Object.YPos)
 					Object.Type = TypeName[Blank Object]
-					PlaySfx(SFX_EXPLOSION, false)
+					PlaySfx(SFX_G_EXPLOSION, 0)
 				end if
 				
 				CallFunction(Player_Hit)

@@ -21,10 +21,16 @@
 #alias 3	:	SIGNPOST2_STOP_PLAYER
 #alias 4	:	SIGNPOST2_BLANK
 
+// Players
+#alias 0	:	PLAYER_SONIC
+
 // Control Mode
 #alias -1	:	CONTROL_DISABLED
 
-// Priorities
+// Global SFX
+#alias 15	:	SFX_G_SIGNPOST
+
+// Priority
 #alias 1	:	PRIORITY_ACTIVE
 #alias 3	:	PRIORITY_XBOUNDS
 
@@ -74,7 +80,7 @@ sub ObjectMain
 				Object.State	  = SIGNPOST2_FLIP
 				Object.Timer	  = 8
 
-				PlaySfx(15, 0)
+				PlaySfx(SFX_G_SIGNPOST, 0) 
 				
 			end if
 		end if
@@ -91,13 +97,13 @@ sub ObjectMain
 				// Spawn a ring sparkle at random location close to the sign post
 				Rand(TempValue0, 48)
 				TempValue0 <<= 16
-				TempValue0 += Object.XPos
-				TempValue0 -= 0x180000
+				TempValue0  += Object.XPos
+				TempValue0  -= 0x180000
 
 				Rand(TempValue1, 32)
 				TempValue1 <<= 16
-				TempValue1 += Object.YPos
-				TempValue1 -= 0x1C0000
+				TempValue1  += Object.YPos
+				TempValue1  -= 0x1C0000
 				CreateTempObject(TypeName[RingSparkle], 0, TempValue0, TempValue1)
 
 				Object.Timer--
@@ -252,7 +258,7 @@ end sub
 
 
 sub ObjectStartup
-	if Stage.PlayerListPos == 0	// Sonic
+	if Stage.PlayerListPos == PLAYER_SONIC
 		LoadSpriteSheet("Global/Items2.gif")
 	else
 		LoadSpriteSheet("Global/Items2_t.gif")

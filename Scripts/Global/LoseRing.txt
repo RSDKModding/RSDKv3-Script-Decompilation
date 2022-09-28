@@ -19,8 +19,11 @@
 #alias 0	:	CSIDE_FLOOR
 
 // Property Values
-#alias 0	:	PROPVAL_PLANEA
-#alias 1	:	PROPVAL_PLANEB
+#alias 0	:	VISUAL_PLANEA
+#alias 1	:	VISUAL_PLANEB
+
+// Players
+#alias 0	:	PLAYER_SONIC
 
 // Game Modes
 #alias 2	:	GAMEMODE_TIMEATTACK
@@ -48,6 +51,7 @@ sub ObjectMain
 	Object.Timer++
 	if Object.Timer == 256
 		Object.Type = TypeName[Blank Object]
+
 		Object.XVelocity = 0
 		Object.YVelocity = 0
 		Object.Timer	 = 0
@@ -71,14 +75,11 @@ end sub
 
 sub ObjectPlayerInteraction
 	if Player.State != Player_State_Hurt
-
 		if Player.CollisionPlane == Object.CollisionPlane
-
 			PlayerObjectCollision(C_TOUCH, -8, -8, 8, 8)
 			if CheckResult == true
-
 				Object.Type = TypeName[RingSparkle]
-				if Object.CollisionPlane == PROPVAL_PLANEA
+				if Object.CollisionPlane == VISUAL_PLANEA
 					Object.DrawOrder = 4
 				else
 					Object.DrawOrder = 2
@@ -96,7 +97,6 @@ sub ObjectPlayerInteraction
 				end if
 
 				if Player.Rings >= Ring.ExtraLife
-
 					if Options.GameMode != GAMEMODE_TIMEATTACK
 
 #platform: Use_Origins
@@ -120,7 +120,7 @@ sub ObjectPlayerInteraction
 
 					// King of the Rings Unlock Criteria
 					if Player.Rings >= 200
-						if Stage.PlayerListPos == 0		//Sonic
+						if Stage.PlayerListPos == PLAYER_SONIC
 							if Stage.DebugMode == false
 								SetAchievement(4, 100)
 							end if
@@ -137,9 +137,7 @@ sub ObjectPlayerInteraction
 				end if
 
 			end if
-			
 		end if
-
 	end if
 end sub
 

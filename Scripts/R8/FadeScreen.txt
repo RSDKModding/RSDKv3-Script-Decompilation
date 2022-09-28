@@ -6,6 +6,9 @@
 #alias Object.Value0	:	Object.Timer
 #alias Object.Value1	:	Object.Timer
 
+// Player Aliases
+#alias Object[0].Value0	:	Player.Rings
+
 // States
 #alias 0	:	FADESCREEN_SETUP
 #alias 1	:	FADESCREEN_AMY
@@ -21,7 +24,17 @@
 #alias 1	:	GAMEMODE_SAVEGAME
 #alias 2	:	GAMEMODE_TIMEATTACK
 
+// Presentation Stages
+#alias 0	:	STAGE_P_TITLE
+#alias 2	:	STAGE_P_TATTACK
+#alias 7	:	STAGE_P_STAFFCREDITS
+#alias 8	:	STAGE_P_TAILSUNLOCK
+
+// Soundstrack
 #alias 0	:	OST_JP
+
+// Players
+#alias 1	:	PLAYER_TAILS
 
 // Engine States
 #alias 1	:	ENGINE_MAINGAME
@@ -103,7 +116,7 @@ sub ObjectMain
 					TempValue1  += TempValue2
 					TempValue1  += Stage.MilliSeconds
 					SetLeaderboard(TempValue0, TempValue1)
-					Stage.ListPos = 2
+					Stage.ListPos = STAGE_P_TATTACK
 				else
 					EngineCallback(4)
 					if Player.Score > 0
@@ -119,7 +132,7 @@ sub ObjectMain
 					game.callbackParam2 = 0
 					EngineCallback(NOTIFY_STATS_ENEMY)
 
-					game.callbackParam0 = Object[0].Value0			// Player Rings
+					game.callbackParam0 = Player.Rings
 					EngineCallback(NOTIFY_STATS_RING)
 
 					game.callbackParam0 = StageStatsUsabilityParam5	// Lamp Post related
@@ -188,22 +201,22 @@ sub ObjectMain
 					if SaveRAM[36] == false	// Is Tails unlocked?
 #platform: Use_Origins
 						if game.playMode == BOOT_PLAYMODE_CLASSIC
-							Stage.ListPos = 0	// Title Screen
+							Stage.ListPos = STAGE_P_TITLE
 							Engine.State = ENGINE_WAIT
 						else
 							SaveRAM[36] = true
 							WriteSaveRAM()
-							Stage.ListPos = 8	// Tails Unlock Screen
+							Stage.ListPos = STAGE_P_TAILSUNLOCK
 						end if
 #endplatform
 
 #platform: Use_Standalone
 						SaveRAM[36] = true
 						WriteSaveRAM()
-						Stage.ListPos = 8	// Tails Unlock Screen
+						Stage.ListPos = STAGE_P_TAILSUNLOCK
 #endplatform
 					else
-						Stage.ListPos = 0	// Title Screen
+						Stage.ListPos = STAGE_P_TITLE
 #platform: Use_Origins
 						Engine.State = ENGINE_WAIT
 #endplatform
@@ -225,8 +238,8 @@ sub ObjectMain
 #platform: Use_Standalone
 					// Originally the game checked if the player was using sonic or tails
 					// This got removed on origins, but since it covers this whole thing, this workaround should do
-					if Stage.PlayerListPos == 1	// Tails
-						Stage.ListPos = 7	// 2011 Remaster Credits
+					if Stage.PlayerListPos == PLAYER_TAILS
+						Stage.ListPos = STAGE_P_STAFFCREDITS
 					end if
 #endplatform
 				end if

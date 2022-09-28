@@ -1,4 +1,4 @@
-//------------Sonic CD Help Menu Script-------------//
+//-----------------Sonic CD Help Menu Script------------------//
 //--------Scripted by Christian Whitehead 'The Taxman'--------//
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
@@ -24,8 +24,15 @@
 #alias 4	:	LANG_SPANISH
 #alias 5	:	LANG_JAPANESE
 
+// Global SFX
+#alias 26	:	SFX_G_OUTTAHERE
+#alias 27	:	SFX_G_SELECT
+
 // Soundtrack
 #alias 0	:	OST_JP
+
+// Presentation Stages
+#alias 1	:	STAGE_P_MENU
 
 // Engine & Callbacks
 #alias 5	:	ENGINE_ENTER_HIRESMODE
@@ -267,7 +274,7 @@ sub ObjectMain
 	case HELPMENU_CONTROLS
 		if KeyPress[0].Down == true
 			if Object.HelpPage < 8
-				PlaySfx(27, 0)	//Select SFX
+				PlaySfx(SFX_G_SELECT, 0)
 				Object.Timer = 256
 				Object.State = HELPMENU_PAGEDOWN
 			end if
@@ -275,13 +282,13 @@ sub ObjectMain
 
 		if KeyPress[0].Up == true
 			if Object.HelpPage > 0
-				PlaySfx(27, 0)	//Select SFX
+				PlaySfx(SFX_G_SELECT, 0)
 				Object.State = HELPMENU_PAGEUP
 			end if
 		end if
 		
 		if KeyPress[0].ButtonB == true
-			PlaySfx(26, 0)
+			PlaySfx(SFX_G_OUTTAHERE, 0) 
 			Object.State = HELPMENU_LEAVE
 		end if
 		break
@@ -356,7 +363,7 @@ sub ObjectMain
 		if Object.Timer < 348
 			Object.Timer += 8
 		else
-			Stage.ListPos = 1		// Menu
+			Stage.ListPos = STAGE_P_MENU
 			Engine.State = ENGINE_EXIT_HIRESMODE
 			LoadStage()
 		end if

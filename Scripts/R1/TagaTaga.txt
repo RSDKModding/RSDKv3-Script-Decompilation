@@ -6,6 +6,7 @@
 #alias Object.Value0		:	Object.Timer
 #alias Object.Value1		:	Object.YVelocity
 #alias Object.Value2		:	Object.YOriginPos
+
 #alias Object.PropertyValue	:	Object.Quality
 
 // States
@@ -18,9 +19,12 @@
 #alias 6	:	TAGATAGA_MOVE_PINCH_2
 #alias 7	:	TAGATAGA_SUBMERGE
 
-// Property Values
-#alias 0	:	PROPVAL_QUALITY_GOOD
-#alias 1	:	PROPVAL_QUALITY_BAD
+// Stage SFX
+#alias 3	:	SFX_S_WATERSPLASH
+
+// Badnik Quality / Property Values
+#alias 0	:	GOOD_QUALITY
+#alias 1	:	BAD_QUALITY
 
 // Priority
 #alias 0	:	PRIORITY_BOUNDS
@@ -28,7 +32,7 @@
 
 
 sub ObjectMain
-	if Object.Quality == PROPVAL_QUALITY_GOOD
+	if Object.Quality == GOOD_QUALITY
 
 		switch Object.State
 		case TAGATAGA_SET_LAUNCH_SPEED
@@ -96,7 +100,7 @@ sub ObjectMain
 			Object.Timer++
 			if Object.Timer > 128
 				Object.State = TAGATAGA_SUBMERGE
-				PlayStageSfx(3, 0)
+				PlayStageSfx(SFX_S_WATERSPLASH, 0)
 			end if
 			break
 
@@ -108,7 +112,7 @@ sub ObjectMain
 				Object.Timer = 0
 
 				Object.YPos = Object.YOriginPos
-				PlayStageSfx(3, 0)
+				PlayStageSfx(SFX_S_WATERSPLASH, 0)
 			end if
 			break
 
@@ -161,7 +165,7 @@ sub ObjectMain
 			Object.Timer++
 			if Object.Timer > 104
 				Object.State = TAGATAGA_TURN_3
-				PlayStageSfx(3, 0)
+				PlayStageSfx(SFX_S_WATERSPLASH, 0)
 			end if
 			break
 
@@ -173,7 +177,7 @@ sub ObjectMain
 				Object.Timer = 0
 
 				Object.YPos = Object.YOriginPos
-				PlayStageSfx(3, 0)
+				PlayStageSfx(SFX_S_WATERSPLASH, 0)
 			end if
 			break
 
@@ -185,7 +189,7 @@ end sub
 
 
 sub ObjectPlayerInteraction
-	if Object.Quality == PROPVAL_QUALITY_GOOD
+	if Object.Quality == GOOD_QUALITY
 		if Object.State < TAGATAGA_SUBMERGE
 			PlayerObjectCollision(C_TOUCH, -16, -16, 16, 16)
 			if CheckResult == true
@@ -204,7 +208,7 @@ end sub
 
 
 sub ObjectDraw
-	if Object.Quality == PROPVAL_QUALITY_GOOD
+	if Object.Quality == GOOD_QUALITY
 		switch Object.State
 		case TAGATAGA_SET_LAUNCH_SPEED
 		case TAGATAGA_EMERGE
@@ -302,30 +306,30 @@ sub RSDKEdit
 	if Editor.ReturnVariable == true
 		switch Editor.VariableID
 		case EDIT_VAR_PROPVAL // property value
-			CheckResult = Object.PropertyValue
+			CheckResult = Object.Quality
 			CheckResult &= 1
 			break
 		case 0 // type
-			CheckResult = Object.PropertyValue
+			CheckResult = Object.Quality
 			CheckResult &= 1
 			break
 		end switch
 	else
 		switch Editor.variableID
 		case EDIT_VAR_PROPVAL // property value
-			Object.PropertyValue = Editor.VariableValue
-			Object.PropertyValue &= 1
+			Object.Quality = Editor.VariableValue
+			Object.Quality &= 1
 			break
 		case 0 // type
-			Object.PropertyValue = Editor.VariableValue
-			Object.PropertyValue &= 1
+			Object.Quality = Editor.VariableValue
+			Object.Quality &= 1
 			break
 		end switch
 	end if
 end sub
 
 sub RSDKDraw
-	DrawSprite(Object.PropertyValue)
+	DrawSprite(Object.Quality)
 end sub
 
 sub RSDKLoad

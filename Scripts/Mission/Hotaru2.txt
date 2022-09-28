@@ -41,20 +41,23 @@
 #alias 1	:	ONEWAYDOOR_OPEN
 
 // Property Values
-#alias 0	:	PROPVAL_PARENT_OBJECT
-#alias 1	:	PROPVAL_CHILD_OBJECT
+#alias 0	:	PARENT_OBJECT
+#alias 1	:	CHILD_OBJECT
 
 // Time Periods
-#alias 0	:	PROPVAL_PRESENT
-#alias 1	:	PROPVAL_PAST
-#alias 2	:	PROPVAL_GOOD_FUTURE
-#alias 3	:	PROPVAL_BAD_FUTURE
+#alias 0	:	PRESENT
+#alias 1	:	PAST
+#alias 2	:	GOOD_FUTURE
+#alias 3	:	BAD_FUTURE
 
 // Ink Effects
 #alias 2	:	INK_ALPHA
 
 // Priority
 #alias 1	:	PRIORITY_ACTIVE
+
+// Stage SFX
+#alias 4	:	SFX_S_HLASER
 
 // Function declarations
 #function Hotaru2_Set_Destination
@@ -209,7 +212,7 @@ sub ObjectMain
 					end if
 				end if
 
-				if HUD.TimePeriod == PROPVAL_BAD_FUTURE
+				if HUD.TimePeriod == BAD_FUTURE
 					if Object.Alpha < 176
 						Object.Alpha++
 					end if
@@ -262,7 +265,7 @@ sub ObjectMain
 				if Object.Timer == 16
 					Object.Timer = 0
 					Object.State++
-					PlayStageSfx(4, 0)
+					PlayStageSfx(SFX_S_HLASER, 0)
 				end if
 				break
 
@@ -295,7 +298,7 @@ end sub
 
 
 sub ObjectPlayerInteraction
-	if Object.PropertyValue == PROPVAL_CHILD_OBJECT
+	if Object.PropertyValue == CHILD_OBJECT
 		if Object.State == HOTARU2_SHOT_LASER
 			if Object.Timer > 1
 				PlayerObjectCollision(C_TOUCH, -5, -5, 5, 5)
@@ -310,7 +313,7 @@ end sub
 
 sub ObjectDraw
 
-	if Object.PropertyValue == PROPVAL_CHILD_OBJECT
+	if Object.PropertyValue == CHILD_OBJECT
 		switch Object.State
 		case HOTARU2_FADE_IN
 			DrawSpriteFX(2, FX_INK, Object.XPos, Object.YPos)
@@ -372,7 +375,7 @@ sub ObjectStartup
 			Object[ArrayPos0].Alpha = 0
 			Object[ArrayPos0].InkEffect = INK_ALPHA
 
-			if HUD.TimePeriod == PROPVAL_BAD_FUTURE
+			if HUD.TimePeriod == BAD_FUTURE
 				Object[ArrayPos0].DrawOrder = 2
 			end if
 
@@ -381,7 +384,7 @@ sub ObjectStartup
 			TempValue0 = 0
 			while TempValue0 < 3
 				// Setups the next 3 blank objects
-				Object[ArrayPos1].PropertyValue	= PROPVAL_CHILD_OBJECT
+				Object[ArrayPos1].PropertyValue	= CHILD_OBJECT
 				Object[ArrayPos1].DrawOrder		= 4
 				Object[ArrayPos1].InkEffect		= INK_ALPHA
 

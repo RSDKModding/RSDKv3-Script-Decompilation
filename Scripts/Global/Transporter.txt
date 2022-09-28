@@ -13,11 +13,18 @@
 #alias 1	:	TRANSPORTER_HOVER_UP
 #alias 2	:	TRANSPORTER_EXPLODE
 
+// Player
+#alias 0	:	PLAYER_SONIC
+
 // Property Values
 #alias 0	:	OPERATIVE
 #alias 1	:	OLD
 #alias 2	:	DESTROYED
 #alias 3	:	OLD_DESTROYED
+
+// Global SFX
+#alias 21	:	SFX_G_ACHIEVEMENT
+#alias 22	:	SFX_G_EXPLOSION
 
 // Priority
 #alias 0	:	PRIORITY_BOUNDS
@@ -65,7 +72,7 @@ sub ObjectMain
 			TempValue0  = Object.Timer
 			TempValue0 &= 3
 			if TempValue0 == 0
-				PlaySfx(22, 0)
+				PlaySfx(SFX_G_EXPLOSION, 0)
 			end if
 
 			Object.Timer++
@@ -76,7 +83,7 @@ sub ObjectMain
 				Object.PropertyValue = DESTROYED
 
 				Object.iYPos += 16
-				PlaySfx(21, 0)
+				PlaySfx(SFX_G_ACHIEVEMENT, 0)
 			end if
 			break
 		end switch
@@ -110,7 +117,7 @@ sub ObjectPlayerInteraction
 					end if
 
 					// Saviour of the Planet unlock criteria
-					if Stage.PlayerListPos == 0	// Sonic
+					if Stage.PlayerListPos == PLAYER_SONIC
 						if Stage.DebugMode == false
 							if Good_Future_List > 16382	// 0b11111111111110
 								if MetalSonic_List > 11

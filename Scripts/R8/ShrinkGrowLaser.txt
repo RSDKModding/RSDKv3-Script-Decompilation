@@ -21,6 +21,13 @@
 // Collision Sides
 #alias 0	:	CSIDE_FLOOR
 
+// Players
+#alias 0	:	PLAYER_SONIC
+
+// Stage SFX
+#alias 3	:	SFX_S_SHRINKLASER
+#alias 4	:	SFX_S_TIMEUFO
+
 
 sub ObjectMain
 	switch Object.State
@@ -38,9 +45,9 @@ sub ObjectMain
 			PlayerObjectCollision(C_TOUCH, -96, -128, 96, 128)
 			if CheckResult == true
 				if Object.PropertyValue == GIMMICK_SHRINK_LASER
-					PlayStageSfx(3, 0)
+					PlayStageSfx(SFX_S_SHRINKLASER, 0)
 				else
-					PlayStageSfx(4, 0)
+					PlayStageSfx(SFX_S_TIMEUFO, 0)
 				end if
 			end if
 		end if
@@ -139,8 +146,8 @@ end sub
 sub ObjectStartup
 	LoadSpriteSheet("R8/Objects2.gif")
 
-	Mini_PlayerFlag = 0
-	if Stage.PlayerListPos == 0	// Sonic
+	Mini_PlayerFlag = false
+	if Stage.PlayerListPos == PLAYER_SONIC
 		LoadAnimation("MiniSonic.Ani")
 	else
 		LoadAnimation("MiniTails.Ani")

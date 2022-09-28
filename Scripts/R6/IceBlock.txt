@@ -1,4 +1,4 @@
-//------------Sonic CD IceBlock Script-------------//
+//-----------------Sonic CD Ice Block Script------------------//
 //--------Scripted by Christian Whitehead 'The Taxman'--------//
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
@@ -11,6 +11,9 @@
 #alias 0	:	ICEBLOCK_FALLING
 #alias 1	:	ICEBLOCK_BREAKICE
 
+// Stage SFX
+#alias 4	:	SFX_S_GLASSSMASH
+
 // Property Values
 #alias 0	:	CHARACTER_ICEBLOCK
 #alias 1	:	BIG_CHUNK_ICEBLOCK
@@ -20,6 +23,9 @@
 
 // Collision Sides
 #alias 0	:	CSIDE_FLOOR
+
+// Players
+#alias 0	:	PLAYER_SONIC
 
 // Directions
 #alias 2	:	FACING_UPEND_RIGHT
@@ -100,7 +106,7 @@ sub ObjectMain
 			if CheckResult == true
 				Object.State = ICEBLOCK_BREAKICE
 				Object.YVelocity = 0
-				PlayStageSfx(4, 0)
+				PlayStageSfx(SFX_S_GLASSSMASH, 0)
 			end if
 
 			Player.XPos = Object.XPos
@@ -218,7 +224,7 @@ end sub
 
 
 sub ObjectStartup
-	if Stage.PlayerListPos == 0	// Sonic
+	if Stage.PlayerListPos == PLAYER_SONIC
 		LoadSpriteSheet("R6/Objects.gif")
 
 		SpriteFrame(-24, -24, 48, 48, 34, 18)	// #0 - Sonic Ice Block

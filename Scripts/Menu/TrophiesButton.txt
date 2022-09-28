@@ -6,14 +6,22 @@
 // Aliases
 #alias Object.Value1	:	Object.InputCheck
 
-//Object[0] is TrophiesMenu
-#alias Object[0].State	:	Object.TMState
+//Object[0] is Trophies Menu
+#alias Object[0].State	:	ThropiesMenu.State
+
+// Thropies Menu States
+#alias 2	:	TROPHIES_CONTROLS
+#alias 5	:	TROPHIES_EXIT
+
+// Global SFX
+#alias 26	:	SFX_G_OUTTAHERE
 
 //Engine & CallBacks
 #alias 2	:	MESSAGE_LOSTFOCUS
 
+
 sub ObjectMain
-	if Object.TMState == 2
+	if ThropiesMenu.State == TROPHIES_CONTROLS
 		if Engine.Message == MESSAGE_LOSTFOCUS
 			Object.InputCheck = 0
 		end if
@@ -32,9 +40,9 @@ sub ObjectMain
 			if CheckResult < 0
 				if Object.InputCheck == true
 					Object.InputCheck = false
-					PlaySfx(26, 0)		//Outta Here SFX?
+					PlaySfx(SFX_G_OUTTAHERE, 0)
 					StopMusic()
-					Object.TMState = 5
+					ThropiesMenu.State = TROPHIES_EXIT
 				end if
 			else
 				 Object.InputCheck = false
@@ -56,11 +64,14 @@ end sub
 
 sub ObjectStartup
 	LoadSpriteSheet("Menu/Trophies.gif")
+
 	SpriteFrame(-63, -39, 126, 78, 129, 385)	//#0 - Back Button
 	SpriteFrame(-60, -37, 120, 74, 260, 387)	//#1 - Pressed Back Button
-	TempValue0 = Screen.CenterX
-	TempValue0 -= 160
+
+	TempValue0   = Screen.CenterX
+	TempValue0  -= 160
 	TempValue0 <<= 16
+
 	ArrayPos0 = 32
 	while ArrayPos0 < 1056
 		if Object[ArrayPos0].Type == TypeName[ExitButton]

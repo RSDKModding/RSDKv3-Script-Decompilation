@@ -13,11 +13,14 @@
 #alias 0	:	FAN_ELEVATOR_CLOSED
 #alias 1	:	FAN_ELEVATOR_OPEN
 
+// Stage SFX
+#alias 8	:	SFX_S_SWITCH
+
 // Time Periods
-#alias 0	:	PROPVAL_PRESENT
-#alias 1	:	PROPVAL_PAST
-#alias 2	:	PROPVAL_GOOD_FUTURE
-#alias 3	:	PROPVAL_BAD_FUTURE
+#alias 0	:	PRESENT
+#alias 1	:	PAST
+#alias 2	:	GOOD_FUTURE
+#alias 3	:	BAD_FUTURE
 
 // Priority
 #alias 3	:	PRIORITY_XBOUNDS
@@ -51,7 +54,7 @@ sub ObjectPlayerInteraction
 	if CheckResult == true
 		Object.YVelocity = -0x20000
 		if Object.State == FAN_ELEVATOR_CLOSED
-			PlayStageSfx(8, 0)
+			PlayStageSfx(SFX_S_SWITCH, 0)
 		end if
 		Object.State = FAN_ELEVATOR_OPEN
 	else
@@ -80,7 +83,7 @@ end sub
 
 sub ObjectStartup
 	LoadSpriteSheet("R4/Objects3.gif")
-	if Hud.TimePeriod < PROPVAL_BAD_FUTURE
+	if Hud.TimePeriod < BAD_FUTURE
 		SpriteFrame(-32, -32, 32, 48, 84, 46)	// #0 - Fan Elevator Body
 		SpriteFrame(-32, 16, 32, 16, 110, 144)	// #1 - Fan closed looking down
 		SpriteFrame(-32, -32, 32, 48, 84, 95)	// #2 - Fan Elevator Body pressed

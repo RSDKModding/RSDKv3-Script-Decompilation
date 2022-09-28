@@ -11,6 +11,7 @@
 #alias Object.Value5 : Object.SwingAngle
 #alias Object.Value6 : Object.ChainsNo
 
+// States
 #alias 0 : RPLATFORM_FULL_CW_SLOWAPEX
 #alias 1 : RPLATFORM_FULL_CW
 #alias 2 : RPLATFORM_FULL_CCW
@@ -18,9 +19,17 @@
 #alias 4 : RPLATFORM_RIGHT180
 #alias 5 : RPLATFORM_BOTTOM180
 
+// Collision
+#alias 1	:	PLAYER_COL_FLOOR
+#alias 2	:	PLAYER_COL_LWALL
+#alias 3	:	PLAYER_COL_RWALL
+#alias 4	:	PLAYER_COL_ROOF
+
+// Gravity
+#alias 0 : GRAVITY_GROUND
+
 
 sub ObjectMain
-	
 	// Each state directly corresponds to a subtype of the platform
 	switch Object.State
 	case RPLATFORM_FULL_CW_SLOWAPEX
@@ -100,7 +109,6 @@ end sub
 
 
 sub ObjectPlayerInteraction
-	
 	// First backup the object's position
 	TempValue0 = Object.XPos
 	TempValue1 = Object.YPos
@@ -116,19 +124,19 @@ sub ObjectPlayerInteraction
 	end if
 	
 	switch CheckResult
-	case 1
+	case PLAYER_COL_FLOOR
 		// The player's on top of the platform, just move them with it for now
 		Player.XPos += Object.ChangeX
 		Player.YPos += Object.ChangeY
 		break
 		
-	case 2
-	case 3
+	case PLAYER_COL_LWALL
+	case PLAYER_COL_RWALL
 		CallFunction(Player_Hit)
 		
 		// [Fallthrough to below, for more collision checks]
 		
-	case 4
+	case PLAYER_COL_ROOF
 		PlayerObjectCollision(C_TOUCH, -16, -8, 16, 9)
 		
 		if CheckResult == true
@@ -139,11 +147,11 @@ sub ObjectPlayerInteraction
 				end if
 				
 				if TempValue3 < 0x60000
-					if Player.Gravity == 0
+					if Player.Gravity == GRAVITY_GROUND
 						CallFunction(Player_Kill)
 					end if
 				else
-					if Player.Gravity == 0
+					if Player.Gravity == GRAVITY_GROUND
 						CallFunction(Player_Hit)
 					end if
 				end if
@@ -153,7 +161,7 @@ sub ObjectPlayerInteraction
 		else
 			Player.YPos = TempValue2
 			
-			if Player.Gravity == 0
+			if Player.Gravity == GRAVITY_GROUND
 				CallFunction(Player_Hit)
 			end if
 		end if
@@ -169,7 +177,6 @@ end sub
 
 
 sub ObjectDraw
-	
 	// Draw the platform post frame
 	DrawSprite(0)
 	

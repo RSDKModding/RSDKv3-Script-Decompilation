@@ -4,6 +4,7 @@
 
 // Aliases
 #alias Object.Value0		:	Object.Timer
+
 #alias Object.PropertyValue	:	Object.Quality
 
 // States
@@ -13,13 +14,13 @@
 // Collision Sides
 #alias 0	:	CSIDE_FLOOR
 
-// Badnik Quality / Property Value
-#alias 0	:	PROPVAL_QUALITY_GOOD
-#alias 1	:	PROPVAL_QUALITY_BAD
+// Badnik Quality / Property Values
+#alias 0	:	GOOD_QUALITY
+#alias 1	:	BAD_QUALITY
 
 
 sub ObjectMain
-	if Object.Quality == PROPVAL_QUALITY_GOOD
+	if Object.Quality == GOOD_QUALITY
 
 		Object.Frame += 2
 		switch Object.State
@@ -117,7 +118,7 @@ end sub
 sub ObjectDraw
 	TempValue0   = Object.Frame
 	TempValue0 >>= 3
-	if Object.Quality == PROPVAL_QUALITY_GOOD
+	if Object.Quality == GOOD_QUALITY
 		TempValue0 += 4
 		DrawSpriteFX(TempValue0, FX_FLIP, Object.XPos, Object.YPos)	// Wheel
 		TempValue0 -= 4
@@ -158,23 +159,23 @@ sub RSDKEdit
 	if Editor.ReturnVariable == true
 		switch Editor.VariableID
 		case EDIT_VAR_PROPVAL // property value
-			CheckResult  = Object.PropertyValue
+			CheckResult  = Object.Quality
 			CheckResult &= 1
 			break
 		case 0 // type
-			CheckResult  = Object.PropertyValue
+			CheckResult  = Object.Quality
 			CheckResult &= 1
 			break
 		end switch
 	else
 		switch Editor.variableID
 		case EDIT_VAR_PROPVAL // property value
-			Object.PropertyValue  = Editor.VariableValue
-			Object.PropertyValue &= 1
+			Object.Quality  = Editor.VariableValue
+			Object.Quality &= 1
 			break
 		case 0 // type
-			Object.PropertyValue  = Editor.VariableValue
-			Object.PropertyValue &= 1
+			Object.Quality  = Editor.VariableValue
+			Object.Quality &= 1
 			break
 		end switch
 	end if
@@ -182,12 +183,12 @@ end sub
 
 sub RSDKDraw
 	// Wheel
-	Object.Frame  = Object.PropertyValue
+	Object.Frame  = Object.Quality
 	Object.Frame += 2
 	DrawSprite(Object.Frame)
 
 	// Anton
-	DrawSprite(Object.PropertyValue)
+	DrawSprite(Object.Quality)
 end sub
 
 sub RSDKLoad

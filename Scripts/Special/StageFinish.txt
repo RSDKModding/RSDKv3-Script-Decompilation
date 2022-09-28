@@ -1,4 +1,4 @@
-//----------------Sonic CD StageFinish Script-----------------//
+//---------------Sonic CD Stage Finish Script-----------------//
 //--------Scripted by Christian Whitehead 'The Taxman'--------//
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
@@ -56,12 +56,12 @@
 #alias 4 : LANG_SPANISH
 #alias 5 : LANG_JAPANESE
 
-// SFX Aliases
-#alias 16 : SFX_SCOREADD
-#alias 17 : SFX_SCORETOTAL
-#alias 19 : SFX_SPECIALWARP
-#alias 20 : SFX_1UP
-#alias 21 : SFX_ACHIEVEMENT
+// Global SFX
+#alias 16 : SFX_G_SCOREADD
+#alias 17 : SFX_G_SCORETOTAL
+#alias 19 : SFX_G_SPECIALWARP
+#alias 20 : SFX_G_1UP
+#alias 21 : SFX_G_ACHIEVEMENT
 
 // Ink Effect Aliases
 #alias 2 : INK_ALPHA
@@ -83,7 +83,6 @@
 
 
 sub ObjectMain
-	
 	switch Object.State
 	case STAGEFINISH_INIT
 		// Setup the initial text line positions
@@ -221,7 +220,7 @@ sub ObjectMain
 			Object.State = STAGEFINISH_FADEIN
 			Object.Timer = 256
 			
-			if SpecialStage.TimeStones > 126
+			if SpecialStage.TimeStones > 126	// 0b1111110, each '1' bit represents an obtained time stone
 				// If the player has all Stones, then turn this object into the "Got 'em all!!" variant
 				
 				Object.ResultsType = RESULTSTYPE_ALLSTONESOBTAINED
@@ -476,9 +475,9 @@ sub ObjectMain
 			Player.ScoreBonus += 50000
 			
 			if Stage.PlayerListPos == PLAYER_SONIC
-				PlaySfx(SFX_1UP, false)
+				PlaySfx(SFX_G_1UP, 0)
 			else
-				PlaySfx(SFX_ACHIEVEMENT, false)
+				PlaySfx(SFX_G_ACHIEVEMENT, 0)
 			end if
 		end if
 		
@@ -491,7 +490,7 @@ sub ObjectMain
 			Object.Timer++
 			
 			if Object.Timer == 2
-				PlaySfx(SFX_SCOREADD, false)
+				PlaySfx(SFX_G_SCOREADD, 0)
 				Object.Timer = 0
 			end if
 		else
@@ -501,7 +500,7 @@ sub ObjectMain
 			Object.Timer = 0
 			
 			// And of course, the signature ka-ching!
-			PlaySfx(SFX_SCORETOTAL, false)
+			PlaySfx(SFX_G_SCORETOTAL, 0)
 		end if
 		break
 		
@@ -513,7 +512,7 @@ sub ObjectMain
 			Object.Timer = 0
 			Object.State = STAGEFINISH_LOADNORMAL
 			if Object[0].Type == TypeName[Blank Object]
-				PlaySfx(SFX_SPECIALWARP, false)
+				PlaySfx(SFX_G_SPECIALWARP, 0)
 			end if
 		end if
 		break
@@ -748,7 +747,7 @@ sub ObjectMain
 			else
 				Object.State = STAGEFINISH_FADEIN
 				Object.Timer = 256
-				if SpecialStage.TimeStones > 126
+				if SpecialStage.TimeStones > 126	// 0b1111110, each '1' bit represents an obtained time stone
 					// Got 'em all!
 					Object.ResultsType = RESULTSTYPE_ALLSTONESOBTAINED
 					EngineCallback(NOTIFY_STATS_PARAM_2)
@@ -767,7 +766,6 @@ end sub
 
 
 sub ObjectDraw
-	
 	if Object.State != STAGEFINISH_LOADLEVELSELECT
 		if Object.State > STAGEFINISH_FADEOUT
 			

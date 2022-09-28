@@ -46,6 +46,22 @@
 // Menu Button States
 #alias 1	:	MENUBUTTON_BUTTONS_IN
 
+// Presentation Stages
+#alias 0	:	STAGE_P_TITLE
+#alias 3	:	STAGE_P_STAGESELECT
+#alias 4	:	STAGE_P_SOUNDTEST
+#alias 5	:	STAGE_P_DAGARDEN
+
+// Player
+#alias 0	:	PLAYER_SONIC
+
+// Global SFX
+#alias 23	:	SFX_G_MENUBUTTON
+#alias 27	:	SFX_G_SELECT
+
+// Stage SFX
+#alias 1	:	SFX_S_BACKBUTTON
+
 // Languages
 #alias 0	:	LANG_ENGLISH
 #alias 1	:	LANG_FRENCH
@@ -179,7 +195,7 @@ sub ObjectMain
 				if Object.CurrentButton < 0
 					Object.CurrentButton = 3
 				end if
-				PlaySfx(23, 0) 	//Menu Button SFX
+				PlaySfx(SFX_G_MENUBUTTON, 0) 
 			end if
 
 			if KeyPress[0].Down == true
@@ -187,7 +203,7 @@ sub ObjectMain
 				if Object.CurrentButton > 3
 					Object.CurrentButton = 0
 				end if
-				PlaySfx(23, 0) 	//Menu Button SFX
+				PlaySfx(SFX_G_MENUBUTTON, 0) 
 			end if
 
 			CheckTouchRect(0, 0, Screen.XSize, Screen.YSize)		//Touch Behaviour Check
@@ -310,7 +326,7 @@ sub ObjectMain
 						Helper[+ArrayPos0].FlickerState = true
 						Object.State++
 						StopMusic()
-						PlaySfx(27, 0)	//Select SFX
+						PlaySfx(SFX_G_SELECT, 0)
 					else
 #platform: Use_Origins
 						if Options.PhysicalControls == false
@@ -331,7 +347,7 @@ sub ObjectMain
 						ArrayPos0 = Object.CurrentButton
 						Helper[+ArrayPos0].FlickerState = true
 						Object.State++
-						PlaySfx(27, 0)	//Select SFX
+						PlaySfx(SFX_G_SELECT, 0)
 					else
 
 #platform: Use_Origins
@@ -355,7 +371,7 @@ sub ObjectMain
 						Helper[+ArrayPos0].FlickerState = true
 						Object.State++
 						StopMusic()
-						PlaySfx(27, 0)	//Select SFX
+						PlaySfx(SFX_G_SELECT, 0)
 					else
 #platform: Use_Origins
 						if Options.PhysicalControls == false
@@ -377,7 +393,7 @@ sub ObjectMain
 						Helper[+ArrayPos0].FlickerState = true
 						Object.State++
 						StopMusic()
-						PlaySfx(27, 0)	//Select SFX
+						PlaySfx(SFX_G_SELECT, 0)
 					else
 #platform: Use_Origins
 						if Options.PhysicalControls == false
@@ -409,7 +425,7 @@ sub ObjectMain
 		if KeyPress[0].ButtonB == true
 			Object.Timer = 248
 			Object.State = EXTRASMENU_EXIT_MENU
-			PlayStageSfx(1, 0)		// Event SFX
+			PlayStageSfx(SFX_S_BACKBUTTON, 0)
 		end if
 #endplatform
 		break
@@ -456,22 +472,22 @@ sub ObjectMain
 			EngineCallback(NOTIFY_LEVEL_SELECT_MENU)
 			game.callbackParam0 = 0
 			EngineCallback(NOTIFY_PLAYER_SET)
-			Stage.PlayerListPos = 0
+			Stage.PlayerListPos = PLAYER_SONIC
 #endplatform
 
 			switch Object.CurrentButton
 			case 0
-				Stage.ListPos = 5	//D.A Garden
+				Stage.ListPos = STAGE_P_DAGARDEN
 				LoadStage()
 				break
 
 			case 2
-				Stage.ListPos = 4	//Sound Test
+				Stage.ListPos = STAGE_P_SOUNDTEST
 				LoadStage()
 				break
 
 			case 3
-				Stage.ListPos = 3	//Stage Select
+				Stage.ListPos = STAGE_P_STAGESELECT
 				LoadStage()
 				break
 
@@ -536,7 +552,7 @@ sub ObjectMain
 		if CheckResult == true
 			if KeyPress[0].Left == true
 				Helper.VMCurrentButtom--
-				PlaySfx(23, 0) 	//Menu Button SFX
+				PlaySfx(SFX_G_MENUBUTTON, 0) 
 				if Helper.VMCurrentButtom < 0
 					Helper.VMCurrentButtom = 3
 				end if
@@ -544,7 +560,7 @@ sub ObjectMain
 
 			if KeyPress[0].Right == true
 				Helper.VMCurrentButtom++
-				PlaySfx(23, 0) 	//Menu Button SFX
+				PlaySfx(SFX_G_MENUBUTTON, 0) 
 				if Helper.VMCurrentButtom > 3
 					Helper.VMCurrentButtom = 0
 				end if
@@ -552,7 +568,7 @@ sub ObjectMain
 
 			if KeyPress[0].Up == true
 				Helper.VMCurrentButtom -= 2
-				PlaySfx(23, 0) 	//Menu Button SFX
+				PlaySfx(SFX_G_MENUBUTTON, 0) 
 				if Helper.VMCurrentButtom < 0
 					Helper.VMCurrentButtom += 4
 				end if
@@ -560,7 +576,7 @@ sub ObjectMain
 
 			if KeyPress[0].Down == true
 				Helper.VMCurrentButtom += 2
-				PlaySfx(23, 0) 	//Menu Button SFX
+				PlaySfx(SFX_G_MENUBUTTON, 0) 
 				if Helper.VMCurrentButtom > 3
 					Helper.VMCurrentButtom -= 4
 				end if
@@ -706,7 +722,7 @@ sub ObjectMain
 		end if
 
 		if CheckResult == true
-			PlaySfx(27, 0)	//Select SFX
+			PlaySfx(SFX_G_SELECT, 0)
 			StopMusic()
 			Object.State++
 		end if
@@ -714,7 +730,7 @@ sub ObjectMain
 		if KeyPress[0].ButtonB == true
 			Object.State = EXTRASMENU_VISUALMODE_FADEOUT
 			Object.Timer = 248
-			PlayStageSfx(1, 0)
+			PlayStageSfx(SFX_S_BACKBUTTON, 0)
 		end if
 		break
 
@@ -884,7 +900,7 @@ sub ObjectMain
 		Object.Timer += 4
 		if Object.Timer == 384
 			Stage.ActiveList = PRESENTATION_STAGE
-			Stage.ListPos	 = 0	// Title Screen
+			Stage.ListPos	 = STAGE_P_TITLE
 			LoadStage()
 		endif
 		SetScreenFade(0, 0, 0, Object.Timer)

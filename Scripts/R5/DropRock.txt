@@ -12,11 +12,14 @@
 #alias 2	:	DROPROCK_WAITFORRESPAWN
 #alias 3	:	DROPROCK_FRAGMENT
 
-// SFX Aliases
-#alias 22	:	SFX_EXPLOSION
+// Global SFX
+#alias 22	:	SFX_G_EXPLOSION
 
 // Collision Sides
 #alias 0	:	CSIDE_FLOOR
+
+// Box Collision
+#alias 4	:	PLAYER_COL_ROOF
 
 // Priority
 #alias 0	:	PRIORITY_BOUNDS
@@ -43,7 +46,7 @@ sub ObjectMain
 		if Object.YVelocity > 0x20000
 			ObjectTileCollision(CSIDE_FLOOR, 0, 12, 0)
 			if CheckResult == true
-				PlaySfx(SFX_EXPLOSION, false)
+				PlaySfx(SFX_G_EXPLOSION, 0)
 				
 				// Make the Rock invisible and make it wait for respawning
 				Object.State = DROPROCK_WAITFORRESPAWN
@@ -176,10 +179,10 @@ sub ObjectPlayerInteraction
 		PlayerObjectCollision(C_BOX, -16, -16, 12, 16)
 		
 		// Did the Player hit their head on the bottom of this rock?
-		if CheckResult == 4
+		if CheckResult == PLAYER_COL_ROOF
 			// Explode!
 			
-			PlaySfx(SFX_EXPLOSION, false)
+			PlaySfx(SFX_G_EXPLOSION, 0)
 			
 			Object.State = DROPROCK_WAITFORRESPAWN
 			

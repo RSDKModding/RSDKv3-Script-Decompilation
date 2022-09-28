@@ -3,38 +3,45 @@
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
 // Aliases
-#alias Object.Value0 : Object.Timer
-#alias Object.Value1 : Object.XVelocity
-#alias Object.Value2 : Object.YVelocity
-#alias Object.Value3 : Object.Bounds.Left
-#alias Object.Value4 : Object.Bounds.Right
-#alias Object.Value5 : Object.InAir
-#alias Object.Value6 : Object.HeartsTimer
-#alias Object.Value7 : Object.FallBackTimer
+#alias Object.Value0	:	Object.Timer
+#alias Object.Value1	:	Object.XVelocity
+#alias Object.Value2	:	Object.YVelocity
+#alias Object.Value3	:	Object.Bounds.Left
+#alias Object.Value4	:	Object.Bounds.Right
+#alias Object.Value5	:	Object.InAir
+#alias Object.Value6	:	Object.HeartsTimer
+#alias Object.Value7	:	Object.FallBackTimer
 
-#alias 0 : AMY2_CHASEPLAYER
-#alias 1 : AMY2_UNKNOWN // TODO: this tbh
-#alias 2 : AMY2_HUGGING
-#alias 3 : AMY2_RECOIL
-#alias 4 : AMY2_WAITNG_R
-#alias 5 : AMY2_WAITNG_L
-#alias 7 : AMY2_UNUSED
+// States
+#alias 0	:	AMY2_CHASEPLAYER
+#alias 1	:	AMY2_UNKNOWN // TODO: this tbh
+#alias 2	:	AMY2_HUGGING
+#alias 3	:	AMY2_RECOIL
+#alias 4	:	AMY2_WAITNG_R
+#alias 5	:	AMY2_WAITNG_L
+#alias 7	:	AMY2_UNUSED
 
 // Collision Sides
 #alias 0	:	CSIDE_FLOOR
 
-// Player Aliases
-#alias -1 : CONTROL_DISABLED
+// Gravity
+#alias 0	:	GRAVITY_GROUND
+#alias 1	:	GRAVITY_AIR
 
-// Fade Music Aliases
-#alias 3 : FADEMUSIC_SSZAMY
+// Control Mode
+#alias -1	:	CONTROL_DISABLED
+
+// Fade Music States
+#alias 3	:	FADEMUSIC_SSZAMY
 
 // Ink Effect
 #alias 2	:	INK_ALPHA
 
+// Stage SFX
+#alias 8	:	SFX_S_GIGGLE
+
 
 sub ObjectMain
-
 	// Always face Sonic
 	if Player.XPos < Object.XPos
 		Object.Direction = FACING_LEFT
@@ -97,7 +104,7 @@ sub ObjectMain
 
 			PlayerObjectCollision(C_TOUCH, -32, -360, 4, 360)
 			if CheckResult == true
-				if Player.Gravity == 0
+				if Player.Gravity == GRAVITY_GROUND
 					if Player.Direction == Object.Direction
 						PlayerObjectCollision(C_TOUCH, -32, -20, 4, 20)
 						if CheckResult == true
@@ -130,7 +137,7 @@ sub ObjectMain
 								Object.Frame = 8
 								Object.Timer = 0
 								Player.State = Player_State_Hugged
-								PlayStageSfx(8, 0)
+								PlayStageSfx(SFX_S_GIGGLE, 0)
 
 								// Grant the "One Hug Is Enough" achievement
 								// -> It's possible that the player may have skipped Amy in PPZ, where the achievement is normally unlocked,
@@ -168,7 +175,7 @@ sub ObjectMain
 
 			PlayerObjectCollision(C_TOUCH, -4, -360, 32, 360)
 			if CheckResult == true
-				if Player.Gravity == 0
+				if Player.Gravity == GRAVITY_GROUND
 					if Player.Direction == Object.Direction
 						PlayerObjectCollision(C_TOUCH, -32, -20, 4, 20)
 						if CheckResult == true
@@ -197,7 +204,7 @@ sub ObjectMain
 								Object.Frame = 8
 								Object.Timer = 0
 								Player.State = Player_State_Hugged
-								PlayStageSfx(8, 0)
+								PlayStageSfx(SFX_S_GIGGLE, 0)
 
 								// Unlock the "One Hug Is Enough" achievement
 								// There's a small chance you missed it in PPZ, so now you have a second chance at it here!
@@ -247,13 +254,13 @@ sub ObjectMain
 		
 		PlayerObjectCollision(C_TOUCH, -4, -360, 4, 360)
 		if CheckResult == false
-			if Player.Gravity == 0
+			if Player.Gravity == GRAVITY_GROUND
 				Object.State = AMY2_CHASEPLAYER
 				Object.Frame = 4
 				Object.Timer = 0
 			end if
 		else
-			if Player.Gravity == 1
+			if Player.Gravity == GRAVITY_AIR
 				Object.State = AMY2_CHASEPLAYER
 				Object.Frame = 4
 				Object.Timer = 0

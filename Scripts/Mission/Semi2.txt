@@ -17,9 +17,9 @@
 #alias 2	:	SEMI_BOMB_THROW
 #alias 3	:	SEMI_RESET
 
-// Badnik Quality
-#alias 0	:	PROPVAL_QUALITY_GOOD
-#alias 1	:	PROPVAL_QUALITY_BAD
+// Badnik Quality / Property Values
+#alias 0	:	GOOD_QUALITY
+#alias 1	:	BAD_QUALITY
 
 // Priority
 #alias 0	:	PRIORITY_BOUNDS
@@ -49,7 +49,7 @@ sub ObjectMain
 
 	case SEMI_BOMB_THROW
 		Object.XPos += Object.XVelocity
-		if Object.Quality == PROPVAL_QUALITY_GOOD
+		if Object.Quality == GOOD_QUALITY
 			if Object.Timer == 0
 				Object.Timer = 30
 				CreateTempObject(TypeName[SemiBomb2], 0, Object.XPos, Object.YPos)
@@ -79,7 +79,7 @@ sub ObjectPlayerInteraction
 		if CheckResult == true
 			Object.State = SEMI_START_FLY
 			if Object.XPos > Player.XPos
-				if Object.Quality == PROPVAL_QUALITY_GOOD
+				if Object.Quality == GOOD_QUALITY
 					Object.XVelocity =  0x20000
 					Object.YVelocity = -0x10000
 				else
@@ -87,7 +87,7 @@ sub ObjectPlayerInteraction
 					Object.YVelocity = 0xC000
 				end if
 			else
-				if Object.Quality == PROPVAL_QUALITY_GOOD
+				if Object.Quality == GOOD_QUALITY
 					Object.XVelocity = -0x20000
 					Object.YVelocity = -0x10000
 				else
@@ -120,7 +120,7 @@ sub ObjectDraw
 		TempValue0 = Object.Frame
 		TempValue0 >>= 2
 
-		if Object.Quality == PROPVAL_QUALITY_GOOD
+		if Object.Quality == GOOD_QUALITY
 			TempValue0 += 2
 		else
 			TempValue0 += 6

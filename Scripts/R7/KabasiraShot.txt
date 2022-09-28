@@ -1,4 +1,4 @@
-//----------------Sonic CD KabasiraShot Script----------------//
+//---------------Sonic CD Kabasira Shot Script----------------//
 //--------Scripted by Christian Whitehead 'The Taxman'--------//
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
@@ -7,12 +7,11 @@
 #alias Object.Value1 : Object.XVelocity
 #alias Object.Value2 : Object.YVelocity
 
-// SFX Aliases
-#alias 22 : SFX_EXPLOSION
+// Global SFX
+#alias 22 : SFX_G_EXPLOSION
 
 
 sub ObjectMain
-	
 	// Update movement
 	Object.XPos += Object.XVelocity
 	Object.YPos += Object.YVelocity
@@ -25,17 +24,16 @@ end sub
 
 
 sub ObjectPlayerInteraction
-	
 	PlayerObjectCollision(C_TOUCH, -6, -6, 6, 6)
 	
 	if CheckResult == true
 		if Player.Animation == ANI_JUMPING
 			ResetObjectEntity(Object.EntityNo, TypeName[Explosion], 0, Object.XPos, Object.YPos)
-			PlaySfx(SFX_EXPLOSION, false)
+			PlaySfx(SFX_G_EXPLOSION, 0)
 		else
 			if Player.Animation == ANI_SPINDASH
 				ResetObjectEntity(Object.EntityNo, TypeName[Explosion], 0, Object.XPos, Object.YPos)
-				PlaySfx(SFX_EXPLOSION, false)
+				PlaySfx(SFX_G_EXPLOSION, 0)
 			else
 				// The player's not in an attacking animation, go ahead and hurt them
 				CallFunction(Player_Hit)
@@ -47,7 +45,6 @@ end sub
 
 
 sub ObjectDraw
-	
 	// Use different sprites based on the shot's direction
 	if Object.PropertyValue == 0
 		// Going right!

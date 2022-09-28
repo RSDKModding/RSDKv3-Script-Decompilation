@@ -1,10 +1,11 @@
-//------------Sonic CD Taga Taga Script-------------//
+//-----------------Sonic CD Taga Taga Script------------------//
 //--------Scripted by Christian Whitehead 'The Taxman'--------//
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
 // Aliases
 #alias Object.Value0		:	Object.Timer
 #alias Object.Value1		:	Object.XOriginPos
+
 #alias Object.PropertyValue	:	Object.Quality
 
 // Taga Spikes Aliases
@@ -18,17 +19,20 @@
 #alias 3	:	TAGATAGA_SHOOT_RIGHT
 #alias 4	:	TAGATAGA_RESTORE
 
-// Taga Taga Property Values
-#alias 0	:	PROPVAL_QUALITY_GOOD
-#alias 1	:	PROPVAL_QUALITY_BAD
+// Stage SFX
+#alias 5	:	SFX_S_SHOT2
 
 // Priority
 #alias 0	:	PRIORITY_BOUNDS
 #alias 1	:	PRIORITY_ACTIVE
 
+// Badnik Quality / Property Values
+#alias 0	:	GOOD_QUALITY
+#alias 1	:	BAD_QUALITY
+
 
 sub ObjectMain
-	if Object.Quality == PROPVAL_QUALITY_GOOD
+	if Object.Quality == GOOD_QUALITY
 		switch Object.State
 		case TAGATAGA_MOVE_LEFT
 			if Object.Timer == 0
@@ -74,7 +78,7 @@ sub ObjectMain
 					Object[TempObjectPos].XVelocity +=  0x20000
 					Object[TempObjectPos].YVelocity  = -0x30000
 
-					PlayStageSfx(5, 0)
+					PlayStageSfx(SFX_S_SHOT2, 0)
 				end if
 			else
 				Object.XPos -= 0x40000
@@ -107,7 +111,7 @@ sub ObjectMain
 					Object[TempObjectPos].XVelocity = -0x20000
 					Object[TempObjectPos].YVelocity = -0x30000
 
-					PlayStageSfx(5, 0)
+					PlayStageSfx(SFX_S_SHOT2, 0)
 				end if
 			else
 				Object.XPos += 0x40000
@@ -194,7 +198,7 @@ end sub
 
 
 sub ObjectPlayerInteraction
-	if Object.Quality == PROPVAL_QUALITY_GOOD
+	if Object.Quality == GOOD_QUALITY
 		switch Object.State
 		case TAGATAGA_MOVE_LEFT
 			PlayerObjectCollision(C_TOUCH, -128, -32, 0, 8)
@@ -249,7 +253,7 @@ end sub
 
 
 sub ObjectDraw
-	if Object.Quality == PROPVAL_QUALITY_GOOD
+	if Object.Quality == GOOD_QUALITY
 		if Object.State < TAGATAGA_RESTORE
 			TempValue0   = Object.Frame
 			TempValue0 >>= 5

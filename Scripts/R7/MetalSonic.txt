@@ -13,47 +13,58 @@
 #alias Object.Value4 : Object.AccessoryFrame
 
 // State Aliases
-#alias 0 : METALSONIC_WAITING
-#alias 1 : METALSONIC_TURNRIGHT
-#alias 2 : METALSONIC_STARTUP
-#alias 3 : METALSONIC_ADVANCEMAIN
-#alias 4 : METALSONIC_CHARGEUP
-#alias 5 : METALSONIC_ELETRICSHIELD
-#alias 6 : METALSONIC_DASHING
-#alias 7 : METALSONIC_TAUNTING
-#alias 8 : METALSONIC_DEFEATED
+#alias 0  : METALSONIC_WAITING
+#alias 1  : METALSONIC_TURNRIGHT
+#alias 2  : METALSONIC_STARTUP
+#alias 3  : METALSONIC_ADVANCEMAIN
+#alias 4  : METALSONIC_CHARGEUP
+#alias 5  : METALSONIC_ELETRICSHIELD
+#alias 6  : METALSONIC_DASHING
+#alias 7  : METALSONIC_TAUNTING
+#alias 8  : METALSONIC_DEFEATED
 
 // Accessory Aliases, to be set to Object.AccessoryAnimation
-#alias 0 : ACCESSORY_NONE
-#alias 1 : ACCESSORY_CHARGE1
-#alias 2 : ACCESSORY_CHARGE2
-#alias 3 : ACCESSORY_CHARGE3
-#alias 4 : ACCESSORY_LIGHTNING
+#alias 0  : ACCESSORY_NONE
+#alias 1  : ACCESSORY_CHARGE1
+#alias 2  : ACCESSORY_CHARGE2
+#alias 3  : ACCESSORY_CHARGE3
+#alias 4  : ACCESSORY_LIGHTNING
 
 // Metal Sonic has an entire animation file, these aliases correspond to animations in there
-#alias 0 : ANI_STANDING
-#alias 1 : ANI_TAUNTING
-#alias 2 : ANI_TURNING
-#alias 3 : ANI_HOVERING
-#alias 4 : ANI_HOVERINGFAST
-#alias 5 : ANI_ELECTRIFIED
-#alias 6 : ANI_DASHING1
-#alias 7 : ANI_DASHING2
-#alias 8 : ANI_DEFEATED
-#alias 9 : ANI_CHARGING
+#alias 0  : ANI_STANDING
+#alias 1  : ANI_TAUNTING
+#alias 2  : ANI_TURNING
+#alias 3  : ANI_HOVERING
+#alias 4  : ANI_HOVERINGFAST
+#alias 5  : ANI_ELECTRIFIED
+#alias 6  : ANI_DASHING1
+#alias 7  : ANI_DASHING2
+#alias 8  : ANI_DEFEATED
+#alias 9  : ANI_CHARGING
 
 // If you're wondering what Metal Sonic's SpriteFrames are then, it's for his effects like lightning and such
 
-// Vertical Door Aliases
-#alias 2 : VERTICALDOOR_END_CLOSING
-#alias 4 : VERTICALDOOR_END_CLOSING_METAL
-#alias 6 : VERTICALDOOR_END_CLOSED_SONIC
+// Vertical Door States
+#alias 2  : VERTICALDOOR_END_CLOSING
+#alias 4  : VERTICALDOOR_END_CLOSING_METAL
+#alias 6  : VERTICALDOOR_END_CLOSED_SONIC
+
+// Players
+#alias 0  :	PLAYER_SONIC
 
 // Collision Sides
-#alias 0 : CSIDE_FLOOR
+#alias 0  : CSIDE_FLOOR
+
+// Global SFX
+#alias 22 : SFX_G_EXPLOSION
+
+// Stage SFX
+#alias 4  : SFX_S_MSCHARGE
+#alias 5  : SFX_S_MSELECTRIC
+#alias 6  : SFX_S_MSJET
 
 // Priority
-#alias 1 : PRIORITY_ACTIVE
+#alias 1  : PRIORITY_ACTIVE
 
 
 // Function declarations
@@ -86,7 +97,6 @@ end function
 
 
 sub ObjectMain
-	
 	switch Object.State
 	case METALSONIC_WAITING
 		if Object.Animation == ANI_STANDING
@@ -181,7 +191,7 @@ sub ObjectMain
 				Object.Timer = 0
 				Object.AccessoryAnimation = ACCESSORY_CHARGE1
 				Object.State++
-				PlayStageSfx(4, 0)
+				PlayStageSfx(SFX_S_MSCHARGE, 0)
 			end if
 		else
 			// Metal Sonic is within 1792 pixels of the door
@@ -228,7 +238,7 @@ sub ObjectMain
 				Object.Animation = ANI_DASHING1
 				Object.AccessoryAnimation = ACCESSORY_NONE
 				Object.AccessoryFrame = 0
-				PlayStageSfx(6, 0)
+				PlayStageSfx(SFX_S_MSJET, 0)
 				
 #platform: Use_Haptics
 				// and play a super dash-esque motion as well, even if the player probably doesn't even see Metal Sonic...
@@ -244,7 +254,7 @@ sub ObjectMain
 				Object.Animation = ANI_ELECTRIFIED
 				Object.AccessoryAnimation = ACCESSORY_LIGHTNING
 				Object.AccessoryFrame = 0
-				PlayStageSfx(5, 0)
+				PlayStageSfx(SFX_S_MSELECTRIC, 0)
 				
 #platform: Use_Haptics
 				HapticEffect(60, 0, 0, 0)
@@ -268,7 +278,7 @@ sub ObjectMain
 				Object.Animation = ANI_DASHING2
 				Object.AccessoryAnimation = ACCESSORY_NONE
 				Object.AccessoryFrame = 0
-				PlayStageSfx(6, 0)
+				PlayStageSfx(SFX_S_MSJET, 0)
 				
 #platform: Use_Haptics
 				HapticEffect(55, 0, 0, 0)
@@ -378,7 +388,7 @@ sub ObjectMain
 			// Door in its closed state, meaning Metal Sonic lost and Sonic won
 			
 			if Player.HeavyMetalFlag == true
-				if Stage.PlayerListPos == 0
+				if Stage.PlayerListPos == PLAYER_SONIC
 					// Player managed to get through the fight without getting hit, give them the Heavy Metal achievment
 					SetAchievement(6, 100)
 				end if
@@ -417,7 +427,7 @@ sub ObjectMain
 					end if
 				loop
 				
-				PlaySfx(22, 0)
+				PlaySfx(SFX_G_EXPLOSION, 0) 
 				
 #platform: Use_Haptics
 				HapticEffect(90, 0, 0, 0)
@@ -447,7 +457,6 @@ end sub
 
 
 sub ObjectPlayerInteraction
-	
 	switch Object.Animation
 	case ANI_ELECTRIFIED
 	case ANI_DASHING2
@@ -469,7 +478,6 @@ end sub
 
 
 sub ObjectDraw
-	
 	// First, draw Metal Sonic's "accessory" (of sorts) behind him
 	switch Object.AccessoryAnimation
 		

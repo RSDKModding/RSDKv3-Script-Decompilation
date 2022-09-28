@@ -1,18 +1,22 @@
-//------------Sonic CD Upsell DL Script-------------//
+//-----------------Sonic CD Upsell DL Script------------------//
 //--------Scripted by Christian Whitehead 'The Taxman'--------//
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
 // Aliases
 #alias Object.Value0	:	Object.Fade
 #alias Object.Value1	:	Object.ButtonCount
-//States
+
+// States
 #alias 0	:	UpsellDL_SETUP_INFADE
 #alias 1	:	UpsellDL_FADEIN
 #alias 2	:	UpsellDL_CONTROLS
 #alias 3	:	UpsellDL_EXIT
 
-// Callbacks & Engine States
-#alias 8	:	CALLBACK_BUY_FULL_GAME_SELECTED
+// Presentation List Stages
+#alias 0	:	STAGE_P_MENU
+
+// Global SFX
+#alias 23	:	SFX_G_MENUBUTTON
 
 // Languages
 #alias 0	:	LANG_ENGLISH
@@ -23,6 +27,8 @@
 #alias 5	:	LANG_JAPANESE
 
 // Engine & Callbacks
+#alias 8	:	CALLBACK_BUY_FULL_GAME_SELECTED
+
 #alias 5	:	ENGINE_ENTER_HIRESMODE
 #alias 6	:	ENGINE_EXIT_HIRESMODE
 
@@ -61,7 +67,7 @@ sub ObjectMain
 				if Object.ButtonCount < 0
 					Object.ButtonCount = 1
 				end if
-				PlaySfx(23, 0) 	//Menu Button SFX
+				PlaySfx(SFX_G_MENUBUTTON, 0) 
 			end if
 
 			if KeyPress[0].Down == true
@@ -69,7 +75,7 @@ sub ObjectMain
 				if Object.ButtonCount > 1
 					Object.ButtonCount = 0
 				end if
-				PlaySfx(23, 0) 	//Menu Button SFX
+				PlaySfx(SFX_G_MENUBUTTON, 0) 
 			end if
 
 			if KeyPress[0].Start == true
@@ -101,10 +107,10 @@ sub ObjectMain
 			end if
 		else
 			CheckTouchRect(0, 0, Screen.XSize, Screen.YSize)
-			TempValue3 = CheckResult
-			TempValue0 = Screen.CenterX
+			TempValue3  = CheckResult
+			TempValue0  = Screen.CenterX
 			TempValue0 -= 80
-			TempValue1 = Screen.CenterX
+			TempValue1  = Screen.CenterX
 			TempValue1 += 80
 			CheckTouchRect(TempValue0, 168, TempValue1, 200)
 			if CheckResult > -1
@@ -122,9 +128,9 @@ sub ObjectMain
 				end if
 			end if
 
-			TempValue0 = Screen.CenterX
+			TempValue0  = Screen.CenterX
 			TempValue0 -= 64
-			TempValue1 = Screen.CenterX
+			TempValue1  = Screen.CenterX
 			TempValue1 += 64
 			CheckTouchRect(TempValue0, 208, TempValue1, 236)
 			if CheckResult > -1
@@ -153,16 +159,16 @@ sub ObjectMain
 			end if
 		end if
 		break
+
 	case UpsellDL_EXIT
 		if Object.Fade < 288
 			Object.Fade += 8
 		else
 			// Going back to normal-quality graphics, signal the engine to exit high-res mode
 			Engine.State = ENGINE_EXIT_HIRESMODE
-
-			// Load the menu
+			
 			Stage.ActiveList = PRESENTATION_STAGE
-			Stage.ListPos = 1
+			Stage.ListPos    = STAGE_P_MENU
 			LoadStage()
 		end if
 

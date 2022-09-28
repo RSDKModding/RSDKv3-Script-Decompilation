@@ -1,13 +1,15 @@
-//------------Sonic CD Dango Script-------------//
+//-------------------Sonic CD Dango Script--------------------//
 //--------Scripted by Christian Whitehead 'The Taxman'--------//
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
 // Aliases
-#alias Object.Value0	:	Object.Timer
-#alias Object.Value1	:	Object.OriginPosX
-#alias Object.Value2	:	Object.OriginPosY
-#alias Object.Value3	:	Object.XVelocity
-#alias Object.Value4	:	Object.ChaseChain
+#alias Object.Value0		:	Object.Timer
+#alias Object.Value1		:	Object.OriginPosX
+#alias Object.Value2		:	Object.OriginPosY
+#alias Object.Value3		:	Object.XVelocity
+#alias Object.Value4		:	Object.ChaseChain
+
+#alias Object.PropertyValue	:	Object.Quality
 
 // States
 #alias 0	:	DANGO_WALK
@@ -20,9 +22,8 @@
 #alias 7	:	DANGO_UNCURLED
 #alias 8	:	DANGO_OFFSCREEN // Unused
 
-// Badnik States (Property Values)
-#alias 0	:	PROPVAL_QUALITY_GOOD
-#alias 1	:	PROPVAL_QUALITY_BAD
+// Gravity
+#alias 1	:	GRAVITY_AIR
 
 // Collision Sides
 #alias 0	:	CSIDE_FLOOR
@@ -33,10 +34,13 @@
 #alias 0	:	PRIORITY_BOUNDS
 #alias 1	:	PRIORITY_ACTIVE
 
+// Badnik Quality / Property Values
+#alias 0	:	GOOD_QUALITY
+#alias 1	:	BAD_QUALITY
+
 
 sub ObjectMain
-
-	if Object.PropertyValue == PROPVAL_QUALITY_GOOD
+	if Object.Quality == GOOD_QUALITY
 		switch Object.State
 		case DANGO_WALK
 			Object.Priority = PRIORITY_ACTIVE
@@ -390,7 +394,7 @@ sub ObjectMain
 			Object.Direction = FACING_RIGHT
 			Object.ChaseChain = 0
 			
-			if Object.PropertyValue == PROPVAL_QUALITY_GOOD
+			if Object.Quality == GOOD_QUALITY
 				Object.XVelocity = -0x6000
 			else
 				Object.XVelocity = -0x1000
@@ -435,20 +439,20 @@ sub ObjectPlayerInteraction
 		PlayerObjectCollision(C_TOUCH, -14, -10, 14, 10)
 		if CheckResult == true
 			CheckEqual(Player.Animation, ANI_JUMPING)
-			TempValue0 = CheckResult
+			TempValue0  = CheckResult
 			CheckEqual(Player.Animation, ANI_SPINDASH)
 			TempValue0 |= CheckResult
 			if TempValue0 == true
 				// The player's rolled towards the Dango, so bounce the player back
-				Player.Speed = Player.XPos
-				Player.Speed -= Object.XPos
+				Player.Speed   = Player.XPos
+				Player.Speed  -= Object.XPos
 				Player.Speed >>= 2
 				Player.XVelocity = Player.Speed
 				
 				// Account for aerial bouncing too if needed
-				if Player.Gravity == 1
-					Player.YVelocity = Player.YPos
-					Player.YVelocity -= Object.YPos
+				if Player.Gravity == GRAVITY_AIR
+					Player.YVelocity   = Player.YPos
+					Player.YVelocity  -= Object.YPos
 					Player.YVelocity >>= 2
 				end if
 			else
@@ -474,10 +478,10 @@ sub ObjectPlayerInteraction
 				Player.Speed >>= 2
 				Player.XVelocity = Player.Speed
 
-				if Player.Gravity == 1
+				if Player.Gravity == GRAVITY_AIR
 					// Account for Y recoil, too
-					Player.YVelocity = Player.YPos
-					Player.YVelocity -= Object.YPos
+					Player.YVelocity   = Player.YPos
+					Player.YVelocity  -= Object.YPos
 					Player.YVelocity >>= 2
 				else
 					// The player is on the ground, make them bounce back rolling
@@ -532,7 +536,7 @@ sub ObjectStartup
 		if Object[ArrayPos0].Type == TypeName[Dango]
 			Object[ArrayPos0].OriginPosX = Object[ArrayPos0].XPos
 			Object[ArrayPos0].OriginPosY = Object[ArrayPos0].YPos
-			if Object[ArrayPos0].PropertyValue == PROPVAL_QUALITY_GOOD
+			if Object[ArrayPos0].Quality == GOOD_QUALITY
 				Object[ArrayPos0].XVelocity = -0x6000
 			else
 				Object[ArrayPos0].XVelocity = -0x1000

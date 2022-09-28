@@ -91,7 +91,7 @@
 // Player Aliases
 #alias 0 : PLAYER_SONIC
 
-// Stage List Position Aliases
+// Presentation Stages
 #alias 0 : STAGE_P_TITLE
 #alias 2 : STAGE_P_TIMEATTACK
 
@@ -107,9 +107,9 @@
 // This Object uses a hardcoded constant of 240 rather often, rather than Screen.YSize, so this is here just to clarify stuff a bit
 #alias 240 : SCREEN_YSIZE
 
-// SFX Aliases
-#alias 23 : SFX_MENUBUTTON
-#alias 27 : SFX_SELECT
+// Global SFX
+#alias 23 : SFX_G_MENUBUTTON
+#alias 27 : SFX_G_SELECT
 
 // Ink Effect Aliases
 #alias 2 : INK_ALPHA
@@ -129,7 +129,6 @@
 
 
 sub ObjectMain
-	
 	switch Object.State
 	case PAUSEMENU_INIT
 		// Object just got spawned, setup everything here
@@ -212,7 +211,7 @@ sub ObjectMain
 		Object.PauseBarXPos *= Screen.XSize
 		Object.PauseBarXPos /= 12
 		
-		// And then move the bckground white rectangle in as well
+		// And then move the background white rectangle in
 		Object.WhiteRectPos = Object.Timer
 		Object.WhiteRectPos *= SCREEN_YSIZE
 		Object.WhiteRectPos /= 12
@@ -289,7 +288,7 @@ sub ObjectMain
 			
 			if KeyPress[0].Up == true
 				
-				PlaySfx(SFX_MENUBUTTON, false)
+				PlaySfx(SFX_G_MENUBUTTON, 0)
 				
 				// Reset all the stuff
 				
@@ -328,7 +327,7 @@ sub ObjectMain
 			
 			if KeyPress[0].Down == true
 				
-				PlaySfx(SFX_MENUBUTTON, false)
+				PlaySfx(SFX_G_MENUBUTTON, 0)
 				
 				// Reset some stuff
 				
@@ -366,14 +365,14 @@ sub ObjectMain
 			
 			// The Player's conditions for 
 			if KeyPress[0].Start == true
-				PlaySfx(SFX_SELECT, false)
+				PlaySfx(SFX_G_SELECT, 0)
 				Object.State = PAUSEMENU_FLASH
 				Object.Alpha = 248
 				Object.Timer = 0
 			end if
 			
 			if KeyPress[0].ButtonA == true
-				PlaySfx(SFX_SELECT, false)
+				PlaySfx(SFX_G_SELECT, 0)
 				Object.State = PAUSEMENU_FLASH
 				Object.Alpha = 248
 				Object.Timer = 0
@@ -419,7 +418,7 @@ sub ObjectMain
 					if Object.CurrentSelection == SELECTION_CONTINUE
 						// The Player's released their finger while on the button, so let's start Continuing now
 						
-						PlaySfx(SFX_SELECT, false)
+						PlaySfx(SFX_G_SELECT, 0)
 						Object.State = PAUSEMENU_FLASH
 						Object.Alpha = 248
 						Object.Timer = 0
@@ -453,7 +452,7 @@ sub ObjectMain
 						if Object.CurrentSelection == SELECTION_RESTART
 							// The Player released their finger while hovering over Restart, so let's restart then!
 							
-							PlaySfx(SFX_SELECT, false)
+							PlaySfx(SFX_G_SELECT, 0)
 							Object.State = PAUSEMENU_FLASH
 							Object.Alpha = 248
 							Object.Timer = 0
@@ -487,7 +486,7 @@ sub ObjectMain
 					if Object.CurrentSelection == SELECTION_EXIT
 						// So in that case, if they were on it for at least one frame before, then let's go ahead and Exit
 						
-						PlaySfx(SFX_SELECT, false)
+						PlaySfx(SFX_G_SELECT, 0)
 						Object.State = PAUSEMENU_FLASH
 						Object.Alpha = 248
 						Object.Timer = 0
@@ -521,7 +520,7 @@ sub ObjectMain
 						if Object.CurrentSelection == SELECTION_DEVMENU
 							// If they were touching the Dev Menu button last frame, then assume a button press
 							
-							PlaySfx(SFX_SELECT, false)
+							PlaySfx(SFX_G_SELECT, 0)
 							Object.State = PAUSEMENU_FLASH
 							Object.Alpha = 248
 							Object.Timer = 0
@@ -785,7 +784,6 @@ end sub
 
 
 sub ObjectDraw
-	
 	switch Object.State
 	case PAUSEMENU_INIT
 	case PAUSEMENU_SLIDEIN

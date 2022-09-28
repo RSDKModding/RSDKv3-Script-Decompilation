@@ -19,7 +19,7 @@
 #alias 0	:	MONITOR_IDLE
 #alias 1	:	MONITOR_FALLING
 
-// Priorities
+// Priority
 #alias 1	:	PRIORITY_ACTIVE
 
 // Collision Sides
@@ -28,8 +28,8 @@
 // Hit Values
 #alias 4	:	PLAYER_COL_ROOF
 
-// GameModes
-#alias 2	:	GAMEMODE_TIMEATTACK
+// Global SFX
+#alias 8	:	SFX_G_DESTROY
 
 // Property Values
 #alias 1	:	SCREEN_RING
@@ -42,6 +42,12 @@
 #alias 8	:	SCREEN_S_MONITOR
 #alias 9	:	SCREEN_STATIC_1
 #alias 10	:	SCREEN_STATIC_2
+
+// Players
+#alias 1	:	PLAYER_TAILS
+
+// GameModes
+#alias 2	:	GAMEMODE_TIMEATTACK
 
 // Collision Plane
 #alias 1	:	COLLISION_PLANE_B
@@ -65,13 +71,13 @@ end sub
 
 sub ObjectPlayerInteraction
 	if Player.CollisionPlane == Object.CollisionPlane
-
 		TempValue0 = false
 		if Player.Gravity == GRAVITY_AIR
 			if Player.YVelocity < 0
 				TempValue0 = true
 			endif
 		endif
+
 		if TempValue0 == false
 			if Player.Animation == ANI_JUMPING
 				PlayerObjectCollision(C_TOUCH, -16, -14, 16, 16)
@@ -88,11 +94,11 @@ sub ObjectPlayerInteraction
 					end if
 
 					Object.Type = TypeName[BrokenMonitor]
-					BrokenMonitor.Priority = PRIORITY_ACTIVE
-					BrokenMonitor.Alpha = 255
+					BrokenMonitor.Priority	= PRIORITY_ACTIVE
+					BrokenMonitor.Alpha		= 255
 					BrokenMonitor.YVelocity = Object.YPos
-					BrokenMonitor.Timer = -0x30000
-					PlaySfx(8, 0)
+					BrokenMonitor.Timer		= -0x30000
+					PlaySfx(SFX_G_DESTROY, 0)
 				
 #platform: Use_Haptics
 					HapticEffect(16, 0, 0, 0)
@@ -105,8 +111,9 @@ sub ObjectPlayerInteraction
 		else
 			PlayerObjectCollision(C_BOX, -15, -16, 15, 16)
 			if CheckResult == PLAYER_COL_ROOF
-				Object.State = MONITOR_FALLING
-				Object.GravityStrength = -0x20000
+				Object.State			= MONITOR_FALLING
+				Object.GravityStrength	= -0x20000
+
 				Player.YVelocity = 0x20000
 			end if
 		end if
@@ -189,7 +196,7 @@ sub ObjectStartup
 		ArrayPos0++
 	loop
 
-	if Stage.PlayerListPos == 1		// Tails
+	if Stage.PlayerListPos == PLAYER_TAILS
 		ArrayPos0 = 32
 		while ArrayPos0 < 1056
 			if Object[ArrayPos0].Type == TypeName[Monitor]

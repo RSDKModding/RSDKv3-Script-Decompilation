@@ -7,8 +7,8 @@
 #alias Object.Value1	:	Object.ScoreBonus
 
 // Player Aliases
-#alias Player.Value4:Player.InvincibleTimer
-#alias Player.Value5:Player.BlinkTimer
+#alias Player.Value4	:	Player.InvincibleTimer
+#alias Player.Value5	:	Player.BlinkTimer
 
 // States
 #alias 0	:	SCORECHUTE_IDLE
@@ -19,6 +19,13 @@
 #alias 5	:	SCORECHUTE_PULL_PLAYER
 #alias 6	:	SCORECHUTE_EJECT_PLAYER
 #alias 7	:	SCORECHUTE_COOLDOWN
+
+// Players
+#alias 0	:	PLAYER_SONIC
+
+// Stage SFX
+#alias 2	:	SFX_S_SCORECHUTE
+#alias 3	:	SFX_S_CHUTEEXIT
 
 // Priority
 #alias 0	:	PRIORITY_BOUNDS
@@ -140,7 +147,7 @@ sub ObjectMain
 
 			Player.YVelocity = -0x74000
 			Player.Timer = 0
-			PlayStageSfx(3, 0)
+			PlayStageSfx(SFX_S_CHUTEEXIT, 0)
 		end if
 		break
 
@@ -174,7 +181,7 @@ sub ObjectPlayerInteraction
 				Player.Animation = ANI_JUMPING
 				Player.ObjectInteraction = false
 
-				PlayStageSfx(2, 0)
+				PlayStageSfx(SFX_S_SCORECHUTE, 0)
 
 #platform: Use_Haptics
 				HapticEffect(55, 0, 0, 0)
@@ -229,7 +236,7 @@ sub ObjectStartup
 	LoadSpriteSheet("R3/Objects.gif")
 	SpriteFrame(-24, -8, 48, 16, 117, 233)			// #0 - Score Chute Active
 
-	if Stage.PlayerListPos == 0		// Sonic
+	if Stage.PlayerListPos == PLAYER_SONIC
 		SpriteFrame(-16, -24, 32, 16, 2, 240)		// #1 - Jump Insert Frame 0
 		SpriteFrame(-8, -16, 16, 8, 35, 241)		// #2 - Jump Insert Frame 1
 	else

@@ -55,11 +55,17 @@
 #alias 2	:	BOSSBARRIER2_OPEN
 
 // Eggman Animations
-#alias 0	:	EGG_ANI_IDLE
-#alias 1	:	EGG_ANI_HURT
-#alias 2	:	EGG_ANI_DEFEAT
-#alias 3	:	EGG_ANI_PANIC
+#alias 0	:	EGGANI_IDLE
+#alias 1	:	EGGANI_HURT
+#alias 2	:	EGGANI_DEFEAT
+#alias 3	:	EGGANI_PANIC
 
+// Global SFX
+#alias 22	:	SFX_G_EXPLOSION
+
+// Stage SFX
+#alias 10	:	SFX_S_BUZZSAW
+#alias 11	:	SFX_S_BOSSHIT
 
 // Function declarations
 #function R6_EGG_DESCEND
@@ -126,7 +132,7 @@ function R6_EGG_ROUTE_1ST_FLOOR
 		if Object.Timer < 1200
 			if Object.Timer == 0
 				Object.SpikesAnimation = 1
-				PlayStageSfx(10, 0)
+				PlayStageSfx(SFX_S_BUZZSAW, 0)
 			end if
 
 			Object.Timer += 4
@@ -173,7 +179,7 @@ function R6_EGG_ROUTE_2ST_FLOOR
 		if Object.Timer < 1200
 			if Object.Timer == 0
 				Object.SpikesAnimation = 1
-				PlayStageSfx(10, 0)
+				PlayStageSfx(SFX_S_BUZZSAW, 0)
 			end if
 
 			Object.Timer += 4
@@ -214,7 +220,7 @@ end function
 
 function R6_EGG_STEAM
 	if Object.AnimationTimer == 0
-		PlaySfx(22, 0)
+		PlaySfx(SFX_G_EXPLOSION, 0) 
 	end if
 	
 	if Object.AnimationTimer < 12
@@ -322,7 +328,7 @@ sub ObjectMain
 			Object.Timer	 = 0
 			Object.YVelocity = 0
 
-			Object.EggmanAnimation = EGG_ANI_PANIC
+			Object.EggmanAnimation = EGGANI_PANIC
 
 			SetTileLayerEntry(500, 0, 20, 5)
 			SetTileLayerEntry(501, 0, 21, 5)
@@ -410,8 +416,8 @@ sub ObjectPlayerInteraction
 					Player.XVelocity   = Player.Speed
 
 					if Object.State < R6_EGG_ROOF_DRILL
-						PlayStageSfx(11, 0)
-						Object.EggmanAnimation = EGG_ANI_HURT
+						PlayStageSfx(SFX_S_BOSSHIT, 0)
+						Object.EggmanAnimation = EGGANI_HURT
 						Object.Frame		   = 0
 					else
 
@@ -429,7 +435,7 @@ sub ObjectPlayerInteraction
 
 						Object.SpikesAnimation = 2
 						Object.AnimationTimer  = 0
-						Object.EggmanAnimation = EGG_ANI_DEFEAT
+						Object.EggmanAnimation = EGGANI_DEFEAT
 						Object.FaceFrame	   = 0
 						Object.Frame		   = 0
 
@@ -439,7 +445,7 @@ sub ObjectPlayerInteraction
 
 						Copy16x16Tile(810, 863)
 
-						PlaySfx(22, 0)
+						PlaySfx(SFX_G_EXPLOSION, 0) 
 					end if
 				else
 					CallFunction(Player_Hit)
@@ -454,7 +460,7 @@ sub ObjectDraw
 	DrawSprite(0)
 
 	switch Object.EggmanAnimation
-	case EGG_ANI_IDLE
+	case EGGANI_IDLE
 		TempValue0  = Object.FaceFrame
 		TempValue0 /= 10
 		TempValue0 += 2
@@ -470,7 +476,7 @@ sub ObjectDraw
 		DrawSpriteFX(TempValue0, FX_FLIP, Object.XPos, Object.YPos)
 		break
 
-	case EGG_ANI_HURT
+	case EGGANI_HURT
 		Object.Direction  = Object.Frame
 		Object.Direction /= 10
 		Object.Frame++
@@ -479,17 +485,17 @@ sub ObjectDraw
 		if Object.FaceTimer > 0
 			Object.FaceTimer--
 		else
-			Object.EggmanAnimation = EGG_ANI_IDLE
+			Object.EggmanAnimation = EGGANI_IDLE
 			Object.FaceFrame	   = 0
 			Object.Frame		   = 0
 		end if
 		break
 
-	case EGG_ANI_DEFEAT
+	case EGGANI_DEFEAT
 		DrawSprite(5)
 		break
 
-	case EGG_ANI_PANIC
+	case EGGANI_PANIC
 		Object.Direction  = Object.Frame
 		Object.Direction /= 25
 

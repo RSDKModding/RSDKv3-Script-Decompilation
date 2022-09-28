@@ -22,17 +22,25 @@
 #alias 4	:	TIMEWARP_LEAVING
 #alias 5	:	TIMEWARP_TRAVEL
 
+// Player
+#alias 0	:	PLAYER_SONIC
+
 // Control Mode
 #alias -1	:	CONTROL_DISABLED
+
+// Global SFX
+#alias 14	:	SFX_G_TIMEWARP
+#alias 24	:	SFX_G_FLYING
+#alias 25	:	SFX_G_TIRED
 
 // Warp Destination
 #alias 1	:	WARPDEST_PAST
 
 // Next Period
-#alias 0	:	PROPVAL_PRESENT
-#alias 1	:	PROPVAL_PAST
-#alias 2	:	PROPVAL_GOOD_FUTURE
-#alias 3	:	PROPVAL_BAD_FUTURE
+#alias 0	:	PRESENT
+#alias 1	:	PAST
+#alias 2	:	GOOD_FUTURE
+#alias 3	:	BAD_FUTURE
 
 
 sub ObjectDraw
@@ -78,7 +86,7 @@ sub ObjectDraw
 			Object.Timer += 10
 		else
 			// 88 Miles per Hour unlock criteria
-			if Stage.PlayerListPos == 0	//Sonic
+			if Stage.PlayerListPos == PLAYER_SONIC
 				if Stage.DebugMode == false
 					SetAchievement(0, 100)
 				end if
@@ -88,8 +96,8 @@ sub ObjectDraw
 			HapticEffect(91, 0, 0, 0)
 #endplatform
 
-			StopSfx(24)
-			StopSfx(25)
+			StopSFX(SFX_G_FLYING)
+			StopSFX(SFX_G_TIRED)
 			Stage.State = STAGE_RUNNING
 			Stage.TimeEnabled = false
 
@@ -150,8 +158,10 @@ sub ObjectDraw
 			Object[ArrayPos0].Type  = TypeName[WarpSonic]
 			Object[ArrayPos0].iXPos = Screen.CenterX
 			Object[ArrayPos0].iYPos = 480
+
 			SetScreenFade(208, 255, 224, 255)
-			PlaySfx(14, 0)
+
+			PlaySfx(SFX_G_TIMEWARP, 0)
 		end if
 		break
 
@@ -204,32 +214,32 @@ sub ObjectDraw
 			SetScreenFade(208, 255, 224, 255)
 			switch Object.CurrentPeriod
 			// from this point onward any "Object.CurrentPeriod" was added by Origins for HE2 tracking
-			case PROPVAL_PRESENT
+			case PRESENT
 				if Warp.Destination == WARPDEST_PAST
 					Stage.ListPos++
-					Object.CurrentPeriod = PROPVAL_PAST
+					Object.CurrentPeriod = PAST
 				else
 					if Transporter_Destroyed == true
 						Stage.ListPos += 2
-						Object.CurrentPeriod = PROPVAL_GOOD_FUTURE
+						Object.CurrentPeriod = GOOD_FUTURE
 					else
 						Stage.ListPos += 3
-						Object.CurrentPeriod = PROPVAL_BAD_FUTURE
+						Object.CurrentPeriod = BAD_FUTURE
 					end if
 				end if
 				break
 
-			case PROPVAL_PAST
+			case PAST
 				Stage.ListPos--
-				Object.CurrentPeriod = PROPVAL_PRESENT
+				Object.CurrentPeriod = PRESENT
 				break
 
-			case PROPVAL_GOOD_FUTURE
+			case GOOD_FUTURE
 				Stage.ListPos -= 2
-				Object.CurrentPeriod = PROPVAL_PRESENT
+				Object.CurrentPeriod = PRESENT
 				break
 
-			case PROPVAL_BAD_FUTURE
+			case BAD_FUTURE
 			
 #platform: Use_Standalone
 				Stage.ListPos -= 3
@@ -243,7 +253,7 @@ sub ObjectDraw
 				endif
 #endplatform
 
-				Object.CurrentPeriod = PROPVAL_PRESENT
+				Object.CurrentPeriod = PRESENT
 				break
 
 			end switch

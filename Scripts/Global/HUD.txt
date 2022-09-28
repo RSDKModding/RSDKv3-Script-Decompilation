@@ -61,12 +61,10 @@ function HUD_DrawStandard
 			if game.coinMode != false
 				game.hudEnable = HUDENABLE_ON
 			end if
-#endplatform
 			
 			// First, draw the Score/Time/Rings text
 			DrawSpriteScreenXY(10, 17, 13)
 
-#platform: Use_Origins
 			// Record the current time
 			TempValue2 = Stage.Minutes
 			TempValue3 = Stage.Seconds
@@ -77,7 +75,7 @@ function HUD_DrawStandard
 			
 			TempValue5 = CheckResult
 			
-			// And check to see if the Time Over override as active as well
+			// Or check to see if the Time Over override is active
 			CheckNotEqual(Object.TimeOver, false)
 			
 			// Combine the previous two results into one
@@ -89,18 +87,25 @@ function HUD_DrawStandard
 				TempValue4 = 99				
 			end if
 			
-			// If minutes are at 9, start flashing the Time text with its red variant
+			// Start flashing Time at minute 9
 			if TempValue2 == 9
-#endplatform
-
-#platform: Use_Standalone
-			// If minutes are at 9, start flashing the Time text with its red variant
-			if Stage.Minutes == 9
-#endplatform
 				if Object.FlashTimer > 7
 					DrawSpriteScreenXY(11, 17, 29)
 				end if
 			end if
+#endplatform
+
+#platform: Use_Standalone
+			// First, draw the Score/Time/Rings text
+			DrawSpriteScreenXY(10, 17, 13)
+
+			// Start flashing Time at minute 9
+			if Stage.Minutes == 9
+				if Object.FlashTimer > 7
+					DrawSpriteScreenXY(11, 17, 29)
+				end if
+			end if
+#endplatform
 			
 			// Flash the Rings text if the player doesn't have rings
 			if Player.Rings == 0
@@ -130,39 +135,31 @@ function HUD_DrawStandard
 			DrawNumbers(0, 80, 45, Player.Rings, 3, 8, false)	// Rings
 			
 			if Stage.DebugMode == true // In Debug Mode, draw the position of the Player
-				// First, get the truncated X Position of the Player
-				TempValue0 = Player.XPos
+				// Get the truncated X Position of the Player
+				TempValue0  = Player.XPos
 				TempValue0 >>= 16
 				
-				// Get the base X Position to draw the numbers at, 24 pixels short of a screen's worth of width
-				TempValue1 = Screen.XSize
+				// Set screen XPos for this value
+				TempValue1  = Screen.XSize
 				TempValue1 -= 24
 				
-				// (Normally there's something here to make sure the number being drawn is positive, but I guess they just didn't care this time...)
-				
-				// Now, draw the X Position numbers
+				// Draw the X Position numbers
 				DrawNumbers(0, TempValue1, 13, TempValue0, 5, 8, true)
 				
-				// After that, do the same thing for the Player's Y Position
-				
-				TempValue0 = Player.YPos
+				// Get the truncated Y Position of the Player
+				TempValue0   = Player.YPos
 				TempValue0 >>= 16
 				
 				if TempValue0 < 0
-					
-					// Unlike the X Position, YPos enforces that the number drawn will be positive
-					// I wonder why XPos doesn't get anything of the sort...
-					FlipSign(TempValue0)
-					
+					// YPos is always drawn as positive
+					FlipSign(TempValue0)					
 				end if
 				
-				// Now, draw the Y Position numbers 16 pixels below the X Position numbers
+				// Draw the Y Position
 				DrawNumbers(0, TempValue1, 29, TempValue0, 5, 8, true)
-				
-				// 42 pixels to the left of the numbers...
+
 				TempValue1 -= 42
-				
-				// ...draw the X/Y icons
+				// Draw the X/Y icons
 				DrawSpriteScreenXY(14, TempValue1, 15)
 				DrawSpriteScreenXY(21, TempValue1, 31)
 			end if
@@ -173,7 +170,7 @@ function HUD_DrawStandard
 	if TempValue6 == false // Using Lives
 #endplatform
 		// Get the current Time Period, then add it's equivalent sprite id
-		TempValue0 = Object.TimePeriod
+		TempValue0  = Object.TimePeriod
 		TempValue0 += 17
 		// Now, draw the corresponding life icon for the time period
 		DrawSpriteScreenXY(TempValue0, 16, 212)
@@ -229,12 +226,11 @@ function HUD_DrawStandard
 #endplatform
 	
 	switch Warp.Destination
+	// Draw the past sign, flicker it while trying to warp
 	case WARPDEST_PAST
 		if Warp.Timer < 100
-			// If the Player isn't currently warping, then just draw the Past sign constantly
 			DrawSpriteScreenXY(15, TempValue1, TempValue5)
 		else
-			// If currently warping, then get the lowest bit of Warp.Timer and draw the Past Post based on that in order to make it flash
 			TempValue0  = Warp.Timer
 			TempValue0 &= 1
 			if TempValue0 == 0
@@ -244,11 +240,10 @@ function HUD_DrawStandard
 		break
 		
 	case WARPDEST_FUTURE
+	// Draw the future sign, flicker it while trying to warp
 		if Warp.Timer < 100
-			// If not warping, then draw the Future sign normally
 			DrawSpriteScreenXY(16, TempValue1, TempValue5)
 		else
-			// If warping, then draw the Future Post based on the bottom bit of the Warp Timer
 			TempValue0  = Warp.Timer
 			TempValue0 &= 1
 			if TempValue0 == 0
@@ -261,19 +256,18 @@ end function
 
 
 function HUD_DrawMobile
-	// Do note, the Origins folks (understandably) neglected to update this function as needed for the Origins additions,
-	// so coins and all that cool stuff isn't here
+	// Aside from being inside a function, this is the same code from the original mobile release
 	
-	// First, draw the Score, Time, Rings text
+	// Draw the Score, Time, Rings text
 	DrawSpriteScreenXY(10, 17, 9)
 	
-	// Draw the flashing Time text if the time's past 9 minutes
+	// Start flashing Time at minute 9
 	if Stage.Minutes == 9
 		if Object.FlashTimer > 7
 			DrawSpriteScreenXY(11, 17, 25)
 		end if
 	end if
-	// If the Player has 0 rings, then draw the flashing Rings text as needed as well
+	// Flash the Rings text at 0 rings
 	if Player.Rings == 0
 		if Object.FlashTimer > 7
 			DrawSpriteScreenXY(12, 17, 41)
@@ -292,38 +286,35 @@ function HUD_DrawMobile
 
 	DrawNumbers(0, 80, 41, Player.Rings, 3, 8, false)
 	
-	if Stage.DebugMode == true // In Debug Mode, show the Player's Position
-		// First, get the Player's truncated X Position
-		TempValue0 = Player.XPos
+	// Debug Mode coordinates drawing
+	if Stage.DebugMode == true
+		// Get the truncated X Position of the Player
+		TempValue0   = Player.XPos
 		TempValue0 >>= 16
-		
-		// Normally, it'd get turned to its absolute here, but it seems like they just didn't want to...
-		
-		// Get the X Position to draw the X Position itself, 16 pixels short from the screen's width
-		TempValue1 = Screen.XSize
+
+		// Set screen XPos for this value
+		TempValue1  = Screen.XSize
 		TempValue1 -= 16
 		
-		// And now, draw the Player's X Position
+		// Draw the X Position numbers
 		DrawNumbers(0, TempValue1, 25, TempValue0, 5, 8, true)
 		
-		// Then, get the Player's truncated Y Position
-		TempValue0 = Player.YPos
+		// Get the truncated Y Position of the Player
+		TempValue0   = Player.YPos
 		TempValue0 >>= 16
 		
 		if TempValue0 < 0
-			
-			// This time the Position's turned absolute, unlike the X Position
+			// YPos is always drawn as positive
 			FlipSign(TempValue0)
 			
 		end if
 		
-		// And with that, draw the Y Position 16 pixels below the X Position
+		// Draw the Y Position
 		DrawNumbers(0, TempValue1, 41, TempValue0, 5, 8, true)
-		
-		// And now, take the X Position those were drawn at, subtract 42 pixels from it, and...
+
 		TempValue1 -= 42
 		
-		// Draw the X and Y icons behind them
+		// Draw the X/Y icons
 		DrawSpriteScreenXY(14, TempValue1, 27)
 		DrawSpriteScreenXY(21, TempValue1, 43)
 	end if
@@ -331,14 +322,14 @@ function HUD_DrawMobile
 	// Lives Counter
 	
 	// Get the X Position to draw the life icon at
-	TempValue1 = Screen.XSize
+	TempValue1  = Screen.XSize
 	TempValue1 -= 48
 	// Get the current Time Period, then add it's equivalent sprite id
-	TempValue0 = Object.TimePeriod
+	TempValue0  = Object.TimePeriod
 	TempValue0 += 17
 	// Now, draw the corresponding life icon for the time period
 	DrawSpriteScreenXY(TempValue0, TempValue1, 8)
-	// Now, move 16 pixels to the right
+
 	TempValue1 += 16
 	// Draw the X/times icon
 	DrawSpriteScreenXY(14, TempValue1, 16)
@@ -353,27 +344,27 @@ function HUD_DrawMobile
 		TempValue1 -= 8
 	end if
 	
-	// Draw the Warping Destination, if there is any at the moment
 	switch Warp.Destination
+	// Draw the past sign, flicker it while trying to warp
 	case WARPDEST_PAST
 		TempValue1 -= 79
 		if Warp.Timer < 100
 			DrawSpriteScreenXY(15, TempValue1, 8)
 		else
-			TempValue0=Warp.Timer
+			TempValue0  = Warp.Timer
 			TempValue0 &= 1
 			if TempValue0 == 0
 				DrawSpriteScreenXY(15, TempValue1, 8)
 			end if
 		end if
 		break
-		
+	// Draw the future sign, flicker it while trying to warp
 	case WARPDEST_FUTURE
 		TempValue1 -= 79
 		if Warp.Timer < 100
 			DrawSpriteScreenXY(16, TempValue1, 8)
 		else
-			TempValue0=Warp.Timer
+			TempValue0  = Warp.Timer
 			TempValue0 &= 1
 			if TempValue0 == 0
 				DrawSpriteScreenXY(16, TempValue1, 8)

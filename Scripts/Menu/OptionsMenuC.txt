@@ -53,6 +53,16 @@
 // Menu Heading Property Values
 #alias 5	:	MAINMENU_HEADER
 
+// Ink Effects
+#alias 2	:	INK_ALPHA
+
+// Global SFX
+#alias 23	:	SFX_G_MENUBUTTON
+#alias 27	:	SFX_G_SELECT
+
+// Stage SFX
+#alias 1	:	SFX_S_BACKBUTTON
+
 // Languages
 #alias 0	:	LANG_ENGLISH
 #alias 1	:	LANG_FRENCH
@@ -61,7 +71,6 @@
 #alias 4	:	LANG_SPANISH
 #alias 5	:	LANG_JAPANESE
 
-#alias 2	:	INK_ALPHA
 
 // Engine & Callbacks
 #alias 9 	:	CALLBACK_HOW_TO_PLAY
@@ -135,7 +144,7 @@ sub ObjectMain
 			if Object.CurrentSelection < 0
 				Object.CurrentSelection = 3
 			end if
-			PlaySfx(23, 0) 	//Menu Button SFX
+			PlaySfx(SFX_G_MENUBUTTON, 0) 
 		end if
 
 		if KeyPress[0].Down == true
@@ -143,7 +152,7 @@ sub ObjectMain
 			if Object.CurrentSelection > 3
 				Object.CurrentSelection = 0
 			end if
-			PlaySfx(23, 0) 	//Menu Button SFX
+			PlaySfx(SFX_G_MENUBUTTON, 0) 
 		end if
 
 		CheckResult = false
@@ -160,7 +169,7 @@ sub ObjectMain
 				ArrayPos0 = Object.CurrentSelection
 				Object.FlickerText = 1
 				Object.State++
-				PlaySfx(27, 0)	//Select SFX
+				PlaySfx(SFX_G_SELECT, 0)
 				switch Object.CurrentSelection
 				case 0
 				case 3
@@ -174,7 +183,7 @@ sub ObjectMain
 		if KeyPress[0].ButtonB == true
 			Object.Timer = 248
 			Object.State = OPTIONS_EXIT
-			PlayStageSfx(1, 0)
+			PlayStageSfx(SFX_S_BACKBUTTON, 0)
 		end if
 		break
 
@@ -254,7 +263,7 @@ sub ObjectMain
 #platform: Standard
 		if KeyPress[0].Up == true
 			Object.OptionCount--
-			PlaySfx(23, 0) 	//Menu Button SFX
+			PlaySfx(SFX_G_MENUBUTTON, 0) 
 			if Object.OptionCount < 0
 				Object.OptionCount = 2
 			end if
@@ -262,7 +271,7 @@ sub ObjectMain
 
 		if KeyPress[0].Down == true
 			Object.OptionCount++
-			PlaySfx(23, 0) 	//Menu Button SFX
+			PlaySfx(SFX_G_MENUBUTTON, 0) 
 			if Object.OptionCount > 2
 				Object.OptionCount = 0
 			end if
@@ -278,7 +287,7 @@ sub ObjectMain
 					Engine.BGMVolume = SaveRAM[33]
 				else
 					Engine.BGMVolume = SaveRAM[33]
-					PlaySfx(23, 0) 	//Menu Button SFX
+					PlaySfx(SFX_G_MENUBUTTON, 0) 
 				end if
 			end if
 
@@ -290,7 +299,7 @@ sub ObjectMain
 					Engine.BGMVolume = SaveRAM[33]
 				else
 					Engine.BGMVolume = SaveRAM[33]
-					PlaySfx(23, 0) 	//Menu Button SFX
+					PlaySfx(SFX_G_MENUBUTTON, 0) 
 				end if
 			end if
 			break
@@ -303,7 +312,7 @@ sub ObjectMain
 					SaveRAM[34] = 0
 					Engine.SFXVolume = SaveRAM[34]
 				else
-					PlaySfx(23, 0) 	//Menu Button SFX
+					PlaySfx(SFX_G_MENUBUTTON, 0) 
 					Engine.SFXVolume = SaveRAM[34]
 				end if
 			end if
@@ -314,7 +323,7 @@ sub ObjectMain
 				if SaveRAM[34] > 100
 					SaveRAM[34] = 100
 				else
-					PlaySfx(23, 0) 	//Menu Button SFX
+					PlaySfx(SFX_G_MENUBUTTON, 0) 
 					Engine.SFXVolume = SaveRAM[34]
 				end if
 			end if
@@ -326,7 +335,7 @@ sub ObjectMain
 				if SaveRAM[35] < 0
 					SaveRAM[35] = 1
 				end if
-				PlaySfx(23, 0) 	//Menu Button SFX
+				PlaySfx(SFX_G_MENUBUTTON, 0) 
 			end if
 
 			if KeyPress[0].Right == true
@@ -334,7 +343,7 @@ sub ObjectMain
 				if SaveRAM[35] > 1
 					SaveRAM[35] = 0
 				end if
-				PlaySfx(23, 0) 	//Menu Button SFX
+				PlaySfx(SFX_G_MENUBUTTON, 0) 
 			end if
 			break
 
@@ -347,7 +356,7 @@ sub ObjectMain
 			Options.OriginalControls = SaveRAM[35]
 			SaveRAM[32] = true
 			WriteSaveRAM()
-			PlayStageSfx(1, 0)
+			PlayStageSfx(SFX_S_BACKBUTTON, 0)
 		end if
 		break
 
@@ -490,7 +499,7 @@ sub ObjectMain
 		if KeyPress[0].ButtonB == true
 			Object.State = OPTIONS_EXIT_ABOUTMENU
 			Object.Timer = 248
-			PlayStageSfx(1, 0)
+			PlayStageSfx(SFX_S_BACKBUTTON, 0)
 		end if
 		break
 

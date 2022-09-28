@@ -5,6 +5,7 @@
 // Aliases
 #alias Object.Value0 : Object.DrawPosY
 
+// States
 #alias 0 : VERTICALDOOR_CLOSED
 #alias 1 : VERTICALDOOR_START_OPENING
 #alias 2 : VERTICALDOOR_END_CLOSING
@@ -13,9 +14,11 @@
 #alias 5 : VERTICALDOOR_START_OPENED
 #alias 6 : VERTICALDOOR_END_CLOSED_SONIC
 
+// Stage SFX
+#alias 3 : SFX_S_DOORCLOSE
+
 
 sub ObjectMain
-	
 	switch Object.State
 	case VERTICALDOOR_START_OPENING
 		if Object.DrawPosY < 0x400000
@@ -51,12 +54,12 @@ sub ObjectMain
 			
 			// From here, do the standard closing routine
 			Object.State = VERTICALDOOR_END_CLOSING
-			PlayStageSfx(3, 0)
+			PlayStageSfx(SFX_S_DOORCLOSE, 0)
 		else
 			if Object[+2].XPos > Object.XPos
 				// If Metal Sonic is past the door
 				Object.State = VERTICALDOOR_END_CLOSING_METAL
-				PlayStageSfx(3, 0)
+				PlayStageSfx(SFX_S_DOORCLOSE, 0)
 			end if
 		end if
 		break

@@ -18,19 +18,18 @@
 #alias 1	:	MECHABU_BACKTRACK
 #alias 2	:	MECHABU_ADVANCE
 
-// SFX Aliases
-#alias 1	:	SFX_BUZZSAW
+// Stage SFX
+#alias 1	:	SFX_S_BUZZSAW
 
-// Badnik Quality
-#alias 0	:	PROPVAL_QUALITY_GOOD
-#alias 1	:	PROPVAL_QUALITY_BAD
+// Badnik Quality / Property Values
+#alias 0	:	GOOD_QUALITY
+#alias 1	:	BAD_QUALITY
 
 // Collision Sides
 #alias 0	:	CSIDE_FLOOR
 
 
 sub ObjectMain
-	
 	switch Object.State
 	case MECHABU_FINDGROUND
 		// See if there's any ground to be found at the Bu's current position
@@ -90,7 +89,6 @@ end sub
 
 
 sub ObjectPlayerInteraction
-	
 	// Huh, it doesn't seem like the Mecha Bu ever reaches state 3, so this check
 	// is effectivly useless
 	if Object.State < 3
@@ -121,11 +119,10 @@ end sub
 
 
 sub ObjectDraw
-	
 	Object.SFXTimer++
 	if Object.SFXTimer == 48
 		Object.SFXTimer = 0
-		PlayStageSfx(SFX_BUZZSAW, false)
+		PlayStageSfx(SFX_S_BUZZSAW, 0)
 	end if
 	
 	TempValue0  = Object.AnimationTimer
@@ -133,7 +130,7 @@ sub ObjectDraw
 	
 	Object.AnimationTimer++
 	Object.AnimationTimer %= 6
-	if Object.PropertyValue == 0
+	if Object.Quality == GOOD_QUALITY
 		if Object.HornAnimTimer > 59
 			TempValue0 += 5
 			DrawSpriteFX(TempValue0, FX_FLIP, Object.XPos, Object.YPos)

@@ -6,6 +6,7 @@
 #alias Object.Value0		:	Object.Timer
 #alias Object.Value1 		:	Object.YOriginPos
 #alias Object.Value2 		:	Object.SpikeTimer
+
 #alias Object.PropertyValue :	Object.Quality
 
 // States
@@ -29,9 +30,12 @@
 #alias 3	:	MINOMUSI_BAD_FLIP_2
 #alias 4	:	MINOMUSI_BAD_RETIRE
 
-// Badnik Quality
-#alias 0	:	PROPVAL_QUALITY_GOOD
-#alias 1	:	PROPVAL_QUALITY_BAD
+// Stage SFX
+#alias 8	:	SFX_S_SPIKES
+
+// Badnik Quality / Property Values
+#alias 0	:	GOOD_QUALITY
+#alias 1	:	BAD_QUALITY
 
 // Priority
 #alias 0	:	PRIORITY_BOUNDS
@@ -47,7 +51,7 @@ sub ObjectMain
 		Object.Priority = PRIORITY_BOUNDS
 	end if
 
-	if Object.Quality == PROPVAL_QUALITY_GOOD
+	if Object.Quality == GOOD_QUALITY
 		switch Object.State
 		case MINOMUSI_DETECT_PLAYER
 			Object.Frame = 0
@@ -79,7 +83,7 @@ sub ObjectMain
 		case MINOMUSI_GOOD_SPIKE_ANIM_2
 			Object.State++
 			Object.Frame = 4
-			PlayStageSfx(8, 0)
+			PlayStageSfx(SFX_S_SPIKES, 0)
 			break
 
 		case MINOMUSI_GOOD_SPIKE_ANIM_3
@@ -218,7 +222,7 @@ sub ObjectPlayerInteraction
 		CallFunction(Player_BadnikBreak)
 	end if
 
-	if Object.Quality == PROPVAL_QUALITY_GOOD
+	if Object.Quality == GOOD_QUALITY
 		if Object.Type == TypeName[Minomusi]
 			if Object.Frame > 2
 				PlayerObjectCollision(C_TOUCH, -17, -4, 17, 20)

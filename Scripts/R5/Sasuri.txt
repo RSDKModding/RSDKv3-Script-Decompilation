@@ -3,12 +3,15 @@
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
 // Aliases
-#alias Object.Value0	:	Object.MoveTimer
-#alias Object.Value1	:	Object.CannonTimer
+#alias Object.Value0		:	Object.MoveTimer
+#alias Object.Value1		:	Object.CannonTimer
+
+#alias Object.PropertyValue	:	Object.Quality
 
 // Sasuri Bullet (SBullet) Aliases
-#alias Object.Value1	:	Object.XVelocity
+#alias Object.Value1		:	Object.XVelocity
 
+// States
 #alias 0	:	SASURI_FINDGROUND
 #alias 1	:	SASURI_CRAWLLEFT
 #alias 2	:	SASURI_CRAWLRIGHT
@@ -16,13 +19,15 @@
 #alias 4	:	SASURI_SHOOT
 #alias 5	:	SASURI_RETRACTCANNON
 
-// Badnik Conditions (Property Values)
-#alias 0	:	PROPVAL_QUALITY_GOOD
-#alias 1	:	PROPVAL_QUALITY_BAD
+// Badnik Quality / Property Values
+#alias 0	:	GOOD_QUALITY
+#alias 1	:	BAD_QUALITY
 
 // Collision Sides
 #alias 0	:	CSIDE_FLOOR
 
+// Stage SFX
+#alias 2	:	SFX_S_SHOT
 
 sub ObjectMain
 	
@@ -30,7 +35,7 @@ sub ObjectMain
 	Object.Frame++
 	Object.Frame %= 60
 	
-	if Object.PropertyValue == PROPVAL_QUALITY_GOOD
+	if Object.Quality == GOOD_QUALITY
 		switch Object.State
 		case SASURI_FINDGROUND
 			// See if there's any ground for the Sasuri to stand on
@@ -51,7 +56,7 @@ sub ObjectMain
 			// Move the Sasuri left by one pixel
 			Object.XPos -= 0x10000
 			
-			// Increment its movement timer as well, and see if it's time to turn around now
+			// Increment its movement timer, and see if it's time to turn around now
 			Object.MoveTimer--
 			if Object.MoveTimer <= -80
 				Object.State = SASURI_CRAWLRIGHT
@@ -59,7 +64,7 @@ sub ObjectMain
 			end if
 			
 			// Also, see if the Sasuri is still on ground
-			// -> If it isn't, then turn around as well
+			// -> If it isn't, then turn around
 			ObjectTileGrip(CSIDE_FLOOR, 0, 13, 0)
 			if CheckResult == false
 				Object.State = SASURI_CRAWLRIGHT
@@ -103,7 +108,7 @@ sub ObjectMain
 		case SASURI_SHOOT
 			if Object.CannonTimer < 40
 				if Object.CannonTimer == 10
-					PlayStageSfx(2, 0)
+					PlayStageSfx(SFX_S_SHOT, 0)
 					
 					// Create the Bullet that the Sasuri shot
 					CreateTempObject(TypeName[Sasuri Bullet], 0, Object.XPos, Object.YPos)
@@ -205,7 +210,7 @@ sub ObjectMain
 				Object.Direction = FACING_RIGHT
 			end if
 			
-			// And also like before, another condition for turning around is reached the end of the ground as well
+			// And like before, another condition for turning around is reached at the end of the ground
 			ObjectTileGrip(CSIDE_FLOOR, 0, 13, 0)
 			if CheckResult == false
 				Object.State = SASURI_CRAWLLEFT
@@ -294,7 +299,7 @@ end sub
 
 sub ObjectDraw
 	
-	if Object.PropertyValue == PROPVAL_QUALITY_GOOD
+	if Object.Quality == GOOD_QUALITY
 		if Object.Frame < 30
 			// In this order, draw the:
 			// - back paw
@@ -403,19 +408,19 @@ sub RSDKEdit
 	if Editor.ReturnVariable == true
 		switch Editor.VariableID
 		case EDIT_VAR_PROPVAL // Property Value
-			CheckResult = Object.PropertyValue
+			CheckResult = Object.Quality
 			break
 		case 0 // Condition
-			CheckResult = Object.PropertyValue
+			CheckResult = Object.Quality
 			break
 		end switch
 	else
 		switch Editor.variableID
 		case EDIT_VAR_PROPVAL // Property Value
-			Object.PropertyValue = Editor.VariableValue
+			Object.Quality = Editor.VariableValue
 			break
 		case 0 // Condition
-			Object.PropertyValue = Editor.VariableValue
+			Object.Quality = Editor.VariableValue
 			break
 		end switch
 	end if
@@ -423,7 +428,7 @@ end sub
 
 
 sub RSDKDraw
-	if Object.PropertyValue == PROPVAL_QUALITY_GOOD
+	if Object.Quality == GOOD_QUALITY
 		DrawSpriteFX(2, FX_FLIP, Object.XPos, Object.YPos)
 		DrawSpriteFX(0, FX_FLIP, Object.XPos, Object.YPos)
 		DrawSpriteFX(3, FX_FLIP, Object.XPos, Object.YPos)
@@ -454,6 +459,6 @@ sub RSDKLoad
 
 	AddEditorVariable("Condition")
 	SetActiveVariable("Condition")
-	AddEnumVariable("Good", PROPVAL_QUALITY_GOOD)
-	AddEnumVariable("Bad",  PROPVAL_QUALITY_BAD)
+	AddEnumVariable("Good", GOOD_QUALITY)
+	AddEnumVariable("Bad",  BAD_QUALITY)
 end sub

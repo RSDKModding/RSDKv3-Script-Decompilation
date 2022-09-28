@@ -9,6 +9,7 @@
 #alias Object.Value3		:	Object.Speed
 #alias Object.Value4		:	Object.XOriginPos
 #alias Object.Value5		:	Object.YOriginPos
+
 #alias Object.PropertyValue	:	Object.Quality
 
 // States
@@ -21,9 +22,9 @@
 #alias 6	:	YAGO_GOOD_DASH
 #alias 7	:	YAGO_BAD_DASH
 
-// Property Values
-#alias 0	:	PROPVAL_QUALITY_GOOD
-#alias 1	:	PROPVAL_QUALITY_BAD
+// Badnik Quality / Property Values
+#alias 0	:	GOOD_QUALITY
+#alias 1	:	BAD_QUALITY
 
 // Collision Sides
 #alias 0	:	CSIDE_FLOOR
@@ -122,7 +123,7 @@ sub ObjectMain
 		if Object.Timer > 0
 			Object.Timer--
 		else
-			if Object.Quality == PROPVAL_QUALITY_GOOD
+			if Object.Quality == GOOD_QUALITY
 				if Object.Direction == FACING_RIGHT
 					Object.Speed = -0x48000
 				else
@@ -138,7 +139,7 @@ sub ObjectMain
 			end if
 
 			Object.YVelocity = -0x18000
-			if Object.Quality == PROPVAL_QUALITY_GOOD
+			if Object.Quality == GOOD_QUALITY
 				Object.State++
 			else
 				Object.State = YAGO_BAD_DASH
@@ -222,7 +223,7 @@ end sub
 sub ObjectDraw
 	TempValue0  = Object.AnimationTimer
 	TempValue0 /= 10
-	if Object.PropertyValue == PROPVAL_QUALITY_BAD
+	if Object.Quality == BAD_QUALITY
 		TempValue0 += 2
 	end if
 	DrawSpriteFX(TempValue0, FX_FLIP, Object.XPos, Object.YPos)

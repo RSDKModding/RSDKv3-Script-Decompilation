@@ -23,7 +23,6 @@
 #alias Object.Value3			:	Object.Milliseconds
 #alias Object.Value4			:	Object.ZoneLocked
 
-
 // States
 // *SM = Sub Menu
 #alias 0	:	MENUCONTROL_SETUP
@@ -54,12 +53,27 @@
 // Round Icon States
 #alias 1	:	ROUNDICON_SELECTED_ZONE
 
+// Presentation Stages
+#alias 0	:	STAGE_P_TITLE
+#alias 1	:	STAGE_P_MENU
+
+// Players
+#alias 0	:	PLAYER_SONIC
+
 // Soundtrack
 #alias 0	:	OST_JP
 
+// Global SFX
+#alias 21	:	SFX_G_ACHIEVEMENT
+#alias 23	:	SFX_G_MENUBUTTON
+#alias 27	:	SFX_G_SELECT
+
+// Stage SFX
+#alias 0	:	SFX_S_BACKBUTTON
+
 // Engine & Callbacks
 #alias 2	:	CALLBACK_TATTACK_NOTIFY_ENTER
-#alias 3	:	CALLBACK_TIMEATTACK_NOTIFY_EXIT
+#alias 3	:	CALLBACK_TATTACK_NOTIFY_EXIT
 
 // Engine Messages
 #alias 2	:	MESSAGE_LOSTFOCUS
@@ -301,7 +315,7 @@ sub ObjectMain
 	case MENUCONTROL_SETUP
 		// Makes sure nothing gets carried away from the saves
 		Stage.DebugMode			= false
-		Stage.PlayerListPos		= 0
+		Stage.PlayerListPos		= PLAYER_SONIC
 		LampPost.Check			= 0
 		Good_Future				= 0
 		Good_Future_Count		= 0
@@ -440,7 +454,7 @@ sub ObjectMain
 					if Object.SavedRound < 0
 						Object.SavedRound = 7
 					end if
-					PlaySfx(23, 0) 	//Menu Button SFX
+					PlaySfx(SFX_G_MENUBUTTON, 0) 
 				end if
 				
 				if KeyPress[0].Right == true
@@ -448,7 +462,7 @@ sub ObjectMain
 					if Object.SavedRound > 7
 						Object.SavedRound = 0
 					end if
-					PlaySfx(23, 0) 	//Menu Button SFX
+					PlaySfx(SFX_G_MENUBUTTON, 0) 
 				end if
 
 				if KeyPress[0].Up == true
@@ -459,7 +473,7 @@ sub ObjectMain
 							Object.State = MENUCONTROL_SCROLL_UP
 						end if
 					end if
-					PlaySfx(23, 0) 	//Menu Button SFX
+					PlaySfx(SFX_G_MENUBUTTON, 0) 
 				end if
 
 				if KeyPress[0].Down == true
@@ -470,7 +484,7 @@ sub ObjectMain
 							Object.State = MENUCONTROL_SCROLL_DOWN
 						end if
 					end if
-					PlaySfx(23, 0) 	//Menu Button SFX
+					PlaySfx(SFX_G_MENUBUTTON, 0) 
 				end if
 
 				if KeyPress[0].Start == true
@@ -492,28 +506,28 @@ sub ObjectMain
 					case -1
 						break
 					case 0
-						PlaySfx(27, 0)
+						PlaySfx(SFX_G_SELECT, 0) 
 						break
 					case 1
-						PlaySfx(27, 0)
+						PlaySfx(SFX_G_SELECT, 0) 
 						break
 					case 2
-						PlaySfx(27, 0)
+						PlaySfx(SFX_G_SELECT, 0) 
 						break
 					case 3
-						PlaySfx(27, 0)
+						PlaySfx(SFX_G_SELECT, 0) 
 						break
 					case 4
-						PlaySfx(27, 0)
+						PlaySfx(SFX_G_SELECT, 0) 
 						break
 					case 5
-						PlaySfx(27, 0)
+						PlaySfx(SFX_G_SELECT, 0) 
 						break
 					case 6
-						PlaySfx(27, 0)
+						PlaySfx(SFX_G_SELECT, 0) 
 						break
 					case 7
-						PlaySfx(27, 0)	//Select SFX
+						PlaySfx(SFX_G_SELECT, 0)
 						Object.State++
 						StopMusic()
 						break
@@ -544,7 +558,7 @@ sub ObjectMain
 					CheckTouchRect(0, 0, Screen.XSize, Screen.YSize)
 					if CheckResult < 0
 						if Object.SelectedButton == 8
-							PlaySfx(23, 0) 	//Menu Button SFX
+							PlaySfx(SFX_G_MENUBUTTON, 0) 
 							Object.State = MENUCONTROL_SCROLL_DOWN
 							Object.SelectedButton = -1
 						end if
@@ -601,7 +615,7 @@ sub ObjectMain
 			Object.State++
 
 			StopMusic()
-			PlaySfx(27, 0)	//Select SFX
+			PlaySfx(SFX_G_SELECT, 0)
 		end if
 		break
 
@@ -614,12 +628,12 @@ sub ObjectMain
 			Object.OffSet += 0x1000
 		else
 #platform: Use_Origins
-			Stage.ListPos = 0		// Title
+			Stage.ListPos = STAGE_P_TITLE
 			StopMusic()
 #endplatform
 
 #platform: Use_Standalone
-			Stage.ListPos = 1		// Menu
+			Stage.ListPos = STAGE_P_MENU
 #endplatform
 
 			LoadStage()
@@ -627,7 +641,7 @@ sub ObjectMain
 		SetScreenFade(0, 0, 0, Object.Timer)
 
 		CallFunction(MenuControl_IconTransitions)
-		EngineCallback(CALLBACK_TIMEATTACK_NOTIFY_EXIT)
+		EngineCallback(CALLBACK_TATTACK_NOTIFY_EXIT)
 		break
 
 	case MENUCONTROL_ENTER_SM
@@ -734,7 +748,7 @@ sub ObjectMain
 			end if
 
 			if KeyPress[0].ButtonB == true
-				PlayStageSfx(0, 0)
+				PlayStageSfx(SFX_S_BACKBUTTON, 0)
 				LargeIcon.State = LARGEICON_LEAVE_SCREEN
 				Object.State	= MENUCONTROL_SM_COMFIRMED_LEAVE
 
@@ -751,7 +765,7 @@ sub ObjectMain
 			if CheckResult == true
 				switch Object.SMCurrentButton
 				case 0
-					PlayStageSfx(0, 0)
+					PlayStageSfx(SFX_S_BACKBUTTON, 0)
 					LargeIcon.State = LARGEICON_LEAVE_SCREEN
 					Object.State	= MENUCONTROL_SM_COMFIRMED_LEAVE
 
@@ -766,12 +780,12 @@ sub ObjectMain
 					break
 
 				case 1
-					PlaySfx(23, 0) 	//Menu Button SFX
+					PlaySfx(SFX_G_MENUBUTTON, 0) 
 					Object.State = MENUCONTROL_SM_SCROLL_UP
 					break
 
 				case 2
-					PlaySfx(27, 0)	//Select SFX
+					PlaySfx(SFX_G_SELECT, 0)
 					Object.State = MENUCONTROL_SM_CONFIRMED
 					StopMusic()
 					break
@@ -803,7 +817,7 @@ sub ObjectMain
 				CheckTouchRect(0, 0, Screen.XSize, Screen.YSize)
 				if CheckResult < 0
 					if Object.SMCurrentButton == 0
-						PlayStageSfx(0, 0)
+						PlayStageSfx(SFX_S_BACKBUTTON, 0)
 						LargeIcon.State = LARGEICON_LEAVE_SCREEN
 						Object.State	= MENUCONTROL_SM_COMFIRMED_LEAVE
 
@@ -824,7 +838,7 @@ sub ObjectMain
 			end if
 
 			if KeyPress[0].ButtonB == true
-				PlayStageSfx(0, 0)
+				PlayStageSfx(SFX_S_BACKBUTTON, 0)
 				LargeIcon.State = LARGEICON_LEAVE_SCREEN
 				Object.State	= MENUCONTROL_SM_COMFIRMED_LEAVE
 
@@ -848,7 +862,7 @@ sub ObjectMain
 					CheckTouchRect(0, 0, Screen.XSize, Screen.YSize)
 					if CheckResult < 0
 						if Object.SMCurrentButton == 1
-							PlaySfx(23, 0) 	//Menu Button SFX
+							PlaySfx(SFX_G_MENUBUTTON, 0) 
 							Object.State = MENUCONTROL_SM_SCROLL_DOWN
 						end if
 					else
@@ -868,7 +882,7 @@ sub ObjectMain
 				CheckTouchRect(0, 0, Screen.XSize, Screen.YSize)
 				if CheckResult < 0
 					if Object.SMCurrentButton == 2
-						PlaySfx(27, 0)	//Select SFX
+						PlaySfx(SFX_G_SELECT, 0)
 						Object.State = MENUCONTROL_SM_CONFIRMED
 						StopMusic()
 					end if
@@ -983,7 +997,7 @@ sub ObjectMain
 		else
 			TimeAttack.Round = -1
 			if Object.BeatedRecord > 0
-				PlaySfx(21, 0)
+				PlaySfx(SFX_G_ACHIEVEMENT, 0) 
 				Object.State = MENUCONTROL_SM_RECORD_BEATED
 				Object[0].DrawOrder = 4
 			else

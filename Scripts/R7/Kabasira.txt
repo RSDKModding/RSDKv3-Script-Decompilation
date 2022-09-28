@@ -3,30 +3,34 @@
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
 // Aliases
-#alias Object.Value0 : Object.Timer
-#alias Object.Value1 : Object.Angle
-#alias Object.Value2 : Object.StartPosX
-#alias Object.Value3 : Object.StartPosY
-#alias Object.Value4 : Object.DrawPosX
-#alias Object.Value5 : Object.DrawPosY
+#alias Object.Value0        : Object.Timer
+#alias Object.Value1        : Object.Angle
+#alias Object.Value2        : Object.StartPosX
+#alias Object.Value3        : Object.StartPosY
+#alias Object.Value4        : Object.DrawPosX
+#alias Object.Value5        : Object.DrawPosY
 
-// States 0-1 are never used, aside from state 0 being the default state
-#alias 2 : KABASIRA_INACTIVE
+#alias Object.PropertyValue : Object.Quality
 
-// KabasiraShot Aliases
+// Kabasira Shot Aliases
 #alias Object.Value1 : Object.XVelocity
 #alias Object.Value2 : Object.YVelocity
 
-// Badnik Conditions
-#alias 0 : CONDITION_GOOD
-#alias 1 : CONDITION_BAD
+// States 0-1 are never used, aside from state 0 being the default state
+#alias 2	:	KABASIRA_INACTIVE
 
 // Ink Effect
 #alias 2	:	INK_ALPHA
 
+// Stage SFX
+#alias 2	:	SFX_S_SHOT
+
+// Badnik Quality / Property Values
+#alias 0	:	GOOD_QUALITY
+#alias 1	:	BAD_QUALITY
+
 
 sub ObjectMain
-	
 	if Object.OutOfBounds == true
 		// The object is out of bounds, reset it
 		Object.State = KABASIRA_INACTIVE
@@ -44,7 +48,7 @@ sub ObjectMain
 		Object.YPos = Object.StartPosY
 	end if
 	
-	if Object.PropertyValue == CONDITION_GOOD
+	if Object.Quality == GOOD_QUALITY
 		// Good variant of the object, able to attack
 		
 		Object.Angle += 2
@@ -59,7 +63,7 @@ sub ObjectMain
 			
 			// Shoot a shot at the player
 			
-			PlayStageSfx(2, 0)
+			PlayStageSfx(SFX_S_SHOT, 0)
 			
 			// Different shot subtypes based on the player's position relative to the Kabasira
 			if Player.XPos > Object.XPos
@@ -115,7 +119,6 @@ end sub
 
 
 sub ObjectPlayerInteraction
-	
 	// Check if the player's touched the head
 	PlayerObjectCollision(C_TOUCH, -6, -6, 6, 6)
 	
@@ -129,7 +132,6 @@ end sub
 
 
 sub ObjectDraw
-	
 	if Object.State < KABASIRA_INACTIVE
 		
 		// First, draw each body part
@@ -337,19 +339,19 @@ sub RSDKEdit
 	if Editor.ReturnVariable == true
 		switch Editor.VariableID
 		case EDIT_VAR_PROPVAL // Property Value
-			CheckResult = Object.PropertyValue
+			CheckResult = Object.Quality
 			break
 		case 0 // Condition
-			CheckResult = Object.PropertyValue
+			CheckResult = Object.Quality
 			break
 		end switch
 	else
 		switch Editor.variableID
 		case EDIT_VAR_PROPVAL // Property Value
-			Object.PropertyValue = Editor.VariableValue
+			Object.Quality = Editor.VariableValue
 			break
 		case 0 // Condition
-			Object.PropertyValue = Editor.VariableValue
+			Object.Quality = Editor.VariableValue
 			break
 		end switch
 	end if
@@ -369,6 +371,6 @@ sub RSDKLoad
 
 	AddEditorVariable("Condition")
 	SetActiveVariable("Condition")
-	AddEnumVariable("Good", CONDITION_GOOD)
-	AddEnumVariable("Bad",  CONDITION_BAD)
+	AddEnumVariable("Good", GOOD_QUALITY)
+	AddEnumVariable("Bad",  BAD_QUALITY)
 end sub

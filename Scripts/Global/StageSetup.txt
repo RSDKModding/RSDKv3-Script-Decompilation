@@ -33,15 +33,30 @@
 // GameModes
 #alias 2	:	GAMEMODE_TIMEATTACK
 
-// Time Period
-#alias 0	:	PROPVAL_PRESENT
-#alias 2	:	PROPVAL_GOOD_FUTURE
+// Player
+#alias 0	:	PLAYER_SONIC
 
 // Control Mode
 #alias -1	:	CONTROL_DISABLED
 
 // Soundtrack
 #alias 0	:	OST_JP
+
+// Global SFX
+#alias 20	:	SFX_G_1UP
+#alias 21	:	SFX_G_ACHIEVEMENT
+
+// Track List
+#alias 0	:	TRACK_STAGE
+#alias 1	:	TRACK_ACTFINISH
+#alias 2	:	TRACK_INVINCIBILITY
+#alias 3	:	TRACK_SPEEDSHOES
+#alias 4	:	TRACK_BOSS
+#alias 5	:	TRACK_GAMEOVER
+
+// Time Period
+#alias 0	:	PRESENT
+#alias 2	:	GOOD_FUTURE
 
 // Function declarations
 #function StageSetup_CheckGoodFuture
@@ -56,7 +71,7 @@ function StageSetup_CheckGoodFuture
 			Object.DrawOrder = 4
 			Object.State	 = FLOWER_SEED_FALL
 		else
-			if HUD.TimePeriod > PROPVAL_PRESENT
+			if HUD.TimePeriod > PRESENT
 				ResetObjectEntity(Object.EntityNo, Flower_TypeNo, 0, Object.XPos, Object.YPos)
 				Object.DrawOrder = 4
 				Object.State	 = FLOWER_SEED_FALL
@@ -190,10 +205,10 @@ sub ObjectMain
 #endplatform
 
 			Player.ScoreBonus += 50000
-			if Stage.PlayerListPos == 0		// Sonic
-				PlaySfx(20, 0)
+			if Stage.PlayerListPos == PLAYER_SONIC
+				PlaySfx(SFX_G_1UP, 0)
 			else
-				PlaySfx(21, 0)
+				PlaySfx(SFX_G_ACHIEVEMENT, 0)
 			end if
 		end if
 	end if
@@ -284,17 +299,17 @@ end sub
 
 sub ObjectStartup
 	if Options.Soundtrack == OST_JP
-		SetMusicTrack("JP/ZoneComplete.ogg", 1, 0)
-		SetMusicTrack("JP/Invincibility.ogg", 2, 0)
-		SetMusicTrack("JP/SpeedShoes.ogg", 3, 0)
-		SetMusicTrack("JP/Boss.ogg", 4, 1)
-		SetMusicTrack("JP/GameOver.ogg", 5, 0)
+		SetMusicTrack("JP/ZoneComplete.ogg", TRACK_ACTFINISH, 0)
+		SetMusicTrack("JP/Invincibility.ogg", TRACK_INVINCIBILITY, 0)
+		SetMusicTrack("JP/SpeedShoes.ogg", TRACK_SPEEDSHOES, 0)
+		SetMusicTrack("JP/Boss.ogg", TRACK_BOSS, 1)
+		SetMusicTrack("JP/GameOver.ogg", TRACK_GAMEOVER, 0)
 	else
-		SetMusicTrack("US/ZoneComplete.ogg", 1, 0)
-		SetMusicTrack("US/Invincibility.ogg", 2, 0)
-		SetMusicTrack("US/SpeedShoes.ogg", 3, 0)
-		SetMusicTrack("US/Boss.ogg", 4, 196526)
-		SetMusicTrack("US/GameOver.ogg", 5, 0)
+		SetMusicTrack("US/ZoneComplete.ogg", TRACK_ACTFINISH, 0)
+		SetMusicTrack("US/Invincibility.ogg", TRACK_INVINCIBILITY, 0)
+		SetMusicTrack("US/SpeedShoes.ogg", TRACK_SPEEDSHOES, 0)
+		SetMusicTrack("US/Boss.ogg", TRACK_BOSS, 196526)
+		SetMusicTrack("US/GameOver.ogg", TRACK_GAMEOVER, 0)
 	end if
 	
 	Stage.PauseEnabled  = false
@@ -316,36 +331,34 @@ sub ObjectStartup
 
 	ArrayPos0 = 32
 	while ArrayPos0 < 1056
-		if Object[ArrayPos0].Type == TypeName[HUD]	// Resets the HUD and carry over the time period
+		if Object[ArrayPos0].Type == TypeName[HUD]	// Delete extra HUD objects and set the correct one
 			Object[ArrayPos0].Type = TypeName[Blank Object]
-			Object[24].Type 	= TypeName[HUD]
-			HUD.Priority 		= PRIORITY_ACTIVE
-			HUD.DrawOrder	 	= 6
-			HUD.TimePeriod 		= Object[ArrayPos0].PropertyValue
+			Object[24].Type	= TypeName[HUD]
+			HUD.Priority	= PRIORITY_ACTIVE
+			HUD.DrawOrder	= 6
+			HUD.TimePeriod	= Object[ArrayPos0].PropertyValue
 		end if
 		ArrayPos0++
 	loop
 	
 	Warp.Timer = 0
 	if Warp.XPos > 0	// if the player comes from a time travel, load the warp values
-		Player.XPos = Warp.XPos
-		Player.YPos = Warp.YPos
-
-		Player.XVelocity = Warp.XVelocity
-		Player.YVelocity = Warp.YVelocity
-		Player.Speed	 = Warp.Speed
-
+		// Reload the previous player stats
+		Player.XPos			 = Warp.XPos
+		Player.YPos			 = Warp.YPos
+		Player.XVelocity 	 = Warp.XVelocity
+		Player.YVelocity 	 = Warp.YVelocity
+		Player.Speed	 	 = Warp.Speed
 		Player.CollisionMode = Warp.CollisionMode
 		Player.Gravity		 = Warp.Gravity
+		Player.State 		 = Warp.State
+		Player.Animation 	 = Warp.Animation
+		Player.Frame	 	 = Warp.PlayerFrame
+		Player.Angle	 	 = Warp.Angle
+		Player.Rings	 	 = Warp.Rings
+		Player.MinRollSpeed  = Warp.MinRollSpeed
 
-		Player.State 		= Warp.State
-
-		Player.Animation 	= Warp.Animation
-		Player.Frame	 	= Warp.PlayerFrame
-		Player.Angle	 	= Warp.Angle
-		Player.Rings	 	= Warp.Rings
-		Player.MinRollSpeed = Warp.MinRollSpeed
-
+		// Reload the previous stage time
 		Stage.MilliSeconds	= Rec_Milliseconds
 		Stage.Seconds		= Rec_Seconds
 		Stage.Minutes		= Rec_Minutes
@@ -353,7 +366,7 @@ sub ObjectStartup
 		CallFunction(StageSetup_LoadStageState)
 	else
 		ArrayPos0 = 7168
-		while ArrayPos0 < 0x2000
+		while ArrayPos0 < 8192
 			SaveRAM[ArrayPos0] = 0
 			ArrayPos0++
 		loop
@@ -365,12 +378,12 @@ sub ObjectStartup
 		Player.Animation	= ANI_STOPPED
 	end if
 
-	if HUD.TimePeriod == PROPVAL_GOOD_FUTURE
+	if HUD.TimePeriod == GOOD_FUTURE
 		Good_Future				= true
 		Transporter_Destroyed	= true
 	end if
 
-	if SpecialStage.TimeStones == 127
+	if SpecialStage.TimeStones == 127 // 0b1111111, each '1' bit represents an obtained time stone
 		Good_Future				= true
 		Transporter_Destroyed	= true
 	end if

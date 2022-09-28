@@ -36,6 +36,18 @@
 // MenuHeading PropertyValues
 #alias 5	:	MAINMENU_HEADER
 
+// Presentation Stages
+#alias 0	:	STAGE_R_PPZ1A
+#alias 34	:	STAGE_R_QQZ2A
+#alias 38	:	STAGE_R_QQZ3C
+
+// Global SFX
+#alias 23	:	SFX_G_MENUBUTTON
+#alias 27	:	SFX_G_SELECT
+
+// Stage SFX
+#alias 1	:	SFX_S_BACKBUTTON
+
 // Gamemodes
 #alias 3	:	GAMEMODE_DEMOMODE
 
@@ -194,7 +206,7 @@ sub ObjectMain
 				if Object.CurrentButton < 0
 					Object.CurrentButton = 2
 				end if
-				PlaySfx(23, 0) 	//Menu Button SFX
+				PlaySfx(SFX_G_MENUBUTTON, 0) 
 			end if
 
 			if KeyPress[0].Right == true
@@ -202,7 +214,7 @@ sub ObjectMain
 				if Object.CurrentButton > 2
 					Object.CurrentButton = 0
 				end if
-				PlaySfx(23, 0) 	//Menu Button SFX
+				PlaySfx(SFX_G_MENUBUTTON, 0) 
 			end if
 
 			CheckTouchRect(0, 0, Screen.XSize, Screen.YSize)
@@ -312,13 +324,13 @@ sub ObjectMain
 		if CheckResult == true
 			Object.State++
 			StopMusic()
-			PlaySfx(27, 0)	//Select SFX
+			PlaySfx(SFX_G_SELECT, 0)
 		end if
 
 		if KeyPress[0].ButtonB == true
 			Object.Fade  = 248
 			Object.State = DEMOMENU_BACK
-			PlayStageSfx(1, 0)
+			PlayStageSfx(SFX_S_BACKBUTTON, 0)
 		end if
 		break
 
@@ -369,15 +381,15 @@ sub ObjectMain
 			Stage.ActiveList = REGULAR_STAGE
 			switch Object.CurrentButton
 			case 0
-				Stage.ListPos = 0		//Palmtree Panic Zone 1 Present
+				Stage.ListPos = STAGE_R_PPZ1A
 				Good_Future = false
 				break
 			case 1
-				Stage.ListPos = 34		//Quartz Quadrant Zone 2 Present
+				Stage.ListPos = STAGE_R_QQZ2A
 				Good_Future = false
 				break
 			case 2
-				Stage.ListPos = 38		//Quartz Quadrant Zone 3 Good Future
+				Stage.ListPos = STAGE_R_QQZ3C
 				Good_Future = true
 				break
 			end switch

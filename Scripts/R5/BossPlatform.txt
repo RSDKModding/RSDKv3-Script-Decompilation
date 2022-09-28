@@ -22,15 +22,10 @@
 // Value0 servers two distinct purposes across this Object's different states
 // For clarity, they're just separately named
 #alias Object.Value0	:	Object.Timer
-
 #alias Object.Value0	:	Object.Bounces
-
 #alias Object.Value1	:	Object.BaseX
-
 #alias Object.Value2	:	Object.YVelocity
-
 #alias Object.Value5	:	Object.Grind
-
 #alias Object.Value6	:	Object.SparksTimer
 
 // These set of Values are for the Conveyor Belt beneath the Boss
@@ -38,6 +33,14 @@
 #alias Object.Value3	:	Object.BeltSpeed
 #alias Object.Value4	:	Object.BeltTimer
 #alias Object.Value7	:	Object.BeltFrame
+
+// Boss Top Aliases
+#alias Object.Value1	:	Object.BoundsR
+#alias Object.Value2	:	Object.OldBoundsR
+
+// Boss Spark Aliases
+#alias Object.Value1	:	Object.XVelocity
+
 
 // States
 #alias 0 	:	BOSSPLATFORM_IDLE
@@ -53,18 +56,13 @@
 #alias 10	:	BOSSPLATFORM_EGGFLEE
 #alias 11	:	BOSSPLATFORM_EXPLODE
 
-// Bomb Carrier Aliases
+// Bomb Carrier States
 #alias 3	:	BOMBCARRIER_SLIDERIGHT
 
-// Boss Top Aliases
-#alias Object.Value1	:	Object.BoundsR
-#alias Object.Value2	:	Object.OldBoundsR
-
+// Boss Top States
 #alias 1	:	BOSSTOP_MOVEBOUNDS
 
-// Boss Spark Aliases
-#alias Object.Value1	:	Object.XVelocity
-
+// Boss Spark States
 #alias 0	:	BOSSSPARK_GRIND
 #alias 1	:	BOSSSPARK_LAND
 
@@ -77,14 +75,15 @@
 // Collision Sides
 #alias 0	:	CSIDE_FLOOR
 
-// SFX Aliases
+// Gravity
+#alias 0	:	GRAVITY_GROUND
 
 // Global SFX
-#alias 22	:	SFX_EXPLOSION
+#alias 22	:	SFX_G_EXPLOSION
 
 // Stage SFX
-#alias 3	:	SFX_BOSSHIT
-#alias 4	:	SFX_IMPACT1
+#alias 3	:	SFX_S_BOSSHIT
+#alias 4	:	SFX_S_IMPACT1
 
 // Ink Effect
 #alias 2	:	INK_ALPHA
@@ -97,7 +96,7 @@
 
 function BossPlatform_Conveyor_Update
 	
-	if Player.Gravity == 0
+	if Player.Gravity == GRAVITY_GROUND
 		// The Player's on the Ground
 		
 		if Player.ObjectInteraction == true
@@ -255,7 +254,7 @@ function BossPlatform_Conveyor_Update
 			Object.XPos += 0x10000
 		end if
 		
-		// And yup, carry the Boss Back Panel along for the ride as well!
+		// And yup, carry the Boss Back Panel along for the ride too!
 		Object[-2].XPos = Object.XPos
 		break
 		
@@ -329,7 +328,7 @@ function BossPlatform_Conveyor_WindDown
 		Object.BeltSpeed = 0
 	end if
 	
-	if Player.Gravity == 0
+	if Player.Gravity == GRAVITY_GROUND
 		// The Player's on the Ground
 		
 		if Player.ObjectInteraction == true
@@ -540,7 +539,7 @@ sub ObjectMain
 		if CheckResult == true
 			Screen.ShakeY = 4
 			
-			PlayStageSfx(SFX_IMPACT1, false)
+			PlayStageSfx(SFX_S_IMPACT1, 0)
 			
 			// Bounce once
 			if Object.Bounces < 1
@@ -618,7 +617,7 @@ sub ObjectMain
 		if CheckResult == true
 			Screen.ShakeY = 4
 			
-			PlayStageSfx(SFX_IMPACT1, false)
+			PlayStageSfx(SFX_S_IMPACT1, 0)
 			
 			// Bounce once when initially hitting the ground
 			if Object.Bounces < 1
@@ -689,7 +688,7 @@ sub ObjectMain
 		if CheckResult == true
 			Screen.ShakeY = 4
 			
-			PlayStageSfx(SFX_IMPACT1, false)
+			PlayStageSfx(SFX_S_IMPACT1, 0)
 			
 			// Bounce a single time upon initially landing
 			if Object.Bounces < 1
@@ -759,7 +758,7 @@ sub ObjectMain
 		if CheckResult == true
 			Screen.ShakeY = 4
 			
-			PlayStageSfx(SFX_IMPACT1, false)
+			PlayStageSfx(SFX_S_IMPACT1, 0)
 			
 			// Just like every other time, bounce one time upon initially landing
 			if Object.Bounces < 1
@@ -809,7 +808,7 @@ sub ObjectMain
 			// Move him to draw ontop of this Boss Platform Object and all its other accessories
 			Object[-1].DrawOrder = 4
 			
-			// Move this Object back to its Base Position as well, and move the Boss Back Panel with it too
+			// Move this Object back to its Base Position, and move the Boss Back Panel with it too
 			Object.XPos = Object.BaseX
 			Object[-2].XPos = Object.XPos
 			
@@ -844,7 +843,7 @@ sub ObjectMain
 			
 			CallFunction(BossPlatform_Conveyor_WindDown)
 			
-			// Restore Stage Bounds as well, in a way to make the camera pan to the right
+			// Restore Stage Bounds, in a way to make the camera pan to the right
 			// -> The full restoring of those bounds is done right below, with the Boss Platform's OldBoundsR
 			Stage.XBoundary2 += 4
 		else
@@ -896,7 +895,7 @@ sub ObjectMain
 		end if
 		
 		if TempValue0 > 255
-			// And cap at 255, as well
+			// Cap at 255
 			TempValue0 = 255
 		end if
 		
@@ -933,7 +932,7 @@ sub ObjectMain
 		TempValue0 = Object.Timer
 		TempValue0 &= 31
 		if TempValue0 == 0
-			PlaySfx(SFX_EXPLOSION, false)
+			PlaySfx(SFX_G_EXPLOSION, 0)
 		end if
 		
 		Object.Timer += 8
@@ -1004,7 +1003,7 @@ sub ObjectPlayerInteraction
 			Object[-4].State = BOMBCARRIER_SLIDERIGHT
 			
 			// Ka-thunk!
-			PlayStageSfx(SFX_BOSSHIT, false)
+			PlayStageSfx(SFX_S_BOSSHIT, 0)
 			
 #platform: Use_Haptics
 			HapticEffect(97, 0, 0, 0)

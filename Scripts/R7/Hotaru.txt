@@ -11,22 +11,19 @@
 
 // Aliases
 
-#alias Object.Value0 : Object.Timer
-
-#alias Object.Value1 : Object.StartPosX
-#alias Object.Value2 : Object.StartPosY
-
+#alias Object.Value0		: Object.Timer
+#alias Object.Value1		: Object.StartPosX
+#alias Object.Value2		: Object.StartPosY
 // Stored as offsets from the base Hotaru object, not complete positions
-#alias Object.Value3 : Object.Hotaru1X
-#alias Object.Value4 : Object.Hotaru2X
-
-// Y-Offset, half the distance between the two Hotarus
-#alias Object.Value7 : Object.HotaruRadius
-
+#alias Object.Value3		: Object.Hotaru1X
+#alias Object.Value4		: Object.Hotaru2X
 // Bit-field that represents the state of the active Hotarus, bit 0 is Hotaru 1 and bit 1 is Hotaru 2
-#alias Object.Value5 : Object.ActiveHotarus
+#alias Object.Value5		: Object.ActiveHotarus
+#alias Object.Value6		: Object.EletricityActive
+// Y-Offset, half the distance between the two Hotarus
+#alias Object.Value7		: Object.HotaruRadius
 
-#alias Object.Value6 : Object.EletricityActive
+#alias Object.PropertyValue	: Object.Quality
 
 // Player Aliases
 #alias Player.Value4 : Player.InvincibleTimer
@@ -46,13 +43,16 @@
 #alias 11 : HOTARU_FLYAWAY
 #alias 12 : HOTARU_OFFSCREEN
 
-// Badnik Condition Aliases
-#alias 0 : CONDITION_GOOD
-#alias 1 : CONDITION_BAD
+// Global SFX
+#alias 8  : SFX_G_DESTROY
+
+// Badnik Quality / Property Values
+#alias 0  : GOOD_QUALITY
+#alias 1  : BAD_QUALITY
 
 // Priority
-#alias 0	:	PRIORITY_BOUNDS
-#alias 1	:	PRIORITY_ACTIVE
+#alias 0  : PRIORITY_BOUNDS
+#alias 1  : PRIORITY_ACTIVE
 
 
 // Function declarations
@@ -89,7 +89,7 @@ function Hotaru_HotaruBreak
 		CreateTempObject(TypeName[ObjectScore], Object[26].Value0, Object.XPos, Object.YPos)
 		Object[TempObjectPos].DrawOrder = 4
 		
-		PlaySfx(8, 0)
+		PlaySfx(SFX_G_DESTROY, 0) 
 		
 		if Player.YVelocity > 0
 			FlipSign(Player.YVelocity)
@@ -129,7 +129,7 @@ function Hotaru_HotaruBreak
 			CreateTempObject(TypeName[ObjectScore], Object[26].Value0, Object.XPos, Object.YPos)
 			Object[TempObjectPos].DrawOrder = 4
 			
-			PlaySfx(8, 0)
+			PlaySfx(SFX_G_DESTROY, 0) 
 			
 			if Player.YVelocity > 0
 				FlipSign(Player.YVelocity)
@@ -172,7 +172,6 @@ end function
 
 
 sub ObjectMain
-	
 	if Object.OutOfBounds == true
 		Object.State = HOTARU_OFFSCREEN
 		Object.Timer = 0
@@ -191,7 +190,7 @@ sub ObjectMain
 	end if
 	
 	// Even if there are really only small differences between the two's behaviours, the GOOD and BAD badnik types just have entirely different
-	if Object.PropertyValue == CONDITION_GOOD
+	if Object.Quality == GOOD_QUALITY
 		switch Object.State
 		case HOTARU_IDLE1
 			Object.Priority = PRIORITY_ACTIVE
@@ -598,7 +597,6 @@ end sub
 
 
 sub ObjectPlayerInteraction
-	
 	switch Object.State
 	case HOTARU_IDLE1
 	case HOTARU_IDLE2
@@ -614,7 +612,7 @@ sub ObjectPlayerInteraction
 	case HOTARU_LIGHTSOFF2
 	case HOTARU_LIGHTSON3
 	case HOTARU_LIGHTSOFF3
-		if Object.PropertyValue == CONDITION_GOOD
+		if Object.Quality == GOOD_QUALITY
 			// Broken Hotarus don't have functional lights...
 			
 			if Object.Hotaru1X < 0
@@ -784,7 +782,6 @@ end sub
 
 
 sub ObjectDraw
-	
 	switch Object.State
 	case HOTARU_IDLE1
 		GetBit(CheckResult, Object.ActiveHotarus, 0)
@@ -1055,14 +1052,14 @@ sub ObjectStartup
 			Object[ArrayPos0].DrawOrder = 5
 			
 			// Setup the Hotarus' type and initial positions
-			switch Object[ArrayPos0].PropertyValue
+			switch Object[ArrayPos0].Quality
 			case 0
 				// Properties of:
 				// Radius of 60 pixels
 				// Good variant, with a functioning Light
 				// Start the Hotarus 70 pixels apart (35 pixels from the base Pos)
 				Object[ArrayPos0].HotaruRadius = 0x3C0000
-				Object[ArrayPos0].PropertyValue = CONDITION_GOOD
+				Object[ArrayPos0].Quality = GOOD_QUALITY
 				Object[ArrayPos0].Hotaru1X = -0x230000
 				Object[ArrayPos0].Hotaru2X = 0x230000
 				break
@@ -1073,7 +1070,7 @@ sub ObjectStartup
 				// Bad variant, with a broken Light
 				// Start the Hotarus 70 pixels apart (35 pixels from the base Pos)
 				Object[ArrayPos0].HotaruRadius = 0x3C0000
-				Object[ArrayPos0].PropertyValue = CONDITION_BAD
+				Object[ArrayPos0].Quality = BAD_QUALITY
 				Object[ArrayPos0].Hotaru1X = -0x230000
 				Object[ArrayPos0].Hotaru2X = 0x230000
 				break
@@ -1084,7 +1081,7 @@ sub ObjectStartup
 				// Good variant, with a functioning Light
 				// Start the Hotarus 100 pixels apart (50 pixels from the base Pos)
 				Object[ArrayPos0].HotaruRadius = 0x440000
-				Object[ArrayPos0].PropertyValue = CONDITION_GOOD
+				Object[ArrayPos0].Quality = GOOD_QUALITY
 				Object[ArrayPos0].Hotaru1X = -0x320000
 				Object[ArrayPos0].Hotaru2X = 0x320000
 				break
@@ -1095,7 +1092,7 @@ sub ObjectStartup
 				// Bad variant, with a broken Light
 				// Start the Hotarus 100 pixels apart (50 pixels from the base Pos)
 				Object[ArrayPos0].HotaruRadius = 0x440000
-				Object[ArrayPos0].PropertyValue = CONDITION_BAD
+				Object[ArrayPos0].Quality = BAD_QUALITY
 				Object[ArrayPos0].Hotaru1X = -0x320000
 				Object[ArrayPos0].Hotaru2X = 0x320000
 				break
@@ -1106,7 +1103,7 @@ sub ObjectStartup
 				// Good variant, with a functioning Light
 				// Start the Hotarus 140 pixels apart (70 pixels from the base Pos)
 				Object[ArrayPos0].HotaruRadius = 0x380000
-				Object[ArrayPos0].PropertyValue = CONDITION_GOOD
+				Object[ArrayPos0].Quality = GOOD_QUALITY
 				Object[ArrayPos0].Hotaru1X = -0x460000
 				Object[ArrayPos0].Hotaru2X = 0x460000
 				break
@@ -1117,7 +1114,7 @@ sub ObjectStartup
 				// Bad variant, with a broken Light
 				// Start the Hotarus 140 pixels apart (70 pixels from the base Pos)
 				Object[ArrayPos0].HotaruRadius = 0x380000
-				Object[ArrayPos0].PropertyValue = CONDITION_BAD
+				Object[ArrayPos0].Quality = BAD_QUALITY
 				Object[ArrayPos0].Hotaru1X = -0x460000
 				Object[ArrayPos0].Hotaru2X = 0x460000
 				break
@@ -1128,7 +1125,7 @@ sub ObjectStartup
 				// Good variant, with a functioning Light
 				// Start the Hotarus 192 pixels apart (96 pixels from the base Pos)
 				Object[ArrayPos0].HotaruRadius = 0x120000
-				Object[ArrayPos0].PropertyValue = CONDITION_GOOD
+				Object[ArrayPos0].Quality = GOOD_QUALITY
 				Object[ArrayPos0].Hotaru1X = -0x600000
 				Object[ArrayPos0].Hotaru2X = 0x600000
 				break
@@ -1139,7 +1136,7 @@ sub ObjectStartup
 				// Bad variant, with a broken Light
 				// Start the Hotarus 192 pixels apart (96 pixels from the base Pos)
 				Object[ArrayPos0].HotaruRadius = 0x120000
-				Object[ArrayPos0].PropertyValue = CONDITION_BAD
+				Object[ArrayPos0].Quality = BAD_QUALITY
 				Object[ArrayPos0].Hotaru1X = -0x600000
 				Object[ArrayPos0].Hotaru2X = 0x600000
 				break
@@ -1165,30 +1162,30 @@ sub RSDKEdit
 	if Editor.ReturnVariable == true
 		switch Editor.VariableID
 		case EDIT_VAR_PROPVAL // Property Value
-			CheckResult = Object.PropertyValue
+			CheckResult = Object.Quality
 			break
 		case 0 // Condition
-			CheckResult = Object.PropertyValue
+			CheckResult = Object.Quality
 			CheckResult &= 1
 			break
 		case 1 // Formation
-			CheckResult = Object.PropertyValue
+			CheckResult = Object.Quality
 			CheckResult &= 254
 			break
 		end switch
 	else
 		switch Editor.variableID
 		case EDIT_VAR_PROPVAL // Property Value
-			Object.PropertyValue = Editor.VariableValue
+			Object.Quality = Editor.VariableValue
 			break
 		case 0 // Condition
 			CheckNotEqual(Editor.VariableValue, false)
-			SetBit(Object.PropertyValue, 0, CheckResult)
+			SetBit(Object.Quality, 0, CheckResult)
 			break
 		case 1 // Formation
-			Object.PropertyValue &= 1
+			Object.Quality &= 1
 			Editor.VariableValue &= 254
-			Object.PropertyValue |= Editor.VariableValue
+			Object.Quality |= Editor.VariableValue
 			break
 		end switch
 	end if
@@ -1196,9 +1193,9 @@ end sub
 
 
 sub RSDKDraw
-	GetBit(TempValue5, Object.PropertyValue, 0)
+	GetBit(TempValue5, Object.Quality, 0)
 	
-	TempValue0 = Object.PropertyValue
+	TempValue0 = Object.Quality
 	TempValue0 &= 254
 	switch TempValue0
 	case 0
@@ -1246,8 +1243,8 @@ sub RSDKLoad
 
 	AddEditorVariable("Condition")
 	SetActiveVariable("Condition")
-	AddEnumVariable("Good", CONDITION_GOOD)
-	AddEnumVariable("Bad",  CONDITION_BAD)
+	AddEnumVariable("Good", GOOD_QUALITY)
+	AddEnumVariable("Bad",  BAD_QUALITY)
 	
 	AddEditorVariable("Formation")
 	SetActiveVariable("Formation")

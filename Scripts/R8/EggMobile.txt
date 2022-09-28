@@ -59,11 +59,24 @@
 // Cutscene
 #alias 1	:	CUTSCENE_SKIP
 
+// Players
+#alias 0	:	PLAYER_SONIC
+
 // Collision Sides
 #alias 0	:	CSIDE_FLOOR
 
 // Ink Effects
 #alias 0	:	INK_NONE
+
+// Global SFX
+#alias 22	:	SFX_G_EXPLOSION
+
+// Stage SFX
+#alias 5	:	SFX_S_BOSSHIT
+#alias 6	:	SFX_S_WINGROTATE
+#alias 7	:	SFX_S_MECHSTEP
+#alias 8	:	SFX_S_IMPACT1
+#alias 9	:	SFX_S_MSCHARGE
 
 // Control Mode
 #alias -1	:	CONTROL_DISABLED
@@ -596,7 +609,7 @@ function EggMobile_ApproachPlayer
 		FlipSign(Object.XVelocity)
 		FlipSign(Object.YVelocity)
 		Helper1.ControllerDisabled = false
-		PlayStageSfx(9, 0)
+		PlayStageSFX(SFX_S_MSCHARGE, 0)
 	end if
 end function
 
@@ -691,7 +704,7 @@ function EggMobile_PogoAttackAscend
 	if Object.Timer > 29
 		Object.Timer = 0
 		Helper1.ControllerDisabled = false
-		PlayStageSfx(8, 0)
+		PlayStageSFX(SFX_S_IMPACT1, 0)
 	end if
 end function
 
@@ -720,7 +733,7 @@ function EggMobile_PogoAttackMoveLeft
 	if Object.Timer > 59
 		Object.Timer = 0
 		Helper1.ControllerDisabled = false
-		PlayStageSfx(8, 0)
+		PlayStageSFX(SFX_S_IMPACT1, 0)
 	end if
 end function
 
@@ -749,7 +762,7 @@ function EggMobile_PogoAttackMoveRight
 	if Object.Timer > 59
 		Object.Timer = 0
 		Helper1.ControllerDisabled = false
-		PlayStageSfx(8, 0)
+		PlayStageSFX(SFX_S_IMPACT1, 0)
 	end if
 end function
 
@@ -1310,8 +1323,8 @@ function EggMobile_Destroyed
 			Player.Down 		= false
 
 			Helper2.SecondaryState++
-			if Stage.PlayerListPos == 0
-				if Stage.DebugMode == 0
+			if Stage.PlayerListPos == PLAYER_SONIC
+				if Stage.DebugMode == false
 					SetAchievement(9, 100)
 				end if
 			end if
@@ -1339,8 +1352,8 @@ function EggMobile_Destroyed
 			TempValue1 = Helper2.CutsceneRightBound
 			TempValue1 <<= 16
 			if TempValue0 > TempValue1
-				Player.Left = 1
-				Player.Right = 0
+				Player.Left = true
+				Player.Right = false
 			end if
 		else
 			TempValue0 = Helper1.CenterBound
@@ -1348,7 +1361,7 @@ function EggMobile_Destroyed
 			if Player.XPos < TempValue0
 				Player.XPos = TempValue0
 				Player.Speed = 0
-				Player.Left = 0
+				Player.Left = false
 			end if
 		end if
 		break
@@ -1358,7 +1371,7 @@ function EggMobile_Destroyed
 		if Player.XPos < TempValue0
 			Player.XPos = TempValue0
 			Player.Speed = 0
-			Player.Left = 0
+			Player.Left = false
 		end if
 		break
 	end switch
@@ -1379,7 +1392,7 @@ function EggMobile_Destroyed
 		CreateTempObject(TypeName[Explosion], 0, TempValue0, TempValue1)
 		if Object.AnimationTimer == 0
 			if Object[+5].Type == TypeName[Blank Object]
-				PlaySfx(22, 0)
+				PlaySfx(SFX_G_EXPLOSION, 0) 
 			end if
 		end if
 	end if
@@ -1422,7 +1435,7 @@ function EggMobile_Destroyed_NoAmy
 		end if
 		break
 	case 2
-		Player.Right = 1
+		Player.Right = true
 		Object.Timer++
 		if Object.Timer == 120
 			Object[+5].Type			 = TypeName[FadeScreen]
@@ -1445,7 +1458,7 @@ function EggMobile_Destroyed_NoAmy
 		CreateTempObject(TypeName[Explosion], 0, TempValue0, TempValue1)
 		if Object.AnimationTimer == 0
 			if Object[+5].Type == TypeName[Blank Object]
-				PlaySfx(22, 0)
+				PlaySfx(SFX_G_EXPLOSION, 0) 
 			end if
 		end if
 	end if
@@ -1585,11 +1598,11 @@ sub ObjectMain
 		case 0
 			Helper2.SfxTimer += 6
 			if Helper2.SfxTimer == 42
-				PlayStageSfx(6, 0)
+				PlayStageSFX(SFX_S_WINGROTATE, 0)
 			end if
 			if Helper2.SfxTimer > 59
 				Helper2.SfxTimer -= 60
-				PlayStageSfx(6, 0)
+				PlayStageSFX(SFX_S_WINGROTATE, 0)
 			end if
 			break
 		case 1
@@ -1597,10 +1610,10 @@ sub ObjectMain
 			if Helper2.SfxTimer > 59
 				Helper2.SfxTimer -= 60
 				if Helper2.SfxUsed == 0
-					PlayStageSfx(6, 0)
+					PlayStageSFX(SFX_S_WINGROTATE, 0)
 					Helper2.SfxUsed = 1
 				else
-					PlayStageSfx(7, 0)
+					PlayStageSFX(SFX_S_MECHSTEP, 0)
 					Helper2.SfxUsed = 0
 				end if
 			end if
@@ -1609,21 +1622,21 @@ sub ObjectMain
 			Helper2.SfxTimer += 8
 			if Helper2.SfxTimer > 59
 				Helper2.SfxTimer -= 60
-				PlayStageSfx(6, 0)
+				PlayStageSFX(SFX_S_WINGROTATE, 0)
 			end if
 			break
 		case 3
 			Helper2.SfxTimer += 10
 			if Helper2.SfxTimer > 59
 				Helper2.SfxTimer -= 60
-				PlayStageSfx(6, 0)
+				PlayStageSFX(SFX_S_WINGROTATE, 0)
 			end if
 			break
 		case 4
 			Helper2.SfxTimer += 16
 			if Helper2.SfxTimer > 59
 				Helper2.SfxTimer -= 60
-				PlayStageSfx(6, 0)
+				PlayStageSFX(SFX_S_WINGROTATE, 0)
 			end if
 			break
 		end switch
@@ -1712,7 +1725,7 @@ sub ObjectPlayerInteraction
 						Object.Timer = 0
 						Object.Animation = 1
 						Helper2.AnimSpeedState = 4
-						PlayStageSfx(5, 0)
+						PlayStageSFX(SFX_S_BOSSHIT, 0)
 
 #platform: Use_Haptics	
 						HapticEffect(75, 0, 0, 0)
@@ -1729,7 +1742,7 @@ sub ObjectPlayerInteraction
 						Object.Timer = 0
 						Object.Animation = 1
 						Helper2.AnimSpeedState = 3
-						PlayStageSfx(5, 0)
+						PlayStageSFX(SFX_S_BOSSHIT, 0)
 
 #platform: Use_Haptics	
 						HapticEffect(75, 0, 0, 0)
@@ -1746,7 +1759,7 @@ sub ObjectPlayerInteraction
 						Object.Timer = 0
 						Object.Animation = 1
 						Helper2.AnimSpeedState = 2
-						PlayStageSfx(5, 0)
+						PlayStageSFX(SFX_S_BOSSHIT, 0)
 						
 #platform: Use_Haptics	
 						HapticEffect(75, 0, 0, 0)

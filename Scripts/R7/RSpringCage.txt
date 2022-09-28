@@ -7,20 +7,26 @@
 // Aliases
 #alias Object.Value0 : Object.FullAngle
 #alias Object.Value1 : Object.Angle
-// Value2 is skipped over...
 #alias Object.Value3 : Object.RightArmOffset
 
+// R7 Spring Aliases
+#alias Object.Value0 : Object.Timer
+
+// States
 #alias 0 : RSPRINGCAGE_IDLE
 #alias 1 : RSPRINGCAGE_LOCKINPLAYER
 #alias 2 : RSPRINGCAGE_SHOOTPLAYER
 #alias 3 : RSPRINGCAGE_RESTORE
 
-// R7 Spring Aliases
-#alias Object.Value0 : Object.Timer
+// Gravity
+#alias 1 : GRAVITY_AIR
+
+// Stage SFX
+#alias 0 : SFX_S_LARGEBOOSTER // In origins, this SFX is Launcher
+#alias 1 : SFX_S_SWITCH
 
 
 sub ObjectMain
-
 	switch Object.State
 	case RSPRINGCAGE_IDLE
 		if Object.PropertyValue == 0
@@ -37,7 +43,7 @@ sub ObjectMain
 			// Close it in, 2 pixels per frame
 			Object.RightArmOffset -= 0x20000
 		else
-			PlayStageSfx(1, 0)
+			PlayStageSfx(SFX_S_SWITCH, 0)
 			Object.State++
 		end if
 		break
@@ -88,7 +94,7 @@ sub ObjectMain
 			end switch
 
 			if Player.JumpPress == true
-				PlayStageSfx(0, 0)
+				PlayStageSfx(SFX_S_LARGEBOOSTER, 0)
 				
 #platform: Use_Origins
 				Player.State = Player_State_Air_NoDropDash
@@ -97,7 +103,7 @@ sub ObjectMain
 #platform: Use_Standalone
 				Player.State = Player_State_Air
 #endplatform
-				Player.Gravity = 1
+				Player.Gravity = GRAVITY_AIR
 				Player.Timer = 0
 
 				// Tell the spring to start animating

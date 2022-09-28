@@ -40,6 +40,16 @@
 // Menu Button States
 #alias 1	:	MENUBUTTON_BUTTONS_IN
 
+// Presentation Stage
+#alias 0	:	STAGE_P_TITLE
+
+// Global SFX
+#alias 23	:	SFX_G_MENUBUTTON
+#alias 27	:	SFX_G_SELECT
+
+// Stage SFX
+#alias 1	:	SFX_S_BACKBUTTON
+
 // Languages
 #alias 0	:	LANG_ENGLISH
 #alias 1	:	LANG_FRENCH
@@ -106,7 +116,7 @@ sub ObjectMain
 				if Object.SelectedOption < OST_JP
 					Object.SelectedOption = OST_US
 				end if
-				PlaySfx(23, 0) 	//Menu Button SFX
+				PlaySfx(SFX_G_MENUBUTTON, 0) 
 			end if
 			
 			if KeyPress[0].Right == true
@@ -114,7 +124,7 @@ sub ObjectMain
 				if Object.SelectedOption > OST_US
 					Object.SelectedOption = OST_JP
 				end if
-				PlaySfx(23, 0) 	//Menu Button SFX
+				PlaySfx(SFX_G_MENUBUTTON, 0) 
 			end if
 			// Enable touch controls if the screen is touched
 			CheckTouchRect(0, 0, Screen.XSize, Screen.YSize)
@@ -216,7 +226,7 @@ sub ObjectMain
 			SaveRAM[38] = Options.Soundtrack
 			Object.State = SOUNDMENU_OST_SELECTED
 			StopMusic()
-			PlaySfx(27, 0)	//Select SFX
+			PlaySfx(SFX_G_SELECT, 0)
 			WriteSaveRAM()
 #platform: Use_Origins
 			game.callbackParam0 = Options.Soundtrack
@@ -227,7 +237,7 @@ sub ObjectMain
 		if KeyPress[0].ButtonB == true
 			Object.FadeValue = 248
 			Object.State = SOUNDMENU_BACK
-			PlayStageSfx(1, 0)
+			PlayStageSfx(SFX_S_BACKBUTTON, 0)
 		end if
 		break
 		
@@ -271,17 +281,19 @@ sub ObjectMain
 			MenuHeading.Header = MAINMENU_HEADER // Set the heading to "MAIN MENU"
 		end if
 		break
-		
-	case SOUNDMENU_RETURN_TO_TITLE	// Origins exclusive state
+
+#platform: Use_Origins
+	case SOUNDMENU_RETURN_TO_TITLE
 		Object.FadeValue += 4
 		if Object.FadeValue == 384
 			Stage.ActiveList = PRESENTATION_STAGE
-			Stage.ListPos = 0	// Title Screen
+			Stage.ListPos = STAGE_P_TITLE
 			StopMusic()
 			LoadStage()
 		endif
 		SetScreenFade(0, 0, 0, Object.FadeValue)
 		break
+#endplatform
 	end switch
 end sub
 

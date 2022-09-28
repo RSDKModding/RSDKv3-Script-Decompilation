@@ -41,8 +41,9 @@
 // Select Aliases
 #alias 0	:	SELECT_INIT
 
-// SFX Aliases
-#alias 1	:	SFX_RING
+// Global SFX
+#alias 1	:	SFX_G_RING
+#alias 27	:	SFX_G_SELECT
 
 // Callbacks & Engine States
 #alias 1	:	CALLBACK_PRESS_START
@@ -57,18 +58,18 @@
 #alias 4	:	LANG_SPANISH
 #alias 5	:	LANG_JAPANESE
 
-// Stage List Position Aliases
 
-// Presentation List Stages
+// Presentation Stages
+#alias 0	:	STAGE_P_MENU
 #alias 3	:	STAGE_P_STAGESELECT
 #alias 4	:	STAGE_P_SOUNDTEST
 
-// Regular List Aliases
+// Regular Stages
 #alias 0	:	STAGE_R_R11A
 #alias 28 	:	STAGE_R_R43C
 #alias 64	:	STAGE_R_R82A
 
-// Special List Aliases
+// Special Stages
 #alias 0	:	STAGE_S_SS1
 #alias 5	:	STAGE_S_SS6
 
@@ -175,7 +176,7 @@ function TouchStart_HandleCheatCodes
 			StopMusic()
 			
 			// Just a cool lil' jingle :)
-			PlaySfx(SFX_RING, false)
+			PlaySfx(SFX_G_RING, 0)
 		else
 			if TempValue0 != CHEATINPUT_NONE
 				Object.StageSelectCheatPos = 0
@@ -245,7 +246,7 @@ function TouchStart_HandleCheatCodes
 			Object.State = START_GOTO_SOUNDTEST
 			StopMusic()
 			
-			PlaySfx(SFX_RING, false)
+			PlaySfx(SFX_G_RING, 0)
 		else
 			if TempValue0 != CHEATINPUT_NONE
 				Object.SoundTestCheatPos = 0
@@ -302,7 +303,7 @@ sub ObjectMain
 
 #platform: Use_Standalone
 			StopMusic()
-			PlaySfx(27, 0)	//Select SFX
+			PlaySfx(SFX_G_SELECT, 0)
 			
 #endplatform
 
@@ -333,7 +334,7 @@ sub ObjectMain
 #platform:	Use_Standalone
 		Object.Fade += 4
 		if Object.Fade == 384
-			Stage.ListPos = 1		//	Menu
+			Stage.ListPos = STAGE_P_MENU
 			LoadStage()
 		end if
 		SetScreenFade(0, 0, 0, Object.Fade)
@@ -383,9 +384,9 @@ sub ObjectMain
 			Fade_Colour = 0x000000
 			
 			// Reset loads of stuff
-			Player.Score	  = 0
-			Player.Lives	  = 3
-			Player.ScoreBonus = 50000
+			Player.Score	  		= 0
+			Player.Lives	  		= 3
+			Player.ScoreBonus		= 50000
 			Transporter_Destroyed 	= false
 			MetalSonic_Destroyed 	= false
 			Good_Future 			= false

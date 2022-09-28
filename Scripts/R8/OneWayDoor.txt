@@ -9,6 +9,12 @@
 #alias 0	:	ONEWAYDOOR_CLOSE
 #alias 1	:	ONEWAYDOOR_OPEN
 
+// Collision
+#alias 1	:	PLAYER_COL_FLOOR
+#alias 2	:	PLAYER_COL_LWALL
+#alias 3	:	PLAYER_COL_RWALL
+#alias 4	:	PLAYER_COL_ROOF
+
 
 sub ObjectMain
 	if Object.State == ONEWAYDOOR_CLOSE
@@ -28,14 +34,14 @@ sub ObjectPlayerInteraction
 	TempValue1   = Player.YPos
 	Object.YPos -= Object.YOffset
 	PlayerObjectCollision(C_BOX, -8, -48, 8, -16)
-	if CheckResult > 1
+	if CheckResult > PLAYER_COL_FLOOR
 		Player.YPos = TempValue1
 	end if
 
 	Object.YPos  = TempValue0
 	Object.YPos += Object.YOffset
 	PlayerObjectCollision(C_BOX, -8, -16, 8, 16)
-	if CheckResult > 1
+	if CheckResult > PLAYER_COL_FLOOR
 		Player.YPos = TempValue1
 	end if
 

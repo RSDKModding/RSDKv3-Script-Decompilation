@@ -31,18 +31,22 @@
 #alias 8	:	ENGINE_WAIT
 
 // Time Periods
-#alias 0	:	PROPVAL_PRESENT
-#alias 1	:	PROPVAL_PAST
-#alias 2	:	PROPVAL_GOOD_FUTURE
-#alias 3	:	PROPVAL_BAD_FUTURE
+#alias 0	:	PRESENT
+#alias 1	:	PAST
+#alias 2	:	GOOD_FUTURE
+#alias 3	:	BAD_FUTURE
+
+// Presentation Stages
+#alias 0	:	STAGE_P_TITLE
+#alias 2	:	STAGE_P_TATTACK
 
 
 sub ObjectMain
 	switch Object.State
 	case DEATHEVENT_GAMEOVER
 #platform: Use_Origins
-		
-		if game.playMode == BOOT_PLAYMODE_CLASSIC // they handle the time over of Classic Mode through here
+		 // Origins handles the time over of Classic Mode through here
+		if game.playMode == BOOT_PLAYMODE_CLASSIC
 			CheckEqual(Object.TimeOver, false)
 			TempValue0  = CheckResult
 			CheckEqual(Stage.Minutes, 9)
@@ -59,7 +63,7 @@ sub ObjectMain
 			end if
 		end if
 		
-		// No break is here, so fall through
+		// Fall through
 #endplatform
 
 	case DEATHEVENT_TIMEOVER
@@ -110,9 +114,9 @@ sub ObjectMain
 #endplatform
 
 			if Object.State == DEATHEVENT_GAMEOVER
-				Stage.ActiveList	= PRESENTATION_STAGE
-				Stage.ListPos		= 0
-				LampPost.Check		= 0
+				Stage.ActiveList	  = PRESENTATION_STAGE
+				Stage.ListPos		  = STAGE_P_TITLE
+				LampPost.Check		  = 0
 
 				Transporter_Destroyed = 0
 				MetalSonic_Destroyed  = 0
@@ -188,7 +192,7 @@ sub ObjectMain
 			game.callbackParam0 =  0				// 0 - Normal Retry, anything else - Show current and best time
 			game.callbackParam1 =  Object.StagePosP	// Get current stage
 			game.callbackParam2 =  0				// Unknown
-			EngineCallback(NOTIFY_STAGE_RETRY)
+			EngineCallback(NOTIFY_STAGE_RETRY)		// This will change callbackResult's value
 			
 			Object.State = DEATHEVENT_HOLDOVERRESTART
 		else
@@ -199,18 +203,18 @@ sub ObjectMain
 				Object.StagePosP = Stage.ListPos
 				
 				switch HUD.TimePeriod
-				case PROPVAL_PRESENT
+				case PRESENT
 					break
 					
-				case PROPVAL_PAST
+				case PAST
 					Object.StagePosP--
 					break
 					
-				case PROPVAL_GOOD_FUTURE
+				case GOOD_FUTURE
 					Object.StagePosP -= 2
 					break
 					
-				case PROPVAL_BAD_FUTURE
+				case BAD_FUTURE
 					Object.StagePosP -= 3
 					break
 					
@@ -248,7 +252,7 @@ sub ObjectMain
 			TimeAttack.Result	= 0
 			LampPost.Check		= 0
 			Stage.ActiveList	= PRESENTATION_STAGE
-			Stage.ListPos		= 2
+			Stage.ListPos		= STAGE_P_TATTACK
 			LoadStage()
 		end if
 		

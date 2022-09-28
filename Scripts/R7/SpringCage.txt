@@ -10,19 +10,22 @@
 // Value2 is unused...
 #alias Object.Value3 : Object.LaunchTimer
 
-#alias 0 : SPRINGCAGE_OPEN
-#alias 1 : SPRINGCAGE_OCCUPIED
-
 // R7 Spring Aliases
 #alias Object.Value0 : Object.Timer
 
-// SFX Aliases
-#alias 0 : SFX_LARGEBOOSTER
-#alias 3 : SFX_LAUNCHER
+// States
+#alias 0 : SPRINGCAGE_OPEN
+#alias 1 : SPRINGCAGE_OCCUPIED
+
+// Gravity
+#alias 1 : GRAVITY_AIR
+
+// Stage SFX
+#alias 0 : SFX_S_LARGEBOOSTER	// in origins, this SFX is Launcher
+#alias 3 : SFX_S_LAUNCHER
 
 
 sub ObjectMain
-	
 	if Object.State == SPRINGCAGE_OPEN
 		if Object.PropertyValue == 0
 			// Spin around
@@ -33,7 +36,7 @@ sub ObjectMain
 			Object.Angle /= 6
 		end if
 		
-		// Update the content spring to show the correct sprite as well
+		// Update the content spring to show the correct sprite
 		switch Object.Angle
 		case 0
 			// Right
@@ -69,16 +72,16 @@ sub ObjectMain
 					// Origins fixed the SFX the Cage uses
 					// This sound ID is only valid on Origins data files though, which is why we gotta separate it
 #platform: Use_Origins
-					PlayStageSfx(SFX_LAUNCHER, false)
+					PlayStageSfx(SFX_S_LAUNCHER, 0)
 					Player.State = Player_State_Air_NoDropDash
 #endplatform
 					
 #platform: Use_Standalone
-					PlayStageSfx(SFX_LARGEBOOSTER, false)
+					PlayStageSfx(SFX_S_LARGEBOOSTER, 0)
 					Player.State = Player_State_Air
 #endplatform
 					
-					Player.Gravity = 1
+					Player.Gravity = GRAVITY_AIR
 					Player.Timer = 0
 					
 					// Activate the spring
@@ -134,7 +137,6 @@ end sub
 
 
 sub ObjectPlayerInteraction
-	
 	if Object.State == SPRINGCAGE_OPEN
 		
 		// See if the player's hopped in yet
@@ -182,7 +184,6 @@ end sub
 
 
 sub ObjectDraw
-	
 	// Jump based on what angle the cage is currently
 	switch Object.Angle
 	case 0

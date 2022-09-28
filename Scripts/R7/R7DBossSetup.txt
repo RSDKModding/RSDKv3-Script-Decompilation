@@ -1,10 +1,13 @@
-//------------------Sonic CD R7 Setup Script------------------//
+//--------------Sonic CD R7 D Boss Setup Script---------------//
 //--------Scripted by Christian Whitehead 'The Taxman'--------//
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
 // Aliases
 #alias Object.Value0	:	Object.Timer
 #alias Object.Value1	:	Object.ActivePalette
+
+// Collision Modes
+#alias 0	:	CMODE_FLOOR
 
 // Priority
 #alias 1	:	PRIORITY_ACTIVE
@@ -69,7 +72,7 @@ sub ObjectPlayerInteraction
 	case 19
 		// Loop chunks, opening on left side
 		CallFunction(R7Setup_GetLoopTileInfo)
-		if Player.CollisionMode == 0
+		if Player.CollisionMode == CMODE_FLOOR
 			if TempValue0 == 1001
 				TempValue1 &= 1022
 				TempValue2 &= 1022
@@ -106,7 +109,7 @@ sub ObjectPlayerInteraction
 	case 23
 		// Loop chunks, opening on right side
 		CallFunction(R7Setup_GetLoopTileInfo)
-		if Player.CollisionMode == 0
+		if Player.CollisionMode == CMODE_FLOOR
 			if TempValue0 == 1000
 				TempValue1 &= 1022
 				TempValue2 &= 1022
@@ -186,7 +189,6 @@ end sub
 
 
 sub ObjectDraw
-	
 	// Find the XPos to draw the lamp at, since it's supposed to have parallax and loop around the stage
 	Object.XPos = Screen.XOffset
 	Object.XPos /= 420

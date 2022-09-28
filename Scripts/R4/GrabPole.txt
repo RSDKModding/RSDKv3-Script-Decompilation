@@ -13,11 +13,14 @@
 #alias 1	:	GRABPOLE_HANGING
 #alias 2	:	GRABPOLE_BROKEN
 
+// Players
+#alias 0	:	PLAYER_SONIC
+
 // Time Periods
-#alias 0	:	PROPVAL_PRESENT
-#alias 1	:	PROPVAL_PAST
-#alias 2	:	PROPVAL_GOOD_FUTURE
-#alias 3	:	PROPVAL_BAD_FUTURE
+#alias 0	:	PRESENT
+#alias 1	:	PAST
+#alias 2	:	GOOD_FUTURE
+#alias 3	:	BAD_FUTURE
 
 
 sub ObjectMain
@@ -34,7 +37,7 @@ sub ObjectMain
 				Object.BreakTimer++
 				Player.XPos = Object.XPos
 				Player.Direction = FACING_RIGHT
-				if Stage.PlayerListPos == 0
+				if Stage.PlayerListPos == PLAYER_SONIC
 					Player.XPos += 0x140000
 				else
 					Player.XPos += 0x100000
@@ -112,7 +115,7 @@ end sub
 sub ObjectStartup
 	LoadSpriteSheet("R4/Objects3.gif")
 
-	if Hud.TimePeriod < PROPVAL_BAD_FUTURE
+	if Hud.TimePeriod < BAD_FUTURE
 		SpriteFrame(-4, -46, 8, 92, 134, 46)	// #0 - Pole
 		SpriteFrame(-4, -46, 16, 92, 117, 46)	// #1 - Broken Pole
 	else

@@ -1,4 +1,4 @@
-//------------Sonic CD BrokenMonitor Script-------------//
+//---------------Sonic CD Broken Monitor Script---------------//
 //--------Scripted by Christian Whitehead 'The Taxman'--------//
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
@@ -12,12 +12,18 @@
 #alias Player.Value4	:	Player.InvincibleTimer
 #alias Player.Value5	:	Player.BlinkTimer
 
+// States
+#alias 0	:	BROKENMONITOR_SPAWN_POWERUP
+#alias 1	:	BROKENMONITOR_FADE_POWERUP
+#alias 2	:	BROKENMONITOR_BLANK
+
+// Player
 #alias 0	:	PLAYER_SONIC
 
 // Soundtrack
 #alias 0	:	OST_JP
 
-// Priorities
+// Priority
 #alias 0	:	PRIORITY_BOUNDS
 #alias 1	:	PRIORITY_ACTIVE
 
@@ -28,10 +34,10 @@
 #alias 0	:	PAN_RIGHT
 #alias 1	:	PAN_LEFT
 
-// States
-#alias 0	:	BROKENMONITOR_SPAWN_POWERUP
-#alias 1	:	BROKENMONITOR_FADE_POWERUP
-#alias 2	:	BROKENMONITOR_BLANK
+// Global SFX
+#alias 10	:	SFX_G_BLUESHIELD
+#alias 20	:	SFX_G_1UP
+#alias 21	:	SFX_G_ACHIEVEMENT
 
 // Property Values
 #alias 0	:	MONITOR_BLANK
@@ -96,9 +102,9 @@ sub ObjectMain
 #endplatform
 
 						if Stage.PlayerListPos == PLAYER_SONIC
-							PlaySfx(20, false)
+							PlaySfx(SFX_G_1UP, 0)
 						else
-							PlaySfx(21, false)
+							PlaySfx(SFX_G_ACHIEVEMENT, 0)
 						end if
 						
 					end if
@@ -120,7 +126,7 @@ sub ObjectMain
 				break
 				
 			case MONITOR_SHIELD
-				PlaySfx(10, 0)
+				PlaySfx(SFX_G_BLUESHIELD, 0)
 				Object[2].PropertyValue = 1
 				if Object[2].Type != TypeName[Invincibility]
 					Object[2].Type		= TypeName[BlueShield]
@@ -174,7 +180,7 @@ sub ObjectMain
 				Player.Lives++
 #endplatform
 
-				PlaySfx(20, 0)
+				PlaySfx(SFX_G_1UP, 0)
 				break
 				
 			case MONITOR_TIME
@@ -195,7 +201,7 @@ sub ObjectMain
 				Player.Lives++
 #endplatform
 
-				PlaySfx(21, 0)
+				PlaySfx(SFX_G_ACHIEVEMENT, 0)
 				break
 				
 			case MONITOR_SUPER

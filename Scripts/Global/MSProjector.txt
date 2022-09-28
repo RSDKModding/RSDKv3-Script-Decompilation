@@ -11,16 +11,22 @@
 #alias Object.Value5	:	Object.AnimalSheet
 #alias Object.Value6	:	Object.FramesUsed
 
+// States
+#alias 0	:	MSPROJECTOR_ANIM_1
+#alias 1	:	MSPROJECTOR_ANIM_2
+#alias 2	:	MSPROJECTOR_DESTROYED
+
+// Player
+#alias 0	:	PLAYER_SONIC
+
 // Gravity
 #alias 1	:	GRAVITY_AIR
 
 // Priority
 #alias 1	:	PRIORITY_ACTIVE
 
-// States
-#alias 0	:	MSPROJECTOR_ANIM_1
-#alias 1	:	MSPROJECTOR_ANIM_2
-#alias 2	:	MSPROJECTOR_DESTROYED
+// Global SFX
+#alias 22	:	SFX_G_EXPLOSION
 
 
 sub ObjectMain
@@ -73,7 +79,7 @@ sub ObjectMain
 
 			CreateTempObject(TypeName[Explosion], 0, TempValue0, TempValue1)
 			Object[TempObjectPos].DrawOrder = 4
-			PlaySfx(22, 0)
+			PlaySfx(SFX_G_EXPLOSION, 0)
 		end if
 
 		Object.Timer++
@@ -97,7 +103,7 @@ sub ObjectPlayerInteraction
 				Object.State		 = MSPROJECTOR_DESTROYED
 				MetalSonic_List++
 				// Saviour of the Planet Unlock Criteria
-				if Stage.PlayerListPos == 0	// Sonic
+				if Stage.PlayerListPos == PLAYER_SONIC
 					if Stage.DebugMode == false
 						if Good_Future_List > 16382	// 0b11111111111110
 							if MetalSonic_List > 11
@@ -164,7 +170,7 @@ sub ObjectDraw
 		end if
 
 		if Object.Flicker < 2
-			if Object.FramesUsed == 8	// tldr; this is true for everything except the TTZ Fishes
+			if Object.FramesUsed == 8	// This is true for every animal except the TTZ Fishes
 				// Metal and stomped animal
 				if Object.Frame < 28
 					Object.SpriteSheet = Object.AnimalSheet

@@ -3,18 +3,28 @@
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
 // Aliases
-#alias Object.Value0	:	Object.Timer
-#alias Object.Value1	:	Object.Spikes
+#alias Object.Value0		:	Object.Timer
+#alias Object.Value1		:	Object.Spikes
 
+#alias Object.PropertyValue	:	Object.Quality
+
+// States
 #alias 0	:	NORONORO_FINDGROUND
 #alias 1	:	NORONORO_ROLLLEFT
 #alias 2	:	NORONORO_ROLLRIGHT
 
-// SFX Aliases
-#alias 1	:	SFX_SPIKES
+// Gravity
+#alias 1	:	GRAVITY_AIR
+
+// Stage SFX
+#alias 1	:	SFX_S_SPIKES
 
 // Collision Sides
 #alias 0	:	CSIDE_FLOOR
+
+// Badnik Quality / Property Values
+#alias 0	:	GOOD_QUALITY
+#alias 1	:	BAD_QUALITY
 
 
 sub ObjectMain
@@ -88,10 +98,9 @@ sub ObjectPlayerInteraction
 	
 	// This only applies to Spikes Noro Noros, normal ones are just about the same regardless of the Player's aerial state
 	
-	if Player.Gravity == 1
-		// The Player's in the air
+	if Player.Gravity == GRAVITY_AIR
 		
-		if Object.PropertyValue == 0
+		if Object.Quality == GOOD_QUALITY
 			// Spiked Noro Noro variant
 			
 			// Make sure this Object hasn't been turned into a Flower yet
@@ -102,7 +111,7 @@ sub ObjectPlayerInteraction
 					if CheckResult == true
 						if Object.Spikes == false
 							// If Spikes aren't already out, then play the SFX
-							PlayStageSfx(SFX_SPIKES, false)
+							PlayStageSfx(SFX_S_SPIKES, 0)
 						end if
 						
 						// Eject the Spikes!
@@ -138,7 +147,7 @@ sub ObjectPlayerInteraction
 			CallFunction(Player_BadnikBreak)
 		end if
 		
-		if Object.PropertyValue == 0
+		if Object.Quality == GOOD_QUALITY
 			
 			// Make sure the Noro Noro hasn't already been detroyed yet
 			if Object.Type == TypeName[Noro Noro]
@@ -148,7 +157,7 @@ sub ObjectPlayerInteraction
 					if CheckResult == true
 						if Object.Spikes == false
 							// If Spikes aren't out already, then play the SFX for ejected the Spikes
-							PlayStageSfx(SFX_SPIKES, false)
+							PlayStageSfx(SFX_S_SPIKES, 0)
 						end if
 						
 						// Get the Spikes ready
@@ -176,7 +185,7 @@ end sub
 
 
 sub ObjectDraw
-	if Object.PropertyValue == 0
+	if Object.Quality == GOOD_QUALITY
 		// Spikes Noro Noro
 		DrawSpriteFX(Object.Spikes, FX_FLIP, Object.XPos, Object.YPos)
 	else
@@ -218,19 +227,19 @@ sub RSDKEdit
 	if Editor.ReturnVariable == true
 		switch Editor.VariableID
 		case EDIT_VAR_PROPVAL // Property Value
-			CheckResult = Object.PropertyValue
+			CheckResult = Object.Quality
 			break
 		case 0 // Type
-			CheckResult = Object.PropertyValue
+			CheckResult = Object.Quality
 			break
 		end switch
 	else
 		switch Editor.variableID
 		case EDIT_VAR_PROPVAL // Property Value
-			Object.PropertyValue = Editor.VariableValue
+			Object.Quality = Editor.VariableValue
 			break
 		case 0 // Type
-			Object.PropertyValue = Editor.VariableValue
+			Object.Quality = Editor.VariableValue
 			break
 		end switch
 	end if
@@ -238,7 +247,7 @@ end sub
 
 
 sub RSDKDraw
-	DrawSprite(Object.PropertyValue)
+	DrawSprite(Object.Quality)
 end sub
 
 

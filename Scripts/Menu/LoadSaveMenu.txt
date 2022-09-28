@@ -40,44 +40,6 @@
 #alias Object[+1].XPos				:	Delete.XPos
 #alias Object[+1].YPos				:	Delete.YPos
 
-// Soundtrack
-#alias 0	:	OST_JP
-
-// Game Mode
-#alias 1	:	GAMEMODE_SAVEGAME
-
-// Save Modes
-#alias 0	:	MODE_NORMAL
-#alias 1	:	MODE_NORMAL_SELECTED
-#alias 2	:	MODE_DELETE
-#alias 3	:	MODE_DELETE_SELECTED
-
-// Buttons
-#alias -1	:	BUTTON_NONE // Touching nothing on mobile
-#alias  0	:	BUTTON_SAVE_ONE
-#alias  1	:	BUTTON_SAVE_TWO
-#alias  2	:	BUTTON_SAVE_THREE
-#alias  3	:	BUTTON_SAVE_FOUR
-#alias  4	:	BUTTON_DELETE
-
-// Save Statuses
-#alias 0	:	SAVE_NORMAL
-#alias 1	:	SAVE_NORMAL_SELECTED
-#alias 2	:	SAVE_DELETE
-#alias 3	:	SAVE_DELETE_SELECTED
-
-// Character Select Options
-#alias -1	:	CHARACTER_NONE // Touching nothing on mobile
-#alias  0	:	CHARACTER_SONIC
-#alias  1	:	CHARACTER_TAILS
-#alias  2	:	CHARACTER_BACK
-
-// Delete Confirm Options
-#alias -1	:	DELETE_NONE // Touching nothing on mobile
-#alias  0	:	DELETE_YES
-#alias  1	:	DELETE_NO
-#alias  2	:	DELETE_BACK
-
 // States
 #alias  0	:	STATE_INITIALIZE
 #alias  1	:	STATE_MAIN_SAVE_MENU
@@ -112,6 +74,59 @@
 
 // Menu Button States
 #alias 1	:	MENUBUTTON_BUTTONS_IN
+
+// Soundtrack
+#alias 0	:	OST_JP
+
+// Game Mode
+#alias 1	:	GAMEMODE_SAVEGAME
+
+// Save Modes
+#alias 0	:	MODE_NORMAL
+#alias 1	:	MODE_NORMAL_SELECTED
+#alias 2	:	MODE_DELETE
+#alias 3	:	MODE_DELETE_SELECTED
+
+// Buttons
+#alias -1	:	BUTTON_NONE // Touching nothing on mobile
+#alias  0	:	BUTTON_SAVE_ONE
+#alias  1	:	BUTTON_SAVE_TWO
+#alias  2	:	BUTTON_SAVE_THREE
+#alias  3	:	BUTTON_SAVE_FOUR
+#alias  4	:	BUTTON_DELETE
+
+// Save Statuses
+#alias 0	:	SAVE_NORMAL
+#alias 1	:	SAVE_NORMAL_SELECTED
+#alias 2	:	SAVE_DELETE
+#alias 3	:	SAVE_DELETE_SELECTED
+
+// Character Select Options
+#alias -1	:	PLAYER_NONE // Touching nothing on mobile
+#alias  0	:	PLAYER_SONIC
+#alias  1	:	PLAYER_TAILS
+#alias  2	:	PLAYER_BACK
+
+// Delete Confirm Options
+#alias -1	:	DELETE_NONE // Touching nothing on mobile
+#alias  0	:	DELETE_YES
+#alias  1	:	DELETE_NO
+#alias  2	:	DELETE_BACK
+
+// Presentation Stage
+#alias 0	:	STAGE_R_PPZ1A
+
+// Special Stage
+#alias 0	:	STAGE_S_SS1
+
+// Global SFX
+#alias 9	:	SFX_G_LAMPPOST
+#alias 23	:	SFX_G_MENUBUTTON
+#alias 27	:	SFX_G_SELECT
+
+// Stage SFX
+#alias 0	:	SFX_S_EVENT
+#alias 1	:	SFX_S_BACKBUTTON
 
 // Engine & Callbacks
 #alias 2	:	MESSAGE_LOSTFOCUS
@@ -413,14 +428,14 @@ sub ObjectMain
 			if Object.ShowDeleteButton == false
 				if KeyPress[0].Up == true
 					Object.SelectedOption--
-					PlaySfx(23, 0) 	//Menu Button SFX
+					PlaySfx(SFX_G_MENUBUTTON, 0) 
 					if Object.SelectedOption < BUTTON_SAVE_ONE
 						Object.SelectedOption = BUTTON_SAVE_FOUR
 					end if
 				end if
 				if KeyPress[0].Down == true
 					Object.SelectedOption++
-					PlaySfx(23, 0) 	//Menu Button SFX
+					PlaySfx(SFX_G_MENUBUTTON, 0) 
 					if Object.SelectedOption > BUTTON_SAVE_FOUR
 						Object.SelectedOption = BUTTON_SAVE_ONE
 					end if
@@ -428,14 +443,14 @@ sub ObjectMain
 			else
 				if KeyPress[0].Up == true
 					Object.SelectedOption--
-					PlaySfx(23, 0) 	//Menu Button SFX
+					PlaySfx(SFX_G_MENUBUTTON, 0) 
 					if Object.SelectedOption < BUTTON_SAVE_ONE
 						Object.SelectedOption = BUTTON_DELETE
 					end if
 				end if
 				if KeyPress[0].Down == true
 					Object.SelectedOption++
-					PlaySfx(23, 0) 	//Menu Button SFX
+					PlaySfx(SFX_G_MENUBUTTON, 0) 
 					if Object.SelectedOption > BUTTON_DELETE
 						Object.SelectedOption = BUTTON_SAVE_ONE
 					end if
@@ -608,7 +623,7 @@ sub ObjectMain
 					ArrayPos0 = Object.SelectedOption
 					Object[+ArrayPos0].SaveStatus = SAVE_NORMAL_SELECTED
 					Object.State = STATE_SAVE_SELECTED
-					PlaySfx(27, 0)	//Select SFX
+					PlaySfx(SFX_G_SELECT, 0)
 					if Object[+ArrayPos0].StageListPos > 0 // Is this save used?
 						StopMusic()
 					else
@@ -630,7 +645,7 @@ sub ObjectMain
 						Object[+ArrayPos0].SaveStatus = SAVE_DELETE_SELECTED
 
 						Object.SaveMode = MODE_NORMAL
-						PlaySfx(9, 0)
+						PlaySfx(SFX_G_LAMPPOST, 0) 
 					else
 						Object.SaveOneStatus	 = SAVE_NORMAL
 						Object.SaveTwoStatus	 = SAVE_NORMAL
@@ -654,7 +669,7 @@ sub ObjectMain
 			end if
 			
 			if Object.SelectedOption == BUTTON_DELETE
-				PlaySfx(9, 0)
+				PlaySfx(SFX_G_LAMPPOST, 0) 
 				Object.State = STATE_TOGGLE_DELETE_MODE
 			end if
 		end if
@@ -664,7 +679,7 @@ sub ObjectMain
 			Object.FadeValue		= 248
 
 			Object.State = STATE_EXIT
-			PlayStageSfx(1, 0)
+			PlayStageSfx(SFX_S_BACKBUTTON, 0)
 		end if
 		break
 		
@@ -787,14 +802,14 @@ sub ObjectMain
 #platform: Use_Origins
 			if Options.PhysicalControls == false
 				ArrayPos0 = Object.SelectedOption
-				Object[+ArrayPos0].PlayerListPos = CHARACTER_NONE
+				Object[+ArrayPos0].PlayerListPos = PLAYER_NONE
 			end if
 #endplatform
 
 #platform: Mobile
 			if Options.PhysicalControls == false
 				ArrayPos0 = Object.SelectedOption
-				Object[+ArrayPos0].PlayerListPos = CHARACTER_NONE
+				Object[+ArrayPos0].PlayerListPos = PLAYER_NONE
 			end if
 #endplatform
 
@@ -831,16 +846,16 @@ sub ObjectMain
 		if CheckResult == true
 			if KeyPress[0].Left == true
 				Object[+ArrayPos0].PlayerListPos--
-				PlaySfx(23, 0) 	//Menu Button SFX
-				if Object[+ArrayPos0].PlayerListPos < CHARACTER_SONIC
-					Object[+ArrayPos0].PlayerListPos = CHARACTER_TAILS
+				PlaySfx(SFX_G_MENUBUTTON, 0) 
+				if Object[+ArrayPos0].PlayerListPos < PLAYER_SONIC
+					Object[+ArrayPos0].PlayerListPos = PLAYER_TAILS
 				end if
 			end if
 			if KeyPress[0].Right == true
 				Object[+ArrayPos0].PlayerListPos++
-				PlaySfx(23, 0) 	//Menu Button SFX
-				if Object[+ArrayPos0].PlayerListPos > CHARACTER_TAILS
-					Object[+ArrayPos0].PlayerListPos = CHARACTER_SONIC
+				PlaySfx(SFX_G_MENUBUTTON, 0) 
+				if Object[+ArrayPos0].PlayerListPos > PLAYER_TAILS
+					Object[+ArrayPos0].PlayerListPos = PLAYER_SONIC
 				end if
 			end if
 
@@ -854,13 +869,13 @@ sub ObjectMain
 #platform: Use_Origins
 				Options.PhysicalControls = false
 #endplatform
-				Object[+ArrayPos0].PlayerListPos = CHARACTER_NONE
+				Object[+ArrayPos0].PlayerListPos = PLAYER_NONE
 			end if
 		else
 			// Touch Controls
 			
 			if Engine.Message == MESSAGE_LOSTFOCUS
-				Object[+ArrayPos0].PlayerListPos = CHARACTER_NONE
+				Object[+ArrayPos0].PlayerListPos = PLAYER_NONE
 			end if
 			
 			// Check if Sonic is pressed
@@ -874,15 +889,15 @@ sub ObjectMain
 			TempValue1 -= 8
 			CheckTouchRect(TempValue0, 126, TempValue1, 184)
 			if CheckResult > -1
-				Object[+ArrayPos0].PlayerListPos = CHARACTER_SONIC
+				Object[+ArrayPos0].PlayerListPos = PLAYER_SONIC
 			else
 				if TempValue3 < 0
-					if Object[+ArrayPos0].PlayerListPos == CHARACTER_SONIC
+					if Object[+ArrayPos0].PlayerListPos == PLAYER_SONIC
 						KeyPress[0].Start = true
 					end if
 				else
-					if Object[+ArrayPos0].PlayerListPos == CHARACTER_SONIC
-						Object[+ArrayPos0].PlayerListPos = CHARACTER_NONE
+					if Object[+ArrayPos0].PlayerListPos == PLAYER_SONIC
+						Object[+ArrayPos0].PlayerListPos = PLAYER_NONE
 					end if
 				end if
 			end if
@@ -894,15 +909,15 @@ sub ObjectMain
 			TempValue1 += 56
 			CheckTouchRect(TempValue0, 126, TempValue1, 184)
 			if CheckResult > -1
-				Object[+ArrayPos0].PlayerListPos = CHARACTER_TAILS
+				Object[+ArrayPos0].PlayerListPos = PLAYER_TAILS
 			else
 				if TempValue3 < 0
-					if Object[+ArrayPos0].PlayerListPos == CHARACTER_TAILS
+					if Object[+ArrayPos0].PlayerListPos == PLAYER_TAILS
 						KeyPress[0].Start = true
 					end if
 				else
-					if Object[+ArrayPos0].PlayerListPos == CHARACTER_TAILS
-						Object[+ArrayPos0].PlayerListPos = CHARACTER_NONE
+					if Object[+ArrayPos0].PlayerListPos == PLAYER_TAILS
+						Object[+ArrayPos0].PlayerListPos = PLAYER_NONE
 					end if
 				end if
 			end if
@@ -912,24 +927,24 @@ sub ObjectMain
 			TempValue0 -= 76
 			CheckTouchRect(TempValue0, 192, Screen.XSize, Screen.YSize)
 			if CheckResult > -1
-				Object[+ArrayPos0].PlayerListPos = CHARACTER_BACK
+				Object[+ArrayPos0].PlayerListPos = PLAYER_BACK
 				Object.BackTouchPress = true
 			else
 				Object.BackTouchPress = false
 				if TempValue3 < 0
-					if Object[+ArrayPos0].PlayerListPos == CHARACTER_BACK
+					if Object[+ArrayPos0].PlayerListPos == PLAYER_BACK
 						KeyPress[0].ButtonB = true
 					end if
 				else
-					if Object[+ArrayPos0].PlayerListPos == CHARACTER_BACK
-						Object[+ArrayPos0].PlayerListPos = CHARACTER_NONE
+					if Object[+ArrayPos0].PlayerListPos == PLAYER_BACK
+						Object[+ArrayPos0].PlayerListPos = PLAYER_NONE
 					end if
 				end if
 			end if
 
 			// Enable physical controls if a button is pressed
 			if KeyPress[0].Left == true
-				Object[+ArrayPos0].PlayerListPos = CHARACTER_TAILS
+				Object[+ArrayPos0].PlayerListPos = PLAYER_TAILS
 #platform: Mobile
 				Options.PhysicalControls = true
 #endplatform
@@ -940,7 +955,7 @@ sub ObjectMain
 			end if
 
 			if KeyPress[0].Right == true
-				Object[+ArrayPos0].PlayerListPos = CHARACTER_SONIC
+				Object[+ArrayPos0].PlayerListPos = PLAYER_SONIC
 #platform: Mobile
 				Options.PhysicalControls = true
 #endplatform
@@ -960,17 +975,17 @@ sub ObjectMain
 		end if
 		if CheckResult == true
 			if Options.TailsUnlocked == true
-				PlaySfx(27, 0)	//Select SFX
+				PlaySfx(SFX_G_SELECT, 0)
 				StopMusic()
 				Object.State = STATE_CHARACTER_SELECTED
 			else
-				if Object[+ArrayPos0].PlayerListPos == CHARACTER_SONIC
-					PlaySfx(27, 0)	//Select SFX
+				if Object[+ArrayPos0].PlayerListPos == PLAYER_SONIC
+					PlaySfx(SFX_G_SELECT, 0)
 					StopMusic()
 					Object.State = STATE_CHARACTER_SELECTED
 				else
 #platform: Mobile
-					Object[+ArrayPos0].PlayerListPos = CHARACTER_NONE	
+					Object[+ArrayPos0].PlayerListPos = PLAYER_NONE	
 #endplatform					
 				end if
 			end if
@@ -979,7 +994,7 @@ sub ObjectMain
 		if KeyPress[0].ButtonB == true
 			Object.State	 = STATE_FADEOUT_CHARACTERSELECT
 			Object.FadeValue = 248
-			PlayStageSfx(1, 0)
+			PlayStageSfx(SFX_S_BACKBUTTON, 0)
 		end if
 		break
 		
@@ -1032,7 +1047,7 @@ sub ObjectMain
 			MetalSonic_List			= 0
 
 			SpecialStage.TimeStones	= 0
-			SpecialStage.ListPos	= 0
+			SpecialStage.ListPos	= STAGE_S_SS1
 
 			LampPost.Check   = 0
 			Stage.ActiveList = REGULAR_STAGE
@@ -1042,7 +1057,7 @@ sub ObjectMain
 			Stage.ListPos = Object[+ArrayPos0].StageListPos
 			Stage.ListPos--
 			if Stage.ListPos < 0
-				Stage.ListPos = 0
+				Stage.ListPos = STAGE_R_PPZ1A
 			end if
 
 			Stage.PlayerListPos = Object[+ArrayPos0].PlayerListPos
@@ -1054,7 +1069,7 @@ sub ObjectMain
 
 			LoadStage()
 			
-			if Stage.PlayerListPos == CHARACTER_SONIC
+			if Stage.PlayerListPos == PLAYER_SONIC
 				LoadVideo("Opening")
 
 //	#platform: Mobile
@@ -1268,7 +1283,7 @@ sub ObjectMain
 		if CheckResult == true
 			if KeyPress[0].Up == true
 				DeleteConfirm.Highlight--
-				PlaySfx(23, 0) 	//Menu Button SFX
+				PlaySfx(SFX_G_MENUBUTTON, 0) 
 				if DeleteConfirm.Highlight < DELETE_YES
 					DeleteConfirm.Highlight = DELETE_NO
 				end if
@@ -1276,7 +1291,7 @@ sub ObjectMain
 
 			if KeyPress[0].Down == true
 				DeleteConfirm.Highlight++
-				PlaySfx(23, 0) 	//Menu Button SFX
+				PlaySfx(SFX_G_MENUBUTTON, 0) 
 				if DeleteConfirm.Highlight > DELETE_NO
 					DeleteConfirm.Highlight = DELETE_YES
 				end if
@@ -1396,9 +1411,9 @@ sub ObjectMain
 
 		if CheckResult == true
 			if DeleteConfirm.Highlight == DELETE_YES
-				PlayStageSfx(0, 0)
+				PlayStageSfx(SFX_S_EVENT, 0)
 			else
-				PlaySfx(27, 0)	//Select SFX
+				PlaySfx(SFX_G_SELECT, 0)
 			end if
 			Object.AnimationTimer = 0
 
@@ -1414,7 +1429,7 @@ sub ObjectMain
 			Object.FadeValue	  = 248
 			Object.AnimationTimer = 0
 
-			PlayStageSfx(1, 0)
+			PlayStageSfx(SFX_S_BACKBUTTON, 0)
 		end if
 		break
 		
@@ -1431,18 +1446,12 @@ sub ObjectMain
 			if DeleteConfirm.Highlight == DELETE_YES
 				// Delete this save in the menu
 				Object[+ArrayPos0].PlayerListPos  = 0
-
 				Object[+ArrayPos0].Lives		  = 3
 				Object[+ArrayPos0].Score		  = 0
-
 				Object[+ArrayPos0].StageListPos   = 0
-
 				Object[+ArrayPos0].TimeStones	  = 0
-
 				Object[+ArrayPos0].SpecialListPos = 0
-
 				Object[+ArrayPos0].ScoreBonus	  = 50000
-
 				Object[+ArrayPos0].GoodFutureList = 0
 				
 				// Now delete it in SaveRAM
@@ -1525,7 +1534,7 @@ sub ObjectDraw
 		TempValue0  = Screen.CenterX
 		TempValue0 -= 32
 		ArrayPos0 = Object.SelectedOption
-		if Object[+ArrayPos0].PlayerListPos == CHARACTER_SONIC
+		if Object[+ArrayPos0].PlayerListPos == PLAYER_SONIC
 			DrawSpriteScreenFX(31, FX_INK, TempValue0, 136)
 			DrawSpriteScreenFX(36, FX_INK, TempValue0, 164)
 			DrawSpriteScreenFX(33, FX_INK, TempValue0, 136)
@@ -1534,7 +1543,7 @@ sub ObjectDraw
 			DrawSpriteScreenFX(34, FX_INK, TempValue0, 164)
 		end if
 		TempValue0 += 64
-		if Object[+ArrayPos0].PlayerListPos == CHARACTER_TAILS
+		if Object[+ArrayPos0].PlayerListPos == PLAYER_TAILS
 			DrawSpriteScreenFX(32, FX_INK, TempValue0, 136)
 			DrawSpriteScreenFX(37, FX_INK, TempValue0, 164)
 			DrawSpriteScreenFX(33, FX_INK, TempValue0, 136)
@@ -1557,7 +1566,7 @@ sub ObjectDraw
 		TempValue1  &= 3
 		TempValue1 >>= 1
 		
-		if Object[+ArrayPos0].PlayerListPos == CHARACTER_SONIC
+		if Object[+ArrayPos0].PlayerListPos == PLAYER_SONIC
 			if TempValue1 == 0
 				DrawSpriteScreenFX(31, FX_INK, TempValue0, 136)
 			end if
@@ -1568,7 +1577,7 @@ sub ObjectDraw
 			DrawSpriteScreenFX(34, FX_INK, TempValue0, 164)
 		end if
 		TempValue0 += 64
-		if Object[+ArrayPos0].PlayerListPos == CHARACTER_TAILS
+		if Object[+ArrayPos0].PlayerListPos == PLAYER_TAILS
 			if TempValue1 == 0
 				DrawSpriteScreenFX(32, FX_INK, TempValue0, 136)
 			end if

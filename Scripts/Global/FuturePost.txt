@@ -24,8 +24,11 @@
 // Collision Plane
 #alias 1	:	COLLISION_PLANE_B
 
+// Global SFX
+#alias 12	:	SFX_G_FUTURE
+
 // Property Values
-#alias 1	:	PROPVAL_PLANEB
+#alias 1	:	PLANEB
 
 
 sub ObjectPlayerInteraction
@@ -34,10 +37,11 @@ sub ObjectPlayerInteraction
 			PlayerObjectCollision(C_TOUCH, -8, -24, 8, 32)
 			if CheckResult == true
 				Warp.Destination = WARPDEST_FUTURE
-				Object.State = FUTUREPOST_ROTATE
-				Object.Priority = PRIORITY_ACTIVE
-				Object.Frame = 1
-				PlaySfx(12, 0)
+
+				Object.State	 = FUTUREPOST_ROTATE
+				Object.Priority	 = PRIORITY_ACTIVE
+				Object.Frame	 = 1
+				PlaySfx(SFX_G_FUTURE, 0)
 				
 #platform: Use_Haptics
 				HapticEffect(20, 0, 0, 0)
@@ -65,7 +69,7 @@ sub ObjectDraw
 		end if
 		DrawSprite(Object.Frame)
 
-		TempValue0 = Object.Timer
+		TempValue0  = Object.Timer
 		TempValue0 &= 1
 		Object.Frame += TempValue0
 		if Object.Frame > 8
@@ -98,7 +102,7 @@ sub ObjectStartup
 	ArrayPos0 = 32
 	while ArrayPos0 < 1056
 		if Object[ArrayPos0].Type == TypeName[FuturePost]
-			if Object[ArrayPos0].PropertyValue == PROPVAL_PLANEB
+			if Object[ArrayPos0].PropertyValue == PLANEB
 				Object[ArrayPos0].DrawOrder 	 = 1
 				Object[ArrayPos0].CollisionPlane = COLLISION_PLANE_B
 			end if

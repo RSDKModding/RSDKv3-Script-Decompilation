@@ -39,14 +39,26 @@
 // MenuButton States
 #alias 2	:	MENUBUTTON_CONFIRM_SELECTION
 
-// Device Type
-#alias 0	:	RETRO_STANDARD
+// Presentation Stages
+#alias 2	:	STAGE_P_TATTACK
+#alias 9	:	STAGE_P_THROPIES
+#alias 10	:	STAGE_P_LEADERBOARDS
+
+// Regular Stages
+#alias 1	:	STAGE_R_PPZ1A
+
+// Global SFX
+#alias 23	:	SFX_G_MENUBUTTON
+#alias 27	:	SFX_G_SELECT
 
 // Soundtrack
 #alias 0	:	OST_JP
 
 // Engine & CallBacks
 #alias 2	:	MESSAGE_LOSTFOCUS
+
+// Device Type
+#alias 0	:	RETRO_STANDARD
 
 
 sub ObjectMain
@@ -96,7 +108,7 @@ sub ObjectMain
 				if Object.CurrentSelection < 1
 					Object.CurrentSelection = 1
 				else
-					PlaySfx(23, 0) 	//Menu Button SFX
+					PlaySfx(SFX_G_MENUBUTTON, 0) 
 				end if
 			end if
 
@@ -105,7 +117,7 @@ sub ObjectMain
 				if Object.CurrentSelection > Object.MaxButtonCount
 					Object.CurrentSelection = Object.MaxButtonCount
 				else
-					PlaySfx(23, 0) 	//Menu Button SFX
+					PlaySfx(SFX_G_MENUBUTTON, 0) 
 				end if
 			end if
 
@@ -304,7 +316,7 @@ sub ObjectMain
 		if Object.Fade < 320
 			Object.Fade += 8
 		else
-			Stage.ListPos = 2	//Time Attack
+			Stage.ListPos = STAGE_P_TATTACK
 			LoadStage()
 		end if
 		SetScreenFade(0, 0, 0, Object.Fade)
@@ -326,7 +338,7 @@ sub ObjectMain
 //			end if
 
 			Stage.ActiveList = REGULAR_STAGE
-			Stage.ListPos	 = 0	//Palmtree Panic 1 Present
+			Stage.ListPos	 = STAGE_R_PPZ1A
 			LoadStage()
 		end if
 		SetScreenFade(0, 0, 0, Object.Fade)
@@ -342,7 +354,7 @@ sub ObjectMain
 			if Object.Fade < 320
 				Object.Fade += 8
 			else
-				Stage.ListPos = 9	//Trophies (Mobile)
+				Stage.ListPos = STAGE_P_THROPIES
 				LoadStage()
 			end if
 			SetScreenFade(0, 0, 0, Object.Fade)
@@ -353,7 +365,7 @@ sub ObjectMain
 			if Object.Fade < 320
 				Object.Fade += 8
 			else
-				Stage.ListPos = 10	//Leaderboards (Mobile)
+				Stage.ListPos = STAGE_P_LEADERBOARDS
 				LoadStage()
 			end if
 			SetScreenFade(0, 0, 0, Object.Fade)

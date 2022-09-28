@@ -3,8 +3,6 @@
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
 // Aliases
-#alias 61: TYPE_TUBESWITCH
-
 #alias Object.Value0	:	Object.InTube
 
 // Player Aliases
@@ -13,6 +11,18 @@
 
 // Warp Star Aliases
 #alias Object.Value0   	:	Object.Timer
+
+// Global SFX
+#alias 6	:	SFX_G_CHARGE
+#alias 7	:	SFX_G_RELEASE
+
+// Gravity
+#alias 0	:	GRAVITY_GROUND
+#alias 1	:	GRAVITY_AIR
+
+// Collision Modes
+#alias 0	:	CMODE_FLOOR
+#alias 3	:	CMODE_RWALL
 
 // Warp Destination
 #alias 0	:	WARPDEST_NONE
@@ -36,7 +46,7 @@ sub ObjectPlayerInteraction
 		case 0
 			if Player.Speed >= 0
 				if Player.State != Player_State_TubeRoll
-					PlaySfx(6, 0)
+					PlaySfx(SFX_G_CHARGE, 0) 
 				end if
 				Player.Direction = FACING_RIGHT
 				Player.State = Player_State_TubeRoll
@@ -57,7 +67,7 @@ sub ObjectPlayerInteraction
 		case 1
 			if Player.Speed <= 0
 				if Player.State != Player_State_TubeRoll
-					PlaySfx(6, 0)
+					PlaySfx(SFX_G_CHARGE, 0) 
 				end if
 				Player.State = Player_State_TubeRoll
 				Player.Animation = ANI_JUMPING
@@ -75,8 +85,8 @@ sub ObjectPlayerInteraction
 			break
 
 		case 2
-			Player.Gravity = 1
-			Player.CollisionMode = 0
+			Player.Gravity = GRAVITY_AIR
+			Player.CollisionMode = CMODE_FLOOR
 			Player.XVelocity = 0
 			Player.Speed = 0
 			break
@@ -85,7 +95,7 @@ sub ObjectPlayerInteraction
 			if ConveyorBelt_Flag == 0
 				if Player.YPos < Object.YPos
 					if Player.State != Player_State_Static
-						PlaySfx(7, 0)
+						PlaySfx(SFX_G_RELEASE, 0) 
 					end if
 					Player.State = Player_State_Static
 					if Player.Animation != ANI_JUMPING
@@ -131,7 +141,7 @@ sub ObjectPlayerInteraction
 					end if
 
 					if Player.State != Player_State_Static
-						PlaySfx(7, 0)
+						PlaySfx(SFX_G_RELEASE, 0) 
 					end if
 					
 					Player.State = Player_State_Static
@@ -162,10 +172,10 @@ sub ObjectPlayerInteraction
 
 		case 5
 			if Player.YVelocity < 0
-				Player.Gravity = 0
+				Player.Gravity = GRAVITY_GROUND
 				Player.State = Player_State_TubeRoll
 				Player.Animation = ANI_JUMPING
-				Player.CollisionMode = 3
+				Player.CollisionMode = CMODE_RWALL
 				Player.Angle = 64
 				Player.Speed = -0xA0000
 				Player.MinRollSpeed = 0xA0000
@@ -174,10 +184,10 @@ sub ObjectPlayerInteraction
 
 		case 6
 			if Player.YVelocity > 0
-				Player.Gravity = 0
+				Player.Gravity = GRAVITY_GROUND
 				Player.State = Player_State_TubeRoll
 				Player.Animation = ANI_JUMPING
-				Player.CollisionMode = 3
+				Player.CollisionMode = CMODE_RWALL
 				Player.Angle = 64
 				Player.Speed = Player.YVelocity
 				Player.MinRollSpeed = 0xA0000
@@ -185,11 +195,11 @@ sub ObjectPlayerInteraction
 			break
 
 		case 7
-			Player.Gravity = 0
+			Player.Gravity = GRAVITY_GROUND
 			Player.State = Player_State_TubeRoll
 			Player.Animation = ANI_JUMPING
-			if Player.CollisionMode != 3
-				Player.CollisionMode = 3
+			if Player.CollisionMode != CMODE_RWALL
+				Player.CollisionMode = CMODE_RWALL
 				Player.Angle = 64
 			end if
 
@@ -204,15 +214,15 @@ sub ObjectPlayerInteraction
 
 		case 8
 			if ConveyorBelt_Flag == 3
-				Player.Gravity = 0
+				Player.Gravity = GRAVITY_GROUND
 				Player.State = Player_State_TubeRoll
 				Player.Animation = ANI_JUMPING
-				Player.CollisionMode = 3
+				Player.CollisionMode = CMODE_RWALL
 				Player.Angle = 64
 				Player.Speed = -851968
 				Player.MinRollSpeed = 851968
 				if Object.InTube == false
-					PlaySfx(7, 0)
+					PlaySfx(SFX_G_RELEASE, 0) 
 				end if
 			end if
 			break

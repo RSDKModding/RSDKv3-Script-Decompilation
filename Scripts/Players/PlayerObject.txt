@@ -3,28 +3,24 @@
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
 // Aliases
-#alias Player.Value0	:	Player.Rings
-#alias Player.Value1	:	Player.AbilityTimer
-#alias Player.Value2	:	Player.RollAnimationSpeed
-#alias Player.Value3	:	Player.SpeedShoesTimer
-#alias Player.Value4	:	Player.InvincibleTimer
-#alias Player.Value5	:	Player.BlinkTimer
-#alias Player.Value6	:	Player.MinRollSpeed
-#alias Player.Value7	:	Player.AnimationReserve
-#alias Player.Value8	:	Player.ScrollDelay
-#alias Player.Value9	:	Player.JumpOffset
-#alias Player.Value10	:	Player.JumpAbility
-#alias Player.Value11	:	Player.ActionPeelout
-#alias Player.Value12	:	Player.ActionSpindash
-#alias Player.Value13	:	Player.Unused1			// Completely unused
-#alias Player.Value14	:	Player.DropDashCharge	// Origins new value, previously Unused2
-#alias Player.Value15	:	Player.FlightVelocity
+#alias Player.Value0		:	Player.Rings
+#alias Player.Value1		:	Player.AbilityTimer
+#alias Player.Value2		:	Player.RollAnimationSpeed
+#alias Player.Value3		:	Player.SpeedShoesTimer
+#alias Player.Value4		:	Player.InvincibleTimer
+#alias Player.Value5		:	Player.BlinkTimer
+#alias Player.Value6		:	Player.MinRollSpeed
+#alias Player.Value7		:	Player.AnimationReserve
+#alias Player.Value8		:	Player.ScrollDelay
+#alias Player.Value9		:	Player.JumpOffset
+#alias Player.Value10		:	Player.JumpAbility
+#alias Player.Value11		:	Player.ActionPeelout
+#alias Player.Value12		:	Player.ActionSpindash
+#alias Player.Value13		:	Player.Unused1			// Completely unused
+#alias Player.Value14		:	Player.DropDashCharge	// Origins new value, previously Unused2
+#alias Player.Value15		:	Player.FlightVelocity
 
-// Player List Pos Aliases
-#alias 0	:	PLAYER_SONIC
-#alias 1	:	PLAYER_TAILS
-
-// Flailing sensors, v4's names convey it much better
+// Flailing states, v4 names explains this much better
 #alias Player.Flailing[0]	:	Player.FloorSensorL
 #alias Player.Flailing[1]	:	Player.FloorSensorC
 #alias Player.Flailing[2]	:	Player.FloorSensorR
@@ -48,11 +44,11 @@
 #alias Object[25].Value7	:	DebugMode.ButtonA
 
 // Death Event Aliases
-#alias Object.Value1	:	DeathEvent.Text1XPos	// Game or Time
-#alias Object.Value2	:	DeathEvent.Text2XPos	// Over
-#alias Object.Value3	:	DeathEvent.Timer		// Also used for fading
-#alias Object.DrawOrder	:	DeathEvent.DrawOrder
-#alias Object.State		:	DeathEvent.State
+#alias Object.Value1		:	DeathEvent.Text1XPos	// Game or Time
+#alias Object.Value2		:	DeathEvent.Text2XPos	// Over
+#alias Object.Value3		:	DeathEvent.Timer		// Also used for fading
+#alias Object.DrawOrder		:	DeathEvent.DrawOrder
+#alias Object.State			:	DeathEvent.State
 
 // Death Event States
 #alias 0 	:	DEATHEVENT_GAMEOVER
@@ -60,13 +56,17 @@
 #alias 2 	:	DEATHEVENT_FADEOUT
 #alias 3 	:	DEATHEVENT_TIMEATTACK
 
-// Priorities
+// Priority
 #alias 1	:	PRIORITY_ACTIVE
 #alias 2	:	PRIORITY_ALWAYS
 
 // Gravity
 #alias 0	:	GRAVITY_GROUND
 #alias 1	:	GRAVITY_AIR
+
+// Player List Pos Aliases
+#alias 0	:	PLAYER_SONIC
+#alias 1	:	PLAYER_TAILS
 
 // Ink
 #alias 2	:	INK_ALPHA
@@ -104,6 +104,20 @@
 // Control Modes
 #alias -1	:	CONTROL_DISABLED
 #alias  0	:	CONTROL_ENABLED
+
+// Global SFX
+#alias 0	:	SFX_G_JUMP
+#alias 3	:	SFX_G_SKIDDING
+#alias 4	:	SFX_G_LOSERINGS
+#alias 5	:	SFX_G_HURT
+#alias 6	:	SFX_G_CHARGE
+#alias 7	:	SFX_G_RELEASE
+#alias 8	:	SFX_G_DESTROY
+#alias 24	:	SFX_G_FLYING
+#alias 25	:	SFX_G_TIRED
+#alias 26	:	SFX_G_OUTTAHERE
+#alias 27	:	SFX_G_SELECT
+#alias 28	:	SFX_G_DROPDASH	// Origins Exclusive
 
 // GameModes
 #alias 2	:	GAMEMODE_TIMEATTACK
@@ -215,7 +229,7 @@ function Player_BadnikBreak
 		CreateTempObject(TypeName[ObjectScore], ObjectScore.Timer, Object.XPos, Object.YPos)
 		Object[TempObjectPos].DrawOrder = 4
 
-		PlaySfx(8, 0)
+		PlaySfx(SFX_G_DESTROY, 0) 
 
 		if Player.YVelocity > 0
 			FlipSign(Player.YVelocity)
@@ -303,7 +317,7 @@ end function
 
 // YOU DIED
 function Player_Kill
-	PlaySfx(5, 0)
+	PlaySfx(SFX_G_HURT, 0) 
 
 	Player.DrawOrder = 5
 
@@ -333,9 +347,9 @@ function Player_ProcessUpdate
 					if Options.DevMenuFlag == true
 						Stage.State = STAGE_PAUSED
 						PauseMusic()
-						PlaySfx(27, false)	//Select SFX
-						StopSfx(24)
-						StopSfx(25)
+						PlaySfx(SFX_G_SELECT, 0) 
+						StopSFX(SFX_G_FLYING)
+						StopSFX(SFX_G_TIRED)
 						Object[9].Type = TypeName[PauseMenu]
 						PauseMenu.DrawOrder = 7
 						PauseMenu.Priority	= PRIORITY_ALWAYS
@@ -401,9 +415,9 @@ function Player_ProcessUpdate
 					if CheckResult > -1
 						Stage.State = STAGE_PAUSED
 						PauseMusic()
-						PlaySfx(27, false)	//Select SFX
-						StopSfx(24)
-						StopSfx(25)
+						PlaySfx(SFX_G_SELECT, 0) 
+						StopSFX(SFX_G_FLYING)
+						StopSFX(SFX_G_TIRED)
 						Object[9].Type = TypeName[PauseMenu]
 						PauseMenu.DrawOrder = 7
 						PauseMenu.Priority	= PRIORITY_ALWAYS
@@ -416,9 +430,9 @@ function Player_ProcessUpdate
 					if Engine.Message == MESSAGE_LOSTFOCUS
 						Stage.State = STAGE_PAUSED
 						PauseMusic()
-						PlaySfx(27, false)	//Select SFX
-						StopSfx(24)
-						StopSfx(25)
+						PlaySfx(SFX_G_SELECT, 0) 
+						StopSFX(SFX_G_FLYING)
+						StopSFX(SFX_G_TIRED)
 						Object[9].Type = TypeName[PauseMenu]
 						PauseMenu.DrawOrder = 7
 						PauseMenu.Priority	= PRIORITY_ALWAYS
@@ -436,9 +450,9 @@ function Player_ProcessUpdate
 						KeyPress[1].Start = false
 						Stage.State = STAGE_PAUSED
 						PauseMusic()
-						PlaySfx(27, 0)	//Select SFX
-						StopSfx(24)
-						StopSfx(25)
+						PlaySfx(SFX_G_SELECT, 0) 
+						StopSFX(SFX_G_FLYING)
+						StopSFX(SFX_G_TIRED)
 						Object[9].Type = TypeName[PauseMenu]
 						PauseMenu.DrawOrder = 7
 						PauseMenu.Priority = PRIORITY_ALWAYS
@@ -450,9 +464,9 @@ function Player_ProcessUpdate
 					if Engine.Message == MESSAGE_LOSTFOCUS
 						Stage.State = STAGE_PAUSED
 						PauseMusic()
-						PlaySfx(27, 0)	//Select SFX
-						StopSfx(24)
-						StopSfx(25)
+						PlaySfx(SFX_G_SELECT, 0) 
+						StopSFX(SFX_G_FLYING)
+						StopSFX(SFX_G_TIRED)
 						Object[9].Type = TypeName[PauseMenu]
 						PauseMenu.DrawOrder = 7
 						PauseMenu.Priority  = PRIORITY_ALWAYS
@@ -570,8 +584,8 @@ function Player_ProcessUpdate
 	// Resets FlightVelocity
 	if Player.State != Player_State_Fly
 		if Player.FlightVelocity != 0
-			StopSfx(24)
-			StopSfx(25)
+			StopSFX(SFX_G_FLYING)
+			StopSFX(SFX_G_TIRED)
 			Player.FlightVelocity = 0
 		end if
 	end if
@@ -630,7 +644,7 @@ function Player_State_Ground
 
 	CallFunction(Player_HandleGroundMovement)
 
-	if Player.Gravity == true
+	if Player.Gravity == GRAVITY_AIR
 		
 #platform: Use_Origins
 		Player.State = Player_State_Air_NoDropDash
@@ -670,7 +684,7 @@ function Player_State_Ground
 								Player.Timer = 0
 								
 								// This SFX is muted in Origins
-								PlaySfx(26, 0)
+								PlaySfx(SFX_G_OUTTAHERE, 0) 
 								
 								Player.State	 = Player_State_OuttaHere
 								Player.Animation = ANI_BORED
@@ -682,7 +696,7 @@ function Player_State_Ground
 						if Player.Timer == 10620	// I'm Outta Here!
 							Player.Timer = 0
 
-							PlaySfx(26, 0)
+							PlaySfx(SFX_G_OUTTAHERE, 0) 
 
 							Player.State	 = Player_State_OuttaHere
 							Player.Animation = ANI_BORED
@@ -790,7 +804,7 @@ function Player_State_Ground
 		// Skidding
 		if Player.Skidding > 0
 			if TempValue7 == true
-				PlaySfx(3, 0)
+				PlaySfx(SFX_G_SKIDDING, 0) 
 			end if
 			Player.Animation		= ANI_SKIDDING
 			Player.AnimationSpeed	= 0
@@ -873,7 +887,7 @@ end function
 
 function Player_State_Roll
 	CallFunction(Player_HandleRollDeceleration)
-	if Player.Gravity == true
+	if Player.Gravity == GRAVITY_AIR
 		
 #platform: Use_Origins
 		Player.State = Player_State_Air_NoDropDash
@@ -1458,7 +1472,7 @@ function Player_Action_Jump
 			Player.State = Player_State_Air
 #endplatform
 
-		PlaySfx(0, 0)
+		PlaySfx(SFX_G_JUMP, 0) 
 	end if
 
 #platform: Use_Origins
@@ -1476,7 +1490,7 @@ function Player_Action_Spindash_S2
 	Player.Animation	= ANI_SPINDASH
 	Player.AbilityTimer = 0
 
-	PlaySfx(6, 0)
+	PlaySfx(SFX_G_CHARGE, 0) 
 	// Dust Puff Code
 	CreateTempObject(TypeName[DustPuff], Object.EntityNo, Player.XPos, Player.YPos)
 	Object[TempObjectPos].iYPos 	= Player.CollisionBottom
@@ -1497,7 +1511,7 @@ function Player_Action_Spindash_CD
 	Player.YPos		   += 0x50000
 	Player.AbilityTimer	= 0
 
-	PlaySfx(6, 0)
+	PlaySfx(SFX_G_CHARGE, 0) 
 				
 #platform: Use_Haptics
 	HapticEffect(112, 0, 0, 0)
@@ -1508,7 +1522,7 @@ end function
 function Player_Action_Peelout_S2
 	Player.State		= Player_State_Peelout_S2
 	Player.AbilityTimer = 0
-	PlaySfx(6, 0)
+	PlaySfx(SFX_G_CHARGE, 0) 
 				
 #platform: Use_Haptics
 	HapticEffect(115, 0, 0, 0)
@@ -1519,7 +1533,7 @@ end function
 function Player_Action_Peelout_CD
 	Player.State		= Player_State_Peelout_CD
 	Player.AbilityTimer = 0
-	PlaySfx(6, 0)
+	PlaySfx(SFX_G_CHARGE, 0) 
 				
 #platform: Use_Haptics
 	HapticEffect(115, 0, 0, 0)
@@ -1545,7 +1559,7 @@ function Player_Action_DblJumpTails
 
 			// check that you're not in water
 			if Player.GravityStrength == 0x3800
-				PlaySfx(24, 1)
+				PlaySfx(SFX_G_FLYING, 1)
 				Player.Animation = ANI_FLYING
 			else
 				Player.Animation = ANI_SWIMMING
@@ -1623,7 +1637,7 @@ end function
 // S2 Spin Dash code
 function Player_State_Spindash_S2
 	// Keep the camera lock, cancel the spin dash
-	if Player.Gravity == true
+	if Player.Gravity == GRAVITY_AIR
 
 #platform: Use_Origins
 		Player.State = Player_State_Air_NoDropDash
@@ -1643,7 +1657,7 @@ function Player_State_Spindash_S2
 		end if
 		Player.Frame = 0
 
-		PlaySfx(6, 0)
+		PlaySfx(SFX_G_CHARGE, 0) 
 	else
 		if Player.AbilityTimer > 0
 			Player.AbilityTimer--
@@ -1706,7 +1720,7 @@ function Player_State_Spindash_S2
 			FlipSign(Player.Speed)
 		end if
 
-		PlaySfx(7, 0)
+		PlaySfx(SFX_G_RELEASE, 0) 
 
 		CallFunction(Player_HandleOnGround)
 				
@@ -1725,7 +1739,7 @@ function Player_State_Spindash_CD
 		Screen.CameraStyle = CAMERA_OFFSET_LEFT
 	end if
 	// Keep the camera lock, cancel the spin dash
-	if Player.Gravity == true
+	if Player.Gravity == GRAVITY_AIR
 
 #platform: Use_Origins
 		Player.State = Player_State_Air_NoDropDash
@@ -1767,7 +1781,7 @@ function Player_State_Spindash_CD
 				FlipSign(Player.Speed)
 			end if
 
-			PlaySfx(7, 0)
+			PlaySfx(SFX_G_RELEASE, 0) 
 		end if
 		CallFunction(Player_HandleOnGround)
 				
@@ -1781,7 +1795,7 @@ end function
 
 function Player_State_Peelout_S2
 	// Cancels the Peel Out, keeps the camera
-	if Player.Gravity == true
+	if Player.Gravity == GRAVITY_AIR
 
 #platform: Use_Origins
 		Player.State = Player_State_Air_NoDropDash
@@ -1836,7 +1850,7 @@ function Player_State_Peelout_S2
 			if Player.Direction == FACING_LEFT
 				FlipSign(Player.Speed)
 			end if
-			PlaySfx(7, 0)
+			PlaySfx(SFX_G_RELEASE, 0) 
 		end if
 		CallFunction(Player_HandleOnGround)
 				
@@ -1857,7 +1871,7 @@ function Player_State_Peelout_CD
 		Screen.CameraStyle = CAMERA_OFFSET_LEFT
 	end if
 	// Cancels the Peel Out, keeps the camera
-	if Player.Gravity == true
+	if Player.Gravity == GRAVITY_AIR
 
 #platform: Use_Origins
 		Player.State = Player_State_Air_NoDropDash
@@ -1914,7 +1928,7 @@ function Player_State_Peelout_CD
 				FlipSign(Player.Speed)
 			end if
 
-			PlaySfx(7, 0)
+			PlaySfx(SFX_G_RELEASE, 0) 
 		end if
 		CallFunction(Player_HandleOnGround)
 				
@@ -1978,8 +1992,8 @@ function Player_State_Fly
 			if Player.Timer == 480
 				if Player.GravityStrength == 0x3800
 					Player.Animation = ANI_FLYINGTIRED
-					StopSfx(24)
-					PlaySfx(25, 1)
+					StopSfx(SFX_G_FLYING)
+					PlaySfx(SFX_G_TIRED, 1)
 				else
 					Player.Animation = ANI_SWIMMINGTIRED
 				end if
@@ -2032,21 +2046,21 @@ function Player_State_GotHit
 	if Object[ArrayPos0].PropertyValue > 0
 		TempValue0 = DAMAGE_SHIELDED
 		ResetObjectEntity(ArrayPos0, TypeName[Blank Object], 0, 0, 0)
-		PlaySfx(5, 0)
+		PlaySfx(SFX_G_HURT, 0) 
 	else
 		if Player.Rings == 0
-			PlaySfx(5, 0)
+			PlaySfx(SFX_G_HURT, 0) 
 			TempValue0 = DAMAGE_DEATH
 		else
 #platform: Use_Origins
 			if TempValue1 == false
-				PlaySfx(4, 0)
+				PlaySfx(SFX_G_LOSERINGS, 0) 
 				TempValue0 = DAMAGE_HURT
 			end if
 #endplatform
 
 #platform: Use_Standalone
-			PlaySfx(4, 0)
+			PlaySfx(SFX_G_LOSERINGS, 0) 
 			TempValue0 = DAMAGE_HURT
 #endplatform
 		end if
@@ -2525,7 +2539,7 @@ function Player_State_CorkscrewRun
 
 	if Player.Skidding > 0
 		if Player.Skidding == 16
-			PlaySfx(8, 0) // Would be Skidding SFX if using Nexus SFX list
+			PlaySfx(SFX_G_DESTROY, 0)  // Would be Skidding SFX if using Nexus SFX list
 		end if
 		Player.Animation = ANI_SKIDDING
 		Player.Skidding--
@@ -2934,7 +2948,7 @@ function Player_HandleDropDash
 	if Player.DropDashCharge >= 0
 		if Player.DropDashCharge == 0
 			if Player.JumpPress == true
-				if Stage.PlayerListPos == 0	// PlayerName[SONIC]
+				if Stage.PlayerListPos == PLAYER_SONIC
 					Player.DropDashCharge =  1
 				else
 					Player.DropDashCharge = -1
@@ -2946,7 +2960,7 @@ function Player_HandleDropDash
 			else
 				Player.DropDashCharge++
 				if Player.DropDashCharge == 20
-					PlaySfx(28, 0)
+					PlaySfx(SFX_G_DROPDASH, 0)
 				end if
 				
 				if Player.DropDashCharge >= 20
@@ -2972,7 +2986,7 @@ sub ObjectMain
 	if TempValue0 == true
 		if KeyPress[1].ButtonB == true	// Turn Debug Mode
 			Object.Type = TypeName[DebugMode]
-			if Stage.PlayerListPos == 1	// Tails
+			if Stage.PlayerListPos == PLAYER_TAILS
 				Object[+1].Type = TypeName[Blank Object]
 			end if
 			Player.YVelocity	= 0

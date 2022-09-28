@@ -9,6 +9,7 @@
 #alias Object.Value2		:	Object.CurrentFrame
 #alias Object.Value3		:	Object.ShootingCooldown
 #alias Object.Value4		:	Object.FrameIncrease
+
 #alias Object.PropertyValue	:	Object.Quality
 
 // PohBee Bullet Aliases
@@ -31,10 +32,13 @@
 #alias 0	:	PRIORITY_BOUNDS
 #alias 1	:	PRIORITY_ACTIVE
 
-// Badnik Quality
-#alias 0	:	PROPVAL_QUALITY_GOOD
-#alias 1	:	PROPVAL_QUALITY_BAD
-#alias 2	:	PROPVAL_STATIONARY	// This PohBee is also good quality
+// Stage SFX
+#alias 7	:	SFX_S_SHOT
+
+// Badnik Quality / Property Values
+#alias 0	:	GOOD_QUALITY
+#alias 1	:	BAD_QUALITY
+#alias 2	:	STATIONARY	// This PohBee is also good quality
 
 
 sub ObjectMain
@@ -48,7 +52,7 @@ sub ObjectMain
 		Object.FrameIncrease = 0
 	end if
 	
-	if Object.Quality == PROPVAL_QUALITY_GOOD
+	if Object.Quality == GOOD_QUALITY
 		switch Object.State
 		case POHBEE2_MOVING_LEFT
 			Object.Priority = PRIORITY_ACTIVE
@@ -121,7 +125,7 @@ sub ObjectMain
 					PohBeeBullet[TempObjectPos].YPos += 0x1B0000
 					PohBeeBullet[TempObjectPos].XVelocity = -0x40000
 					PohBeeBullet[TempObjectPos].YVelocity =  0x40000
-					PlayStageSfx(7,0)
+					PlayStageSfx(SFX_S_SHOT,0)
 				end if
 			else
 				Object.State = POHBEE2_MOVING_LEFT
@@ -144,7 +148,7 @@ sub ObjectMain
 					PohBeeBullet[TempObjectPos].YPos += 0x1B0000
 					PohBeeBullet[TempObjectPos].XVelocity = 0x40000
 					PohBeeBullet[TempObjectPos].YVelocity = 0x40000
-					PlayStageSfx(7,0)
+					PlayStageSfx(SFX_S_SHOT,0)
 				end if
 			else
 				Object.State = POHBEE2_MOVING_RIGHT
@@ -224,7 +228,7 @@ end sub
 
 
 sub ObjectPlayerInteraction
-	if Object.Quality == PROPVAL_QUALITY_GOOD
+	if Object.Quality == GOOD_QUALITY
 		if Object.State < POHBEE2_SHOOTING_LEFT
 			if Object.ShootingCooldown == 0
 				PlayerObjectCollision(C_TOUCH, -96, -64, 96, 64)
@@ -252,7 +256,7 @@ end sub
 
 sub ObjectDraw
 	if Object.State < POHBEE2_RESET
-		if Object.Quality == PROPVAL_QUALITY_GOOD
+		if Object.Quality == GOOD_QUALITY
 			Object.CurrentFrame++
 			Object.CurrentFrame &= 3
 

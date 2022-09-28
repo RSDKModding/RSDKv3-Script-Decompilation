@@ -20,10 +20,8 @@
 #alias 4	:	SASURI2_SHOOT
 #alias 5	:	SASURI2_RETRACTCANNON
 
-// Badnik Conditions (Property Values)
-#alias 0	:	PROPVAL_QUALITY_GOOD
-#alias 1	:	PROPVAL_QUALITY_BAD
-
+// Stage SFX
+#alias 2	:	SFX_S_SHOT
 
 
 sub ObjectMain
@@ -51,7 +49,7 @@ sub ObjectMain
 		// Move the Sasuri left by one pixel
 		Object.XPos -= 0x10000
 
-		// Increment its movement timer as well, and see if it's time to turn around now	
+		// Increment its movement timer, and see if it's time to turn around now	
 		Object.MoveTimer--
 		if Object.MoveTimer <= -80
 			Object.State = SASURI2_CRAWLRIGHT
@@ -96,7 +94,7 @@ sub ObjectMain
 	case SASURI2_SHOOT
 		if Object.CannonTimer < 40
 			if Object.CannonTimer == 10
-				PlayStageSfx(2, 0)
+				PlayStageSfx(SFX_S_SHOT, 0)
 				
 				// Create the Bullet that the Sasuri shot
 				CreateTempObject(TypeName[Sasuri Bullet], 0, Object.XPos, Object.YPos)
@@ -123,7 +121,7 @@ sub ObjectMain
 			Object.State = SASURI2_RETRACTCANNON
 			Object.CannonTimer = 0
 			
-			// Move the Sasuri back to its original Draw Order as well, as at this point,
+			// Move the Sasuri back to its original Draw Order, as at this point
 			// the Bullet's definitely beyond the Sasuri now
 			Object.DrawOrder = 3
 		end if
