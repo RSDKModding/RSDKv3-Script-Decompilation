@@ -11,7 +11,7 @@
 #alias Object[24].PropertyValue	:	HUD.TimePeriod
 
 // Time Periods
-#alias 1	:	PAST
+#alias 1	:	TIME_PAST
 
 // Gravity
 #alias 1	:	GRAVITY_AIR
@@ -39,7 +39,7 @@ sub ObjectMain
 		end if
 	end if
 
-	if HUD.TimePeriod != PAST
+	if HUD.TimePeriod != TIME_PAST
 		RotatingDrum_Timer++
 		RotatingDrum_Timer %= 20
 	end if
@@ -105,7 +105,7 @@ sub ObjectPlayerInteraction
 	case 1
 		if Player.YVelocity >= 0
 			Player.Gravity = GRAVITY_AIR
-			PlayStageSfx(SFX_S_BUMPER2, 0)
+			PlayStageSfx(SFX_S_BUMPER2, false)
 				
 				
 #platform: Use_Haptics
@@ -132,14 +132,14 @@ sub ObjectPlayerInteraction
 		else
 			if Player.Gravity == GRAVITY_AIR
 				Player.YVelocity = 0x40000
-				PlayStageSfx(SFX_S_BUMPER2, 0)
+				PlayStageSfx(SFX_S_BUMPER2, false)
 			end if
 		end if
 		break
 
 	case 2
 		if Player.Gravity == GRAVITY_AIR
-			PlayStageSfx(SFX_S_MINIBUMPER, 0)
+			PlayStageSfx(SFX_S_MINIBUMPER, false)
 				
 #platform: Use_Haptics
 			HapticEffect(11, 0, 0, 0)
@@ -155,7 +155,7 @@ sub ObjectPlayerInteraction
 
 	case 3
 		if Player.Gravity == GRAVITY_AIR
-			PlayStageSfx(SFX_S_BUMPER2, 0)
+			PlayStageSfx(SFX_S_BUMPER2, false)
 				
 #platform: Use_Haptics
 			HapticEffect(11, 0, 0, 0)
@@ -261,7 +261,7 @@ sub ObjectPlayerInteraction
 			Player.XVelocity = 0x50000
 		end if
 		Player.Speed = Player.XVelocity
-		PlayStageSfx(SFX_S_BUMPER2, 0)
+		PlayStageSfx(SFX_S_BUMPER2, false)
 		break
 
 	case 2
@@ -271,7 +271,7 @@ sub ObjectPlayerInteraction
 			Player.XVelocity = 0x40000
 		end if
 		Player.Speed = Player.XVelocity
-		PlayStageSfx(SFX_S_MINIBUMPER, 0)
+		PlayStageSfx(SFX_S_MINIBUMPER, false)
 				
 #platform: Use_Haptics
 		HapticEffect(11, 0, 0, 0)
@@ -302,7 +302,7 @@ sub ObjectStartup
 
 	Stage.WaterLevel = 1472
 
-	if HUD.TimePeriod == PAST
+	if HUD.TimePeriod == TIME_PAST
 		RotatingDrum_Timer = 1
 	else
 		RotatingDrum_Timer = 0

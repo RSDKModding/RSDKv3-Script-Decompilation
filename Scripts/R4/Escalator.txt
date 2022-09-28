@@ -21,10 +21,10 @@
 #alias 1	:	PLAYER_COL_FLOOR
 
 // Time Periods
-#alias 0	:	PRESENT
-#alias 1	:	PAST
-#alias 2	:	GOOD_FUTURE
-#alias 3	:	BAD_FUTURE
+#alias 0	:	TIME_PRESENT
+#alias 1	:	TIME_PAST
+#alias 2	:	TIME_GOOD_FUTURE
+#alias 3	:	TIME_BAD_FUTURE
 
 // Priority
 #alias 0	:	PRIORITY_BOUNDS
@@ -131,18 +131,18 @@ end sub
 
 sub ObjectStartup
 	switch Hud.TimePeriod
-	case PRESENT
-	case PAST
+	case TIME_PRESENT
+	case TIME_PAST
 		LoadSpriteSheet("R4/Objects.gif")
 		SpriteFrame(-16, -16, 32, 32, 130, 1)	// #0 - Escalator
 		break
 
-	case GOOD_FUTURE
+	case TIME_GOOD_FUTURE
 		LoadSpriteSheet("R4/Objects3.gif")
 		SpriteFrame(-16, -16, 32, 32, 1, 150)	// #0 - Escalator
 		break
 
-	case BAD_FUTURE
+	case TIME_BAD_FUTURE
 		LoadSpriteSheet("R4/Objects3.gif")
 		SpriteFrame(-16, -16, 32, 32, 1, 183)	// #0 - Escalator
 		break
@@ -152,7 +152,7 @@ sub ObjectStartup
 	ArrayPos0 = 32
 	while ArrayPos0 < 1056
 		if Object[ArrayPos0].Type == TypeName[Escalator]
-			if Hud.TimePeriod < GOOD_FUTURE	// aka present or past
+			if Hud.TimePeriod < TIME_GOOD_FUTURE	// aka present or past
 				Object[ArrayPos0].Speed		= 0x10000
 				Object[ArrayPos0].TimerSet  = 160
 			else

@@ -46,10 +46,10 @@
 #alias 10	:	SFX_S_DROWNALERT
 
 // Time Periods
-#alias 0	:	PRESENT
-#alias 1	:	PAST
-#alias 2	:	GOOD_FUTURE
-#alias 3	:	BAD_FUTURE
+#alias 0	:	TIME_PRESENT
+#alias 1	:	TIME_PAST
+#alias 2	:	TIME_GOOD_FUTURE
+#alias 3	:	TIME_BAD_FUTURE
 
 // Function declarations
 #function Water_CreateAirBubble
@@ -158,7 +158,7 @@ sub ObjectMain
 
 				CreateTempObject(TypeName[WaterSplash], 0, Player.XPos, Stage.WaterLevel)
 				Object[TempObjectPos].DrawOrder = 4
-				PlayStageSfx(SFX_S_WATERSPLASH, 0)
+				PlayStageSfx(SFX_S_WATERSPLASH, false)
 				Object.ConstBubbleTimer = 52
 				Player.AirTimer = 0
 			end if
@@ -173,7 +173,7 @@ sub ObjectMain
 			CallFunction(Water_CreateAirBubble)
 			Player.AirTimer++
 			if Player.AirTimer == 360
-				PlayStageSfx(SFX_S_AIRALERT, 0)
+				PlayStageSfx(SFX_S_AIRALERT, false)
 				Object.State++
 			end if
 			break
@@ -182,7 +182,7 @@ sub ObjectMain
 			CallFunction(Water_CreateAirBubble)
 			Player.AirTimer++
 			if Player.AirTimer == 660
-				PlayStageSfx(SFX_S_AIRALERT, 0)
+				PlayStageSfx(SFX_S_AIRALERT, false)
 				Object.State++
 			end if
 			break
@@ -191,7 +191,7 @@ sub ObjectMain
 			CallFunction(Water_CreateAirBubble)
 			Player.AirTimer++
 			if Player.AirTimer == 960
-				PlayStageSfx(SFX_S_AIRALERT, 0)
+				PlayStageSfx(SFX_S_AIRALERT, false)
 				Object.State++
 			end if
 			break
@@ -230,7 +230,7 @@ sub ObjectMain
 			TempValue0  = Player.AirTimer
 			TempValue0 &= 63
 			if TempValue0 == 0
-				PlayStageSfx(SFX_S_DROWNALERT, 0)
+				PlayStageSfx(SFX_S_DROWNALERT, false)
 			end if
 
 			Player.AirTimer++
@@ -246,7 +246,7 @@ sub ObjectMain
 			TempValue0  = Player.AirTimer
 			TempValue0 &= 63
 			if TempValue0 == 0
-				PlayStageSfx(SFX_S_DROWNALERT, 0)
+				PlayStageSfx(SFX_S_DROWNALERT, false)
 			end if
 
 			Player.AirTimer++
@@ -262,7 +262,7 @@ sub ObjectMain
 			TempValue0  = Player.AirTimer
 			TempValue0 &= 63
 			if TempValue0 == 0
-				PlayStageSfx(SFX_S_DROWNALERT, 0)
+				PlayStageSfx(SFX_S_DROWNALERT, false)
 			end if
 
 			Player.AirTimer++
@@ -292,7 +292,7 @@ sub ObjectMain
 					Player.DrawOrder = 5
 					Object.ConstBubbleTimer = 2
 					Object.Unused = 60	// ?
-					PlayStageSfx(ANI_DROWNING, 0)
+					PlayStageSfx(ANI_DROWNING, false)
 
 					Object.State++
 				end if
@@ -350,9 +350,9 @@ sub ObjectMain
 
 				if Player.State == Player_State_Fly
 					if Player.Timer < 480
-						PlaySfx(SFX_G_FLYING, 1)
+						PlaySfx(SFX_G_FLYING, true)
 					else
-						PlaySfx(SFX_G_TIRED, 1)
+						PlaySfx(SFX_G_TIRED, true)
 					end if
 				end if
 
@@ -370,7 +370,7 @@ sub ObjectMain
 
 				CreateTempObject(TypeName[WaterSplash], 0, Player.XPos, Stage.WaterLevel)
 				Object[TempObjectPos].DrawOrder = 4
-				PlayStageSfx(SFX_S_WATERSPLASH, 0)
+				PlayStageSfx(SFX_S_WATERSPLASH, false)
 				Player.AirTimer = 0
 			end if
 		end if
@@ -417,13 +417,13 @@ sub ObjectStartup
 	switch Stage.ActNo
 	case 1
 		switch Hud.TimePeriod
-		case PRESENT
+		case TIME_PRESENT
 			if Player.XPos > 0x5E00000
 				TempValue7 = 0x2640000
 			end if
 			break
-		case GOOD_FUTURE
-		case BAD_FUTURE
+		case TIME_GOOD_FUTURE
+		case TIME_BAD_FUTURE
 			if Player.XPos > 0x9100000
 				TempValue7 = 0x1100000
 			end if
@@ -434,7 +434,7 @@ sub ObjectStartup
 
 	case 2
 		switch Hud.TimePeriod
-		case PRESENT
+		case TIME_PRESENT
 			if Player.XPos > 0x4B00000
 				TempValue7 = 0x5340000
 			end if
@@ -446,8 +446,8 @@ sub ObjectStartup
 			end if
 			break
 
-		case GOOD_FUTURE
-		case BAD_FUTURE
+		case TIME_GOOD_FUTURE
+		case TIME_BAD_FUTURE
 			if Player.XPos > 0x4B00000
 				TempValue7 = 0x5100000
 			end if

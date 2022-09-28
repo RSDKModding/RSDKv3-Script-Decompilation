@@ -27,19 +27,19 @@
 #alias 11	:	SFX_G_SPRING
 
 // Property Values
-#alias 0	:	FACING_UP
-#alias 1	:	FACING_RIGHT
-#alias 2	:	FACING_LEFT
-#alias 3	:	FACING_DOWN
-#alias 4	:	FACING_DIAGONAL_UR
-#alias 5	:	FACING_DIAGONAL_UL
-#alias 6	:	FACING_DIAGONAL_DR	// Not actually facing down
-#alias 7	:	FACING_DIAGONAL_DL	// Not actually facing down
+#alias 0	:	FACE_FACING_UP
+#alias 1	:	FACE_FACING_RIGHT
+#alias 2	:	FACE_FACING_LEFT
+#alias 3	:	FACE_FACING_DOWN
+#alias 4	:	FACE_FACING_DIAGONAL_UR
+#alias 5	:	FACE_FACING_DIAGONAL_UL
+#alias 6	:	FACE_FACING_DIAGONAL_DR	// Not actually facing down
+#alias 7	:	FACE_FACING_DIAGONAL_DL	// Not actually facing down
 
 
 sub ObjectPlayerInteraction
 	switch Object.PropertyValue
-	case FACING_UP
+	case FACE_FACING_UP
 		TempValue0 = false
 
 		if Player.Gravity == GRAVITY_AIR
@@ -82,7 +82,7 @@ sub ObjectPlayerInteraction
 				Player.Animation = ANI_BOUNCING
 				Player.Timer	 = 0
 
-				PlaySfx(SFX_G_SPRING, 0)
+				PlaySfx(SFX_G_SPRING, false)
 				
 #platform: Use_Haptics
 				HapticEffect(10, 0, 0, 0)
@@ -94,7 +94,7 @@ sub ObjectPlayerInteraction
 				PlayerObjectCollision(C_PLATFORM, -16, -8, 16, 8)
 
 				PlayerObjectCollision(C_TOUCH, -16, -10, 16, -6)
-				if CheckResult == PLAYER_COL_FLOOR
+				if CheckResult == true
 					Player.AnimationReserve = ANI_WALKING
 
 					if Player.Animation == ANI_RUNNING
@@ -120,7 +120,7 @@ sub ObjectPlayerInteraction
 					Player.Animation = ANI_BOUNCING
 					Player.Timer	 = 0
 
-					PlaySfx(SFX_G_SPRING, 0)
+					PlaySfx(SFX_G_SPRING, false)
 				
 #platform: Use_Haptics
 					HapticEffect(10, 0, 0, 0)
@@ -131,7 +131,7 @@ sub ObjectPlayerInteraction
 		end if
 		break
 
-	case FACING_RIGHT
+	case FACE_FACING_RIGHT
 		PlayerObjectCollision(C_BOX, -8, -16, 8, 16)
 		if Player.Gravity == GRAVITY_GROUND
 
@@ -146,7 +146,7 @@ sub ObjectPlayerInteraction
 				Player.Direction	 = FACING_RIGHT
 				Player.ControlLock	 = 16
 
-				PlaySfx(SFX_G_SPRING, 0)
+				PlaySfx(SFX_G_SPRING, false)
 				
 #platform: Use_Haptics
 				HapticEffect(10, 0, 0, 0)
@@ -156,7 +156,7 @@ sub ObjectPlayerInteraction
 		end if
 		break
 
-	case FACING_LEFT
+	case FACE_FACING_LEFT
 		PlayerObjectCollision(C_BOX, -8, -16, 8, 16)
 		if Player.Gravity == GRAVITY_GROUND
 
@@ -169,7 +169,7 @@ sub ObjectPlayerInteraction
 				Player.Direction	 = FACING_LEFT
 				Player.ControlLock	 = 16
 
-				PlaySfx(SFX_G_SPRING, 0)
+				PlaySfx(SFX_G_SPRING, false)
 				
 #platform: Use_Haptics
 				HapticEffect(10, 0, 0, 0)
@@ -179,7 +179,7 @@ sub ObjectPlayerInteraction
 		end if
 		break
 
-	case FACING_DOWN
+	case FACE_FACING_DOWN
 		PlayerObjectCollision(C_BOX, -16, -8, 16, 8)
 
 		PlayerObjectCollision(C_TOUCH, -15, 6, 15, 10)
@@ -202,7 +202,7 @@ sub ObjectPlayerInteraction
 			Player.YVelocity = 0x100000
 			Player.Timer	 = 0
 
-			PlaySfx(SFX_G_SPRING, 0)
+			PlaySfx(SFX_G_SPRING, false)
 				
 #platform: Use_Haptics
 			HapticEffect(10, 0, 0, 0)
@@ -210,7 +210,7 @@ sub ObjectPlayerInteraction
 
 		end if
 		break
-	case FACING_DIAGONAL_UR
+	case FACE_FACING_DIAGONAL_UR
 		PlayerObjectCollision(C_TOUCH, -12, -16, 12, 12)
 		if Player.Gravity == GRAVITY_GROUND
 			if CheckResult == true
@@ -231,7 +231,7 @@ sub ObjectPlayerInteraction
 				Player.Direction	 = FACING_RIGHT
 				Player.Timer		 = 0
 
-				PlaySfx(SFX_G_SPRING, 0)
+				PlaySfx(SFX_G_SPRING, false)
 				
 #platform: Use_Haptics
 				HapticEffect(10, 0, 0, 0)
@@ -259,7 +259,7 @@ sub ObjectPlayerInteraction
 				Player.Direction	= FACING_RIGHT
 				Player.Timer		= 0
 
-				PlaySfx(SFX_G_SPRING, 0)
+				PlaySfx(SFX_G_SPRING, false)
 				
 #platform: Use_Haptics
 				HapticEffect(10, 0, 0, 0)
@@ -269,7 +269,7 @@ sub ObjectPlayerInteraction
 		end if
 		break
 
-	case FACING_DIAGONAL_UL
+	case FACE_FACING_DIAGONAL_UL
 		PlayerObjectCollision(C_TOUCH, -12, -16, 12, 12)
 		if Player.YVelocity >= 0
 			if CheckResult == true
@@ -290,7 +290,7 @@ sub ObjectPlayerInteraction
 				Player.Direction	= FACING_LEFT
 				Player.Timer		= 0
 
-				PlaySfx(SFX_G_SPRING, 0)
+				PlaySfx(SFX_G_SPRING, false)
 				
 #platform: Use_Haptics
 				HapticEffect(10, 0, 0, 0)
@@ -317,7 +317,7 @@ sub ObjectPlayerInteraction
 				Player.Direction	= FACING_LEFT
 				Player.Timer		= 0
 
-				PlaySfx(SFX_G_SPRING, 0)
+				PlaySfx(SFX_G_SPRING, false)
 				
 #platform: Use_Haptics
 				HapticEffect(10, 0, 0, 0)
@@ -327,7 +327,7 @@ sub ObjectPlayerInteraction
 		end if
 		break
 
-	case FACING_DIAGONAL_DR
+	case FACE_FACING_DIAGONAL_DR
 		PlayerObjectCollision(C_TOUCH, -12, -12, 12, 12)
 		if CheckResult == true
 			Object.ActiveSpring = true
@@ -344,7 +344,7 @@ sub ObjectPlayerInteraction
 			Player.YVelocity = 0x74000
 			Player.Timer = 0
 
-			PlaySfx(SFX_G_SPRING, 0)
+			PlaySfx(SFX_G_SPRING, false)
 				
 #platform: Use_Haptics
 			HapticEffect(10, 0, 0, 0)
@@ -353,7 +353,7 @@ sub ObjectPlayerInteraction
 		end if
 		break
 		
-	case FACING_DIAGONAL_DL
+	case FACE_FACING_DIAGONAL_DL
 		PlayerObjectCollision(C_TOUCH, -12, -12, 12, 12)
 		if CheckResult == true
 			Object.ActiveSpring = true
@@ -370,7 +370,7 @@ sub ObjectPlayerInteraction
 			Player.YVelocity = 0x74000
 			Player.Timer	 = 0
 
-			PlaySfx(SFX_G_SPRING, 0)
+			PlaySfx(SFX_G_SPRING, false)
 				
 #platform: Use_Haptics
 			HapticEffect(10, 0, 0, 0)
@@ -457,7 +457,7 @@ sub ObjectStartup
 	ArrayPos0 = 32
 	while ArrayPos0 < 1056
 		if Object[ArrayPos0].Type == TypeName[YellowSpring]
-			if Object[ArrayPos0].PropertyValue > FACING_DIAGONAL_UL
+			if Object[ArrayPos0].PropertyValue > FACE_FACING_DIAGONAL_UL
 				Object[ArrayPos0].Direction = FACING_UPEND_RIGHT
 			end if
 		end if
@@ -495,9 +495,9 @@ sub RSDKEdit
 end sub
 
 sub RSDKDraw
-	Object.Direction = FACING_RIGHT
-	if Object.PropertyValue > FACING_DIAGONAL_UL
-		Object.Direction = FACING_UPWARDS
+	Object.Direction = FACE_FACING_RIGHT
+	if Object.PropertyValue > FACE_FACING_DIAGONAL_UL
+		Object.Direction = FACE_FACING_UPWARDS
 	end if
 
 	DrawSpriteFX(Object.PropertyValue, FX_FLIP, Object.XPos, Object.YPos)

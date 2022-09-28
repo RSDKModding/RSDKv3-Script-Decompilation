@@ -229,7 +229,7 @@ function Player_BadnikBreak
 		CreateTempObject(TypeName[ObjectScore], ObjectScore.Timer, Object.XPos, Object.YPos)
 		Object[TempObjectPos].DrawOrder = 4
 
-		PlaySfx(SFX_G_DESTROY, 0) 
+		PlaySfx(SFX_G_DESTROY, false) 
 
 		if Player.YVelocity > 0
 			FlipSign(Player.YVelocity)
@@ -317,7 +317,7 @@ end function
 
 // YOU DIED
 function Player_Kill
-	PlaySfx(SFX_G_HURT, 0) 
+	PlaySfx(SFX_G_HURT, false) 
 
 	Player.DrawOrder = 5
 
@@ -347,7 +347,7 @@ function Player_ProcessUpdate
 					if Options.DevMenuFlag == true
 						Stage.State = STAGE_PAUSED
 						PauseMusic()
-						PlaySfx(SFX_G_SELECT, 0) 
+						PlaySfx(SFX_G_SELECT, false) 
 						StopSFX(SFX_G_FLYING)
 						StopSFX(SFX_G_TIRED)
 						Object[9].Type = TypeName[PauseMenu]
@@ -415,7 +415,7 @@ function Player_ProcessUpdate
 					if CheckResult > -1
 						Stage.State = STAGE_PAUSED
 						PauseMusic()
-						PlaySfx(SFX_G_SELECT, 0) 
+						PlaySfx(SFX_G_SELECT, false) 
 						StopSFX(SFX_G_FLYING)
 						StopSFX(SFX_G_TIRED)
 						Object[9].Type = TypeName[PauseMenu]
@@ -430,7 +430,7 @@ function Player_ProcessUpdate
 					if Engine.Message == MESSAGE_LOSTFOCUS
 						Stage.State = STAGE_PAUSED
 						PauseMusic()
-						PlaySfx(SFX_G_SELECT, 0) 
+						PlaySfx(SFX_G_SELECT, false) 
 						StopSFX(SFX_G_FLYING)
 						StopSFX(SFX_G_TIRED)
 						Object[9].Type = TypeName[PauseMenu]
@@ -450,7 +450,7 @@ function Player_ProcessUpdate
 						KeyPress[1].Start = false
 						Stage.State = STAGE_PAUSED
 						PauseMusic()
-						PlaySfx(SFX_G_SELECT, 0) 
+						PlaySfx(SFX_G_SELECT, false) 
 						StopSFX(SFX_G_FLYING)
 						StopSFX(SFX_G_TIRED)
 						Object[9].Type = TypeName[PauseMenu]
@@ -464,7 +464,7 @@ function Player_ProcessUpdate
 					if Engine.Message == MESSAGE_LOSTFOCUS
 						Stage.State = STAGE_PAUSED
 						PauseMusic()
-						PlaySfx(SFX_G_SELECT, 0) 
+						PlaySfx(SFX_G_SELECT, false) 
 						StopSFX(SFX_G_FLYING)
 						StopSFX(SFX_G_TIRED)
 						Object[9].Type = TypeName[PauseMenu]
@@ -684,7 +684,7 @@ function Player_State_Ground
 								Player.Timer = 0
 								
 								// This SFX is muted in Origins
-								PlaySfx(SFX_G_OUTTAHERE, 0) 
+								PlaySfx(SFX_G_OUTTAHERE, false) 
 								
 								Player.State	 = Player_State_OuttaHere
 								Player.Animation = ANI_BORED
@@ -696,7 +696,7 @@ function Player_State_Ground
 						if Player.Timer == 10620	// I'm Outta Here!
 							Player.Timer = 0
 
-							PlaySfx(SFX_G_OUTTAHERE, 0) 
+							PlaySfx(SFX_G_OUTTAHERE, false) 
 
 							Player.State	 = Player_State_OuttaHere
 							Player.Animation = ANI_BORED
@@ -804,7 +804,7 @@ function Player_State_Ground
 		// Skidding
 		if Player.Skidding > 0
 			if TempValue7 == true
-				PlaySfx(SFX_G_SKIDDING, 0) 
+				PlaySfx(SFX_G_SKIDDING, false) 
 			end if
 			Player.Animation		= ANI_SKIDDING
 			Player.AnimationSpeed	= 0
@@ -1472,7 +1472,7 @@ function Player_Action_Jump
 			Player.State = Player_State_Air
 #endplatform
 
-		PlaySfx(SFX_G_JUMP, 0) 
+		PlaySfx(SFX_G_JUMP, false) 
 	end if
 
 #platform: Use_Origins
@@ -1490,7 +1490,7 @@ function Player_Action_Spindash_S2
 	Player.Animation	= ANI_SPINDASH
 	Player.AbilityTimer = 0
 
-	PlaySfx(SFX_G_CHARGE, 0) 
+	PlaySfx(SFX_G_CHARGE, false) 
 	// Dust Puff Code
 	CreateTempObject(TypeName[DustPuff], Object.EntityNo, Player.XPos, Player.YPos)
 	Object[TempObjectPos].iYPos 	= Player.CollisionBottom
@@ -1511,7 +1511,7 @@ function Player_Action_Spindash_CD
 	Player.YPos		   += 0x50000
 	Player.AbilityTimer	= 0
 
-	PlaySfx(SFX_G_CHARGE, 0) 
+	PlaySfx(SFX_G_CHARGE, false) 
 				
 #platform: Use_Haptics
 	HapticEffect(112, 0, 0, 0)
@@ -1522,7 +1522,7 @@ end function
 function Player_Action_Peelout_S2
 	Player.State		= Player_State_Peelout_S2
 	Player.AbilityTimer = 0
-	PlaySfx(SFX_G_CHARGE, 0) 
+	PlaySfx(SFX_G_CHARGE, false) 
 				
 #platform: Use_Haptics
 	HapticEffect(115, 0, 0, 0)
@@ -1533,7 +1533,7 @@ end function
 function Player_Action_Peelout_CD
 	Player.State		= Player_State_Peelout_CD
 	Player.AbilityTimer = 0
-	PlaySfx(SFX_G_CHARGE, 0) 
+	PlaySfx(SFX_G_CHARGE, false) 
 				
 #platform: Use_Haptics
 	HapticEffect(115, 0, 0, 0)
@@ -1559,7 +1559,7 @@ function Player_Action_DblJumpTails
 
 			// check that you're not in water
 			if Player.GravityStrength == 0x3800
-				PlaySfx(SFX_G_FLYING, 1)
+				PlaySfx(SFX_G_FLYING, true)
 				Player.Animation = ANI_FLYING
 			else
 				Player.Animation = ANI_SWIMMING
@@ -1657,7 +1657,7 @@ function Player_State_Spindash_S2
 		end if
 		Player.Frame = 0
 
-		PlaySfx(SFX_G_CHARGE, 0) 
+		PlaySfx(SFX_G_CHARGE, false) 
 	else
 		if Player.AbilityTimer > 0
 			Player.AbilityTimer--
@@ -1720,7 +1720,7 @@ function Player_State_Spindash_S2
 			FlipSign(Player.Speed)
 		end if
 
-		PlaySfx(SFX_G_RELEASE, 0) 
+		PlaySfx(SFX_G_RELEASE, false) 
 
 		CallFunction(Player_HandleOnGround)
 				
@@ -1781,7 +1781,7 @@ function Player_State_Spindash_CD
 				FlipSign(Player.Speed)
 			end if
 
-			PlaySfx(SFX_G_RELEASE, 0) 
+			PlaySfx(SFX_G_RELEASE, false) 
 		end if
 		CallFunction(Player_HandleOnGround)
 				
@@ -1850,7 +1850,7 @@ function Player_State_Peelout_S2
 			if Player.Direction == FACING_LEFT
 				FlipSign(Player.Speed)
 			end if
-			PlaySfx(SFX_G_RELEASE, 0) 
+			PlaySfx(SFX_G_RELEASE, false) 
 		end if
 		CallFunction(Player_HandleOnGround)
 				
@@ -1928,7 +1928,7 @@ function Player_State_Peelout_CD
 				FlipSign(Player.Speed)
 			end if
 
-			PlaySfx(SFX_G_RELEASE, 0) 
+			PlaySfx(SFX_G_RELEASE, false) 
 		end if
 		CallFunction(Player_HandleOnGround)
 				
@@ -1993,7 +1993,7 @@ function Player_State_Fly
 				if Player.GravityStrength == 0x3800
 					Player.Animation = ANI_FLYINGTIRED
 					StopSfx(SFX_G_FLYING)
-					PlaySfx(SFX_G_TIRED, 1)
+					PlaySfx(SFX_G_TIRED, true)
 				else
 					Player.Animation = ANI_SWIMMINGTIRED
 				end if
@@ -2046,21 +2046,21 @@ function Player_State_GotHit
 	if Object[ArrayPos0].PropertyValue > 0
 		TempValue0 = DAMAGE_SHIELDED
 		ResetObjectEntity(ArrayPos0, TypeName[Blank Object], 0, 0, 0)
-		PlaySfx(SFX_G_HURT, 0) 
+		PlaySfx(SFX_G_HURT, false) 
 	else
 		if Player.Rings == 0
-			PlaySfx(SFX_G_HURT, 0) 
+			PlaySfx(SFX_G_HURT, false) 
 			TempValue0 = DAMAGE_DEATH
 		else
 #platform: Use_Origins
 			if TempValue1 == false
-				PlaySfx(SFX_G_LOSERINGS, 0) 
+				PlaySfx(SFX_G_LOSERINGS, false) 
 				TempValue0 = DAMAGE_HURT
 			end if
 #endplatform
 
 #platform: Use_Standalone
-			PlaySfx(SFX_G_LOSERINGS, 0) 
+			PlaySfx(SFX_G_LOSERINGS, false) 
 			TempValue0 = DAMAGE_HURT
 #endplatform
 		end if
@@ -2539,7 +2539,7 @@ function Player_State_CorkscrewRun
 
 	if Player.Skidding > 0
 		if Player.Skidding == 16
-			PlaySfx(SFX_G_DESTROY, 0)  // Would be Skidding SFX if using Nexus SFX list
+			PlaySfx(SFX_G_DESTROY, false)  // Would be Skidding SFX if using Nexus SFX list
 		end if
 		Player.Animation = ANI_SKIDDING
 		Player.Skidding--
@@ -2960,7 +2960,7 @@ function Player_HandleDropDash
 			else
 				Player.DropDashCharge++
 				if Player.DropDashCharge == 20
-					PlaySfx(SFX_G_DROPDASH, 0)
+					PlaySfx(SFX_G_DROPDASH, false)
 				end if
 				
 				if Player.DropDashCharge >= 20

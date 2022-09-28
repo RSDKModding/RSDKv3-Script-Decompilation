@@ -44,10 +44,10 @@
 
 
 // Time Period Aliases
-#alias 0	:	PRESENT
-#alias 1	:	PAST
-#alias 2	:	GOOD_FUTURE
-#alias 3	:	BAD_FUTURE
+#alias 0	:	TIME_PRESENT
+#alias 1	:	TIME_PAST
+#alias 2	:	TIME_GOOD_FUTURE
+#alias 3	:	TIME_BAD_FUTURE
 
 // Global SFX
 #alias 16	:	SFX_G_SCOREADD
@@ -161,18 +161,18 @@ sub ObjectMain
 		// Find the Present version of the current stage
 		Object.StagePosP = Stage.ListPos
 		switch HUD.TimePeriod
-		case PRESENT
+		case TIME_PRESENT
 			break
 			
-		case PAST
+		case TIME_PAST
 			Object.StagePosP--
 			break
 			
-		case GOOD_FUTURE
+		case TIME_GOOD_FUTURE
 			Object.StagePosP -= 2
 			break
 			
-		case BAD_FUTURE
+		case TIME_BAD_FUTURE
 			Object.StagePosP -= 3
 			break
 			
@@ -303,7 +303,7 @@ sub ObjectMain
 				
 				// See if the Paradise Found achievement should be unlocked
 				if Stage.PlayerListPos == PLAYER_SONIC
-					if HUD.TimePeriod == GOOD_FUTURE
+					if HUD.TimePeriod == TIME_GOOD_FUTURE
 						if Stage.DebugMode == false
 							SetAchievement(2, 100)
 						end if
@@ -322,7 +322,7 @@ sub ObjectMain
 				
 				// See if the Paradise Found achievement should be unlocked
 				if Stage.PlayerListPos == PLAYER_SONIC
-					if HUD.TimePeriod == GOOD_FUTURE
+					if HUD.TimePeriod == TIME_GOOD_FUTURE
 						if Stage.DebugMode == false
 							SetAchievement(2, 100)
 						end if
@@ -361,7 +361,7 @@ sub ObjectMain
 			Object.Timer++
 			
 			if Object.Timer == 2
-				PlaySfx(SFX_G_SCOREADD, 0)
+				PlaySfx(SFX_G_SCOREADD, false)
 				Object.Timer = 0
 			end if
 			
@@ -373,7 +373,7 @@ sub ObjectMain
 			Object.Timer = 0
 			
 			// Ka-ching!
-			PlaySfx(SFX_G_SCORETOTAL, 0)
+			PlaySfx(SFX_G_SCORETOTAL, false)
 			
 		end if
 		break
@@ -413,7 +413,7 @@ sub ObjectMain
 
 			// If the Player's a Blank Object, then that means they entered a Special Ring
 			if Player.Type == TypeName[Blank Object]
-				PlaySfx(SFX_G_SPECIALWARP, 0)
+				PlaySfx(SFX_G_SPECIALWARP, false)
 			end if
 		end if
 		break
@@ -465,19 +465,19 @@ sub ObjectMain
 				
 				// Get the Stage List Pos of the next stage's Present version
 				switch HUD.TimePeriod
-				case PRESENT
+				case TIME_PRESENT
 					Stage.ListPos += 4
 					break
 					
-				case PAST
+				case TIME_PAST
 					Stage.ListPos += 3
 					break
 					
-				case GOOD_FUTURE
+				case TIME_GOOD_FUTURE
 					Stage.ListPos += 2
 					break
 					
-				case BAD_FUTURE
+				case TIME_BAD_FUTURE
 					Stage.ListPos++
 					break
 					
@@ -598,19 +598,19 @@ sub ObjectMain
 				
 				// Get the Stage ID of the next stage's starting version
 				switch Hud.TimePeriod
-				case PRESENT
+				case TIME_PRESENT
 					Stage.ListPos += 4
 					break
 					
-				case PAST
+				case TIME_PAST
 					Stage.ListPos += 3
 					break
 					
-				case GOOD_FUTURE
+				case TIME_GOOD_FUTURE
 					Stage.ListPos += 2
 					break
 					
-				case BAD_FUTURE
+				case TIME_BAD_FUTURE
 					Stage.ListPos++
 					break
 					
