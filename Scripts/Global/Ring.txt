@@ -3,7 +3,7 @@
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
 // Aliases
-#alias Object.PropertyValue	:	Object.CollisionPlane
+#alias Object.PropertyValue	:	Object.DrawingPlane
 
 // Player Alias
 #alias Player.Value0		:	Player.Rings
@@ -23,13 +23,14 @@
 #alias 21	:	SFX_G_ACHIEVEMENT
 
 // Property Values
-#alias 0	:	PLANEA
+#alias 0	:	DRAWING_PLANE_A
+#alias 1	:	DRAWING_PLANE_B
 
 
 sub ObjectPlayerInteraction
 	if Player.State != Player_State_Hurt
 
-		if Player.CollisionPlane == Object.CollisionPlane
+		if Player.PropertyValue == Object.DrawingPlane
 
 			PlayerObjectCollision(C_TOUCH, -8, -8, 8, 8)
 			if CheckResult == true
@@ -102,18 +103,6 @@ end sub
 sub ObjectStartup
 	LoadSpriteSheet("Global/Items.gif")
 
-	ArrayPos0 = 32
-	while ArrayPos0 < 1056
-		if Object[ArrayPos0].Type == TypeName[Ring]
-			if Object[ArrayPos0].CollisionPlane == PLANEA
-				Object[ArrayPos0].DrawOrder = 4
-			else
-				Object[ArrayPos0].DrawOrder = 2
-			end if
-		end if
-		ArrayPos0++
-	loop
-
 	SpriteFrame(-8, -8, 16, 16, 1, 1)		// #0 - Ring Frame 0
 	SpriteFrame(-8, -8, 16, 16, 1, 18)		// #1 - Ring Frame 1
 	SpriteFrame(-8, -8, 16, 16, 1, 35)		// #2 - Ring Frame 2
@@ -122,6 +111,20 @@ sub ObjectStartup
 	SpriteFrame(-8, -8, 16, 16, 1, 86)		// #5 - Ring Frame 5
 	SpriteFrame(-8, -8, 16, 16, 1, 103)		// #6 - Ring Frame 6
 	SpriteFrame(-8, -8, 16, 16, 1, 120)		// #7 - Ring Frame 7
+
+	// Used to be below LoadSpriteSheet, moved here for consistency
+	ArrayPos0 = 32
+	while ArrayPos0 < 1056
+		if Object[ArrayPos0].Type == TypeName[Ring]
+			if Object[ArrayPos0].DrawingPlane == DRAWING_PLANE_A
+				Object[ArrayPos0].DrawOrder = 4
+			else
+				Object[ArrayPos0].DrawOrder = 2
+			end if
+		end if
+		ArrayPos0++
+	loop
+
 end sub
 
 // ========================
