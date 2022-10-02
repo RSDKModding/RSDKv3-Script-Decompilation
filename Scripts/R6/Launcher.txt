@@ -4,7 +4,7 @@
 
 // Aliases
 #alias Object.Value0	:	Object.Timer
-#alias Object.Value1	:	Object.OriginXPos
+#alias Object.Value1	:	Object.XOriginPos
 
 // States
 #alias 0	:	LAUNCHER_IDLE
@@ -89,14 +89,14 @@ sub ObjectMain
 		end if
 
 		Object.XPos -= 0x40000
-		if Object.XPos < Object.OriginXPos
-			Object.XPos		= Object.OriginXPos
+		if Object.XPos < Object.XOriginPos
+			Object.XPos		= Object.XOriginPos
 			Object.Priority = PRIORITY_BOUNDS
 			Object.State	= LAUNCHER_IDLE
 		end if
 
 		if Object.OutOfBounds == true
-			Object.XPos		= Object.OriginXPos
+			Object.XPos		= Object.XOriginPos
 			Object.Priority = PRIORITY_BOUNDS
 			Object.State	= LAUNCHER_IDLE
 		end if
@@ -104,14 +104,14 @@ sub ObjectMain
 
 	case LAUNCHER_RESET
 		Object.XPos -= 0x40000
-		if Object.XPos < Object.OriginXPos
-			Object.XPos		= Object.OriginXPos
+		if Object.XPos < Object.XOriginPos
+			Object.XPos		= Object.XOriginPos
 			Object.Priority = PRIORITY_BOUNDS
 			Object.State	= LAUNCHER_IDLE
 		end if
 		
 		if Object.OutOfBounds == true
-			Object.XPos		= Object.OriginXPos
+			Object.XPos		= Object.XOriginPos
 			Object.Priority = PRIORITY_BOUNDS
 			Object.State	= LAUNCHER_IDLE
 		end if
@@ -168,7 +168,7 @@ sub ObjectStartup
 	ArrayPos0 = 32
 	while ArrayPos0 < 1056
 		if Object[ArrayPos0].Type == TypeName[Launcher]
-			Object[ArrayPos0].OriginXPos = Object[ArrayPos0].XPos
+			Object[ArrayPos0].XOriginPos = Object[ArrayPos0].XPos
 			Object[ArrayPos0].DrawOrder  = 4
 		end if
 		ArrayPos0++
