@@ -57,148 +57,154 @@ sub ObjectMain
 		
 		// This used to be checking if it was false, but Origins changed it up a bit
 		if Stage.TimeEnabled == true
-			
-			// Progress the timer
-			HUD[4].TimeFrames++
-			if HUD[4].TimeFrames == 60
-				HUD[4].TimeFrames = 0
-				
-				if HUD[4].TimeSeconds > 0
+			// However, whatever thing origins does to make this work is not on decomp so....
+#platform: Use_Decomp		
+			if Stage.TimeEnabled == false
+#endplatform
+				// Progress the timer
+				HUD[4].TimeFrames++
+				if HUD[4].TimeFrames == 60
+					HUD[4].TimeFrames = 0
 					
-					if HUD[4].TimeSeconds < 6
-						// Time's almost up, play a jingle to alert the player
-						PlayStageSfx(SFX_S_DROWNALERT, false)
-					end if
-					
-					HUD[4].TimeSeconds--
-					if HUD[4].TimeSeconds < 20
+					if HUD[4].TimeSeconds > 0
 						
-						// Less than 20 seconds left, quickly, spawn a time UFO to help the player!
-						ArrayPos0 = HUD[4].BonusUFOPos
-						
-						// Make sure the bonus UFO doesn't exist already
-						if Object[ArrayPos0].Type != TypeName[UFO]
-							PlayStageSfx(SFX_S_TIMEUFO, false)
-							
-							ArrayPos1 = ArrayPos0
-							ArrayPos1++
-							
-							Object[ArrayPos0].Type = TypeName[UFO]
-							Object[ArrayPos0].Priority = PRIORITY_ACTIVE
-							Object[ArrayPos0].PropertyValue = 2
-							Object[ArrayPos0].XPos = Object[ArrayPos1].XPos
-							Object[ArrayPos0].ZPos = Object[ArrayPos1].ZPos
+						if HUD[4].TimeSeconds < 6
+							// Time's almost up, play a jingle to alert the player
+							PlayStageSfx(SFX_S_DROWNALERT, false)
 						end if
 						
-					end if
-				else
-					
-					// In Time Attack, let's be lenient on the Player
-					if Options.GameMode != GAMEMODE_TIMEATTACK
-						
-						// Time's over, so start the stage results
-						Object[30].Type = TypeName[Stage Finish]
-						
-						if Stage.ActNo == 8
+						HUD[4].TimeSeconds--
+						if HUD[4].TimeSeconds < 20
 							
-							// If in the Robotnik Special Stage, then go to the Level Select
+							// Less than 20 seconds left, quickly, spawn a time UFO to help the player!
+							ArrayPos0 = HUD[4].BonusUFOPos
 							
-							Object[30].State = STAGEFINISH_LOADLEVELSELECT
-							Object[30].DrawOrder = 7
-							
-						else
-							
-							// Nope, we can just do normal results
-							Object[30].DrawOrder = 6
-							
-						end if
-						
-						SSSonic.ControlMode = CONTROL_DISABLED
-					end if
-				end if
-			end if
-			
-			if HUD[4].WaterTimer > 0
-				if HUD[4].WaterTimer > 1
-					if HUD[4].WaterTimer > 20
-						TempValue0 = HUD[4].TimeFrames
-						TempValue0 &= 1
-						
-						if HUD[4].TimeSeconds > 0
-							HUD[4].TimeSeconds -= TempValue0
-						else
-							
-							// In Time Attack, you can't run out of time
-							if Options.GameMode != GAMEMODE_TIMEATTACK
+							// Make sure the bonus UFO doesn't exist already
+							if Object[ArrayPos0].Type != TypeName[UFO]
+								PlayStageSfx(SFX_S_TIMEUFO, false)
 								
-								// No more time left, end the stage by spawning the results
-								Object[30].Type = TypeName[Stage Finish]
+								ArrayPos1 = ArrayPos0
+								ArrayPos1++
 								
-								if Stage.ActNo == 8
-									
-									// If in the Robotnik Special Stage, then go back to the Level Select rather than the normal SS results
-									
-									Object[30].State = STAGEFINISH_LOADLEVELSELECT
-									Object[30].DrawOrder = 7
-									
-								else
-									
-									// We're in a normal stage, so show the results as normal
-									
-									Object[30].DrawOrder = 6
-									
-								end if
-								
-								SSSonic.ControlMode = CONTROL_DISABLED
+								Object[ArrayPos0].Type = TypeName[UFO]
+								Object[ArrayPos0].Priority = PRIORITY_ACTIVE
+								Object[ArrayPos0].PropertyValue = 2
+								Object[ArrayPos0].XPos = Object[ArrayPos1].XPos
+								Object[ArrayPos0].ZPos = Object[ArrayPos1].ZPos
 							end if
 							
 						end if
+					else
+						
+						// In Time Attack, let's be lenient on the Player
+						if Options.GameMode != GAMEMODE_TIMEATTACK
+							
+							// Time's over, so start the stage results
+							Object[30].Type = TypeName[Stage Finish]
+							
+							if Stage.ActNo == 8
+								
+								// If in the Robotnik Special Stage, then go to the Level Select
+								
+								Object[30].State = STAGEFINISH_LOADLEVELSELECT
+								Object[30].DrawOrder = 7
+								
+							else
+								
+								// Nope, we can just do normal results
+								Object[30].DrawOrder = 6
+								
+							end if
+							
+							SSSonic.ControlMode = CONTROL_DISABLED
+						end if
+					end if
+				end if
+				
+				if HUD[4].WaterTimer > 0
+					if HUD[4].WaterTimer > 1
+						if HUD[4].WaterTimer > 20
+							TempValue0 = HUD[4].TimeFrames
+							TempValue0 &= 1
+							
+							if HUD[4].TimeSeconds > 0
+								HUD[4].TimeSeconds -= TempValue0
+							else
+								
+								// In Time Attack, you can't run out of time
+								if Options.GameMode != GAMEMODE_TIMEATTACK
+									
+									// No more time left, end the stage by spawning the results
+									Object[30].Type = TypeName[Stage Finish]
+									
+									if Stage.ActNo == 8
+										
+										// If in the Robotnik Special Stage, then go back to the Level Select rather than the normal SS results
+										
+										Object[30].State = STAGEFINISH_LOADLEVELSELECT
+										Object[30].DrawOrder = 7
+										
+									else
+										
+										// We're in a normal stage, so show the results as normal
+										
+										Object[30].DrawOrder = 6
+										
+									end if
+									
+									SSSonic.ControlMode = CONTROL_DISABLED
+								end if
+								
+							end if
+						else
+							if Object[3].Type != TypeName[WaterSplash]
+								HUD[4].WaterTimer = 0
+							end if
+						end if
+						
+						HUD[4].WaterTimer--
 					else
 						if Object[3].Type != TypeName[WaterSplash]
 							HUD[4].WaterTimer = 0
-						end if
-					end if
-					
-					HUD[4].WaterTimer--
-				else
-					if Object[3].Type != TypeName[WaterSplash]
-						HUD[4].WaterTimer = 0
-					else
-						TempValue0 = HUD[4].TimeFrames
-						TempValue0 &= 1
-						
-						if HUD[4].TimeSeconds > 0
-							HUD[4].TimeSeconds -= TempValue0
 						else
+							TempValue0 = HUD[4].TimeFrames
+							TempValue0 &= 1
 							
-							// In Time Attack, you can't muddle your time up and time out
-							if Options.GameMode != GAMEMODE_TIMEATTACK
+							if HUD[4].TimeSeconds > 0
+								HUD[4].TimeSeconds -= TempValue0
+							else
 								
-								// Player wasted too much time puddling around and now time's up, end the stage
-								Object[30].Type=TypeName[Stage Finish]
-								
-								if Stage.ActNo == 8
+								// In Time Attack, you can't muddle your time up and time out
+								if Options.GameMode != GAMEMODE_TIMEATTACK
 									
-									// If we're in Robotnik's secret Special Stage, then return to the level select
+									// Player wasted too much time puddling around and now time's up, end the stage
+									Object[30].Type=TypeName[Stage Finish]
 									
-									Object[30].State = STAGEFINISH_LOADLEVELSELECT
-									Object[30].DrawOrder = 7
+									if Stage.ActNo == 8
+										
+										// If we're in Robotnik's secret Special Stage, then return to the level select
+										
+										Object[30].State = STAGEFINISH_LOADLEVELSELECT
+										Object[30].DrawOrder = 7
+										
+									else
+										
+										// We're in a normal stage, so show the normal results
+										
+										Object[30].DrawOrder = 6
+										
+									end if
 									
-								else
-									
-									// We're in a normal stage, so show the normal results
-									
-									Object[30].DrawOrder = 6
-									
+									SSSonic.ControlMode = CONTROL_DISABLED
 								end if
 								
-								SSSonic.ControlMode = CONTROL_DISABLED
 							end if
-							
 						end if
 					end if
 				end if
+#platform: Use_Decomp
 			end if
+#endplatform
 		end if
 	end if
 	
