@@ -65,9 +65,8 @@ sub ObjectMain
 				HUD[4].TimeFrames++
 				if HUD[4].TimeFrames == 60
 					HUD[4].TimeFrames = 0
-					
+
 					if HUD[4].TimeSeconds > 0
-						
 						if HUD[4].TimeSeconds < 6
 							// Time's almost up, play a jingle to alert the player
 							PlayStageSfx(SFX_S_DROWNALERT, false)
@@ -75,7 +74,6 @@ sub ObjectMain
 						
 						HUD[4].TimeSeconds--
 						if HUD[4].TimeSeconds < 20
-							
 							// Less than 20 seconds left, quickly, spawn a time UFO to help the player!
 							ArrayPos0 = HUD[4].BonusUFOPos
 							
@@ -92,30 +90,20 @@ sub ObjectMain
 								Object[ArrayPos0].XPos = Object[ArrayPos1].XPos
 								Object[ArrayPos0].ZPos = Object[ArrayPos1].ZPos
 							end if
-							
 						end if
 					else
-						
-						// In Time Attack, let's be lenient on the Player
+						// This will never happen on Time Attack
 						if Options.GameMode != GAMEMODE_TIMEATTACK
-							
 							// Time's over, so start the stage results
 							Object[30].Type = TypeName[Stage Finish]
-							
 							if Stage.ActNo == 8
-								
 								// If in the Robotnik Special Stage, then go to the Level Select
-								
 								Object[30].State = STAGEFINISH_LOADLEVELSELECT
 								Object[30].DrawOrder = 7
-								
 							else
-								
 								// Nope, we can just do normal results
 								Object[30].DrawOrder = 6
-								
 							end if
-							
 							SSSonic.ControlMode = CONTROL_DISABLED
 						end if
 					end if
@@ -130,31 +118,24 @@ sub ObjectMain
 							if HUD[4].TimeSeconds > 0
 								HUD[4].TimeSeconds -= TempValue0
 							else
-								
 								// In Time Attack, you can't run out of time
 								if Options.GameMode != GAMEMODE_TIMEATTACK
-									
 									// No more time left, end the stage by spawning the results
 									Object[30].Type = TypeName[Stage Finish]
 									
 									if Stage.ActNo == 8
-										
 										// If in the Robotnik Special Stage, then go back to the Level Select rather than the normal SS results
 										
 										Object[30].State = STAGEFINISH_LOADLEVELSELECT
 										Object[30].DrawOrder = 7
-										
 									else
-										
 										// We're in a normal stage, so show the results as normal
 										
 										Object[30].DrawOrder = 6
-										
 									end if
 									
 									SSSonic.ControlMode = CONTROL_DISABLED
 								end if
-								
 							end if
 						else
 							if Object[3].Type != TypeName[WaterSplash]
