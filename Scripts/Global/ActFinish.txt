@@ -724,7 +724,7 @@ sub ObjectMain
 #endplatform
 
 #platform: Use_Standalone
-	#platform: Mobile
+				// this check can only happen in mobile
 				if Options.GameMode == GAMEMODE_TRIALGAME
 					// Set Trial Recoerds
 					TimeAttack.Result  = Stage.Seconds
@@ -752,7 +752,7 @@ sub ObjectMain
 					Stage.ActiveList = PRESENTATION_STAGE
 					Stage.ListPos	 = STAGE_P_DOWNLOADSCREEN
 				end if
-	#endplatform				
+
 				if Options.GameMode == GAMEMODE_TIMEATTACK
 					TimeAttack.Result  = Stage.Seconds
 					TimeAttack.Result *= 100
@@ -764,16 +764,17 @@ sub ObjectMain
 					Stage.ListPos	   = STAGE_P_TATTACK
 					LoadStage()
 				else
-	#platform: Mobile
+					// this check can only happen in mobile
 					if Options.GameMode < GAMEMODE_TRIALGAME
 						TempValue0 = Engine.TrialMode
 					else
 						TempValue0 = false
 					end if
-	#endplatform
+
 					if Stage.ListPos >= Stage.ListSize	// tldr; check if you are playing a trial
 						TempValue0 = true
 					end if
+
 					if TempValue0 == false
 						LoadStage()
 					else
@@ -782,7 +783,7 @@ sub ObjectMain
 						LoadStage()
 					end if
 				end if
-	#endplatform
+#endplatform
 			end if
 		end if
 		break
