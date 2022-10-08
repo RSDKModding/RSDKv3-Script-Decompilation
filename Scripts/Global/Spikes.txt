@@ -6,15 +6,15 @@
 #alias Player.Value4	:	Player.InvincibleTimer
 
 // Property Values
-#alias 0	:	FACING_UP
-#alias 1	:	FACING_RIGHT
-#alias 2	:	FACING_LEFT
-#alias 3	:	FACING_DOWN
+#alias 0	:	SPIKEDIRECTION_UP    // Was FACING_UP. changed to fix Spike behavior.
+#alias 1	:	SPIKEDIRECTION_RIGHT // Was FACING_RIGHT. changed to fix Spike behavior.
+#alias 2	:	SPIKEDIRECTION_LEFT  // Was FACING_LEFT. changed to fix Spike behavior.
+#alias 3	:	SPIKEDIRECTION_DOWN  // Was FACING_DOWN. changed to fix Spike behavior.
 
 
 sub ObjectPlayerInteraction
 	switch Object.PropertyValue
-	case FACING_UP
+	case SPIKEDIRECTION_UP
 		PlayerObjectCollision(C_BOX, -16, -12, 16, 16)
 		if Player.YVelocity > -1
 			if Player.InvincibleTimer == 0
@@ -31,7 +31,7 @@ sub ObjectPlayerInteraction
 		end if
 		break
 
-	case FACING_RIGHT
+	case SPIKEDIRECTION_RIGHT
 		PlayerObjectCollision(C_BOX, -16, -16, 15, 16)
 		if Player.XVelocity <= 0
 			if Player.InvincibleTimer == 0
@@ -44,7 +44,7 @@ sub ObjectPlayerInteraction
 		end if
 		break
 
-	case FACING_LEFT
+	case SPIKEDIRECTION_LEFT
 		PlayerObjectCollision(C_BOX, -15, -16, 16, 16)
 		if Player.InvincibleTimer == 0
 			PlayerObjectCollision(C_TOUCH, -16, -15, -12, 15)
@@ -55,7 +55,7 @@ sub ObjectPlayerInteraction
 		end if
 		break
 
-	case FACING_DOWN
+	case SPIKEDIRECTION_DOWN
 		TempValue0 = Player.YVelocity
 		PlayerObjectCollision(C_BOX, -16, -16, 16, 15)
 		if TempValue0 < 1
