@@ -39,7 +39,7 @@ sub ObjectMain
 	Object.ChangeX  *= TempValue1
 	Object.ChangeX <<= 7
 	Object.ChangeX  += Object.XPos
-	Object.ChangeX  &= -0x10000
+	Object.ChangeX  &= 0xFFFF0000 // Truncate the value
 	Object.ChangeX  -= Object.LogX
 	
 	// And then get the Y change for the platform
@@ -47,7 +47,7 @@ sub ObjectMain
 	Object.ChangeY  *= TempValue1
 	Object.ChangeY <<= 7
 	Object.ChangeY  += Object.YPos
-	Object.ChangeY  &= -0x10000
+	Object.ChangeY  &= 0xFFFF0000 // Truncate the value
 	Object.ChangeY  -= Object.LogY
 	
 end sub
@@ -90,14 +90,14 @@ sub ObjectDraw
 	Object.LogX  *= TempValue1
 	Object.LogX <<= 7
 	Object.LogX  += Object.XPos
-	Object.LogX  &= -0x10000
+	Object.LogX  &= 0xFFFF0000 // Truncate the value
 	
 	// Get the Y Position of the Log
 	Sin(Object.LogY, Object.Angle)
 	Object.LogY  *= TempValue1
 	Object.LogY <<= 7
 	Object.LogY  += Object.YPos
-	Object.LogY  &= -0x10000
+	Object.LogY  &= 0xFFFF0000 // Truncate the value
 	
 	DrawSpriteXY(0, Object.LogX, Object.LogY)
 	
@@ -254,14 +254,14 @@ sub RSDKDraw
 		TempValue1 *= 96
 		TempValue1 <<= 7
 		TempValue1 += Object.XPos
-		TempValue1 &= -0x10000
+		TempValue1 &= 0xFFFF0000 // Truncate the value
 		
 		// Get the Y Position of the Log
 		Sin(TempValue2, TempValue0)
 		TempValue2 *= 96
 		TempValue2 <<= 7
 		TempValue2 += Object.YPos
-		TempValue2 &= -0x10000
+		TempValue2 &= 0xFFFF0000 // Truncate the value
 		
 		Object.InkEffect = INK_BLEND
 		

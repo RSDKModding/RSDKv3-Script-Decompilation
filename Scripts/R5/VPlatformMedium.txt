@@ -9,6 +9,8 @@
 #alias Object.Value3	:	Object.Angle
 
 // Time Period Aliases
+#alias Object[24].PropertyValue : HUD.TimePeriod
+
 #alias 0	:	TIME_PRESENT
 #alias 1	:	TIME_PAST
 #alias 2	:	TIME_GOOD_FUTURE
@@ -47,7 +49,7 @@ sub ObjectMain
 		Object.ChangeY *= 0x1800
 		Object.ChangeY += 0x300000
 		Object.ChangeY += Object.YPos
-		Object.ChangeY &= -0x10000
+		Object.ChangeY &= 0xFFFF0000 // Truncate the value
 		Object.ChangeY -= Object.PlatformY
 		break
 		
@@ -57,7 +59,7 @@ sub ObjectMain
 		Object.ChangeY *= -0x1800
 		Object.ChangeY -= 0x300000
 		Object.ChangeY += Object.YPos
-		Object.ChangeY &= -0x10000
+		Object.ChangeY &= 0xFFFF0000 // Truncate the value
 		Object.ChangeY -= Object.PlatformY
 		break
 		
@@ -66,7 +68,7 @@ sub ObjectMain
 		Object.ChangeY *= 0x1800
 		Object.ChangeY += 0x300000
 		Object.ChangeY += Object.YPos
-		Object.ChangeY &= -0x10000
+		Object.ChangeY &= 0xFFFF0000 // Truncate the value
 		Object.ChangeY -= Object.PlatformY
 		break
 		
@@ -75,7 +77,7 @@ sub ObjectMain
 		Object.ChangeY *= -0x1800
 		Object.ChangeY -= 0x300000
 		Object.ChangeY += Object.YPos
-		Object.ChangeY &= -0x10000
+		Object.ChangeY &= 0xFFFF0000 // Truncate the value
 		Object.ChangeY -= Object.PlatformY
 		break
 		
@@ -142,7 +144,7 @@ sub ObjectDraw
 		Object.PlatformY *= 0x1800
 		Object.PlatformY += 0x300000
 		Object.PlatformY += Object.YPos
-		Object.PlatformY &= -0x10000
+		Object.PlatformY &= 0xFFFF0000 // Truncate the value
 		DrawSpriteXY(0, Object.XPos, Object.PlatformY)
 		break
 
@@ -151,7 +153,7 @@ sub ObjectDraw
 		Object.PlatformY *= 0x1800
 		Object.PlatformY += 0x300000
 		Object.PlatformY += Object.YPos
-		Object.PlatformY &= -0x10000
+		Object.PlatformY &= 0xFFFF0000 // Truncate the value
 		DrawSpriteXY(0, Object.XPos, Object.PlatformY)
 		DrawSpriteXY(1, Object.XPos, Object.PlatformY)
 		break
@@ -162,7 +164,7 @@ sub ObjectDraw
 		Object.PlatformY *= -0x1800
 		Object.PlatformY -= 0x300000
 		Object.PlatformY += Object.YPos
-		Object.PlatformY &= -0x10000
+		Object.PlatformY &= 0xFFFF0000 // Truncate the value
 		DrawSpriteXY(0, Object.XPos, Object.PlatformY)
 		break
 
@@ -171,7 +173,7 @@ sub ObjectDraw
 		Object.PlatformY *= -0x1800
 		Object.PlatformY -= 0x300000
 		Object.PlatformY += Object.YPos
-		Object.PlatformY &= -0x10000
+		Object.PlatformY &= 0xFFFF0000 // Truncate the value
 		DrawSpriteXY(0, Object.XPos, Object.PlatformY)
 		DrawSpriteXY(1, Object.XPos, Object.PlatformY)
 		break
@@ -186,7 +188,7 @@ sub ObjectStartup
 	LoadSpriteSheet("R5/Objects.gif")
 	
 	// Use different sprites based on the current Time Periods
-	switch Object[24].PropertyValue
+	switch HUD.TimePeriod
 	case TIME_PRESENT
 		LoadSpriteSheet("R5/Objects.gif")
 		SpriteFrame(-32, -16, 64, 32, 34, 51)
@@ -305,7 +307,7 @@ sub RSDKDraw
 	end switch
 	
 	TempValue3 = Object.YPos
-	TempValue3 &= -0x10000
+	TempValue3 &= 0xFFFF0000 // Truncate the value
 	DrawSpriteXY(0, Object.XPos, TempValue3)
 	
 	if TempValue2 == true
@@ -320,7 +322,7 @@ sub RSDKDraw
 		TempValue4 *= TempValue0
 		TempValue4 += TempValue1
 		TempValue4 += Object.YPos
-		TempValue4 &= -0x10000
+		TempValue4 &= 0xFFFF0000 // Truncate the value
 		
 		Editor.DrawingOverlay = true
 		

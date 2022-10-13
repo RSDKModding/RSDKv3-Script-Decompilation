@@ -25,7 +25,7 @@ sub ObjectMain
 		Object.ChangeX = Object.Angle
 		Object.ChangeX *= -0x4000
 		Object.ChangeX += Object.XPos
-		Object.ChangeX &= -0x10000
+		Object.ChangeX &= 0xFFFF0000 // Truncate the value
 		Object.ChangeX -= Object.PlatformX
 	else
 		Object.ChangeX = 0
@@ -34,7 +34,7 @@ sub ObjectMain
 	Cos(Object.ChangeY, Object.Angle)
 	Object.ChangeY *= 0x3000
 	Object.ChangeY += Object.YPos
-	Object.ChangeY &= -0x10000
+	Object.ChangeY &= 0xFFFF0000 // Truncate the value
 	Object.ChangeY -= Object.PlatformY
 	
 end sub
@@ -76,12 +76,12 @@ sub ObjectDraw
 	Object.PlatformX = Object.Angle
 	Object.PlatformX *= -0x4000
 	Object.PlatformX += Object.XPos
-	Object.PlatformX &= -0x10000
+	Object.PlatformX &= 0xFFFF0000 // Truncate the value
 	
 	Cos(Object.PlatformY, Object.Angle)
 	Object.PlatformY *= 0x3000
 	Object.PlatformY += Object.YPos
-	Object.PlatformY &= -0x10000
+	Object.PlatformY &= 0xFFFF0000 // Truncate the value
 	
 	DrawSpriteXY(0, Object.PlatformX, Object.PlatformY)
 	DrawSpriteXY(1, Object.PlatformX, Object.PlatformY)
@@ -125,11 +125,11 @@ end sub
 
 sub RSDKDraw
 	TempValue1 = Object.XPos
-	TempValue1 &= -0x10000
+	TempValue1 &= 0xFFFF0000 // Truncate the value
 	Cos(TempValue2, 0)
 	TempValue2 *= 0x3000
 	TempValue2 += Object.YPos
-	TempValue2 &= -0x10000
+	TempValue2 &= 0xFFFF0000 // Truncate the value
 	DrawSpriteXY(0, TempValue1, TempValue2)
 	DrawSpriteXY(1, TempValue1, TempValue2)
 end sub

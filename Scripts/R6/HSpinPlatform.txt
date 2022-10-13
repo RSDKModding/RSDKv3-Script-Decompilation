@@ -27,15 +27,16 @@
 
 
 sub ObjectMain
-	Object.Angle = Oscillation
+	Object.Angle   = Oscillation
 	Object.Angle <<= 1
 	if Object.PropertyValue == START_HALFWAY_THROUGH
 		Object.Angle += 256
 	end if
+	
 	Sin(Object.XVelocity, Object.Angle)
 	Object.XVelocity <<= 13
 	Object.XVelocity  += Object.XPos
-	Object.XVelocity  &= -0x10000
+	Object.XVelocity  &= 0xFFFF0000 // Truncate the value
 	Object.XVelocity  -= Object.OffSetXPos
 end sub
 
@@ -134,7 +135,7 @@ sub ObjectDraw
 	Sin(Object.OffSetXPos, Object.Angle)
 	Object.OffSetXPos <<= 13
 	Object.OffSetXPos  += Object.XPos
-	Object.OffSetXPos  &= -0x10000
+	Object.OffSetXPos  &= 0xFFFF0000 // Truncate the value
 
 	TempValue0  = Object.PlatAnimFrame
 	TempValue0 /= 10

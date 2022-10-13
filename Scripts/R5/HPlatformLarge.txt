@@ -35,9 +35,9 @@ sub ObjectMain
 	
 	// From this Oscillation value, get the object's Angle
 	// This Angle will range from 0-510
-	Object.Angle = Object.Oscillation
+	Object.Angle   = Object.Oscillation
 	Object.Angle <<= 6
-	Object.Angle /= 39
+	Object.Angle  /= 39
 	
 	// And then from this Angle, get the base X Change Value
 	Sin(Object.ChangeX, Object.Angle)
@@ -49,7 +49,7 @@ sub ObjectMain
 		Object.ChangeX *= 0x1800
 		Object.ChangeX += 0x300000
 		Object.ChangeX += Object.XPos
-		Object.ChangeX &= -0x10000
+		Object.ChangeX &= 0xFFFF0000 // Truncate the value
 		Object.ChangeX -= Object.PlatformX
 		break
 		
@@ -59,7 +59,7 @@ sub ObjectMain
 		Object.ChangeX *= -0x1800
 		Object.ChangeX -= 0x300000
 		Object.ChangeX += Object.XPos
-		Object.ChangeX &= -0x10000
+		Object.ChangeX &= 0xFFFF0000 // Truncate the value
 		Object.ChangeX -= Object.PlatformX
 		break
 		
@@ -68,7 +68,7 @@ sub ObjectMain
 		Object.ChangeX *= 0x1800
 		Object.ChangeX += 0x300000
 		Object.ChangeX += Object.XPos
-		Object.ChangeX &= -0x10000
+		Object.ChangeX &= 0xFFFF0000 // Truncate the value
 		
 		// Move the first following Object
 		
@@ -107,7 +107,7 @@ sub ObjectMain
 		Object.ChangeX *= -0x1800
 		Object.ChangeX -= 0x300000
 		Object.ChangeX += Object.XPos
-		Object.ChangeX &= -0x10000
+		Object.ChangeX &= 0xFFFF0000 // Truncate the value
 		
 		// Move the first Following Object
 		
@@ -267,7 +267,7 @@ sub ObjectDraw
 		Object.PlatformX *= 0x1800
 		Object.PlatformX += 0x300000
 		Object.PlatformX += Object.XPos
-		Object.PlatformX &= -0x10000
+		Object.PlatformX &= 0xFFFF0000 // Truncate the value
 		DrawSpriteXY(0, Object.PlatformX, Object.YPos)
 		break
 		
@@ -277,7 +277,7 @@ sub ObjectDraw
 		Object.PlatformX *= 0x1800
 		Object.PlatformX += 0x300000
 		Object.PlatformX += Object.XPos
-		Object.PlatformX &= -0x10000
+		Object.PlatformX &= 0xFFFF0000 // Truncate the value
 		DrawSpriteXY(0, Object.PlatformX, Object.YPos)
 		DrawSpriteXY(1, Object.PlatformX, Object.YPos)
 		break
@@ -289,7 +289,7 @@ sub ObjectDraw
 		Object.PlatformX *= -0x1800
 		Object.PlatformX -= 0x300000
 		Object.PlatformX += Object.XPos
-		Object.PlatformX &= -0x10000
+		Object.PlatformX &= 0xFFFF0000 // Truncate the value
 		DrawSpriteXY(0, Object.PlatformX, Object.YPos)
 		break
 		
@@ -299,7 +299,7 @@ sub ObjectDraw
 		Object.PlatformX *= -0x1800
 		Object.PlatformX -= 0x300000
 		Object.PlatformX += Object.XPos
-		Object.PlatformX &= -0x10000
+		Object.PlatformX &= 0xFFFF0000 // Truncate the value
 		DrawSpriteXY(0, Object.PlatformX, Object.YPos)
 		DrawSpriteXY(1, Object.PlatformX, Object.YPos)
 		break
@@ -373,7 +373,7 @@ sub RSDKDraw
 	end switch
 	
 	TempValue3 = Object.XPos
-	TempValue3 &= -0x10000
+	TempValue3 &= 0xFFFF0000 // Truncate the value
 	DrawSpriteXY(0, TempValue3, Object.YPos)
 	DrawSpriteXY(TempValue2, TempValue3, Object.YPos)
 	
@@ -386,7 +386,7 @@ sub RSDKDraw
 		TempValue4 *= TempValue0
 		TempValue4 += TempValue1
 		TempValue4 += Object.XPos
-		TempValue4 &= -0x10000
+		TempValue4 &= 0xFFFF0000 // Truncate the value
 		
 		DrawLine(TempValue3, Object.YPos, TempValue4, Object.YPos, 255, 255, 255)
 		

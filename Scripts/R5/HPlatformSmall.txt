@@ -18,6 +18,8 @@
 #alias Object.Value7	:	Object.Cooldown
 
 // Time Period Aliases
+#alias Object[24].PropertyValue : HUD.TimePeriod
+
 #alias 0	:	TIME_PRESENT
 #alias 1	:	TIME_PAST
 #alias 2	:	TIME_GOOD_FUTURE
@@ -47,7 +49,7 @@ sub ObjectMain
 		Object.ChangeX *= 0x1800
 		Object.ChangeX += 0x300000
 		Object.ChangeX += Object.XPos
-		Object.ChangeX &= -0x10000
+		Object.ChangeX &= 0xFFFF0000 // Truncate the value
 		Object.ChangeX -= Object.PlatformX
 		break
 		
@@ -57,7 +59,7 @@ sub ObjectMain
 		Object.ChangeX *= -0x1800
 		Object.ChangeX -= 0x300000
 		Object.ChangeX += Object.XPos
-		Object.ChangeX &= -0x10000
+		Object.ChangeX &= 0xFFFF0000 // Truncate the value
 		Object.ChangeX -= Object.PlatformX
 		break
 		
@@ -66,7 +68,7 @@ sub ObjectMain
 		Object.ChangeX *= 0x1800
 		Object.ChangeX += 0x300000
 		Object.ChangeX += Object.XPos
-		Object.ChangeX &= -0x10000
+		Object.ChangeX &= 0xFFFF0000 // Truncate the value
 		
 		// Move the following Object along with the Platform
 		Object[+1].XPos = Object.ChangeX
@@ -84,13 +86,13 @@ sub ObjectMain
 		Object.ChangeX *= -0x1800
 		Object.ChangeX -= 0x300000
 		Object.ChangeX += Object.XPos
-		Object.ChangeX &= -0x10000
+		Object.ChangeX &= 0xFFFF0000 // Truncate the value
 		
 		// Move the riding Object to match this Platform
 		Object[+1].XPos = Object.ChangeX
 		
 		// And make it 24 pixels above, so that its bottom is on this Platform's top
-		Object[+1].YPos = Object.YPos
+		Object[+1].YPos  = Object.YPos
 		Object[+1].YPos -= 0x180000
 		
 		// And with that, get the actual Change value
@@ -103,7 +105,7 @@ sub ObjectMain
 	if Object.Pressed == true
 		if Object.PlatformY < 16
 			Object.PlatformY++
-			TempValue0 = Object.PlatformY
+			TempValue0  = Object.PlatformY
 			TempValue0 &= 3
 			if TempValue0 == 3
 				// Move down a pixel
@@ -117,7 +119,7 @@ sub ObjectMain
 	else
 		if Object.PlatformY > 0
 			Object.PlatformY--
-			TempValue0 = Object.PlatformY
+			TempValue0  = Object.PlatformY
 			TempValue0 &= 3
 			if TempValue0 == 3
 				// Recover back up a pixel
@@ -232,7 +234,7 @@ sub ObjectDraw
 		Object.PlatformX *= 0x1800
 		Object.PlatformX += 0x300000
 		Object.PlatformX += Object.XPos
-		Object.PlatformX &= -0x10000
+		Object.PlatformX &= 0xFFFF0000 // Truncate the value
 		DrawSpriteXY(0, Object.PlatformX, Object.YPos)
 		break
 		
@@ -242,7 +244,7 @@ sub ObjectDraw
 		Object.PlatformX *= 0x1800
 		Object.PlatformX += 0x300000
 		Object.PlatformX += Object.XPos
-		Object.PlatformX &= -0x10000
+		Object.PlatformX &= 0xFFFF0000 // Truncate the value
 		DrawSpriteXY(0, Object.PlatformX, Object.YPos)
 		DrawSpriteXY(1, Object.PlatformX, Object.YPos)
 		break
@@ -254,7 +256,7 @@ sub ObjectDraw
 		Object.PlatformX *= -0x1800
 		Object.PlatformX -= 0x300000
 		Object.PlatformX += Object.XPos
-		Object.PlatformX &= -0x10000
+		Object.PlatformX &= 0xFFFF0000 // Truncate the value
 		DrawSpriteXY(0, Object.PlatformX, Object.YPos)
 		break
 		
@@ -264,7 +266,7 @@ sub ObjectDraw
 		Object.PlatformX *= -0x1800
 		Object.PlatformX -= 0x300000
 		Object.PlatformX += Object.XPos
-		Object.PlatformX &= -0x10000
+		Object.PlatformX &= 0xFFFF0000 // Truncate the value
 		DrawSpriteXY(0, Object.PlatformX, Object.YPos)
 		DrawSpriteXY(1, Object.PlatformX, Object.YPos)
 		break
@@ -279,7 +281,7 @@ sub ObjectStartup
 	LoadSpriteSheet("R5/Objects.gif")
 	
 	// Load the needed sprites based on the current Time Period
-	switch Object[24].PropertyValue
+	switch HUD.TimePeriod
 	case TIME_PRESENT
 		LoadSpriteSheet("R5/Objects.gif")
 		SpriteFrame(-16, -16, 32, 32, 1, 51)
@@ -360,7 +362,7 @@ sub RSDKDraw
 	end switch
 	
 	TempValue3 = Object.XPos
-	TempValue3 &= -0x10000
+	TempValue3 &= 0xFFFF0000 // Truncate the value
 	DrawSpriteXY(0, TempValue3, Object.YPos)
 	DrawSpriteXY(TempValue2, TempValue3, Object.YPos)
 	
@@ -371,7 +373,7 @@ sub RSDKDraw
 		TempValue4 *= TempValue0
 		TempValue4 += TempValue1
 		TempValue4 += Object.XPos
-		TempValue4 &= -0x10000
+		TempValue4 &= 0xFFFF0000 // Truncate the value
 		
 		Editor.DrawingOverlay = true
 		

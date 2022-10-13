@@ -43,7 +43,7 @@ sub ObjectMain
 		Sin(Object.YCollisionOffset, Object.Oscillation)
 		Object.YCollisionOffset *= Object.Speed
 		Object.YCollisionOffset += Object.YPos
-		Object.YCollisionOffset &= -0x10000
+		Object.YCollisionOffset &= 0xFFFF0000 // Truncate the value
 		Object.YCollisionOffset -= Object.YDrawPos
 	else
 		switch Object.State
@@ -85,7 +85,7 @@ sub ObjectMain
 		Sin(Object.YCollisionOffset, Object.Oscillation)
 		Object.YCollisionOffset *= Object.Speed
 		Object.YCollisionOffset += Object.YPos
-		Object.YCollisionOffset &= -0x10000
+		Object.YCollisionOffset &= 0xFFFF0000 // Truncate the value
 		Object.YCollisionOffset -= Object.YDrawPos
 	end if
 end sub
@@ -151,7 +151,7 @@ sub ObjectDraw
 	Sin(Object.YDrawPos, Object.Oscillation)
 	Object.YDrawPos *= Object.Speed
 	Object.YDrawPos += Object.YPos
-	Object.YDrawPos &= -0x10000
+	Object.YDrawPos &= 0xFFFF0000 // Truncate the value
 	DrawSpriteXY(0, Object.XPos, Object.YDrawPos)
 	if Object.LargePlatform == true
 		DrawSpriteXY(1, Object.XPos, Object.YDrawPos)

@@ -43,22 +43,22 @@ sub ObjectMain
 	case RPLATFORM_FULL_CW
 		Object.SwingAngle++
 		Object.SwingAngle &= 511
-		TempValue0 = Object.SwingAngle
+		TempValue0   = Object.SwingAngle
 		TempValue0 >>= 1
 		Cos(TempValue1, TempValue0)
 		TempValue1 >>= 1
-		Object.Angle = 640
+		Object.Angle  = 640
 		Object.Angle -= TempValue1
 		break
 		
 	case RPLATFORM_FULL_CCW
 		Object.SwingAngle++
 		Object.SwingAngle &= 511
-		TempValue0 = Object.SwingAngle
+		TempValue0   = Object.SwingAngle
 		TempValue0 >>= 1
 		Cos(Object.Angle, TempValue0)
 		Object.Angle >>= 1
-		Object.Angle += 640
+		Object.Angle  += 640
 		break
 		
 	case RPLATFORM_TOP180
@@ -66,7 +66,7 @@ sub ObjectMain
 		Object.SwingAngle &= 511
 		Sin(Object.Angle, Object.SwingAngle)
 		Object.Angle >>= 2
-		Object.Angle += 896
+		Object.Angle  += 896
 		break
 		
 	case RPLATFORM_RIGHT180
@@ -74,7 +74,7 @@ sub ObjectMain
 		Object.SwingAngle &= 511
 		Sin(Object.Angle, Object.SwingAngle)
 		Object.Angle >>= 2
-		Object.Angle += 512
+		Object.Angle  += 512
 		break
 		
 	case RPLATFORM_BOTTOM180
@@ -82,7 +82,7 @@ sub ObjectMain
 		Object.SwingAngle &= 511
 		Sin(Object.Angle, Object.SwingAngle)
 		Object.Angle >>= 2
-		Object.Angle += 640
+		Object.Angle  += 640
 		break
 		
 	end switch
@@ -92,18 +92,18 @@ sub ObjectMain
 	TempValue1 <<= 4
 	
 	Cos(Object.ChangeX, Object.Angle)
-	Object.ChangeX *= TempValue1
+	Object.ChangeX  *= TempValue1
 	Object.ChangeX <<= 7
-	Object.ChangeX += Object.XPos
-	Object.ChangeX &= -0x10000 // Truncating to the iXpos, the number is -0x10000
-	Object.ChangeX -= Object.PlatformX
+	Object.ChangeX  += Object.XPos
+	Object.ChangeX  &= 0xFFFF0000 // Truncate the value
+	Object.ChangeX  -= Object.PlatformX
 	
 	Sin(Object.ChangeY, Object.Angle)
-	Object.ChangeY *= TempValue1
+	Object.ChangeY  *= TempValue1
 	Object.ChangeY <<= 7
-	Object.ChangeY += Object.YPos
-	Object.ChangeY &= -0x10000 // Same as above, this -0x10000 number is truncating the YPos
-	Object.ChangeY -= Object.PlatformY
+	Object.ChangeY  += Object.YPos
+	Object.ChangeY  &= 0xFFFF0000 // Truncate the value
+	Object.ChangeY  -= Object.PlatformY
 	
 end sub
 
@@ -113,7 +113,7 @@ sub ObjectPlayerInteraction
 	TempValue0 = Object.XPos
 	TempValue1 = Object.YPos
 	
-	TempValue2 = Player.YPos
+	TempValue2  = Player.YPos
 	Object.XPos = Object.PlatformX
 	Object.YPos = Object.PlatformY
 	
@@ -185,14 +185,14 @@ sub ObjectDraw
 	TempValue1 = 16
 	while TempValue0 < Object.ChainsNo
 		Cos(TempValue2, Object.Angle)
-		TempValue2 *= TempValue1
+		TempValue2  *= TempValue1
 		TempValue2 <<= 7
-		TempValue2 += Object.XPos
+		TempValue2  += Object.XPos
 		
 		Sin(TempValue3, Object.Angle)
-		TempValue3 *= TempValue1
+		TempValue3  *= TempValue1
 		TempValue3 <<= 7
-		TempValue3 += Object.YPos
+		TempValue3  += Object.YPos
 		
 		DrawSpriteXY(1, TempValue2, TempValue3)
 		
@@ -204,17 +204,17 @@ sub ObjectDraw
 	
 	// Find the X component
 	Cos(Object.PlatformX, Object.Angle)
-	Object.PlatformX *= TempValue1
+	Object.PlatformX  *= TempValue1
 	Object.PlatformX <<= 7
-	Object.PlatformX += Object.XPos
-	Object.PlatformX &= -0x10000 // Rounding to iXPos, getting rid of the subpixels inbetween
+	Object.PlatformX  += Object.XPos
+	Object.PlatformX  &= 0xFFFF0000 // Truncate the value
 	
 	// And then find the Y
 	Sin(Object.PlatformY, Object.Angle)
-	Object.PlatformY *= TempValue1
+	Object.PlatformY  *= TempValue1
 	Object.PlatformY <<= 7
-	Object.PlatformY += Object.YPos
-	Object.PlatformY &= -0x10000 // Same as above
+	Object.PlatformY  += Object.YPos
+	Object.PlatformY  &= 0xFFFF0000 // Truncate the value
 	
 	DrawSpriteXY(2, Object.PlatformX, Object.PlatformY)
 	
@@ -378,13 +378,13 @@ sub RSDKDraw
 	TempValue0 *= TempValue1
 	TempValue0 <<= 7
 	TempValue0 += Object.XPos
-	TempValue0 &= -0x10000
+	TempValue0 &= 0xFFFF0000 // Truncate the value
 
 	Sin(TempValue2, Object.Angle)
 	TempValue2 *= TempValue1
 	TempValue2 <<= 7
 	TempValue2 += Object.YPos
-	TempValue2 &= -0x10000
+	TempValue2 &= 0xFFFF0000 // Truncate the value
 
 	DrawSpriteXY(2, TempValue0, TempValue2)
 end sub
