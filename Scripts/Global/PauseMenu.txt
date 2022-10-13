@@ -181,6 +181,7 @@ sub ObjectMain
 		CheckEqual(Options.PhysicalControls, true)
 #endplatform
 
+		// 2011 Steam lacks Options.PhysicalControls, so we force it here first and the other platforms can override it
 		if CheckResult == true
 			if KeyPress[0].Up == true
 				PlaySfx(SFX_G_MENUBUTTON, false)
@@ -443,68 +444,61 @@ sub ObjectMain
 				Object.State = PAUSEMENU_RESUME_GAME
 				Stage.State  = STAGE_RUNNING
 			else
-
-#platform: Standard
+				// Blit/Origins method of this process
 				Object.SpritesXPos  = Object.XPos
 				Object.SpritesXPos += 48
 				StopMusic()
 				Object.State = PAUSEMENU_EXIT_LEVEL
-#endplatform
 
-#platform: Mobile
-				if Engine.Message < MESSAGE_YES_SELECTED
-					switch Object.SelectedButton
-					case 1
-						EngineCallback(CALLBACK_RESTART_SELECTED)
-						break
-					case 2
-						EngineCallback(CALLBACK_EXIT_SELECTED)
-						break
-					case 3
-						if Engine.TrialMode == false
-							Object.SpritesXPos  = Object.XPos
-							Object.SpritesXPos += 48
-
-							StopMusic()
-							Object.State = PAUSEMENU_EXIT_LEVEL	// Dev Menu
-						else
-							EngineCallback(CALLBACK_BUY_FULL_GAME_SELECTED)	// Demo End
-							Object.Timer		  = 0
-							Object.AnimationTimer = 0
-							Object.Frame		  = 0
-							Object.SpritesXPos	  = Screen.XSize
-
-							if Options.PhysicalControls == false
-								Object.SelectedButton = -1
-							end if
-
-							Object.State = PAUSEMENU_CONTROLS
-							Object.Alpha = 255
-						end if
-						break
-					end switch
-				else
-					if Engine.Message == MESSAGE_NO_SELECTED
-						Object.Timer		  = 0
-						Object.AnimationTimer = 0
-						Object.Frame		  = 0
-						Object.SpritesXPos	  = Screen.XSize
-
-						if Options.PhysicalControls == false
-							Object.SelectedButton = -1
-						end if
-
-						Object.State = PAUSEMENU_CONTROLS
-						Object.Alpha = 255
-					else
-						Object.SpritesXPos  = Object.XPos
-						Object.SpritesXPos += 48
-
-						StopMusic()
-						Object.State = PAUSEMENU_EXIT_LEVEL
-					end if
-				end if
-#endplatform
+//#platform: Mobile
+				// Old mobile method of this process
+				// if Engine.Message < MESSAGE_YES_SELECTED
+				// 	switch Object.SelectedButton
+				// 	case 1
+				// 		EngineCallback(CALLBACK_RESTART_SELECTED)
+				// 		break
+				// 	case 2
+				// 		EngineCallback(CALLBACK_EXIT_SELECTED)
+				// 		break
+				// 	case 3
+				// 		if Engine.TrialMode == false
+				// 			Object.SpritesXPos  = Object.XPos
+				// 			Object.SpritesXPos += 48
+				// 			StopMusic()
+				// 			Object.State = PAUSEMENU_EXIT_LEVEL	// Dev Menu
+				// 		else
+				// 			EngineCallback(CALLBACK_BUY_FULL_GAME_SELECTED)	// Demo End
+				// 			Object.Timer		  = 0
+				// 			Object.AnimationTimer = 0
+				// 			Object.Frame		  = 0
+				// 			Object.SpritesXPos	  = Screen.XSize
+				// 			if Options.PhysicalControls == false
+				// 				Object.SelectedButton = -1
+				// 			end if
+				// 			Object.State = PAUSEMENU_CONTROLS
+				// 			Object.Alpha = 255
+				// 		end if
+				// 		break
+				// 	end switch
+				// else
+				// 	if Engine.Message == MESSAGE_NO_SELECTED
+				// 		Object.Timer		  = 0
+				// 		Object.AnimationTimer = 0
+				// 		Object.Frame		  = 0
+				// 		Object.SpritesXPos	  = Screen.XSize
+				// 		if Options.PhysicalControls == false
+				// 			Object.SelectedButton = -1
+				// 		end if
+				// 		Object.State = PAUSEMENU_CONTROLS
+				// 		Object.Alpha = 255
+				// 	else
+				// 		Object.SpritesXPos  = Object.XPos
+				// 		Object.SpritesXPos += 48
+				// 		StopMusic()
+				// 		Object.State = PAUSEMENU_EXIT_LEVEL
+				// 	end if
+				// end if
+//#endplatform
 			end if
 		end if
 		break
@@ -594,69 +588,26 @@ sub ObjectDraw
 				Object.BlackBarHeight = Object.BlackBarYPos
 			end if
 		end if
-		break
-
+		// Fall-through
 	case PAUSEMENU_RESUME_GAME
-		// White BG
-		if Object.Alpha < 128
-			DrawRect(0, 0, Screen.XSize, 240, 255, 255, 255, Object.Alpha)
-		end if
-		break
+		DrawSpriteScreenXY(3, Object.XPos, 0)
+		DrawSpriteScreenXY(3, Object.XPos, 32)
+		DrawSpriteScreenXY(3, Object.XPos, 64)
+		DrawSpriteScreenXY(3, Object.XPos, 96)
+		DrawSpriteScreenXY(3, Object.XPos, 128)
+		DrawSpriteScreenXY(3, Object.XPos, 160)
+		DrawSpriteScreenXY(3, Object.XPos, 192)
+		DrawSpriteScreenXY(3, Object.XPos, 224)
 
-	case PAUSEMENU_EXIT_LEVEL
-		// Screen Cover
-		TempValue0  = Screen.XSize
-		TempValue0 -= 96
-		DrawRect(TempValue0, 0, 96, 240, 0, 0, 0, 255)
-		break
-		endswitch
-	
-	// Menu Draw
-	DrawSpriteScreenXY(3, Object.XPos, 0)
-	DrawSpriteScreenXY(3, Object.XPos, 32)
-	DrawSpriteScreenXY(3, Object.XPos, 64)
-	DrawSpriteScreenXY(3, Object.XPos, 96)
-	DrawSpriteScreenXY(3, Object.XPos, 128)
-	DrawSpriteScreenXY(3, Object.XPos, 160)
-	DrawSpriteScreenXY(3, Object.XPos, 192)
-	DrawSpriteScreenXY(3, Object.XPos, 224)
-
-	// Pause Black Bar
-	TempValue0  = Object.XPos
-	TempValue0 += 128
-	DrawRect(TempValue0, 0, 128, Screen.YSize, 0, 0, 0, 255)
-
-	switch Object.State
-	case PAUSEMENU_START_PAUSE
-	case PAUSEMENU_SLIDE_IN
-	case PAUSEMENU_SPRITES_FADE_IN
-	case PAUSEMENU_CONTROLS
-	case PAUSEMENU_CONFIRMED
+		// Black Bar position
+		TempValue0  = Object.XPos
+		TempValue0 += 128
+		DrawRect(TempValue0, 0, 128, Screen.YSize, 0, 0, 0, 255)
 		DrawRect(0, 202, Object.BlackBarXPos, 13, 0, 0, 0, 255)
-		if Object.State < PAUSEMENU_CONFIRMED
-			DrawSpriteScreenFX(4, FX_INK, 0, 202)
-		else
-			DrawSpriteScreenXY(4, 0, 202)
-		end if
-		break
-		
-	case PAUSEMENU_RESUME_GAME
-		DrawRect(0, Object.BlackBarYPos, Screen.XSize, 13, 0, 0, 0, 255)
-		DrawSpriteScreenXY(4, 0, Object.BlackBarYPos)
-		break
-		endswitch
-	
-	// Text Sprite Slide
-	if Object.State < PAUSEMENU_RESUME_GAME
+
+		DrawSpriteScreenFX(4, FX_INK, 0, 202)
 		TempValue0  = Object.XPos
 		TempValue0 += 48
-	end if
-	
-	switch Object.State
-	case PAUSEMENU_START_PAUSE
-	case PAUSEMENU_SLIDE_IN
-	case PAUSEMENU_SPRITES_FADE_IN
-	case PAUSEMENU_CONTROLS
 
 		if Object.SpritesXPos > TempValue0
 			TempValue1   = TempValue0
@@ -664,57 +615,48 @@ sub ObjectDraw
 			TempValue1 >>= 3
 			Object.SpritesXPos += TempValue1
 		end if
-		
-		// Continue
+
 		TempValue1 = 48
 		DrawSpriteScreenFX(6, FX_INK, TempValue0, TempValue1)
-
-		// Continue Highlight
 		if Object.SelectedButton == 0
 			DrawSpriteScreenFX(5, FX_INK, Object.SpritesXPos, TempValue1)
 			DrawSpriteScreenFX(Object.Frame, FX_INK, TempValue0, TempValue1)
 		end if
-
-		// Restart
+		
 		TempValue1 += 48
-		if Object.BlockRestart == 0
+		if Object.BlockRestart == false
 			DrawSpriteScreenFX(7, FX_INK, TempValue0, TempValue1)
 		else
-			TempValue2	   = Object.Alpha
+			TempValue2     = Object.Alpha
 			Object.Alpha >>= 1
 			DrawSpriteScreenFX(7, FX_INK, TempValue0, TempValue1)
 			Object.Alpha = TempValue2
 		end if
 
-		// Restart Highlight
 		if Object.SelectedButton == 1
-			DrawSpriteScreenFX(5, FX_INK, Object.SpritesXPos, TempValue1)
+			DrawSpriteScreenFX(5, FX_INK, Object.Value2, TempValue1)
 			DrawSpriteScreenFX(Object.Frame, FX_INK, TempValue0, TempValue1)
 		end if
-		
-		// Exit
+
 		TempValue1 += 48
 		DrawSpriteScreenFX(8, FX_INK, TempValue0, TempValue1)
-
-		// Exit Highlight
 		if Object.SelectedButton == 2
-			DrawSpriteScreenFX(5, FX_INK, Object.SpritesXPos, TempValue1)
+			DrawSpriteScreenFX(5, FX_INK, Object.Value2, TempValue1)
 			DrawSpriteScreenFX(Object.Frame, FX_INK, TempValue0, TempValue1)
 		end if
 
-		// Dev Menu
 		TempValue1 += 48
 		if Options.DevMenuFlag == true
 			DrawSpriteScreenFX(9, FX_INK, TempValue0, TempValue1)
 			if Object.SelectedButton == 3
-				DrawSpriteScreenFX(5, FX_INK, Object.SpritesXPos, TempValue1)
+				DrawSpriteScreenFX(5, FX_INK, Object.Value2, TempValue1)
 				DrawSpriteScreenFX(Object.Frame, FX_INK, TempValue0, TempValue1)
 			end if
 		else
 			if Engine.TrialMode == true
 				DrawSpriteScreenFX(10, FX_INK, TempValue0, TempValue1)
 				if Object.SelectedButton == 3
-					DrawSpriteScreenFX(5, FX_INK, Object.SpritesXPos, TempValue1)
+					DrawSpriteScreenFX(5, FX_INK, Object.Value2, TempValue1)
 					DrawSpriteScreenFX(Object.Frame, FX_INK, TempValue0, TempValue1)
 				end if
 			end if
@@ -722,10 +664,27 @@ sub ObjectDraw
 		break
 
 	case PAUSEMENU_CONFIRMED
+		DrawSpriteScreenXY(3, Object.XPos, 0)
+		DrawSpriteScreenXY(3, Object.XPos, 32)
+		DrawSpriteScreenXY(3, Object.XPos, 64)
+		DrawSpriteScreenXY(3, Object.XPos, 96)
+		DrawSpriteScreenXY(3, Object.XPos, 128)
+		DrawSpriteScreenXY(3, Object.XPos, 160)
+		DrawSpriteScreenXY(3, Object.XPos, 192)
+		DrawSpriteScreenXY(3, Object.XPos, 224)
 
-		//	Continue Flashing
-		TempValue1 = 48
-		if Object.SelectedButton == 0
+		TempValue0  = Object.XPos
+		TempValue0 += 128
+		DrawRect(TempValue0, 0, 128, Screen.YSize, 0, 0, 0, 255)
+
+		DrawRect(0, 202, Object.BlackBarXPos, 13, 0, 0, 0, 255)
+		DrawSpriteScreenXY(4, 0, 202)
+
+		TempValue0  = Object.XPos
+		TempValue0 += 48
+		TempValue1  = 48
+
+		if Object.SelectedButton == 0	// Continue
 			if Object.Timer < 2
 				DrawSpriteScreenXY(6, TempValue0, TempValue1)
 			end if
@@ -735,28 +694,26 @@ sub ObjectDraw
 			DrawSpriteScreenFX(6, FX_INK, TempValue0, TempValue1)
 		end if
 
-		//	Restart Flashing
 		TempValue1 += 48
-		if Object.SelectedButton == 1
+		if Object.SelectedButton == 1	// Reset
 			if Object.Timer < 2
 				DrawSpriteScreenXY(7, TempValue0, TempValue1)
 			end if
 			DrawSpriteScreenXY(5, Object.SpritesXPos, TempValue1)
 			DrawSpriteScreenXY(Object.Frame, TempValue0, TempValue1)
 		else
-			if Object.BlockRestart == 0
+			if Object.BlockRestart == false
 				DrawSpriteScreenFX(7, FX_INK, TempValue0, TempValue1)
 			else
-				TempValue2 = Object.Alpha
+				TempValue2     = Object.Alpha
 				Object.Alpha >>= 1
 				DrawSpriteScreenFX(7, FX_INK, TempValue0, TempValue1)
 				Object.Alpha = TempValue2
 			end if
 		end if
 
-		//	Exit Flashing
 		TempValue1 += 48
-		if Object.SelectedButton == 2
+		if Object.SelectedButton == 2	// Exit
 			if Object.Timer < 2
 				DrawSpriteScreenXY(8, TempValue0, TempValue1)
 			end if
@@ -766,10 +723,9 @@ sub ObjectDraw
 			DrawSpriteScreenFX(8, FX_INK, TempValue0, TempValue1)
 		end if
 
-		//	Dev Menu Flashing
 		TempValue1 += 48
 		if Options.DevMenuFlag == true
-			if Object.SelectedButton == 3
+			if Object.SelectedButton == 3	// Dev Menu
 				if Object.Timer < 2
 					DrawSpriteScreenXY(9, TempValue0, TempValue1)
 				end if
@@ -780,7 +736,7 @@ sub ObjectDraw
 			end if
 		else
 			if Engine.TrialMode == true
-				if Object.SelectedButton == 3
+				if Object.SelectedButton == 3	// Buy Demo
 					if Object.Timer < 2
 						DrawSpriteScreenXY(10, TempValue0, TempValue1)
 					end if
@@ -794,24 +750,38 @@ sub ObjectDraw
 		break
 
 	case PAUSEMENU_RESUME_GAME
-	case PAUSEMENU_EXIT_LEVEL
+		if Object.Alpha < 128
+			DrawRect(0, 0, Screen.XSize, 240, 255, 255, 255, Object.Alpha)
+		end if
+
+		DrawSpriteScreenXY(3, Object.XPos, 0)
+		DrawSpriteScreenXY(3, Object.XPos, 32)
+		DrawSpriteScreenXY(3, Object.XPos, 64)
+		DrawSpriteScreenXY(3, Object.XPos, 96)
+		DrawSpriteScreenXY(3, Object.XPos, 128)
+		DrawSpriteScreenXY(3, Object.XPos, 160)
+		DrawSpriteScreenXY(3, Object.XPos, 192)
+		DrawSpriteScreenXY(3, Object.XPos, 224)
+
+		TempValue0  = Object.XPos
+		TempValue0 += 128
+		DrawRect(TempValue0, 0, 128, Screen.YSize, 0, 0, 0, 255)
+		DrawRect(0, Object.BlackBarYPos, Screen.XSize, 13, 0, 0, 0, 255)
+		DrawSpriteScreenXY(4, 0, Object.BlackBarYPos)
 
 		switch Object.SelectedButton
 		case 0	// Continue
 			DrawSpriteScreenXY(6, Object.SpritesXPos, 48)
 			DrawSpriteScreenXY(Object.Frame, Object.SpritesXPos, 48)
 			break
-
-		case 1	// Restart
-			DrawSpriteScreenXY(7, Object.SpritesXPos, 96)
+		case 1	// Reset
+			DrawSpriteScreenXY(6, Object.SpritesXPos, 96)
 			DrawSpriteScreenXY(Object.Frame, Object.SpritesXPos, 96)
 			break
-
 		case 2	// Exit
 			DrawSpriteScreenXY(8, Object.SpritesXPos, 144)
 			DrawSpriteScreenXY(Object.Frame, Object.SpritesXPos, 144)
 			break
-
 		case 3	// Dev Menu
 			if Options.DevMenuFlag == true
 				DrawSpriteScreenXY(9, Object.SpritesXPos, 192)
@@ -826,7 +796,50 @@ sub ObjectDraw
 		end switch
 		break
 
-	end switch
+	case PAUSEMENU_EXIT_LEVEL
+
+		TempValue0  = Screen.XSize
+		TempValue0 -= 96
+		DrawRect(TempValue0, 0, 96, 240, 0, 0, 0, 255)
+		DrawSpriteScreenXY(3, Object.XPos, 0)
+		DrawSpriteScreenXY(3, Object.XPos, 32)
+		DrawSpriteScreenXY(3, Object.XPos, 64)
+		DrawSpriteScreenXY(3, Object.XPos, 96)
+		DrawSpriteScreenXY(3, Object.XPos, 128)
+		DrawSpriteScreenXY(3, Object.XPos, 160)
+		DrawSpriteScreenXY(3, Object.XPos, 192)
+		DrawSpriteScreenXY(3, Object.XPos, 224)
+
+		TempValue0  = Object.XPos
+		TempValue0 += 128
+		DrawRect(TempValue0, 0, 128, Screen.YSize, 0, 0, 0, 255)
+		switch Object.SelectedButton
+		case 0	// Continue
+			DrawSpriteScreenXY(6, Object.SpritesXPos, 48)
+			DrawSpriteScreenXY(Object.Frame, Object.SpritesXPos, 48)
+			break
+		case 1	// Reset
+			DrawSpriteScreenXY(6, Object.SpritesXPos, 96)
+			DrawSpriteScreenXY(Object.Frame, Object.SpritesXPos, 96)
+			break
+		case 2	// Exit
+			DrawSpriteScreenXY(8, Object.SpritesXPos, 144)
+			DrawSpriteScreenXY(Object.Frame, Object.SpritesXPos, 144)
+			break
+		case 3	// Dev Menu
+			if Options.DevMenuFlag == true
+				DrawSpriteScreenXY(9, Object.SpritesXPos, 192)
+				DrawSpriteScreenXY(Object.Frame, Object.SpritesXPos, 192)
+			else
+				if Engine.TrialMode == true
+					DrawSpriteScreenXY(10, Object.SpritesXPos, 192)
+					DrawSpriteScreenXY(Object.Frame, Object.SpritesXPos, 192)
+				end if
+			end if
+			break
+		end switch
+		break
+	endswitch
 end sub
 
 

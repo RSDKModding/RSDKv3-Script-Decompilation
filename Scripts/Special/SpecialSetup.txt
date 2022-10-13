@@ -21,7 +21,7 @@
 #alias Player.ControlMode : SSSonic.ControlMode
 
 // ControlMode Aliases
-#alias -1 : CONTROL_DISABLED
+#alias -1 : CONTROLMODE_NONE
 
 // Stage Finish State Aliases
 #alias 9 : STAGEFINISH_LOADLEVELSELECT
@@ -37,7 +37,10 @@
 #alias 0 : OST_JP
 
 // Priority
-#alias 1	:	PRIORITY_ACTIVE
+#alias 1 : PRIORITY_ACTIVE
+
+// Tile Layer types
+#alias 4 : LAYER_3DSKY
 
 
 sub ObjectMain
@@ -57,7 +60,7 @@ sub ObjectMain
 		
 		// This used to be checking if it was false, but Origins changed it up a bit
 		if Stage.TimeEnabled == true
-			// However, whatever thing origins does to make this work is not on decomp so....
+			// However, this is a bit faulty and results on a time ufo sometimes appearing in time attack, so let's exclude any of this from time attack for decomp
 #platform: Use_Decomp		
 			if Options.GameMode != GAMEMODE_TIMEATTACK
 #endplatform
@@ -104,7 +107,7 @@ sub ObjectMain
 								// Nope, we can just do normal results
 								Object[30].DrawOrder = 6
 							end if
-							SSSonic.ControlMode = CONTROL_DISABLED
+							SSSonic.ControlMode = CONTROLMODE_NONE
 						end if
 					end if
 				end if
@@ -134,7 +137,7 @@ sub ObjectMain
 										Object[30].DrawOrder = 6
 									end if
 									
-									SSSonic.ControlMode = CONTROL_DISABLED
+									SSSonic.ControlMode = CONTROLMODE_NONE
 								end if
 							end if
 						else
@@ -176,7 +179,7 @@ sub ObjectMain
 										
 									end if
 									
-									SSSonic.ControlMode = CONTROL_DISABLED
+									SSSonic.ControlMode = CONTROLMODE_NONE
 								end if
 								
 							end if
@@ -232,7 +235,7 @@ sub ObjectStartup
 	
 	// Set the ground to the "3d Sky" layer type
 	// -> This way, it'll render in high-quality mode if possible, as opposed to the "3d Floor" type
-	TileLayer[0].Type = 4
+	TileLayer[0].Type = LAYER_3DSKY
 	
 	if Options.Soundtrack == OST_JP
 		SetMusicTrack("JP/SpecialStage.ogg", 0, true)
@@ -249,7 +252,7 @@ sub ObjectStartup
 		Stage.TimeEnabled = false
 	else
 		Stage.TimeEnabled = true
-	endif
+	end if
 	
 	Object[23].Type = TypeName[Special Setup]
 	Object[23].Priority = PRIORITY_ACTIVE

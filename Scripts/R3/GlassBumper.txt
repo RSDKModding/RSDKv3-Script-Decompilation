@@ -27,6 +27,9 @@
 #alias 2	:	TIME_GOOD_FUTURE
 #alias 3	:	TIME_BAD_FUTURE
 
+// Tile Info
+#alias 0	:	TILEINFO_INDEX
+
 
 sub ObjectMain
 	if Object.State == GLASSBUMPER_DESTROYED
@@ -69,8 +72,8 @@ sub ObjectPlayerInteraction
 				Cos256(TempValue0, TempValue2)
 				Sin256(TempValue1, TempValue2)
 
-				TempValue0 *= 1792
-				TempValue1 *= 1792
+				TempValue0 *= 0x700
+				TempValue1 *= 0x700
 
 				Player.XVelocity = TempValue0
 				Player.YVelocity = TempValue1
@@ -83,19 +86,20 @@ sub ObjectPlayerInteraction
 				TempValue0  = Object.iXPos
 				TempValue1  = Object.iYPos
 
+				// Replace the bumper tiles with blank tiles
 				TempValue0 -= 8
 				TempValue1 -= 8
-				Set16x16TileInfo(0, TempValue0, TempValue1, 0)
+				Set16x16TileInfo(0, TempValue0, TempValue1, TILEINFO_INDEX)
 
 				TempValue0 += 16
-				Set16x16TileInfo(0, TempValue0, TempValue1, 0)
+				Set16x16TileInfo(0, TempValue0, TempValue1, TILEINFO_INDEX)
 				
 				TempValue0 -= 16
 				TempValue1 += 16
-				Set16x16TileInfo(0, TempValue0, TempValue1, 0)
+				Set16x16TileInfo(0, TempValue0, TempValue1, TILEINFO_INDEX)
 
 				TempValue0 += 16
-				Set16x16TileInfo(0, TempValue0, TempValue1, 0)
+				Set16x16TileInfo(0, TempValue0, TempValue1, TILEINFO_INDEX)
 
 			end if
 		end if

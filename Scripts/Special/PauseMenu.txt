@@ -127,6 +127,9 @@
 #alias 6 : CALLBACK_RESTART_SELECTED
 #alias 7 : CALLBACK_EXIT_SELECTED
 
+// Tile Layer types
+#alias 4 : LAYER_3DSKY
+
 
 sub ObjectMain
 	switch Object.State
@@ -200,6 +203,15 @@ sub ObjectMain
 #platform: Use_Origins
 		// On Origins, Physical Controls are enforced as the default
 		Options.PhysicalControls = true
+#endplatform
+
+#platform: Mobile
+		if Options.TouchControls == true
+			Object.CurrentSelection = SELECTION_NULL
+			Options.PhysicalControls = false
+		else
+			Options.PhysicalControls = true
+		end if
 #endplatform
 		Object.State++
 		break
@@ -720,7 +732,7 @@ sub ObjectMain
 			
 			// Make the Floor render in High Quality mode now
 			// (...shouldn't this be done when the stage state is reset? why is it being done afterwards?)
-			TileLayer[0].Type = 4
+			TileLayer[0].Type = LAYER_3DSKY
 			
 		end if
 		break
@@ -752,7 +764,7 @@ sub ObjectMain
 				Good_Future_List = 0
 				Good_Future = 0
 				Transporter_Destroyed = false
-				MetalSonic_Destroyed = false
+				MetalSonic_Destroyed  = false
 				
 				Stage.ActiveList = PRESENTATION_STAGE
 				

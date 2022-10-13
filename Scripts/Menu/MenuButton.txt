@@ -82,8 +82,8 @@
 // Menus
 #alias 1 	:	Menu_LoadSaveMenu
 #alias 2 	:	Menu_TimeAttack
-#alias 3 	:	Menu_LeaderBoards
-#alias 4 	:	Menu_Achievements
+#alias 3 	:	Menu_Achievements
+#alias 4 	:	Menu_LeaderBoards
 #alias 5 	:	Menu_Help&Options
 #alias 6 	:	Menu_Extras
 #alias 7 	:	Menu_UnlockFullGame
@@ -118,6 +118,10 @@
 #alias 8 	:	CALLBACK_BUY_FULL_GAME_SELECTED
 #alias 14	:	CALLBACK_FULL_VERSION_ONLY
 #alias 16	:	CALLBACK_MOREGAMES
+
+// Online Menus
+#alias 0	:	ONLINEMENU_ACHIEVEMENTS
+#alias 1	:	ONLINEMENU_LEADERBOARDS
 
 // game.mainMenuMode Aliases
 #alias 0	:	MAINMENUMODE_NONE		// Starts with this, but gets swapped on MenuButton
@@ -193,7 +197,7 @@ sub ObjectMain
 // Originally if Options.PhysicalControls == false
 // Adapted the code to ensure compatibility with Blit Data files
 #platform: Standard
-		TempValue0 = false
+		CheckResult = false
 #endplatform
 
 #platform: Mobile
@@ -204,7 +208,7 @@ sub ObjectMain
 		CheckEqual(Options.PhysicalControls, false)
 #endplatform
 
-		if TempValue0 == true
+		if CheckResult == true
 			TempValue0  = Object.ButtonXOffSet
 			TempValue0 -= 16
 			TempValue1  = Object.ButtonXOffSet
@@ -257,7 +261,6 @@ sub ObjectMain
 								break
 
 							case Menu_TimeAttack
-							case Menu_Achievements		//All of this is MenuButton
 								if Engine.TrialMode == false
 									StopMusic()
 									Object[34].State = MENUBUTTON_BUTTONS_OUT
@@ -281,10 +284,6 @@ sub ObjectMain
 									Object[43].State = MENUBUTTON_BUTTONS_OUT
 									Object[43].Timer = 0
 								end if
-								break
-
-							case Menu_LeaderBoards
-								StopMusic()
 								break
 
 							end switch
@@ -320,13 +319,13 @@ sub ObjectMain
 						if Engine.PlatformID == RETRO_ANDROID
 							if Object.PropertyValue == Menu_LoadSaveMenu
 								StopMusic()
-							endif
-						endif
+							end if
+						end if
 					else
 						if Object.PropertyValue == Menu_TimeAttack
 							StopMusic()
-						endif
-					endif
+						end if
+					end if
 
 					MenuControl.State = MENUCONTROL_BLANK
 					switch Object.PropertyValue
@@ -396,7 +395,6 @@ sub ObjectMain
 				MenuControl.CurrentDrag = 0
 			end if
 		end if
-
 		break
 
 	case MENUBUTTON_MENU_SELECTED
@@ -476,39 +474,45 @@ sub ObjectMain
 				end if
 				break
 
-			case Menu_LeaderBoards
+			case Menu_Achievements
 				if Engine.PlatformID != RETRO_WP7
-					LoadOnlineMenu(0)
+					LoadOnlineMenu(ONLINEMENU_ACHIEVEMENTS)
 					Object.State = MENUBUTTON_CONFIRM_SELECTION
 
 					MenuControl.State = MENUCONTROL_CONTROLS
+#platform: Mobile
+					MenuControl.CurrentDrag = 0
+#endplatform
 				else
 					Object.State   = MENUBUTTON_BLANK
 
 					MenuControl.State = MENUCONTROL_ENTER_TROPHIES
 					MenuControl.Fade  = 0
-				endif
+				end if
 				break
 
-			case Menu_Achievements
-			if Engine.PlatformID!=RETRO_WP7
-				LoadOnlineMenu(1)
-				Object.State   = MENUBUTTON_CONFIRM_SELECTION
-
-				MenuControl.State = MENUCONTROL_CONTROLS
-			else
-				if Engine.TrialMode == false
-					Object.State   = MENUBUTTON_BLANK
-
-					MenuControl.State = MENUCONTROL_ENTER_LEADERBOARS
-					MenuControl.Fade  = 0
-				else
-					Object.State  = MENUBUTTON_CONFIRM_SELECTION
+			case Menu_LeaderBoards
+				if Engine.PlatformID!=RETRO_WP7
+					LoadOnlineMenu(ONLINEMENU_LEADERBOARDS)
+					Object.State   = MENUBUTTON_CONFIRM_SELECTION
 
 					MenuControl.State = MENUCONTROL_CONTROLS
-					EngineCallback(CALLBACK_FULL_VERSION_ONLY)
-				endif
-			endif
+#platform: Mobile
+					MenuControl.CurrentDrag = 0
+#endplatform
+				else
+					if Engine.TrialMode == false
+						Object.State   = MENUBUTTON_BLANK
+
+						MenuControl.State = MENUCONTROL_ENTER_LEADERBOARS
+						MenuControl.Fade  = 0
+					else
+						Object.State  = MENUBUTTON_CONFIRM_SELECTION
+
+						MenuControl.State = MENUCONTROL_CONTROLS
+						EngineCallback(CALLBACK_FULL_VERSION_ONLY)
+					end if
+				end if
 				break
 
 			case Menu_Help&Options
@@ -517,17 +521,17 @@ sub ObjectMain
 
 				CallFunction(MenuButton_SetupMenuWindow)
 #platform: Use_Standalone
-#platform: Standard
+	#platform: Standard
 				ResetObjectEntity(62, TypeName[OptionsMenuC], 0, 0, 0)
-#endplatform
+	#endplatform
 
-#platform: Mobile
+	#platform: Mobile
 				if Options.HapticsMenu == true
 					ResetObjectEntity(62, TypeName[OptionsMenuH], 0, 0, 0)
 				else
 					ResetObjectEntity(62, TypeName[OptionsMenu], 0, 0, 0)
 				end if
-#endplatform
+	#endplatform
 #endplatform
 
 #platform: Use_Origins
@@ -613,6 +617,7 @@ sub ObjectMain
 				Object.Type = TypeName[Blank Object]
 				break
 
+#platform: Mobile
 			case Menu_MoreGames
 				EngineCallback(CALLBACK_MOREGAMES)
 				Object.State = MENUBUTTON_CONFIRM_SELECTION
@@ -620,7 +625,7 @@ sub ObjectMain
 				MenuControl.State		= MENUCONTROL_CONTROLS
 				MenuControl.CurrentDrag = 0
 				break
-
+#endplatform
 			end switch
 		end if
 		break
@@ -836,7 +841,7 @@ sub ObjectStartup
 		else
 			if Engine.OnlineActive == true
 				Object[34].PropertyValue = Menu_LoadSaveMenu
-				Object[35].PropertyValue = Menu_Help&Options
+				Object[35].PropertyValue = Menu_TimeAttack
 				Object[36].PropertyValue = Menu_LeaderBoards
 				Object[37].PropertyValue = Menu_Achievements
 				Object[38].PropertyValue = Menu_Help&Options
@@ -846,7 +851,7 @@ sub ObjectStartup
 				Object.ButtonCount = 8
 			else
 				Object[34].PropertyValue = Menu_LoadSaveMenu
-				Object[35].PropertyValue = Menu_Help&Options
+				Object[35].PropertyValue = Menu_TimeAttack
 				Object[36].PropertyValue = Menu_Help&Options
 				Object[37].PropertyValue = Menu_MoreGames
 				Object[38].PropertyValue = Menu_Soundtrack
@@ -857,14 +862,14 @@ sub ObjectStartup
 				Object[38].PropertyValue = Menu_Extras
 				Object[39].PropertyValue = Menu_Exit
 				Object.ButtonCount = 6
-			endif
-		endif
+			end if
+		end if
 		break
 
 	case RETRO_iOS
 		if Engine.OnlineActive == true
 			Object[34].PropertyValue = Menu_LoadSaveMenu
-			Object[35].PropertyValue = Menu_Help&Options
+			Object[35].PropertyValue = Menu_TimeAttack
 			Object[36].PropertyValue = Menu_LeaderBoards
 			Object[37].PropertyValue = Menu_Help&Options
 			Object[38].PropertyValue = Menu_Soundtrack
@@ -877,7 +882,7 @@ sub ObjectStartup
 			Object[37].PropertyValue = Menu_Soundtrack
 			Object[38].PropertyValue = Menu_Extras
 			Object.ButtonCount = 5
-		endif
+		end if
 		break
 
 	case RETRO_WP7
@@ -1017,8 +1022,8 @@ sub ObjectStartup
 			SpriteFrame(19,-7,128,16,130,TempValue1)
 		else
 			SpriteFrame(19,-7,128,16,291,632)
-		endif
-	endif
+		end if
+	end if
 
 	TempValue1 += 17
 	TempValue0++
@@ -1119,7 +1124,7 @@ sub ObjectStartup
 							ResetObjectEntity(62,TypeName[OptionsMenuH],0,0,0)
 						else
 							ResetObjectEntity(62,TypeName[OptionsMenu],0,0,0)
-						endif
+						end if
 
 						Object.NextMenuInkEffect = INK_ALPHA
 						Object.NextMenuAlpha	 = 0
@@ -1161,13 +1166,13 @@ sub ObjectStartup
 								ResetObjectEntity(65, TypeName[Blank Object], 0, 0, 0)
 								ResetObjectEntity(66, TypeName[Blank Object], 0, 0, 0)
 								Object.Type = TypeName[Blank Object]
-							endif
-						endif
-					endif
-				endif
-			endif
-		endif
-	endif
+							end if
+						end if
+					end if
+				end if
+			end if
+		end if
+	end if
 
 #endplatform
 

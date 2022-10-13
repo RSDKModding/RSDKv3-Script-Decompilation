@@ -20,6 +20,10 @@
 #alias 9	:	CALLBACK_TERMS_SELECTED
 #alias 10	:	CALLBACK_PRIVACY_SELECTED
 
+// Text Info type
+#alias 0	:	TEXTINFO_TEXTDATA
+#alias 1	:	TEXTINFO_TEXTSIZE
+
 
 sub ObjectMain
 	Object.Alpha = Object.OptionsAlpha
@@ -154,14 +158,14 @@ sub ObjectMain
 	if Object.Alpha > 254
 		if Options.PhysicalControls == false
 			CallFunction(MenuHeading_CheckTouchBack)
-		endif
+		end if
 	else
 		if Options.PhysicalControls == false
 			Object.ButtonSelected = -1
-		endif
+		end if
 		Object.AnimationTimer = 0
 		Object.State = ABOUTMENU_CONTROLS
-	endif
+	end if
 #endplatform
 end sub
 
@@ -197,16 +201,17 @@ sub ObjectDraw
 	end if
 
 	ArrayPos0 = 0
-	GetTextInfo(TempValue1, MENU_1, 1, 0, 0)	//Gets version numbers
+	GetTextInfo(TempValue1, MENU_1, TEXTINFO_TEXTSIZE, 0, 0)	//Gets version numbers
 	TempValue2   = TempValue1
 	TempValue2 <<= 2
 	FlipSign(TempValue2)
 	TempValue2 += Screen.CenterX
 	TempValue2 += 72
 	Object.DrawHeight = 102
-
-	while TempValue1 > 0		//This handles the drawing of the game version
-		GetTextInfo(TempValue0, MENU_1, 0, 0, ArrayPos0)
+	
+	//This handles the drawing of the game version
+	while TempValue1 > 0
+		GetTextInfo(TempValue0, MENU_1, TEXTINFO_TEXTDATA, 0, ArrayPos0)
 		switch TempValue0
 		default
 			Object.Frame = 0

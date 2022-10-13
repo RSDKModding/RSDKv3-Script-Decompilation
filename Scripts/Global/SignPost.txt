@@ -21,7 +21,7 @@
 #alias 4	:	SIGNPOST_BLANK
 
 // Control Mode
-#alias -1	:	CONTROL_DISABLED
+#alias -1	:	CONTROLMODE_NONE
 
 // Player
 #alias 0	:	PLAYER_SONIC
@@ -110,7 +110,7 @@ sub ObjectMain
 						ActFinish.DrawOrder = 6
 						ActFinish.Priority	= PRIORITY_ACTIVE
 					else	// Otherwise the signpost will do it itself.
-						Player.ControlMode 	= CONTROL_DISABLED
+						Player.ControlMode 	= CONTROLMODE_NONE
 						Player.Up 			= false
 						Player.Down 		= false
 						Player.Left 		= false
@@ -167,7 +167,7 @@ sub ObjectMain
 			ActFinish.Priority	= PRIORITY_ACTIVE
 		end if
 
-		if Player.ControlMode == CONTROL_DISABLED
+		if Player.ControlMode == CONTROLMODE_NONE
 			Player.Right = true
 		end if
 
@@ -192,7 +192,7 @@ sub ObjectMain
 		break
 
 	case SIGNPOST_STOP_PLAYER
-		if Player.ControlMode == CONTROL_DISABLED
+		if Player.ControlMode == CONTROLMODE_NONE
 			Player.Right = true
 		end if
 		TempValue0   = 40
@@ -215,8 +215,8 @@ sub ObjectMain
 		if Object.State > SIGNPOST_IDLE
 			// 	// Origins gives the player invincibility, in case the game stops you close to a hazard
 			Player.InvincibleTimer = 80
-		endif
-	endif
+		end if
+	end if
 #endplatform
 end sub
 

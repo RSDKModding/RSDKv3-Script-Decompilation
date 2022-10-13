@@ -36,6 +36,13 @@
 // Ink Effect
 #alias 2	:	INK_ALPHA
 
+// Text Info type
+#alias 0	:	TEXTINFO_TEXTDATA
+#alias 1	:	TEXTINFO_TEXTSIZE
+
+// Online Menus
+#alias 1	:	ONLINEMENU_LEADERBOARDS
+
 
 sub ObjectMain
 	switch Object.State
@@ -58,7 +65,7 @@ sub ObjectMain
 					if Object.PropertyValue == 2
 						Leaderboard.ID++
 						Leaderboard.ID %= 22
-						LoadOnlineMenu(1)
+						LoadOnlineMenu(ONLINEMENU_LEADERBOARDS)
 					end if
 				end if
 			end if
@@ -99,7 +106,7 @@ sub ObjectMain
 						if Leaderboard.ID < 0
 							Leaderboard.ID = 21
 						end if
-						LoadOnlineMenu(1)
+						LoadOnlineMenu(ONLINEMENU_LEADERBOARDS)
 					end if
 				end if
 			end if
@@ -191,12 +198,12 @@ sub ObjectDraw
 	Object.Index  = Object.PropertyValue
 	Object.Index += Object.VTimer
 	ArrayPos0 = 0
-	GetTextInfo(TempValue1, MENU_1, 1, Object.Index, 0)
+	GetTextInfo(TempValue1, MENU_1, TEXTINFO_TEXTSIZE, Object.Index, 0)
 	TempValue2  = Object.XPos
 	TempValue2 += 0x80000
 	TempValue3  = 0
 	while TempValue3 < 4
-		GetTextInfo(TempValue0, MENU_1, 0, Object.Index, ArrayPos0)
+		GetTextInfo(TempValue0, MENU_1, TEXTINFO_TEXTDATA, Object.Index, ArrayPos0)
 		switch TempValue0
 		default
 			Object.Frame = 0
@@ -232,7 +239,7 @@ sub ObjectDraw
 	loop
 	TempValue1 -= 4
 	while TempValue1 > 0
-		GetTextInfo(TempValue0, MENU_1, 0, Object.Index, ArrayPos0)
+		GetTextInfo(TempValue0, MENU_1, TEXTINFO_TEXTDATA, Object.Index, ArrayPos0)
 		switch TempValue0
 		default
 			Object.Frame = 0
@@ -293,7 +300,7 @@ sub ObjectStartup
 	LoadSpriteSheet("LBoards/Leaderboards.gif")
 	LoadTextFile(MENU_1, "Data/Game/LeaderboardText.txt", 0)
 	Leaderboard.ID = 0
-	LoadOnlineMenu(1)
+	LoadOnlineMenu(ONLINEMENU_LEADERBOARDS)
 
 	SpriteFrame(0, 0, 8, 10, 118, 298)		// #0 - Blank Space
 

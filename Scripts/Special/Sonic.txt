@@ -131,15 +131,25 @@
 #alias 6 : SFX_S_FAN
 
 // ControlMode Aliases
-#alias -1 : CONTROL_DISABLED
-#alias  0 : CONTROL_ENABLED
+#alias -1 : CONTROLMODE_NONE
+#alias  0 : CONTROLMODE_NORMAL
 
 // Engine Callback Aliases
 #alias 13 : CALLBACK_PAUSE_REQUESTED
 
+// Engine Messages
+#alias 2	:	MESSAGE_LOSTFOCUS
+
 // Priority
 #alias 1	:	PRIORITY_ACTIVE
 #alias 2	:	PRIORITY_ALWAYS
+
+// Tile Layer types
+#alias 3	:	LAYER_3DFLOOR
+
+// Tile Info
+#alias 1	:	TILEINFO_DIRECTION
+#alias 6	:	TILEINFO_ANGLEA
 
 
 function Sonic_ProcessPlayer
@@ -149,7 +159,7 @@ function Sonic_ProcessPlayer
 		// Mobile has a lot more checks here than standard, especially because of the touchscreen, so it's just its own separate part here
 		
 		if Options.TouchControls == true
-			if SSSonic.ControlMode == CONTROL_ENABLED
+			if SSSonic.ControlMode == CONTROLMODE_NORMAL
 				CheckTouchRect(0, 96, Screen.CenterX, Screen.YSize)
 				if CheckResult > -1
 					
@@ -241,13 +251,13 @@ function Sonic_ProcessPlayer
 						
 						// And set the floor to be of the actual "3d floor" type
 						// The floor was indeed 3d already, but this disables High Quality mode to help save on resources while paused
-						TileLayer[0].Type = 3
+						TileLayer[0].Type = LAYER_3DFLOOR
 						
 					end if
 					
 					// Check if game focus was lost
 					// (As in, did the player exit the app?)
-					if Engine.Message == 2
+					if Engine.Message == MESSAGE_LOSTFOCUS
 						
 						// Pause the entire stage (including its objects)
 						Stage.State = STAGE_PAUSED
@@ -278,7 +288,7 @@ function Sonic_ProcessPlayer
 						end if
 						
 						// This sets the floor to the "3d floor" type, in order to disable High Quality rendering mode
-						TileLayer[0].Type = 3
+						TileLayer[0].Type = LAYER_3DFLOOR
 						
 					end if
 				end if
@@ -286,7 +296,7 @@ function Sonic_ProcessPlayer
 		else
 			// Using physical controls
 			
-			if SSSonic.ControlMode == CONTROL_ENABLED
+			if SSSonic.ControlMode == CONTROLMODE_NORMAL
 				
 				// Check that no Pause Menu object exists yet
 				if Object[9].Type == TypeName[Blank Object]
@@ -328,13 +338,13 @@ function Sonic_ProcessPlayer
 						end if
 						
 						// Keep the floor as 3d, but as the lower quality version to stay efficient while paused
-						TileLayer[0].Type = 3
+						TileLayer[0].Type = LAYER_3DFLOOR
 						
 					end if
 					
 					// Then check if game focus was lost
 					// Meaning, did the player exit the app?
-					if Engine.Message == 2
+					if Engine.Message == MESSAGE_LOSTFOCUS
 						
 						// Pause the entire stage, along with all objects
 						Stage.State = STAGE_PAUSED
@@ -364,7 +374,7 @@ function Sonic_ProcessPlayer
 						end if
 						
 						// The floor should already be 3d here, but make it a 3d floor again in order to exit High Quality mode while paused
-						TileLayer[0].Type = 3
+						TileLayer[0].Type = LAYER_3DFLOOR
 						
 					end if
 					
@@ -377,7 +387,7 @@ function Sonic_ProcessPlayer
 		// Standard doesn't need nearly as much code as mobile to handle its inputs,
 		// thanks to the lack of a touchscreen and other mobile things
 		
-		if SSSonic.ControlMode == CONTROL_ENABLED
+		if SSSonic.ControlMode == CONTROLMODE_NORMAL
 			
 			// Make sure no Pause Menu object exists already
 			if Object[9].Type == TypeName[Blank Object]
@@ -412,7 +422,7 @@ function Sonic_ProcessPlayer
 						Object[9].Priority = PRIORITY_ALWAYS
 						
 						// The floor should already be 3d, this is actually a form of exiting High Quality mode
-						TileLayer[0].Type = 3
+						TileLayer[0].Type = LAYER_3DFLOOR
 						
 					else
 						
@@ -442,7 +452,7 @@ function Sonic_HandlePause
 	
 	if Options.AttractMode == false
 #platform: Mobile
-		if SSSonic.ControlMode == CONTROL_ENABLED
+		if SSSonic.ControlMode == CONTROLMODE_NORMAL
 			
 			// Make sure the Pause Menu doesn't already exist
 			if Object[9].Type == TypeName[Blank Object]
@@ -477,12 +487,12 @@ function Sonic_HandlePause
 					end if
 					
 					// Make the floor lower quality instead while paused, to be more efficient
-					TileLayer[0].Type = 3
+					TileLayer[0].Type = LAYER_3DFLOOR
 					
 				end if
 				
 				// Check if focus was lost (as in, the player exiting the game)
-				if Engine.Message == 2
+				if Engine.Message == MESSAGE_LOSTFOCUS
 					
 					// Pause the stage & music
 					Stage.State = STAGE_PAUSED
@@ -506,7 +516,7 @@ function Sonic_HandlePause
 					end if
 					
 					// The floor should already be 3d, this is ensuring that it's drawn in standard quality rather than High Quality mode
-					TileLayer[0].Type = 3
+					TileLayer[0].Type = LAYER_3DFLOOR
 					
 				end if
 			end if
@@ -514,7 +524,7 @@ function Sonic_HandlePause
 #endplatform
 		
 #platform: Standard
-		if SSSonic.ControlMode == CONTROL_ENABLED
+		if SSSonic.ControlMode == CONTROLMODE_NORMAL
 			
 			// Make sure the game isn't already paused via checking if the Pause Menu object exists or not
 			if Object[9].Type == TypeName[Blank Object]
@@ -544,7 +554,7 @@ function Sonic_HandlePause
 						Object[9].Priority = PRIORITY_ALWAYS
 						
 						// Turn the floor into low-quality 3d
-						TileLayer[0].Type = 3
+						TileLayer[0].Type = LAYER_3DFLOOR
 						
 					else
 						
@@ -667,14 +677,14 @@ function Sonic_HandleBumperInteraction
 	// Check upper-left tile, uses the first bit
 	TempValue0 -= 8
 	TempValue1 -= 8
-	Get16x16TileInfo(CheckResult, TempValue0, TempValue1, 6)
+	Get16x16TileInfo(CheckResult, TempValue0, TempValue1, TILEINFO_ANGLEA)
 	if CheckResult == 3
 		SetBit(TempValue2, 0, true)
 	end if
 	
 	// Check upper-right tile, uses the second bit
 	TempValue0 += 16
-	Get16x16TileInfo(CheckResult, TempValue0, TempValue1, 6)
+	Get16x16TileInfo(CheckResult, TempValue0, TempValue1, TILEINFO_ANGLEA)
 	if CheckResult == 3
 		SetBit(TempValue2, 1, true)
 	end if
@@ -682,14 +692,14 @@ function Sonic_HandleBumperInteraction
 	// Check bottom left tile, uses the third bit
 	TempValue0 -= 16
 	TempValue1 += 16
-	Get16x16TileInfo(CheckResult, TempValue0, TempValue1, 6)
+	Get16x16TileInfo(CheckResult, TempValue0, TempValue1, TILEINFO_ANGLEA)
 	if CheckResult == 3
 		SetBit(TempValue2, 2, true)
 	end if
 	
 	// Check bottom right tile, uses the fourth bit
 	TempValue0 += 16
-	Get16x16TileInfo(CheckResult, TempValue0, TempValue1, 6)
+	Get16x16TileInfo(CheckResult, TempValue0, TempValue1, TILEINFO_ANGLEA)
 	if CheckResult == 3
 		SetBit(TempValue2, 3, true)
 	end if
@@ -799,7 +809,7 @@ function Sonic_HandleTileInteractions
 	TempValue1 >>= 16
 	
 	// Find what tile type the player is currently standing on
-	Get16x16TileInfo(CheckResult, TempValue0, TempValue1, 6)
+	Get16x16TileInfo(CheckResult, TempValue0, TempValue1, TILEINFO_ANGLEA)
 	switch CheckResult
 	case 1
 		// Offroad tile, slow down Sonic and kick up some dust
@@ -962,7 +972,7 @@ function Sonic_HandleTileInteractions
 		SSSonic.ScreenYPos = 0
 		
 		// Get the tile's flip directions
-		Get16x16TileInfo(CheckResult, TempValue0, TempValue1, 1)
+		Get16x16TileInfo(CheckResult, TempValue0, TempValue1, TILEINFO_DIRECTION)
 		
 		// Flip Sonic's direction if needed
 		if CheckResult == 1
@@ -994,7 +1004,7 @@ function Sonic_HandleTileInteractions
 		SSSonic.ScreenYPos = 0
 		
 		// Get the tile's flip directions
-		Get16x16TileInfo(CheckResult, TempValue0, TempValue1, 1)
+		Get16x16TileInfo(CheckResult, TempValue0, TempValue1, TILEINFO_DIRECTION)
 		
 		// Flip Sonic's direction if needed
 		if CheckResult == 1
@@ -1026,7 +1036,7 @@ function Sonic_HandleTileInteractions
 		SSSonic.ScreenYPos = -0xC0000
 		
 		// Get the tile's flip directions
-		Get16x16TileInfo(CheckResult, TempValue0, TempValue1, 1)
+		Get16x16TileInfo(CheckResult, TempValue0, TempValue1, TILEINFO_DIRECTION)
 		
 		// Flip Sonic's direction if needed
 		if CheckResult == 2
@@ -1058,7 +1068,7 @@ function Sonic_HandleTileInteractions
 		SSSonic.ScreenYPos = 0xC0000
 		
 		// Get the tile's flip directions
-		Get16x16TileInfo(CheckResult, TempValue0, TempValue1, 1)
+		Get16x16TileInfo(CheckResult, TempValue0, TempValue1, TILEINFO_DIRECTION)
 		
 		// Flip Sonic's direction if needed
 		if CheckResult == 2
@@ -1094,7 +1104,7 @@ function Sonic_HandleTileInteractions
 		SSSonic.ScreenYPos = 0
 		
 		// Get the tile's flip directions
-		Get16x16TileInfo(CheckResult, TempValue0, TempValue1, 1)
+		Get16x16TileInfo(CheckResult, TempValue0, TempValue1, TILEINFO_DIRECTION)
 		
 		// Flip Sonic's direction if needed
 		if CheckResult == 1
@@ -1117,7 +1127,7 @@ function Sonic_HandleTileInteractions
 		SSSonic.ScreenYPos = 0
 		
 		// Get the tile's flip directions
-		Get16x16TileInfo(CheckResult, TempValue0, TempValue1, 1)
+		Get16x16TileInfo(CheckResult, TempValue0, TempValue1, TILEINFO_DIRECTION)
 		
 		// Flip Sonic's direction if needed
 		if CheckResult == 1
@@ -1140,7 +1150,7 @@ function Sonic_HandleTileInteractions
 		SSSonic.ScreenYPos = -0x80000
 		
 		// Get the tile's flip directions
-		Get16x16TileInfo(CheckResult, TempValue0, TempValue1, 1)
+		Get16x16TileInfo(CheckResult, TempValue0, TempValue1, TILEINFO_DIRECTION)
 		
 		// Flip Sonic's direction if needed
 		if CheckResult == 2
@@ -1163,7 +1173,7 @@ function Sonic_HandleTileInteractions
 		SSSonic.ScreenYPos = 0x80000
 		
 		// Get the tile's flip directions
-		Get16x16TileInfo(CheckResult, TempValue0, TempValue1, 1)
+		Get16x16TileInfo(CheckResult, TempValue0, TempValue1, TILEINFO_DIRECTION)
 		
 		// Flip Sonic's direction if needed
 		if CheckResult == 2
@@ -1294,7 +1304,7 @@ sub ObjectMain
 		CallFunction(Sonic_HandleMovement)
 		CallFunction(Sonic_ProcessAnimation)
 		
-		// Gravity of 0x2000 per frame
+		// Gravity of 0.125 per frame
 		SSSonic.YVelocity -= 0x2000
 		
 		SSSonic.YPos += SSSonic.YVelocity
@@ -1323,7 +1333,7 @@ sub ObjectMain
 					SSSonic.FrameTimer = 0
 				end if
 			else
-				SSSonic.ControlMode = CONTROL_DISABLED
+				SSSonic.ControlMode = CONTROLMODE_NONE
 				SSSonic.State = SSSONIC_FINISHSTAND
 				Stage.TimeEnabled = false
 			end if
@@ -1435,7 +1445,7 @@ sub ObjectMain
 				end if
 			else
 				SSSonic.State = SSSONIC_FINISHSTAND
-				SSSonic.ControlMode = CONTROL_DISABLED
+				SSSonic.ControlMode = CONTROLMODE_NONE
 				Stage.TimeEnabled = false
 			end if
 		end if
@@ -1459,7 +1469,7 @@ sub ObjectMain
 		TempValue1 = SSSonic.ZPos
 		TempValue1 >>= 16
 		
-		Get16x16TileInfo(CheckResult, TempValue0, TempValue1, 6)
+		Get16x16TileInfo(CheckResult, TempValue0, TempValue1, TILEINFO_ANGLEA)
 		
 		// If the player's hit a bumper tile, then get up and start walking again
 		if CheckResult == 3
@@ -1633,7 +1643,7 @@ sub ObjectMain
 					SSSonic.FrameTimer = 0
 				end if
 			else
-				SSSonic.ControlMode = CONTROL_DISABLED
+				SSSonic.ControlMode = CONTROLMODE_NONE
 				SSSonic.State = SSSONIC_FINISHSTAND
 			end if
 		end if

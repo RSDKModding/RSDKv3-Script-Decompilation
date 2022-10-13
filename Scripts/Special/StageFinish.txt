@@ -79,7 +79,7 @@
 #alias 1	:	GAMEMODE_SAVEGAME
 
 // Control Mode
-#alias 0	:	CONTROL_ENABLED
+#alias 0	:	CONTROLMODE_NORMAL
 
 
 sub ObjectMain
@@ -256,7 +256,7 @@ sub ObjectMain
 				Stage.ActiveLayer[3] = 9
 				
 				// Lock the player from doing stuff too
-				Player.ControlMode = CONTROL_ENABLED
+				Player.ControlMode = CONTROLMODE_NORMAL
 				KeyDown[1].Left  = false
 				KeyDown[1].Right = false
 				Player.Direction = FACING_RIGHT
@@ -780,6 +780,21 @@ sub ObjectDraw
 				
 				TempValue0 += 48
 			loop
+
+#platform: Use_Decomp
+			// Only on decomp, extend the bg past 448
+			TempValue0 = 0
+			while TempValue0 < 240
+				TempValue1 = 448
+				while TempValue1 < 720
+					DrawSpriteScreenXY(0, TempValue1, TempValue0)
+					TempValue1 += 224
+				loop
+				
+				TempValue0 += 48
+			loop
+
+#endplatform
 			
 			// Draw all the Time Stones the player has so far
 			// - TempValue0 is the current Stone
@@ -976,7 +991,7 @@ sub ObjectDraw
 #endplatform
 		
 #platform: Use_Standalone
-		// Just draw Continues, we don't use Coins in Use_Standalone
+		// Just draw Continues, we don't use Coins in Standalone
 		
 		while TempValue2 > 0
 			DrawSpriteScreenXY(TempValue1, TempValue0, 177)

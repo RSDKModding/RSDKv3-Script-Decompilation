@@ -95,14 +95,14 @@ sub ObjectMain
 	Object.ChangeX *= TempValue1
 	Object.ChangeX <<= 7
 	Object.ChangeX += Object.XPos
-	Object.ChangeX &= 0xFFFF0000 // Truncating to the iXpos, the number is 0xFFFF0000
+	Object.ChangeX &= -0x10000 // Truncating to the iXpos, the number is -0x10000
 	Object.ChangeX -= Object.PlatformX
 	
 	Sin(Object.ChangeY, Object.Angle)
 	Object.ChangeY *= TempValue1
 	Object.ChangeY <<= 7
 	Object.ChangeY += Object.YPos
-	Object.ChangeY &= 0xFFFF0000 // Same as above, this 0xFFFF0000 number is truncating the YPos
+	Object.ChangeY &= -0x10000 // Same as above, this -0x10000 number is truncating the YPos
 	Object.ChangeY -= Object.PlatformY
 	
 end sub
@@ -207,14 +207,14 @@ sub ObjectDraw
 	Object.PlatformX *= TempValue1
 	Object.PlatformX <<= 7
 	Object.PlatformX += Object.XPos
-	Object.PlatformX &= 0xFFFF0000 // Rounding to iXPos, getting rid of the subpixels inbetween
+	Object.PlatformX &= -0x10000 // Rounding to iXPos, getting rid of the subpixels inbetween
 	
 	// And then find the Y
 	Sin(Object.PlatformY, Object.Angle)
 	Object.PlatformY *= TempValue1
 	Object.PlatformY <<= 7
 	Object.PlatformY += Object.YPos
-	Object.PlatformY &= 0xFFFF0000 // Same as above
+	Object.PlatformY &= -0x10000 // Same as above
 	
 	DrawSpriteXY(2, Object.PlatformX, Object.PlatformY)
 	
@@ -378,13 +378,13 @@ sub RSDKDraw
 	TempValue0 *= TempValue1
 	TempValue0 <<= 7
 	TempValue0 += Object.XPos
-	TempValue0 &= 0xFFFF0000
+	TempValue0 &= -0x10000
 
 	Sin(TempValue2, Object.Angle)
 	TempValue2 *= TempValue1
 	TempValue2 <<= 7
 	TempValue2 += Object.YPos
-	TempValue2 &= 0xFFFF0000
+	TempValue2 &= -0x10000
 
 	DrawSpriteXY(2, TempValue0, TempValue2)
 end sub

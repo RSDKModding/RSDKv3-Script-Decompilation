@@ -17,14 +17,6 @@
 #alias 2	:	CREDITSCONTROL_MAIN
 #alias 3	:	CREDITSCONTROL_FADEOUT
 
-// Credits Source File Aliases
-// The difference platforms pull from different Credits Files
-
-// The current version is the Mobile ver, so let's stick with that
-// (And yeah, the "Mobile" version is used in Origins too...)
-
-#alias "Data/Game/Credits_Mobile.txt"	:	CREDITSCONTROL_SOURCEFILE
-
 // On Standard Platforms (ie PC 2012 & consoles) "Data/Game/Credits_Console.txt" is used instead
 
 // Soundtrack
@@ -38,6 +30,11 @@
 
 // Engine States
 #alias 8	:	ENGINE_WAIT
+
+// Text Info type
+#alias 0	:	TEXTINFO_TEXTDATA
+#alias 1	:	TEXTINFO_TEXTSIZE
+#alias 2	:	TEXTINFO_ROWCOUNT
 
 
 sub ObjectMain
@@ -180,8 +177,7 @@ sub ObjectStartup
 		SetMusicTrack("US/DAGarden.ogg", 0, 117382)
 	end if
 	
-	// CREDITSCONTROL_SOURCEFILE is the path to a file as defined up above in the Aliases
-	LoadTextFile(MENU_1, CREDITSCONTROL_SOURCEFILE, false)
+	LoadTextFile(MENU_1, "Data/Game/Credits_Mobile.txt", false)
 	
 	// In this scene, we control the camera manually
 	Screen.CameraEnabled = false
@@ -193,7 +189,7 @@ sub ObjectStartup
 	Object[0].Priority = PRIORITY_ACTIVE
 	
 	// Get the row count of how many entries there are in the credits file
-	GetTextInfo(TempValue1, MENU_1, 2, 0, 0)
+	GetTextInfo(TempValue1, MENU_1, TEXTINFO_ROWCOUNT, 0, 0)
 	
 	// Find the first unoccupied object slot in the stage
 	ArrayPos0 = 32
@@ -222,10 +218,10 @@ sub ObjectStartup
 		
 		// Get what type of entry it is
 		// [Reading the number inside the brackets]
-		GetTextInfo(TempValue4, MENU_1, 0, TempValue0, 1)
+		GetTextInfo(TempValue4, MENU_1, TEXTINFO_TEXTDATA, TempValue0, 1)
 		
 		// Get the length of the entry
-		GetTextInfo(TempValue5, MENU_1, 1, TempValue0, 0)
+		GetTextInfo(TempValue5, MENU_1, TEXTINFO_TEXTSIZE, TempValue0, 0)
 		
 		if TempValue5 == 0
 			// This is a blank line, so don't put any text on the current line and instead create a new line 22 pixels tall

@@ -20,7 +20,7 @@
 #alias 0	:	PLAYER_SONIC
 
 // Control Mode
-#alias -1	:	CONTROL_DISABLED
+#alias -1	:	CONTROLMODE_NONE
 
 // Global SFX
 #alias 18	:	SFX_G_SPECIALRING
@@ -28,7 +28,10 @@
 #alias 25	:	SFX_G_TIRED
 
 // Decomp Usage alias
-#alias 1	:	UPDATED_VERSION
+#alias 0	:	UPDATED_VERSION
+#alias 1	:	OLD_VERSION
+
+#alias 2	:	TEXTINFO_ROWCOUNT // Menu Alias
 
 
 sub ObjectMain
@@ -39,7 +42,7 @@ sub ObjectMain
 				Object[0].Type = TypeName[Blank Object]
 				Object[1].Type = TypeName[Blank Object]
 
-				Player.ControlMode = CONTROL_DISABLED
+				Player.ControlMode = CONTROLMODE_NONE
 
 				Player.Direction = FACING_RIGHT
 
@@ -111,7 +114,7 @@ sub ObjectDraw
 				Object.Direction = FACING_LEFT
 			else
 				Object.Direction = FACING_RIGHT
-			endif
+			end if
 
 			DrawSpriteFX(TempValue0, FX_FLIP, Object.XPos, Object.YPos)
 #endplatform
@@ -119,7 +122,7 @@ sub ObjectDraw
 			Object.Frame++
 			if Object.Frame > 31
 				Object.Frame = 0
-			endif
+			end if
 		end if
 		break
 
@@ -138,7 +141,7 @@ sub ObjectDraw
 			Object.Frame++
 			if Object.Frame > 31
 				Object.Direction = FACING_LEFT
-			endif
+			end if
 			if Object.Frame > 47
 				ResetObjectEntity(Object.EntityNo, TypeName[Blank Object], 0, 0, 0)
 			end if
@@ -177,7 +180,7 @@ sub ObjectDraw
 			Object.Direction = FACING_LEFT
 		else
 			Object.Direction = FACING_RIGHT
-		endif
+		end if
 
 		DrawSpriteFX(TempValue0, FX_FLIP, Object.XPos, Object.YPos)
 		if TempValue0 == 11
@@ -187,13 +190,13 @@ sub ObjectDraw
 			if TempValue0 == 15
 				Object.Direction = FACING_LEFT
 				DrawSpriteFX(TempValue0, FX_FLIP, Object.XPos, Object.YPos)
-			endif
-		endif
+			end if
+		end if
 
 		Object.Frame++
 		if Object.Frame > 63
 			ResetObjectEntity(Object.EntityNo, TypeName[BlankObject], 0, 0, 0)
-		endif
+		end if
 #endplatform
 		break
 	endswitch
@@ -232,14 +235,16 @@ sub ObjectStartup
 #platform: Use_Decomp
 	// Custom decomp check of versions
 	// Checks the amount of rows Credits_Console has, a file that doesn't exist on mobile data files.
-	// if it's 1, means there's no such file in the game, therefore we're using a mobile data file, and the updated animation is needed
+	// if it's equal or less than 1 (depending of platform), means there's no such file in the game, therefore we're using a mobile data file, and the updated animation is needed
 	// otherwise, it means we are playing with a Steam/Blit datafile, and as such we need to use the old animation
 	LoadTextFile(MENU_1,"Data/Game/Credits_Console.txt", false)
-	GetTextInfo(CheckResult, MENU_1, 2, 0, 0)		
+	GetTextInfo(CheckResult, MENU_1, TEXTINFO_ROWCOUNT, 0, 0)
 	ArrayPos0 = 32
 	while ArrayPos0 < 1056
 		if Object[ArrayPos0].Type == TypeName[SpecialRing]
-			Object[ArrayPos0].CheckVersion = CheckResult
+			if CheckResult > 1
+				Object[ArrayPos0].CheckVersion = OLD_VERSION
+			end if
 		end if
 		ArrayPos0++
 	loop
@@ -305,20 +310,20 @@ sub ObjectStartup
 		while ArrayPos0 < 1056
 			if Object[ArrayPos0].Type == TypeName[SpecialRing]
 				ResetObjectEntity(ArrayPos0, TypeName[BlankObject], 0, 0, 0)
-			endif
+			end if
 			ArrayPos0++
 		loop
-	endif
+	end if
 
 	if Engine.TrialMode == true
 		ArrayPos0 = 32
 		while ArrayPos0 < 1056
 			if Object[ArrayPos0].Type == TypeName[SpecialRing]
 				ResetObjectEntity(ArrayPos0, TypeName[BlankObject], 0, 0, 0)
-			endif
+			end if
 			ArrayPos0++
 		loop
-	endif
+	end if
 end sub
 
 // ========================

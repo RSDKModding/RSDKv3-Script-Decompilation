@@ -11,6 +11,11 @@
 // Priority
 #alias 1	:	PRIORITY_ACTIVE
 
+// Tile Info
+#alias 0	:	TILEINFO_INDEX
+#alias 8	:	TILEINFO_ANGLEB
+
+
 // Function declarations
 #function R7Setup_GetLoopTileInfo
 
@@ -24,7 +29,7 @@ function R7Setup_GetLoopTileInfo
 	TempValue3 = Player.XPos
 	TempValue3 >>= 16
 	TempValue3 &= 255
-	TempValue3 += 12544
+	TempValue3 += 0x3100
 
 	TempValue0 -= 16
 	TempValue0 >>= 2
@@ -34,7 +39,7 @@ function R7Setup_GetLoopTileInfo
 	TempValue4 &= 255
 	TempValue4 += TempValue0
 
-	Get16x16TileInfo(TempValue0, TempValue3, TempValue4, 0)
+	Get16x16TileInfo(TempValue0, TempValue3, TempValue4, TILEINFO_INDEX)
 end function
 
 
@@ -196,7 +201,7 @@ sub ObjectPlayerInteraction
 			TempValue4 += 8
 
 			// See if the player is on a special flame tile
-			Get16x16TileInfo(TempValue0, TempValue3, TempValue4, 8)
+			Get16x16TileInfo(TempValue0, TempValue3, TempValue4, TILEINFO_ANGLEB)
 
 			if TempValue0 == 1
 				Object.FlamesTimer = 4

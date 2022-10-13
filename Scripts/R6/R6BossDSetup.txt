@@ -34,6 +34,9 @@
 // Priority
 #alias 1	:	PRIORITY_ACTIVE
 
+// Tile Info
+#alias 8	:	TILEINFO_ANGLEB
+
 
 sub ObjectMain
 	switch Object.AlarmTile
@@ -133,12 +136,12 @@ sub ObjectPlayerInteraction
 	TempValue3 >>= 16
 	TempValue3 += Player.CollisionBottom
 	TempValue3 += 2
-	Get16x16TileInfo(TempValue0, TempValue2, TempValue3, 8)
+	Get16x16TileInfo(TempValue0, TempValue2, TempValue3, TILEINFO_ANGLEB)
 
 	TempValue2 = Player.XPos
 	TempValue2 >>= 16
 	TempValue2 += Player.CollisionLeft
-	Get16x16TileInfo(TempValue1, TempValue2, TempValue3, 8)
+	Get16x16TileInfo(TempValue1, TempValue2, TempValue3, TILEINFO_ANGLEB)
 
 	TempValue0 |= TempValue1
 	if TempValue0 == true
@@ -170,7 +173,7 @@ sub ObjectPlayerInteraction
 	TempValue3 -= 2
 	// You will see constant checks for R6D_SETUP_WEB_SHOCK state
 	// but the code to reach that state is removed, since there are no shock webs on the boss stage
-	Get16x16TileInfo(TempValue0, TempValue2, TempValue3, 8)
+	Get16x16TileInfo(TempValue0, TempValue2, TempValue3, TILEINFO_ANGLEB)
 	switch TempValue0
 	case 2
 		if Player.InvincibleTimer == 0
@@ -239,7 +242,7 @@ sub ObjectPlayerInteraction
 	end switch
 
 	TempValue3 -= 4
-	Get16x16TileInfo(TempValue0, TempValue2, TempValue3, 8)
+	Get16x16TileInfo(TempValue0, TempValue2, TempValue3, TILEINFO_ANGLEB)
 	switch TempValue0
 	case 2
 		if Player.InvincibleTimer == 0
@@ -309,7 +312,7 @@ sub ObjectPlayerInteraction
 
 	TempValue3 += 4
 	TempValue3 += Player.CollisionTop
-	Get16x16TileInfo(TempValue0, TempValue2, TempValue3, 8)
+	Get16x16TileInfo(TempValue0, TempValue2, TempValue3, TILEINFO_ANGLEB)
 	if TempValue0 == 3
 		TempValue4 = TempValue3
 		TempValue4 &= 15
@@ -318,7 +321,7 @@ sub ObjectPlayerInteraction
 				Player.State = Player_State_HangBar
 				Player.YVelocity = 0
 				Player.Animation = ANI_HANGING
-				TempValue3 &= 32752
+				TempValue3 &= 0x7FF0
 				TempValue3 += 4
 				TempValue3 -= Player.CollisionTop
 				Player.iYPos = TempValue3

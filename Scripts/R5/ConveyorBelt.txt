@@ -21,6 +21,9 @@
 // Priority
 #alias 1	:	PRIORITY_ACTIVE
 
+// Tile Info
+#alias 8	:	TILEINFO_ANGLEB
+
 
 sub ObjectPlayerInteraction
 
@@ -42,7 +45,7 @@ sub ObjectPlayerInteraction
 			TempValue2 += 2
 			
 			// Get the B Angle/Flags value of the Tile at the specified positions
-			Get16x16TileInfo(TempValue0, TempValue1, TempValue2, 8)
+			Get16x16TileInfo(TempValue0, TempValue1, TempValue2, TILEINFO_ANGLEB)
 			
 			// See if it's a Conveyor Belt tile
 			if TempValue0 == TILE_CONVEYORBELT
@@ -57,11 +60,11 @@ sub ObjectPlayerInteraction
 			else
 			
 				// If the right tile did't have anything, then check the one to the Player's left
-				TempValue1 = Player.XPos
+				TempValue1   = Player.XPos
 				TempValue1 >>= 16
-				TempValue1 += Player.CollisionLeft
+				TempValue1  += Player.CollisionLeft
 				
-				Get16x16TileInfo(TempValue0, TempValue1, TempValue2, 8)
+				Get16x16TileInfo(TempValue0, TempValue1, TempValue2, TILEINFO_ANGLEB)
 				
 				if TempValue0 == TILE_CONVEYORBELT
 				

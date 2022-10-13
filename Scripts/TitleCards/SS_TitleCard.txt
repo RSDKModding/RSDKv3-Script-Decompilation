@@ -34,8 +34,8 @@
 #alias 5	:	LANG_JAPANESE
 
 // ControlMode Aliases
-#alias -1	:	CONTROL_DISABLED
-#alias  0	:	CONTROL_ENABLED
+#alias -1	:	CONTROLMODE_NONE
+#alias  0	:	CONTROLMODE_NORMAL
 
 // Game modes
 #alias 2	:	GAMEMODE_TIMEATTACK
@@ -60,7 +60,7 @@ sub ObjectDraw
 				
 				// Free Sonic's control
 				// (But, it gets locked again right after anyways...)
-				SSSonic.ControlMode = CONTROL_ENABLED
+				SSSonic.ControlMode = CONTROLMODE_NORMAL
 			end if
 			
 			SetScreenFade(Object.FadeR, Object.FadeG, Object.FadeB, Object.Timer)
@@ -73,7 +73,7 @@ sub ObjectDraw
 		end if
 		
 		// Lock Sonic's control
-		SSSonic.ControlMode = CONTROL_DISABLED
+		SSSonic.ControlMode = CONTROLMODE_NONE
 		break
 		
 	case TITLECARD_SLIDEIN
@@ -129,7 +129,7 @@ sub ObjectDraw
 			ResetObjectEntity(20, TypeName[Blank Object], 0, 0, 0)
 			
 			// Free Sonic's control, for real this time
-			SSSonic.ControlMode = CONTROL_ENABLED
+			SSSonic.ControlMode = CONTROLMODE_NORMAL
 			
 			if Options.GameMode == GAMEMODE_TIMEATTACK
 				// If in time attack, start proper time progression
@@ -266,16 +266,18 @@ sub ObjectStartup
 	// 5 - Main part of the "SONIC THE HEGDEHOG" bar	
 	// Workaround for steam datafile to show this sprite correctly
 #platform: Use_Origins
-	SpriteFrame(72, 81, 160, 16, 60, 227)	// #5  - Sonic The Hedgehog CD
+	SpriteFrame(72, 81, 160, 16, 60, 227)	 // #5  - Sonic The Hedgehog CD
 #endplatform
 
 #platform: Use_Standalone
 	#platform: Standard
-		SpriteFrame(64, 81, 160, 16, 52, 227)	// #5  - Sonic The Hedgehog CD
+		SpriteFrame(64, 81, 160, 16, 52, 227)// #5  - Sonic The Hedgehog CD
 	#endplatform
+#endplatform
 
+#platform: Use_Standalone
 	#platform: Mobile
-		SpriteFrame(72, 81, 160, 16, 60, 227)	// #5  - Sonic The Hedgehog CD
+		SpriteFrame(72, 81, 160, 16, 60, 227)// #5  - Sonic The Hedgehog CD
 	#endplatform
 #endplatform
 
@@ -320,7 +322,7 @@ sub ObjectStartup
 		game.missionCondition = 0
 		game.missionEnd		  = false
 
-		Player.ControlMode	  = CONTROL_ENABLED
+		Player.ControlMode	  = CONTROLMODE_NORMAL
 		Stage.TimeEnabled	  = true
 
 		ResetObjectEntity(20, TypeName[Blank Object], 0, 0, 0)

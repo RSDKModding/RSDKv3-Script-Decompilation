@@ -42,7 +42,11 @@
 #alias Object.Frame					:	BossWing.Frame
 #alias Object.Rotation				:	BossWing.Rotation
 #alias Object.State					:	BossWing.State
+#alias Object.Type					:	BossWing.Type
 #alias Object.Priority				:	BossWing.Priority
+
+// HUD aliases
+#alias Object[24].PropertyValue		:	HUD.TimePeriod
 
 // Helper 2 States
 #alias 0	:	HELPER2_PREPARE_DETACH
@@ -56,6 +60,12 @@
 #alias 2	:	BOSSWING_FALL_VERTICAL
 #alias 5	:	BOSSWING_FALL_DIAGONAL
 
+// Eggman animations
+#alias 0	:	EGGANI_IDLE
+#alias 1	:	EGGANI_HURT
+#alias 2	:	EGGANI_LAUGH
+#alias 3	:	EGGANI_DEFEAT
+
 // Cutscene
 #alias 1	:	CUTSCENE_SKIP
 
@@ -68,6 +78,9 @@
 // Ink Effects
 #alias 0	:	INK_NONE
 
+// Time Periods
+#alias 3	:	TIME_BAD_FUTURE
+
 // Global SFX
 #alias 22	:	SFX_G_EXPLOSION
 
@@ -79,8 +92,8 @@
 #alias 9	:	SFX_S_MSCHARGE
 
 // Control Mode
-#alias -1	:	CONTROL_DISABLED
-#alias  0	:	CONTROL_ENABLED
+#alias -1	:	CONTROLMODE_NONE
+#alias  0	:	CONTROLMODE_NORMAL
 
 // Priority
 #alias 1	:	PRIORITY_ACTIVE
@@ -167,11 +180,11 @@ function EggMobile_GroundSpinDescend
 			TempValue0 >>= 6
 			if TempValue0 == Helper2.MaxOscillation
 				Object.OscillationValue = 0
-				Object.Oscillation = TempValue0
-				Object.Oscillation <<= 6
+				Object.Oscillation		= TempValue0
+				Object.Oscillation	  <<= 6
 			end if
 		else
-			TempValue0 = Object.Oscillation
+			TempValue0  = Object.Oscillation
 			TempValue0 %= 1280
 			if TempValue0 == 0
 				Object.OscillationValue = 0
@@ -206,15 +219,15 @@ function EggMobile_GroundSpinLeft
 		Object.OscillationValue = 0
 		Helper1.ControllerDisabled = false
 	end if
-	TempValue0 = Object.Rotation
+	TempValue0   = Object.Rotation
 	TempValue0 <<= 1
-	TempValue0 &= 511
+	TempValue0  &= 511
 	Sin(TempValue1, TempValue0)
 	if TempValue1 < 0
 		FlipSign(TempValue1)
 	end if
 	TempValue1 >>= 7
-	TempValue1 += 64
+	TempValue1  += 64
 	ObjectTileGrip(CSIDE_FLOOR, 0, TempValue1, 0)
 end function
 
@@ -226,15 +239,15 @@ function EggMobile_GroundSpinRight
 		Object.OscillationValue = 0
 		Helper1.ControllerDisabled = false
 	end if
-	TempValue0 = Object.Rotation
+	TempValue0   = Object.Rotation
 	TempValue0 <<= 1
-	TempValue0 &= 511
+	TempValue0  &= 511
 	Sin(TempValue1, TempValue0)
 	if TempValue1 < 0
 		FlipSign(TempValue1)
 	end if
 	TempValue1 >>= 7
-	TempValue1 += 64
+	TempValue1  += 64
 	ObjectTileGrip(CSIDE_FLOOR, 0, TempValue1, 0)
 end function
 
@@ -251,11 +264,11 @@ function EggMobile_HandleWingThrowATK
 
 	case HELPER2_CENTER_WINGS
 		if Object.OscillationValue != 0
-			TempValue0 = Object.Oscillation
+			TempValue0   = Object.Oscillation
 			TempValue0 >>= 7
 			if TempValue0 == 0
 				TempValue0 <<= 7
-				Object.Oscillation = TempValue0
+				Object.Oscillation		= TempValue0
 				Object.OscillationValue = 0
 				Helper2.SecondaryState++
 			end if
@@ -266,16 +279,16 @@ function EggMobile_HandleWingThrowATK
 		Object.Timer++
 		Object.WingOffset += 0x80
 		if Object.Timer == 22
-			Object[-4].Frame = 1
-			Object[-3].Frame = 1
-			Object[-2].Frame = 1
-			Object[-1].Frame = 1
+			BossWing[-4].Frame = 1
+			BossWing[-3].Frame = 1
+			BossWing[-2].Frame = 1
+			BossWing[-1].Frame = 1
 		end if
 		if Object.Timer == 26
-			Object[-4].Frame = 2
-			Object[-3].Frame = 2
-			Object[-2].Frame = 2
-			Object[-1].Frame = 2
+			BossWing[-4].Frame = 2
+			BossWing[-3].Frame = 2
+			BossWing[-2].Frame = 2
+			BossWing[-1].Frame = 2
 		end if
 		if Object.Timer == 36
 			Object.Timer = 0
@@ -289,7 +302,7 @@ function EggMobile_HandleWingThrowATK
 			Object.Timer = 0
 			Helper2.SecondaryState++
 			Object.OscillationValue = -64
-			Helper1.TargetPos = Object[+3].YPos
+			Helper1.TargetPos  = Object[+3].YPos
 			Helper1.TargetPos -= 0x440000
 		end if
 		break
@@ -425,44 +438,46 @@ end function
 
 function EggMobile_WingThrowDiagonal
 	if Helper2.AnimSpeedState < 1
-		Object[-1].Type = TypeName[BossWing]
-		Object[-1].State = BOSSWING_FALL_VERTICAL
-		Object[-1].Value0 = 0
-		Object[-1].Frame = 3
+		Object[-1].Type   = TypeName[BossWing]
+		BossWing[-1].State  = BOSSWING_FALL_VERTICAL
+		BossWing[-1].Timer  = 0
+		BossWing[-1].Frame  = 3
 		if Player.XPos < Object[+3].XPos
-			Object[-1].YPos = Object[+3].iXPos
-			Object[-1].YPos += 248
-			TempValue0 = Player.XPos
+			BossWing[-1].YPos   = Object[+3].iXPos
+			BossWing[-1].YPos  += 248
+			TempValue0   = Player.XPos
 			TempValue0 >>= 16
-			Object[-1].YPos -= TempValue0
-			Object[-1].YPos *= -27146
-			Object[-1].YPos >>= 16
-			Object[-1].YPos &= 65535
-			Object[-1].YPos <<= 16
-			Object[-1].YPos += Object[+3].YPos
-			Object[-1].YPos += 0x600000
-			Object[-1].XPos = Object[+3].XPos
-			Object[-1].XPos += 13107200
-			Object[-1].Rotation = 96
-			Object[-1].Value1 = -211898
-			Object[-1].Value2 = 87759
+			BossWing[-1].YPos  -= TempValue0
+			BossWing[-1].YPos  *= -0x6A0A
+			BossWing[-1].YPos >>= 16
+			BossWing[-1].YPos  &= 0xFFFF
+			BossWing[-1].YPos <<= 16
+			BossWing[-1].YPos  += Object[+3].YPos
+			BossWing[-1].YPos  += 0x600000
+			BossWing[-1].XPos   = Object[+3].XPos
+			BossWing[-1].XPos  += 0xC80000
+
+			BossWing[-1].Rotation  =  96
+			BossWing[-1].XVelocity = -0x33BBA
+			BossWing[-1].YVelocity =  0x156CF
 		else
-			Object[-1].YPos = Player.XPos
-			Object[-1].YPos >>= 16
-			TempValue0 = Object[+3].iXPos
+			BossWing[-1].YPos   = Player.XPos
+			BossWing[-1].YPos >>= 16
+			TempValue0  = Object[+3].iXPos
 			TempValue0 -= 248
-			Object[-1].YPos -= TempValue0
-			Object[-1].YPos *= -27146
-			Object[-1].YPos >>= 16
-			Object[-1].YPos &= 65535
-			Object[-1].YPos <<= 16
-			Object[-1].YPos += Object[+3].YPos
-			Object[-1].YPos += 0x600000
-			Object[-1].XPos = Object[+3].XPos
-			Object[-1].XPos -= 13107200
-			Object[-1].Rotation = 416
-			Object[-1].Value1 = 211898
-			Object[-1].Value2 = 87759
+			BossWing[-1].YPos  -= TempValue0
+			BossWing[-1].YPos  *= -0x6A0A
+			BossWing[-1].YPos >>= 16
+			BossWing[-1].YPos  &= 0xFFFF
+			BossWing[-1].YPos <<= 16
+			BossWing[-1].YPos  += Object[+3].YPos
+			BossWing[-1].YPos  += 0x600000
+			BossWing[-1].XPos   = Object[+3].XPos
+			BossWing[-1].XPos  -= 0xC80000
+
+			BossWing[-1].Rotation  = 416
+			BossWing[-1].XVelocity = 0x33BBA
+			BossWing[-1].YVelocity = 0x156CF
 		end if
 		Helper2.AnimSpeedState++
 	else
@@ -484,41 +499,41 @@ function EggMobile_RestoreWings
 		switch Helper1.BossHealth
 		case 1
 			Object[-2].Type = TypeName[BossWing]
-			Object[-2].Frame = 0
-			Object[-2].Value5 = 1
+			BossWing[-2].Frame    = 0
+			BossWing[-2].Attached = 1
 			break
 		case 2
 			Object[-2].Type = TypeName[BossWing]
-			Object[-2].Frame = 0
-			Object[-2].Value5 = 1
+			BossWing[-2].Frame    = 0
+			BossWing[-2].Attached = 1
 			Object[-1].Type = TypeName[BossWing]
-			Object[-1].Frame = 0
-			Object[-1].Value5 = 1
+			BossWing[-1].Frame    = 0
+			BossWing[-1].Attached = 1
 			break
 		case 3
 			Object[-3].Type = TypeName[BossWing]
-			Object[-3].Frame = 0
-			Object[-3].Value5 = 1
+			BossWing[-3].Frame    = 0
+			BossWing[-3].Attached = 1
 			Object[-2].Type = TypeName[BossWing]
-			Object[-2].Frame = 0
-			Object[-2].Value5 = 1
+			BossWing[-2].Frame    = 0
+			BossWing[-2].Attached = 1
 			Object[-1].Type = TypeName[BossWing]
-			Object[-1].Frame = 0
-			Object[-1].Value5 = 1
+			BossWing[-1].Frame    = 0
+			BossWing[-1].Attached = 1
 			break
 		case 4
 			Object[-4].Type = TypeName[BossWing]
-			Object[-4].Frame = 0
-			Object[-4].Value5 = 1
+			BossWing[-4].Frame    = 0
+			BossWing[-4].Attached = 1
 			Object[-3].Type = TypeName[BossWing]
-			Object[-3].Frame = 0
-			Object[-3].Value5 = 1
+			BossWing[-3].Frame    = 0
+			BossWing[-3].Attached = 1
 			Object[-2].Type = TypeName[BossWing]
-			Object[-2].Frame = 0
-			Object[-2].Value5 = 1
+			BossWing[-2].Frame    = 0
+			BossWing[-2].Attached = 1
 			Object[-1].Type = TypeName[BossWing]
-			Object[-1].Frame = 0
-			Object[-1].Value5 = 1
+			BossWing[-1].Frame    = 0
+			BossWing[-1].Attached = 1
 			break
 		end switch
 		Object.WingOffset = 0
@@ -660,12 +675,12 @@ function EggMobile_PreparePogoAttack
 	if Object.Timer < 20
 		Object.Timer++
 	else
-		TempValue0 = Object.Oscillation
+		TempValue0   = Object.Oscillation
 		TempValue0 >>= 7
 		if TempValue0 == 0
 			Object.Timer = 0
-			Object[-2].Rotation = 256
-			Object.Oscillation = 0
+			BossWing[-2].Rotation	= 256
+			Object.Oscillation		= 0
 			Object.OscillationValue = 0
 			Helper1.ControllerDisabled = false
 		end if
@@ -674,11 +689,11 @@ end function
 
 
 function EggMobile_PogoAttackDescend
-	TempValue0 = Object.Timer
+	TempValue0   = Object.Timer
 	TempValue0 <<= 8
-	TempValue0 /= 60
+	TempValue0  /= 60
 	Sin(Object.YPos, TempValue0)
-	Object.YPos *= -12800
+	Object.YPos *= -0x3200
 	Object.YPos += Object[+3].YPos
 	Object.YPos += 0x200000
 	Object.Timer++
@@ -697,7 +712,7 @@ function EggMobile_PogoAttackAscend
 	TempValue0 <<= 8
 	TempValue0 /= 60
 	Sin(Object.YPos, TempValue0)
-	Object.YPos *= -12800
+	Object.YPos *= -0x3200
 	Object.YPos += Object[+3].YPos
 	Object.YPos += 0x200000
 	Object.Timer++
@@ -714,10 +729,10 @@ function EggMobile_PogoAttackMoveLeft
 	TempValue0 <<= 8
 	TempValue0 /= 60
 	Cos(Object.XPos, TempValue0)
-	Object.XPos *= 5248
+	Object.XPos *= 0x1480
 	Object.XPos += Helper1.TargetPos
 	Sin(Object.YPos, TempValue0)
-	Object.YPos *= -13312
+	Object.YPos *= -0x3400
 	Object.YPos += Object[+3].YPos
 	Object.YPos += 0x200000
 	TempValue0 = Object[+3].YPos
@@ -743,10 +758,10 @@ function EggMobile_PogoAttackMoveRight
 	TempValue0 <<= 8
 	TempValue0 /= 60
 	Cos(Object.XPos, TempValue0)
-	Object.XPos *= -5248
+	Object.XPos *= -0x1480
 	Object.XPos += Helper1.TargetPos
 	Sin(Object.YPos, TempValue0)
-	Object.YPos *= -13312
+	Object.YPos *= -0x3400
 	Object.YPos += Object[+3].YPos
 	Object.YPos += 0x200000
 	TempValue0 = Object[+3].YPos
@@ -777,7 +792,7 @@ function Helper1Controller_FourWings
 	case 1
 		Object.State = EggMobile_MoveToRight
 		Object.OscillationValue = -64
-		Object.XVelocity = 90112
+		Object.XVelocity = 0x16000
 		Helper2.BossInvincible = true
 		break
 	case 2
@@ -879,15 +894,15 @@ function Helper1Controller_FourWings
 		break
 	case 16
 		Object.State = EggMobile_WingThrowVertical
-		Helper2.AnimSpeedState = 0
-		Helper2.WingSpawnXPos = Player.XPos
+		Helper2.AnimSpeedState  = 0
+		Helper2.WingSpawnXPos   = Player.XPos
 		Helper2.WingSpawnXPos >>= 16
-		Helper2.WingSpawnXPos &= 3
+		Helper2.WingSpawnXPos  &= 3
 		Helper2.WingSpawnXPos <<= 2
-		Object[-4].Type = TypeName[Blank Object]
-		Object[-3].Type = TypeName[Blank Object]
-		Object[-2].Type = TypeName[Blank Object]
-		Object[-1].Type = TypeName[Blank Object]
+		BossWing[-4].Type = TypeName[Blank Object]
+		BossWing[-3].Type = TypeName[Blank Object]
+		BossWing[-2].Type = TypeName[Blank Object]
+		BossWing[-1].Type = TypeName[Blank Object]
 		Helper2.BossInvincible = true
 		break
 	case 17
@@ -898,7 +913,7 @@ function Helper1Controller_FourWings
 		CallFunction(EggMobile_SetTargetDestiny)
 		Object.State = EggMobile_ApproachPlayer
 		Object.OscillationValue = -64
-		Helper2.BossInvincible = false
+		Helper2.BossInvincible  = false
 		break
 	case 19
 		Object.State = EggMobile_ExtendWings
@@ -918,6 +933,7 @@ function Helper1Controller_FourWings
 		Object.State = EggMobile_RetractWings
 		break
 	end switch
+
 	if Helper1.ControllerState < 23
 		Helper1.ControllerState++
 	else
@@ -1061,15 +1077,15 @@ function Helper1Controller_ThreeWings
 		break
 	case 16
 		Object.State = EggMobile_WingThrowVertical
-		Helper2.AnimSpeedState = 0
-		Helper2.WingSpawnXPos = Player.XPos
+		Helper2.AnimSpeedState  = 0
+		Helper2.WingSpawnXPos   = Player.XPos
 		Helper2.WingSpawnXPos >>= 16
-		Helper2.WingSpawnXPos &= 3
+		Helper2.WingSpawnXPos  &= 3
 		Helper2.WingSpawnXPos <<= 2
-		Object[-4].Type = TypeName[Blank Object]
-		Object[-3].Type = TypeName[Blank Object]
-		Object[-2].Type = TypeName[Blank Object]
-		Object[-1].Type = TypeName[Blank Object]
+		BossWing[-4].Type = TypeName[Blank Object]
+		BossWing[-3].Type = TypeName[Blank Object]
+		BossWing[-2].Type = TypeName[Blank Object]
+		BossWing[-1].Type = TypeName[Blank Object]
 		Helper2.BossInvincible = true
 		break
 	case 17
@@ -1080,7 +1096,7 @@ function Helper1Controller_ThreeWings
 		CallFunction(EggMobile_SetTargetDestiny)
 		Object.State = EggMobile_ApproachPlayer
 		Object.OscillationValue = -64
-		Helper2.BossInvincible = false
+		Helper2.BossInvincible  = false
 		break
 	case 19
 		Object.State = EggMobile_ExtendWings
@@ -1100,6 +1116,7 @@ function Helper1Controller_ThreeWings
 		Object.State = EggMobile_RetractWings
 		break
 	end switch
+
 	if Helper1.ControllerState < 23
 		Helper1.ControllerState++
 	else
@@ -1114,7 +1131,7 @@ function Helper1Controller_TwoWings
 	case 0
 		Object.State = EggMobile_MoveToRight
 		Object.OscillationValue = -106
-		Object.XVelocity = 106496
+		Object.XVelocity = 0x1A000
 		Helper2.BossInvincible = true
 		break
 	case 1
@@ -1129,15 +1146,15 @@ function Helper1Controller_TwoWings
 		break
 	case 4
 		Object.State = EggMobile_WingThrowVertical
-		Helper2.AnimSpeedState = 0
-		Helper2.WingSpawnXPos = Player.XPos
+		Helper2.AnimSpeedState  = 0
+		Helper2.WingSpawnXPos   = Player.XPos
 		Helper2.WingSpawnXPos >>= 16
-		Helper2.WingSpawnXPos &= 3
+		Helper2.WingSpawnXPos  &= 3
 		Helper2.WingSpawnXPos <<= 2
-		Object[-4].Type = TypeName[Blank Object]
-		Object[-3].Type = TypeName[Blank Object]
-		Object[-2].Type = TypeName[Blank Object]
-		Object[-1].Type = TypeName[Blank Object]
+		BossWing[-4].Type = TypeName[Blank Object]
+		BossWing[-3].Type = TypeName[Blank Object]
+		BossWing[-2].Type = TypeName[Blank Object]
+		BossWing[-1].Type = TypeName[Blank Object]
 		Helper2.BossInvincible = true
 		break
 	case 5
@@ -1168,6 +1185,7 @@ function Helper1Controller_TwoWings
 		Object.State = EggMobile_RetractWings
 		break
 	end switch
+
 	if Helper1.ControllerState < 11
 		Helper1.ControllerState++
 	else
@@ -1182,7 +1200,7 @@ function Helper1Controller_OneWing
 	case 0
 		Object.State = EggMobile_MoveToRight
 		Object.OscillationValue = -160
-		Object.XVelocity = 106496
+		Object.XVelocity = 0x1A000
 		Helper2.BossInvincible = true
 		break
 	case 1
@@ -1194,19 +1212,19 @@ function Helper1Controller_OneWing
 	case 3
 		Object.State = EggMobile_HandleWingThrowATK
 		Helper2.SecondaryState = 4
-		Object.Oscillation >>= 6
-		Object.Oscillation <<= 6
+		Object.Oscillation   >>= 6
+		Object.Oscillation   <<= 6
 		Object.Timer = 0
-		Helper1.TargetPos = Object[+3].YPos
+		Helper1.TargetPos  = Object[+3].YPos
 		Helper1.TargetPos -= 0x440000
 		break
 	case 4
 		Object.State = EggMobile_WingThrowDiagonal
 		Helper2.AnimSpeedState = 0
-		Object[-4].Type = TypeName[Blank Object]
-		Object[-3].Type = TypeName[Blank Object]
-		Object[-2].Type = TypeName[Blank Object]
-		Object[-1].Type = TypeName[Blank Object]
+		BossWing[-4].Type = TypeName[Blank Object]
+		BossWing[-3].Type = TypeName[Blank Object]
+		BossWing[-2].Type = TypeName[Blank Object]
+		BossWing[-1].Type = TypeName[Blank Object]
 		Object.Timer = 0
 		Object.WingOffset = 0
 		break
@@ -1243,29 +1261,29 @@ function Helper1Controller_OneWing
 		if Object.Direction == FACING_RIGHT
 			Object.State = EggMobile_PogoAttackMoveLeft
 			Helper1.TargetPos = Object.XPos
-			Helper1.TargetPos -= 2686976
+			Helper1.TargetPos -= 0x290000
 		else
 			Object.State = EggMobile_PogoAttackMoveRight
 			Helper1.TargetPos = Object.XPos
-			Helper1.TargetPos += 2686976
+			Helper1.TargetPos += 0x290000
 		end if
 		break
 	case 13
 		if Object.Direction == FACING_RIGHT
 			Object.State = EggMobile_PogoAttackMoveLeft
-			Helper1.TargetPos -= 5373952
+			Helper1.TargetPos -= 0x520000
 		else
 			Object.State = EggMobile_PogoAttackMoveRight
-			Helper1.TargetPos += 5373952
+			Helper1.TargetPos += 0x520000
 		end if
 		break
 	case 14
 		if Object.Direction == FACING_RIGHT
 			Object.State = EggMobile_PogoAttackMoveLeft
-			Helper1.TargetPos -= 5373952
+			Helper1.TargetPos -= 0x520000
 		else
 			Object.State = EggMobile_PogoAttackMoveRight
-			Helper1.TargetPos += 5373952
+			Helper1.TargetPos += 0x520000
 		end if
 		break
 	case 15
@@ -1278,25 +1296,26 @@ function Helper1Controller_OneWing
 	case 16
 		if Object.Direction == FACING_RIGHT
 			Object.State = EggMobile_PogoAttackMoveRight
-			Helper1.TargetPos += 5373952
+			Helper1.TargetPos += 0x520000
 		else
 			Object.State = EggMobile_PogoAttackMoveLeft
-			Helper1.TargetPos -= 5373952
+			Helper1.TargetPos -= 0x520000
 		end if
 		break
 	case 17
 		if Object.Direction == FACING_RIGHT
 			Object.State = EggMobile_PogoAttackMoveRight
-			Helper1.TargetPos += 5373952
+			Helper1.TargetPos += 0x520000
 		else
 			Object.State = EggMobile_PogoAttackMoveLeft
-			Helper1.TargetPos -= 5373952
+			Helper1.TargetPos -= 0x520000
 		end if
 		break
 	case 18
 		Object.State = EggMobile_PogoAttackDescend
 		break
 	end switch
+
 	if Helper1.ControllerState < 18
 		Helper1.ControllerState++
 	else
@@ -1315,7 +1334,7 @@ function EggMobile_Destroyed
 			Object.XVelocity = 0x14000
 			Helper1.TargetPos = Object.YPos
 
-			Player.ControlMode	= CONTROL_DISABLED
+			Player.ControlMode	= CONTROLMODE_NONE
 			Player.JumpHold		= false
 			Player.Right		= true
 			Player.Left			= false
@@ -1330,26 +1349,30 @@ function EggMobile_Destroyed
 			end if
 		end if
 		break
+
 	case 1
 		Object.XPos += Object.XVelocity
 		Sin(Object.YPos, Object.Timer)
 		Object.YPos <<= 9
-		Object.YPos += Helper1.TargetPos
+		Object.YPos  += Helper1.TargetPos
 		Helper1.TargetPos += 0x4000
 		Object.Timer += 4
 		Object.Timer &= 511
-		TempValue0 = Helper1.RightBound
+
+		TempValue0  = Helper1.RightBound
 		TempValue0 += 0x800000
 		if Object.XPos > TempValue0
 			Object.Timer = 0
 			Object[+4].Type = TypeName[AmyRose]
 			Helper2.SecondaryState++
 		end if
+
 		if Player.Right == true
-			TempValue0 = Player.CollisionRight
+			TempValue0   = Player.CollisionRight
 			TempValue0 <<= 16
-			TempValue0 += Player.XPos
-			TempValue1 = Helper2.CutsceneRightBound
+			TempValue0  += Player.XPos
+
+			TempValue1   = Helper2.CutsceneRightBound
 			TempValue1 <<= 16
 			if TempValue0 > TempValue1
 				Player.Left = true
@@ -1359,36 +1382,38 @@ function EggMobile_Destroyed
 			TempValue0 = Helper1.CenterBound
 			TempValue0 += 0x400000
 			if Player.XPos < TempValue0
-				Player.XPos = TempValue0
+				Player.XPos  = TempValue0
 				Player.Speed = 0
-				Player.Left = false
+				Player.Left  = false
 			end if
 		end if
 		break
+
 	case 2
-		TempValue0 = Helper1.CenterBound
+		TempValue0  = Helper1.CenterBound
 		TempValue0 += 0x400000
 		if Player.XPos < TempValue0
-			Player.XPos = TempValue0
+			Player.XPos  = TempValue0
 			Player.Speed = 0
-			Player.Left = false
+			Player.Left  = false
 		end if
 		break
 	end switch
-	TempValue0 = Object.AnimationTimer
+
+	TempValue0  = Object.AnimationTimer
 	TempValue0 &= 1
 	if TempValue0 == 0
 		if Helper2.SecondaryState > 0
 			Screen.ShakeY = 2
 		end if
 		Rand(TempValue0, 300)
-		TempValue0 -= 150
+		TempValue0  -= 150
 		TempValue0 <<= 16
-		TempValue0 += Object[+3].XPos
+		TempValue0  += Object[+3].XPos
 		Rand(TempValue1, 200)
-		TempValue1 -= 100
+		TempValue1  -= 100
 		TempValue1 <<= 16
-		TempValue1 += Object[+3].YPos
+		TempValue1  += Object[+3].YPos
 		CreateTempObject(TypeName[Explosion], 0, TempValue0, TempValue1)
 		if Object.AnimationTimer == 0
 			if Object[+5].Type == TypeName[Blank Object]
@@ -1407,26 +1432,27 @@ function EggMobile_Destroyed_NoAmy
 		Object.Timer++
 		if Object.Timer == 30
 			Object.Timer = 0
-			Object.XVelocity = 0x20000
+			Object.XVelocity  = 0x20000
 			Helper1.TargetPos = Object.YPos
 			Helper2.SecondaryState++
 		end if
 		break
+
 	case 1
 		Object.XPos += Object.XVelocity
 		Sin(Object.YPos, Object.Timer)
 		Object.YPos <<= 9
-		Object.YPos += Helper1.TargetPos
+		Object.YPos  += Helper1.TargetPos
 		Helper1.TargetPos += 0x4000
 		Object.Timer += 4
 		Object.Timer &= 511
-		TempValue0 = Helper1.RightBound
+		TempValue0  = Helper1.RightBound
 		TempValue0 += 0x580000
 		if Object.XPos > TempValue0
 			Helper2.SecondaryState++
 			Object.Timer = 0
 			Helper2.CutsceneRightBound += 64
-			Player.ControlMode	= CONTROL_DISABLED
+			Player.ControlMode	= CONTROLMODE_NONE
 			Player.JumpHold		= false
 			Player.Right		= true
 			Player.Left			= false
@@ -1434,6 +1460,7 @@ function EggMobile_Destroyed_NoAmy
 			Player.Down 		= false
 		end if
 		break
+
 	case 2
 		Player.Right = true
 		Object.Timer++
@@ -1443,6 +1470,7 @@ function EggMobile_Destroyed_NoAmy
 		end if
 		break
 	end switch
+
 	TempValue0  = Object.AnimationTimer
 	TempValue0 &= 3
 	if TempValue0 == 0
@@ -1468,7 +1496,7 @@ end function
 
 
 function EggMobile_HandleWingRotation
-	ArrayPos0 = Object.EntityNo
+	ArrayPos0  = Object.EntityNo
 	ArrayPos0 -= 4
 	TempValue0 = 0
 	TempValue1 = Object.Rotation
@@ -1495,31 +1523,32 @@ end function
 
 
 function EggMobile_DropDamagedWing
-	TempValue6 = Object[ArrayPos0].XPos
+	TempValue6  = Object[ArrayPos0].XPos
 	TempValue6 -= Object.XPos
 	TempValue6 -= 0x180000
 	if TempValue0 < 0
 		FlipSign(TempValue6)
 	end if
-	TempValue7 = Object[ArrayPos0].YPos
+
+	TempValue7  = Object[ArrayPos0].YPos
 	TempValue7 -= Object.YPos
 	TempValue7 -= 0x440000
 	if TempValue7 < 0
 		FlipSign(TempValue7)
 	end if
-	TempValue6 += TempValue7
+	TempValue6  += TempValue7
 	TempValue6 >>= 16
 end function
 
 
 function EggMobile_HandleAnimations
-	TempValue0 = Object[+1].AnimationTimer
+	TempValue0   = Object[+1].AnimationTimer
 	TempValue0 >>= 2
-	TempValue0 &= 1
+	TempValue0  &= 1
 	if TempValue0 == 1
-		TempValue0 = Object[+1].AnimationTimer
+		TempValue0   = Object[+1].AnimationTimer
 		TempValue0 >>= 3
-		TempValue0 += 11
+		TempValue0  += 11
 		DrawSprite(TempValue0)
 		TempValue0 += 5
 		DrawSprite(TempValue0)
@@ -1557,33 +1586,33 @@ sub ObjectMain
 	CallFunction(EggMobile_HandleWingRotation)
 	if Object.InvulnerableTimer > 0
 		if Object.InvulnerableTimer > 20
-			TempValue0 = Object.InvulnerableTimer
+			TempValue0  = Object.InvulnerableTimer
 			TempValue0 &= 15
 			if TempValue0 == 0
 
 				Rand(TempValue0, 48)
-				TempValue0 -= 24
+				TempValue0  -= 24
 				TempValue0 <<= 16
-				TempValue0 += Object.XPos
+				TempValue0  += Object.XPos
 
 				Rand(TempValue1, 48)
-				TempValue1 -= 32
+				TempValue1  -= 32
 				TempValue1 <<= 16
-				TempValue1 += Object.YPos
+				TempValue1  += Object.YPos
 
 				CreateTempObject(TypeName[BossSpark], 0, TempValue0, TempValue1)
 				Object[TempObjectPos].InkEffect = INK_NONE
 				Object[TempObjectPos].Alpha = 248
 
 				Rand(TempValue0, 48)
-				TempValue0 -= 24
+				TempValue0  -= 24
 				TempValue0 <<= 16
-				TempValue0 += Object.XPos
+				TempValue0  += Object.XPos
 
 				Rand(TempValue1, 48)
-				TempValue1 -= 32
+				TempValue1  -= 32
 				TempValue1 <<= 16
-				TempValue1 += Object.YPos
+				TempValue1  += Object.YPos
 
 				CreateTempObject(TypeName[BossSpark], 0, TempValue0, TempValue1)
 				Object[TempObjectPos].InkEffect = INK_NONE
@@ -1605,6 +1634,7 @@ sub ObjectMain
 				PlayStageSFX(SFX_S_WINGROTATE, false)
 			end if
 			break
+
 		case 1
 			Helper2.SfxTimer += 3
 			if Helper2.SfxTimer > 59
@@ -1618,6 +1648,7 @@ sub ObjectMain
 				end if
 			end if
 			break
+
 		case 2
 			Helper2.SfxTimer += 8
 			if Helper2.SfxTimer > 59
@@ -1625,6 +1656,7 @@ sub ObjectMain
 				PlayStageSFX(SFX_S_WINGROTATE, false)
 			end if
 			break
+
 		case 3
 			Helper2.SfxTimer += 10
 			if Helper2.SfxTimer > 59
@@ -1632,6 +1664,7 @@ sub ObjectMain
 				PlayStageSFX(SFX_S_WINGROTATE, false)
 			end if
 			break
+
 		case 4
 			Helper2.SfxTimer += 16
 			if Helper2.SfxTimer > 59
@@ -1652,7 +1685,7 @@ sub ObjectPlayerInteraction
 				if Player.Animation != ANI_JUMPING
 					CallFunction(Player_Hit)
 					if Player.State == Player_State_GotHit
-						Object.Animation = 2
+						Object.Animation = EGGANI_LAUGH
 					end if
 				else
 					Object.Oscillation >>= 5
@@ -1668,13 +1701,14 @@ sub ObjectPlayerInteraction
 						if BossWing[ArrayPos0].Attached == true
 							CallFunction(EggMobile_DropDamagedWing)
 							if TempValue6 < TempValue1
-								ArrayPos1 = ArrayPos0
+								ArrayPos1  = ArrayPos0
 								TempValue1 = TempValue6
 							end if
 						end if
 						ArrayPos0--
 						TempValue0++
 					loop
+					
 					if TempValue1 < 0x10000
 						BossWing[ArrayPos1].Attached = false
 						BossWing[ArrayPos1].State = BOSSWING_FALL_DIAGONAL
@@ -1692,12 +1726,13 @@ sub ObjectPlayerInteraction
 #platform: Use_Origins
 						EngineCallback(NOTIFY_KILL_BOSS)
 #endplatform
-						Stage.TimeEnabled = 0
+						Stage.TimeEnabled = false
 						Player.Score += 1000
 						Helper2.BossInvincible = true
-						Object.Animation = 3
-						Object.Timer = 0
-						if Object[24].PropertyValue == 3
+						Object.Animation = EGGANI_DEFEAT
+						Object.Timer	 = 0
+						// Check if it's the bad future, for what? who knows
+						if HUD.TimePeriod == TIME_BAD_FUTURE
 							Object.State = EggMobile_Destroyed
 						else
 							Object.State = EggMobile_Destroyed
@@ -1706,7 +1741,7 @@ sub ObjectPlayerInteraction
 						Object[+3].Alpha >>= 1
 						Object[+3].Alpha <<= 1
 						Helper2.SecondaryState = 0
-						Object.AnimationTimer = 0
+						Object.AnimationTimer  = 0
 						Helper1.ControllerDisabled = true
 						Helper2.AnimSpeedState = 5
 
@@ -1716,14 +1751,14 @@ sub ObjectPlayerInteraction
 
 						break
 					case 1
-						Object.InvulnerableTimer = 120
-						Helper1.ControllerState = 0
+						Object.InvulnerableTimer   = 120
+						Helper1.ControllerState	   = 0
 						Helper1.ControllerDisabled = true
-						Object.State = EggMobile_Hit
+						Object.State	 = EggMobile_Hit
 						Object.YVelocity = 0x10000
 						Helper1.Controller = Helper1Controller_OneWing
-						Object.Timer = 0
-						Object.Animation = 1
+						Object.Timer	 = 0
+						Object.Animation = EGGANI_HURT
 						Helper2.AnimSpeedState = 4
 						PlayStageSFX(SFX_S_BOSSHIT, false)
 
@@ -1737,10 +1772,10 @@ sub ObjectPlayerInteraction
 						Helper1.ControllerState = 0
 						Helper1.ControllerDisabled = true
 						Object.State = EggMobile_Hit
-						Object.YVelocity = 57344
+						Object.YVelocity = 0xE000
 						Helper1.Controller = Helper1Controller_TwoWings
 						Object.Timer = 0
-						Object.Animation = 1
+						Object.Animation = EGGANI_HURT
 						Helper2.AnimSpeedState = 3
 						PlayStageSFX(SFX_S_BOSSHIT, false)
 
@@ -1757,7 +1792,7 @@ sub ObjectPlayerInteraction
 						Object.YVelocity = 0xC000
 						Helper1.Controller = Helper1Controller_ThreeWings
 						Object.Timer = 0
-						Object.Animation = 1
+						Object.Animation = EGGANI_HURT
 						Helper2.AnimSpeedState = 2
 						PlayStageSFX(SFX_S_BOSSHIT, false)
 						
@@ -1771,6 +1806,7 @@ sub ObjectPlayerInteraction
 			end if
 		end if
 	end if
+
 	TempValue0   = Player.CollisionRight
 	TempValue0 <<= 16
 	TempValue0  += Player.XPos
@@ -1778,7 +1814,8 @@ sub ObjectPlayerInteraction
 	TempValue1 <<= 16
 	if TempValue0 > TempValue1
 		Player.XVelocity = 0
-		Player.Speed = 0
+		Player.Speed	 = 0
+
 		Player.XPos  = TempValue1
 		TempValue0   = Player.CollisionRight
 		TempValue0 <<= 16
@@ -1792,27 +1829,28 @@ sub ObjectDraw
 	TempValue0 &= 1
 	if TempValue0 == 0
 		switch Object.Animation
-		case 0
+		case EGGANI_IDLE
 			DrawSprite(0)
 			CallFunction(EggMobile_HandleAnimations)
 			if Object.OscillationValue != 0
-				TempValue0 = Oscillation
-				TempValue0 &= 7
+				TempValue0   = Oscillation
+				TempValue0  &= 7
 				TempValue0 >>= 2
-				TempValue0 += 2
+				TempValue0  += 2
 				DrawSprite(TempValue0)
 			end if
 			DrawSprite(6)
 			DrawSprite(10)
 			break
-		case 1
+
+		case EGGANI_HURT
 			DrawSprite(0)
 			CallFunction(EggMobile_HandleAnimations)
 			if Object.OscillationValue != 0
-				TempValue0 = Oscillation
-				TempValue0 &= 7
+				TempValue0   = Oscillation
+				TempValue0  &= 7
 				TempValue0 >>= 2
-				TempValue0 += 2
+				TempValue0  += 2
 				DrawSprite(TempValue0)
 			end if
 			DrawSprite(9)
@@ -1821,33 +1859,35 @@ sub ObjectDraw
 				Object.AnimationTimer++
 			else
 				Object.AnimationTimer = 0
-				Object.Animation = 0
+				Object.Animation	  = EGGANI_IDLE
 			end if
 			break
-		case 2
+
+		case EGGANI_LAUGH
 			DrawSprite(0)
 			CallFunction(EggMobile_HandleAnimations)
 			if Object.OscillationValue != 0
-				TempValue0 = Oscillation
-				TempValue0 &= 7
+				TempValue0   = Oscillation
+				TempValue0  &= 7
 				TempValue0 >>= 2
-				TempValue0 += 2
+				TempValue0  += 2
 				DrawSprite(TempValue0)
 			end if
-			TempValue0 = Object.AnimationTimer
-			TempValue0 &= 15
+			TempValue0   = Object.AnimationTimer
+			TempValue0  &= 15
 			TempValue0 >>= 3
-			TempValue0 += 6
+			TempValue0  += 6
 			DrawSprite(TempValue0)
 			if Object.AnimationTimer < 120
 				Object.AnimationTimer++
 			else
 				Object.AnimationTimer = 0
-				Object.Animation = 0
+				Object.Animation	  = EGGANI_IDLE
 			end if
 			DrawSprite(10)
 			break
-		case 3
+
+		case EGGANI_DEFEAT
 			DrawSprite(1)
 			DrawSprite(8)
 			break

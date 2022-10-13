@@ -12,7 +12,7 @@
 #alias 1	:	ATTRACTMODE_HANDLE_INPUT
 
 // Control Modes
-#alias  0	:	CONTROL_ENABLED
+#alias  0	:	CONTROLMODE_NORMAL
 
 // Demo ID Aliases
 #alias 0	:	DEMO_R11A
@@ -30,13 +30,18 @@
 // Player Aliases
 #alias 0	:	PLAYER_SONIC
 
+// Presentation Stages
 #alias 0	:	STAGE_P_TITLE
+
+// Text Info type
+#alias 0	:	TEXTINFO_TEXTDATA
+#alias 1	:	TEXTINFO_TEXTSIZE
 
 
 sub ObjectMain
 	switch Object.State
 	case ATTRACTMODE_SETUP
-		if Player.ControlMode == CONTROL_ENABLED
+		if Player.ControlMode == CONTROLMODE_NORMAL
 			Object.State++
 			Object.DemoInput  = Object.DemoLength
 			Object.DemoInput -= 60
@@ -46,7 +51,7 @@ sub ObjectMain
 	case ATTRACTMODE_HANDLE_INPUT
 		
 		// Get the inputs for the current frame
-		GetTextInfo(TempValue0, MENU_1, 0, 0, Object.DemoTime)
+		GetTextInfo(TempValue0, MENU_1, TEXTINFO_TEXTDATA, 0, Object.DemoTime)
 		
 		// Set all the input stuff as needed
 		GetBit(Player.Up, TempValue0, 0)
@@ -221,7 +226,7 @@ sub ObjectStartup
 				end switch
 				
 				// Get how long the Demo is, and store it in the Attract Mode Object
-				GetTextInfo(Object[ArrayPos0].DemoLength, MENU_1, 1, 0, 0)
+				GetTextInfo(Object[ArrayPos0].DemoLength, MENU_1, TEXTINFO_TEXTSIZE, 0, 0)
 				
 			else
 				

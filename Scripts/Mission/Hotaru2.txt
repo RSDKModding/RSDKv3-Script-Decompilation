@@ -111,7 +111,7 @@ sub ObjectMain
 	if game.playMode == BOOT_PLAYMODE_BOSSRUSH
 		Object.Type=TypeName[BlankObject]
 	else
-		if Object.PropertyValue == 0
+		if Object.PropertyValue == PARENT_OBJECT
 			switch Object.State
 			case HOTARU2_SPAWNER_CHECK_BOUNDS
 				TempValue0  = Object.XPos
@@ -158,22 +158,22 @@ sub ObjectMain
 					Object.Timer++
 				else
 					Object.Timer = 0
-					Object[+2].Type = TypeName[Hotaru2]
+					Object[+2].Type  = TypeName[Hotaru2]
 					Object[+2].CheckBounds = true
 
-					Object[+2].XPos = Object.XPos
+					Object[+2].XPos  = Object.XPos
 					Object[+2].XPos -= 0x500000
 
-					Object[+2].YPos = Object.YPos
+					Object[+2].YPos  = Object.YPos
 					Object[+2].YPos += 0x280000
 
 					Object[+3].Type = TypeName[Hotaru2]
 					Object[+3].CheckBounds = false
 
-					Object[+3].XPos = Object.XPos
+					Object[+3].XPos  = Object.XPos
 					Object[+3].XPos += 0x500000
 
-					Object[+3].YPos = Object.YPos
+					Object[+3].YPos  = Object.YPos
 					Object[+3].YPos += 0x280000
 					Object.State++
 				end if
@@ -195,9 +195,9 @@ sub ObjectMain
 					end if
 				else
 					if Object[+2].State < HOTARU2_CHARGE_LASER
-						TempValue0=176
+						TempValue0 = 176
 					else
-						TempValue0=0
+						TempValue0 = 0
 					end if
 					TempValue0   -= Object.Alpha
 					TempValue0  >>= 3
@@ -238,7 +238,7 @@ sub ObjectMain
 					CallFunction(Hotaru2_Set_Destination)
 					Object.State++
 				end if
-				Object.Alpha = Object.Timer
+				Object.Alpha   = Object.Timer
 				Object.Alpha <<= 2
 				break
 
@@ -273,7 +273,7 @@ sub ObjectMain
 				TempValue0  = Object.Timer
 				TempValue0 &= 1
 				if TempValue0 == 0
-					CreateTempObject(TypeName[HotaruLaser], 0, Object.XPos, Object.YPos)
+					CreateTempObject(TypeName[BlankObject], 0, Object.XPos, Object.YPos)
 					Object[TempObjectPos].HotaruEntity = Object.EntityNo
 				end if
 				Object.Timer++

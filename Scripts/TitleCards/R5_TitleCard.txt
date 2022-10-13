@@ -38,8 +38,8 @@
 
 
 // Control Mode
-#alias -1	:	CONTROL_DISABLED
-#alias 0	:	CONTROL_ENABLED
+#alias -1	:	CONTROLMODE_NONE
+#alias 0	:	CONTROLMODE_NORMAL
 
 // Priority
 #alias 1	:	PRIORITY_ACTIVE
@@ -53,7 +53,7 @@ end sub
 sub ObjectDraw
 	switch Object.State
 	case TITLECARD_FADEIN
-		Player.ControlMode	= CONTROL_DISABLED
+		Player.ControlMode	= CONTROLMODE_NONE
 		Player.Up			= false
 		Player.Down			= false
 		Player.Left			= false
@@ -104,7 +104,7 @@ sub ObjectDraw
 				Object.State = TITLECARD_SLIDEIN
 				Object.FadeA = 0
 			else
-				Player.ControlMode = CONTROL_ENABLED
+				Player.ControlMode = CONTROLMODE_NORMAL
 				Stage.TimeEnabled  = true
 
 				ResetObjectEntity(20, TypeName[Blank Object], 0, 0, 0)
@@ -143,7 +143,7 @@ sub ObjectDraw
 			Object.TextPos += 16
 			Object.BarPos  -= 16
 		else
-			Player.ControlMode = CONTROL_ENABLED
+			Player.ControlMode = CONTROLMODE_NORMAL
 			Stage.TimeEnabled  = true
 
 			ResetObjectEntity(20, TypeName[Blank Object], 0, 0, 0)
@@ -303,11 +303,13 @@ sub ObjectStartup
 
 #platform: Use_Standalone
 	#platform: Standard
-		SpriteFrame(64, 81, 160, 16, 41, 50)	// #5  - Sonic The Hedgehog CD
+		SpriteFrame(64, 81, 160, 16, 41, 50)// #5  - Sonic The Hedgehog CD
 	#endplatform
+#endplatform
 
+#platform: Use_Standalone
 	#platform: Mobile
-		SpriteFrame(72, 81, 160, 16, 49, 50)	// #5  - Sonic The Hedgehog CD
+		SpriteFrame(72, 81, 160, 16, 49, 50)// #5  - Sonic The Hedgehog CD
 	#endplatform
 #endplatform
 	
@@ -354,7 +356,7 @@ sub ObjectStartup
 		game.missionCondition = 0
 		game.missionEnd		  = false
 
-		Player.ControlMode	  = CONTROL_ENABLED
+		Player.ControlMode	  = CONTROLMODE_NORMAL
 		Stage.TimeEnabled	  = true
 
 		ResetObjectEntity(20, TypeName[Blank Object], 0, 0, 0)

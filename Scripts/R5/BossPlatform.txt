@@ -107,8 +107,8 @@ function BossPlatform_Conveyor_Update
 				Object.BeltSpeed += 0x600
 				
 				// Cap the Belt Speed to be ~5.81 pixels per frame maximum
-				if Object.BeltSpeed > 380928
-					Object.BeltSpeed = 380928
+				if Object.BeltSpeed > 0x5D000
+					Object.BeltSpeed = 0x5D000
 				end if
 			else
 				// The Player's going slower than (or the same speed as) the Conveyor Belt
@@ -152,10 +152,10 @@ function BossPlatform_Conveyor_Update
 		// If the Player is flying, make the Belt decelerate faster
 		if Player.State == Player_State_Fly
 			// Make it decelerate by around 0.031 pixels per frame
-			Object.BeltSpeed -= 2048
+			Object.BeltSpeed -= 0x800
 		else
 			// The Player's just in the air normally, decelerate at a rate of 0.0039 pixels per frame
-			Object.BeltSpeed -= 256
+			Object.BeltSpeed -= 0x100
 		end if
 		
 		// Enforce a minumum speed of 0.75 pixels per frame
@@ -195,7 +195,7 @@ function BossPlatform_Conveyor_Update
 	TempValue0 -= 0xC000
 	
 	// And then divide the remainder from that to level it down from 0-3
-	TempValue0 /= 110592
+	TempValue0 /= 0x1B000
 	switch TempValue0
 	case 0
 		// Lowest grind speed...
@@ -364,7 +364,7 @@ function BossPlatform_Conveyor_WindDown
 	// Just, without all the Boss shaking side of the stuff
 	
 	TempValue0 = Object.BeltSpeed
-	TempValue0 /= 110592
+	TempValue0 /= 0x1B000
 	
 	switch TempValue0
 	case 0
@@ -509,7 +509,7 @@ sub ObjectMain
 		
 		// Move Robotnik along, to be 28 pixels above the Platform's Y Position
 		Object[-1].YPos = Object.YPos
-		Object[-1].YPos -= 1835008
+		Object[-1].YPos -= 0x1C0000
 		
 		// And then move the Boss's Back Panel too
 		Object[-2].YPos = Object.YPos
@@ -558,7 +558,7 @@ sub ObjectMain
 			end if
 			
 			// Spawn Sparks, with an offset of 19 pixels
-			TempValue0 = 1245184
+			TempValue0 = 0x130000
 			CallFunction(BossPlatform_SpawnLandingSparks)
 
 #platform: Use_Haptics
@@ -568,7 +568,7 @@ sub ObjectMain
 		
 		
 		Object[-1].YPos = Object.YPos
-		Object[-1].YPos -= 1835008
+		Object[-1].YPos -= 0x1C0000
 		
 		Object[-2].YPos = Object.YPos
 		
@@ -633,7 +633,7 @@ sub ObjectMain
 			end if
 			
 			// Spawn landing Sparks, with an offset of 11 pixels
-			TempValue0 = 720896
+			TempValue0 = 0xB0000
 			CallFunction(BossPlatform_SpawnLandingSparks)
 			
 #platform: Use_Haptics
@@ -642,8 +642,8 @@ sub ObjectMain
 		end if
 		
 		// Move Eggman to match this Object's position, 28 pixels above
-		Object[-1].YPos = Object.YPos
-		Object[-1].YPos -= 1835008
+		Object[-1].YPos  = Object.YPos
+		Object[-1].YPos -= 0x1C0000
 		
 		// And move the Boss Back Panel along as well
 		Object[-2].YPos = Object.YPos
@@ -670,7 +670,7 @@ sub ObjectMain
 			// - X Velocity of 1 pixel left per frame
 			CreateTempObject(TypeName[Boss Spark], BOSSSPARK_GRIND, Object.XPos, Object.YPos)
 			Object[TempObjectPos].XPos += 0x180000
-			Object[TempObjectPos].YPos += 1245184
+			Object[TempObjectPos].YPos += 0x130000
 			Object[TempObjectPos].XVelocity = -0x10000
 		end if
 		break
@@ -713,7 +713,7 @@ sub ObjectMain
 		
 		// Carry Eggman along, to be 28 pixels above this Platform's Position
 		Object[-1].YPos = Object.YPos
-		Object[-1].YPos -= 1835008
+		Object[-1].YPos -= 0x1C0000
 		
 		// And his Back Panel, too
 		Object[-2].YPos = Object.YPos
@@ -740,7 +740,7 @@ sub ObjectMain
 			// - X Velocity of 1 pixel left per frame
 			CreateTempObject(TypeName[Boss Spark], BOSSSPARK_GRIND, Object.XPos, Object.YPos)
 			Object[TempObjectPos].XPos += 0x180000
-			Object[TempObjectPos].YPos += 720896
+			Object[TempObjectPos].YPos += 0xB0000
 			Object[TempObjectPos].XVelocity = -0x10000
 		end if
 		break
@@ -784,7 +784,7 @@ sub ObjectMain
 		
 		// Carry Eggman along, keeping him 28 pixels above this Object's Base Y Position
 		Object[-1].YPos = Object.YPos
-		Object[-1].YPos -= 1835008
+		Object[-1].YPos -= 0x1C0000
 		
 		// And then Eggman's control Panel too, he needs something to hold on to!
 		Object[-2].YPos = Object.YPos
