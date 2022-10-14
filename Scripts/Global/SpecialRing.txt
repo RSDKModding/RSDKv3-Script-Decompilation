@@ -294,8 +294,9 @@ sub ObjectStartup
 		ArrayPos0++
 	loop
 #endplatform
-
-	if SpecialStage.TimeStones >= 127	// We don't need this if all time stones are collected
+	
+	// If all Time Stones are collected, we don't need any Special Stages anymore
+	if SpecialStage.TimeStones >= 127
 		ArrayPos0 = 32
 		while ArrayPos0 < 1056
 			if Object[ArrayPos0].Type == TypeName[SpecialRing]
@@ -305,6 +306,7 @@ sub ObjectStartup
 		loop
 	end if
 	
+	// In Time Attack, we shouldn't enter any Special Stages
 	if Options.GameMode > GAMEMODE_SAVEGAME
 		ArrayPos0 = 32
 		while ArrayPos0 < 1056
@@ -314,7 +316,8 @@ sub ObjectStartup
 			ArrayPos0++
 		loop
 	end if
-
+	
+	// That 'Lite!' on the banner wasn't joking, better remove all Special Rings!
 	if Engine.TrialMode == true
 		ArrayPos0 = 32
 		while ArrayPos0 < 1056
@@ -336,7 +339,6 @@ end sub
 
 sub RSDKLoad
 	LoadSpriteSheet("Global/Items2.gif")
-
 	SpriteFrame(-32, -32, 64, 64, 83, 1)	// #0  - Special Ring Frame 0
 
 	SetVariableAlias(ALIAS_VAR_PROPVAL, "unused")

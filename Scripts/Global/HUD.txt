@@ -518,6 +518,24 @@ end sub
 // Editor Subs
 // ========================
 
+sub RSDKEdit
+	if Editor.ReturnVariable == true
+		switch Editor.VariableID
+		case EDIT_VAR_PROPVAL // Property Value
+		case 0 // TimePeriod
+			CheckResult = Object.PropertyValue
+			break
+		end switch
+	else
+		switch Editor.VariableID
+		case EDIT_VAR_PROPVAL // Property Value
+		case 0 // TimePeriod
+			Object.PropertyValue = Editor.VariableValue
+			break
+		end switch
+	end if
+end sub
+
 sub RSDKDraw
 	DrawSprite(0)
 end sub
@@ -525,6 +543,11 @@ end sub
 sub RSDKLoad
 	LoadSpriteSheet("Global/Display.gif")
 	SpriteFrame(0, 0, 39, 43, 1, 1)
-
-	SetVariableAlias(ALIAS_VAR_PROPVAL,  "unused")
+	
+	AddEditorVariable("TimePeriod")
+	SetActiveVariable("TimePeriod")
+	AddEnumVariable("Present", 0)
+	AddEnumVariable("Past", 1)
+	AddEnumVariable("Good Future", 2)
+	AddEnumVariable("Bad Future", 3)
 end sub
