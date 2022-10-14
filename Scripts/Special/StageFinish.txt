@@ -8,6 +8,7 @@
 #alias Object.Value6 : Object.RingBonus
 
 // This can be Coins bonus too, depending on the current mode
+// For simplicity's sake, we're just going to continue calling it Continues
 #alias Object.Value7 : Object.Continues
 
 // All texts have their own X position values
@@ -20,9 +21,6 @@
 // HUD Aliases
 #alias Object.Value1 : HUD.TimeSeconds
 #alias Object.Value3 : HUD.Rings
-
-// Property Value - Results Type
-#alias Object.PropertyValue : Object.ResultsType
 
 // States
 #alias 0 : STAGEFINISH_INIT
@@ -38,9 +36,15 @@
 #alias 10: STAGEFINISH_CHECKRETRYCOND
 #alias 11: STAGEFINISH_SAVE
 
-#alias 0 : RESULTSTYPE_FAILURE
-#alias 1 : RESULTSTYPE_STONEOBTAINED
-#alias 2 : RESULTSTYPE_ALLSTONESOBTAINED
+// Property Value - Results Type
+// Changed by this object, as well as the things that may spawn it
+#alias Object.PropertyValue : Object.ResultsType
+
+// Character limit is rearing its head here, which is why we can only stick in a "T" to distinguish it from states
+// Not what was planned, but not much we can do...
+#alias 0 : STAGEFINISH_T_FAILURE
+#alias 1 : STAGEFINISH_T_STONEOBTAINED
+#alias 2 : STAGEFINISH_T_ALLSTONESOBTAINED
 
 // Player Aliases
 #alias 0 : PLAYER_SONIC
@@ -76,10 +80,10 @@
 #alias 7 : STAGE_P_CREDITS
 
 // Game Modes
-#alias 1	:	GAMEMODE_SAVEGAME
+#alias 1 : GAMEMODE_SAVEGAME
 
 // Control Mode
-#alias 0	:	CONTROLMODE_NORMAL
+#alias 0 : CONTROLMODE_NORMAL
 
 
 sub ObjectMain
@@ -106,7 +110,7 @@ sub ObjectMain
 #endplatform
 		
 		// Don't wanna reward the Player if they just lost!
-		if Object.ResultsType > RESULTSTYPE_FAILURE
+		if Object.ResultsType > STAGEFINISH_T_FAILURE
 			
 			// Setup the Time Bonus
 			Object.TimeBonus = HUD[4].TimeSeconds
@@ -220,10 +224,10 @@ sub ObjectMain
 			Object.State = STAGEFINISH_FADEIN
 			Object.Timer = 256
 			
-			if SpecialStage.TimeStones > 126	// 0b1111110, each '1' bit represents an obtained time stone
+			if SpecialStage.TimeStones > 126	// 0b01111110, each '1' bit represents an obtained time stone
 				// If the player has all Stones, then turn this object into the "Got 'em all!!" variant
 				
-				Object.ResultsType = RESULTSTYPE_ALLSTONESOBTAINED
+				Object.ResultsType = STAGEFINISH_T_ALLSTONESOBTAINED
 			end if
 			
 			PlayMusic(1)
@@ -462,7 +466,7 @@ sub ObjectMain
 				Player.Lives++
 			else
 				game.callbackParam0 = 1	// Set the amount of coins to add
-				EngineCallback(NOTIFY_ADD_COIN)
+				EngineCallback(NOTIFY_ADD_COIN) // CD's Special Stages only give 1 Coin while the others give 3? But CD's is the coolest...
 			end if
 #endplatform
 			
@@ -671,7 +675,7 @@ sub ObjectMain
 		
 		game.callbackResult = -1	// Reset the Callback result
 		
-		if Object.ResultsType == RESULTSTYPE_FAILURE
+		if Object.ResultsType == STAGEFINISH_T_FAILURE
 			// We've failed getting the Stone, so we're able to retry the Special Stage
 			
 			game.callbackParam0 = false
@@ -749,7 +753,7 @@ sub ObjectMain
 				Object.Timer = 256
 				if SpecialStage.TimeStones > 126	// 0b1111110, each '1' bit represents an obtained time stone
 					// Got 'em all!
-					Object.ResultsType = RESULTSTYPE_ALLSTONESOBTAINED
+					Object.ResultsType = STAGEFINISH_T_ALLSTONESOBTAINED
 					EngineCallback(NOTIFY_STATS_PARAM_2)
 				end if
 				
@@ -828,17 +832,17 @@ sub ObjectDraw
 		
 		// Draw the main text, depending on what the current results type is
 		switch Object.ResultsType
-		case RESULTSTYPE_FAILURE
+		case STAGEFINISH_T_FAILURE
 			// "SPECIAL ZONE"
 			DrawSpriteScreenXY(1, Object.XPos, 50)
 			break
 			
-		case RESULTSTYPE_STONEOBTAINED
+		case STAGEFINISH_T_STONEOBTAINED
 			// "TIME STONES"
 			DrawSpriteScreenXY(2, Object.XPos, 50)
 			break
 			
-		case RESULTSTYPE_ALLSTONESOBTAINED
+		case STAGEFINISH_T_ALLSTONESOBTAINED
 			// "GOT THEM ALL!!"
 			DrawSpriteScreenXY(3, Object.XPos, 50)
 			break

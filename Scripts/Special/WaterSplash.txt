@@ -21,12 +21,15 @@
 
 sub ObjectDraw
 	if SSSonic.YPos > 0
+		// If Sonic's in the air, he certainly isn't splashing around anymore so unload
 		ResetObjectEntity(3, TypeName[Blank Object], 0, 0, 0)
 	else
 		
 		// Find the player's truncated X and Z pos
+		
 		TempValue0 = SSSonic.XPos
 		TempValue0 >>= 16
+		
 		TempValue1 = SSSonic[-1].ZPos
 		TempValue1 >>= 16
 		
@@ -58,7 +61,7 @@ sub ObjectDraw
 			DrawSpriteScreenXY(TempValue0, Screen.CenterX, 224)
 			
 		else
-			// Sonic's not on a water tile, so erase the Water Splash object
+			// Sonic's not on a water tile, erase the Water Splash object
 			ResetObjectEntity(3, TypeName[Blank Object], 0, 0, 0)
 			HUD[4].WaterTimer = 0
 		end if

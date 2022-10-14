@@ -4,10 +4,6 @@
 
 // Aliases
 
-// note to rdc leon or whoever is gonna do secondary cleanup - i request that you please leave the excess spaces in this script,
-// i know it may be abit much but i dunno, i just like it for some reason, so i hope you'll let it stay
-
-
 // These are three sets of aliases, this object is rather inconsistent in its variable use, where sometimes
 // normal Object.Values are used, but then other times, Player. values are used instead
 // For the sake of simplicity, these have all been merged into a SSSonic. namespace via aliases
@@ -138,18 +134,23 @@
 #alias 13 : CALLBACK_PAUSE_REQUESTED
 
 // Engine Messages
-#alias 2	:	MESSAGE_LOSTFOCUS
+#alias 2 : MESSAGE_LOSTFOCUS
 
 // Priority
-#alias 1	:	PRIORITY_ACTIVE
-#alias 2	:	PRIORITY_ALWAYS
+#alias 1 : PRIORITY_ACTIVE
+#alias 2 : PRIORITY_ALWAYS
 
 // Tile Layer types
-#alias 3	:	LAYER_3DFLOOR
+#alias 3 : LAYER_3DFLOOR
 
 // Tile Info
-#alias 1	:	TILEINFO_DIRECTION
-#alias 6	:	TILEINFO_ANGLEA
+#alias 1 : TILEINFO_DIRECTION
+#alias 6 : TILEINFO_ANGLEA
+
+// Stage Finish Aliases
+#alias Object.PropertyValue : Object.ResultsType
+
+#alias 1 : STAGEFINISH_T_STONEOBTAINED
 
 
 function Sonic_ProcessPlayer
@@ -814,6 +815,9 @@ function Sonic_HandleTileInteractions
 	case 1
 		// Offroad tile, slow down Sonic and kick up some dust
 		Object[3].Type = TypeName[Dust Puff]
+		
+		// Note that we're giving it a Draw Order of 4, not only does this make it draw above Sonic but
+		//  more importantly this makes it so that it won't be treated as a 3d object
 		Object[3].DrawOrder = 4
 		
 		if HUD[4].SpeedShoes == 0
@@ -1415,7 +1419,7 @@ sub ObjectMain
 		CallFunction(Sonic_HandleMovement)
 		CallFunction(Sonic_ProcessAnimation)
 		
-		// Gravity of 0x800, the fan provides some air resistance to lessen the normal gravity from 0x2000
+		// Gravity of 0.03125 pixels per frame, the fan provides some air resistance to lessen the normal gravity from 0.125 pixels per frame
 		SSSonic.YVelocity -= 0x0800
 		
 		SSSonic.YPos += SSSonic.YVelocity
@@ -1543,6 +1547,7 @@ sub ObjectMain
 			SSSonic.FrameTimer = 0
 			SSSonic.AnimationSpeed = 80
 			SSSonic.YVelocity = 0x46000
+			
 			PlaySfx(SFX_G_JUMP, false)
 		end if
 		
@@ -1593,7 +1598,7 @@ sub ObjectMain
 			// Spawn the Stage Results, as the "TIME STONES" variant
 			
 			Object[30].Type = TypeName[Stage Finish]
-			Object[30].PropertyValue = 1
+			Object[30].ResultsType = STAGEFINISH_T_STONEOBTAINED
 		else
 			SSSonic.Timer++
 		end if
@@ -1652,7 +1657,7 @@ sub ObjectMain
 	end switch
 	
 	// Enforce stage bounds
-	// Stage size is set by the stage's BGEffects object
+	// These stage size values are set by the stage's BGEffects object on Startup
 	
 	if SSSonic.XPos > Stage.XBoundary2
 		SSSonic.XPos = Stage.XBoundary2
@@ -1662,7 +1667,7 @@ sub ObjectMain
 		SSSonic.XPos = Stage.XBoundary1
 	end if
 	
-	// The Stage Bounds are setup for a 2d plane, which is why ZPos is being paired with the Y Bounds here
+	// The Stage Bounds are setup for a 2d plane, which is why ZPos is being paired with the "Y" Bounds here
 	if SSSonic.ZPos > Stage.YBoundary2
 		SSSonic.ZPos = Stage.YBoundary2
 	end if
@@ -1671,7 +1676,7 @@ sub ObjectMain
 		SSSonic.ZPos = Stage.YBoundary1
 	end if
 	
-	// So we're not actually moving around a 3d stage - instead, we're moving the entire world around Sonic
+	// So we're kind of not actually moving around a 3d stage - instead, we're moving the entire world around Sonic
 	// So do the calculations for that
 	
 	TileLayer[0].Angle = SSSonic.Angle
@@ -1725,7 +1730,7 @@ sub ObjectDraw
 		break
 		
 	case SSSONIC_WALKING
-		// Bump Sonic's sprite based on how "tilted" he is in relation to the camera
+		// Bump Sonic's sprite based on how "tilted" he is
 		
 		TempValue1 = SSSonic.Frame
 		
@@ -1786,19 +1791,21 @@ sub ObjectStartup
 	// Make Sonic always active
 	SSSonic[2].Priority = PRIORITY_ACTIVE
 	
-	// Give him a standard draw order, since he's just about in the middle of the screen
+	// Give him a standard draw order depth, since he's just about in the middle of the screen
 	SSSonic[2].ScreenDepth = 0x5800
 	
-	// Start with him doing his intro pose
+	// Start with him doing his intro pose, pretty fancy
 	SSSonic[2].Frame     = ANI_INTROPOSE_START
 	SSSonic[2].FrameLoop = ANI_INTROPOSE_LOOP
 	SSSonic[2].FrameEnd  = ANI_INTROPOSE_END
 	SSSonic[2].AnimationSpeed = 30
 	
-	// Cycle through the scene and find all Sonic objects
+	// Cycle through the scene to find all Sonic objects
 	ArrayPos0 = 32
 	while ArrayPos0 < 1056
 		if Object[ArrayPos0].Type == TypeName[Sonic]
+			
+			// Transfer this placed Sonic object's values to the main Sonic object
 			
 			SSSonic.XPos = Object[ArrayPos0].XPos
 			
@@ -1809,11 +1816,11 @@ sub ObjectStartup
 			SSSonic.YPos = 0
 			
 			// PropertyValue is Sonic's starting direction
-			// Sonic's PropertyValue is normally always 192/0xC0, which is facing left
+			// Sonic's PropertyValue is normally always 0xC0, which is facing left
 			SSSonic.Angle = Object[ArrayPos0].PropertyValue
 			SSSonic.Angle <<= 1
 			
-			// Remove this Sonic object from the scene set of objects,
+			// Remove this placed Sonic object from the scene set of objects,
 			// as it's been moved to a reserved object slot now
 			ResetObjectEntity(ArrayPos0, TypeName[Blank Object], 0, 0, 0)
 			
@@ -1966,6 +1973,7 @@ sub ObjectStartup
 	SpriteFrame(-20, -48, 40, 48, 206, 189)
 	
 	// 81-90 - Time Stone Grabbing Frames
+	// These aren't used in the traditional animation system, and are instead manually set in SSSONIC_CAMERAPAN
 	SpriteFrame(-20, -48, 40, 48, 1, 197)
 	SpriteFrame(-20, -48, 40, 48, 124, 246)
 	SpriteFrame(-20, -48, 40, 48, 165, 246)
@@ -1995,7 +2003,7 @@ sub RSDKEdit
 			break
 		end switch
 	else
-		switch Editor.variableID
+		switch Editor.VariableID
 		case EDIT_VAR_PROPVAL // Property Value
 			Object.PropertyValue = Editor.VariableValue
 			break

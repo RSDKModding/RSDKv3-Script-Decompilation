@@ -11,7 +11,7 @@
 #alias Object.Value0 : HUD.UFOsCount
 #alias Object.Value1 : HUD.TimeSeconds
 #alias Object.Value2 : HUD.TimeFrames
-#alias Object.Value6 : HUD.BonusUFOPos
+#alias Object.Value6 : HUD.BonusUFONo // "No" akin to Entity No, not as in "is there no UFO?"
 #alias Object.Value7 : HUD.WaterTimer
 
 // UFO Alias
@@ -39,7 +39,7 @@
 // Priority
 #alias 1 : PRIORITY_ACTIVE
 
-// Tile Layer types
+// Tile Layer Types
 #alias 4 : LAYER_3DSKY
 
 
@@ -78,7 +78,7 @@ sub ObjectMain
 						HUD[4].TimeSeconds--
 						if HUD[4].TimeSeconds < 20
 							// Less than 20 seconds left, quickly, spawn a time UFO to help the player!
-							ArrayPos0 = HUD[4].BonusUFOPos
+							ArrayPos0 = HUD[4].BonusUFONo
 							
 							// Make sure the bonus UFO doesn't exist already
 							if Object[ArrayPos0].Type != TypeName[UFO]
@@ -230,7 +230,7 @@ end sub
 sub ObjectStartup
 	
 	// Despite not having any SpriteFrames to draw with, go ahead and load the Special Stage objects sheet anyways
-	// (This somewhat helps loading times by doing initial loading i guess...?)
+	// (It doesn't make much of a difference but hey, may as well anyways!)
 	LoadSpriteSheet("Special/Objects.gif")
 	
 	// Set the ground to the "3d Sky" layer type
@@ -257,7 +257,7 @@ sub ObjectStartup
 	Object[23].Type = TypeName[Special Setup]
 	Object[23].Priority = PRIORITY_ACTIVE
 	
-	// Give it a draw order lower than the rest to make sure it can sort all other entities correctly
+	// Give it a draw order lower right before the primary one, to make sure it can sort all the upcoming 3d entities correctly
 	Object[23].DrawOrder = 2
 	
 	// Cycle through all Blank Objects?
@@ -270,6 +270,7 @@ sub ObjectStartup
 			// If the object is blank... then blank it again...
 			ResetObjectEntity(ArrayPos0, TypeName[Blank Object], 0, 0, 0)
 		end if
+		
 		ArrayPos0++
 	loop
 	

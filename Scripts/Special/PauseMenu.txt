@@ -1,4 +1,4 @@
-//-----------------Sonic CD PauseMenu Script------------------//
+//-----------------Sonic CD Pause Menu Script-----------------//
 //--------Scripted by Christian Whitehead 'The Taxman'--------//
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
@@ -9,15 +9,15 @@
 
 #alias Object.Value0 : Object.Timer
 
-// The current highlighted selection, check out the SELECTION_* aliases right down below
+// The current highlighted selection, check out the PAUSEMENU_SEL_* aliases right down below
 #alias Object.Value1 : Object.CurrentSelection
 
 // Selection Aliases
-#alias -1 : SELECTION_NULL
-#alias  0 : SELECTION_CONTINUE
-#alias  1 : SELECTION_RESTART
-#alias  2 : SELECTION_EXIT
-#alias  3 : SELECTION_DEVMENU
+#alias -1 : PAUSEMENU_SEL_NULL
+#alias  0 : PAUSEMENU_SEL_CONTINUE
+#alias  1 : PAUSEMENU_SEL_RESTART
+#alias  2 : PAUSEMENU_SEL_EXIT
+#alias  3 : PAUSEMENU_SEL_DEVMENU
 
 // X Position of the underline that's underneat the Options texts
 #alias Object.Value2 : Object.UnderlinePos
@@ -127,7 +127,7 @@
 #alias 6 : CALLBACK_RESTART_SELECTED
 #alias 7 : CALLBACK_EXIT_SELECTED
 
-// Tile Layer types
+// Tile Layer Types
 #alias 4 : LAYER_3DSKY
 
 
@@ -160,6 +160,9 @@ sub ObjectMain
 			Object.ExtendTime = 15
 			break
 			
+		// A bit of fall-through could probably be used on these last three entries, but it isn't
+		// Oh well
+		
 		case LANG_ITALIAN
 			Object.ExtendTime = 13
 			break
@@ -182,21 +185,21 @@ sub ObjectMain
 			// This version of the Pause Menu is only used in Special Stages anyways... so why is this check here?
 			// Likely just a result of copy-pasting the maingame one, if I had to guess, as that one
 			// has the same check there despite it being the opposite situation, where it'll never be true since it's only used in regular/bonus stages
-#platform: Use_Origins
-			if Stage.ActiveList == 3
-				Object.RestartDisabled = true
-			else
-				Object.RestartDisabled = false
-			end if
-#endplatform
-
 #platform: Use_Standalone
 			if Stage.ActiveList == SPECIAL_STAGE
 				Object.RestartDisabled = true
 			else
 				Object.RestartDisabled = false
 			end if
-
+#endplatform
+			
+#platform: Use_Origins
+			// Origins messed up the Active List IDs ("SPECIAL_STAGE" points to the Bonus Stage list now!) so we check via a direct ID instead here
+			if Stage.ActiveList == 3
+				Object.RestartDisabled = true
+			else
+				Object.RestartDisabled = false
+			end if
 #endplatform
 			
 		end if
@@ -204,15 +207,18 @@ sub ObjectMain
 		// On Origins, Physical Controls are enforced as the default
 		Options.PhysicalControls = true
 #endplatform
-
+		
 #platform: Mobile
+		// On Mobile though, have a default selection (or don't) based on if the Player's using a physical gamepad or not
 		if Options.TouchControls == true
-			Object.CurrentSelection = SELECTION_NULL
+			Object.CurrentSelection = PAUSEMENU_SEL_NULL
 			Options.PhysicalControls = false
 		else
+			// (Implicitly making the starting selection PAUSEMENU_SEL_CONTINUE - ID 0)
 			Options.PhysicalControls = true
 		end if
 #endplatform
+		
 		Object.State++
 		break
 		
@@ -279,7 +285,7 @@ sub ObjectMain
 		
 	case PAUSEMENU_MAIN
 
-	// There's normally a `if Options.PhysicalControls == true` path here, but to keep Steam datafiles working we gotta do this roundabout way instead
+	// There's normally a `if Options.PhysicalControls == true` path here, but to keep 2012 Steam datafiles working we gotta do this roundabout way instead
 #platform: Standard
 		// Let's assume the variable doesn't exist, force Physical Controls
 		CheckResult = true
@@ -296,7 +302,6 @@ sub ObjectMain
 		
 		if CheckResult == true
 			// Update Physical Controls
-			// (Standard Platforms don't have any extra conditions before this because y'know... it's always physical controls there)
 			
 			if KeyPress[0].Up == true
 				
@@ -318,19 +323,19 @@ sub ObjectMain
 				
 				// Enforce different upwards loop points based on if the 4th Dev Menu option is available or not
 				if Options.DevMenuFlag == true
-					if Object.CurrentSelection < SELECTION_CONTINUE
-						Object.CurrentSelection = SELECTION_DEVMENU
+					if Object.CurrentSelection < PAUSEMENU_SEL_CONTINUE
+						Object.CurrentSelection = PAUSEMENU_SEL_DEVMENU
 					end if
 				else
-					if Object.CurrentSelection < SELECTION_CONTINUE
-						Object.CurrentSelection = SELECTION_EXIT
+					if Object.CurrentSelection < PAUSEMENU_SEL_CONTINUE
+						Object.CurrentSelection = PAUSEMENU_SEL_EXIT
 					end if
 				end if
 				
 				// If restart is disabled (which it always should be here) then don't let the player select it
 				if Object.RestartDisabled == true
-					if Object.CurrentSelection == SELECTION_RESTART
-						// Move them to the SELECTION_CONTINUE instead
+					if Object.CurrentSelection == PAUSEMENU_SEL_RESTART
+						// Move them to the PAUSEMENU_SEL_CONTINUE instead
 						Object.CurrentSelection--
 					end if
 				end if
@@ -356,26 +361,26 @@ sub ObjectMain
 				
 				// The Dev Menu adds a 4th entry, so the wrap around value is different too
 				if Options.DevMenuFlag == true
-					if Object.CurrentSelection > SELECTION_DEVMENU
-						Object.CurrentSelection = SELECTION_CONTINUE
+					if Object.CurrentSelection > PAUSEMENU_SEL_DEVMENU
+						Object.CurrentSelection = PAUSEMENU_SEL_CONTINUE
 					end if
 				else
-					if Object.CurrentSelection > SELECTION_EXIT
-						Object.CurrentSelection = SELECTION_CONTINUE
+					if Object.CurrentSelection > PAUSEMENU_SEL_EXIT
+						Object.CurrentSelection = PAUSEMENU_SEL_CONTINUE
 					end if
 				end if
 				
-				// If restarting is disabled (always the case in Special Stages) then
-				// move the player's selection to SELECTION_EXIT instead
+				// If restarting is disabled (always the case here in Special Stages) then
+				// move the player's selection to PAUSEMENU_SEL_EXIT instead
 				if Object.RestartDisabled == true
-					if Object.CurrentSelection == SELECTION_RESTART
+					if Object.CurrentSelection == PAUSEMENU_SEL_RESTART
 						Object.CurrentSelection++
 					end if
 				end if
 				
 			end if
 			
-			// The Player's conditions for 
+			// You can use either Start or A to close a selection, the other two buttons won't do anything though...
 			if KeyPress[0].Start == true
 				PlaySfx(SFX_G_SELECT, false)
 				Object.State = PAUSEMENU_FLASH
@@ -389,20 +394,21 @@ sub ObjectMain
 				Object.Alpha = 248
 				Object.Timer = 0
 			end if
+			
 #platform: Mobile
 			// If the Player's touched the screen at all, then switch to Touch Controls
 			CheckTouchRect(0, 0, Screen.XSize, Screen.YSize)
 			
 			if CheckResult > -1
 				Options.PhysicalControls = false
-				Object.CurrentSelection = SELECTION_NULL
+				Object.CurrentSelection = PAUSEMENU_SEL_NULL
 			end if
 #endplatform
 		else
 			
 			// If the Player's not even in the game, then reset the current selection
 			if Engine.Message == MESSAGE_LOSTFOCUS
-				Object.CurrentSelection = SELECTION_NULL
+				Object.CurrentSelection = PAUSEMENU_SEL_NULL
 			end if
 			
 			// From here, now we do a whole lotta stuff with touch controls, where we check manually for every option
@@ -422,12 +428,12 @@ sub ObjectMain
 				// If the player has their finger over the Continue button but hasn't relased it yet, then just keep it selected
 				// but don't actually activate it yet
 				
-				Object.CurrentSelection = SELECTION_CONTINUE
+				Object.CurrentSelection = PAUSEMENU_SEL_CONTINUE
 			else
 				if TempValue3 < 0
 					// The Player doesn't have their finger on the screen *nor* the Continue button
 					
-					if Object.CurrentSelection == SELECTION_CONTINUE
+					if Object.CurrentSelection == PAUSEMENU_SEL_CONTINUE
 						// The Player's released their finger while on the button, so let's start Continuing now
 						
 						PlaySfx(SFX_G_SELECT, false)
@@ -438,8 +444,8 @@ sub ObjectMain
 				else
 					// The Player's finger is on the screen but not on the Continue option, so make them deselect
 					
-					if Object.CurrentSelection == SELECTION_CONTINUE
-						Object.CurrentSelection = SELECTION_NULL
+					if Object.CurrentSelection == PAUSEMENU_SEL_CONTINUE
+						Object.CurrentSelection = PAUSEMENU_SEL_NULL
 					end if
 				end if
 			end if
@@ -456,12 +462,12 @@ sub ObjectMain
 				if CheckResult > -1
 					// If they do, then make the current selection Restart
 					
-					Object.CurrentSelection = SELECTION_RESTART
+					Object.CurrentSelection = PAUSEMENU_SEL_RESTART
 				else
 					if TempValue3 < 0
 						// The Player isn't touching the screen at all
 						
-						if Object.CurrentSelection == SELECTION_RESTART
+						if Object.CurrentSelection == PAUSEMENU_SEL_RESTART
 							// The Player released their finger while hovering over Restart, so let's restart then!
 							
 							PlaySfx(SFX_G_SELECT, false)
@@ -472,8 +478,8 @@ sub ObjectMain
 					else
 						// The finger has their player on the screen, but not over the Continue button
 						
-						if Object.CurrentSelection == SELECTION_RESTART
-							Object.CurrentSelection = SELECTION_NULL
+						if Object.CurrentSelection == PAUSEMENU_SEL_RESTART
+							Object.CurrentSelection = PAUSEMENU_SEL_NULL
 						end if
 					end if
 				end if
@@ -488,14 +494,14 @@ sub ObjectMain
 			if CheckResult > -1
 				// If there is, then make it the current selection
 				
-				Object.CurrentSelection = SELECTION_EXIT
+				Object.CurrentSelection = PAUSEMENU_SEL_EXIT
 			else
 				// The Player isn't currently on the Exit button
 				
 				if TempValue3 < 0
 					// And, the Player isn't touching the screen at all!
 					
-					if Object.CurrentSelection == SELECTION_EXIT
+					if Object.CurrentSelection == PAUSEMENU_SEL_EXIT
 						// So in that case, if they were on it for at least one frame before, then let's go ahead and Exit
 						
 						PlaySfx(SFX_G_SELECT, false)
@@ -506,13 +512,14 @@ sub ObjectMain
 				else
 					// The Player's finger is on the screen, but not on the Exit button
 					
-					if Object.CurrentSelection == SELECTION_EXIT
-						Object.CurrentSelection = SELECTION_NULL
+					if Object.CurrentSelection == PAUSEMENU_SEL_EXIT
+						Object.CurrentSelection = PAUSEMENU_SEL_NULL
 					end if
 				end if
 			end if
 			
-			// Yup, and now the Dev Menu button
+			// Yup, and now the Dev Menu button!
+			// It only shows under the most special conditions, they say...
 			
 			if Options.DevMenuFlag == true
 				
@@ -522,14 +529,14 @@ sub ObjectMain
 				if CheckResult > -1
 					// If they are, then make it selected
 					
-					Object.CurrentSelection = SELECTION_DEVMENU
+					Object.CurrentSelection = PAUSEMENU_SEL_DEVMENU
 				else
 					// The Player's not touching the Dev Menu button
 					
 					if TempValue3 < 0
 						// Additionally, they're not touching the screen at all either
 						
-						if Object.CurrentSelection == SELECTION_DEVMENU
+						if Object.CurrentSelection == PAUSEMENU_SEL_DEVMENU
 							// If they were touching the Dev Menu button last frame, then assume a button press
 							
 							PlaySfx(SFX_G_SELECT, false)
@@ -540,9 +547,9 @@ sub ObjectMain
 					else
 						// The Player's holding the screen, but they're not touching the Dev Menu button
 						
-						if Object.CurrentSelection == SELECTION_DEVMENU
+						if Object.CurrentSelection == PAUSEMENU_SEL_DEVMENU
 							// So just let the button go
-							Object.CurrentSelection = SELECTION_NULL
+							Object.CurrentSelection = PAUSEMENU_SEL_NULL
 						end if
 					end if
 				end if
@@ -557,9 +564,9 @@ sub ObjectMain
 				// This'll vary if the Dev Menu is active, of course
 				
 				if Options.DevMenuFlag == true
-					Object.CurrentSelection = SELECTION_DEVMENU
+					Object.CurrentSelection = PAUSEMENU_SEL_DEVMENU
 				else
-					Object.CurrentSelection = SELECTION_EXIT
+					Object.CurrentSelection = PAUSEMENU_SEL_EXIT
 				end if
 				
 #platform: Mobile
@@ -574,7 +581,7 @@ sub ObjectMain
 				// If Down was pressed, then just go to the topmost entry
 				// Nothing further needed here
 				
-				Object.CurrentSelection = SELECTION_CONTINUE
+				Object.CurrentSelection = PAUSEMENU_SEL_CONTINUE
 				
 #platform: Mobile
 				// And similarly, set Physical Controls to be active for the same reason as before
@@ -619,7 +626,7 @@ sub ObjectMain
 		if Object.Alpha > 0
 			Object.Alpha -= 8
 		else
-			if Object.CurrentSelection == SELECTION_CONTINUE
+			if Object.CurrentSelection == PAUSEMENU_SEL_CONTINUE
 				// If on the Continue option, then make the Pause Menu move away rather than cover the screen
 				
 				Object.UnderlinePos = Object.SelectionBarPos
@@ -653,15 +660,15 @@ sub ObjectMain
 				
 				if Engine.Message < MESSAGE_YES_SELECTED
 					switch Object.CurrentSelection
-					case SELECTION_RESTART
+					case PAUSEMENU_SEL_RESTART
 						EngineCallback(CALLBACK_RESTART_SELECTED)
 						break
 						
-					case SELECTION_EXIT
+					case PAUSEMENU_SEL_EXIT
 						EngineCallback(CALLBACK_EXIT_SELECTED)
 						break
 						
-					case SELECTION_DEVMENU
+					case PAUSEMENU_SEL_DEVMENU
 						// For the Dev Menu, don't prompt any extra confirmation and just start sliding away already
 						
 						Object.UnderlinePos = Object.SelectionBarPos
@@ -686,7 +693,7 @@ sub ObjectMain
 						Object.UnderlinePos = Screen.XSize
 						
 						if Options.PhysicalControls == false
-							Object.CurrentSelection = SELECTION_NULL
+							Object.CurrentSelection = PAUSEMENU_SEL_NULL
 						end if
 						
 						Object.State = PAUSEMENU_MAIN
@@ -748,7 +755,7 @@ sub ObjectMain
 			// From here, jump to the handling needed
 			
 			switch Object.CurrentSelection
-			case SELECTION_RESTART
+			case PAUSEMENU_SEL_RESTART
 				// You should never be able to restart a Special Stage, so this piece of code goes unused...
 				
 				LampPost.Check = 0
@@ -757,7 +764,7 @@ sub ObjectMain
 				LoadStage()
 				break
 				
-			case SELECTION_EXIT
+			case PAUSEMENU_SEL_EXIT
 				// Before Exiting, reset everything for the next playthrough
 				
 				Good_Future_Count = 0
@@ -781,7 +788,7 @@ sub ObjectMain
 				LoadStage()
 				break
 				
-			case SELECTION_DEVMENU
+			case PAUSEMENU_SEL_DEVMENU
 				// To get to the Dev Menu, we need to reset the entire game rather than directly opening the menu or anything like that
 				Engine.State = RESET_GAME
 				break
@@ -810,8 +817,8 @@ sub ObjectDraw
 				// Note that the Stage State is currently paused, in other words nothing is getting rendered
 				// -> That means that, if we were to simply draw a white tint rectangle from 0,0 to whereever,
 				//    it would overlap with what was drawn the previous frame, and that would continously stack
-				//    Because of that, we have to not draw the entire tint rect at once, but
-				//    only draw the difference from the previous frame every time instead
+				// -> Because of that, we have to not draw the entire tint rect at once, but
+				//    draw only the difference from the previous frame every time instead
 				
 				// Find how tall the tint rectangle should be
 				TempValue0 = Object.WhiteRectPos
@@ -868,7 +875,7 @@ sub ObjectDraw
 		TempValue1 = 48
 		DrawSpriteScreenFX(6, FX_INK, TempValue0, TempValue1)
 		
-		if Object.CurrentSelection == SELECTION_CONTINUE
+		if Object.CurrentSelection == PAUSEMENU_SEL_CONTINUE
 			// If it's the current selection, then draw the underline and mini Sonic next to it
 			
 			DrawSpriteScreenFX(5, FX_INK, Object.UnderlinePos, TempValue1)
@@ -886,7 +893,7 @@ sub ObjectDraw
 			DrawSpriteScreenFX(10, FX_INK, TempValue0, TempValue1)
 		end if
 		
-		if Object.CurrentSelection == SELECTION_RESTART
+		if Object.CurrentSelection == PAUSEMENU_SEL_RESTART
 			// If it's the current selection, then draw the underline underneath and along with Sonic next to it
 			// -> As said earlier though, Restart's always disabled in Special Stages so...
 			
@@ -900,7 +907,7 @@ sub ObjectDraw
 		// Draw the Exit text
 		DrawSpriteScreenFX(8, FX_INK, TempValue0, TempValue1)
 		
-		if Object.CurrentSelection == SELECTION_EXIT
+		if Object.CurrentSelection == PAUSEMENU_SEL_EXIT
 			// If Exit is currently selected, then draw the underline and Sonic along with with
 			
 			DrawSpriteScreenFX(5, FX_INK, Object.UnderlinePos, TempValue1)
@@ -915,7 +922,7 @@ sub ObjectDraw
 			// Draw the Dev Menu text
 			DrawSpriteScreenFX(9, FX_INK, TempValue0, TempValue1)
 			
-			if Object.CurrentSelection == SELECTION_DEVMENU
+			if Object.CurrentSelection == PAUSEMENU_SEL_DEVMENU
 				// And if it's the current selection, then do the usual
 				
 				DrawSpriteScreenFX(5, FX_INK, Object.UnderlinePos, TempValue1)
@@ -952,7 +959,7 @@ sub ObjectDraw
 		// And now, the Y position for the Continue text
 		TempValue1 = 48
 		
-		if Object.CurrentSelection == SELECTION_CONTINUE
+		if Object.CurrentSelection == PAUSEMENU_SEL_CONTINUE
 			
 			// Draw the Continue text, but only every other second frame
 			if Object.Timer < 2
@@ -972,7 +979,7 @@ sub ObjectDraw
 		// Then comes the Restart text
 		TempValue1 += 48
 		
-		if Object.CurrentSelection == SELECTION_RESTART
+		if Object.CurrentSelection == PAUSEMENU_SEL_RESTART
 			// As said many times before, you can't restart in Special Stages, so this all goes unused
 			
 			// Flash the Restart text
@@ -999,7 +1006,7 @@ sub ObjectDraw
 		// After that comes the Exit text
 		TempValue1 += 48
 		
-		if Object.CurrentSelection == SELECTION_EXIT
+		if Object.CurrentSelection == PAUSEMENU_SEL_EXIT
 			
 			// Flash it as needed
 			if Object.Timer < 2
@@ -1020,7 +1027,7 @@ sub ObjectDraw
 		
 		if Options.DevMenuFlag == true
 		
-			if Object.CurrentSelection == SELECTION_DEVMENU
+			if Object.CurrentSelection == PAUSEMENU_SEL_DEVMENU
 				
 				// Flash the Dev Menu text
 				if Object.Timer < 2
@@ -1048,7 +1055,7 @@ sub ObjectDraw
 		if Object.Alpha < 128
 			// Draw the white fade-in rectangle, around the entire screen
 			
-			// The stage is reumsed now, meaning it's drawing again, which is why
+			// The stage is resumed now, meaning it's drawing again, which is why
 			//  we can do the entire screen at once rather than the old `only difference` system needed before
 			
 			DrawRect(0, 0, Screen.XSize, SCREEN_YSIZE, 255, 255, 255, Object.Alpha)
@@ -1080,24 +1087,24 @@ sub ObjectDraw
 		// From here, the only text drawn is that of the current selection
 		// So, jump as needed
 		switch Object.CurrentSelection
-		case SELECTION_CONTINUE
+		case PAUSEMENU_SEL_CONTINUE
 			DrawSpriteScreenXY(6, Object.UnderlinePos, 48)
 			DrawSpriteScreenXY(Object.SonicFrame, Object.UnderlinePos, 48)
 			break
 			
-		case SELECTION_RESTART
+		case PAUSEMENU_SEL_RESTART
 			// Huh? Why is the Continue sprite being used here?
 			// The Restart sprite is frame 7...
 			DrawSpriteScreenXY(6, Object.UnderlinePos, 96)
 			DrawSpriteScreenXY(Object.SonicFrame, Object.UnderlinePos, 96)
 			break
 			
-		case SELECTION_EXIT
+		case PAUSEMENU_SEL_EXIT
 			DrawSpriteScreenXY(8, Object.UnderlinePos, 144)
 			DrawSpriteScreenXY(Object.SonicFrame, Object.UnderlinePos, 144)
 			break
 			
-		case SELECTION_DEVMENU
+		case PAUSEMENU_SEL_DEVMENU
 			if Options.DevMenuFlag == true
 				DrawSpriteScreenXY(9, Object.UnderlinePos, 192)
 				DrawSpriteScreenXY(Object.SonicFrame, Object.UnderlinePos, 192)
@@ -1132,22 +1139,23 @@ sub ObjectDraw
 		
 		// Draw the option selected and its underline as well, sliding to the right
 		switch Object.CurrentSelection
-		case SELECTION_CONTINUE
+		case PAUSEMENU_SEL_CONTINUE
 			DrawSpriteScreenXY(6, Object.UnderlinePos, 48)
 			DrawSpriteScreenXY(Object.SonicFrame, Object.UnderlinePos, 48)
 			break
 			
-		case SELECTION_RESTART
+		case PAUSEMENU_SEL_RESTART
+			// This is still using the continue sprite...
 			DrawSpriteScreenXY(6, Object.UnderlinePos, 96)
 			DrawSpriteScreenXY(Object.SonicFrame, Object.UnderlinePos, 96)
 			break
 			
-		case SELECTION_EXIT
+		case PAUSEMENU_SEL_EXIT
 			DrawSpriteScreenXY(8, Object.UnderlinePos, 144)
 			DrawSpriteScreenXY(Object.SonicFrame, Object.UnderlinePos, 144)
 			break
 			
-		case SELECTION_DEVMENU
+		case PAUSEMENU_SEL_DEVMENU
 			if Options.DevMenuFlag == true
 				DrawSpriteScreenXY(9, Object.UnderlinePos, 192)
 				DrawSpriteScreenXY(Object.SonicFrame, Object.UnderlinePos, 192)
@@ -1191,23 +1199,19 @@ sub ObjectStartup
 	
 	// The mini character frames should, of course, be different for each character
 	if Stage.PlayerListPos == PLAYER_SONIC
-		
 		// 0 - Standing Sonic
 		SpriteFrame(-28, -14, 16, 24, 1, 231)
 		
 		// 1-2 - Impatient Sonic
 		SpriteFrame(-28, -14, 16, 24, 18, 231)
 		SpriteFrame(-28, -14, 16, 24, 35, 231)
-		
 	else
-		
 		// 0 - Normal Tails
 		SpriteFrame(-28, -14, 16, 24, 122, 202)
 		
 		// 1-2 - Tapping Tails
 		SpriteFrame(-28, -14, 16, 24, 139, 202)
 		SpriteFrame(-28, -14, 16, 24, 156, 202)
-		
 	end if
 	
 	// 3 - Wave

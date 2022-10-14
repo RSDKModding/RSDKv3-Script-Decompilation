@@ -13,12 +13,12 @@
 #alias Object.Value5 : Object.ScreenDepth
 
 // HUD Aliases
-#alias Object.Value0 : HUD.UFOsCount     // Initially set via a loop in the UFO script
-#alias Object.Value1 : HUD.TimeSeconds  // Displayed time
+#alias Object.Value0 : HUD.UFOsCount       // Initially set via a loop in the UFO script
+#alias Object.Value1 : HUD.TimeSeconds     // Displayed time
 #alias Object.Value3 : HUD.Rings
-#alias Object.Value4 : HUD.LastUFOType   // Used by UFOs for ring streak bonus
-#alias Object.Value5 : HUD.SpeedShoesTimer    // Used to transmit between player and UFO
-#alias Object.Value6 : HUD.BonusUFOPos   // "Pos" akin to entity pos, not as in X or Y Position
+#alias Object.Value4 : HUD.LastUFOType     // Used by UFOs for ring streak bonus
+#alias Object.Value5 : HUD.SpeedShoesTimer // Used to transmit between player and UFO
+#alias Object.Value6 : HUD.BonusUFONo      // "No" akin to Entity No, not as in "is there no UFO?"
 
 // UFOPowerUp Aliases
 #alias Object.Value0 : UFOPowerUp.ExplosionDir
@@ -32,9 +32,9 @@
 #alias 1 : SFX_G_RING
 
 // Property Value
-#alias 0 : RING_UFO
-#alias 1 : SPEEDSHOE_UFO
-#alias 2 : BONUSTIME_UFO
+#alias 0 : UFO_CONTENTS_RINGS
+#alias 1 : UFO_CONTENTS_SPEEDDHOES
+#alias 2 : UFO_CONTENTS_TIME
 
 // Priority
 #alias 1 : PRIORITY_ACTIVE
@@ -147,7 +147,7 @@ sub ObjectMain
 #endplatform
 							
 							switch Object.PropertyValue
-							case RING_UFO
+							case UFO_CONTENTS_RINGS
 								// Decrease the UFO count and give some bonus rings
 								HUD[4].UFOsCount--
 								if HUD[4].LastUFOType == Object.PropertyValue
@@ -158,13 +158,13 @@ sub ObjectMain
 								end if
 								break
 								
-							case SPEEDSHOE_UFO
+							case UFO_CONTENTS_SPEEDDHOES
 								// Decrease the UFO count and give the player some new faster shoes
 								HUD[4].UFOsCount--
 								HUD[4].SpeedShoesTimer = 600
 								break
 								
-							case BONUSTIME_UFO
+							case UFO_CONTENTS_TIME
 								// Aadd some time to the clock
 								// (Not decreasing the UFO count because time UFOs don't count towards the whole)
 								HUD[4].TimeSeconds += 30
@@ -278,7 +278,7 @@ sub ObjectStartup
 			// Set the UFO to always be active
 			Object[ArrayPos0].Priority = PRIORITY_ACTIVE
 			
-			if Object[ArrayPos0].PropertyValue < 2
+			if Object[ArrayPos0].PropertyValue < UFO_CONTENTS_TIME
 				
 				// Increase the UFO count
 				HUD[4].UFOsCount++
@@ -286,9 +286,10 @@ sub ObjectStartup
 			else
 				
 				// Bonus UFO Spawn point, delete the UFO for right now and store its EntityPos into the HUD value
+				// (We need to make sure the Time UFO is spawned in the correct slot because of its Nodes)
 				
 				Object[ArrayPos0].Type = TypeName[Blank Object]
-				HUD[4].BonusUFOPos = ArrayPos0
+				HUD[4].BonusUFONo = ArrayPos0
 				
 			end if
 		end if
@@ -365,7 +366,7 @@ sub RSDKLoad
 
 	AddEditorVariable("Contents")
 	SetActiveVariable("Contents")
-	AddEnumVariable("10 Rings", 0)
-	AddEnumVariable("Speed Shoes", 1)
-	AddEnumVariable("Extra Time", 2)
+	AddEnumVariable("10 Rings", UFO_CONTENTS_RINGS)
+	AddEnumVariable("Speed Shoes", UFO_CONTENTS_SPEEDDHOES)
+	AddEnumVariable("Extra Time", UFO_CONTENTS_TIME)
 end sub
