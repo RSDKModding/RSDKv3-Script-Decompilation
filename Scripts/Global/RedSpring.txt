@@ -531,9 +531,12 @@ end sub
 
 
 sub RSDKDraw
-	Object.Direction = FACE_FACING_RIGHT
 	if Object.PropertyValue > FACE_FACING_DIAGONAL_UL
-		Object.Direction = FACING_UPEND_RIGHT
+		// Fun little fact - the official RSDKv3 editor displayed down diagonal springs wrong
+		// Here though, we may as well right that
+		Object.Direction = 2 // FLIP_Y
+	else
+		Object.Direction = 0 // FLIP_NONE
 	end if
 
 	DrawSpriteFX(Object.PropertyValue, FX_FLIP, Object.XPos, Object.YPos)
@@ -542,8 +545,6 @@ end sub
 
 sub RSDKLoad
 	LoadSpriteSheet("Global/Items.gif")
-	
-	// Springs
 	SpriteFrame(-16, -8, 32, 16, 84, 1)			// #0  - Red Spring facing up
 	SpriteFrame(-8, -16, 16, 32, 117, 1)		// #1  - Red Spring facing right
 	SpriteFrame(-8, -16, 16, 32, 175, 1)		// #2  - Red Spring facing left
