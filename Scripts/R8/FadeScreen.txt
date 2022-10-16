@@ -40,6 +40,8 @@
 #alias 1	:	ENGINE_MAINGAME
 #alias 8	:	ENGINE_WAIT
 
+// Callbacks
+#alias 4	:	CALLBACK_FINISHGAME_NOTIFY
 
 sub ObjectMain
 	switch Object.State
@@ -95,13 +97,14 @@ sub ObjectMain
 				Object.State = FADESCREEN_BOSSRUSH
 			else
 				if Options.GameMode == GAMEMODE_TIMEATTACK
-					TimeAttack.Result = Stage.Seconds
+					TimeAttack.Result  = Stage.Seconds
 					TimeAttack.Result *= 100
-					TempValue0 = Stage.Minutes
-					TempValue0 *= 0x1770
+					TempValue0		   = Stage.Minutes
+					TempValue0		  *= 6000
 					TimeAttack.Result += TempValue0
 					TimeAttack.Result += Stage.MilliSeconds
-					TempValue0 = Stage.ListPos
+
+					TempValue0   = Stage.ListPos
 					TempValue0  %= 10
 					TempValue0 >>= 2
 					TempValue1   = Stage.ListPos
@@ -112,13 +115,13 @@ sub ObjectMain
 					TempValue1   = Stage.Seconds
 					TempValue1  *= 100
 					TempValue2   = Stage.Minutes
-					TempValue2  *= 0x1770
+					TempValue2  *= 6000
 					TempValue1  += TempValue2
 					TempValue1  += Stage.MilliSeconds
 					SetLeaderboard(TempValue0, TempValue1)
 					Stage.ListPos = STAGE_P_TATTACK
 				else
-					EngineCallback(4)
+					EngineCallback(CALLBACK_FINISHGAME_NOTIFY)
 					if Player.Score > 0
 						if Options.GameMode == GAMEMODE_SAVEGAME
 							if Stage.DebugMode == false
