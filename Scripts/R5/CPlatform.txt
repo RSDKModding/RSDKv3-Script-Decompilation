@@ -266,6 +266,25 @@ end sub
 // Editor Subs
 // ========================
 
+sub RSDKEdit
+	if Editor.ReturnVariable == true
+		switch Editor.VariableID
+		case EDIT_VAR_PROPVAL // Property Value
+		case 0 // BlocksNo
+			CheckResult = Object.PropertyValue
+			break
+		end switch
+	else
+		switch Editor.VariableID
+		case EDIT_VAR_PROPVAL // Property Value
+		case 0 // BlocksNo
+			Object.PropertyValue = Editor.VariableValue
+			break
+		end switch
+	end if
+end sub
+
+
 sub RSDKDraw
 	TempValue0 = 0
 	TempValue1 = Object.PropertyValue
@@ -283,6 +302,7 @@ end sub
 sub RSDKLoad
 	LoadSpriteSheet("R5/Objects.gif")
 	SpriteFrame(-8, -16, 16, 32, 108, 51)
-
-	SetVariableAlias(ALIAS_VAR_PROPVAL, "noBlocks")
+	
+	AddEditorVariable("BlocksNo")
+	SetActiveVariable("BlocksNo")
 end sub
