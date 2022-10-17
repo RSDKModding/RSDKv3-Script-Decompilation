@@ -215,14 +215,46 @@ end sub
 // Editor Subs
 // ========================
 
+sub RSDKEdit
+	if Editor.ReturnVariable == true
+		switch Editor.VariableID
+		case EDIT_VAR_PROPVAL // Property Value
+			CheckResult = Object.PropertyValue
+			CheckResult &= 1
+			break
+		case 0 // condition
+			CheckResult = Object.PropertyValue
+			CheckResult &= 1
+			break
+		end switch
+	else
+		switch Editor.VariableID
+		case EDIT_VAR_PROPVAL // Property Value
+			Object.PropertyValue = Editor.VariableValue
+			Object.PropertyValue &= 1
+			break
+		case 0 // condition
+			Object.PropertyValue = Editor.VariableValue
+			Object.PropertyValue &= 1
+			break
+		end switch
+	end if
+end sub
+
+
 sub RSDKDraw
-	DrawSprite(0)
+	Object.Direction = Object.PropertyValue
+	DrawSpriteFX(0, FX_FLIP, Object.XPos, Object.YPos)
 end sub
 
 
 sub RSDKLoad
-	LoadSpriteSheet("Global/Display.gif")
-	SpriteFrame(-16, -16, 32, 32, 1, 143)		// #0 - "Script" Icon
+	LoadSpriteSheet("R3/Objects.gif")
 
-	SetVariableAlias(ALIAS_VAR_PROPVAL, "unused")
+	SpriteFrame(-32, -12, 64, 32, 100, 167)	// #0 - Flipper idle
+
+	AddEditorVariable("direction")
+	SetActiveVariable("direction")
+	AddEnumVariable("Facing Left", 0)
+	AddEnumVariable("Facing Right", 1)
 end sub

@@ -7,31 +7,31 @@
 #alias Object.Value2	:	Object.XPlayerFloor
 #alias Object.Value3	:	Object.YOriginPos
 #alias Object.Value4	:	Object.YPlayerFloor
-#alias Object.Value5	:	Object.Oscillation
+#alias Object.Value5	:	Object.Angle
 #alias Object.Value6	:	Object.Amplitude
 
 // Property Values
 // This property values only cover the starting position
-#alias 0	:	START_FROM_BEGINNING
-#alias 1	:	START_HALFWAY_THROUGH
+#alias 0	:	START_MOVING_LEFT_DOWN
+#alias 1	:	START_MOVING_RIGHT_DOWN
 // On a map editor this would rather be (0)Left-Down, (1)Right-Down, (2)Left-Up and (3)Right-Up
 // But here we only cover what's useful for the script itself
 
 
 sub ObjectMain
-	Object.Oscillation   = Oscillation
-	Object.Oscillation <<= 1
-	if Object.PropertyValue == START_HALFWAY_THROUGH
-		Object.Oscillation += 256
+	Object.Angle   = Oscillation
+	Object.Angle <<= 1
+	if Object.PropertyValue == START_MOVING_RIGHT_DOWN
+		Object.Angle += 256
 	end if
 
-	Cos(Object.XPlayerFloor, Object.Oscillation)
+	Cos(Object.XPlayerFloor, Object.Angle)
 	Object.XPlayerFloor *= 0x1800
 	Object.XPlayerFloor += Object.XPos
 	Object.XPlayerFloor &= 0xFFFF0000	// Truncate the value
 	Object.XPlayerFloor -= Object.XOriginPos
 
-	Cos(Object.YPlayerFloor, Object.Oscillation)
+	Cos(Object.YPlayerFloor, Object.Angle)
 	FlipSign(Object.YPlayerFloor)
 	Object.YPlayerFloor *= Object.Amplitude
 	Object.YPlayerFloor += Object.YPos
@@ -59,12 +59,12 @@ end sub
 
 
 sub ObjectDraw
-	Cos(Object.XOriginPos, Object.Oscillation)
+	Cos(Object.XOriginPos, Object.Angle)
 	Object.XOriginPos *= 0x1800
 	Object.XOriginPos += Object.XPos
 	Object.XOriginPos &= 0xFFFF0000
 
-	Cos(Object.YOriginPos, Object.Oscillation)
+	Cos(Object.YOriginPos, Object.Angle)
 	FlipSign(Object.YOriginPos)
 	Object.YOriginPos *= Object.Amplitude
 	Object.YOriginPos += Object.YPos

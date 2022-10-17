@@ -134,14 +134,109 @@ end sub
 // Editor Subs
 // ========================
 
+sub RSDKEdit
+	if Editor.ReturnVariable == true
+		switch Editor.VariableID
+		case EDIT_VAR_PROPVAL // Property Value
+			CheckResult  = Object.PropertyValue
+			CheckResult &= 3
+			break
+		case 0 // spikeAmount
+			CheckResult  = Object.PropertyValue
+			CheckResult &= 3
+			break
+		end switch
+	else
+		switch Editor.VariableID
+		case EDIT_VAR_PROPVAL // Property Value
+			Object.PropertyValue  = Editor.VariableValue
+			Object.PropertyValue &= 3
+			break
+		case 0 // spikeAmount
+			Object.PropertyValue  = Editor.VariableValue
+			Object.PropertyValue &= 3
+			break		
+		end switch
+	end if
+end sub
+
+
 sub RSDKDraw
 	DrawSprite(0)
+
+	TempValue0 = 0
+	if Object.PropertyValue > 1
+		TempValue1 = 2
+	else
+		CheckCurrentStageFolder("R31B")
+		TempValue0  = CheckResult
+		CheckCurrentStageFolder("R32B")
+		TempValue0 |= CheckResult
+		if TempValue0 == true
+			TempValue1 = 3
+		else
+			TempValue1 = 4
+		end if
+	end if
+
+	TempValue2 = Object.XPos
+	TempValue3 = Object.YPos
+	while TempValue0 < TempValue1
+		TempValue2 += 0x100000
+		TempValue3 += 0x100000
+		DrawSpriteXY(1, TempValue2, TempValue3)
+		TempValue0++
+	loop
+
+	if Editor.ShowGizmos == true
+		switch Object.PropertyValue
+		case 0
+		case 2		
+			TempValue0   = Object.iXPos
+			TempValue0  += 32
+			TempValue0 <<= 16
+
+			TempValue1   = Object.iYPos
+			TempValue1  += 32
+			TempValue1 <<= 16
+			DrawArrow(TempValue0, Object.YPos, Object.XPos, TempValue1, 255, 255, 255, 0)	
+			break
+		case 1
+		case 3	
+			TempValue0   = Object.iXPos
+			TempValue0  += 32
+			TempValue0 <<= 16
+
+			TempValue1   = Object.iYPos
+			TempValue1  += 32
+			TempValue1 <<= 16
+			DrawArrow(Object.XPos, TempValue1, TempValue0, Object.YPos, 255, 255, 255, 0)	
+			break
+		end switch
+	end if
 end sub
 
 
 sub RSDKLoad
-	LoadSpriteSheet("Global/Display.gif")
-	SpriteFrame(-16, -16, 32, 32, 1, 143)		// #0 - "Script" Icon
+	LoadSpriteSheet("R3/Objects.gif")
 
-	SetVariableAlias(ALIAS_VAR_PROPVAL, "unused")
+	SpriteFrame(-8, -8, 16, 16, 181, 143)	// #0 - Spike Joint
+	SpriteFrame(-8, -8, 16, 16, 181, 160)	// #1 - Spike
+
+	CheckCurrentStageFolder("R31B")
+	TempValue0  = CheckResult
+	CheckCurrentStageFolder("R32B")
+	TempValue0 |= CheckResult
+
+	AddEditorVariable("spikeAmount")
+	SetActiveVariable("spikeAmount")
+	if TempValue0 == true
+		AddEnumVariable("3 Spikes Clock-wise", 0)
+		AddEnumVariable("3 Spikes Counter Clock-wise", 1)
+	else
+		AddEnumVariable("4 Spikes Clock-wise", 0)
+		AddEnumVariable("4 Spikes Counter Clock-wise", 1)
+	end if
+	AddEnumVariable("2 Spikes Clock-wise", 2)
+	AddEnumVariable("2 Spikes Counter Clock-wise", 3)
 end sub

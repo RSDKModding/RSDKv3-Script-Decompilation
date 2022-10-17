@@ -5,25 +5,25 @@
 // Aliases
 #alias Object.Value1	:	Object.YCollisionOffset
 #alias Object.Value2	:	Object.YVelocity
-#alias Object.Value3	:	Object.Oscillation
+#alias Object.Value3	:	Object.Angle
 
 // Property Values
-#alias 0	:	START_FROM_BEGINNING
-#alias 1	:	START_HALFWAY_THROUGH
+#alias 0	:	START_MOVING_DOWN
+#alias 1	:	START_MOVING_UP
 
 // Collision
 #alias 1	:	PLAYER_COL_FLOOR
 
 
 sub ObjectMain
-	Object.Oscillation   = Oscillation
-	Object.Oscillation <<= 1
+	Object.Angle   = Oscillation
+	Object.Angle <<= 1
 
-	if Object.PropertyValue == START_HALFWAY_THROUGH
-		Object.Oscillation += 256
+	if Object.PropertyValue == START_MOVING_UP
+		Object.Angle += 256
 	end if
 
-	Sin(Object.YVelocity, Object.Oscillation)
+	Sin(Object.YVelocity, Object.Angle)
 	Object.YVelocity *= 0x1800
 	Object.YVelocity += Object.YPos
 	Object.YVelocity &= 0xFFFF0000 // Truncate the value
@@ -45,7 +45,7 @@ end sub
 
 
 sub ObjectDraw
-	Sin(Object.YCollisionOffset, Object.Oscillation)
+	Sin(Object.YCollisionOffset, Object.Angle)
 	Object.YCollisionOffset *= 0x1800
 	Object.YCollisionOffset += Object.YPos
 	Object.YCollisionOffset &= 0xFFFF0000 // Truncate the value
