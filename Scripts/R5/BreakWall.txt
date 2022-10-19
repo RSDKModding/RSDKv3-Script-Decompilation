@@ -3,11 +3,14 @@
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
 // Aliases
-#alias Object.Value0	:	Object.XVelocity
-#alias Object.Value1	:	Object.YVelocity
+#alias Object.Value0			:	Object.XVelocity
+#alias Object.Value1			:	Object.YVelocity
 
 // The object isn't cleared upon being destroyed, it's just given a new state and made hidden instead...
-#alias Object.State	:	Object.Destroyed
+#alias Object.State				:	Object.Destroyed
+
+// HUD Alias
+#alias Object[24].PropertyValue	:	HUD.CurrentTimePeriod
 
 // Time Period Aliases
 #alias 0	:	TIME_PRESENT
@@ -21,6 +24,17 @@
 // Priority
 #alias 0	:	PRIORITY_BOUNDS
 #alias 1	:	PRIORITY_ACTIVE
+
+// Property Values
+#alias 0	:	BREAKWALL
+#alias 1	:	BREAKWALL_DEBRIS_1
+#alias 2	:	BREAKWALL_DEBRIS_2
+#alias 3	:	BREAKWALL_DEBRIS_3
+#alias 4	:	BREAKWALL_DEBRIS_4
+#alias 5	:	BREAKWALL_DEBRIS_5
+#alias 6	:	BREAKWALL_DEBRIS_6
+#alias 7	:	BREAKWALL_DEBRIS_7
+#alias 8	:	BREAKWALL_DEBRIS_8
 
 
 sub ObjectMain
@@ -86,48 +100,48 @@ sub ObjectPlayerInteraction
 					TempValue3 = Object.YPos
 					TempValue3 -= 0x180000
 					
-					CreateTempObject(TypeName[BreakableWall], 1, TempValue1, TempValue3)
+					CreateTempObject(TypeName[Breakable Wall], BREAKWALL_DEBRIS_1, TempValue1, TempValue3)
 					Object[TempObjectPos].XVelocity = -0x10000
 					Object[TempObjectPos].YVelocity = -0x20000
 					Object[TempObjectPos].DrawOrder = 5
 
-					CreateTempObject(TypeName[BreakableWall], 2, TempValue2, TempValue3)
+					CreateTempObject(TypeName[Breakable Wall], BREAKWALL_DEBRIS_2, TempValue2, TempValue3)
 					Object[TempObjectPos].XVelocity = 0x10000
 					Object[TempObjectPos].YVelocity = -0x20000
 					Object[TempObjectPos].DrawOrder = 5
 					
 					TempValue3 += 0x100000
 					
-					CreateTempObject(TypeName[BreakableWall], 3, TempValue1, TempValue3)
+					CreateTempObject(TypeName[Breakable Wall], BREAKWALL_DEBRIS_3, TempValue1, TempValue3)
 					Object[TempObjectPos].XVelocity = -0x20000
 					Object[TempObjectPos].YVelocity = -0x10000
 					Object[TempObjectPos].DrawOrder = 5
 
-					CreateTempObject(TypeName[BreakableWall], 4, TempValue2, TempValue3)
+					CreateTempObject(TypeName[Breakable Wall], BREAKWALL_DEBRIS_4, TempValue2, TempValue3)
 					Object[TempObjectPos].XVelocity = 0x20000
 					Object[TempObjectPos].YVelocity = -0x10000
 					Object[TempObjectPos].DrawOrder = 5
 					
 					TempValue3 += 0x100000
 					
-					CreateTempObject(TypeName[BreakableWall], 5, TempValue1, TempValue3)
+					CreateTempObject(TypeName[Breakable Wall], BREAKWALL_DEBRIS_5, TempValue1, TempValue3)
 					Object[TempObjectPos].XVelocity = -0x40000
 					Object[TempObjectPos].YVelocity = 0
 					Object[TempObjectPos].DrawOrder = 5
 
-					CreateTempObject(TypeName[BreakableWall], 6, TempValue2, TempValue3)
+					CreateTempObject(TypeName[Breakable Wall], BREAKWALL_DEBRIS_6, TempValue2, TempValue3)
 					Object[TempObjectPos].XVelocity = 0x40000
 					Object[TempObjectPos].YVelocity = 0
 					Object[TempObjectPos].DrawOrder = 5
 					
 					TempValue3 += 0x100000
 					
-					CreateTempObject(TypeName[BreakableWall], 7, TempValue1, TempValue3)
+					CreateTempObject(TypeName[Breakable Wall], BREAKWALL_DEBRIS_7, TempValue1, TempValue3)
 					Object[TempObjectPos].XVelocity = -0x20000
 					Object[TempObjectPos].YVelocity = 0x10000
 					Object[TempObjectPos].DrawOrder = 5
 
-					CreateTempObject(TypeName[BreakableWall], 8, TempValue2, TempValue3)
+					CreateTempObject(TypeName[Breakable Wall], BREAKWALL_DEBRIS_8, TempValue2, TempValue3)
 					Object[TempObjectPos].XVelocity = 0x20000
 					Object[TempObjectPos].YVelocity = 0x10000
 					Object[TempObjectPos].DrawOrder = 5
@@ -166,7 +180,7 @@ end sub
 
 sub ObjectStartup
 	
-	switch Object[24].PropertyValue
+	switch HUD.CurrentTimePeriod
 	case TIME_PRESENT
 		LoadSpriteSheet("R5/Objects.gif")
 		SpriteFrame(-16, -48, 32, 96, 223, 141)

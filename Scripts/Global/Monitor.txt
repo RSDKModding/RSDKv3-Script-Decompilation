@@ -42,6 +42,8 @@
 #alias 8	:	SCREEN_S_MONITOR
 #alias 9	:	SCREEN_STATIC_1
 #alias 10	:	SCREEN_STATIC_2
+// Using values bigger than 9 on a level editor will swap the collision plane 
+// and restart the cycle, with 10 being Ring monitor
 
 // Players
 #alias 1	:	PLAYER_TAILS
@@ -84,7 +86,7 @@ sub ObjectPlayerInteraction
 				if CheckResult == true
 					Object.State = MONITOR_IDLE
 
-					CreateTempObject(TypeName[SmokePuff], 0, Object.XPos, Object.YPos)
+					CreateTempObject(TypeName[Smoke Puff], 0, Object.XPos, Object.YPos)
 
 					Object[TempObjectPos].DrawOrder = 4
 
@@ -93,7 +95,7 @@ sub ObjectPlayerInteraction
 						Player.YVelocity = -0x20000
 					end if
 
-					Object.Type = TypeName[BrokenMonitor]
+					Object.Type = TypeName[Broken Monitor]
 					BrokenMonitor.Priority	= PRIORITY_ACTIVE
 					BrokenMonitor.Alpha		= 255
 					BrokenMonitor.YVelocity = Object.YPos
@@ -187,7 +189,7 @@ sub ObjectStartup
 	ArrayPos0 = 32
 	while ArrayPos0 < 1056
 		if Object[ArrayPos0].Type == TypeName[Monitor]
-			if Object[ArrayPos0].PropertyValue > SCREEN_STATIC_1
+			if Object[ArrayPos0].PropertyValue > 9
 				Object[ArrayPos0].PropertyValue -= 10
 				Object[ArrayPos0].DrawOrder = 1
 				Object[ArrayPos0].CollisionPlane = COLLISION_PLANE_B

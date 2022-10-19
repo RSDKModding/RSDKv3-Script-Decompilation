@@ -9,7 +9,7 @@
 #alias Object.Value3			:	Object.TimerSet
 
 // HUD alias
-#alias Object[24].PropertyValue	:	Hud.TimePeriod
+#alias Object[24].PropertyValue	:	HUD.CurrentTimePeriod
 
 // States
 #alias 0	:	ESCALATOR_IDLE
@@ -130,7 +130,7 @@ end sub
 
 
 sub ObjectStartup
-	switch Hud.TimePeriod
+	switch HUD.CurrentTimePeriod
 	case TIME_PRESENT
 	case TIME_PAST
 		LoadSpriteSheet("R4/Objects.gif")
@@ -152,7 +152,7 @@ sub ObjectStartup
 	ArrayPos0 = 32
 	while ArrayPos0 < 1056
 		if Object[ArrayPos0].Type == TypeName[Escalator]
-			if Hud.TimePeriod < TIME_GOOD_FUTURE	// aka present or past
+			if HUD.CurrentTimePeriod < 2	// aka present or past
 				Object[ArrayPos0].Speed		= 0x10000
 				Object[ArrayPos0].TimerSet  = 160
 			else

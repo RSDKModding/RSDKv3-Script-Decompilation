@@ -5,14 +5,15 @@
 // This is a chunk swapper for loops
 
 // Aliases
-#alias Object.Value0	:	Object.HitboxTop
-#alias Object.Value1	:	Object.HitboxBottom
-#alias Object.Value2	:	Object.ChunkX
-#alias Object.Value3	:	Object.ChunkY
-#alias Object.Value4	:	Object.NextChunkX
-#alias Object.Value5	:	Object.NextChunkY
-#alias Object.Value6	:	Object.OriginalChunk
-#alias Object.Value7	:	Object.NextChunk
+#alias Object.Value0		:	Object.HitboxTop
+#alias Object.Value1		:	Object.HitboxBottom
+#alias Object.Value2		:	Object.ChunkX
+#alias Object.Value3		:	Object.ChunkY
+#alias Object.Value4		:	Object.NextChunkX
+#alias Object.Value5		:	Object.NextChunkY
+#alias Object.Value6		:	Object.StartupChunk
+#alias Object.Value7		:	Object.NextChunk
+#alias Object.PropertyValue	:	Object.Size
 
 // Gravity
 #alias 0	:	GRAVITY_GROUND
@@ -25,7 +26,7 @@ sub ObjectPlayerInteraction
 			if Player.Speed > 0
 				TempValue0 = Object.NextChunk
 			else
-				TempValue0 = Object.OriginalChunk
+				TempValue0 = Object.StartupChunk
 			end if
 			SetTileLayerEntry(TempValue0, 0, Object.ChunkX, Object.ChunkY)
 			TempValue0++
@@ -46,10 +47,10 @@ end sub
 sub ObjectStartup
 	ArrayPos0 = 32
 	while ArrayPos0 < 1056
-		if Object[ArrayPos0].Type == TypeName[TileTriggerL]
+		if Object[ArrayPos0].Type == TypeName[Tile Trigger L]
 			ArrayPos1 = ArrayPos0
 			ArrayPos1++	// This should always be a blank object
-			Object[ArrayPos0].HitboxTop     = Object[ArrayPos0].PropertyValue
+			Object[ArrayPos0].HitboxTop     = Object[ArrayPos0].Size
 			Object[ArrayPos0].HitboxTop   <<= 3
 			Object[ArrayPos0].HitboxBottom  = Object[ArrayPos0].HitboxTop
 			FlipSign(Object[ArrayPos0].HitboxTop)
@@ -68,9 +69,9 @@ sub ObjectStartup
 			Object[ArrayPos0].NextChunkY = Object[ArrayPos0].ChunkY
 			Object[ArrayPos0].NextChunkY++
 
-			GetTileLayerEntry(Object[ArrayPos0].OriginalChunk, 0, Object[ArrayPos0].ChunkX, Object[ArrayPos0].ChunkY)
+			GetTileLayerEntry(Object[ArrayPos0].StartupChunk, 0, Object[ArrayPos0].ChunkX, Object[ArrayPos0].ChunkY)
 
-			Object[ArrayPos0].NextChunk  = Object[ArrayPos0].OriginalChunk
+			Object[ArrayPos0].NextChunk  = Object[ArrayPos0].StartupChunk
 			Object[ArrayPos0].NextChunk += 4
 		end if
 		ArrayPos0++

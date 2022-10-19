@@ -8,7 +8,7 @@
 #alias Object.Value5 : Object.PrevTimePeriod
 #alias Object.Value6 : Object.TimeOver
 
-#alias Object.PropertyValue	: Object.TimePeriod
+#alias Object.PropertyValue	: Object.CurrentTimePeriod
 
 // Player Aliases
 #alias Player.Value0 : Player.Rings
@@ -170,7 +170,7 @@ function HUD_DrawStandard
 	if TempValue6 == false // Using Lives
 #endplatform
 		// Get the current Time Period, then add it's equivalent sprite id
-		TempValue0  = Object.TimePeriod
+		TempValue0  = Object.CurrentTimePeriod
 		TempValue0 += 17
 		// Now, draw the corresponding life icon for the time period
 		DrawSpriteScreenXY(TempValue0, 16, 212)
@@ -189,19 +189,19 @@ function HUD_DrawStandard
 #platform: Use_Origins
 	else // Using Coins
 		// This TempValue0 isn't really used...
-		TempValue0 = Object.TimePeriod
+		TempValue0 = Object.CurrentTimePeriod
 		// See if the Time Period's changed
-		if Object.PrevTimePeriod != Object.TimePeriod
-			Object.PrevTimePeriod = Object.TimePeriod
+		if Object.PrevTimePeriod != Object.CurrentTimePeriod
+			Object.PrevTimePeriod = Object.CurrentTimePeriod
 			
-			game.callbackParam0 = Object.TimePeriod	// Signal the new period over to the engine
+			game.callbackParam0 = Object.CurrentTimePeriod	// Signal the new period over to the engine
 			EngineCallback(NOTIFY_FUTURE_PAST)
 		end if
 		
 		// In Missions, Coins shouldn't be drawn here
 		if game.playMode != BOOT_PLAYMODE_MISSION
 			// Get the current Time Period
-			TempValue0 = Object.TimePeriod
+			TempValue0 = Object.CurrentTimePeriod
 			
 			// And bump it up by 22 to match the Coins Sprite Frame IDs
 			TempValue0 += 22
@@ -325,7 +325,7 @@ function HUD_DrawMobile
 	TempValue1  = Screen.XSize
 	TempValue1 -= 48
 	// Get the current Time Period, then add it's equivalent sprite id
-	TempValue0  = Object.TimePeriod
+	TempValue0  = Object.CurrentTimePeriod
 	TempValue0 += 17
 	// Now, draw the corresponding life icon for the time period
 	DrawSpriteScreenXY(TempValue0, TempValue1, 8)

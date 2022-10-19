@@ -2,20 +2,32 @@
 //--------Scripted by Christian Whitehead 'The Taxman'--------//
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
+// Previous Object alias
+#alias Object.PropertyValue	:	Fan.Active
+
 // Control Mode
 #alias -1	:	CONTROLMODE_NONE
 #alias 0	:	CONTROLMODE_NORMAL
 
+// Property Values
+#alias 0	:	TRIGGER_FROM_FAN
+#alias 1	:	STREAM_RIGHT_XBOUNDS
+#alias 2	:	STREAM_LEFT_XBOUNDS
+#alias 3	:	STREAM_LEFT_YBOUNDS
+#alias 4	:	STREAM_RIGHT
+#alias 5	:	STREAM_PUSH_DOWN
+
 
 sub ObjectPlayerInteraction
 	switch Object.PropertyValue
-	case 0
-		if Object[-1].PropertyValue == 1
+	case TRIGGER_FROM_FAN
+		// Triggers from a fan
+		if Fan[-1].Active == true
 			PlayerObjectCollision(C_TOUCH, -112, -64, 0, 160)
 			if CheckResult == true
 				if Player.State != Player_State_Death
 					if Player.State != Player_State_Drown
-						Player.State = Player_State_WaterCurrent
+						Player.State	 = Player_State_WaterCurrent
 						Player.Animation = ANI_FANROTATE
 						
 						Player.ControlMode = CONTROLMODE_NONE
@@ -46,18 +58,18 @@ sub ObjectPlayerInteraction
 #endplatform
 
 					Player.ControlMode = CONTROLMODE_NORMAL
-					Player.Animation = ANI_WALKING
+					Player.Animation   = ANI_WALKING
 				end if
 			end if
 		end if
 		break
 		
-	case 1
+	case STREAM_RIGHT_XBOUNDS
 		PlayerObjectCollision(C_TOUCH, -128, 0, 112, 64)
 		if CheckResult == true
 			if Player.State != Player_State_Death
 				if Player.State != Player_State_Drown
-					Player.State = Player_State_WaterCurrent
+					Player.State	 = Player_State_WaterCurrent
 					Player.Animation = ANI_FANROTATE
 						
 					Player.ControlMode = CONTROLMODE_NONE
@@ -85,18 +97,18 @@ sub ObjectPlayerInteraction
 					Player.State = Player_State_Air
 #endplatform
 					Player.ControlMode = CONTROLMODE_NORMAL
-					Player.Animation = ANI_WALKING
+					Player.Animation   = ANI_WALKING
 				end if
 			end if
 		end if
 		break
 
-	case 2
+	case STREAM_LEFT_XBOUNDS
 		PlayerObjectCollision(C_TOUCH, -128, 0, 112, 64)
 		if CheckResult == true
 			if Player.State != Player_State_Death
 				if Player.State != Player_State_Drown
-					Player.State = Player_State_WaterCurrent
+					Player.State	 = Player_State_WaterCurrent
 					Player.Animation = ANI_FANROTATE
 
 					Player.ControlMode = CONTROLMODE_NONE
@@ -124,18 +136,18 @@ sub ObjectPlayerInteraction
 					Player.State = Player_State_Air
 #endplatform
 					Player.ControlMode = CONTROLMODE_NORMAL
-					Player.Animation = ANI_WALKING
+					Player.Animation   = ANI_WALKING
 				end if
 			end if
 		end if
 		break
 
-	case 3
+	case STREAM_LEFT_YBOUNDS
 		PlayerObjectCollision(C_TOUCH, -128, 0, 112, 64)
 		if CheckResult == true
 			if Player.State != Player_State_Death
 				if Player.State != Player_State_Drown
-					Player.State = Player_State_WaterCurrent
+					Player.State	 = Player_State_WaterCurrent
 					Player.Animation = ANI_FANROTATE
 
 					Player.ControlMode = CONTROLMODE_NONE
@@ -162,18 +174,18 @@ sub ObjectPlayerInteraction
 #endplatform
 
 					Player.ControlMode = CONTROLMODE_NORMAL
-					Player.Animation = ANI_WALKING
+					Player.Animation   = ANI_WALKING
 				end if
 			end if
 		end if
 		break
 
-	case 4
+	case STREAM_RIGHT
 		PlayerObjectCollision(C_TOUCH, 0, -64, 256, 64)
 		if CheckResult == true
 			if Player.State != Player_State_Death
 				if Player.State != Player_State_Drown
-					Player.State = Player_State_WaterCurrent
+					Player.State	 = Player_State_WaterCurrent
 					Player.Animation = ANI_FANROTATE
 
 					Player.XVelocity = 0x40000
@@ -184,12 +196,12 @@ sub ObjectPlayerInteraction
 		end if
 		break
 
-	case 5
+	case STREAM_PUSH_DOWN
 		PlayerObjectCollision(C_TOUCH, -64, -160, 64, 0)
 		if CheckResult == true
 			if Player.State != Player_State_Death
 				if Player.State != Player_State_Drown
-					Player.State = Player_State_WaterCurrent
+					Player.State	 = Player_State_WaterCurrent
 					Player.Animation = ANI_FANROTATE
 
 					Player.ControlMode = CONTROLMODE_NONE
@@ -219,9 +231,9 @@ sub ObjectPlayerInteraction
 #platform: Use_Standalone
 					Player.State = Player_State_Air
 #endplatform
-					Player.Angle = 0
+					Player.Angle	   = 0
 					Player.ControlMode = CONTROLMODE_NORMAL
-					Player.Animation = ANI_WALKING
+					Player.Animation   = ANI_WALKING
 				end if
 			end if
 		end if

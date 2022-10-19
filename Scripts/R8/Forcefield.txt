@@ -2,6 +2,9 @@
 //--------Scripted by Christian Whitehead 'The Taxman'--------//
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
+// Aliases
+#alias Object.PropertyValue	:	Object.ScrollDistance
+
 // States
 #alias 0	:	FORCEFIELD_MOVE_TO_SCREEN
 #alias 1	:	FORCEFIELD_IDLE
@@ -14,8 +17,8 @@
 sub ObjectMain
 	switch Object.State
 	case FORCEFIELD_MOVE_TO_SCREEN
-		if Object.PropertyValue > 168
-			Object.PropertyValue--
+		if Object.ScrollDistance > 168
+			Object.ScrollDistance--
 		else
 			Object.State++
 		end if
@@ -65,7 +68,7 @@ end sub
 
 sub ObjectPlayerInteraction
 	if Object.Alpha > 0
-		TempValue0  = Object.PropertyValue
+		TempValue0  = Object.ScrollDistance
 		TempValue0 -= 8
 		PlayerObjectCollision(C_BOX, TempValue0, -96, 240, 96)
 		FlipSign(TempValue0)
@@ -75,7 +78,7 @@ end sub
 
 
 sub ObjectDraw
-	TempValue0  = Object.PropertyValue
+	TempValue0  = Object.ScrollDistance
 	TempValue0 *= -0x10000
 	TempValue0 += Object.XPos
 	DrawSpriteFX(4, FX_INK, TempValue0, Object.YPos)
@@ -86,7 +89,7 @@ sub ObjectDraw
 	Object.Direction = 2
 	DrawSpriteFX(Object.Frame, FX_FLIP, TempValue0, Object.YPos)
 	
-	TempValue0   = Object.PropertyValue
+	TempValue0   = Object.ScrollDistance
 	TempValue0 <<= 16
 	TempValue0  += Object.XPos
 	DrawSpriteFX(4, FX_INK, TempValue0, Object.YPos)

@@ -3,25 +3,31 @@
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
 // Aliases
-#alias Object.Value1	:	Object.HitboxLeft
-#alias Object.Value2	:	Object.HitboxRight
+#alias Object.Value1		:	Object.HitboxLeft
+#alias Object.Value2		:	Object.HitboxRight
+
+#alias Object.PropertyValue	:	Object.ActiveWaterStream
+
+// Previous Object alias
+#alias Object.PropertyValue	:	PrevObject.Active
 
 // Control Mode
 #alias 0	:	CONTROLMODE_NORMAL
 
 
 sub ObjectPlayerInteraction
-	// Water streams are activated through a chain, originated from a push button
-	if Object[-1].PropertyValue == 1
-		Object.PropertyValue = 1
+	// Water streams are activated through a chain, originated from a blank object or a fan
+	if PrevObject[-1].Active == true
+		Object.ActiveWaterStream = true
 		PlayerObjectCollision(C_TOUCH, Object.HitboxLeft, -32, Object.HitboxRight, 32)
 		if CheckResult == true
 			if Player.State != Player_State_Hurt
 				if Player.State != Player_State_Death
 					if Player.State != Player_State_Drown
 						if Player.State != Player_State_Static
-							Player.State = Player_State_WaterCurrent
+							Player.State	 = Player_State_WaterCurrent
 							Player.Animation = ANI_FANROTATE
+
 							if Player.Up == false
 								if Player.Down == false
 									if Player.YPos < Object.YPos
@@ -32,10 +38,11 @@ sub ObjectPlayerInteraction
 									end if
 								end if
 							end if
+
 							Player.XVelocity = 0x40000
 							Player.Speed     = 0x40000
 							if Player.WaterStream == false
-								Player.YVelocity = 0
+								Player.YVelocity   = 0
 								Player.WaterStream = true
 							end if
 						end if
@@ -55,7 +62,7 @@ sub ObjectPlayerInteraction
 #endplatform
 
 					Player.ControlMode = CONTROLMODE_NORMAL
-					Player.Animation = ANI_WALKING
+					Player.Animation   = ANI_WALKING
 				end if
 			end if
 		end if
@@ -66,12 +73,12 @@ end sub
 sub ObjectStartup
 	ArrayPos0 = 32
 	while ArrayPos0 < 1056
-		if Object[ArrayPos0].Type == TypeName[WaterStreamR]
+		if Object[ArrayPos0].Type == TypeName[Water Stream R]
 			Object[ArrayPos0].HitboxLeft   = Object[ArrayPos0].PropertyValue
 			Object[ArrayPos0].HitboxLeft <<= 3
 			Object[ArrayPos0].HitboxRight  = Object[ArrayPos0].HitboxLeft
 			FlipSign(Object[ArrayPos0].HitboxLeft)
-			Object[ArrayPos0].PropertyValue = 0
+			Object[ArrayPos0].ActiveWaterStream = false
 		end if
 		ArrayPos0++
 	loop

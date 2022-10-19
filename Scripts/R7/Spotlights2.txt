@@ -5,17 +5,17 @@
 // Aliases
 
 // Position for where the checkpoint should progress to its next version
-#alias Object.Value1	:	Object.Checkpoint
+#alias Object.Value1			:	Object.Checkpoint
 
 // The colours the Spotlight should use
 // Just like everything else, these colours are in RRGGBB
-#alias Object.Value2	:	Object.PrimaryBaseColour
-#alias Object.Value3	:	Object.SecondaryBaseColour
-#alias Object.Value4	:	Object.PrimaryDisplayColour
-#alias Object.Value5	:	Object.SecondaryDisplayColour
+#alias Object.Value2			:	Object.PrimaryBaseColour
+#alias Object.Value3			:	Object.SecondaryBaseColour
+#alias Object.Value4			:	Object.PrimaryDisplayColour
+#alias Object.Value5			:	Object.SecondaryDisplayColour
 
 // There are several different types of spotlights that appear in the stage
-#alias Object.Value0	:	Object.SpotlightType
+#alias Object.Value0			:	Object.SpotlightType
 // 0 - Pair of two primary ones
 //     - Using SSZ2A's, it's the two small green ones
 // 1 - Single primary one
@@ -27,6 +27,14 @@
 // 4 - Pair of primary and secondary
 //     - Using SSZ2A's, the pair of a big green one with a small yellow one
 // Then it loops back
+
+// HUD Alias
+#alias Object[24].PropertyValue	:	HUD.CurrentTimePeriod
+
+// Time Periods
+#alias 0	:	TIME_PRESENT
+#alias 2	:	TIME_GOOD_FUTURE
+#alias 3	:	TIME_BAD_FUTURE
 
 // Priority
 #alias 1	:	PRIORITY_ACTIVE
@@ -546,8 +554,8 @@ sub ObjectStartup
 			Object[ArrayPos0].Checkpoint += 192
 			
 			// Setup the colours the spotlights will use depending on the current time zone
-			switch Object[24].PropertyValue
-			case 0
+			switch HUD.CurrentTimePeriod
+			case TIME_PRESENT
 				// Present gets standard colours - set the primary spotlight to green
 				Object[ArrayPos0].PrimaryBaseColour = 128
 				Object[ArrayPos0].PrimaryBaseColour <<= 16
@@ -567,7 +575,7 @@ sub ObjectStartup
 				
 			// No case 1 since spotlights probably didn't even exist back then in the Past
 			
-			case 2
+			case TIME_GOOD_FUTURE
 				// The Good Future gets nice and bright colours - primary spotlight is brown
 				Object[ArrayPos0].PrimaryBaseColour = 192
 				Object[ArrayPos0].PrimaryBaseColour <<= 16
@@ -585,7 +593,7 @@ sub ObjectStartup
 				Object[ArrayPos0].SecondaryBaseColour += 224
 				break
 				
-			case 3
+			case TIME_BAD_FUTURE
 				// Bad Future gets cool and fancy colours, primary spotlight is pink
 				Object[ArrayPos0].PrimaryBaseColour = 224
 				Object[ArrayPos0].PrimaryBaseColour <<= 16

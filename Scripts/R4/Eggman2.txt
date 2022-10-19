@@ -79,6 +79,10 @@
 #alias 4	:	EGGANI_ESCAPE
 #alias 5	:	EGGANI_NONE
 
+// Fade Music Property Values
+#alias 0	:	FADEMUSIC_TO_BOSS
+#alias 1	:	FADEMUSIC_TO_LEVEL
+
 // Global SFX
 #alias 22	:	SFX_G_EXPLOSION
 
@@ -165,7 +169,7 @@ function EggBubble_CheckShieldCondition
 	ArrayPos0  = 1
 	TempValue0 = 0
 	while ArrayPos0 <= Object.MaxBubble
-		if Bubble2[+ArrayPos0].Type == TypeName[BossBubble2]
+		if Bubble2[+ArrayPos0].Type == TypeName[Boss Bubble 2]
 			TempValue0++
 		end if
 		ArrayPos0++
@@ -210,7 +214,7 @@ function EggBubble_CheckBubbleAmount
 	ArrayPos0  = 1
 	TempValue0 = 0
 	while ArrayPos0 <= Object.MaxBubble
-		if Bubble2[+ArrayPos0].Type == TypeName[BossBubble2]
+		if Bubble2[+ArrayPos0].Type == TypeName[Boss Bubble 2]
 			TempValue0++
 		end if
 		ArrayPos0++
@@ -219,7 +223,7 @@ function EggBubble_CheckBubbleAmount
 	ArrayPos0 = 1
 	while ArrayPos0 <= Object.MaxBubble
 		if ArrayPos0 <= TempValue0
-			Bubble2[+ArrayPos0].Type   = TypeName[BossBubble2]
+			Bubble2[+ArrayPos0].Type   = TypeName[Boss Bubble 2]
 			Bubble2[+ArrayPos0].State  = BOSSBUBBLE2_BREATHABLE
 			Bubble2[+ArrayPos0].TImer  = 0
 		else
@@ -237,7 +241,7 @@ end function
 function EggBubble_DestroyBubbles
 	ArrayPos0 = 1
 	while ArrayPos0 <= Object.MaxBubble
-		if Bubble2[+ArrayPos0].Type == TypeName[BossBubble2]
+		if Bubble2[+ArrayPos0].Type == TypeName[Boss Bubble 2]
 			Bubble2[+ArrayPos0].State  = BOSSBUBBLE2_CONSUMED
 			Bubble2[+ArrayPos0].TImer  = 0
 		end if
@@ -248,29 +252,29 @@ end function
 
 function EggBubble_FireBullet
 	if Object.Direction == FACING_RIGHT
-		CreateTempObject(TypeName[BossBullet], 0, Object.XPos, Object.YPos)
+		CreateTempObject(TypeName[Boss Bullet], 0, Object.XPos, Object.YPos)
 		Bullet[TempObjectPos].BossEntity = Object.EntityNo
 		Bullet[TempObjectPos].DrawOrder  = 2
-		CreateTempObject(TypeName[BossBullet], 1, Object.XPos, Object.YPos)
+		CreateTempObject(TypeName[Boss Bullet], 1, Object.XPos, Object.YPos)
 		Bullet[TempObjectPos].BossEntity = Object.EntityNo
 		Bullet[TempObjectPos].DrawOrder  = 2
-		CreateTempObject(TypeName[BossBullet], 2, Object.XPos, Object.YPos)
+		CreateTempObject(TypeName[Boss Bullet], 2, Object.XPos, Object.YPos)
 		Bullet[TempObjectPos].BossEntity = Object.EntityNo
 		Bullet[TempObjectPos].DrawOrder  = 2
-		CreateTempObject(TypeName[BossBullet], 3, Object.XPos, Object.YPos)
+		CreateTempObject(TypeName[Boss Bullet], 3, Object.XPos, Object.YPos)
 		Bullet[TempObjectPos].BossEntity = Object.EntityNo
 		Bullet[TempObjectPos].DrawOrder  = 2
 	else
-		CreateTempObject(TypeName[BossBullet], 4, Object.XPos, Object.YPos)
+		CreateTempObject(TypeName[Boss Bullet], 4, Object.XPos, Object.YPos)
 		Bullet[TempObjectPos].BossEntity = Object.EntityNo
 		Bullet[TempObjectPos].DrawOrder  = 2
-		CreateTempObject(TypeName[BossBullet], 5, Object.XPos, Object.YPos)
+		CreateTempObject(TypeName[Boss Bullet], 5, Object.XPos, Object.YPos)
 		Bullet[TempObjectPos].BossEntity = Object.EntityNo
 		Bullet[TempObjectPos].DrawOrder  = 2
-		CreateTempObject(TypeName[BossBullet], 6, Object.XPos, Object.YPos)
+		CreateTempObject(TypeName[Boss Bullet], 6, Object.XPos, Object.YPos)
 		Bullet[TempObjectPos].BossEntity = Object.EntityNo
 		Bullet[TempObjectPos].DrawOrder  = 2
-		CreateTempObject(TypeName[BossBullet], 7, Object.XPos, Object.YPos)
+		CreateTempObject(TypeName[Boss Bullet], 7, Object.XPos, Object.YPos)
 		Bullet[TempObjectPos].BossEntity = Object.EntityNo
 		Bullet[TempObjectPos].DrawOrder  = 2
 	end if
@@ -297,7 +301,7 @@ sub ObjectMain
 
 			Helper.YPos  = Object.YPos
 
-			CreateTempObject(TypeName[FadeMusic], 0, Object.XPos, Object.YPos)
+			CreateTempObject(TypeName[Fade Music], FADEMUSIC_TO_BOSS, Object.XPos, Object.YPos)
 		end if
 		break
 
@@ -325,7 +329,7 @@ sub ObjectMain
 			else
 				Object.BubbleSpawnTimer = 10
 
-				CreateTempObject(TypeName[BossBubble1], 0, Object.XPos, Object.YPos)
+				CreateTempObject(TypeName[Boss Bubble 1], 0, Object.XPos, Object.YPos)
 				
 				Rand(Bubble1[TempObjectPos].XPos, 28)
 				Bubble1[TempObjectPos].XPos   -= 14
@@ -374,7 +378,7 @@ sub ObjectMain
 			Object.State = R4_EGG_BUBBLE_EXPAND_SHIELD
 			ArrayPos0 = 1
 			while ArrayPos0 < 17
-				Bubble2[+ArrayPos0].Type = TypeName[BossBubble2]
+				Bubble2[+ArrayPos0].Type = TypeName[Boss Bubble 2]
 				ArrayPos0++
 			loop
 			CallFunction(EggBubble_HandleBubbleMovement)
@@ -645,7 +649,7 @@ sub ObjectMain
 			Object.FrameTimer = 0
 
 			Stage.NewWaterLevel = 0x8000000	// Y - 2048 in map coords
-			CreateTempObject(TypeName[FadeMusic], 1, Object.XPos, Object.YPos)
+			CreateTempObject(TypeName[Fade Music], FADEMUSIC_TO_LEVEL, Object.XPos, Object.YPos)
 		end if
 		break
 
@@ -819,7 +823,7 @@ sub ObjectStartup
 	// Used to be below LoadSpriteSheet, moved here for consistency
 	ArrayPos0 = 32
 	while ArrayPos0 < 1056
-		if Object[ArrayPos0].Type == TypeName[EggmanPart2]
+		if Object[ArrayPos0].Type == TypeName[Eggman Part 2]
 			TempValue0  = 160
 			TempValue0 -= Screen.CenterX
 			Object[ArrayPos0].iXPos += TempValue0

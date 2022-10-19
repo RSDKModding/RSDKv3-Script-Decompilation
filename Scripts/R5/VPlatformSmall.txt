@@ -8,13 +8,22 @@
 #alias Object.Value2 : Object.ChangeY
 #alias Object.Value3 : Object.Angle
 
-// Time Period Aliases
-#alias Object[24].PropertyValue : HUD.TimePeriod
+// HUD Alias
+#alias Object[24].PropertyValue : HUD.CurrentTimePeriod
 
-#alias 0 : TIME_PRESENT
-#alias 1 : TIME_PAST
-#alias 2 : TIME_GOOD_FUTURE
-#alias 3 : TIME_BAD_FUTURE
+// Time Period Aliases
+#alias 0	:	TIME_PRESENT
+#alias 1	:	TIME_PAST
+#alias 2	:	TIME_GOOD_FUTURE
+#alias 3	:	TIME_BAD_FUTURE
+
+// Property Values
+#alias 0	:	DOWNWARDS_PLAT
+#alias 1	:	DOWNWARDS_PLAT_UNUSED
+#alias 2	:	DOWNWARDS_PLAT_CONV
+#alias 3	:	UPWARDS_PLAT
+#alias 4	:	UPWARDS_PLAT_UNUSED
+#alias 5	:	UPWARDS_PLAT_CONV
 
 
 sub ObjectMain
@@ -37,8 +46,8 @@ sub ObjectMain
 	
 	// From this base Change value, jump to the Platform handling type for what's further needed
 	switch Object.PropertyValue
-	case 0
-	case 2
+	case DOWNWARDS_PLAT
+	case DOWNWARDS_PLAT_CONV
 		// Downwards Platform
 		Object.ChangeY *= 0x1800
 		Object.ChangeY += 0x300000
@@ -47,8 +56,8 @@ sub ObjectMain
 		Object.ChangeY -= Object.PlatformY
 		break
 		
-	case 3
-	case 5
+	case UPWARDS_PLAT
+	case UPWARDS_PLAT_CONV
 		// Upwards Platform
 		Object.ChangeY *= -0x1800
 		Object.ChangeY -= 0x300000
@@ -57,7 +66,7 @@ sub ObjectMain
 		Object.ChangeY -= Object.PlatformY
 		break
 		
-	case 1
+	case DOWNWARDS_PLAT_UNUSED
 		// Unused duplicate of downwards platform
 		Object.ChangeY *= 0x1800
 		Object.ChangeY += 0x300000
@@ -66,7 +75,7 @@ sub ObjectMain
 		Object.ChangeY -= Object.PlatformY
 		break
 		
-	case 4
+	case UPWARDS_PLAT_UNUSED
 		// Unused duplicate of upwards platform
 		Object.ChangeY *= -0x1800
 		Object.ChangeY -= 0x300000
@@ -89,8 +98,8 @@ sub ObjectPlayerInteraction
 	Object.YPos = Object.PlatformY
 	
 	switch Object.PropertyValue
-	case 0
-	case 3
+	case DOWNWARDS_PLAT
+	case UPWARDS_PLAT
 		// Normal Platform
 		PlayerObjectCollision(C_PLATFORM, -16, -16, 16, 12)
 		if CheckResult == true
@@ -99,8 +108,8 @@ sub ObjectPlayerInteraction
 		end if
 		break
 		
-	case 2
-	case 5
+	case DOWNWARDS_PLAT_CONV
+	case UPWARDS_PLAT_CONV
 		// Conveyor Platform
 		PlayerObjectCollision(C_PLATFORM, -16, -16, 16, 12)
 		if CheckResult == true
@@ -130,8 +139,8 @@ sub ObjectDraw
 	
 	// All Platform types have their own Draw routines
 	switch Object.PropertyValue
-	case 0
-	case 1
+	case DOWNWARDS_PLAT
+	case DOWNWARDS_PLAT_UNUSED
 		// Standard Downards Platform
 		Sin(Object.PlatformY, Object.Angle)
 		Object.PlatformY *= 0x1800
@@ -141,7 +150,7 @@ sub ObjectDraw
 		DrawSpriteXY(0, Object.XPos, Object.PlatformY)
 		break
 		
-	case 2
+	case DOWNWARDS_PLAT_CONV
 		// Downards Conveyor Platform
 		Sin(Object.PlatformY, Object.Angle)
 		Object.PlatformY *= 0x1800
@@ -152,8 +161,8 @@ sub ObjectDraw
 		DrawSpriteXY(1, Object.XPos, Object.PlatformY)
 		break
 		
-	case 3
-	case 4
+	case UPWARDS_PLAT
+	case UPWARDS_PLAT_UNUSED
 		// Standard Upwards Platform
 		Sin(Object.PlatformY, Object.Angle)
 		Object.PlatformY *= -0x1800
@@ -163,7 +172,7 @@ sub ObjectDraw
 		DrawSpriteXY(0, Object.XPos, Object.PlatformY)
 		break
 		
-	case 5
+	case UPWARDS_PLAT_CONV
 		// Upwards Conveyor Platform
 		Sin(Object.PlatformY, Object.Angle)
 		Object.PlatformY *= -0x1800
@@ -189,7 +198,7 @@ sub ObjectStartup
 	// 0 - Base Platform Frame
 	// 1 - Conveyor Frame, to be overlayed atop the base Platform Frame
 	
-	switch HUD.TimePeriod
+	switch HUD.CurrentTimePeriod
 	case TIME_PRESENT
 		LoadSpriteSheet("R5/Objects.gif")
 		SpriteFrame(-16, -16, 32, 32, 1, 51)

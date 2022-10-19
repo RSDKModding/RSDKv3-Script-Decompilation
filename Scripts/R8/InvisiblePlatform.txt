@@ -14,6 +14,11 @@
 #alias Object.Value6	:	Object.ThirdPlatMaxTimer
 #alias Object.Value7	:	Object.ThirdPlatFrame
 
+// Property Values
+#alias 0	:	ONE_BLOCK
+#alias 1	:	TWO_BLOCKS	// Doesn't seem actually used tho
+#alias 2	:	THREE_BLOCK_STAIR
+
 // Function declarations
 #function InvPlatform_SetMaxTimer
 
@@ -69,7 +74,7 @@ sub ObjectMain
 		Object.FirstPlatMaxTimer = TempValue1
 	end if
 
-	if Object.PropertyValue == 2
+	if Object.PropertyValue == THREE_BLOCK_STAIR
 		if Object.SecondPlatTimer < Object.SecondPlatMaxTimer
 			Object.SecondPlatTimer++
 		else
@@ -97,17 +102,17 @@ end sub
 
 sub ObjectPlayerInteraction
 	switch Object.PropertyValue
-	case 0
+	case ONE_BLOCK
 		if Object.Frame == 13
 			PlayerObjectCollision(C_PLATFORM, -16, -16, 16, 0)
 		end if
 		break
-	case 1
+	case TWO_BLOCKS
 		if Object.Frame == 13
 			PlayerObjectCollision(C_PLATFORM, -16, -16, 48, 0)
 		end if
 		break
-	case 2
+	case THREE_BLOCK_STAIR
 		if Object.Frame == 13
 			PlayerObjectCollision(C_PLATFORM, -16, -16, 16, 0)
 		end if
@@ -124,16 +129,16 @@ end sub
 
 sub ObjectDraw
 	switch Object.PropertyValue
-	case 0
+	case ONE_BLOCK
 		DrawSprite(Object.Frame)
 		break
-	case 1
+	case TWO_BLOCKS
 		TempValue0 = Object.XPos
 		DrawSpriteXY(Object.Frame, TempValue0, Object.YPos)
 		TempValue0 += 0x200000
 		DrawSpriteXY(Object.Frame, TempValue0, Object.YPos)
 		break
-	case 2
+	case THREE_BLOCK_STAIR
 		TempValue0 = Object.XPos
 		TempValue1 = Object.YPos
 		DrawSpriteXY(Object.Frame, TempValue0, TempValue1)
@@ -190,16 +195,16 @@ sub ObjectStartup
 
 	ArrayPos0 = 32
 	while ArrayPos0 < 1056
-		if Object[ArrayPos0].Type == TypeName[InvPlatform]
+		if Object[ArrayPos0].Type == TypeName[Inv Platform]
 			switch Object[ArrayPos0].PropertyValue
-			case 0
-			case 1
-				Object[ArrayPos0].Value1 = 60
+			case ONE_BLOCK
+			case TWO_BLOCKS
+				Object[ArrayPos0].FirstPlatMaxTimer = 60
 				break
-			case 2
-				Object[ArrayPos0].Value1 = 60
-				Object[ArrayPos0].Value3 = 108
-				Object[ArrayPos0].Value6 = 156
+			case THREE_BLOCK_STAIR
+				Object[ArrayPos0].FirstPlatMaxTimer = 60
+				Object[ArrayPos0].SecondPlatMaxTimer = 108
+				Object[ArrayPos0].ThirdPlatMaxTimer = 156
 				break
 			end switch
 		end if

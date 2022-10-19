@@ -8,12 +8,12 @@
 #alias Object.Value3			:	Object.MaxHeight
 
 // Push Button aliases
-#alias Object[+1].PropertyValue	:	PushButton.Pressed
-#alias Object[+1].XPos			:	PushButton.XPos
-#alias Object[+1].YPos			:	PushButton.YPos
+#alias Object.PropertyValue	:	PushButton.Pressed
+#alias Object.XPos			:	PushButton.XPos
+#alias Object.YPos			:	PushButton.YPos
 
 // HUD alias
-#alias Object[24].PropertyValue	:	Hud.TimePeriod
+#alias Object[24].PropertyValue	:	HUD.CurrentTimePeriod
 
 // Gravity
 #alias 0	:	GRAVITY_GROUND
@@ -30,7 +30,7 @@
 
 
 sub ObjectMain
-	if PushButton.Pressed == true
+	if PushButton[+1].Pressed == true
 		if Object.YVelocity > -0x10000
 			Object.YVelocity -= 0x200
 		end if
@@ -52,11 +52,11 @@ sub ObjectMain
 		end if
 	end if
 
-	PushButton.XPos  = Object.XPos
-	PushButton.XPos += 0x100000
+	PushButton[+1].XPos  = Object.XPos
+	PushButton[+1].XPos += 0x100000
 
-	PushButton.YPos  = Object.YPos
-	PushButton.YPos -= 0x480000	
+	PushButton[+1].YPos  = Object.YPos
+	PushButton[+1].YPos -= 0x480000	
 end sub
 
 
@@ -101,7 +101,7 @@ end sub
 
 
 sub ObjectStartup
-	switch Hud.TimePeriod
+	switch HUD.CurrentTimePeriod
 	case TIME_PRESENT
 		LoadSpriteSheet("R4/Objects.gif")
 		TempValue0 = 163
@@ -142,7 +142,7 @@ sub ObjectStartup
 
 	ArrayPos0 = 32
 	while ArrayPos0 < 1056
-		if Object[ArrayPos0].Type == TypeName[ButtonBlocks1]
+		if Object[ArrayPos0].Type == TypeName[Button Blocks 1]
 			Object[ArrayPos0].MinHeight  = Object[ArrayPos0].YPos
 			Object[ArrayPos0].MaxHeight  = Object[ArrayPos0].YPos
 			Object[ArrayPos0].MaxHeight -= 0x800000

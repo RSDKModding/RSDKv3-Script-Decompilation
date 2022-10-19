@@ -2,7 +2,8 @@
 //--------Scripted by Christian Whitehead 'The Taxman'--------//
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
-// Aliases
+// HUD Alias
+#alias Object[24].PropertyValue	:	HUD.CurrentTimePeriod
 
 // Time Period Aliases
 #alias 0	:	TIME_PRESENT
@@ -10,39 +11,41 @@
 #alias 2	:	TIME_GOOD_FUTURE
 #alias 3	:	TIME_BAD_FUTURE
 
+// Property Values
+#alias 0	:	PLATFORM_SMALL
+#alias 1	:	PLATFORM_MEDIUM
+#alias 2	:	PLATFORM_LARGE
+#alias 3	:	PLATFORM_SMALL_CONVEYOR
+#alias 4	:	PLATFORM_MEDIUM_CONVEYOR
+#alias 5	:	PLATFORM_LARGE_CONVEYOR
+
 
 sub ObjectPlayerInteraction
 
 	switch Object.PropertyValue
-	case 0
-		// Small Platform
+	case PLATFORM_SMALL
 		PlayerObjectCollision(C_PLATFORM, -16, -16, 16, 12)
 		break
 		
-	case 1
-		// Medium Platform
+	case PLATFORM_MEDIUM
 		PlayerObjectCollision(C_PLATFORM, -32, -16, 32, 12)
 		break
 		
-	case 2
-		// Large Platform
+	case PLATFORM_LARGE
 		PlayerObjectCollision(C_PLATFORM, -48, -16, 48, 12)
 		break
 		
-	case 3
-		// Small Conveyor Platform
-		// (But with the Conveyor code removed, functionally identical to the normal Small Platform)
+	case PLATFORM_SMALL_CONVEYOR
+		// (with the Conveyor code removed, functionally identical to the normal Small Platform)
 		PlayerObjectCollision(C_PLATFORM, -16, -16, 16, 12)
 		break
 		
-	case 4
-		// Medium Conveyor Platform
+	case PLATFORM_MEDIUM_CONVEYOR
 		// (Also with no Conveyor code associated with it... pretty much the same as the normal Medium Platform type)
 		PlayerObjectCollision(C_PLATFORM, -32, -16, 32, 12)
 		break
 		
-	case 5
-		// Large Conveyor Platform
+	case PLATFORM_LARGE_CONVEYOR
 		// (You may notice some corresponding code is missing, that's because the took the Conveyor out of the name!)
 		PlayerObjectCollision(C_PLATFORM, -48, -16, 48, 12)
 		break
@@ -55,26 +58,26 @@ end sub
 sub ObjectDraw
 
 	switch Object.PropertyValue
-	case 0
-	case 1
-	case 2
+	case PLATFORM_SMALL
+	case PLATFORM_MEDIUM
+	case PLATFORM_LARGE
 		// Standard Platform
 		DrawSprite(Object.PropertyValue)
 		break
 		
 	// These next 3 types are for Conveyor Belt types, where the Conveyor Belt Frame is overlayed atop the normal Platform Sprite
 
-	case 3
+	case PLATFORM_SMALL_CONVEYOR
 		DrawSprite(0)
 		DrawSprite(3)
 		break
 		
-	case 4
+	case PLATFORM_MEDIUM_CONVEYOR
 		DrawSprite(1)
 		DrawSprite(4)
 		break
 		
-	case 5
+	case PLATFORM_LARGE_CONVEYOR
 		DrawSprite(2)
 		DrawSprite(5)
 		break
@@ -102,7 +105,7 @@ sub ObjectStartup
 	
 	// The essentially unused Conveyor Belt Frames are to be layered on top of the Platform Frames, though they aren't really used from this Object
 	
-	switch Object[24].PropertyValue
+	switch HUD.CurrentTimePeriod
 	case TIME_PRESENT
 		LoadSpriteSheet("R5/Objects.gif")
 		SpriteFrame(-16, -16, 32, 32, 1, 51)

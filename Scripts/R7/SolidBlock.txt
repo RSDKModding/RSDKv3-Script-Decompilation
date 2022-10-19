@@ -5,7 +5,7 @@
 // Aliases
 
 // Time Period Aliases
-#alias Object[24].PropertyValue : HUD.TimePeriod
+#alias Object[24].PropertyValue : HUD.CurrentTimePeriod
 
 #alias 0 : TIME_PRESENT
 #alias 1 : TIME_PAST
@@ -13,10 +13,24 @@
 #alias 3 : TIME_BAD_FUTURE
 
 // Gravity
-#alias 0	:	GRAVITY_GROUND
+#alias 0 : GRAVITY_GROUND
 
 // Ink Effect
-#alias 1	:	INK_BLEND
+#alias 1 : INK_BLEND
+
+// Player Collision
+#alias 2 : PLAYER_COL_LWALL
+#alias 4 : PLAYER_COL_ROOF
+
+// Property Values
+#alias 0 : SINGLE_BLOCK
+#alias 1 : TWO_BLOCKS_H
+#alias 2 : THREE_BLOCKS_H
+#alias 3 : FOUR_BLOCKS_H
+#alias 4 : TWO_BLOCKS_V
+#alias 5 : THREE_BLOCKS_V
+#alias 6 : FOUR_BLOCKS_V
+#alias 7 : INV_BLOCK
 
 
 sub ObjectPlayerInteraction
@@ -24,39 +38,39 @@ sub ObjectPlayerInteraction
 	
 	// Different collision widths & heights for different block types
 	switch Object.PropertyValue
-	case 0 // Single Block
-	case 7 // Invisible Block (same size as Single Block)
+	case SINGLE_BLOCK
+	case INV_BLOCK
 		PlayerObjectCollision(C_BOX, -16, -16, 16, 16)
 		break
 		
-	case 1 // Two Blocks H
+	case TWO_BLOCKS_H
 		PlayerObjectCollision(C_BOX, -32, -16, 32, 16)
 		break
 		
-	case 2 // Three Blocks H
+	case THREE_BLOCKS_H
 		PlayerObjectCollision(C_BOX, -48, -16, 48, 16)
 		break
 		
-	case 3 // Four Blocks H
+	case FOUR_BLOCKS_H
 		PlayerObjectCollision(C_BOX, -64, -16, 64, 16)
 		break
 		
-	case 4 // Two Blocks V
+	case TWO_BLOCKS_V
 		PlayerObjectCollision(C_BOX, -16, -32, 16, 32)
 		break
 		
-	case 5 // Three Blocks V
+	case THREE_BLOCKS_V
 		PlayerObjectCollision(C_BOX, -16, -48, 16, 48)
 		break
 		
-	case 6 // Four Blocks V
+	case FOUR_BLOCKS_V
 		PlayerObjectCollision(C_BOX, -16, -64, 16, 64)
 		break
 		
 	end switch
 	
 	// Left Wall Collsion (on the block) detected?
-	if CheckResult == 2
+	if CheckResult == PLAYER_COL_LWALL
 		// Set the Player's Right Collision Flag to true
 		// (Used in the Metal Sonic race sequence)
 		
@@ -65,7 +79,7 @@ sub ObjectPlayerInteraction
 	
 	// Roof collision detected while the player's on the ground?
 	if Player.Gravity == GRAVITY_GROUND
-		if CheckResult == 4
+		if CheckResult == PLAYER_COL_ROOF
 			// Move the player back ontop of the block
 			
 			Player.YPos = TempValue0
@@ -77,11 +91,11 @@ end sub
 
 sub ObjectDraw
 	switch Object.PropertyValue
-	case 0 // Single Block
+	case SINGLE_BLOCK
 		DrawSprite(0)
 		break
 		
-	case 1 // Two Blocks H
+	case TWO_BLOCKS_H
 		TempValue0 = Object.XPos
 		TempValue0 -= 0x100000
 		DrawSpriteXY(0, TempValue0, Object.YPos)
@@ -89,7 +103,7 @@ sub ObjectDraw
 		DrawSpriteXY(0, TempValue0, Object.YPos)
 		break
 		
-	case 2 // Three Blocks H
+	case THREE_BLOCKS_H
 		TempValue0 = Object.XPos
 		TempValue0 -= 0x200000
 		DrawSpriteXY(0, TempValue0, Object.YPos)
@@ -99,7 +113,7 @@ sub ObjectDraw
 		DrawSpriteXY(0, TempValue0, Object.YPos)
 		break
 		
-	case 3 // Four Blocks H
+	case FOUR_BLOCKS_H
 		TempValue0 = Object.XPos
 		TempValue0 -= 0x300000
 		DrawSpriteXY(0, TempValue0, Object.YPos)
@@ -111,7 +125,7 @@ sub ObjectDraw
 		DrawSpriteXY(0, TempValue0, Object.YPos)
 		break
 		
-	case 4 // Two Blocks V
+	case TWO_BLOCKS_V
 		TempValue0 = Object.YPos
 		TempValue0 -= 0x100000
 		DrawSpriteXY(0, Object.XPos, TempValue0)
@@ -119,7 +133,7 @@ sub ObjectDraw
 		DrawSpriteXY(0, Object.XPos, TempValue0)
 		break
 		
-	case 5 // Three Blocks V
+	case THREE_BLOCKS_V
 		TempValue0 = Object.YPos
 		TempValue0 -= 0x200000
 		DrawSpriteXY(0, Object.XPos, TempValue0)
@@ -129,7 +143,7 @@ sub ObjectDraw
 		DrawSpriteXY(0, Object.XPos, TempValue0)
 		break
 		
-	case 6 // Four Blocks V
+	case FOUR_BLOCKS_V
 		TempValue0 = Object.YPos
 		TempValue0 -= 0x300000
 		DrawSpriteXY(0, Object.XPos, TempValue0)
@@ -153,7 +167,7 @@ sub ObjectStartup
 	LoadSpriteSheet("R7/Objects.gif")
 	
 	// Load the appropriate version of the sprite based on the current time period
-	switch HUD.TimePeriod
+	switch HUD.CurrentTimePeriod
 	case TIME_PRESENT
 	case TIME_PAST
 	case TIME_BAD_FUTURE

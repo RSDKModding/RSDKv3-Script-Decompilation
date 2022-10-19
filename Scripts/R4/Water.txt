@@ -14,7 +14,7 @@
 #alias Object.Value3			:	Object.YVelocity
 
 // HUD alias
-#alias Object[24].PropertyValue	:	Hud.TimePeriod
+#alias Object[24].PropertyValue	:	HUD.CurrentTimePeriod
 
 // States
 #alias 0	:	WATER_CREATEBUBBLE_1
@@ -51,6 +51,9 @@
 #alias 2	:	TIME_GOOD_FUTURE
 #alias 3	:	TIME_BAD_FUTURE
 
+// Air Bubble Property Values
+#alias 2	:	BUBBLE_SMALL
+
 // Function declarations
 #function Water_CreateAirBubble
 #function Water_CreateCountBubble
@@ -61,7 +64,7 @@ function Water_CreateAirBubble
 		if Object.RandBubbleTimer > 0
 			Object.RandBubbleTimer--
 		else
-			CreateTempObject(TypeName[AirBubble], 2, Player.XPos, Player.YPos)
+			CreateTempObject(TypeName[Air Bubble], BUBBLE_SMALL, Player.XPos, Player.YPos)
 			Object[TempObjectPos].DrawOrder = 4
 
 			Object[TempObjectPos].YVelocity = -0x8800
@@ -84,7 +87,7 @@ function Water_CreateAirBubble
 		end if
 
 		Object.ConstBubbleTimer = 60
-		CreateTempObject(TypeName[AirBubble], 2, Player.XPos, Player.YPos)
+		CreateTempObject(TypeName[Air Bubble], BUBBLE_SMALL, Player.XPos, Player.YPos)
 		Object[TempObjectPos].DrawOrder = 4
 
 		Object[TempObjectPos].YVelocity = -0x8800
@@ -100,7 +103,7 @@ end function
 
 
 function Water_CreateCountBubble
-	CreateTempObject(TypeName[CountdownBubble], TempValue0, Player.XPos, Player.YPos)
+	CreateTempObject(TypeName[Countdown Bubble], TempValue0, Player.XPos, Player.YPos)
 	Object[TempObjectPos].DrawOrder = 4
 
 	Object[TempObjectPos].YVelocity = -0x8800
@@ -156,7 +159,7 @@ sub ObjectMain
 				Player.JumpStrength		=  0x38000
 				Player.JumpCap			= -0x20000
 
-				CreateTempObject(TypeName[WaterSplash], 0, Player.XPos, Stage.WaterLevel)
+				CreateTempObject(TypeName[Water Splash], 0, Player.XPos, Stage.WaterLevel)
 				Object[TempObjectPos].DrawOrder = 4
 				PlayStageSfx(SFX_S_WATERSPLASH, false)
 				Object.ConstBubbleTimer = 52
@@ -311,7 +314,7 @@ sub ObjectMain
 				else
 					Rand(TempValue1, 2)
 					TempValue1 += 2
-					CreateTempObject(TypeName[AirBubble], TempValue1, Player.XPos, Player.YPos)
+					CreateTempObject(TypeName[Air Bubble], TempValue1, Player.XPos, Player.YPos)
 					Object[TempObjectPos].DrawOrder = 5
 					Object[TempObjectPos].YVelocity = -0x8800
 					Object[TempObjectPos].YPos -= 0x60000
@@ -329,7 +332,7 @@ sub ObjectMain
 				Object.ConstBubbleTimer = 6
 				Rand(TempValue1, 2)
 				TempValue1 += 2
-				CreateTempObject(TypeName[AirBubble], TempValue1, Player.XPos, Player.YPos)
+				CreateTempObject(TypeName[Air Bubble], TempValue1, Player.XPos, Player.YPos)
 				Object[TempObjectPos].DrawOrder = 5
 				Object[TempObjectPos].YVelocity = -0x8800
 				Object[TempObjectPos].YPos -= 0x60000
@@ -368,7 +371,7 @@ sub ObjectMain
 				Player.JumpStrength		= 0x68000
 				Player.JumpCap			= -0x40000
 
-				CreateTempObject(TypeName[WaterSplash], 0, Player.XPos, Stage.WaterLevel)
+				CreateTempObject(TypeName[Water Splash], 0, Player.XPos, Stage.WaterLevel)
 				Object[TempObjectPos].DrawOrder = 4
 				PlayStageSfx(SFX_S_WATERSPLASH, false)
 				Player.AirTimer = 0
@@ -416,7 +419,7 @@ sub ObjectStartup
 	TempValue7 = -1
 	switch Stage.ActNo
 	case 1
-		switch Hud.TimePeriod
+		switch HUD.CurrentTimePeriod
 		case TIME_PRESENT
 			if Player.XPos > 0x5E00000
 				TempValue7 = 0x2640000
@@ -433,7 +436,7 @@ sub ObjectStartup
 		break
 
 	case 2
-		switch Hud.TimePeriod
+		switch HUD.CurrentTimePeriod
 		case TIME_PRESENT
 			if Player.XPos > 0x4B00000
 				TempValue7 = 0x5340000

@@ -12,7 +12,7 @@
 #alias Object.Value4 : Object.ScreenXPos // Difference from the center of the camera (which is where Sonic is always located)
 #alias Object.Value5 : Object.ScreenDepth
 
-// HUD Aliases
+// HUD Alias
 #alias Object.Value0 : HUD.UFOsCount       // Initially set via a loop in the UFO script
 #alias Object.Value1 : HUD.TimeSeconds     // Displayed time
 #alias Object.Value3 : HUD.Rings
@@ -175,7 +175,7 @@ sub ObjectMain
 							HUD[4].LastUFOType = Object.PropertyValue
 							
 							// Create the UFO powerup icon
-							CreateTempObject(TypeName[UFOPowerUp], Object.PropertyValue, TempValue0, TempValue1)
+							CreateTempObject(TypeName[UFO PowerUp], Object.PropertyValue, TempValue0, TempValue1)
 							Rand(UFOPowerUp[TempObjectPos].ExplosionDir, 100)
 							UFOPowerUp[TempObjectPos].ExplosionXVel = TempValue0
 							UFOPowerUp[TempObjectPos].ExplosionYVel = TempValue1
@@ -278,7 +278,7 @@ sub ObjectStartup
 			// Set the UFO to always be active
 			Object[ArrayPos0].Priority = PRIORITY_ACTIVE
 			
-			if Object[ArrayPos0].PropertyValue < UFO_CONTENTS_TIME
+			if Object[ArrayPos0].PropertyValue < 2
 				
 				// Increase the UFO count
 				HUD[4].UFOsCount++
@@ -339,7 +339,8 @@ sub RSDKDraw
 		ArrayPos0 = Object.EntityNo
 		ArrayPos0++
 		
-		GetObjectType(TempValue0, "UFO Node")
+		// TODO: change this to "UFO Node" once GetObjectType works with spaces
+		GetObjectType(TempValue0, "UFONode")
 		
 		while Object[ArrayPos0].Type == TempValue0
 			DrawArrow(Object[ArrayPos1].XPos, Object[ArrayPos1].ZPos, Object[ArrayPos0].XPos, Object[ArrayPos0].ZPos, 255, 255, 0)

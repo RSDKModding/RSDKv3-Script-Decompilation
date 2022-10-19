@@ -53,6 +53,8 @@
 // GameModes
 #alias 2	:	GAMEMODE_TIMEATTACK
 
+// Blue Shield possesion Property Value
+#alias 1	:	ACTIVE_SHIELD
 
 sub ObjectMain
 	switch Object.State
@@ -127,9 +129,9 @@ sub ObjectMain
 				
 			case MONITOR_SHIELD
 				PlaySfx(SFX_G_BLUESHIELD, false)
-				Object[2].PropertyValue = 1
+				Object[2].PropertyValue = ACTIVE_SHIELD
 				if Object[2].Type != TypeName[Invincibility]
-					Object[2].Type		= TypeName[BlueShield]
+					Object[2].Type		= TypeName[Blue Shield]
 					Object[2].Priority	= PRIORITY_ACTIVE
 					Object[2].DrawOrder = 4
 					Object[2].InkEffect = INK_ALPHA
@@ -250,7 +252,7 @@ end sub
 sub ObjectDraw
 	DrawSprite(0)
 	
-	if Object.PropertyValue > MONITOR_BLANK
+	if Object.PropertyValue > 0
 		DrawSpriteFX(Object.PropertyValue, FX_INK, Object.XPos, Object.PowerupPos)
 	end if
 end sub

@@ -19,8 +19,8 @@
 // The Stage List Pos of the current stage's Present version
 #alias Object.Value7			:	Object.StagePosP
 
-// Hud Aliases
-#alias Object[24].PropertyValue	:	HUD.TimePeriod
+// HUD Alias
+#alias Object[24].PropertyValue	:	HUD.CurrentTimePeriod
 
 // Player Aliases
 #alias Object[0].Type  			:	Player.Type
@@ -160,7 +160,7 @@ sub ObjectMain
 #platform: Use_Origins
 		// Find the Present version of the current stage
 		Object.StagePosP = Stage.ListPos
-		switch HUD.TimePeriod
+		switch HUD.CurrentTimePeriod
 		case TIME_PRESENT
 			break
 			
@@ -303,7 +303,7 @@ sub ObjectMain
 				
 				// See if the Paradise Found achievement should be unlocked
 				if Stage.PlayerListPos == PLAYER_SONIC
-					if HUD.TimePeriod == TIME_GOOD_FUTURE
+					if HUD.CurrentTimePeriod == TIME_GOOD_FUTURE
 						if Stage.DebugMode == false
 							SetAchievement(2, 100)
 						end if
@@ -322,7 +322,7 @@ sub ObjectMain
 				
 				// See if the Paradise Found achievement should be unlocked
 				if Stage.PlayerListPos == PLAYER_SONIC
-					if HUD.TimePeriod == TIME_GOOD_FUTURE
+					if HUD.CurrentTimePeriod == TIME_GOOD_FUTURE
 						if Stage.DebugMode == false
 							SetAchievement(2, 100)
 						end if
@@ -448,10 +448,10 @@ sub ObjectMain
 				LampPost.Check	 = 0
 
 				Good_Future_Count += Good_Future
-				Good_Future		   = 0
+				Good_Future		   = false
 
-				Transporter_Destroyed = 0
-				MetalSonic_Destroyed  = 0
+				Transporter_Destroyed = false
+				MetalSonic_Destroyed  = false
 				
 				if Stage.ActNo == 2
 					if Good_Future_Count < 2
@@ -464,7 +464,7 @@ sub ObjectMain
 				end if
 				
 				// Get the Stage List Pos of the next stage's Present version
-				switch HUD.TimePeriod
+				switch HUD.CurrentTimePeriod
 				case TIME_PRESENT
 					Stage.ListPos += 4
 					break
@@ -581,10 +581,10 @@ sub ObjectMain
 				Player.Direction = FACING_RIGHT
 
 				Good_Future_Count += Good_Future
-				Good_Future		   = 0
+				Good_Future		   = false
 
-				Transporter_Destroyed = 0
-				MetalSonic_Destroyed  = 0
+				Transporter_Destroyed = false
+				MetalSonic_Destroyed  = false
 				
 				if Stage.ActNo == 2
 					if Good_Future_Count < 2
@@ -597,7 +597,7 @@ sub ObjectMain
 				end if
 				
 				// Get the Stage ID of the next stage's starting version
-				switch Hud.TimePeriod
+				switch HUD.CurrentTimePeriod
 				case TIME_PRESENT
 					Stage.ListPos += 4
 					break

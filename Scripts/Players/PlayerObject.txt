@@ -105,6 +105,10 @@
 #alias -1	:	CONTROLMODE_NONE
 #alias  0	:	CONTROLMODE_NORMAL
 
+// Shield status
+#alias 0	:	NO_SHIELD
+#alias 1	:	ACTIVE_SHIELD
+
 // Global SFX
 #alias 0	:	SFX_G_JUMP
 #alias 3	:	SFX_G_SKIDDING
@@ -232,10 +236,10 @@ function Player_BadnikBreak
 		ResetObjectEntity(Object.EntityNo, Flower_TypeNo, 0, Object.XPos, Object.YPos)
 		Object.DrawOrder = 4
 
-		CreateTempObject(TypeName[SmokePuff], 0, Object.XPos, Object.YPos)
+		CreateTempObject(TypeName[Smoke Puff], 0, Object.XPos, Object.YPos)
 		Object[TempObjectPos].DrawOrder = 4
 
-		CreateTempObject(TypeName[ObjectScore], ObjectScore.Timer, Object.XPos, Object.YPos)
+		CreateTempObject(TypeName[Object Score], ObjectScore.Timer, Object.XPos, Object.YPos)
 		Object[TempObjectPos].DrawOrder = 4
 
 		PlaySfx(SFX_G_DESTROY, false) 
@@ -359,7 +363,7 @@ function Player_ProcessUpdate
 						PlaySfx(SFX_G_SELECT, false) 
 						StopSFX(SFX_G_FLYING)
 						StopSFX(SFX_G_TIRED)
-						Object[9].Type = TypeName[PauseMenu]
+						Object[9].Type = TypeName[Pause Menu]
 						PauseMenu.DrawOrder = 7
 						PauseMenu.Priority	= PRIORITY_ALWAYS
 					else
@@ -427,7 +431,7 @@ function Player_ProcessUpdate
 						PlaySfx(SFX_G_SELECT, false) 
 						StopSFX(SFX_G_FLYING)
 						StopSFX(SFX_G_TIRED)
-						Object[9].Type = TypeName[PauseMenu]
+						Object[9].Type = TypeName[Pause Menu]
 						PauseMenu.DrawOrder = 7
 						PauseMenu.Priority	= PRIORITY_ALWAYS
 						if Engine.FrameSkipTimer > -1
@@ -442,7 +446,7 @@ function Player_ProcessUpdate
 						PlaySfx(SFX_G_SELECT, false) 
 						StopSFX(SFX_G_FLYING)
 						StopSFX(SFX_G_TIRED)
-						Object[9].Type = TypeName[PauseMenu]
+						Object[9].Type = TypeName[Pause Menu]
 						PauseMenu.DrawOrder = 7
 						PauseMenu.Priority	= PRIORITY_ALWAYS
 						if Engine.FrameSkipTimer > -1
@@ -462,7 +466,7 @@ function Player_ProcessUpdate
 						PlaySfx(SFX_G_SELECT, false) 
 						StopSFX(SFX_G_FLYING)
 						StopSFX(SFX_G_TIRED)
-						Object[9].Type = TypeName[PauseMenu]
+						Object[9].Type = TypeName[Pause Menu]
 						PauseMenu.DrawOrder = 7
 						PauseMenu.Priority = PRIORITY_ALWAYS
 						if Engine.FrameSkipTimer > -1
@@ -476,7 +480,7 @@ function Player_ProcessUpdate
 						PlaySfx(SFX_G_SELECT, false) 
 						StopSFX(SFX_G_FLYING)
 						StopSFX(SFX_G_TIRED)
-						Object[9].Type = TypeName[PauseMenu]
+						Object[9].Type = TypeName[Pause Menu]
 						PauseMenu.DrawOrder = 7
 						PauseMenu.Priority  = PRIORITY_ALWAYS
 						if Engine.FrameSkipTimer > -1
@@ -534,18 +538,18 @@ function Player_ProcessUpdate
 			end if
 			if Object[+2].Type == TypeName[Invincibility]
 				switch Object[+2].PropertyValue
-				case 0
+				case NO_SHIELD
 					TempValue0  = Player.EntityNo
 					TempValue0 += 2
 					ResetObjectEntity(TempValue0, TypeName[Blank Object], 0, 0, 0)
 					break
 
-				case 1
+				case ACTIVE_SHIELD
 					TempValue0 = Player.EntityNo
 					TempValue0 += 2
 					ResetObjectEntity(TempValue0, TypeName[Blank Object], 0, 0, 0)
-					Object[+2].Type = TypeName[BlueShield]
-					Object[+2].PropertyValue = 1
+					Object[+2].Type = TypeName[Blue Shield]
+					Object[+2].PropertyValue = ACTIVE_SHIELD
 					Object[+2].Priority 	 = PRIORITY_ACTIVE
 					Object[+2].DrawOrder	 = 4
 					Object[+2].InkEffect	 = INK_ALPHA
@@ -577,7 +581,7 @@ function Player_ProcessUpdate
 		
 		if Warp.Timer == 204
 			Screen.CameraEnabled = false
-			CreateTempObject(TypeName[TimeWarp], 0, 0, 0)
+			CreateTempObject(TypeName[Time Warp], 0, 0, 0)
 			Object[TempObjectPos].DrawOrder = 7
 		end if
 	end if
@@ -1043,7 +1047,7 @@ function Player_Action_Spindash_S2
 
 	PlaySfx(SFX_G_CHARGE, false) 
 	// Dust Puff Code
-	CreateTempObject(TypeName[DustPuff], Object.EntityNo, Player.XPos, Player.YPos)
+	CreateTempObject(TypeName[Dust Puff], Object.EntityNo, Player.XPos, Player.YPos)
 	Object[TempObjectPos].iYPos 	= Player.CollisionBottom
 	Object[TempObjectPos].YPos	   += Player.YPos
 	Object[TempObjectPos].Frame		= 4
@@ -1235,7 +1239,7 @@ function Player_State_Ground
 					if Warp.Destination > WARPDEST_NONE
 						if Warp.Timer == 0
 							Warp.Timer = 1
-							ResetObjectEntity(3, TypeName[WarpStar], 0, Player.XPos, Player.YPos)
+							ResetObjectEntity(3, TypeName[Warp Star], 0, Player.XPos, Player.YPos)
 							WarpStar.Timer		= 7
 							WarpStar.DrawOrder	= 4
 						end if
@@ -1267,7 +1271,7 @@ function Player_State_Ground
 					if Warp.Destination > WARPDEST_NONE
 						if Warp.Timer == 0
 							Warp.Timer = 1
-							ResetObjectEntity(3, TypeName[WarpStar], 0, Player.XPos, Player.YPos)
+							ResetObjectEntity(3, TypeName[Warp Star], 0, Player.XPos, Player.YPos)
 							WarpStar.Timer		= 7
 							WarpStar.DrawOrder	= 4
 						end if
@@ -1295,7 +1299,7 @@ function Player_State_Ground
 			Player.Skidding--
 
 			if Ring.AniCount == 0
-				CreateTempObject(TypeName[DustPuff], 0, Player.XPos, Player.YPos)
+				CreateTempObject(TypeName[Dust Puff], 0, Player.XPos, Player.YPos)
 				Object[TempObjectPos].iYPos		+= Player.CollisionBottom
 				Object[TempObjectPos].DrawOrder  = Player.DrawOrder
 			end if
@@ -1508,7 +1512,7 @@ function Player_State_Roll
 			if Warp.Destination > WARPDEST_NONE
 				if Warp.Timer == 0
 					Warp.Timer			= 1
-					ResetObjectEntity(3, TypeName[WarpStar], 0, Player.XPos, Player.YPos)
+					ResetObjectEntity(3, TypeName[Warp Star], 0, Player.XPos, Player.YPos)
 					WarpStar.Timer		= 7
 					WarpStar.DrawOrder	= 4
 				end if
@@ -2130,7 +2134,7 @@ function Player_State_GotHit
 
 		TempValue3 = 0
 		while TempValue3 < TempValue1
-			CreateTempObject(TypeName[LoseRing], Player.CollisionPlane, Player.XPos, Player.YPos)
+			CreateTempObject(TypeName[Lose Ring], Player.CollisionPlane, Player.XPos, Player.YPos)
 			Cos(Object[TempObjectPos].XVelocity, TempValue2)
 			Sin(Object[TempObjectPos].YVelocity, TempValue2)
 			Object[TempObjectPos].XVelocity		<<= 8
@@ -2156,7 +2160,7 @@ function Player_State_GotHit
 		TempValue3 = 0
 
 		while TempValue3 < TempValue0
-			CreateTempObject(TypeName[LoseRing], Player.CollisionPlane, Player.XPos, Player.YPos)
+			CreateTempObject(TypeName[Lose Ring], Player.CollisionPlane, Player.XPos, Player.YPos)
 			Cos(Object[TempObjectPos].XVelocity, TempValue2)
 			Sin(Object[TempObjectPos].YVelocity, TempValue2)
 			Object[TempObjectPos].XVelocity		<<= 9
@@ -2622,7 +2626,7 @@ function Player_State_TubeRoll
 			if Warp.Destination > WARPDEST_NONE
 				if Warp.Timer == 0
 					Warp.Timer = 1
-					CreateTempObject(TypeName[WarpStar], 0, Player.XPos, Player.YPos)
+					CreateTempObject(TypeName[Warp Star], 0, Player.XPos, Player.YPos)
 					WarpStar.Timer		= 7
 					WarpStar.DrawOrder	= 4
 				end if
@@ -2678,7 +2682,7 @@ function Player_State_TubeAirRoll
 			if Warp.Destination > WARPDEST_NONE
 				if Warp.Timer == 0
 					Warp.Timer = 1
-					CreateTempObject(TypeName[WarpStar], 0, Player.XPos, Player.YPos)
+					CreateTempObject(TypeName[Warp Star], 0, Player.XPos, Player.YPos)
 					WarpStar.Timer		= 7
 					WarpStar.DrawOrder	= 4
 				end if
@@ -2994,7 +2998,7 @@ sub ObjectMain
 
 	if TempValue0 == true
 		if KeyPress[1].ButtonB == true	// Turn Debug Mode
-			Object.Type = TypeName[DebugMode]
+			Object.Type = TypeName[Debug Mode]
 			if Stage.PlayerListPos == PLAYER_TAILS
 				Object[+1].Type = TypeName[Blank Object]
 			end if

@@ -12,6 +12,10 @@
 // Menu Control Alias
 #alias Object[0].State	:	MenuControl.State
 
+// Next and previous LEntry's
+#alias Object.State		:	PrevLEntry.State
+#alias Object.State		:	NextLEntry.State
+
 // States
 #alias 0	:	LENTRY_BLANK
 #alias 1	:	LENTRY_MOVE_RIGHT
@@ -43,6 +47,13 @@
 // Online Menus
 #alias 1	:	ONLINEMENU_LEADERBOARDS
 
+// Property Values
+#alias 0	:	ENTRY_1
+#alias 1	:	ENTRY_2
+#alias 2	:	ENTRY_3
+#alias 3	:	ENTRY_4
+#alias 4	:	ENTRY_5
+
 
 sub ObjectMain
 	switch Object.State
@@ -61,8 +72,8 @@ sub ObjectMain
 			Object.HTimer++
 			if Object.PropertyValue < 4
 				if Object.HTimer == 5
-					Object[+1].State = LENTRY_MOVE_RIGHT
-					if Object.PropertyValue == 2
+					PrevLEntry[+1].State = LENTRY_MOVE_RIGHT
+					if Object.PropertyValue == ENTRY_2
 						Leaderboard.ID++
 						Leaderboard.ID %= 22
 						LoadOnlineMenu(ONLINEMENU_LEADERBOARDS)
@@ -80,9 +91,9 @@ sub ObjectMain
 	case LENTRY_STOP_SCROLL_R
 		Object.XPos -= 0x300000
 		if Object.XPos < Object.SavedXPos
-			Object.XPos = Object.SavedXPos
+			Object.XPos  = Object.SavedXPos
 			Object.State = LENTRY_BLANK
-			if Object.PropertyValue == 4
+			if Object.PropertyValue == ENTRY_5
 				MenuControl.State = MENUCONTROL_CONTROLS
 			end if
 		end if
@@ -100,8 +111,8 @@ sub ObjectMain
 			Object.HTimer++
 			if Object.PropertyValue < 4
 				if Object.HTimer == 5
-					Object[+1].State = LENTRY_MOVE_LEFT
-					if Object.PropertyValue == 2
+					PrevLEntry[+1].State = LENTRY_MOVE_LEFT
+					if Object.PropertyValue == ENTRY_3
 						Leaderboard.ID--
 						if Leaderboard.ID < 0
 							Leaderboard.ID = 21
@@ -121,9 +132,9 @@ sub ObjectMain
 	case LENTRY_STOP_SCROLL_L
 		Object.XPos += 0x300000
 		if Object.XPos > Object.SavedXPos
-			Object.XPos = Object.SavedXPos
+			Object.XPos  = Object.SavedXPos
 			Object.State = LENTRY_BLANK
-			if Object.PropertyValue == 4
+			if Object.PropertyValue == ENTRY_5
 				MenuControl.State = MENUCONTROL_CONTROLS
 			end if
 		end if
@@ -148,12 +159,12 @@ sub ObjectMain
 			Object.Alpha -= 32
 			if Object.PropertyValue < 4
 				if Object.Alpha == 128
-					Object[+1].State = LENTRY_MOVE_DOWN
+					PrevLEntry[+1].State = LENTRY_MOVE_DOWN
 				end if
 			end if
 		else
 			Object.State = LENTRY_BLANK
-			if Object.PropertyValue == 4
+			if Object.PropertyValue == ENTRY_5
 				MenuControl.State = MENUCONTROL_CONTROLS
 			end if
 		end if
@@ -178,12 +189,12 @@ sub ObjectMain
 			Object.Alpha -= 32
 			if Object.PropertyValue < 4
 				if Object.Alpha == 128
-					Object[+1].State = LENTRY_MOVE_UP
+					PrevLEntry[+1].State = LENTRY_MOVE_UP
 				end if
 			end if
 		else
 			Object.State = LENTRY_BLANK
-			if Object.PropertyValue == 4
+			if Object.PropertyValue == ENTRY_5
 				MenuControl.State = MENUCONTROL_CONTROLS
 			end if
 		end if
@@ -195,9 +206,11 @@ end sub
 
 sub ObjectDraw
 	DrawSprite(142)
+
 	Object.Index  = Object.PropertyValue
 	Object.Index += Object.VTimer
 	ArrayPos0 = 0
+
 	GetTextInfo(TempValue1, MENU_1, TEXTINFO_TEXTSIZE, Object.Index, 0)
 	TempValue2  = Object.XPos
 	TempValue2 += 0x80000
@@ -237,6 +250,7 @@ sub ObjectDraw
 		TempValue3++
 		TempValue2 += 0x80000
 	loop
+
 	TempValue1 -= 4
 	while TempValue1 > 0
 		GetTextInfo(TempValue0, MENU_1, TEXTINFO_TEXTDATA, Object.Index, ArrayPos0)
@@ -290,7 +304,8 @@ sub ObjectDraw
 		TempValue1--
 		TempValue2 += 0x80000
 	loop
-	if Object.State > 6
+
+	if Object.State > LENTRY_STOP_SCROLL_L
 		DrawSpriteFX(143, FX_INK, Object.XPos, Object.YPos)
 	end if
 end sub
@@ -343,8 +358,9 @@ end sub
 
 
 sub RSDKLoad
-	LoadSpriteSheet("Global/Display.gif")
-	SpriteFrame(-16, -16, 32, 32, 1, 143)		// #0 - "Script" Icon
+	LoadSpriteSheet("LBoards/Leaderboards.gif")
 
-	SetVariableAlias(ALIAS_VAR_PROPVAL, "unused")
+	SpriteFrame(0, -10, 232, 21, 1, 309)	// #142 - Button
+
+	SetVariableAlias(ALIAS_VAR_PROPVAL, "entry")
 end sub

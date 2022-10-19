@@ -3,23 +3,34 @@
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
 // Aliases
-#alias Object.Value0	:	Object.Pressed
+#alias Object.Value0			:	Object.Pressed
 
-#alias Object.Value1	:	Object.PlatformY
-#alias Object.Value2	:	Object.ChangeY
+#alias Object.Value1			:	Object.PlatformY
+#alias Object.Value2			:	Object.ChangeY
 
-#alias Object.Value3	:	Object.PlatformX
-#alias Object.Value4	:	Object.ChangeX
+#alias Object.Value3			:	Object.PlatformX
+#alias Object.Value4			:	Object.ChangeX
 
-#alias Object.Value5	:	Object.Angle
+#alias Object.Value5			:	Object.Angle
 
-#alias Object.Value6	:	Object.Cooldown
+#alias Object.Value6			:	Object.Cooldown
+
+// HUD Alias
+#alias Object[24].PropertyValue	:	HUD.CurrentTimePeriod
 
 // Time Period Aliases
 #alias 0	:	TIME_PRESENT
 #alias 1	:	TIME_PAST
 #alias 2	:	TIME_GOOD_FUTURE
 #alias 3	:	TIME_BAD_FUTURE
+
+// Property Values
+#alias 0	:	START_MOVING_RIGHT
+#alias 1	:	START_MOVING_RIGHT_W/SPRING
+#alias 2	:	START_MOVING_RIGHT_W/CONV
+#alias 3	:	START_MOVING_LEFT
+#alias 4	:	START_MOVING_LEFT_W/SPRING
+#alias 5	:	START_MOVING_LEFT_W/CONV
 
 
 sub ObjectMain
@@ -30,8 +41,8 @@ sub ObjectMain
 	Sin(Object.ChangeX, Object.Angle)
 	
 	switch Object.PropertyValue
-	case 0
-	case 2
+	case START_MOVING_RIGHT
+	case START_MOVING_RIGHT_W/CONV
 		// Right-moving Platform
 		Object.ChangeX *= 0x1000
 		Object.ChangeX += 0x200000
@@ -40,8 +51,8 @@ sub ObjectMain
 		Object.ChangeX -= Object.PlatformX
 		break
 		
-	case 3
-	case 5
+	case START_MOVING_LEFT
+	case START_MOVING_LEFT_W/CONV
 		// Left-moving Platform
 		Object.ChangeX *= -0x1000
 		Object.ChangeX -= 0x200000
@@ -50,7 +61,7 @@ sub ObjectMain
 		Object.ChangeX -= Object.PlatformX
 		break
 		
-	case 1
+	case START_MOVING_RIGHT_W/SPRING
 		// Right-moving Carrier Object
 		Object.ChangeX *= 0x1000
 		Object.ChangeX += 0x200000
@@ -80,7 +91,7 @@ sub ObjectMain
 		Object.ChangeX -= Object.PlatformX
 		break
 		
-	case 4
+	case START_MOVING_LEFT_W/SPRING
 		// Left-moving Carrier Object
 		Object.ChangeX *= -0x1000
 		Object.ChangeX -= 0x200000
@@ -160,8 +171,8 @@ sub ObjectPlayerInteraction
 	
 	// From here, jump to the further handling type needed
 	switch Object.PropertyValue
-	case 0
-	case 3
+	case START_MOVING_RIGHT
+	case START_MOVING_LEFT
 		// Standard Platform type
 		
 		PlayerObjectCollision(C_PLATFORM, -32, -16, 32, 12)
@@ -178,8 +189,8 @@ sub ObjectPlayerInteraction
 		end if
 		break
 		
-	case 2
-	case 5
+	case START_MOVING_RIGHT_W/CONV
+	case START_MOVING_LEFT_W/CONV
 		// Conveyor Platform
 		
 		if Object.Cooldown == 0
@@ -242,8 +253,8 @@ sub ObjectDraw
 	Object.YPos += Object.ChangeY
 	
 	switch Object.PropertyValue
-	case 0
-	case 1
+	case START_MOVING_RIGHT
+	case START_MOVING_RIGHT_W/SPRING
 		// Right-moving Platform
 		Sin(Object.PlatformX, Object.Angle)
 		Object.PlatformX *= 0x1000
@@ -253,7 +264,7 @@ sub ObjectDraw
 		DrawSpriteXY(0, Object.PlatformX, Object.YPos)
 		break
 		
-	case 2
+	case START_MOVING_RIGHT_W/CONV
 		// Right-moving Conveyor Platform
 		Sin(Object.PlatformX, Object.Angle)
 		Object.PlatformX *= 0x1000
@@ -264,8 +275,8 @@ sub ObjectDraw
 		DrawSpriteXY(1, Object.PlatformX, Object.YPos)
 		break
 		
-	case 3
-	case 4
+	case START_MOVING_LEFT
+	case START_MOVING_LEFT_W/SPRING
 		// Left-moving Platform
 		Sin(Object.PlatformX, Object.Angle)
 		Object.PlatformX *= -0x1000
@@ -275,7 +286,7 @@ sub ObjectDraw
 		DrawSpriteXY(0, Object.PlatformX, Object.YPos)
 		break
 		
-	case 5
+	case START_MOVING_LEFT_W/CONV
 		// Left-moving Conveyor Platform
 		Sin(Object.PlatformX, Object.Angle)
 		Object.PlatformX *= -0x1000
@@ -296,7 +307,7 @@ sub ObjectStartup
 	LoadSpriteSheet("R5/Objects.gif")
 	
 	// Use different Sprites for the different Time Periods
-	switch Object[24].PropertyValue
+	switch HUD.CurrentTimePeriod
 	case TIME_PRESENT
 		LoadSpriteSheet("R5/Objects.gif")
 		SpriteFrame(-32, -16, 64, 32, 34, 51)

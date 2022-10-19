@@ -6,8 +6,8 @@
 #alias Object.Value0			:	Object.OnObject
 #alias Object.Value2			:	Object.YOriginPos
 
-// HUD aliases
-#alias Object[24].PropertyValue	:	HUD.TimePeriod
+// HUD Alias
+#alias Object[24].PropertyValue	:	HUD.CurrentTimePeriod
 
 // State
 #alias 0	:	INVBLOCK_IDLE
@@ -31,7 +31,7 @@ sub ObjectPlayerInteraction
 		Object.OnObject = CheckResult
 	end if
 
-	if HUD.TimePeriod > TIME_PAST	// Inv Blocks in the future fall upon contact
+	if HUD.CurrentTimePeriod > 1	// Inv Blocks in the future fall upon contact
 		switch Object.State
 		case INVBLOCK_IDLE
 			if Object.OnObject == true
@@ -70,7 +70,7 @@ sub ObjectDraw
 
 	end switch
 
-	switch HUD.TimePeriod	// they are invisible only in the present
+	switch HUD.CurrentTimePeriod	// they are invisible only in the present
 	case TIME_PRESENT
 		if Object.OnObject == true
 			if Object.Frame < 24
@@ -131,7 +131,7 @@ sub ObjectStartup
 	// Used to be below LoadSpriteSheet, moved here for consistency
 	ArrayPos0 = 32
 	while ArrayPos0 < 1056
-		if Object[ArrayPos0].Type == TypeName[InvisibleBlock]
+		if Object[ArrayPos0].Type == TypeName[Invisible Block]
 			Object[ArrayPos0].YOriginPos = Object[ArrayPos0].YPos
 		end if
 		ArrayPos0++

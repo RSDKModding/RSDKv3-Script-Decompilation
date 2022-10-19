@@ -15,6 +15,12 @@
 // Stage SFX
 #alias 6	:	SFX_S_BREATHING
 
+// Air Bubble Property Values
+#alias 2	:	BUBBLE_SMALL
+#alias 4	:	BUBBLE_MEDIUM
+#alias 5	:	BUBBLE_BREATHABLE
+#alias 6	:	BUBBLE_EXPLODE
+
 
 sub ObjectMain
 	if Object.State == AIRBUBBLE_ACTIVE
@@ -32,6 +38,7 @@ sub ObjectMain
 
 		Object.YPos += Object.YVelocity
 
+		// Small bubbles fly away while sonic is pushed by water streams
 		if Player.Animation == ANI_FANROTATE
 			if Object.PropertyValue < 3
 				Object.XVelocity += 0x40000
@@ -53,12 +60,13 @@ sub ObjectMain
 		end if
 
 		if Object.iYPos < Stage.WaterLevel
-			if Object.PropertyValue == 5
+			if Object.PropertyValue == BUBBLE_BREATHABLE
 				Object.Frame = 6
-				Object.PropertyValue = 6
+				Object.PropertyValue = BUBBLE_EXPLODE
 				Object.Timer = 0
 				Object.YVelocity = 0
 			else
+				// Despawn small and medium bubbles above water level
 				if Object.PropertyValue < 5
 					Object.Type = TypeName[Blank Object]
 				end if

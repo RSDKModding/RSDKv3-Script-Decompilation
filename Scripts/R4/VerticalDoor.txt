@@ -6,7 +6,7 @@
 #alias 0						:	Object.Timer
 
 // Push Button alias
-#alias Object[-1].PropertyValue	:	PushButton.Pressed
+#alias Object.PropertyValue		:	PushButton.Pressed
 
 // States
 #alias 0	:	VERTICALDOOR_INACTIVE
@@ -24,7 +24,7 @@
 sub ObjectMain
 	switch Object.PropertyValue
 	case VDOOR_BUTTON_HOLD
-		if PushButton.Pressed == false
+		if PushButton[-1].Pressed == false
 			if Object.Timer > 0
 				Object.Timer -= 0x80000
 				Object.YPos  += 0x80000
@@ -38,7 +38,7 @@ sub ObjectMain
 		break
 
 	case VDOOR_CLOSE_AFTER_PLAYER_ROOF
-		if PushButton.Pressed == true
+		if PushButton[-1].Pressed == true
 			Object.State = VERTICALDOOR_ACTIVE
 		end if
 
@@ -62,7 +62,7 @@ sub ObjectMain
 		break
 
 	case VDOOR_CLOSE_AFTER_PLAYER_FLOOR
-		if PushButton.Pressed == true
+		if PushButton[-1].Pressed == true
 			Object.State = VERTICALDOOR_ACTIVE
 		end if
 

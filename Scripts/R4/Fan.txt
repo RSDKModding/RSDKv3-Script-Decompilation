@@ -4,10 +4,10 @@
 
 
 // Button alias
-#alias Object[-1].PropertyValue	:	PushButton.Pressed
+#alias Object.PropertyValue		:	PushButton.Pressed
 
 // HUD alias
-#alias Object[24].PropertyValue	:	Hud.TimePeriod
+#alias Object[24].PropertyValue	:	HUD.CurrentTimePeriod
 
 // States / Property Values
 // These are based on Property Value, so technically they are named the same
@@ -28,7 +28,7 @@ sub ObjectMain
 	switch Object.State
 	case VERTICAL_FAN_OFF
 	case HORIZONTAL_FAN_OFF
-		if PushButton.Pressed == true
+		if PushButton[-1].Pressed == true
 			Object.PropertyValue = VERTICAL_FAN_ON
 			Object.State++
 		end if
@@ -36,7 +36,7 @@ sub ObjectMain
 
 	case VERTICAL_FAN_ON
 	case HORIZONTAL_FAN_ON
-		if Hud.TimePeriod < TIME_GOOD_FUTURE
+		if HUD.CurrentTimePeriod < 2
 			Object.Frame++
 			if Object.Frame > 9
 				Object.Frame = 0
@@ -78,7 +78,7 @@ end sub
 
 
 sub ObjectStartup
-	switch Hud.TimePeriod
+	switch HUD.CurrentTimePeriod
 	case TIME_PRESENT
 	case TIME_PAST
 		LoadSpriteSheet("R4/Objects.gif")

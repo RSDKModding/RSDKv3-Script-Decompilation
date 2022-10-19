@@ -25,11 +25,15 @@
 #alias 0 : SFX_S_LARGEBOOSTER // In origins, this SFX is Launcher
 #alias 1 : SFX_S_SWITCH
 
+// Property Values
+#alias 0 : ROTATING_CAGE
+#alias 1 : STATIC_CAGE
+
 
 sub ObjectMain
 	switch Object.State
 	case RSPRINGCAGE_IDLE
-		if Object.PropertyValue == 0
+		if Object.PropertyValue == ROTATING_CAGE
 			Object.FullAngle++
 			Object.FullAngle %= 48
 
@@ -50,7 +54,7 @@ sub ObjectMain
 
 	case RSPRINGCAGE_SHOOTPLAYER
 		if Player.State != Player_State_Death
-			if Object.PropertyValue == 0
+			if Object.PropertyValue == ROTATING_CAGE
 				Object.FullAngle++
 				Object.FullAngle %= 48
 				Object.Angle  = Object.FullAngle
@@ -387,7 +391,7 @@ sub ObjectStartup
 	// Setup all Rotating Cage objects within the level
 	ArrayPos0 = 32
 	while ArrayPos0 < 1056
-		if Object[ArrayPos0].Type == TypeName[RSpringCage]
+		if Object[ArrayPos0].Type == TypeName[R Spring Cage]
 		
 			// Focus on the Cage's corresponding R7 Spring object
 			ArrayPos1 = ArrayPos0
@@ -444,7 +448,8 @@ sub RSDKDraw
 	DrawSpriteFX(0, FX_FLIP, Object.XPos, TempValue1)
 
 	if Editor.ShowGizmos == true
-		GetObjectType(TempValue0, "R7 Spring")
+		// TODO: change this to "R7 Spring" once GetObjectType works with spaces
+		GetObjectType(TempValue0, "R7Spring")
 
 		ArrayPos1 = Object.EntityNo
 		ArrayPos1++

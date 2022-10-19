@@ -15,7 +15,7 @@
 #alias 1	:	PLAYER_COL_FLOOR
 
 // Time Period Aliases
-#alias Object[24].PropertyValue : HUD.TimePeriod
+#alias Object[24].PropertyValue : HUD.CurrentTimePeriod
 
 #alias 0 : TIME_PRESENT
 #alias 1 : TIME_PAST
@@ -24,6 +24,10 @@
 
 // Ink Effect
 #alias 1 : INK_BLEND
+
+// Property Values
+#alias 0	:	CHILD_OBJECT
+#alias 1	:	PARENT_OBJECT
 
 
 sub ObjectMain
@@ -109,7 +113,7 @@ sub ObjectStartup
 	
 	// Rotating Log Frames
 	// Uses separate sprites for each time zone
-	switch HUD.TimePeriod
+	switch HUD.CurrentTimePeriod
 	case TIME_PRESENT
 		SpriteFrame(-8, -8, 16, 16, 35, 1)
 		break
@@ -135,7 +139,7 @@ sub ObjectStartup
 		
 			// See if the object is a Leading Log
 			switch Object[ArrayPos0].PropertyValue
-			case 1
+			case PARENT_OBJECT
 				// Set the starting angle of the next 7 Logs, as well as the current one
 				
 				Object[ArrayPos0].Angle = 504
@@ -206,7 +210,8 @@ sub RSDKDraw
 		if Object.PropertyValue == 1
 			TempValue0 = 504
 		else
-			GetObjectType(TempValue1, "Rotating Log")
+			// TODO: change this to "Rotating Log" once GetObjectType works with spaces
+			GetObjectType(TempValue1, "RotatingLog")
 			ArrayPos0 = Object.EntityNo
 			TempValue0 = 0
 

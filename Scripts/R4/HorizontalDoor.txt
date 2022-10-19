@@ -6,10 +6,10 @@
 #alias Object.Value0			:	Object.Timer
 
 // HUD alias
-#alias Object[24].PropertyValue	:	Hud.TimePeriod
+#alias Object[24].PropertyValue	:	HUD.CurrentTimePeriod
 
 // Push Button alias
-#alias Object[-1].PropertyValue :	PushButton.Pressed
+#alias Object.PropertyValue		:	PushButton.Pressed
 
 // Property Values
 // At startup is used to set it's direction, so 0 is facing right, 1 facing left
@@ -44,7 +44,7 @@ sub ObjectMain
 			end if
 		end if
 
-		if PushButton.Pressed == true
+		if PushButton[-1].Pressed == true
 			Object.PropertyValue = OPEN_DOOR
 		end if
 		break
@@ -83,7 +83,7 @@ end sub
 
 
 sub ObjectStartup
-	if Hud.TimePeriod < TIME_GOOD_FUTURE	// Past or Present?
+	if HUD.CurrentTimePeriod < 2	// Past or Present
 		LoadSpriteSheet("R4/Objects.gif")
 		SpriteFrame(-64, -8, 128, 16, 18, 69)	// Horizontal Door
 	else
@@ -93,7 +93,7 @@ sub ObjectStartup
 
 	ArrayPos0 = 32
 	while ArrayPos0 < 1056
-		if Object[ArrayPos0].Type == TypeName[HorizontalDoor]
+		if Object[ArrayPos0].Type == TypeName[Horizontal Door]
 			Object[ArrayPos0].Priority  = PRIORITY_XBOUNDS
 			Object[ArrayPos0].Direction = Object[ArrayPos0].PropertyValue
 			Object[ArrayPos0].PropertyValue = CLOSED_DOOR

@@ -28,8 +28,8 @@
 #alias Object.Value2			:	FloorRubble.YVelocity
 #alias Object.Value3			:	FloorRubble.FallSpeed
 
-// HUD aliases
-#alias Object[24].PropertyValue	:	HUD.TimePeriod
+// HUD Alias
+#alias Object[24].PropertyValue	:	HUD.CurrentTimePeriod
 
 // States
 #alias 0	:	FLOORCONTROL_INACTIVE
@@ -56,7 +56,7 @@
 
 
 function FloorControl_SpawnRubble
-	CreateTempObject(TypeName[FloorRubble], 0, Boss.XPos, Object.RubbleYPos)
+	CreateTempObject(TypeName[Floor Rubble], 0, Boss.XPos, Object.RubbleYPos)
 	Rand(FloorRubble[TempObjectPos].XPos, 160)
 	FloorRubble[TempObjectPos].XPos  -= 80
 	FloorRubble[TempObjectPos].XPos <<= 16
@@ -90,7 +90,7 @@ function FloorControl_SpawnPlatFarLeft
 		break
 	end switch
 	
-	Object[+ArrayPos0].Type = TypeName[BossPlatform]
+	Object[+ArrayPos0].Type = TypeName[Boss Platform]
 	BossPlat[+ArrayPos0].YPos 		= Object.RubbleYPos
 	BossPlat[+ArrayPos0].YVelocity  = 0
 	BossPlat[+ArrayPos0].FallSpeed  = 2816
@@ -113,7 +113,7 @@ function FloorControl_SpawnPlatLeft
 		break
 	end switch
 
-	Object[+ArrayPos0].Type = TypeName[BossPlatform]
+	Object[+ArrayPos0].Type = TypeName[Boss Platform]
 	BossPlat[+ArrayPos0].YPos 		= Object.RubbleYPos
 	BossPlat[+ArrayPos0].YVelocity  = 0
 	BossPlat[+ArrayPos0].FallSpeed  = 2816
@@ -136,7 +136,7 @@ function FloorControl_SpawnPlatRight
 		break
 	end switch
 
-	Object[+ArrayPos0].Type = TypeName[BossPlatform]
+	Object[+ArrayPos0].Type = TypeName[Boss Platform]
 	BossPlat[+ArrayPos0].YPos		= Object.RubbleYPos
 	BossPlat[+ArrayPos0].YVelocity	= 0
 	BossPlat[+ArrayPos0].FallSpeed	= 2816
@@ -159,7 +159,7 @@ function FloorControl_SpawnPlatFarRight
 		break
 	end switch
 
-	Object[+ArrayPos0].Type = TypeName[BossPlatform]
+	Object[+ArrayPos0].Type = TypeName[Boss Platform]
 	BossPlat[+ArrayPos0].YPos		= Object.RubbleYPos
 	BossPlat[+ArrayPos0].YVelocity	= 0
 	BossPlat[+ArrayPos0].FallSpeed	= 2816
@@ -267,7 +267,7 @@ sub ObjectMain
 			TempValue0 %= 35
 			if TempValue0 == 0
 				Object.SpikeAmount--
-				CreateTempObject(TypeName[BossSpike], 0, 0xAC00000, Object.RubbleYPos)
+				CreateTempObject(TypeName[Boss Spike], 0, 0xAC00000, Object.RubbleYPos)
 				Object[TempObjectPos].XPos += Object.XVelocity
 				if Object.XVelocity > 0
 					Object.XVelocity -= 0x200000
@@ -297,7 +297,7 @@ sub ObjectMain
 			Object.TargetFloor >>= 25
 			if Object.CurrentFloor < Object.TargetFloor
 				Object.CurrentFloor = Object.TargetFloor
-				CreateTempObject(TypeName[ElectricArc], 0, Boss.XPos, FirstElectrode.YPos)
+				CreateTempObject(TypeName[Electric Arc], 0, Boss.XPos, FirstElectrode.YPos)
 				TempValue0	 = Object.TargetFloor
 				TempValue0 <<= 25
 				TempValue0  += 0x20000
@@ -319,7 +319,7 @@ sub ObjectMain
 		if Object.Timer == 60
 			Object.Timer = 0
 			Object.State++
-			if HUD.TimePeriod == TIME_GOOD_FUTURE
+			if HUD.CurrentTimePeriod == TIME_GOOD_FUTURE
 				Copy16x16Tile(739, 827)
 			else
 				Copy16x16Tile(810, 863)
@@ -328,7 +328,7 @@ sub ObjectMain
 			TempValue0   = Object.Timer
 			TempValue0 >>= 1
 			TempValue0  %= 5
-			if HUD.TimePeriod == TIME_GOOD_FUTURE
+			if HUD.CurrentTimePeriod == TIME_GOOD_FUTURE
 				TempValue0 += 826
 				Copy16x16Tile(739, TempValue0)
 			else

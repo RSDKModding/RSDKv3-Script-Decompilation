@@ -3,12 +3,13 @@
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
 // Aliases
-#alias Object.Value0	:	Object.Timer
-#alias Object.Value1	:	Object.SpawnList
-#alias Object.Value2	:	Object.SpawnType		// Set by BGAnimation
+#alias Object.Value0		:	Object.Timer
+#alias Object.Value1		:	Object.SpawnList
+#alias Object.Value2		:	Object.SpawnType		// Set by BGAnimation
 
 // Blue Bird/ Slow Bird Alias
-#alias Object.Value2	:	Object.Wobble
+#alias Object.Value2		:	Object.Wobble
+#alias Object.PropertyValue	:	Object.WobbleIncrease
 
 // Spawn List
 // 0		- Blue Bird
@@ -21,6 +22,14 @@
 // States
 #alias 0	:	CHARACTERSPAWN_SETUP
 #alias 1	:	CHARACTERSPAWN_SPAWNER
+
+// UFO Property Values
+#alias 0	:	GREEN_UFO
+#alias 3	:	YELLOW_UFO
+
+// Shooting Star Property Values
+#alias 0	:	WHITE_STAR
+#alias 6	:	GREEN_STAR
 
 #function CharacterSpawn_SpawnBlueBird
 #function CharacterSpawn_SpawnShootStar
@@ -45,7 +54,7 @@ function CharacterSpawn_SpawnBlueBird
 		TempValue3  += TempValue4
 		TempValue3 <<= 16
 
-		CreateTempObject(TypeName[BlueBird], 0, TempValue2, TempValue3)
+		CreateTempObject(TypeName[Blue Bird], 0, TempValue2, TempValue3)
 		if TempValue0 < Screen.CenterX
 			Object[TempObjectPos].Direction = FACING_RIGHT
 		else
@@ -54,8 +63,8 @@ function CharacterSpawn_SpawnBlueBird
 		Object[TempObjectPos].Wobble = TempValue5	// Set the base wobble value
 		TempValue5 += 8
 		// Set the wobble increment value
-		Rand(Object[TempObjectPos].PropertyValue, 10)
-		Object[TempObjectPos].PropertyValue += 3
+		Rand(Object[TempObjectPos].WobbleIncrease, 10)
+		Object[TempObjectPos].WobbleIncrease += 3
 		TempValue1--
 	loop
 	// Spawn one slower blue bird
@@ -70,7 +79,7 @@ function CharacterSpawn_SpawnBlueBird
 	TempValue3  += TempValue4
 	TempValue3 <<= 16
 
-	CreateTempObject(TypeName[SlowBird], 0, TempValue2, TempValue3)
+	CreateTempObject(TypeName[Slow Bird], 0, TempValue2, TempValue3)
 	if TempValue0 < Screen.CenterX
 		Object[TempObjectPos].Direction = FACING_RIGHT
 	else
@@ -79,8 +88,8 @@ function CharacterSpawn_SpawnBlueBird
 	Object[TempObjectPos].Wobble = TempValue5	// Set the base wobble value
 	TempValue5 += 8
 	// Set the wobble increment value
-	Rand(Object[TempObjectPos].PropertyValue, 10)
-	Object[TempObjectPos].PropertyValue += 3
+	Rand(Object[TempObjectPos].WobbleIncrease, 10)
+	Object[TempObjectPos].WobbleIncrease += 3
 	TempValue1--
 end function
 
@@ -101,9 +110,9 @@ function CharacterSpawn_SpawnShootStar
 		// Define the color of the shooting star
 		Rand(TempValue4, 10)
 		if TempValue4 > 5
-			CreateTempObject(TypeName[ShootingStar], 6, TempValue2, TempValue3)
+			CreateTempObject(TypeName[Shooting Star], GREEN_STAR, TempValue2, TempValue3)
 		else
-			CreateTempObject(TypeName[ShootingStar], 0, TempValue2, TempValue3)
+			CreateTempObject(TypeName[Shooting Star], WHITE_STAR, TempValue2, TempValue3)
 		end if
 		TempValue1--
 	loop
@@ -126,7 +135,7 @@ function CharacterSpawn_SpawnSetup
 		TempValue0   = Screen.XSize
 		TempValue0  += 48
 		TempValue0 <<= 16
-		CreateTempObject(TypeName[TailsBiplane], 0, TempValue0, Object.YPos)
+		CreateTempObject(TypeName[Tails Biplane], 0, TempValue0, Object.YPos)
 		Object[TempObjectPos].Direction = FACING_LEFT
 		Object.SpawnList++
 		break
@@ -154,15 +163,15 @@ function CharacterSpawn_SpawnSetup
 		// Determine if spawns from the top or bottom of the screen
 		Rand(TempValue1, 64)
 		if TempValue1 > 40
-			CreateTempObject(TypeName[MetalSonic], 0, TempValue0, 0x10C0000)
+			CreateTempObject(TypeName[Metal Sonic], 0, TempValue0, 0x10C0000)
 		else
-			CreateTempObject(TypeName[MetalSonic], 0, TempValue0, -0x400000)
+			CreateTempObject(TypeName[Metal Sonic], 0, TempValue0, -0x400000)
 		end if
 		Object.SpawnList++
 		break
 
 	case 4
-		CreateTempObject(TypeName[TailsBiplane], 0, Object.XPos, Object.YPos)
+		CreateTempObject(TypeName[Tails Biplane], 0, Object.XPos, Object.YPos)
 		Object.SpawnList++
 		break
 
@@ -185,7 +194,7 @@ function CharacterSpawn_SpawnSetup
 		TempValue0   = Screen.XSize
 		TempValue0  += 48
 		TempValue0 <<= 16
-		CreateTempObject(TypeName[UFO], 0, TempValue0, Object.YPos)
+		CreateTempObject(TypeName[UFO], YELLOW_UFO, TempValue0, Object.YPos)
 		Object[TempObjectPos].Direction = FACING_LEFT
 		Object.SpawnList++
 		break
@@ -195,7 +204,7 @@ function CharacterSpawn_SpawnSetup
 		TempValue0   = Screen.XSize
 		TempValue0  += 48
 		TempValue0 <<= 16
-		CreateTempObject(TypeName[DrEggman], 6, TempValue0, 0xC00000)
+		CreateTempObject(TypeName[Dr Eggman], 6, TempValue0, 0xC00000)
 		Object[TempObjectPos].Direction = FACING_RIGHT
 		Object.SpawnList++
 		break
@@ -209,9 +218,9 @@ function CharacterSpawn_SpawnSetup
 		// Determine if spawns from the top or bottom of the screen
 		Rand(TempValue1, 64)
 		if TempValue1 > 40
-			CreateTempObject(TypeName[MetalSonic], 0, TempValue0, 0x10C0000)
+			CreateTempObject(TypeName[Metal Sonic], 0, TempValue0, 0x10C0000)
 		else
-			CreateTempObject(TypeName[MetalSonic], 0, TempValue0, -0x400000)
+			CreateTempObject(TypeName[Metal Sonic], 0, TempValue0, -0x400000)
 		end if
 		Object.SpawnList++
 		break
@@ -235,14 +244,14 @@ function CharacterSpawn_SpawnSetup
 		TempValue0   = Screen.XSize
 		TempValue0  += 48
 		TempValue0 <<= 16
-		CreateTempObject(TypeName[TailsBiplane], 0, TempValue0, Object.YPos)
+		CreateTempObject(TypeName[Tails Biplane], 0, TempValue0, Object.YPos)
 		Object[TempObjectPos].Direction = FACING_LEFT
 		Object.SpawnList++
 		break
 
 	case 11
-		CreateTempObject(TypeName[UFO], 3, Object.XPos, Object.YPos)
-		CreateTempObject(TypeName[UFO], 0, Object.XPos, Object.YPos)
+		CreateTempObject(TypeName[UFO], GREEN_UFO, Object.XPos, Object.YPos)
+		CreateTempObject(TypeName[UFO], YELLOW_UFO, Object.XPos, Object.YPos)
 		Object.SpawnList++
 		break
 
@@ -250,7 +259,7 @@ function CharacterSpawn_SpawnSetup
 		// Set Base XPos
 		TempValue0   = -48
 		TempValue0 <<= 16
-		CreateTempObject(TypeName[DrEggman], 6, TempValue0, 0xC00000)
+		CreateTempObject(TypeName[Dr Eggman], 6, TempValue0, 0xC00000)
 		Object[TempObjectPos].Direction = FACING_LEFT
 		Object.SpawnList = 0
 		break
@@ -262,7 +271,7 @@ end function
 sub ObjectMain
 	switch Object.State
 	case CHARACTERSPAWN_SETUP
-		CreateTempObject(TypeName[TailsBiplane], 0, Object.XPos, Object.YPos)
+		CreateTempObject(TypeName[Tails Biplane], 0, Object.XPos, Object.YPos)
 		Object.Timer = 380
 		Object.State++
 		break

@@ -45,8 +45,8 @@
 #alias Object.Type					:	BossWing.Type
 #alias Object.Priority				:	BossWing.Priority
 
-// HUD aliases
-#alias Object[24].PropertyValue		:	HUD.TimePeriod
+// HUD Alias
+#alias Object[24].PropertyValue		:	HUD.CurrentTimePeriod
 
 // Helper 2 States
 #alias 0	:	HELPER2_PREPARE_DETACH
@@ -348,7 +348,7 @@ function EggMobile_WingThrowVertical
 			ArrayPos0  = Object.EntityNo
 			ArrayPos0 -= 4
 			ArrayPos0 += Helper2.AnimSpeedState
-			Object[ArrayPos0].Type = TypeName[BossWing]
+			Object[ArrayPos0].Type = TypeName[Boss Wing]
 			BossWing[ArrayPos0].State	 = BOSSWING_FALL_VERTICAL
 			BossWing[ArrayPos0].Rotation = 0
 			BossWing[ArrayPos0].Timer	 = 0
@@ -438,7 +438,7 @@ end function
 
 function EggMobile_WingThrowDiagonal
 	if Helper2.AnimSpeedState < 1
-		Object[-1].Type   = TypeName[BossWing]
+		Object[-1].Type   = TypeName[Boss Wing]
 		BossWing[-1].State  = BOSSWING_FALL_VERTICAL
 		BossWing[-1].Timer  = 0
 		BossWing[-1].Frame  = 3
@@ -498,40 +498,40 @@ function EggMobile_RestoreWings
 	if Object.Timer == 0
 		switch Helper1.BossHealth
 		case 1
-			Object[-2].Type = TypeName[BossWing]
+			Object[-2].Type = TypeName[Boss Wing]
 			BossWing[-2].Frame    = 0
 			BossWing[-2].Attached = 1
 			break
 		case 2
-			Object[-2].Type = TypeName[BossWing]
+			Object[-2].Type = TypeName[Boss Wing]
 			BossWing[-2].Frame    = 0
 			BossWing[-2].Attached = 1
-			Object[-1].Type = TypeName[BossWing]
+			Object[-1].Type = TypeName[Boss Wing]
 			BossWing[-1].Frame    = 0
 			BossWing[-1].Attached = 1
 			break
 		case 3
-			Object[-3].Type = TypeName[BossWing]
+			Object[-3].Type = TypeName[Boss Wing]
 			BossWing[-3].Frame    = 0
 			BossWing[-3].Attached = 1
-			Object[-2].Type = TypeName[BossWing]
+			Object[-2].Type = TypeName[Boss Wing]
 			BossWing[-2].Frame    = 0
 			BossWing[-2].Attached = 1
-			Object[-1].Type = TypeName[BossWing]
+			Object[-1].Type = TypeName[Boss Wing]
 			BossWing[-1].Frame    = 0
 			BossWing[-1].Attached = 1
 			break
 		case 4
-			Object[-4].Type = TypeName[BossWing]
+			Object[-4].Type = TypeName[Boss Wing]
 			BossWing[-4].Frame    = 0
 			BossWing[-4].Attached = 1
-			Object[-3].Type = TypeName[BossWing]
+			Object[-3].Type = TypeName[Boss Wing]
 			BossWing[-3].Frame    = 0
 			BossWing[-3].Attached = 1
-			Object[-2].Type = TypeName[BossWing]
+			Object[-2].Type = TypeName[Boss Wing]
 			BossWing[-2].Frame    = 0
 			BossWing[-2].Attached = 1
-			Object[-1].Type = TypeName[BossWing]
+			Object[-1].Type = TypeName[Boss Wing]
 			BossWing[-1].Frame    = 0
 			BossWing[-1].Attached = 1
 			break
@@ -1363,7 +1363,7 @@ function EggMobile_Destroyed
 		TempValue0 += 0x800000
 		if Object.XPos > TempValue0
 			Object.Timer = 0
-			Object[+4].Type = TypeName[AmyRose]
+			Object[+4].Type = TypeName[Amy Rose]
 			Helper2.SecondaryState++
 		end if
 
@@ -1465,7 +1465,7 @@ function EggMobile_Destroyed_NoAmy
 		Player.Right = true
 		Object.Timer++
 		if Object.Timer == 120
-			Object[+5].Type			 = TypeName[FadeScreen]
+			Object[+5].Type			 = TypeName[Fade Screen]
 			Object[+5].PropertyValue = CUTSCENE_SKIP
 		end if
 		break
@@ -1600,7 +1600,7 @@ sub ObjectMain
 				TempValue1 <<= 16
 				TempValue1  += Object.YPos
 
-				CreateTempObject(TypeName[BossSpark], 0, TempValue0, TempValue1)
+				CreateTempObject(TypeName[Boss Spark], 0, TempValue0, TempValue1)
 				Object[TempObjectPos].InkEffect = INK_NONE
 				Object[TempObjectPos].Alpha = 248
 
@@ -1614,7 +1614,7 @@ sub ObjectMain
 				TempValue1 <<= 16
 				TempValue1  += Object.YPos
 
-				CreateTempObject(TypeName[BossSpark], 0, TempValue0, TempValue1)
+				CreateTempObject(TypeName[Boss Spark], 0, TempValue0, TempValue1)
 				Object[TempObjectPos].InkEffect = INK_NONE
 				Object[TempObjectPos].Alpha = 248
 			end if
@@ -1732,7 +1732,7 @@ sub ObjectPlayerInteraction
 						Object.Animation = EGGANI_DEFEAT
 						Object.Timer	 = 0
 						// Check if it's the bad future, for what? who knows
-						if HUD.TimePeriod == TIME_BAD_FUTURE
+						if HUD.CurrentTimePeriod == TIME_BAD_FUTURE
 							Object.State = EggMobile_Destroyed
 						else
 							Object.State = EggMobile_Destroyed
@@ -1955,7 +1955,7 @@ sub ObjectStartup
 
 	ArrayPos0 = 32
 	while ArrayPos0 < 1056
-		if Object[ArrayPos0].Type == TypeName[EggMobile]
+		if Object[ArrayPos0].Type == TypeName[Egg Mobile]
 			Object[ArrayPos0].DrawOrder = 2
 			Object[ArrayPos0].Type = TypeName[Blank Object]
 

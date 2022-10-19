@@ -27,6 +27,13 @@
 #alias 23	:	SFX_G_MENUBUTTON
 #alias 27	:	SFX_G_SELECT
 
+// Property Values
+#alias 0	:	BUTTON_EXIT
+#alias 1	:	BUTTON_ARROW_UP
+#alias 2	:	BUTTON_ARROW_DOWN
+#alias 3	:	BUTTON_ARROW_LEFT
+#alias 4	:	BUTTON_ARROW_RIGHT
+
 //Engine & CallBacks
 #alias 2	:	MESSAGE_LOSTFOCUS
 
@@ -46,32 +53,32 @@ sub ObjectMain
 
 	TempValue3   = TempValue2
 	switch Object.PropertyValue
-	case 0
+	case BUTTON_EXIT
 		TempValue1 += 64
 		TempValue2 -= 8
 		TempValue3 += 24
 		break
 
-	case 1
+	case BUTTON_ARROW_UP
 		TempValue1 += 48
 		TempValue2 -= 8
 		TempValue3 += 24
 		break
 		
-	case 2
+	case BUTTON_ARROW_DOWN
 		TempValue1 += 48
 		TempValue2 -= 8
 		TempValue3 += 24
 		break
 
-	case 3
+	case BUTTON_ARROW_LEFT
 		TempValue0 -= 8
 		TempValue1 += 32
 		TempValue2 -= 8
 		TempValue3 += 40
 		break
 		
-	case 4
+	case BUTTON_ARROW_RIGHT
 		TempValue0 -= 8
 		TempValue1 += 32
 		TempValue2 -= 8
@@ -91,31 +98,31 @@ sub ObjectMain
 		if CheckResult < 0
 			if Object.ButtonPressed == 1
 				switch Object.PropertyValue
-				case 0
+				case BUTTON_EXIT
 					MenuControl.State = MENUCONTROL_EXIT
 					StopMusic()
 					PlaySfx(SFX_G_SELECT, false)
 					break
 
-				case 1
+				case BUTTON_ARROW_UP
 					MenuControl.State = MENUCONTROL_BLANK
 					LEntry.State = LENTRY_MOVE_UP
 					PlaySfx(SFX_G_MENUBUTTON, false) 
 					break
 
-				case 2
+				case BUTTON_ARROW_DOWN
 					MenuControl.State = MENUCONTROL_BLANK
 					LEntry.State = LENTRY_MOVE_DOWN
 					PlaySfx(SFX_G_MENUBUTTON, false) 
 					break
 
-				case 3
+				case BUTTON_ARROW_LEFT
 					MenuControl.State = MENUCONTROL_BLANK
 					LEntry.State = LENTRY_MOVE_LEFT
 					PlaySfx(SFX_G_MENUBUTTON, false) 
 					break
 
-				case 4
+				case BUTTON_ARROW_RIGHT
 					MenuControl.State = MENUCONTROL_BLANK
 					LEntry.State = LENTRY_MOVE_RIGHT
 					PlaySfx(SFX_G_MENUBUTTON, false) 
@@ -159,14 +166,47 @@ end sub
 // Editor Subs
 // ========================
 
+sub RSDKEdit
+	if Editor.ReturnVariable == true
+		switch Editor.VariableID
+		case EDIT_VAR_PROPVAL // Property Value
+			CheckResult = Object.PropertyValue
+			break
+		case 0 // buttonType
+			CheckResult = Object.PropertyValue
+			break
+		end switch
+	else
+		switch Editor.VariableID
+		case EDIT_VAR_PROPVAL // Property Value
+			Object.PropertyValue = Editor.VariableValue
+			break
+		case 0 // buttonType
+			Object.PropertyValue = Editor.VariableValue
+			break
+		end switch
+	end if
+end sub
+
 sub RSDKDraw
-	DrawSprite(0)
+	DrawSprite(Object.PropertyValue)
 end sub
 
 
 sub RSDKLoad
-	LoadSpriteSheet("Global/Display.gif")
-	SpriteFrame(-16, -16, 32, 32, 1, 143)		// #0 - "Script" Icon
+	LoadSpriteSheet("LBoards/Leaderboards.gif")
 
-	SetVariableAlias(ALIAS_VAR_PROPVAL, "unused")
+	SpriteFrame(0, 0, 64, 20, 135, 34)	// #0 - Exit
+	SpriteFrame(0, 0, 48, 20, 200, 34)	// #2 - Up Arrow
+	SpriteFrame(0, 0, 48, 20, 249, 34)	// #4 - Down Arrow
+	SpriteFrame(0, 0, 24, 32, 223, 92)	// #6 - Left Arrow
+	SpriteFrame(0, 0, 24, 32, 273, 92)	// #8 - Right Arrow
+
+	AddEditorVariable("buttonType")
+	SetActiveVariable("buttonType")
+	AddEnumVariable("Exit Button", 0)
+	AddEnumVariable("Up Arrow", 1)
+	AddEnumVariable("Down Arrow", 2)
+	AddEnumVariable("Left Arrow", 3)
+	AddEnumVariable("Right Arrow", 4)
 end sub

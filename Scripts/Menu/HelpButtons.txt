@@ -18,9 +18,20 @@
 // Device Type
 #alias 1	:	RETRO_MOBILE
 
+// Help Menu States
+#alias 2	:	HELPMENU_CONTROLS
+#alias 3	:	HELPMENU_PAGEDOWN
+#alias 4	:	HELPMENU_PAGEUP
+#alias 5	:	HELPMENU_LEAVE
+
+// Property Values
+#alias 0	:	BUTTON_DOWN
+#alias 1	:	BUTTON_UP
+#alias 2	:	BUTTON_BACK
+
 
 sub ObjectMain
-	if Object.HelpState == 2
+	if Object.HelpState == HELPMENU_CONTROLS
 		if Engine.Message == MESSAGE_LOSTFOCUS
 			Object.ButtonPressed = 0
 		end if
@@ -42,52 +53,52 @@ sub ObjectMain
 			CheckTouchRect(0, 0, Screen.XSize, Screen.YSize)
 			if CheckResult < 0
 				switch Object.PropertyValue
-				case 0
+				case BUTTON_DOWN
 					if Object.ButtonPressed == true
 						Object.ButtonPressed = 0
 						if Object.CurrentPage < 8
 							PlaySfx(SFX_G_SELECT, false)
 							Object.HelpFade = 256
-							Object.HelpState = 3
+							Object.HelpState = HELPMENU_PAGEDOWN
 						end if
 					end if
 					break
 
-				case 1
+				case BUTTON_UP
 					if Object.ButtonPressed == 2
 						Object.ButtonPressed = 0
 						if Object.CurrentPage > 0
 							PlaySfx(SFX_G_SELECT, false)
-							Object.HelpState = 4
+							Object.HelpState = HELPMENU_PAGEUP
 						end if
 					end if
 					break
 
-				case 2
+				case BUTTON_BACK
 					if Object.ButtonPressed == 3
 						Object.ButtonPressed = 0
 						PlaySfx(SFX_G_OUTTAHERE, false) 
 						StopMusic()
-						Object.HelpState = 5
+						Object.HelpState = HELPMENU_LEAVE
 					end if
 					break
 
 				end switch
 			else
 				switch Object.PropertyValue
-				case 0
+				case BUTTON_DOWN
 					if Object.ButtonPressed == 1
 						Object.ButtonPressed = 0
 					end if
 					break
 
-				case 1
+				case BUTTON_UP
 					if Object.ButtonPressed == 2
 						Object.ButtonPressed = 0
 					end if
 					break
 
-				case 2
+				case BUTTON_BACK
 					if Object.ButtonPressed == 3
 						Object.ButtonPressed = 0
 					end if
@@ -103,21 +114,21 @@ end sub
 sub ObjectDraw
 	Object.Scale = 128
 	switch Object.PropertyValue
-	case 0
+	case BUTTON_DOWN
 		if Object.ButtonPressed == 1
 			DrawSpriteFX(1, FX_SCALE, Object.XPos, Object.YPos)
 		else
 			DrawSpriteFX(0, FX_SCALE, Object.XPos, Object.YPos)
 		end if
 		break
-	case 1
+	case BUTTON_UP
 		if Object.ButtonPressed == 2
 			DrawSpriteFX(3, FX_SCALE, Object.XPos, Object.YPos)
 		else
 			DrawSpriteFX(2, FX_SCALE, Object.XPos, Object.YPos)
 		end if
 		break
-	case 2
+	case BUTTON_BACK
 		if Object.ButtonPressed == 3
 			DrawSpriteFX(5, FX_SCALE, Object.XPos, Object.YPos)
 		else
@@ -157,7 +168,7 @@ sub ObjectStartup
 
 	ArrayPos0 = 32
 	while ArrayPos0 < 1056
-		if Object[ArrayPos0].Type == TypeName[HelpButtons]
+		if Object[ArrayPos0].Type == TypeName[Help Buttons]
 			Object[ArrayPos0].XPos += TempValue0
 		end if
 		ArrayPos0++

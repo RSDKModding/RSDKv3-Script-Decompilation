@@ -5,13 +5,16 @@
 // Note: We're using R7Eggman as a prefix here because there's like 5 "Eggman" objects in the game, it's less confusing this way
 
 // Aliases
-#alias Object.Value0 : Object.Timer
-#alias Object.Value1 : Object.XVelocity
-#alias Object.Value2 : Object.LaserActive
-#alias Object.Value3 : Object.DebrisTimer
-#alias Object.Value4 : Object.LastExplosion
-#alias Object.Value5 : Object.LaserOffset
-#alias Object.Value6 : Object.Acceleration
+#alias Object.Value0			: Object.Timer
+#alias Object.Value1			: Object.XVelocity
+#alias Object.Value2			: Object.LaserActive
+#alias Object.Value3			: Object.DebrisTimer
+#alias Object.Value4			: Object.LastExplosion
+#alias Object.Value5			: Object.LaserOffset
+#alias Object.Value6			: Object.Acceleration
+
+// HUD Alias
+#alias Object[24].PropertyValue	: HUD.CurrentTimePeriod
 
 // Initial few States
 #alias 0  : R7EGGMAN_AWAITPLAYER
@@ -80,11 +83,14 @@
 #alias 0 : OST_JP
 
 // Collision Sides
-#alias 0	:	CSIDE_FLOOR
+#alias 0 : CSIDE_FLOOR
 
 // Priority
-#alias 0	:	PRIORITY_BOUNDS
-#alias 1	:	PRIORITY_ACTIVE
+#alias 0 : PRIORITY_BOUNDS
+#alias 1 : PRIORITY_ACTIVE
+
+// Time Periods
+#alias 2 : TIME_GOOD_FUTURE
 
 
 // Function declarations
@@ -285,7 +291,7 @@ sub ObjectMain
 		if Object.Timer < 120
 			Object.Timer++
 		else
-			if Object[24].PropertyValue == 2
+			if HUD.CurrentTimePeriod == TIME_GOOD_FUTURE
 				// In the Bad Future nothing needs to happen, but if in the Good Future then start playing the Bad Future music
 				if Options.Soundtrack == OST_JP
 					SetMusicTrack("JP/R7D.ogg", 0, true)
@@ -505,7 +511,7 @@ sub ObjectMain
 			Object.Type = TypeName[Blank Object]
 			Object.Priority = PRIORITY_BOUNDS
 			
-			if Object[24].PropertyValue == 2
+			if HUD.CurrentTimePeriod == TIME_GOOD_FUTURE
 				// In the Bad Future nothing needs to change, but in the Good Future start playing the normal Good Future music again
 				if Options.Soundtrack == OST_JP
 					SetMusicTrack("JP/R7C.ogg", 0, 103060)

@@ -6,7 +6,10 @@
 #alias Object[23].Priority		:	StageSetup.Priority
 #alias Object[24].Priority		:	HUD.Priority
 #alias Object[24].DrawOrder		:	HUD.DrawOrder
-#alias Object[24].PropertyValue	:	HUD.TimePeriod
+#alias Object[24].PropertyValue	:	HUD.CurrentTimePeriod
+
+// Badnik Alias
+#alias Object.PropertyValue		:	Badnik.Quality
 
 // Player Aliases
 #alias Player.Value0			:	Player.Rings
@@ -54,6 +57,7 @@
 #alias 4	:	TRACK_BOSS
 #alias 5	:	TRACK_GAMEOVER
 
+
 // Time Period
 #alias 0	:	TIME_PRESENT
 #alias 2	:	TIME_GOOD_FUTURE
@@ -66,12 +70,14 @@
 
 function StageSetup_CheckGoodFuture
 	if Good_Future == true
-		if Object.PropertyValue > 0
+		// Destroying the transporters in the past will get rid of any badnik with bad condition in the present
+		if Badnik.Quality > 0
 			ResetObjectEntity(Object.EntityNo, Flower_TypeNo, 0, Object.XPos, Object.YPos)
 			Object.DrawOrder = 4
 			Object.State	 = FLOWER_SEED_FALL
 		else
-			if HUD.TimePeriod > TIME_PRESENT
+			// And get rid entirely of them in the past and good future
+			if HUD.CurrentTimePeriod > 0
 				ResetObjectEntity(Object.EntityNo, Flower_TypeNo, 0, Object.XPos, Object.YPos)
 				Object.DrawOrder = 4
 				Object.State	 = FLOWER_SEED_FALL
@@ -85,7 +91,7 @@ function StageSetup_SaveStageState
 	ArrayPos0 = 32
 	ArrayPos1 = 7168
 
-	TempValue1  = HUD.TimePeriod
+	TempValue1  = HUD.CurrentTimePeriod
 	TempValue1 += 4
 	// Checks and saves:
 	// Anything that doesn't exist anymore
@@ -94,26 +100,26 @@ function StageSetup_SaveStageState
 	// Anything that transformed into a flower
 	while ArrayPos0 < 1056
 		if Object[ArrayPos0].Type == TypeName[Blank Object]
-			SetBit(SaveRAM[ArrayPos1], HUD.TimePeriod, true)
+			SetBit(SaveRAM[ArrayPos1], HUD.CurrentTimePeriod, true)
 		else
-			if Object[ArrayPos0].Type == TypeName[BrokenMonitor]
-				SetBit(SaveRAM[ArrayPos1], HUD.TimePeriod, true)
+			if Object[ArrayPos0].Type == TypeName[Broken Monitor]
+				SetBit(SaveRAM[ArrayPos1], HUD.CurrentTimePeriod, true)
 			else
-				if Object[ArrayPos0].Type == TypeName[FuturePost]
+				if Object[ArrayPos0].Type == TypeName[Future Post]
 					if Object[ArrayPos0].State == FUTUREPOST_USED
-						SetBit(SaveRAM[ArrayPos1], HUD.TimePeriod, true)
+						SetBit(SaveRAM[ArrayPos1], HUD.CurrentTimePeriod, true)
 					else
-						SetBit(SaveRAM[ArrayPos1], HUD.TimePeriod, false)
+						SetBit(SaveRAM[ArrayPos1], HUD.CurrentTimePeriod, false)
 					end if
 				else
-					if Object[ArrayPos0].Type == TypeName[PastPost]
+					if Object[ArrayPos0].Type == TypeName[Past Post]
 						if Object[ArrayPos0].State == PASTPOST_USED
-							SetBit(SaveRAM[ArrayPos1], HUD.TimePeriod, true)
+							SetBit(SaveRAM[ArrayPos1], HUD.CurrentTimePeriod, true)
 						else
-							SetBit(SaveRAM[ArrayPos1], HUD.TimePeriod, false)
+							SetBit(SaveRAM[ArrayPos1], HUD.CurrentTimePeriod, false)
 						end if
 					else
-						SetBit(SaveRAM[ArrayPos1], HUD.TimePeriod, false)
+						SetBit(SaveRAM[ArrayPos1], HUD.CurrentTimePeriod, false)
 						if Object[ArrayPos0].Type == Flower_TypeNo
 							SetBit(SaveRAM[ArrayPos1], TempValue1, true)
 						else
@@ -133,7 +139,7 @@ function StageSetup_LoadStageState
 	ArrayPos0 = 32
 	ArrayPos1 = 7168
 
-	TempValue1  = HUD.TimePeriod
+	TempValue1  = HUD.CurrentTimePeriod
 	TempValue1 += 4
 	// Checks and loads:
 	// Anything that doesn't exist anymore
@@ -142,26 +148,26 @@ function StageSetup_LoadStageState
 	// Anything that transformed into a flower
 	while ArrayPos0 < 1056
 		if Object[ArrayPos0].Type == TypeName[Ring]
-			GetBit(TempValue0, SaveRAM[ArrayPos1], HUD.TimePeriod)
+			GetBit(TempValue0, SaveRAM[ArrayPos1], HUD.CurrentTimePeriod)
 			if TempValue0 == true
 				Object[ArrayPos0].Type = TypeName[Blank Object]
 			end if
 		else
 			if Object[ArrayPos0].Type == TypeName[Monitor]
-				GetBit(TempValue0, SaveRAM[ArrayPos1], HUD.TimePeriod)
+				GetBit(TempValue0, SaveRAM[ArrayPos1], HUD.CurrentTimePeriod)
 				if TempValue0 == true
-					Object[ArrayPos0].Type = TypeName[BrokenMonitor]
+					Object[ArrayPos0].Type = TypeName[Broken Monitor]
 					Object[ArrayPos0].State = BROKENMONITOR_BLANK
 				end if
 			else
-				if Object[ArrayPos0].Type == TypeName[FuturePost]
-					GetBit(TempValue0, SaveRAM[ArrayPos1], HUD.TimePeriod)
+				if Object[ArrayPos0].Type == TypeName[Future Post]
+					GetBit(TempValue0, SaveRAM[ArrayPos1], HUD.CurrentTimePeriod)
 					if TempValue0 == true
 						Object[ArrayPos0].State = FUTUREPOST_USED
 					end if
 				else
-					if Object[ArrayPos0].Type == TypeName[PastPost]
-						GetBit(TempValue0, SaveRAM[ArrayPos1], HUD.TimePeriod)
+					if Object[ArrayPos0].Type == TypeName[Past Post]
+						GetBit(TempValue0, SaveRAM[ArrayPos1], HUD.CurrentTimePeriod)
 						if TempValue0 == true
 							Object[ArrayPos0].State = PASTPOST_USED
 						end if
@@ -232,7 +238,7 @@ sub ObjectMain
 				end if
 
 				if game.playMode != BOOT_PLAYMODE_BOSSRUSH
-					Object[0].Type = TypeName[PlayerObject]
+					Object[0].Type = TypeName[Player Object]
 					CallFunction(Player_Kill)
 				end if
 			end if
@@ -246,7 +252,7 @@ sub ObjectMain
 		CheckEqual(Player.State, Player_State_Drown)
 		CheckResult |= TempValue0
 		if CheckResult == false
-			Object[0].Type = TypeName[PlayerObject]
+			Object[0].Type = TypeName[Player Object]
 			CallFunction(Player_Kill)
 		end if
 	end if
@@ -259,7 +265,7 @@ sub ObjectMain
 			Stage.Seconds		 = 59
 			Stage.MilliSeconds	 = 99
 			Stage.TimeEnabled	 = false
-			Object[0].Type		 = TypeName[PlayerObject]
+			Object[0].Type		 = TypeName[Player Object]
 			CallFunction(Player_Kill)
 		end if
 	end if
@@ -318,12 +324,12 @@ sub ObjectStartup
 
 	Stage.DeathBoundary   = Stage.YBoundary2
 	Stage.DeathBoundary <<= 16
-	Object[23].Type = TypeName[StageSetup]
+	Object[23].Type = TypeName[Stage Setup]
 	StageSetup.Priority = PRIORITY_ACTIVE
 
 	ArrayPos0 = 32
 	while ArrayPos0 < 1056
-		if Object[ArrayPos0].Type == TypeName[StageSetup]
+		if Object[ArrayPos0].Type == TypeName[Stage Setup]
 			ResetObjectEntity(ArrayPos0, TypeName[Blank Object], 0, 0, 0)
 		end if
 		ArrayPos0++
@@ -336,7 +342,7 @@ sub ObjectStartup
 			Object[24].Type	= TypeName[HUD]
 			HUD.Priority	= PRIORITY_ACTIVE
 			HUD.DrawOrder	= 6
-			HUD.TimePeriod	= Object[ArrayPos0].PropertyValue
+			HUD.CurrentTimePeriod	= Object[ArrayPos0].PropertyValue
 		end if
 		ArrayPos0++
 	loop
@@ -378,7 +384,7 @@ sub ObjectStartup
 		Player.Animation	= ANI_STOPPED
 	end if
 
-	if HUD.TimePeriod == TIME_GOOD_FUTURE
+	if HUD.CurrentTimePeriod == TIME_GOOD_FUTURE
 		Good_Future				= true
 		Transporter_Destroyed	= true
 	end if

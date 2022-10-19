@@ -26,8 +26,8 @@
 // R8 Setup Alias
 #alias Object[19].Value1		:	R8Setup.CurrentPalette
 
-// HUD Aliases
-#alias Object[24].PropertyValue	:	HUD.TimePeriod
+// HUD Alias
+#alias Object[24].PropertyValue	:	HUD.CurrentTimePeriod
 
 // States
 #alias 0	:	BOSSCURTAIN_WAIT_PLAYER
@@ -43,6 +43,9 @@
 // Tile Info
 #alias 0	:	TILEINFO_INDEX
 
+// Fade Music Property Values
+#alias 0	:	FADEMUSIC_TO_BOSS
+
 
 sub ObjectMain
 	switch Object.State
@@ -50,7 +53,7 @@ sub ObjectMain
 		if Player.XPos > Object.XPos
 			// This check doesn't make sense
 			// is a boss stage, you're already forced to be in the future
-			if HUD.TimePeriod > TIME_PAST
+			if HUD.CurrentTimePeriod > 1
 				if Options.Soundtrack == OST_JP
 					SetMusicTrack("JP/FinalBoss.ogg", 4, true)
 				else
@@ -67,25 +70,25 @@ sub ObjectMain
 			Object.Timer++
 			
 			if Object.Timer == 140
-				CreateTempObject(TypeName[Fade Music], 0, Object.XPos, Object.YPos)
+				CreateTempObject(TypeName[Fade Music], FADEMUSIC_TO_BOSS, Object.XPos, Object.YPos)
 			end if
 		else
 			Object.Timer = 0
 			R8Setup.CurrentPalette = 0
 			ArrayPos0 = Object.EntityNo
 			ArrayPos0 -= 3
-			Object[-3].Type = TypeName[EggMobile]
+			Object[-3].Type = TypeName[Egg Mobile]
 
-			Object[-7].Type = TypeName[BossWing]
+			Object[-7].Type = TypeName[Boss Wing]
 			BossWing[-7].EggMobileEntity = ArrayPos0
 
-			Object[-6].Type = TypeName[BossWing]
+			Object[-6].Type = TypeName[Boss Wing]
 			BossWing[-6].EggMobileEntity = ArrayPos0
 
-			Object[-5].Type = TypeName[BossWing]
+			Object[-5].Type = TypeName[Boss Wing]
 			BossWing[-5].EggMobileEntity = ArrayPos0
 
-			Object[-4].Type = TypeName[BossWing]
+			Object[-4].Type = TypeName[Boss Wing]
 			BossWing[-4].EggMobileEntity = ArrayPos0
 			
 			Helper1.BossHealth   = 4
@@ -210,7 +213,7 @@ sub ObjectStartup
 
 	ArrayPos0 = 32
 	while ArrayPos0 < 1056
-		if Object[ArrayPos0].Type == TypeName[BossCurtain]
+		if Object[ArrayPos0].Type == TypeName[Boss Curtain]
 			Object[ArrayPos0].Direction = FACING_LEFT
 			Object[ArrayPos0].DrawOrder = 2
 			Object[ArrayPos0].Alpha     = 224
