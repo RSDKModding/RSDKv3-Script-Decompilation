@@ -293,7 +293,6 @@ sub ObjectMain
 			Object.State = START_GOTO_MENU	// Select Menu
 		
 #platform: Use_Origins
-			
 			Object[+1].Type  = TypeName[Select]
 			Object[+1].iXPos = Screen.CenterX
 			Object[+1].iYPos = 200
@@ -495,10 +494,22 @@ sub ObjectDraw
 	if Object.AnimationTimer > 59
 		Object.AnimationTimer = 0
 	end if
+#endplatform
 
-	if Object.AnimationTimer > 29
-		DrawSprite(1)
-	end if
+#platform: Use_Standalone
+	#platform: Standard
+		if Object.AnimationTimer > 29
+			DrawSprite(0)
+		end if
+	#endplatform
+#endplatform
+
+#platform: Use_Standalone
+	#platform: Mobile
+		if Object.AnimationTimer > 29
+			DrawSprite(1)
+		end if
+	#endplatform
 #endplatform
 end sub
 
