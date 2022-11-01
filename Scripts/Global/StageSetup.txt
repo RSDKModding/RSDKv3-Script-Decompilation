@@ -58,9 +58,11 @@
 #alias 5	:	TRACK_GAMEOVER
 
 
-// Time Period
-#alias 0	:	TIME_PRESENT
-#alias 2	:	TIME_GOOD_FUTURE
+// Time Period Aliases
+#alias 0 : TIME_PRESENT
+#alias 1 : TIME_PAST
+#alias 2 : TIME_GOOD_FUTURE
+#alias 3 : TIME_BAD_FUTURE
 
 // Function declarations
 #function StageSetup_CheckGoodFuture
@@ -421,11 +423,12 @@ end sub
 // Editor Helpers
 // ========================
 
-// All the following is only to be used from Editor subs, using these in the game itself won't give desired results
-// None of these exist in the original game, these are all custom to the decomp
+// All the following are only to be used from Editor subs, using these in the actual game itself won't do much
+// None of these exist in the original game, they're all custom to the decomp
 
 #function EditorHelpers_DrawHitbox
 #function EditorHelpers_DrawX
+#function EditorHelpers_FindTimePeriod
 
 
 function EditorHelpers_DrawHitbox
@@ -441,10 +444,11 @@ function EditorHelpers_DrawHitbox
 	// - TempValue1 is the top hitbox size
 	// - TempValue2 is the right hitbox size
 	// - TempValue3 is the bottom hitbox size
+	//   - All these values are to be positive
 	
 	// Get the base 1:1 position of the object
 	TempValue4 = Object.iXPos
-	TempValue5 = Object.iXPos
+	TempValue5 = Object.iYPos
 	
 	// Move to its top left corner
 	TempValue4 -= TempValue0
@@ -454,7 +458,11 @@ function EditorHelpers_DrawHitbox
 	TempValue2 += TempValue0
 	TempValue3 += TempValue1
 	
-	DrawRectOutline(TempValue4, TempValue5, TempValue2, TempValue3, 255, 255, 255, 255)
+	// Turning iPos into normal Pos
+	TempValue4 <<= 16
+	TempValue5 <<= 16
+	
+	DrawRectOutline(TempValue4, TempValue5, TempValue2, TempValue3, 255, 255, 0, 255)
 	
 #endplatform
 	
@@ -492,6 +500,37 @@ function EditorHelpers_DrawX
 	
 	// TR-BL
 	DrawLine(TempValue3, TempValue4, TempValue2, TempValue5, 255, 0, 0)
+	
+#endplatform
+	
+end function
+
+
+function EditorHelpers_FindTimePeriod
+	
+#platform: Editor
+	
+	// This function is called in order to get the current Time Period
+	// Do note that this is inaccurate to how the game actually handles it, but since
+	//  we can't look at the HUD's property value instead we have to estimate based on the current stage's folder
+	
+	// Postconditions:
+	// - CheckResult holds the current time period
+	//   - If the current folder's name doesn't end in ABCD then Present time period will be assumed
+	
+	TempValue0 = TIME_PRESENT
+	
+	CheckCurrentStageFolder("B")
+	SetBit(TempValue0, 0, CheckResult)
+	
+	CheckCurrentStageFolder("C")
+	SetBit(TempValue0, 1, CheckResult)
+	
+	CheckCurrentStageFolder("D")
+	CheckResult *= TIME_BAD_FUTURE
+	TempValue0 += CheckResult
+	
+	CheckResult = TempValue0
 	
 #endplatform
 	

@@ -3,7 +3,7 @@
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
 // Aliases
-#alias Object.Value0	:	Object.DissapearTimer
+#alias Object.Value0	:	Object.Timer
 
 // Property Values
 #alias 0	:	TIMEWARPFIX_ERASE_TOUCH		// Touch this while trying to warp, no more time travel for you
@@ -29,6 +29,7 @@ sub ObjectMain
 						Warp.Destination = WARP_NONE
 					end if
 				end if
+				
 				Warp.Timer = 0
 			end if
 		end if
@@ -49,8 +50,8 @@ sub ObjectMain
 			Player.YPos = Object[+1].YPos
 		end if
 		
-		Object.DissapearTimer++
-		if Object.DissapearTimer == 2
+		Object.Timer++
+		if Object.Timer == 2
 			Object.Type = TypeName[Blank Object]
 		end if
 		break
@@ -64,8 +65,8 @@ sub ObjectMain
 			Player.Gravity = GRAVITY_AIR
 		end if
 		
-		Object.DissapearTimer++
-		if Object.DissapearTimer == 2
+		Object.Timer++
+		if Object.Timer == 2
 			Object.Type = TypeName[Blank Object]
 		end if
 		break
@@ -93,7 +94,6 @@ sub RSDKEdit
 		switch Editor.VariableID
 		case EDIT_VAR_PROPVAL // Property Value
 			CheckResult = Object.PropertyValue
-			CheckResult &= 3
 			break
 		case 0 // Type
 			CheckResult = Object.PropertyValue
@@ -104,7 +104,6 @@ sub RSDKEdit
 		switch Editor.VariableID
 		case EDIT_VAR_PROPVAL // Property Value
 			Object.PropertyValue = Editor.VariableValue
-			Object.PropertyValue &= 3
 			break
 		case 0 // Type
 			Object.PropertyValue = Editor.VariableValue
@@ -117,44 +116,45 @@ end sub
 
 sub RSDKDraw
 	DrawSprite(0)
-
+	
 	if Editor.ShowGizmos == true
+		Editor.DrawingOverlay = true
+		
+		TempValue0 = -1
+		
 		switch Object.PropertyValue
 		case TIMEWARPFIX_ERASE_TOUCH
-			// Draw the object's hitbox
-			// (Initial idea was to tile T icons instead, but for a size of 32x32, it didn't look too good)
-			TempValue0 = Object.iXPos
-			TempValue1 = Object.iYPos
-			TempValue0 -= 16
-			TempValue1 -= 16
-			DrawRectOutline(TempValue0, TempValue1, 32, 32, 255, 255, 255, 255)
+			TempValue0 = 16; TempValue1 = 16; TempValue2 = 16; TempValue3 = 16;
 			break
-
+			
+		case TIMEWARPFIX_ERASE_AREA
+			// Draw a rightward arrow, should convey what this object does well enough
+			TempValue1 = Object.XPos
+			TempValue1 += 0x380000
+			DrawArrow(Object.XPos, Object.YPos, TempValue1, Object.YPos, 0, 0, 255)
+			break
+			
 		case TIMEWARPFIX_SAVE_POINT
-			// Draw hitbox rectangle
-			TempValue0 = Object.iXPos
-			TempValue1 = Object.iYPos
-			TempValue0 -= 48
-			TempValue1 -= 48
-			DrawRectOutline(TempValue0, TempValue1, 96, 96, 255, 255, 255, 255)
+			TempValue0 = 48; TempValue1 = 48; TempValue2 = 48; TempValue3 = 48;
 			
 			// Draw an arrow to where the player will be sent
-			DrawArrow(Object.XPos, Object.YPos, Object[+1].XPos, Object[+1].YPos, 255, 255, 255)
+			DrawArrow(Object.XPos, Object.YPos, Object[+1].XPos, Object[+1].YPos, 255, 255, 0)
 			break
-
+			
 		case TIMEWARPFIX_SAVE_POINT_AIR
-			// Draw hitbox rectangle
-			TempValue0 = Object.iXPos
-			TempValue1 = Object.iYPos
-			TempValue0 -= 96
-			TempValue1 -= 96
-			DrawRectOutline(TempValue0, TempValue1, 192, 192, 255, 255, 255, 255)
+			TempValue0 = 96; TempValue1 = 96; TempValue2 = 96; TempValue3 = 96;
 			
 			// Draw an arrow to where the player will be sent
 			DrawArrow(Object.XPos, Object.YPos, Object[+1].XPos, Object[+1].YPos, 255, 255, 0)
 			break
 			
 		end switch
+		
+		if TempValue0 != -1
+			CallFunction(EditorHelpers_DrawHitbox)
+		end if
+		
+		Editor.DrawingOverlay = false
 	end if
 end sub
 
@@ -162,8 +162,7 @@ end sub
 sub RSDKLoad
 	LoadSpriteSheet("Global/Display.gif")
 	SpriteFrame(-8, -8, 16, 16, 173, 67) // "T" (rigger) Icon
-
-
+	
 	AddEditorVariable("Type")
 	SetActiveVariable("Type")
 	AddEnumVariable("Erase Time Warp on Touch", 0)

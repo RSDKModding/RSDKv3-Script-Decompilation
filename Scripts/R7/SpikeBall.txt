@@ -4,7 +4,7 @@
 
 // Aliases
 
-// Either X or Y-based, depending on the Object's Property Value
+// Can be either X or Y-based, depending on the Object's Property Value
 #alias Object.Value2			: Object.Velocity
 
 // Value3 is unused...
@@ -12,7 +12,7 @@
 // Timers
 // (These count towards the "Time" values, at which point states switch)
 #alias Object.Value0			: Object.PauseTimer
-#alias Object.Value1			: Object.SpikesOutTimer
+#alias Object.Value1			: Object.MoveTimer
 
 // Durations
 // (How long, in frames, the SpikeBall will do the action for)
@@ -41,18 +41,18 @@
 #alias 3 : TIME_BAD_FUTURE
 
 // Property Values
-#alias 0 : HORZ_SPIKE
-#alias 1 : VERT_SPIKE
+#alias 0 : SPIKEBALL_TYPE_H
+#alias 1 : SPIKEBALL_TYPE_V
 
 
 sub ObjectMain
-
+	
 	switch Object.State
 	
 	// Horizontal Spike Ball States
 	case SPIKEBALL_H_MOVERIGHT
-		if Object.SpikesOutTimer < Object.ShootTime
-			Object.SpikesOutTimer++
+		if Object.MoveTimer < Object.ShootTime
+			Object.MoveTimer++
 			Object.XPos += Object.Velocity
 		else
 			Object.State++
@@ -69,8 +69,8 @@ sub ObjectMain
 		break
 		
 	case SPIKEBALL_H_MOVELEFT
-		if Object.SpikesOutTimer > Object.RetractTime
-			Object.SpikesOutTimer--
+		if Object.MoveTimer > Object.RetractTime
+			Object.MoveTimer--
 			Object.XPos -= Object.Velocity
 		else
 			Object.State++
@@ -85,12 +85,12 @@ sub ObjectMain
 			Object.State = SPIKEBALL_H_MOVERIGHT
 		end if
 		break
-
-
+		
+		
 	// Vertical Spike Ball States
 	case SPIKEBALL_V_MOVEDOWN
-		if Object.SpikesOutTimer < Object.ShootTime
-			Object.SpikesOutTimer++
+		if Object.MoveTimer < Object.ShootTime
+			Object.MoveTimer++
 			Object.YPos += Object.Velocity
 		else
 			Object.State++
@@ -107,8 +107,8 @@ sub ObjectMain
 		break
 		
 	case SPIKEBALL_V_MOVEUP
-		if Object.SpikesOutTimer > Object.RetractTime
-			Object.SpikesOutTimer--
+		if Object.MoveTimer > Object.RetractTime
+			Object.MoveTimer--
 			Object.YPos -= Object.Velocity
 		else
 			Object.State++
@@ -130,12 +130,13 @@ end sub
 
 
 sub ObjectPlayerInteraction
+	
 	PlayerObjectCollision(C_TOUCH, -12, -12, 12, 12)
-
+	
 	if CheckResult == true
 		CallFunction(Player_Hit)
 	end if
-
+	
 end sub
 
 
@@ -153,8 +154,10 @@ sub ObjectStartup
 	ArrayPos0 = 32
 	while ArrayPos0 < 1056
 		if Object[ArrayPos0].Type == TypeName[Spike Ball]
-			if Object[ArrayPos0].PropertyValue == VERT_SPIKE
+		
+			if Object[ArrayPos0].PropertyValue == SPIKEBALL_TYPE_V
 				Object[ArrayPos0].State = SPIKEBALL_V_MOVEDOWN
+				
 				switch HUD.CurrentTimePeriod
 				case TIME_PRESENT
 					Object[ArrayPos0].Velocity = 0x20000
@@ -205,6 +208,7 @@ sub ObjectStartup
 					
 				end switch
 			end if
+			
 		end if
 		
 		ArrayPos0++
@@ -221,8 +225,6 @@ sub RSDKEdit
 	if Editor.ReturnVariable == true
 		switch Editor.VariableID
 		case EDIT_VAR_PROPVAL // Property Value
-			CheckResult = Object.PropertyValue
-			break
 		case 0 // Type
 			CheckResult = Object.PropertyValue
 			break
@@ -230,8 +232,6 @@ sub RSDKEdit
 	else
 		switch Editor.VariableID
 		case EDIT_VAR_PROPVAL // Property Value
-			Object.PropertyValue = Editor.VariableValue
-			break
 		case 0 // Type
 			Object.PropertyValue = Editor.VariableValue
 			break
@@ -245,6 +245,100 @@ sub RSDKDraw
 	
 	// TODO: it would be cool to see the path of the spike ball via an arrow
 	// however, spike movement is dependant on time period, so that complicates things...
+	// update: woahhh we live in post-Origns CheckCurrentStageFolder era now, i think that may be possible
+	// the following (as well as the time period func) are incredibly scuffed, bring them up to snuff eventually
+	
+	if Editor.ShowGizmos == true
+		Editor.DrawingOverlay = true
+		
+		CallFunction(EditorHelpers_FindTimePeriod)
+		
+		Object.InkEffect = 1
+		
+		if Object.PropertyValue == SPIKEBALL_TYPE_V
+			switch CheckResult
+			case TIME_PRESENT
+				Object.Velocity = 0x20000
+				Object.ShootTime = 16
+				Object.RetractTime = -16
+				Object.PauseTime = 40
+				break
+				
+			case TIME_PAST
+				Object.Velocity = 0x40000
+				Object.ShootTime = 8
+				Object.RetractTime = -8
+				Object.PauseTime = 60
+				break
+				
+			case TIME_GOOD_FUTURE
+			case TIME_BAD_FUTURE
+				Object.Velocity = 0x10000
+				Object.ShootTime = 32
+				Object.RetractTime = -32
+				Object.PauseTime = 20
+				break
+				
+			end switch
+			
+			TempValue0 = Object.Velocity
+			TempValue0 *= Object.ShootTime
+			
+			TempValue1 = Object.Velocity
+			TempValue1 *= Object.RetractTime
+			
+			TempValue0 += Object.YPos
+			TempValue1 += Object.YPos
+			
+			DrawSpriteFX(0, FX_INK, Object.XPos, TempValue0)
+			DrawSpriteFX(0, FX_INK, Object.XPos, TempValue1)
+			
+			DrawLine(Object.XPos, TempValue0, Object.XPos, TempValue1, 255, 255, 255)
+			
+		else
+			switch CheckResult
+			case TIME_PRESENT
+				Object.Velocity = 0x20000
+				Object.ShootTime = 24
+				Object.RetractTime = -24
+				Object.PauseTime = 40
+				break
+				
+			case TIME_PAST
+				Object.Velocity = 0x40000
+				Object.ShootTime = 12
+				Object.RetractTime = -12
+				Object.PauseTime = 60
+				break
+				
+			case TIME_GOOD_FUTURE
+			case TIME_BAD_FUTURE
+				Object.Velocity = 0x10000
+				Object.ShootTime = 48
+				Object.RetractTime = -48
+				Object.PauseTime = 20
+				break
+				
+			end switch
+			
+			TempValue0 = Object.Velocity
+			TempValue0 *= Object.ShootTime
+			
+			TempValue1 = Object.Velocity
+			TempValue1 *= Object.RetractTime
+			
+			TempValue0 += Object.XPos
+			TempValue1 += Object.XPos
+			
+			DrawSpriteFX(0, FX_INK, TempValue0, Object.YPos)
+			DrawSpriteFX(0, FX_INK, TempValue1, Object.YPos)
+			
+			DrawLine(TempValue0, Object.YPos, TempValue1, Object.YPos, 255, 255, 255)
+			
+		end if
+		
+		Editor.DrawingOverlay = false
+	end if
 end sub
 
 
@@ -254,6 +348,6 @@ sub RSDKLoad
 
 	AddEditorVariable("Type")
 	SetActiveVariable("Type")
-	AddEnumVariable("Horizontal", 0)
-	AddEnumVariable("Vertical",   1)
+	AddEnumVariable("Horizontal", SPIKEBALL_TYPE_H)
+	AddEnumVariable("Vertical",   SPIKEBALL_TYPE_V)
 end sub
