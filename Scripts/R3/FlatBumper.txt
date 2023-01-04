@@ -180,49 +180,87 @@ end sub
 // Editor Subs
 // ========================
 
+sub RSDKEdit
+	if Editor.ReturnVariable == true
+		switch Editor.VariableID
+		case EDIT_VAR_PROPVAL // Property Value
+		case 0 // Type
+			CheckResult = Object.PropertyValue
+			break
+		end switch
+	else
+		switch Editor.VariableID
+		case EDIT_VAR_PROPVAL // Property Value
+		case 0 // Type
+			Object.PropertyValue = Editor.VariableValue
+			break
+		end switch
+	end if
+end sub
+
+
 sub RSDKDraw
 	DrawSprite(0)
+	if object.PropertyValue == MOVE_HORIZONTALLY
+		TempValue0  = Object.XPos
+		TempValue0 += 0x600000
+
+		TempValue1  = Object.XPos
+		TempValue1 -= 0x600000
+
+		TempValue2  = Object.YPos
+		TempValue2 -= 0x100000
+
+		if Editor.ShowGizmos == true
+			Editor.DrawingOverlay = true
+			DrawRectOutline(TempValue1, TempValue2, 0xC0, 32, 255, 255, 0, 255)
+			DrawArrow(Object.XPos, Object.YPos, TempValue1, Object.YPos, 255, 255, 255, 0)
+			Editor.DrawingOverlay = false
+		end if
+		
+		DrawArrow(Object.XPos, Object.YPos, TempValue0, Object.YPos, 255, 128, 0, 0)
+	else
+		TempValue0  = Object.YPos
+		TempValue0 += 0x600000
+
+		TempValue1  = Object.YPos
+		TempValue1 -= 0x600000
+
+		TempValue2  = Object.XPos
+		TempValue2 -= 0x100000
+
+		if Editor.ShowGizmos == true
+			Editor.DrawingOverlay = true
+			DrawRectOutline(TempValue2, TempValue1, 0x32, 0xC0, 255, 255, 0, 255)
+			DrawArrow(Object.XPos, Object.YPos, Object.XPos, TempValue0, 255, 255, 255, 0)
+			Editor.DrawingOverlay = false
+		end if
+		
+		DrawArrow(Object.XPos, Object.YPos, Object.XPos, TempValue1, 255, 128, 0, 0)
+	end if
 end sub
 
 
 sub RSDKLoad
-	CheckCurrentStageFolder("R31A")
-	TempValue0  = CheckResult
-	CheckCurrentStageFolder("R31B")
-	TempValue0 |= CheckResult
-	CheckCurrentStageFolder("R32A")
-	TempValue0 |= CheckResult
-	CheckCurrentStageFolder("R32B")
-	TempValue0 |= CheckResult
-	if TempValue0 == true
+	CallFunction(EditorHelpers_FindTimePeriod)
+	switch CheckResult
+	case TIME_PRESENT
+	case TIME_PAST
 		LoadSpriteSheet("R3/Objects.gif")
-
 		SpriteFrame(-32, -16, 64, 32, 1, 75)
-	end if	
-
-	CheckCurrentStageFolder("R31C")
-	TempValue0  = CheckResult
-	CheckCurrentStageFolder("R32C")
-	TempValue0 |= CheckResult
-	CheckCurrentStageFolder("R33C")
-	TempValue0 |= CheckResult
-	if TempValue0 == true
+		break
+	case TIME_GOOD_FUTURE
 		LoadSpriteSheet("R3/Objects3.gif")
-
 		SpriteFrame(-32, -16, 64, 32, 132, 67)
-	end if
-
-	CheckCurrentStageFolder("R31D")
-	TempValue0  = CheckResult
-	CheckCurrentStageFolder("R32D")
-	TempValue0 |= CheckResult
-	CheckCurrentStageFolder("R33D")
-	TempValue0 |= CheckResult
-	if TempValue0 == true
+		break
+	case TIME_BAD_FUTURE
 		LoadSpriteSheet("R3/Objects3.gif")
-
 		SpriteFrame(-32, -16, 64, 32, 132, 100)
-	end if
+		break
+	end switch
 
-	SetVariableAlias(ALIAS_VAR_PROPVAL, "unused")
+	AddEditorVariable("Type")
+	SetActiveVariable("Type")
+	AddEnumVariable("Horiontal", MOVE_HORIZONTALLY)
+	AddEnumVariable("Horiontal", MOVE_VERTICALLY)
 end sub

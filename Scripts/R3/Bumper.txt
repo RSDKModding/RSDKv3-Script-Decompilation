@@ -30,7 +30,7 @@
 
 // Property Values
 // _G properties use R3Setup oscillation
-#alias 0	:	BUMPER_STILL
+#alias 0	:	BUMPER_STATIC
 #alias 1	:	BUMPER_RIGHT_TO_LEFT_G
 #alias 2	:	BUMPER_LEFT_TO_RIGHT_G
 #alias 3	:	BUMPER_TOP_TO_BOTTOM
@@ -215,8 +215,133 @@ end sub
 // Editor Subs
 // ========================
 
+sub RSDKEdit
+	if Editor.ReturnVariable == true
+		switch Editor.VariableID
+		case EDIT_VAR_PROPVAL // Property Value
+			CheckResult = Object.PropertyValue
+			break
+		case 0 // pattern
+			CheckResult = Object.PropertyValue
+			break
+		end switch
+	else
+		switch Editor.VariableID
+		case EDIT_VAR_PROPVAL // Property Value
+			Object.PropertyValue = Editor.VariableValue
+			break
+		case 0 // pattern
+			Object.PropertyValue = Editor.VariableValue
+			break
+		end switch
+	end if
+end sub
+
+
 sub RSDKDraw
 	DrawSprite(0)
+		switch Object.PropertyValue
+		case 1
+			TempValue0  = Object.XPos
+			TempValue0 -= 0x300000
+			TempValue1  = Object.XPos
+			TempValue1 += 0x300000
+			TempValue2  = Object.YPos
+			TempValue2 -= 0x100000
+
+			if Editor.ShowGizmos == true
+				Editor.DrawingOverlay = true
+				DrawRectOutline(TempValue0, TempValue2, 0x60, 32, 255, 255, 0, 255)
+				DrawArrow(Object.XPos, Object.YPos, TempValue0, Object.YPos, 255, 255, 255, 0)
+				Editor.DrawingOverlay = false
+			end if
+			DrawArrow(Object.XPos, Object.YPos, TempValue1, Object.YPos, 255, 128, 0, 0)
+			break
+		case 2
+			TempValue0  = Object.XPos
+			TempValue0 += 0x300000
+			TempValue1  = Object.XPos
+			TempValue1 -= 0x300000
+			TempValue2  = Object.YPos
+			TempValue2 -= 0x100000
+
+			if Editor.ShowGizmos == true
+				Editor.DrawingOverlay = true
+				DrawRectOutline(TempValue0, TempValue2, -0x60, 32, 255, 255, 0, 255)
+				DrawArrow(Object.XPos, Object.YPos, TempValue0, Object.YPos, 255, 255, 255, 0)
+				Editor.DrawingOverlay = false
+			end if
+
+			DrawArrow(Object.XPos, Object.YPos, TempValue1, Object.YPos, 255, 128, 0, 0)
+			break
+		case 3
+			TempValue0  = Object.XPos
+			TempValue0 -= 0x100000
+			TempValue1  = Object.YPos
+			TempValue1 -= 0x380000
+			TempValue2  = Object.YPos
+			TempValue2 += 0x380000
+
+			if Editor.ShowGizmos == true
+				Editor.DrawingOverlay = true
+				DrawRectOutline(TempValue0, TempValue1, 32, 0x70, 255, 255, 0, 255)
+				DrawArrow(Object.XPos, Object.YPos, Object.XPos, TempValue1, 255, 255, 255, 0)
+				Editor.DrawingOverlay = false
+			end if
+
+			DrawArrow(Object.XPos, Object.YPos, Object.XPos, TempValue2, 255, 128, 0, 0)
+			break
+		case 5
+			TempValue0  = Object.XPos
+			TempValue0 -= 0x100000
+			TempValue1  = Object.YPos
+			TempValue1 -= 0x300000
+			TempValue2  = Object.YPos
+			TempValue2 += 0x300000
+
+			if Editor.ShowGizmos == true
+				Editor.DrawingOverlay = true
+				DrawRectOutline(TempValue0, TempValue1, 32, 0x60, 255, 255, 0, 255)
+				DrawArrow(Object.XPos, Object.YPos, Object.XPos, TempValue1, 255, 255, 255, 0)
+				Editor.DrawingOverlay = false
+			end if
+
+			DrawArrow(Object.XPos, Object.YPos, Object.XPos, TempValue2, 255, 128, 0, 0)
+			break
+
+		case 4
+			TempValue0  = Object.XPos
+			TempValue0 -= 0x100000
+			TempValue1  = Object.YPos
+			TempValue1 += 0x380000
+			TempValue2  = Object.YPos
+			TempValue2 -= 0x380000
+
+			if Editor.ShowGizmos == true
+				Editor.DrawingOverlay = true
+				DrawRectOutline(TempValue0, TempValue1, 32, -0x70, 255, 255, 0, 255)
+				DrawArrow(Object.XPos, Object.YPos, Object.XPos, TempValue1, 255, 255, 255, 0)
+				Editor.DrawingOverlay = false
+			end if
+			DrawArrow(Object.XPos, Object.YPos, Object.XPos, TempValue2, 255, 128, 0, 0)
+			break
+		case 6
+			TempValue0  = Object.XPos
+			TempValue0 -= 0x100000
+			TempValue1  = Object.YPos
+			TempValue1 += 0x300000
+			TempValue2  = Object.YPos
+			TempValue2 -= 0x300000
+
+			if Editor.ShowGizmos == true
+				Editor.DrawingOverlay = true
+				DrawRectOutline(TempValue0, TempValue1, 32, -0x60, 255, 255, 0, 255)
+				DrawArrow(Object.XPos, Object.YPos, Object.XPos, TempValue1, 255, 255, 255, 0)
+				Editor.DrawingOverlay = false
+			end if
+			DrawArrow(Object.XPos, Object.YPos, Object.XPos, TempValue2, 255, 128, 0, 0)
+			break
+		end switch
 end sub
 
 
@@ -225,5 +350,13 @@ sub RSDKLoad
 
 	SpriteFrame(-16, -16, 32, 32, 67, 167)		// #0 - Bumper
 
-	SetVariableAlias(ALIAS_VAR_PROPVAL, "unused")
+	AddEditorVariable("Pattern")
+	SetActiveVariable("Pattern")
+	AddEnumVariable("Static", BUMPER_STATIC)
+	AddEnumVariable("Right to Left (Global Sync)", BUMPER_RIGHT_TO_LEFT_G)
+	AddEnumVariable("Left to Right (Global Sync)", BUMPER_LEFT_TO_RIGHT_G)
+	AddEnumVariable("Top to Bottom", BUMPER_TOP_TO_BOTTOM)
+	AddEnumVariable("Bottom to Top", BUMPER_BOTTOM_TO_TOP)
+	AddEnumVariable("Top to Bottom (Global Sync)", BUMPER_TOP_TO_BOTTOM_G)
+	AddEnumVariable("Bottom to Top (Global Sync)", BUMPER_BOTTOM_TO_TOP_G)
 end sub

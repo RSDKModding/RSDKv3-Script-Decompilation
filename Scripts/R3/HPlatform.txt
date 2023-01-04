@@ -11,15 +11,15 @@
 #alias Object.Value5	:	Object.Angle
 
 // Property Values
-#alias 0	:	HPLATFORM_START_LEFT
-#alias 1	:	HPLATFORM_START_RIGHT
+#alias 0	:	START_MOVING_LEFT
+#alias 1	:	START_MOVING_RIGHT
 
 
 sub ObjectMain
 	Object.Angle  = Oscillation
 	Object.Angle *= 3
 	
-	if Object.PropertyValue == HPLATFORM_START_RIGHT
+	if Object.PropertyValue == START_MOVING_RIGHT
 		Object.Angle += 256
 	end if
 
@@ -30,7 +30,6 @@ sub ObjectMain
 	Object.XVelocity -= Object.XCollisionOffset
 
 	if Object.OnObject == true
-	
 		if Object.Timer < 16
 			Object.Timer++
 			TempValue0  = Object.Timer
@@ -45,11 +44,8 @@ sub ObjectMain
 		else
 			Object.YVelocity = 0
 		end if
-
 	else
-
 		if Object.Timer > 0
-
 			Object.Timer--
 			TempValue0  = Object.Timer
 			TempValue0 &= 3
@@ -58,11 +54,9 @@ sub ObjectMain
 			else
 				Object.YVelocity = 0
 			end if
-
 		else
 			Object.YVelocity = 0
 		end if
-
 	end if
 	Object.OnObject = true
 end sub
@@ -132,6 +126,48 @@ end sub
 
 sub RSDKDraw
 	DrawSprite(0)
+		switch Object.PropertyValue
+	case START_MOVING_LEFT
+		TempValue1 = 255
+		TempValue2 = 255
+		TempValue3 = 128
+		TempValue4 = 0
+		break
+	case START_MOVING_RIGHT
+		TempValue1 = 128
+		TempValue2 = 0
+		TempValue3 = 255
+		TempValue4 = 255
+		break
+	end switch
+
+	TempValue0   = Object.XPos
+	TempValue0  -= 0x620000
+	TempValue5   = Object.YPos
+	TempValue5  -= 0x100000
+	if object.PropertyValue == START_MOVING_LEFT
+		if Editor.ShowGizmos == true
+			Editor.DrawingOverlay = true
+			DrawRectOutline(TempValue0, TempValue5, 0xC4, 0x20, 255, 255, 255, 255)
+			DrawArrow(Object.XPos, Object.YPos, TempValue0, Object.YPos, 255, TempValue1, TempValue2, 0)
+			Editor.DrawingOverlay = false
+		end if
+	else
+		DrawArrow(Object.XPos, Object.YPos, TempValue0, Object.YPos, 255, TempValue1, TempValue2, 0)
+	end if
+	
+	TempValue0   = Object.XPos
+	TempValue0  += 0x620000
+	if object.PropertyValue == START_MOVING_RIGHT
+		if Editor.ShowGizmos == true
+			Editor.DrawingOverlay = true
+			DrawRectOutline(TempValue0, TempValue5, 0xC4, 0x20, 255, 255, 255, 255)
+			DrawArrow(Object.XPos, Object.YPos, TempValue0, Object.YPos, 255, TempValue3, TempValue4, 0)
+			Editor.DrawingOverlay = false
+		end if
+	else
+		DrawArrow(Object.XPos, Object.YPos, TempValue0, Object.YPos, 255, TempValue3, TempValue4, 0)
+	end if
 end sub
 
 
@@ -142,6 +178,6 @@ sub RSDKLoad
 
 	AddEditorVariable("startDir")
 	SetActiveVariable("startDir")
-	AddEnumVariable("Left", 0)
-	AddEnumVariable("Right", 1)
+	AddEnumVariable("Left", START_MOVING_LEFT)
+	AddEnumVariable("Right", START_MOVING_RIGHT)
 end sub

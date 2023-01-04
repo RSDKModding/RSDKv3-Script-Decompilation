@@ -262,7 +262,7 @@ sub ObjectPlayerInteraction
 		end if
 		break
 
-	case RAMP3D_RUN_FROM_TOP
+	case RAMP3D_RUN_FROM_TOP // Technically speaking another YBound-like object
 		if Player.XPos > Object.XPos
 			Stage.YBoundary2 = 1024
 			if Player.Gravity == GRAVITY_GROUND
@@ -311,6 +311,7 @@ sub ObjectPlayerInteraction
 			Object[15].Type = TypeName[Background FX]
 			Object[15].Priority = PRIORITY_ACTIVE
 			Object[15].DrawOrder = 0
+
 			ArrayPos0 = 0
 			while ArrayPos0 < 2
 				HParallax[ArrayPos0].ScrollPos = 0
@@ -375,17 +376,159 @@ end sub
 
 
 sub RSDKDraw
-	DrawSprite(0)
+	// RE2 why i have to do it like this so you don't decide to corrupt the Y sprite? >:(
+	RemoveSpriteSheet("Global/Display.gif")
+	RemoveSpriteSheet("Players/Sonic2.gif")
+	RemoveSpriteSheet("Players/Sonic3.gif")
+	switch object.PropertyValue
+	case 0
+		LoadSpriteSheet("Players/Sonic2.gif")
+		Object.InkEffect = 1
+		DrawSpriteFX(3,FX_INK, Object.XPos, Object.YPos)
+		Object.InkEffect = 0
+		if Editor.ShowGizmos == true
+			Editor.DrawingOverlay = true
+			TempValue1  = Object.YPos
+			TempValue1 -= 0xC00000
+			DrawArrow(Object.XPos, Object.YPos, Object.XPos, TempValue1, 255, 255, 0)
+			Editor.DrawingOverlay = false
+		end if
+		break
+	case 1
+	case 8
+		LoadSpriteSheet("Players/Sonic2.gif")
+		Object.InkEffect = 1
+		DrawSpriteFX(3,FX_INK, Object.XPos, Object.YPos)
+		Object.InkEffect = 0
+		if Editor.ShowGizmos == true
+			Editor.DrawingOverlay = true
+			TempValue0  = Object.XPos
+			TempValue0 += 0x800000
+			TempValue1  = Object.YPos
+			TempValue1 -= 0xE00000
+			DrawArrow(Object.XPos, Object.YPos, TempValue0, TempValue1, 255, 255, 0)
+			Editor.DrawingOverlay = false
+		end if
+		break
+	case 2
+		LoadSpriteSheet("Players/Sonic2.gif")
+		Object.InkEffect = 1
+		DrawSpriteFX(3,FX_INK, Object.XPos, Object.YPos)
+		Object.InkEffect = 0
+		if Editor.ShowGizmos == true
+			Editor.DrawingOverlay = true
+			TempValue0  = Object.XPos
+			TempValue0 += 0x400000
+			TempValue1  = Object.YPos
+			TempValue1 -= 0xC00000
+			DrawArrow(Object.XPos, Object.YPos, TempValue0, TempValue1, 255, 255, 0)
+			Editor.DrawingOverlay = false
+		end if
+		break
+	case 3
+	case 6
+		LoadSpriteSheet("Global/Display.gif")
+		TempValue0  = Object.XPos
+		TempValue0 -= 0x100000
+		TempValue1  = Object.YPos
+		TempValue1 -= 0x100000
+		DrawRectWorld(TempValue0,TempValue1,32,32,96,96,192,255)
+
+		TempValue0  = Object.XPos
+		TempValue0 -= 0x80000
+		TempValue1  = Object.YPos
+		TempValue1 -= 0x80000
+		DrawSpriteXY(1, TempValue0, TempValue1)
+
+		TempValue0 += 0x100000
+		DrawSpriteXY(1, TempValue0, TempValue1)
+
+		TempValue1 += 0x100000
+		DrawSpriteXY(1, TempValue0, TempValue1)
+
+		TempValue0 -= 0x100000
+		DrawSpriteXY(1, TempValue0, TempValue1)
+		break
+	case 7
+		LoadSpriteSheet("Global/Display.gif")
+		TempValue0  = Object.XPos
+		TempValue0 -= 0x100000
+		TempValue1  = Object.YPos
+		TempValue1 -= 0xC0000
+		DrawSpriteXY(1, TempValue0, TempValue1)
+
+		RemoveSpriteSheet("Global/Display.gif")
+		LoadSpriteSheet("Players/Sonic2.gif")
+		Object.InkEffect = 1
+		DrawSpriteFX(2, FX_INK, Object.XPos, Object.YPos)
+		Object.InkEffect = 0
+
+		if Editor.ShowGizmos == true
+			Editor.DrawingOverlay = true
+			TempValue0  = Object.XPos
+			TempValue0 -= 0x200000
+			DrawArrow(Object.XPos, Object.YPos, TempValue0, Object.YPos, 255, 255, 0)
+			Editor.DrawingOverlay = false
+		end if
+		break
+	case 4
+		LoadSpriteSheet("Players/Sonic2.gif")
+		Object.InkEffect = 1
+		DrawSpriteFX(2, FX_INK, Object.XPos, Object.YPos)
+		Object.InkEffect = 0
+
+		if Editor.ShowGizmos == true
+			Editor.DrawingOverlay = true
+			TempValue0  = Object.XPos
+			TempValue0 += 0x200000
+			DrawArrow(Object.XPos, Object.YPos, TempValue0, Object.YPos, 255, 255, 0)
+
+
+			Editor.DrawingOverlay = false
+		end if
+		break
+	case 5
+		LoadSpriteSheet("Players/Sonic3.gif")
+		Object.InkEffect = 1
+		DrawSpriteFX(4, FX_INK, Object.XPos, Object.YPos)
+		Object.InkEffect = 0
+		if Editor.ShowGizmos == true
+			Editor.DrawingOverlay = true
+			TempValue0  = Object.YPos
+			TempValue0 += 0x200000
+			DrawArrow(Object.XPos, Object.YPos, Object.XPos, TempValue0, 255, 255, 0)
+			Editor.DrawingOverlay = false
+		end if
+		break
+	default
+		LoadSpriteSheet("Global/Display.gif")
+		DrawSprite(0)
+	end switch
 end sub
 
 
 sub RSDKLoad
 	LoadSpriteSheet("Global/Display.gif")
-	SpriteFrame(-16, -16, 32, 32, 1, 143)		// #0 - "Script" Icon
+	SpriteFrame(-16, -16, 32, 32, 1, 143)	// #0 - "Script" Icon
+	SpriteFrame(-4, -4, 8, 8, 10, 98)		// #1 - "Y"
+
+	LoadSpriteSheet("Players/Sonic2.gif")
+	SpriteFrame(-20, -20, 40, 40, 133, 171)	// #2 - Sonic 3D Ramp Enter
+	SpriteFrame(-16, -20, 32, 40, 1, 169)	// #3 - Sonic 3D Ramp Exit
+
+	LoadSpriteSheet("Players/Sonic3.gif")
+	SpriteFrame(-20, -24, 40, 48, 1, 83)	// #4 - Sonic 3D Ramp Drop
 
 
 	AddEditorVariable("type")
 	SetActiveVariable("type")
 	AddEnumVariable("3D Ramp Run", 0)
+	AddEnumVariable("3D Ramp Exit Boost (Unused)", 1)
+	AddEnumVariable("3D Ramp Exit ", 2)
+	AddEnumVariable("3D Ramp (Set YBound)", 3)
 	AddEnumVariable("3D Ramp Start", 4)
+	AddEnumVariable("3D Ramp Drop", 5)
+	AddEnumVariable("3D Ramp (Set YBound 2)", 6)
+	AddEnumVariable("3D Ramp Top Run", 7)
+	AddEnumVariable("3D Ramp Exit Boost", 8)
 end sub

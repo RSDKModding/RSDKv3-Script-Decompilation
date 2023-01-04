@@ -145,48 +145,26 @@ end sub
 // ========================
 
 sub RSDKDraw
-	Object.InkEffect = 2
-	Object.Alpha = 128
+	Object.InkEffect = 1
 	DrawSpriteFX(0, FX_INK, Object.XPos, Object.YPos)
 end sub
 
 
 sub RSDKLoad
 	LoadSpriteSheet("R3/Objects3.gif")
-
-	CheckCurrentStageFolder("R31A")
-	TempValue0  = CheckResult
-	CheckCurrentStageFolder("R32A")
-	TempValue0 |= CheckResult
-	if TempValue0 == true
+	CallFunction(EditorHelpers_FindTimePeriod)
+	switch CheckResult
+	case TIME_PRESENT
 		SpriteFrame(-16, -16, 32, 32, 66, 1)
-	end if	
-
-	CheckCurrentStageFolder("R31B")
-	TempValue0|= CheckResult
-	CheckCurrentStageFolder("R32B")
-	TempValue0 |= CheckResult
-	if TempValue0 == true
+		break
+	case TIME_PAST
 		SpriteFrame(-16, -16, 32, 32, 66, 34)
-	end if	
-
-	CheckCurrentStageFolder("R31C")
-	TempValue0  = CheckResult
-	CheckCurrentStageFolder("R32C")
-	TempValue0 |= CheckResult
-	CheckCurrentStageFolder("R33C")
-	TempValue0 |= CheckResult
-	if TempValue0 == true
+		break
+	case TIME_GOOD_FUTURE
 		SpriteFrame(-16, -16, 32, 32, 66, 67)
-	end if
-
-	CheckCurrentStageFolder("R31D")
-	TempValue0  = CheckResult
-	CheckCurrentStageFolder("R32D")
-	TempValue0 |= CheckResult
-	CheckCurrentStageFolder("R33D")
-	TempValue0 |= CheckResult
-	if TempValue0 == true
+		break
+	case TIME_BAD_FUTURE
 		SpriteFrame(-16, -16, 32, 32, 66, 100)
-	end if
+		break
+	end switch
 end sub

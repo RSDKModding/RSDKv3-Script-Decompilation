@@ -91,29 +91,46 @@ sub RSDKDraw
 
 	DrawSprite(0)
 
-	if Editor.ShowGizmos == true
-		switch Object.PropertyValue
-		case START_MOVING_DOWN
-			TempValue1 = 255
-			TempValue2 = 255
-			TempValue3 = 128
-			TempValue4 = 0
-			break
-		case START_MOVING_UP
-			TempValue1 = 128
-			TempValue2 = 0
-			TempValue3 = 255
-			TempValue4 = 255
-			break
-		end switch
+	switch Object.PropertyValue
+	case START_MOVING_DOWN
+		TempValue1 = 255
+		TempValue2 = 255
+		TempValue3 = 128
+		TempValue4 = 0
+		break
+	case START_MOVING_UP
+		TempValue1 = 128
+		TempValue2 = 0
+		TempValue3 = 255
+		TempValue4 = 255
+		break
+	end switch
 
-		TempValue0   = Object.iYPos
-		TempValue0  -= 98
-		TempValue0 <<= 16
+	TempValue0   = Object.YPos
+	TempValue0  -= 0x620000
+	TempValue5   = Object.XPos
+	TempValue5  -= 0x200000
+	if object.PropertyValue == START_MOVING_DOWN
+		if Editor.ShowGizmos == true
+			Editor.DrawingOverlay = true
+			DrawRectOutline(TempValue5, TempValue0, 0x40, 0xC4, 255, 255, 255, 255)
+			DrawArrow(Object.XPos, Object.YPos, Object.XPos, TempValue0, 255, TempValue1, TempValue2, 0)
+			Editor.DrawingOverlay = false
+		end if
+	else
 		DrawArrow(Object.XPos, Object.YPos, Object.XPos, TempValue0, 255, TempValue1, TempValue2, 0)
-		TempValue0   = Object.iYPos
-		TempValue0  += 98
-		TempValue0 <<= 16
+	end if
+
+	TempValue0   = Object.YPos
+	TempValue0  += 0x620000
+	if object.PropertyValue == START_MOVING_UP
+		if Editor.ShowGizmos == true
+			Editor.DrawingOverlay = true
+			DrawRectOutline(TempValue5, TempValue0, 0x40, 0xC4, 255, 255, 255, 255)
+			DrawArrow(Object.XPos, Object.YPos, Object.XPos, TempValue0, 255, TempValue3, TempValue4, 0)
+			Editor.DrawingOverlay = false
+		end if
+	else
 		DrawArrow(Object.XPos, Object.YPos, Object.XPos, TempValue0, 255, TempValue3, TempValue4, 0)
 	end if
 end sub
@@ -127,6 +144,6 @@ sub RSDKLoad
 	AddEditorVariable("startDir")
 	SetActiveVariable("startDir")
 	
-	AddEnumVariable("Down", 0)
-	AddEnumVariable("Up", 1)
+	AddEnumVariable("Down", START_MOVING_DOWN)
+	AddEnumVariable("Up", START_MOVING_UP)
 end sub

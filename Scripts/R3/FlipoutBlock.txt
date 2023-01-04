@@ -108,29 +108,38 @@ end sub
 
 sub RSDKDraw
 	DrawSprite(Object.PropertyValue)
-	TempValue0   = Object.iYPos
-	TempValue0  -= 32
-	TempValue0 <<= 16	
-
-	TempValue1   = Object.iXPos
-	TempValue1  += 16
-	TempValue1 <<= 16
-
-	TempValue2   = Object.iXPos
-	TempValue2  -= 16
-	TempValue2 <<= 16
-
-	TempValue3   = Object.iYPos
-	TempValue3  -= 16
-	TempValue3 <<= 16
-
 	if Object.PropertyValue < 2
-		DrawArrow(TempValue1, Object.YPos, TempValue1, TempValue0, 255, 255, 255, 0)
-		DrawRectOutline(TempValue2, TempValue3, 0x40, 0x20, 255, 255, 255, 255)
+		TempValue0   = Object.YPos
+		TempValue0  -= 0x200000
 	else
-
+		TempValue0   = Object.YPos
+		TempValue0  += 0x200000
 	end if
 
+	TempValue1   = Object.XPos
+	TempValue1  += 0x100000
+
+	TempValue2   = Object.XPos
+	TempValue2  -= 0x100000
+
+	TempValue3   = Object.YPos
+	TempValue3  -= 0x100000
+
+
+	if Editor.ShowGizmos == true
+		switch Object.PropertyValue
+		case 0
+		case 2
+			DrawArrow(TempValue1, Object.YPos, TempValue1, TempValue0, 255, 255, 255, 0)
+			DrawRectOutline(TempValue2, TempValue3, 0x40, 0x20, 255, 255, 255, 255)
+			break
+		case 1
+		case 3
+			DrawArrow(Object.XPos, Object.YPos, Object.XPos, TempValue0, 255, 255, 255, 0)
+			DrawRectOutline(TempValue2, TempValue3, 0x20, 0x20, 255, 255, 255, 255)
+			break
+		end switch
+	end if
 end sub
 
 
@@ -144,8 +153,8 @@ sub RSDKLoad
 
 	AddEditorVariable("Type")
 	SetActiveVariable("Type")
-	AddEnumVariable("Normal", 0)
-	AddEnumVariable("Without Attachment", 1)
-	AddEnumVariable("Upside-Down", 2)
-	AddEnumVariable("Upside-Down w/o Attachment", 3)
+	AddEnumVariable("Normal", FLIPOUTBLOCK_FLOOR)
+	AddEnumVariable("Without Attachment", FLIPOUTBLOCK_FLOOR_NO_ATTACH)
+	AddEnumVariable("Upside-Down", FLIPOUTBLOCK_ROOF)
+	AddEnumVariable("Upside-Down w/o Attachment", FLIPOUTBLOCK_ROOF_NO_ATTACH)
 end sub
