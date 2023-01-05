@@ -251,8 +251,68 @@ end sub
 // Editor Subs
 // ========================
 
+sub RSDKEdit
+	if Editor.ReturnVariable == true
+		switch Editor.VariableID
+		case EDIT_VAR_PROPVAL // Property Value
+			CheckResult  = Object.PropertyValue
+			CheckResult %= 14
+			break
+		case 0 // levelTrigger
+			CheckResult = Object.PropertyValue
+			CheckResult %= 14
+			break
+		case 1 // streamDir
+			CheckResult = Object.PropertyValue
+			CheckResult %= 14
+			break
+		end switch
+	else
+		switch Editor.VariableID
+		case EDIT_VAR_PROPVAL // Property Value
+			Object.PropertyValue  = Editor.VariableValue
+			Object.PropertyValue %= 14
+			break
+		case 0 // levelTrigger
+			Object.PropertyValue = Editor.VariableValue
+			Object.PropertyValue %= 14
+			break
+		case 1 // streamDir
+			Object.PropertyValue = Editor.VariableValue
+			Object.PropertyValue %= 14
+			break
+		end switch
+	end if
+end sub
+
+
 sub RSDKDraw
-	DrawSprite(0)
+	LoadSpriteSheet("Global/Display.gif")
+	TempValue6 = Object.SpriteSheet
+	LoadSpriteSheet("Players/Sonic3.gif")
+	TempValue7 = Object.SpriteSheet
+
+	switch Object.PropertyValue
+	case SET_BG_LAYER
+	case SWAP_BACKGROUND
+	case WATER_HEIGHT
+	case WATER_HEIGHT_2
+		Object.SpriteSheet = TempValue6
+		DrawSprite(0)
+		break
+	case PIPE_BOTTOM_ENTRY
+	case PIPE_TOP_ENTRY
+	case PIPE_TURN_LEFT
+	case PIPE_TURN_RIGHT
+	case PIPE_TURN_UP
+	case PIPE_TURN_DOWN
+	case UNUSED
+	case UNUSED_2
+	case PIPE_EXIT_PIPE
+		Object.SpriteSheet = TempValue7
+		DrawSprite(1)
+		break
+	end switch
 end sub
 
 
@@ -260,5 +320,26 @@ sub RSDKLoad
 	LoadSpriteSheet("Global/Display.gif")
 	SpriteFrame(-16, -16, 32, 32, 1, 143)		// #0 - "Script" Icon
 
-	SetVariableAlias(ALIAS_VAR_PROPVAL, "unused")
+	LoadSpriteSheet("Players/Sonic3.gif")
+	SpriteFrame(-28, -12, 56, 24, 199, 75)		// #1 - Sonic Fan Rotate
+
+	AddEditorVariable("levelTrigger")
+	AddEditorVariable("streamDir")
+
+	SetActiveVariable("levelTrigger")
+	AddEnumVariable("Set background layer", SET_BG_LAYER)
+	AddEnumVariable("Swap backgrounds", SWAP_BACKGROUND)
+	AddEnumVariable("Set water height", WATER_HEIGHT)
+	AddEnumVariable("Set water height (Bottom of level)", WATER_HEIGHT_2)
+
+	SetActiveVariable("streamDir")
+	AddEnumVariable("Stream entry (Bottom)", PIPE_BOTTOM_ENTRY)
+	AddEnumVariable("Stream entry (Top)", PIPE_TOP_ENTRY)
+	AddEnumVariable("Stream turn (Left)", PIPE_TURN_LEFT)
+	AddEnumVariable("Stream turn (Right)", PIPE_TURN_RIGHT)
+	AddEnumVariable("Stream turn (Up)", PIPE_TURN_UP)
+	AddEnumVariable("Stream turn (Down)", PIPE_TURN_DOWN)
+	AddEnumVariable("Unused", UNUSED)
+	AddEnumVariable("Unused 2", UNUSED_2)
+	AddEnumVariable("Exit stream", PIPE_EXIT_PIPE)
 end sub

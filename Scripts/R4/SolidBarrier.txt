@@ -115,14 +115,81 @@ end sub
 // Editor Subs
 // ========================
 
+sub RSDKEdit
+	if Editor.ReturnVariable == true
+		switch Editor.VariableID
+		case EDIT_VAR_PROPVAL // Property Value
+			CheckResult = Object.PropertyValue
+			break
+		case 0 // blocks
+			CheckResult = Object.PropertyValue
+			break
+		end switch
+	else
+		switch Editor.VariableID
+		case EDIT_VAR_PROPVAL // Property Value
+			Object.PropertyValue = Editor.VariableValue
+			break
+		case 0 // blocks
+			Object.PropertyValue = Editor.VariableValue
+			break
+		end switch
+	end if
+end sub
+
+
 sub RSDKDraw
-	DrawSprite(0)
+	TempValue0 = 0
+	while TempValue0 < 16
+		DrawSprite(TempValue0)
+		TempValue0++
+	loop
 end sub
 
 
 sub RSDKLoad
-	LoadSpriteSheet("Global/Display.gif")
-	SpriteFrame(-16, -16, 32, 32, 1, 143)		// #0 - "Script" Icon
+	CallFunction(EditorHelpers_FindTimePeriod)
+	switch CheckResult
+	case TIME_PRESENT
+		LoadSpriteSheet("R4/Objects.gif")
+		TempValue2 = 163
+		TempValue3 = 1
+		break
 
-	SetVariableAlias(ALIAS_VAR_PROPVAL, "unused")
+	case TIME_PAST
+		LoadSpriteSheet("R4/Objects2.gif")
+		TempValue2 = 1
+		TempValue3 = 157
+		break
+
+	case TIME_GOOD_FUTURE
+		LoadSpriteSheet("R4/Objects2.gif")
+		TempValue2 = 1
+		TempValue3 = 190
+		break
+
+	case TIME_BAD_FUTURE
+		LoadSpriteSheet("R4/Objects2.gif")
+		TempValue2 = 1
+		TempValue3 = 223
+		break
+
+	end switch
+
+	TempValue0 = -64
+	TempValue1 = -64
+	while TempValue1 < 64
+		while TempValue0 < 64
+			SpriteFrame(TempValue0, TempValue1, 32, 32, TempValue2, TempValue3)
+			TempValue0 += 32
+		loop
+		TempValue0  = -64
+		TempValue1 += 32
+	loop
+	AddEditorVariable("behaviour")
+	SetActiveVariable("behaviour")
+	AddEnumVariable("Inactive", INACTIVE)
+	AddEnumVariable("Check player to close", CLOSE_CHECK)
+	AddEnumVariable("Close automatically", CLOSE_AUTO)
+	AddEnumVariable("Open by Eggman", OPEN_EGGMAN)
 end sub

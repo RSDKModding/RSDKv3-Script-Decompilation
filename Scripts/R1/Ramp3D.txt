@@ -356,19 +356,17 @@ sub RSDKEdit
 	if Editor.ReturnVariable == true
 		switch Editor.VariableID
 		case EDIT_VAR_PROPVAL // Property Value
-			CheckResult = Object.PropertyValue
-			break
 		case 0 // type
-			CheckResult = Object.PropertyValue
+			CheckResult  = Object.PropertyValue
+			CheckResult %= 9
 			break
 		end switch
 	else
 		switch Editor.VariableID
 		case EDIT_VAR_PROPVAL // Property Value
-			Object.PropertyValue = Editor.VariableValue
-			break
 		case 0 // type
 			Object.PropertyValue = Editor.VariableValue
+			CheckResult %= 9
 			break
 		end switch
 	end if
@@ -376,13 +374,16 @@ end sub
 
 
 sub RSDKDraw
-	// RE2 why i have to do it like this so you don't decide to corrupt the Y sprite? >:(
-	RemoveSpriteSheet("Global/Display.gif")
-	RemoveSpriteSheet("Players/Sonic2.gif")
-	RemoveSpriteSheet("Players/Sonic3.gif")
+	LoadSpriteSheet("Global/Display.gif")
+	TempValue5 = Object.SpriteSheet
+	LoadSpriteSheet("Players/Sonic2.gif")
+	TempValue6 = Object.SpriteSheet
+	LoadSpriteSheet("Players/Sonic3.gif")
+	TempValue7 = Object.SpriteSheet
+
 	switch object.PropertyValue
 	case 0
-		LoadSpriteSheet("Players/Sonic2.gif")
+		Object.SpriteSheet = TempValue6
 		Object.InkEffect = 1
 		DrawSpriteFX(3,FX_INK, Object.XPos, Object.YPos)
 		Object.InkEffect = 0
@@ -396,7 +397,7 @@ sub RSDKDraw
 		break
 	case 1
 	case 8
-		LoadSpriteSheet("Players/Sonic2.gif")
+		Object.SpriteSheet = TempValue6
 		Object.InkEffect = 1
 		DrawSpriteFX(3,FX_INK, Object.XPos, Object.YPos)
 		Object.InkEffect = 0
@@ -411,7 +412,7 @@ sub RSDKDraw
 		end if
 		break
 	case 2
-		LoadSpriteSheet("Players/Sonic2.gif")
+		Object.SpriteSheet = TempValue6
 		Object.InkEffect = 1
 		DrawSpriteFX(3,FX_INK, Object.XPos, Object.YPos)
 		Object.InkEffect = 0
@@ -427,7 +428,7 @@ sub RSDKDraw
 		break
 	case 3
 	case 6
-		LoadSpriteSheet("Global/Display.gif")
+		Object.SpriteSheet = TempValue5
 		TempValue0  = Object.XPos
 		TempValue0 -= 0x100000
 		TempValue1  = Object.YPos
@@ -450,15 +451,14 @@ sub RSDKDraw
 		DrawSpriteXY(1, TempValue0, TempValue1)
 		break
 	case 7
-		LoadSpriteSheet("Global/Display.gif")
+		Object.SpriteSheet = TempValue5
 		TempValue0  = Object.XPos
 		TempValue0 -= 0x100000
 		TempValue1  = Object.YPos
 		TempValue1 -= 0xC0000
 		DrawSpriteXY(1, TempValue0, TempValue1)
 
-		RemoveSpriteSheet("Global/Display.gif")
-		LoadSpriteSheet("Players/Sonic2.gif")
+		Object.SpriteSheet = TempValue6
 		Object.InkEffect = 1
 		DrawSpriteFX(2, FX_INK, Object.XPos, Object.YPos)
 		Object.InkEffect = 0
@@ -472,7 +472,7 @@ sub RSDKDraw
 		end if
 		break
 	case 4
-		LoadSpriteSheet("Players/Sonic2.gif")
+		Object.SpriteSheet = TempValue6
 		Object.InkEffect = 1
 		DrawSpriteFX(2, FX_INK, Object.XPos, Object.YPos)
 		Object.InkEffect = 0
@@ -488,7 +488,7 @@ sub RSDKDraw
 		end if
 		break
 	case 5
-		LoadSpriteSheet("Players/Sonic3.gif")
+		Object.SpriteSheet = TempValue7
 		Object.InkEffect = 1
 		DrawSpriteFX(4, FX_INK, Object.XPos, Object.YPos)
 		Object.InkEffect = 0
@@ -501,7 +501,7 @@ sub RSDKDraw
 		end if
 		break
 	default
-		LoadSpriteSheet("Global/Display.gif")
+		Object.SpriteSheet = TempValue5
 		DrawSprite(0)
 	end switch
 end sub
@@ -522,13 +522,13 @@ sub RSDKLoad
 
 	AddEditorVariable("type")
 	SetActiveVariable("type")
-	AddEnumVariable("3D Ramp Run", 0)
-	AddEnumVariable("3D Ramp Exit Boost (Unused)", 1)
-	AddEnumVariable("3D Ramp Exit ", 2)
-	AddEnumVariable("3D Ramp (Set YBound)", 3)
-	AddEnumVariable("3D Ramp Start", 4)
-	AddEnumVariable("3D Ramp Drop", 5)
-	AddEnumVariable("3D Ramp (Set YBound 2)", 6)
-	AddEnumVariable("3D Ramp Top Run", 7)
-	AddEnumVariable("3D Ramp Exit Boost", 8)
+	AddEnumVariable("3D Ramp Run", RAMP3D_RUN)
+	AddEnumVariable("3D Ramp Exit Boost (Unused)", RAMP3D_EXIT_UNUSED)
+	AddEnumVariable("3D Ramp Exit ", RAMP3D_EXIT)
+	AddEnumVariable("3D Ramp (Set YBound)", RAMP3D_SET_YBOUND)
+	AddEnumVariable("3D Ramp Start", RAMP3D_ENTER)
+	AddEnumVariable("3D Ramp Drop", RAMP3D_DROP)
+	AddEnumVariable("3D Ramp (Set YBound 2)", RAMP3D_SET_YBOUND2)
+	AddEnumVariable("3D Ramp Top Run", RAMP3D_RUN_FROM_TOP)
+	AddEnumVariable("3D Ramp Exit Boost", RAMP3D_EXIT_BOOST)
 end sub

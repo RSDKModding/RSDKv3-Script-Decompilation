@@ -15,6 +15,8 @@
 #alias 1	:	VERTICAL_FAN_ON
 #alias 2	:	HORIZONTAL_FAN_OFF
 #alias 3	:	HORIZONTAL_FAN_ON
+#alias 4	:	HORIZONTAL_FAN_LEFT_OFF
+#alias 5	:	HORIZONTAL_FAN_LEFT_ON
 
 // Time Periods
 #alias 0	:	TIME_PRESENT
@@ -148,14 +150,83 @@ end sub
 // Editor Subs
 // ========================
 
+sub RSDKEdit
+	if Editor.ReturnVariable == true
+		switch Editor.VariableID
+		case EDIT_VAR_PROPVAL // Property Value
+			CheckResult = Object.PropertyValue
+			break
+		case 0 // type
+			CheckResult = Object.PropertyValue
+			break
+		end switch
+	else
+		switch Editor.VariableID
+		case EDIT_VAR_PROPVAL // Property Value
+			Object.PropertyValue = Editor.VariableValue
+			break
+		case 0 // type
+			Object.PropertyValue = Editor.VariableValue
+			break
+		end switch
+	end if
+end sub
+
+
 sub RSDKDraw
-	DrawSprite(0)
+	if Object.PropertyValue > 3
+		Object.Direction = FACING_LEFT
+	end if
+	DrawSpriteFX(Object.PropertyValue, FX_FLIP, Object.XPos, Object.YPos)
 end sub
 
 
 sub RSDKLoad
-	LoadSpriteSheet("Global/Display.gif")
-	SpriteFrame(-16, -16, 32, 32, 1, 143)		// #0 - "Script" Icon
+	CallFunction(EditorHelpers_FindTimePeriod)
+	switch CheckResult
+	case TIME_PRESENT
+	case TIME_PAST
+		LoadSpriteSheet("R4/Objects.gif")
+		
+		SpriteFrame(-16, -8, 32, 16, 163, 35)	// #0 - Fan vertical frame 0
+		SpriteFrame(-12, -8, 24, 16, 229, 1)	// #1 - Fan vertical frame 1
+		SpriteFrame(-8, -16, 16, 32, 239, 136)	// #5 - Fan horizontal frame 0
+		SpriteFrame(-8, -12, 16, 24, 222, 169)	// #6 - Fan horizontal frame 1
+		SpriteFrame(-8, -16, 16, 32, 239, 136)	// #5 - Fan horizontal frame 0
+		SpriteFrame(-8, -12, 16, 24, 222, 169)	// #6 - Fan horizontal frame 1
+		break
 
-	SetVariableAlias(ALIAS_VAR_PROPVAL, "unused")
+	case TIME_GOOD_FUTURE
+		LoadSpriteSheet("R4/Objects3.gif")
+
+		SpriteFrame(-16, -8, 32, 16, 51, 67)	// #0 - Future fan vertical off
+		SpriteFrame(-16, -8, 32, 16, 51, 84)	// #1 - Future fan vertical on
+		SpriteFrame(-8, -16, 16, 32, 50, 101)	// #5 - Future fan horizontal off
+		SpriteFrame(-8, -16, 16, 32, 67, 101)	// #6 - Future fan horizontal on
+		SpriteFrame(-8, -16, 16, 32, 50, 101)	// #5 - Future fan horizontal off
+		SpriteFrame(-8, -16, 16, 32, 67, 101)	// #6 - Future fan horizontal on
+		break
+
+	case TIME_BAD_FUTURE
+		LoadSpriteSheet("R4/Objects3.gif")
+
+		SpriteFrame(-16, -8, 32, 16, 62, 228)	// #0 - Future fan vertical off
+		SpriteFrame(-16, -8, 32, 16, 94, 228)	// #1 - Future fan vertical on
+		SpriteFrame(-8, -16, 16, 32, 76, 144)	// #5 - Future fan horizontal off
+		SpriteFrame(-8, -16, 16, 32, 93, 144)	// #6 - Future fan horizontal on
+		SpriteFrame(-8, -16, 16, 32, 76, 144)	// #5 - Future fan horizontal off
+		SpriteFrame(-8, -16, 16, 32, 93, 144)	// #6 - Future fan horizontal on
+		break
+
+	end switch
+
+	AddEditorVariable("type")
+	SetActiveVariable("type")
+	AddEnumVariable("Vertical Fan (Off)", VERTICAL_FAN_OFF)
+	AddEnumVariable("Vertical Fan (On)", VERTICAL_FAN_ON)
+	AddEnumVariable("Horizontal Fan (Off)", HORIZONTAL_FAN_OFF)
+	AddEnumVariable("Horizontal Fan (On)", HORIZONTAL_FAN_ON)
+	AddEnumVariable("Horizontal Fan Facing Left (Off)", HORIZONTAL_FAN_LEFT_OFF)
+	AddEnumVariable("Horizontal Fan Facing Left (On)", HORIZONTAL_FAN_LEFT_ON)
+	
 end sub
