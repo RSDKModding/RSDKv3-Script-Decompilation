@@ -88,13 +88,48 @@ end sub
 // ========================
 
 sub RSDKDraw
-	DrawSprite(0)
+	TempValue1   = Oscillation
+	TempValue1  += Object.PropertyValue
+	TempValue1 <<= 1
+	Sin(TempValue0, TempValue1)
+	TempValue0 *= 0x1800
+	TempValue0 += Object.YPos
+	TempValue0 &= 0xFFFF0000 // Truncate the value
+	
+	DrawSpriteXY(0, Object.XPos, TempValue0)
 end sub
 
 
 sub RSDKLoad
-	LoadSpriteSheet("Global/Display.gif")
-	SpriteFrame(-16, -16, 32, 32, 1, 143)		// #0 - "Script" Icon
+	CallFunction(EditorHelpers_FindTimePeriod)
+	switch CheckResult
+	case TIME_PRESENT
+		LoadSpriteSheet("R4/Objects.gif")
+		TempValue0 = 163
+		TempValue1 = 1
+		TempValue2 = 196
+		break
+	case TIME_PAST
+		LoadSpriteSheet("R4/Objects2.gif")
+		TempValue0 = 1
+		TempValue1 = 157
+		TempValue2 = 34
+		break
+	case TIME_GOOD_FUTURE
+		LoadSpriteSheet("R4/Objects2.gif")
+		TempValue0 = 1
+		TempValue1 = 190
+		TempValue2 = 34
+		break
+	case TIME_BAD_FUTURE
+		LoadSpriteSheet("R4/Objects2.gif")
+		TempValue0 = 1
+		TempValue1 = 223
+		TempValue2 = 34
+		break
+	end switch
 
-	SetVariableAlias(ALIAS_VAR_PROPVAL, "unused")
+	SpriteFrame(-16, -16, 32, 32, TempValue2, TempValue1)	// R4 Block
+
+	SetVariableAlias(ALIAS_VAR_PROPVAL, "startingAngle")
 end sub

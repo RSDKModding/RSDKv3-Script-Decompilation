@@ -11,6 +11,7 @@
 #alias Object.Value5	:	Object.AngleIncrease
 
 // Property Values
+#alias 0	:	CHAIN
 #alias 1	:	CLOCKWISE_MOVEMENT
 #alias 2	:	COUNTERCLOCKWISE_MOVEMENT
 
@@ -214,17 +215,86 @@ end sub
 
 
 sub RSDKDraw
-	Sin(TempValue1, Object.Angle)
-	Object.YDrawPos  *= TempValue1
-	Object.YDrawPos <<= 7
-	Object.YDrawPos  += Object.YPos
-	Object.YDrawPos  &= 0xFFFF0000 // Truncate the value
-	DrawSpriteXY(Object.Frame, Object.XDrawPos, Object.YDrawPos)
-	if object.PropertyValue == 0
-		DrawSprite(0)
-	else
-		DrawSprite(1)
-	end if
+	Object.InkEffect = 1
+	DrawSpriteFX(0, FX_INK, Object.XPos, Object.YPos)
+
+	switch Object.PropertyValue
+	case CLOCKWISE_MOVEMENT
+	case COUNTERCLOCKWISE_MOVEMENT
+		TempValue2 = 112
+		TempValue3 = 0
+		break
+
+	case CHAIN
+		ArrayPos0  = Object.EntityNo
+		TempValue0 = 0
+		TempValue1 = 0
+		while TempValue1 == false
+			if TempValue0 == 8
+				TempValue1 = true
+			end if
+			ArrayPos0--
+			TempValue0++
+			CheckEqual(Object[ArrayPos0].Type, TypeName[Link Platforms])
+			TempValue1  = CheckResult
+			CheckNotEqual(Object[ArrayPos0].PropertyValue, false)
+			TempValue1 &= CheckResult
+		loop
+		ArrayPos1  = Object.EntityNo
+		ArrayPos1 -= Object[ArrayPos0].EntityNo
+		switch ArrayPos1
+		case 0
+			TempValue2 = 112
+			TempValue3 = 0
+			break
+		case 1
+			TempValue2 = 16
+			TempValue3 = 0
+			break
+		case 2
+			TempValue2 = 32
+			TempValue3 = 0
+			break
+		case 3
+			TempValue2 = 48
+			TempValue3 = 0
+			break
+		case 4
+			TempValue2 = 96
+			TempValue3 = 0
+			break
+		case 5
+			TempValue2 = 80
+			TempValue3 = 0
+			break
+		case 6
+			TempValue2 = 64
+			TempValue3 = 1
+			break
+		case 7
+			TempValue2 = 0
+			TempValue3 = 1
+			break
+		case 8
+			TempValue2 = 128
+			TempValue3 = 1
+			break
+		end switch
+		break
+	end switch
+	Cos(TempValue4, TempValue2)
+	TempValue4  *= 96
+	TempValue4 <<= 7
+	TempValue4  += Object.XPos
+	TempValue4  &= 0xFFFF0000 // Truncate the value
+
+	Sin(TempValue5, TempValue2)
+	TempValue5  *= 96
+	TempValue5 <<= 7
+	TempValue5  += Object.YPos
+	TempValue5  &= 0xFFFF0000 // Truncate the value
+	DrawSpriteXY(TempValue3, TempValue4, TempValue5)
+	DrawLine(Object.XPos, Object.YPos, TempValue4, TempValue5, 255, 255, 0)
 end sub
 
 
@@ -233,7 +303,6 @@ sub RSDKLoad
 
 	SpriteFrame(-8, -8, 16, 16, 180, 52)	// #0 - Chain
 	SpriteFrame(-32, -8, 64, 16, 147, 69)	// #1 - Platform
-
 
 	AddEditorVariable("moveDir")
 	SetActiveVariable("moveDir")
