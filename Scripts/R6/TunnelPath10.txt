@@ -1018,13 +1018,130 @@ end sub
 // ========================
 
 sub RSDKDraw
-	DrawSprite(0)
+	Object.InkEffect = 1
+	DrawSpriteFX(0,FX_INK,Object.XPos, Object.YPos)
+	if Editor.ShowGizmos == true
+		Editor.DrawingOverlay = true
+		
+		CallFunction(EditorHelpers_FindTimePeriod)
+		switch CheckResult
+		case 0	// Present
+		case 3	// Bad Future
+			TempValue6 = 255
+			TempValue7 = 0
+			break
+		case 1	// Past
+			TempValue6 = 0
+			TempValue7 = 128
+			break
+		case 2	// Good Future
+			TempValue6 = 128
+			TempValue7 = 0
+			break
+		end switch
+
+		TempValue0 = 0
+		while TempValue0 <= 10
+			TempValue1  = Object.XPos
+			TempValue2  = Object.YPos
+			TempValue3  = Object.XPos
+			TempValue4  = Object.YPos
+			TempValue5  = 0
+			switch TempValue0
+			case 0
+				TempValue1 += 0x5200
+				TempValue3 += 0x5200
+				TempValue2 += 0x3500
+				TempValue4 += 0x2B83500
+				TempValue5  = 1
+				break
+			case 1
+				TempValue1 += 0x5200
+				TempValue3 -= 0x77AE00
+				TempValue2 += 0x2B83500
+				TempValue4 += 0x2B83500
+				break
+			case 2
+				TempValue1 -= 0x77AE00
+				TempValue3 -= 0x77AE00
+				TempValue2 += 0x2B83500
+				TempValue4 += 0x3683500
+				TempValue5  = 1
+				break
+			case 3
+				TempValue1 -= 0x77AE00
+				TempValue3 -= 0x17AE00
+				TempValue2 += 0x3683500
+				TempValue4 += 0x3683500
+				break
+			case 4
+				TempValue1 -= 0x17AE00
+				TempValue3 -= 0xA7A600
+				TempValue2 += 0x3683500
+				TempValue4 += 0x3C03500
+				break
+			case 5
+				TempValue1 -= 0xA7A600
+				TempValue3 -= 0x47A600
+				TempValue2 += 0x3B83500
+				TempValue4 += 0x3B83500
+				break
+			case 6
+				TempValue1 -= 0x47A600
+				TempValue3 -= 0x47A600
+				TempValue2 += 0x3B83500
+				TempValue4 += 0x3F83500
+				TempValue5  = 1
+				break
+			case 7
+				TempValue1 -= 0x47A600
+				TempValue3 += 0x185A00
+				TempValue2 += 0x3F83500
+				TempValue4 += 0x3F83500
+				break
+			case 8
+				TempValue1 += 0x185A00
+				TempValue3 += 0x185A00
+				TempValue2 += 0x3F83500
+				TempValue4 += 0x4583500
+				TempValue5  = 1
+				break
+			case 9
+				TempValue1 += 0x185A00
+				TempValue3 -= 0x37A600
+				TempValue2 += 0x4583500
+				TempValue4 += 0x4583500
+				break
+			case 10
+				TempValue1 -= 0x37A600
+				TempValue3 -= 0x37A600
+				TempValue2 += 0x4583500
+				TempValue4 += 0x4E83500
+				TempValue5  = 1
+				break
+			endswitch
+			DrawArrow(TempValue1, TempValue2, TempValue3, TempValue4, 255, TempValue6, TempValue7)
+			// make the arrow thicker
+			if TempValue5 == 1
+				TempValue1 += 0x10000
+				TempValue3 += 0x10000
+				DrawArrow(TempValue1, TempValue2, TempValue3, TempValue4, 255, TempValue6, TempValue7)
+			else
+				TempValue2 -= 0x10000
+				TempValue4 -= 0x10000
+				DrawArrow(TempValue1, TempValue2, TempValue3, TempValue4, 255, TempValue6, TempValue7)
+			end if
+
+			TempValue0++
+		loop
+		Editor.DrawingOverlay = false
+	end if
 end sub
 
 
 sub RSDKLoad
-	LoadSpriteSheet("Global/Display.gif")
-	SpriteFrame(-16, -16, 32, 32, 1, 143)		// #0 - "Script" Icon
+	LoadSpriteSheet("Players/Sonic1.gif")
+	SpriteFrame(-16, -16, 32, 32, 42, 118)		// #0 - Sonic spin
 
 	SetVariableAlias(ALIAS_VAR_PROPVAL, "unused")
 end sub

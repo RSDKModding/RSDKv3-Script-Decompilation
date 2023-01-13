@@ -84,6 +84,7 @@ sub ObjectPlayerInteraction
 					Player.XVelocity = -0xC0000
 					Object.State = POLETRIGGER_IDLE
 				end if
+				
 				if Object.Angle == 384
 					Player.DrawOrder = 4
 
@@ -116,8 +117,8 @@ sub ObjectStartup
 		if Object[ArrayPos0].Type == TypeName[Pole Trigger]
 			ArrayPos1 = ArrayPos0
 			ArrayPos1++
-			Object[ArrayPos0].CollisionTop    = Object[ArrayPos0].PropertyValue
-			Object[ArrayPos0].CollisionTop  <<= 3
+			Object[ArrayPos0].CollisionTop     = Object[ArrayPos0].PropertyValue
+			Object[ArrayPos0].CollisionTop   <<= 3
 			Object[ArrayPos0].CollisionBottom  = Object[ArrayPos0].CollisionTop
 			FlipSign(Object[ArrayPos0].CollisionTop)
 			Object[ArrayPos0].CollisionTop	  -= 8
@@ -134,12 +135,28 @@ end sub
 
 sub RSDKDraw
 	DrawSprite(0)
+	if Editor.ShowGizmos == true
+		Editor.DrawingOverlay = true
+		TempValue0   = Object.XPos
+		TempValue0  -= 0x40000
+		TempValue1   = Object.PropertyValue
+		TempValue1 <<= 3
+		TempValue2   = TempValue1
+		FlipSign(TempValue1)
+		TempValue1  -= 8
+		TempValue2  += 8
+		TempValue2  *= 2
+		TempValue1 <<= 16
+		TempValue1 += Object.YPos
+		DrawRectOutline(TempValue0, TempValue1, 8, TempValue2, 255, 255, 0, 255)
+		Editor.DrawingOverlay = false
+	end if
 end sub
 
 
 sub RSDKLoad
-	LoadSpriteSheet("Global/Display.gif")
-	SpriteFrame(-16, -16, 32, 32, 1, 143)		// #0 - "Script" Icon
+	LoadSpriteSheet("Players/Sonic1.gif")
+	SpriteFrame(-16, -16, 32, 32, 75, 118)		// #0 - Sonic spin
 
-	SetVariableAlias(ALIAS_VAR_PROPVAL, "unused")
+	SetVariableAlias(ALIAS_VAR_PROPVAL, "verticalLength")
 end sub
