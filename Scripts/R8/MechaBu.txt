@@ -7,7 +7,7 @@
 
 #alias Object.Value2		:	Object.XOriginPos
 #alias Object.Value3		:	Object.YOriginPos
-#alias Object.Value4		:	Object.HornAnimTimer
+#alias Object.Value4		:	Object.HornTimer
 #alias Object.Value5		:	Object.SFXTimer
 
 #alias Object.PropertyValue	:	Object.Quality
@@ -100,13 +100,17 @@ sub ObjectPlayerInteraction
 		
 		// Make sure the Bu hasn't become a Flower (destroyed) before checking for other parts
 		if Object.Type == TypeName[Mecha Bu]
-			if Object.HornAnimTimer > 59
-				PlayerObjectCollision(C_TOUCH, -30, -32, -8, 0)
+		
+			// Bug Details:
+			// The PlayerObjectCollision boxes here for MechaBu are swapped for both positions of its horn.
+			// As to how this happened is unclear, most likely a programming oversight.
+			if Object.HornTimer > 59
+				PlayerObjectCollision(C_TOUCH, -30, -32, -8, 0) // Timer is over 59 frames, use "Lower" Hitbox
 				if CheckResult == true
 					CallFunction(Player_Hit)
 				end if
 			else
-				PlayerObjectCollision(C_TOUCH, -36, -16, -14, 16)
+				PlayerObjectCollision(C_TOUCH, -36, -16, -14, 16) // Timer is under 59 frames, use "Raised" Hitbox
 				if CheckResult == true
 					CallFunction(Player_Hit)
 				end if
@@ -129,26 +133,31 @@ sub ObjectDraw
 	
 	Object.AnimationTimer++
 	Object.AnimationTimer %= 6
+
 	if Object.Quality == GOOD_QUALITY
-		if Object.HornAnimTimer > 59
+	
+		// Bug Details:
+		// MechaBu has it's saw rendering behind its body. Another programming oversight...?
+		if Object.HornTimer > 59
 			TempValue0 += 5
-			DrawSpriteFX(TempValue0, FX_FLIP, Object.XPos, Object.YPos)
-			DrawSpriteFX(0, FX_FLIP, Object.XPos, Object.YPos)
-			DrawSpriteFX(4, FX_FLIP, Object.XPos, Object.YPos)
+			DrawSpriteFX(TempValue0, FX_FLIP, Object.XPos, Object.YPos) // Draw Raised Saw Sprite
+			DrawSpriteFX(0, FX_FLIP, Object.XPos, Object.YPos) // Draw Body Sprite
+			DrawSpriteFX(4, FX_FLIP, Object.XPos, Object.YPos) // Draw Raised Arm Sprite
 		else
 			TempValue0 += 2
-			DrawSpriteFX(TempValue0, FX_FLIP, Object.XPos, Object.YPos)
-			DrawSpriteFX(0, FX_FLIP, Object.XPos, Object.YPos)
-			DrawSpriteFX(1, FX_FLIP, Object.XPos, Object.YPos)
+			DrawSpriteFX(TempValue0, FX_FLIP, Object.XPos, Object.YPos) // Draw Lower Saw Sprite
+			DrawSpriteFX(0, FX_FLIP, Object.XPos, Object.YPos) // Draw Body Sprite
+			DrawSpriteFX(1, FX_FLIP, Object.XPos, Object.YPos) // Draw Lower Arm Sprite
 		end if
 		
-		Object.HornAnimTimer++
-		Object.HornAnimTimer %= 120
+		// Start the HornTimer, reset every 120 frames
+		Object.HornTimer++
+		Object.HornTimer %= 120
 	else
 		TempValue0 += 5
-		DrawSpriteFX(TempValue0, FX_FLIP, Object.XPos, Object.YPos)
-		DrawSpriteFX(0, FX_FLIP, Object.XPos, Object.YPos)
-		DrawSpriteFX(4, FX_FLIP, Object.XPos, Object.YPos)
+		DrawSpriteFX(TempValue0, FX_FLIP, Object.XPos, Object.YPos) // Draw Raised Saw Sprite
+		DrawSpriteFX(0, FX_FLIP, Object.XPos, Object.YPos) // Draw Body Sprite
+		DrawSpriteFX(4, FX_FLIP, Object.XPos, Object.YPos) // Draw Raised Arm Sprite
 	end if
 	
 end sub
