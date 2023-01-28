@@ -234,13 +234,32 @@ end sub
 // ========================
 
 sub RSDKDraw
-	DrawSprite(0)
+	Object.Direction = FACING_LEFT
+
+	TempValue1  = Object.XPos
+	TempValue1 -= 0x80000
+	TempValue2  = Object.XPos
+	TempValue2 += 0x80000
+	
+	TempValue0  = 0
+	while TempValue0 < 6
+		DrawSpriteXY(TempValue0, TempValue1, Object.YPos)
+		DrawSpriteFX(TempValue0, FX_FLIP, TempValue2, Object.YPos)
+		TempValue0++
+	loop
+	Object.DrawOrder = 2
 end sub
 
 
 sub RSDKLoad
-	LoadSpriteSheet("Global/Display.gif")
-	SpriteFrame(-16, -16, 32, 32, 1, 143)		// #0 - "Script" Icon
+	LoadSpriteSheet("R8/Objects2.gif")
+
+	SpriteFrame(-8, -96, 16, 32, 134, 187)	// #0 - Curtain Center Section 1
+	SpriteFrame(-8, -64, 16, 32, 134, 187)	// #1 - Curtain Center Section 2
+	SpriteFrame(-8, -32, 16, 32, 134, 187)	// #2 - Curtain Center Section 3
+	SpriteFrame(-8, 0, 16, 32, 134, 187)	// #3 - Curtain Center Section 4
+	SpriteFrame(-8, 32, 16, 32, 134, 187)	// #4 - Curtain Center Section 5
+	SpriteFrame(-8, 64, 16, 32, 134, 187)	// #5 - Curtain Center Section 6
 
 	SetVariableAlias(ALIAS_VAR_PROPVAL, "unused")
 end sub

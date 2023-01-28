@@ -202,13 +202,50 @@ end sub
 // ========================
 
 sub RSDKDraw
+	TempValue1 = 64
+	Cos(TempValue2, 256)
+	TempValue2  *=  TempValue1
+	TempValue2 <<=  7
+	TempValue2  +=  Object.XPos
+	TempValue2  &= 0xFFFF0000 // Truncate the value
+
+	Sin(TempValue3, 256)
+	TempValue3  *=  TempValue1
+	TempValue3 <<=  7
+	TempValue3  +=  Object.YPos
+	TempValue3  &= 0xFFFF0000 // Truncate the value
+
+	DrawSpriteXY(0, TempValue2, TempValue3)
+	DrawSpriteXY(1, TempValue2, TempValue3)
 	DrawSprite(0)
+	DrawSprite(1)
+	TempValue0 = 0
+	TempValue1 = 8
+	while TempValue0 < 7
+		Cos(TempValue2, 256)
+		TempValue2  *=  TempValue1
+		TempValue2 <<=  7
+		TempValue2  +=  Object.XPos
+		TempValue2  &= 0xFFFF0000 // Truncate the value
+
+		Sin(TempValue3, 256)
+		TempValue3  *=  TempValue1
+		TempValue3 <<=  7
+		TempValue3  +=  Object.YPos
+		TempValue3  &= 0xFFFF0000 // Truncate the value
+
+		DrawSpriteXY(1, TempValue2, TempValue3)
+		TempValue0++
+		TempValue1 += 8
+	loop
 end sub
 
 
 sub RSDKLoad
-	LoadSpriteSheet("Global/Display.gif")
-	SpriteFrame(-16, -16, 32, 32, 1, 143)		// #0 - "Script" Icon
+	LoadSpriteSheet("R8/Objects2.gif")
+
+	SpriteFrame(-24, -40, 48, 80, 51, 1)	// #0 - Twin Walker Leg
+	SpriteFrame(-4, -4, 8, 8, 19, 67)		// #1 - Twin Walker Chain
 
 	SetVariableAlias(ALIAS_VAR_PROPVAL, "unused")
 end sub

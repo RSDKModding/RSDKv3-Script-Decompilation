@@ -300,14 +300,100 @@ end sub
 // Editor Subs
 // ========================
 
+sub RSDKEdit
+	if Editor.ReturnVariable == true
+		switch Editor.VariableID
+		case EDIT_VAR_PROPVAL // Property Value
+			CheckResult = Object.PropertyValue
+			CheckResult &= 1
+			break
+		case 0 // type
+			CheckResult = Object.PropertyValue
+			CheckResult &= 1
+			break
+		end switch
+	else
+		switch Editor.VariableID
+		case EDIT_VAR_PROPVAL // Property Value
+			Object.PropertyValue = Editor.VariableValue
+			Object.PropertyValue &= 1
+			break
+		case 0 // type
+			Object.PropertyValue = Editor.VariableValue
+			Object.PropertyValue &= 1
+			break
+		end switch
+	end if
+end sub
+
 sub RSDKDraw
-	DrawSprite(0)
+	if Object.PropertyValue == GIMMICK_PARENT
+		TempValue0  = Object.AnimationTimer
+		TempValue0 /= 3
+		DrawSprite(TempValue0)
+		TempValue0 += 2
+		DrawSprite(TempValue0)
+	else
+		ArrayPos0  = Object.EntityNo
+		TempValue0 = 0
+		TempValue1 = 0
+		while TempValue1 == false
+			if TempValue0 == 3
+				TempValue1 = true
+			end if
+			ArrayPos0--
+			TempValue0++
+			CheckEqual(Object[ArrayPos0].Type, TypeName[R Plane Shifter])
+			TempValue1  = CheckResult
+			CheckNotEqual(Object[ArrayPos0].PropertyValue, GIMMICK_CHILD)
+			TempValue1 &= CheckResult
+		loop
+		ArrayPos1  = Object.EntityNo
+		ArrayPos1 -= Object[ArrayPos0].EntityNo
+		switch ArrayPos1
+		case 0
+			TempValue0  = 0
+			break
+		case 1
+			TempValue0  = 0
+			TempValue0 += 170
+			TempValue0 &= 511
+			break
+		case 2
+			TempValue0  = 0
+			TempValue0 += 341
+			TempValue0 &= 511
+			break
+		end switch
+		Sin(TempValue2, TempValue0)
+		TempValue2 *= 0xC00
+		TempValue2 += Object[ArrayPos0].XPos
+		DrawSpriteXY(4, TempValue2, Object.YPos)
+		DrawSpriteXY(5, TempValue2, Object.YPos)
+		DrawSpriteXY(6, TempValue2, Object.YPos)
+		DrawSpriteXY(7, TempValue2, Object.YPos)
+		DrawSpriteXY(8, TempValue2, Object.YPos)
+	end if
 end sub
 
 
 sub RSDKLoad
-	LoadSpriteSheet("Global/Display.gif")
-	SpriteFrame(-16, -16, 32, 32, 1, 143)		// #0 - "Script" Icon
+	LoadSpriteSheet("R8/Objects2.gif")
 
-	SetVariableAlias(ALIAS_VAR_PROPVAL, "unused")
+	SpriteFrame(-40, -8, 80, 16, 1, 200)	// #0 - R Plane Shifter Base frame 0
+	SpriteFrame(-40, -8, 80, 16, 1, 217)	// #1 - R Plane Shifter Base frame 1
+
+	SpriteFrame(-40, -184, 80, 16, 1, 200)	// #2 - R Plane Shifter Roof frame 0
+	SpriteFrame(-40, -184, 80, 16, 1, 217)	// #3 - R Plane Shifter Roof frame 1
+
+	SpriteFrame(-4, -40, 8, 32, 100, 35)	// #4 - R Plane Shifter Bars 0
+	SpriteFrame(-4, -72, 8, 32, 100, 35)	// #5 - R Plane Shifter Bars 1
+	SpriteFrame(-4, -104, 8, 32, 100, 35)	// #6 - R Plane Shifter Bars 2
+	SpriteFrame(-4, -136, 8, 32, 100, 35)	// #7 - R Plane Shifter Bars 3
+	SpriteFrame(-4, -168, 8, 32, 100, 35)	// #8 - R Plane Shifter Bars 4
+
+	AddEditorVariable("type")
+	SetActiveVariable("type")
+	AddEnumVariable("Parent Object", GIMMICK_PARENT)
+	AddEnumVariable("Child Object", GIMMICK_CHILD)
 end sub

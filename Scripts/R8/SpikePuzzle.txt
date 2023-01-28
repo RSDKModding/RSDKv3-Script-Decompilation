@@ -258,14 +258,122 @@ end sub
 // Editor Subs
 // ========================
 
+sub RSDKEdit
+	if Editor.ReturnVariable == true
+		switch Editor.VariableID
+		case EDIT_VAR_PROPVAL // Property Value
+			CheckResult = Object.PropertyValue
+			CheckResult &= 1
+			break
+		case 0 // type
+			CheckResult = Object.PropertyValue
+			CheckResult &= 1
+			break
+		end switch
+	else
+		switch Editor.VariableID
+		case EDIT_VAR_PROPVAL // Property Value
+			Object.PropertyValue = Editor.VariableValue
+			Object.PropertyValue &= 1
+			break
+		case 0 // type
+			Object.PropertyValue = Editor.VariableValue
+			Object.PropertyValue &= 1
+			break
+		end switch
+	end if
+end sub
+
+
 sub RSDKDraw
-	DrawSprite(0)
+	TempValue1  = 0
+	TempValue2  = TempValue1
+	TempValue2 += 6
+	while TempValue1 < TempValue2
+		DrawSprite(TempValue1)
+		TempValue1++
+	loop
+	
+	if Editor.ShowGizmos == true
+		Editor.DrawingOverlay = true
+		TempValue0  = Object.YPos
+		TempValue0 += 0x600000
+		Object.InkEffect = 1
+		ArrayPos0 = 5
+		while ArrayPos0 > 1
+			switch ArrayPos0
+			case 5
+			case 3
+			case 1
+				TempValue1 = 0
+				break
+			case 2
+				if Object.PropertyValue == PUZZLE_A
+					TempValue1 = 6
+				else
+					TempValue1 = 12
+				end if
+				break
+			case 4
+				if Object.PropertyValue == PUZZLE_A
+					TempValue1 = 12
+				else
+					TempValue1 = 6
+				end if
+				break
+			end switch
+			TempValue2  = TempValue1
+			TempValue2 += 6
+			while TempValue1 < TempValue2
+				DrawSpriteFX(TempValue1, FX_INK, Object.XPos, TempValue0)
+				TempValue1++
+			loop
+			TempValue0 -= 0x180000
+			ArrayPos0 --
+		loop
+		ArrayPos0  = Object.EntityNo
+		ArrayPos1  = ArrayPos0
+		ArrayPos1 += 5
+		while ArrayPos0 <= ArrayPos1
+			if Object[ArrayPos0].Type == TypeName[Blank Object]
+				DrawLine(Object.XPos, Object.YPos, Object[ArrayPos0].XPos, Object[ArrayPos0].YPos, 255, 255, 0)
+			end if
+			ArrayPos0++
+		loop
+		Editor.DrawingOverlay = false
+	end if
 end sub
 
 
 sub RSDKLoad
-	LoadSpriteSheet("Global/Display.gif")
-	SpriteFrame(-16, -16, 32, 32, 1, 143)		// #0 - "Script" Icon
+	LoadSpriteSheet("R8/Objects2.gif")
+	
+	// First Piece
+	SpriteFrame(-80, -8, 24, 24, 133, 1)	// #0  - Spike Small Chunk
+	SpriteFrame(-56, -8, 32, 24, 100, 1)	// #1  - Spike Medium Chunk
+	SpriteFrame(-24, -8, 24, 16, 158, 1)	// #2  - Spike BG Chunk
+	SpriteFrame(0, -8, 24, 16, 158, 1)		// #3  - Spike BG Chunk
+	SpriteFrame(24, -8, 32, 24, 100, 1)		// #4  - Spike Medium Chunk
+	SpriteFrame(56, -8, 24, 24, 133, 1)		// #5  - Spike Small Chunk
+	
+	// Second Piece
+	SpriteFrame(-80, -8, 24, 24, 133, 1)	// #6  - Spike Small Chunk
+	SpriteFrame(-56, -8, 24, 16, 158, 1)	// #7  - Spike BG Chunk
+	SpriteFrame(-32, -8, 24, 16, 158, 1)	// #8  - Spike BG Chunk
+	SpriteFrame(-8, -8, 32, 24, 100, 1)		// #9  - Spike Medium Chunk
+	SpriteFrame(24, -8, 32, 24, 100, 1)		// #10 - Spike Medium Chunk
+	SpriteFrame(56, -8, 24, 24, 133, 1)		// #11 - Spike Small Chunk
+	
+	// Third Piece
+	SpriteFrame(-80, -8, 32, 24, 100, 1)	// #12 - Spike Medium Chunk
+	SpriteFrame(-48, -8, 32, 24, 100, 1)	// #13 - Spike Medium Chunk
+	SpriteFrame(-16, -8, 24, 24, 133, 1)	// #14 - Spike Small Chunk
+	SpriteFrame(8, -8, 24, 16, 158, 1)		// #15 - Spike BG Chunk
+	SpriteFrame(32, -8, 24, 16, 158, 1)		// #16 - Spike BG Chunk
+	SpriteFrame(56, -8, 24, 24, 133, 1)		// #17 - Spike Small Chunk
 
-	SetVariableAlias(ALIAS_VAR_PROPVAL, "unused")
+	AddEditorVariable("puzzle")
+	SetActiveVariable("puzzle")
+	AddEnumVariable("Puzzle A", PUZZLE_A)
+	AddEnumVariable("Puzzle B", PUZZLE_B)
 end sub

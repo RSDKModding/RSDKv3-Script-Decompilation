@@ -16,7 +16,7 @@ sub ObjectMain
 			else
 				if Player.XPos > Object.XPos
 					// Set Left Bound
-					TempValue0  = 0xC30
+					TempValue0  = 3120
 					TempValue0 -= Screen.CenterX
 					Stage.NewXBoundary1 = TempValue0
 
@@ -44,7 +44,7 @@ sub ObjectMain
 			else
 				if Player.XPos > Object.XPos
 					// Set Left Bound
-					TempValue0  = 0xF00
+					TempValue0  = 3840
 					TempValue0 -= Screen.CenterX
 					Stage.NewXBoundary1 = TempValue0
 
@@ -52,7 +52,7 @@ sub ObjectMain
 					TempValue0 += Screen.XSize
 					Stage.NewXBoundary2 = TempValue0
 
-					Screen.XOffset = 0xCBC
+					Screen.XOffset = 3260
 
 					// Set Top Bound
 					TempValue0  = Object.iYPos
@@ -109,22 +109,41 @@ end sub
 
 sub RSDKDraw
 	if Editor.ShowGizmos == true
+		Editor.DrawingOverlay = true
 		// Draw a little indicator of where the bounds will be moved to
 		
-		TempValue0  = Object.XPos
-		TempValue0 -= 0x180000
-		TempValue1  = Object.XPos
-		TempValue1 += 0x180000
-		DrawLine(TempValue0, Object.XPos, TempValue1, Object.YPos, 255, 255, 0)
+		 // Let's assume it's the original width res of the game, 424
+		TempValue0   = 3120
+		TempValue0  -= 242
+		TempValue0 <<= 16
+		TempValue1   = Object.iYPos
+		TempValue1  -= 240
+		TempValue1 <<= 16
+		DrawRectOutline(TempValue0, TempValue1, 424, 240, 255, 255, 0, 255)
+		Editor.DrawingOverlay = false
 	end if
 	
-	DrawSprite(0)
+	TempValue0  = Object.XPos
+	TempValue0 -= 0x80000
+	TempValue1  = Object.YPos
+	TempValue1 -= 0x80000
+
+	DrawSpriteXY(0, TempValue0, TempValue1)
+
+	TempValue0 += 0x100000
+	DrawSpriteXY(0, TempValue0, TempValue1)
+
+	TempValue1 += 0x100000
+	DrawSpriteXY(0, TempValue0, TempValue1)
+
+	TempValue0 -= 0x100000
+	DrawSpriteXY(0, TempValue0, TempValue1)
 end sub
 
 
 sub RSDKLoad
 	LoadSpriteSheet("Global/Display.gif")
-	SpriteFrame(-16, -16, 32, 32, 1, 143)		// #0 - "Script" Icon
+	SpriteFrame(-8, -8, 16, 16, 173, 67)		// #0 - "T" Icon
 
 	SetVariableAlias(ALIAS_VAR_PROPVAL, "unused")
 end sub

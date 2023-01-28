@@ -13,7 +13,7 @@
 #alias 3	:	TUBEDOOR_CHECK_HEIGHT
 
 // Property Values
-#alias 0	:	OPENABLE
+#alias 0	:	TRIGGER_BY_BUTTON
 
 // Priority
 #alias 0	:	PRIORITY_BOUNDS
@@ -31,7 +31,7 @@ sub ObjectMain
 	case TUBEDOOR_CLOSED
 		Object.Priority = PRIORITY_ACTIVE
 		if PushButton[-1].Pressed == true
-			if Object.PropertyValue == OPENABLE
+			if Object.PropertyValue == TRIGGER_BY_BUTTON
 				Object.State = TUBEDOOR_OPEN
 			end if
 		else
@@ -115,14 +115,58 @@ end sub
 // Editor Subs
 // ========================
 
+sub RSDKEdit
+	if Editor.ReturnVariable == true
+		switch Editor.VariableID
+		case EDIT_VAR_PROPVAL // Property Value
+		case 0 // type
+			if Object.PropertyValue != 0
+				CheckResult = 1
+			else
+				CheckResult = 0
+			end if
+			break
+		end switch
+	else
+		switch Editor.VariableID
+		case EDIT_VAR_PROPVAL // Property Value
+		case 0 // type
+			if Editor.VariableValue != 0
+				Object.PropertyValue = 1
+			else
+				Object.PropertyValue = 0
+			end if
+			break
+		end switch
+	end if
+end sub
+
 sub RSDKDraw
+	DrawSprite(2)
+	DrawSprite(3)
 	DrawSprite(0)
+	DrawSprite(1)
+
+	if Object.PropertyValue == TRIGGER_BY_BUTTON
+		if Editor.ShowGizmos == true
+			Editor.DrawingOverlay = true
+			DrawLine(Object.XPos, Object.YPos, Object[-1].XPos, Object[-1].YPos, 255, 255, 0)
+			Editor.DrawingOverlay = false
+		end if
+	end if
 end sub
 
 
 sub RSDKLoad
-	LoadSpriteSheet("Global/Display.gif")
-	SpriteFrame(-16, -16, 32, 32, 1, 143)		// #0 - "Script" Icon
+	LoadSpriteSheet("R8/Objects2.gif")
 
-	SetVariableAlias(ALIAS_VAR_PROPVAL, "unused")
+	SpriteFrame(-8, -4, 16, 8, 19, 75)	// #0 - Tube Door left side
+	SpriteFrame(40, -4, 16, 8, 133, 26)	// #1 - Tube Door right side
+	SpriteFrame(8, -4, 16, 8, 100, 26)	// #2 - Tube Door first half
+	SpriteFrame(24, -4, 16, 8, 116, 26)	// #3 - Tube Door second half
+
+	AddEditorVariable("type")
+	SetActiveVariable("type")
+	AddEnumVariable("Trigger by button", TRIGGER_BY_BUTTON)
+	AddEnumVariable("No trigger", 1)
 end sub

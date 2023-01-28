@@ -11,11 +11,13 @@
 #alias Object.Value5	:	Object.SeesawFrame
 #alias Object.Value6	:	Object.OnObject
 
+// States
 #alias 0	:	SEESAW_IDLE
 #alias 1	:	SEESAW_SWING_DOWN
 #alias 2	:	SEESAW_SWING_UP
 #alias 3	:	SEESAW_SPIKEBALL_LAND
 
+// Priority
 #alias 0	:	PRIORITY_BOUNDS
 #alias 1	:	PRIORITY_ACTIVE
 
@@ -258,17 +260,17 @@ sub ObjectStartup
 	SpriteFrame(-40, -40, 40, 96, 107, 1)	// #1  - SeeSaw BG move frame 0
 	SpriteFrame(-24, -24, 24, 80, 123, 17)	// #2  - SeeSaw BG move frame 1
 	SpriteFrame(-40, -32, 40, 88, 148, 1)	// #3  - SeeSaw BG move frame 2
-	SpriteFrame(-40, -40, 40, 96, 189, 1)	// #3  - SeeSaw BG move frame 3
+	SpriteFrame(-40, -40, 40, 96, 189, 1)	// #4  - SeeSaw BG move frame 3
 
-	SpriteFrame(-40, -56, 80, 24, 175, 98)	// #4  - SeeSaw front platform Top
-	SpriteFrame(-40, -40, 80, 24, 175, 98)	// #5  - SeeSaw front platform Middle Top
-	SpriteFrame(-40, -24, 80, 24, 175, 98)	// #6  - SeeSaw front platform Middle
-	SpriteFrame(-40, 0, 80, 24, 175, 98)	// #7  - SeeSaw front platform Middle Bottom
-	SpriteFrame(-40, 16, 80, 24, 175, 98)	// #8  - SeeSaw front platform Bottom
+	SpriteFrame(-40, -56, 80, 24, 175, 98)	// #5  - SeeSaw front platform Top
+	SpriteFrame(-40, -40, 80, 24, 175, 98)	// #6  - SeeSaw front platform Middle Top
+	SpriteFrame(-40, -24, 80, 24, 175, 98)	// #7  - SeeSaw front platform Middle
+	SpriteFrame(-40, 0, 80, 24, 175, 98)	// #8  - SeeSaw front platform Middle Bottom
+	SpriteFrame(-40, 16, 80, 24, 175, 98)	// #9  - SeeSaw front platform Bottom
 
-	SpriteFrame(-16, -16, 32, 32, 1, 213)	// #9  - SpikeBall BG
-	SpriteFrame(-24, -24, 48, 48, 1, 164)	// #10 - SpikeBall halfway
-	SpriteFrame(-28, -32, 56, 64, 1, 99)	// #11 - SpikeBall FG
+	SpriteFrame(-16, -16, 32, 32, 1, 213)	// #10 - SpikeBall BG
+	SpriteFrame(-24, -24, 48, 48, 1, 164)	// #11 - SpikeBall halfway
+	SpriteFrame(-28, -32, 56, 64, 1, 99)	// #12 - SpikeBall FG
 
 	ArrayPos0 = 32
 	while ArrayPos0 < 1056
@@ -287,13 +289,20 @@ end sub
 // ========================
 
 sub RSDKDraw
+	Object.Direction = FACING_LEFT
+	DrawSpriteXY(2, Object.XPos, Object.YPos)
 	DrawSprite(0)
+	DrawSpriteFX(0, FX_FLIP, Object.XPos, Object.YPos)
+	DrawSprite(1)
 end sub
 
 
 sub RSDKLoad
-	LoadSpriteSheet("Global/Display.gif")
-	SpriteFrame(-16, -16, 32, 32, 1, 143)		// #0 - "Script" Icon
+	LoadSpriteSheet("R8/Objects.gif")
+
+	SpriteFrame(-40, -56, 40, 112, 66, 1)	// #0 - SeeSaw
+	SpriteFrame(-40, -56, 80, 24, 175, 98)	// #1 - SeeSaw front platform Top
+	SpriteFrame(-16, -16, 32, 32, 1, 213)	// #2 - SpikeBall BG
 
 	SetVariableAlias(ALIAS_VAR_PROPVAL, "unused")
 end sub

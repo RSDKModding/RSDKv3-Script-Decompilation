@@ -6,29 +6,29 @@
 #alias Object.Value0	:	Object.Timer
 
 // States
-#alias 0	:	V_PLAT_BASE
-#alias 1	:	V_PLAT_EXTEND_1
-#alias 2	:	V_PLAT_EXTEND_2
-#alias 3	:	V_PLAT_EXTEND_3
-#alias 4	:	V_PLAT_FULL_EXTEND
-#alias 5	:	V_PLAT_RETRACT_1
-#alias 6	:	V_PLAT_RETRACT_2
-#alias 7	:	V_PLAT_RETRACT_3
+#alias 0	:	H_PLAT_BASE
+#alias 1	:	H_PLAT_EXTEND_1
+#alias 2	:	H_PLAT_EXTEND_2
+#alias 3	:	H_PLAT_EXTEND_3
+#alias 4	:	H_PLAT_FULL_EXTEND
+#alias 5	:	H_PLAT_RETRACT_1
+#alias 6	:	H_PLAT_RETRACT_2
+#alias 7	:	H_PLAT_RETRACT_3
 
-#alias 8	:	H_PLAT_BASE
-#alias 9	:	H_PLAT_EXTEND_1
-#alias 10	:	H_PLAT_EXTEND_2
-#alias 11	:	H_PLAT_EXTEND_3
-#alias 12	:	H_PLAT_FULL_EXTEND
-#alias 13	:	H_PLAT_RETRACT_1
-#alias 14	:	H_PLAT_RETRACT_2
-#alias 15	:	H_PLAT_RETRACT_3
+#alias 8	:	V_PLAT_BASE
+#alias 9	:	V_PLAT_EXTEND_1
+#alias 10	:	V_PLAT_EXTEND_2
+#alias 11	:	V_PLAT_EXTEND_3
+#alias 12	:	V_PLAT_FULL_EXTEND
+#alias 13	:	V_PLAT_RETRACT_1
+#alias 14	:	V_PLAT_RETRACT_2
+#alias 15	:	V_PLAT_RETRACT_3
 
 
 sub ObjectMain
 	switch Object.State
-	case V_PLAT_BASE
 	case H_PLAT_BASE
+	case V_PLAT_BASE
 		if Object.Timer < 30
 			Object.Timer++
 		else
@@ -37,12 +37,12 @@ sub ObjectMain
 		end if
 		break
 		
-	case V_PLAT_EXTEND_1
-	case V_PLAT_EXTEND_2
-	case V_PLAT_EXTEND_3
 	case H_PLAT_EXTEND_1
 	case H_PLAT_EXTEND_2
 	case H_PLAT_EXTEND_3
+	case V_PLAT_EXTEND_1
+	case V_PLAT_EXTEND_2
+	case V_PLAT_EXTEND_3
 		if Object.Timer < 5
 			Object.Timer++
 		else
@@ -51,8 +51,8 @@ sub ObjectMain
 		end if
 		break
 		
-	case V_PLAT_FULL_EXTEND
 	case H_PLAT_FULL_EXTEND
+	case V_PLAT_FULL_EXTEND
 		if Object.Timer < 120
 			Object.Timer++
 		else
@@ -61,12 +61,12 @@ sub ObjectMain
 		end if
 		break
 		
-	case V_PLAT_RETRACT_1
-	case V_PLAT_RETRACT_2
-	case V_PLAT_RETRACT_3
 	case H_PLAT_RETRACT_1
 	case H_PLAT_RETRACT_2
 	case H_PLAT_RETRACT_3
+	case V_PLAT_RETRACT_1
+	case V_PLAT_RETRACT_2
+	case V_PLAT_RETRACT_3
 		if Object.Timer < 5
 			Object.Timer++
 		else
@@ -84,42 +84,42 @@ end sub
 sub ObjectPlayerInteraction
 	// Use different hitboxes for the Platform's different sizes
 	switch Object.State
-	case V_PLAT_BASE
 	case H_PLAT_BASE
+	case V_PLAT_BASE
 		PlayerObjectCollision(C_BOX, -8, -8, 8, 8)
 		break
 		
-	case V_PLAT_EXTEND_1
-	case V_PLAT_RETRACT_3
-		PlayerObjectCollision(C_BOX, -24, -8, 24, 8)
-		break
-		
-	case V_PLAT_EXTEND_2
-	case V_PLAT_RETRACT_2
-		PlayerObjectCollision(C_BOX, -40, -8, 40, 8)
-		break
-		
-	case V_PLAT_EXTEND_3
-	case V_PLAT_FULL_EXTEND
-	case V_PLAT_RETRACT_1
-		// Tallest version
-		PlayerObjectCollision(C_BOX, -56, -8, 56, 8)
-		break
-		
-	case H_PLAT_BASE
+	case H_PLAT_EXTEND_1
 	case H_PLAT_RETRACT_3
-		PlayerObjectCollision(C_BOX, -8, -24, 8, 24)
+		PlayerObjectCollision(C_BOX, -24, -8, 24, 8)
 		break
 		
 	case H_PLAT_EXTEND_2
 	case H_PLAT_RETRACT_2
-		PlayerObjectCollision(C_BOX, -8, -40, 8, 40)
+		PlayerObjectCollision(C_BOX, -40, -8, 40, 8)
 		break
 		
 	case H_PLAT_EXTEND_3
 	case H_PLAT_FULL_EXTEND
 	case H_PLAT_RETRACT_1
 		// Widest version
+		PlayerObjectCollision(C_BOX, -56, -8, 56, 8)
+		break
+		
+	case V_PLAT_BASE
+	case V_PLAT_RETRACT_3
+		PlayerObjectCollision(C_BOX, -8, -24, 8, 24)
+		break
+		
+	case V_PLAT_EXTEND_2
+	case V_PLAT_RETRACT_2
+		PlayerObjectCollision(C_BOX, -8, -40, 8, 40)
+		break
+		
+	case V_PLAT_EXTEND_3
+	case V_PLAT_FULL_EXTEND
+	case V_PLAT_RETRACT_1
+		// Tallest version
 		PlayerObjectCollision(C_BOX, -8, -56, 8, 56)
 		break
 		
@@ -135,24 +135,24 @@ sub ObjectDraw
 	// And then depending on the Platform's current state, 
 	// draw all the extended Platform frames as needed
 	switch Object.State
-	case 1
-	case 7
+	case H_PLAT_EXTEND_1
+	case H_PLAT_RETRACT_3
 		DrawSprite(3)
 		DrawSprite(4)
 		break
 		
-	case 2
-	case 6
+	case H_PLAT_EXTEND_2
+	case H_PLAT_RETRACT_2
 		DrawSprite(2)
 		DrawSprite(3)
 		DrawSprite(4)
 		DrawSprite(5)
 		break
 		
-	case 3
-	case 4
-	case 5
-		// Fully extended, vertically
+	case H_PLAT_EXTEND_3
+	case H_PLAT_FULL_EXTEND
+	case H_PLAT_RETRACT_1
+		// Fully extended, horizontally
 		DrawSprite(1)
 		DrawSprite(2)
 		DrawSprite(3)
@@ -161,24 +161,24 @@ sub ObjectDraw
 		DrawSprite(6)
 		break
 		
-	case 9
-	case 15
+	case V_PLAT_EXTEND_1
+	case V_PLAT_RETRACT_3
 		DrawSprite(9)
 		DrawSprite(10)
 		break
 		
-	case 10
-	case 14
+	case V_PLAT_EXTEND_2
+	case V_PLAT_RETRACT_2
 		DrawSprite(8)
 		DrawSprite(9)
 		DrawSprite(10)
 		DrawSprite(11)
 		break
 		
-	case 11
-	case 12
-	case 13
-		// Fully extended, horizontally
+	case V_PLAT_EXTEND_3
+	case V_PLAT_FULL_EXTEND
+	case V_PLAT_RETRACT_1
+		// Fully extended, vertically
 		DrawSprite(7)
 		DrawSprite(8)
 		DrawSprite(9)
@@ -217,12 +217,9 @@ sub ObjectStartup
 	ArrayPos0 = 32
 	while ArrayPos0 < 1056
 		if Object[ArrayPos0].Type == TypeName[HV Platform]
-			
 			// Start the Platform at fully extended horizontally
-			Object[ArrayPos0].State = H_PLAT_FULL_EXTEND
-			
+			Object[ArrayPos0].State = V_PLAT_FULL_EXTEND
 		end if
-		
 		ArrayPos0++
 	loop
 	
@@ -234,16 +231,36 @@ end sub
 // ========================
 
 sub RSDKDraw
-	TempValue0 = 0
-	while TempValue0 < 6
+	DrawSprite(0)
+	TempValue0 = 7
+	while TempValue0 <= 12
 		DrawSprite(TempValue0); TempValue0++
 	loop
+
+	if Editor.ShowGizmos == true
+		Editor.DrawingOverlay = true
+		Object.InkEffect = 1
+		TempValue0 = 0
+		while TempValue0 <= 6
+			DrawSpriteFX(TempValue0, FX_INK, Object.XPos, Object.YPos); TempValue0++
+		loop
+		Editor.DrawingOverlay = false
+	end if
 end sub
 
 
 sub RSDKLoad
 	LoadSpriteSheet("R8/Objects.gif")
+	// Base Post Frame
 	SpriteFrame(-8, -8, 16, 16, 140, 123)
+	
+	// All the extension frames
+	SpriteFrame(-56, -8, 16, 16, 75, 200)
+	SpriteFrame(-40, -8, 16, 16, 75, 200)
+	SpriteFrame(-24, -8, 16, 16, 75, 200)
+	SpriteFrame(8, -8, 16, 16, 75, 200)
+	SpriteFrame(24, -8, 16, 16, 75, 200)
+	SpriteFrame(40, -8, 16, 16, 75, 200)
 	SpriteFrame(-8, -56, 16, 16, 75, 200)
 	SpriteFrame(-8, -40, 16, 16, 75, 200)
 	SpriteFrame(-8, -24, 16, 16, 75, 200)
