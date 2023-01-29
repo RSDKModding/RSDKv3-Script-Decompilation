@@ -59,20 +59,6 @@ sub ObjectStartup
 	LoadSpriteSheet("Menu/HelpText.gif")
 	TempValue1 = Object.SpriteSheet
 
-	ArrayPos0 = 32
-	while ArrayPos0 < 1056
-		if Object[ArrayPos0].Type == TypeName[Trophie List]
-			Object[ArrayPos0].TrophieSheet  = TempValue0
-			Object[ArrayPos0].HelpTextSheet = TempValue1
-			Object[ArrayPos0].DrawOrder = 2
-			Object[ArrayPos0].Priority  = PRIORITY_ACTIVE
-			if Screen.XSize >= 384
-				Object[ArrayPos0].XPos -= 0x100000
-			end if
-		end if
-		ArrayPos0++
-	loop
-
 	SpriteFrame(-64, -64, 128, 128, 0, 0)		// #0  - 88 Miles Per Hour Icon
 	SpriteFrame(-64, -64, 128, 128, 128, 0)		// #1  - One Hug is Enough Icon
 	SpriteFrame(-64, -64, 128, 128, 256, 0)		// #2  - Paradise Found Icon
@@ -126,6 +112,21 @@ sub ObjectStartup
 	AddMenuEntry(MENU_2, "Destroy all the robot transporters and Metal Sonic holograms in the past.", 0)
 
 	LoadOnlineMenu(ONLINEMENU_ACHIEVEMENTS)
+
+	// Used to be below LoadSpriteSheet, moved here for consistency
+	ArrayPos0 = 32
+	while ArrayPos0 < 1056
+		if Object[ArrayPos0].Type == TypeName[Trophie List]
+			Object[ArrayPos0].TrophieSheet  = TempValue0
+			Object[ArrayPos0].HelpTextSheet = TempValue1
+			Object[ArrayPos0].DrawOrder = 2
+			Object[ArrayPos0].Priority  = PRIORITY_ACTIVE
+			if Screen.XSize >= 384
+				Object[ArrayPos0].XPos -= 0x100000
+			end if
+		end if
+		ArrayPos0++
+	loop
 end sub
 
 
@@ -134,13 +135,29 @@ end sub
 // ========================
 
 sub RSDKDraw
-	DrawSprite(0)
+	Object.Scale = 128
+	TempValue0 = Object.EntityNo
+	TempValue0--
+	DrawSpriteFX(TempValue0, FX_SCALE, Object.XPos, Object.YPos)
 end sub
 
 
 sub RSDKLoad
-	LoadSpriteSheet("Global/Display.gif")
-	SpriteFrame(-16, -16, 32, 32, 1, 143)		// #0 - "Script" Icon
+	LoadSpriteSheet("Menu/Trophies.gif")
+
+	SpriteFrame(-64, -64, 128, 128, 0, 0)		// #0  - 88 Miles Per Hour Icon
+	SpriteFrame(-64, -64, 128, 128, 128, 0)		// #1  - One Hug is Enough Icon
+	SpriteFrame(-64, -64, 128, 128, 256, 0)		// #2  - Paradise Found Icon
+	SpriteFrame(-64, -64, 128, 128, 384, 0)		// #3  - Take the High Road Icon
+	SpriteFrame(-64, -64, 128, 128, 0, 128)		// #4  - King of the Rings Icon
+	SpriteFrame(-64, -64, 128, 128, 128, 128)	// #5  - Statue Saviour Icon
+	SpriteFrame(-64, -64, 128, 128, 256, 128)	// #6  - Heavy Metal Icon
+	SpriteFrame(-64, -64, 128, 128, 384, 128)	// #7  - All Stages Clear! Icon
+	SpriteFrame(-64, -64, 128, 128, 0, 256)		// #8  - Treasure Hunter Icon
+	SpriteFrame(-64, -64, 128, 128, 128, 256)	// #9  - Dr. Eggman Got Served Icon
+	SpriteFrame(-64, -64, 128, 128, 256, 256)	// #10 - Just In Time! Icon
+	SpriteFrame(-64, -64, 128, 128, 384, 256)	// #11 - Saviour of the Planet Icon
+	SpriteFrame(-64, -64, 128, 128, 0, 384)		// #12 - Lock Icon
 
 	SetVariableAlias(ALIAS_VAR_PROPVAL, "unused")
 end sub

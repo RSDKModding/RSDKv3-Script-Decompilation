@@ -243,8 +243,34 @@ end sub
 // Editor Subs
 // ========================
 
+sub RSDKEdit
+	if Editor.ReturnVariable == true
+		switch Editor.VariableID
+		case EDIT_VAR_PROPVAL // Property Value
+			CheckResult = Object.PropertyValue
+			CheckResult &= 1
+			break
+		case 0 // condition
+			CheckResult = Object.PropertyValue
+			CheckResult &= 1
+			break
+		end switch
+	else
+		switch Editor.VariableID
+		case EDIT_VAR_PROPVAL // Property Value
+			Object.PropertyValue = Editor.VariableValue
+			Object.PropertyValue &= 1
+			break
+		case 0 // condition
+			Object.PropertyValue = Editor.VariableValue
+			Object.PropertyValue &= 1
+			break
+		end switch
+	end if
+end sub
+
 sub RSDKDraw
-	DrawSprite(0)
+	DrawSprite(Object.PropertyValue)
 end sub
 
 
@@ -253,8 +279,13 @@ sub RSDKLoad
 
 	// Good
 	SpriteFrame(-16, -18, 32, 40, 34, 134)	// #0 - Pata Byon
-	
-	SetVariableAlias(ALIAS_VAR_PROPVAL, "unused")
+	// Bad
+	SpriteFrame(-16, -18, 32, 40, 34, 175)	// #1 - Pata Byon
+
+	AddEditorVariable("condition")
+	SetActiveVariable("condition")
+	AddEnumVariable("Good Quality", GOOD_QUALITY)
+	AddEnumVariable("Bad Quality", BAD_QUALITY)
 end sub
 
 

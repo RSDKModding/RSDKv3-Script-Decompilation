@@ -1162,30 +1162,30 @@ sub RSDKEdit
 	if Editor.ReturnVariable == true
 		switch Editor.VariableID
 		case EDIT_VAR_PROPVAL // Property Value
-			CheckResult = Object.Quality
+			CheckResult = Object.PropertyValue
 			break
 		case 0 // Condition
-			CheckResult = Object.Quality
+			CheckResult = Object.PropertyValue
 			CheckResult &= 1
 			break
 		case 1 // Formation
-			CheckResult = Object.Quality
+			CheckResult = Object.PropertyValue
 			CheckResult &= 254
 			break
 		end switch
 	else
 		switch Editor.VariableID
 		case EDIT_VAR_PROPVAL // Property Value
-			Object.Quality = Editor.VariableValue
+			Object.PropertyValue = Editor.VariableValue
 			break
 		case 0 // Condition
 			CheckNotEqual(Editor.VariableValue, false)
-			SetBit(Object.Quality, 0, CheckResult)
+			SetBit(Object.PropertyValue, 0, CheckResult)
 			break
 		case 1 // Formation
-			Object.Quality &= 1
+			Object.PropertyValue &= 1
 			Editor.VariableValue &= 254
-			Object.Quality |= Editor.VariableValue
+			Object.PropertyValue |= Editor.VariableValue
 			break
 		end switch
 	end if
@@ -1193,9 +1193,9 @@ end sub
 
 
 sub RSDKDraw
-	GetBit(TempValue5, Object.Quality, 0)
+	GetBit(TempValue5, Object.PropertyValue, 0)
 	
-	TempValue0 = Object.Quality
+	TempValue0 = Object.PropertyValue
 	TempValue0 &= 254
 	switch TempValue0
 	case 0
