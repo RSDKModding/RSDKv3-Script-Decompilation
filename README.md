@@ -18,7 +18,8 @@ To use these scripts in mods:
 * Sonic Origins (Requires [HedgeModManager](https://github.com/thesupersonic16/HedgeModManager)):
   * Navigate to game's executable directory. The easy way to get to it is by clicking `Open Game Directory` in the Settings tab of HedgeModManager.
   * Once you're there, extract the `Scripts` folder into a folder named `SonicCDu` in the exe's root directory: eg `[rootdir]/SonicCDu/Scripts/`.
-* Standalone Steam release (Requires the latest version of the [Sonic CD Steam Mod Loader](https://gamebanana.com/tools/6446)): The mod loader will automatically download and install the scripts upon launch.
+
+These scripts do NOT work with the standalone Steam release of the game.
 
 Mods are only required to include the scripts that have been changed.
 
