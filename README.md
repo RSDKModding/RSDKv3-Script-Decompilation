@@ -8,11 +8,17 @@ These scripts have been manually reverted back to what the original scripts coul
 * Function IDs have been recovered back to proper function names
 * Functions are in the proper order
 * Default aliases have been re-added where possible
-* Origins/Haptic/Renderer code has been added into scripts via the use of `#platform:` markers
+* Added editor renders and variables for (almost) every object
+* Origins/Haptic/Renderer code have all been included via the use of `#platform:` markers
+
+Some portions of the code have been slightly modified for compatibility purposes.
 
 To use these scripts in mods: 
-* RSDKv3/RSDKv5U Decompilation: Extract the scripts folder to the exe's root directory: eg `[rootdir]/Scripts/`.
-* Standalone Steam release: If you're using an up-to-date version of the mod loader, it will download and install these scripts automatically.
+* RSDKv3/RSDKv5U Decompilation: Extract the `Scripts` folder to the exe's root directory: eg `[rootdir]/Scripts/`.
+* Sonic Origins (Requires [HedgeModManager](https://github.com/thesupersonic16/HedgeModManager)):
+  * Navigate to game's executable directory. The easy way to get to it is by clicking `Open Game Directory` in the Settings tab of HedgeModManager.
+  * Once you're there, extract the `Scripts` folder into a folder named `SonicCDu` in the exe's root directory: eg `[rootdir]/SonicCDu/Scripts/`.
+* Standalone Steam release (Requires the latest version of the [Sonic CD Steam Mod Loader](https://gamebanana.com/tools/6446)): The mod loader will automatically download and install the scripts upon launch.
 
 Mods are only required to include the scripts that have been changed.
 
