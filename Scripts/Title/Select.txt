@@ -107,7 +107,7 @@ sub ObjectMain
 	case SELECT_INIT
 		Object.SelectionPos = Screen.CenterX
 		
-		// Game Stary is the default option
+		// Game Start is the default option
 		Object.DisplaySelection = SELECTION_GAMESTART
 		Object.CurrentSelection = SELECTION_GAMESTART
 		Object.State = SELECT_MAIN
@@ -140,7 +140,6 @@ sub ObjectMain
 				while TempValue1 == false
 					if TempValue0 == SELECTION_GAMESTART
 						// Hit the minimum, just break with the Game Start Selection
-						
 						TempValue1 = true
 					else
 						TempValue0--
@@ -160,7 +159,6 @@ sub ObjectMain
 			while TempValue1 == false
 				if TempValue0 >= SELECTION_MAX
 					// Hit the maximum, just break with whatever the current Selection is
-					
 					TempValue1 = true
 					TempValue0 = Object.CurrentSelection
 				else
@@ -236,39 +234,22 @@ sub ObjectMain
 		break
 		
 	case SELECT_GAMESTART
-		// Create a new save, with properties of such:
-		ArrayPos1 = 0
-		
-		// Make the character who the player just chose
-		SaveRAM[ArrayPos1] = Stage.PlayerListPos
+		ArrayPos1 = 0 // Create a new save, with properties of such:
+		SaveRAM[ArrayPos1] = Stage.PlayerListPos // Make the character who the player just chose
 		ArrayPos1++
-		
-		// Start with 3 lives
-		SaveRAM[ArrayPos1] = 3
+		SaveRAM[ArrayPos1] = 3 // Start with 3 lives
 		ArrayPos1++
-		
-		// Default score of 0
-		SaveRAM[ArrayPos1] = 0
+		SaveRAM[ArrayPos1] = 0 // Default score of 0
 		ArrayPos1++
-		
-		// The game starts at Palmtree Present Act 1, of course!
-		SaveRAM[ArrayPos1] = STAGE_R_R11A
+		SaveRAM[ArrayPos1] = STAGE_R_R11A // The game starts at Palmtree Present Act 1, of course!
 		ArrayPos1++
-		
-		// No Time Stones
-		SaveRAM[ArrayPos1] = 0
+		SaveRAM[ArrayPos1] = 0 // No Time Stones
 		ArrayPos1++
-		
-		// And if you have no Time Stones, then that means no Special Stages have been done yet either!
-		SaveRAM[ArrayPos1] = 0
+		SaveRAM[ArrayPos1] = 0 // And if you have no Time Stones, then that means no Special Stages have been done yet either!
 		ArrayPos1++
-		
-		// To get an extra life, the first benchmark will be 50000
-		SaveRAM[ArrayPos1] = 50000
+		SaveRAM[ArrayPos1] = 50000 // To get an extra life, the first benchmark will be 50000
 		ArrayPos1++
-		
-		// Since it's a new save, there haven't been any Good Futures yet too
-		SaveRAM[ArrayPos1] = 0
+		SaveRAM[ArrayPos1] = 0 // Since it's a new save, there haven't been any Good Futures yet too
 		
 		// And now, write all those initial values
 		WriteSaveRAM()
@@ -325,7 +306,6 @@ sub ObjectMain
 		
 		if Stage.ListPos < STAGE_R_R11A
 			// If in the negatives somehow, then go back to 0 - STAGE_R_R11A
-			
 			Stage.ListPos = STAGE_R_R11A
 			Player.Lives  = 3
 			Player.Score  = 0
@@ -334,7 +314,6 @@ sub ObjectMain
 		// If it's beyond the normal stage length, then that means the save is
 		//   in a Special Stage
 		if Stage.ListPos >= 80
-			
 			// Let's bring that back down, to the actual Stage List Pos
 			SpecialStage.NextZone  = Stage.ListPos
 			SpecialStage.NextZone -= 80
@@ -420,8 +399,7 @@ sub ObjectMain
 		break
 		
 	case SELECT_SETTINGS
-		
-		// Load the Menu, specifically the "settings" part
+		// Load the Menu, specifically the "Settings" part
 		// -> Despite its general name, it's really only the Spindash option...
 		
 		game.mainMenuMode = MAINMENUMODE_SETTINGS
@@ -434,7 +412,6 @@ sub ObjectMain
 		break
 		
 	case SELECT_SOUNDTRACK
-		
 		// Load the Menu, but this time for the Soundtrack menu
 		game.mainMenuMode = MAINMENUMODE_SOUNDTRACK
 		Stage.ActiveList  = PRESENTATION_STAGE
@@ -446,7 +423,6 @@ sub ObjectMain
 		break
 		
 	case SELECT_EXTRAS
-		
 		// Yup it's your favourite Menu again, but now the Extras tab!
 		game.mainMenuMode = MAINMENUMODE_EXTRAS
 		Stage.ActiveList  = PRESENTATION_STAGE
@@ -459,14 +435,12 @@ sub ObjectMain
 		
 	case SELECT_EXIT
 		// Not much here...
-		
 		Engine.State = ENGINE_WAIT
 		
 		SetScreenFade(0, 0, 0, 255)
 		break
 		
 	case SELECT_CHARSELECT
-		
 		// Prompt the HE2 side of things to bring up the character menu
 		game.continueFlag	= false
 		game.callbackResult = -1	// Reset Callback result
@@ -478,7 +452,6 @@ sub ObjectMain
 		
 	case SELECT_RECIEVERESULT
 		if game.callbackResult > 0
-			
 			// Based on the result, either exit or actually follow the selected option
 			if game.continueFlag != false
 				Object.CurrentSelection = SELECTION_CONTINUE
@@ -504,7 +477,6 @@ sub ObjectMain
 		break
 		
 	case SELECT_LEFT_START
-		
 		// Slide the current selection off to the right
 		Object.SelectionPos += 30
 		
@@ -522,24 +494,20 @@ sub ObjectMain
 		break
 		
 	case SELECT_LEFT_END
-		
 		// Slide the text in from the left 'till it's centre screen
 		Object.SelectionPos += 30
 		
 		if Object.SelectionPos >= Screen.CenterX
-			
 			// Just to make sure that it's in the middle
 			Object.SelectionPos = Screen.CenterX
 			
 			// And now, go back to the Main Selection phase
 			Object.State = SELECT_MAIN
 			Object.ArrowsPos = 0
-			
 		end if
 		break
 		
 	case SELECT_RIGHT_START
-		
 		// Move the current select off to the left
 		Object.SelectionPos -= 30
 		
@@ -557,19 +525,16 @@ sub ObjectMain
 		break
 		
 	case SELECT_RIGHT_END
-		
 		// Move the new selection from the right side of the screen to reach the middle
 		Object.SelectionPos -= 30
 		
 		if Object.SelectionPos <= Screen.CenterX
-			
 			// Just to make sure it's where it should be
 			Object.SelectionPos = Screen.CenterX
 			
 			// Now, back to the Main selection state!
 			Object.State = SELECT_MAIN
 			Object.ArrowsPos = 0
-			
 		end if
 		break
 		
@@ -591,23 +556,18 @@ sub ObjectMain
 		Engine.State = RESET_GAME
 		SetScreenFade(0, 0, 0, 255)
 		break
-		
 	end switch
-	
 end sub
 
 
 sub ObjectDraw
-	
 	// Base Frame ID
 	TempValue0 = Object.DisplaySelection
 	
 	if Object.SelectionPos == Screen.CenterX
-		
 		// If the Selection is in the middle of the screen, then bump up the
 		//   frame ID to use the yellow, selected frame
 		TempValue0 += 7
-		
 	end if
 	
 	// Huh, why are they assigned these values to temps when they could just be used directly?
@@ -652,14 +612,11 @@ sub ObjectDraw
 			// And again, another use of FX_INK for no reason at all...
 			DrawSpriteScreenFX(17, FX_INK, TempValue4, TempValue2)
 		end if
-		
 	end if
-	
 end sub
 
 
 sub ObjectStartup
-	
 	// Do note, this sprite is new to Origins so it doesn't exist in previous Steam or mobile data files
 	LoadSpriteSheet("Title/Select.gif")
 	
@@ -730,7 +687,6 @@ sub ObjectStartup
 	
 	// Yup, all the remaining sprites on the sheet are unused!
 	// That makes a nearly half unused sheet!
-	
 end sub
 
 
