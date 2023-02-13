@@ -2,21 +2,28 @@
 //--------Scripted by Christian Whitehead 'The Taxman'--------//
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
+// Do note, these are not the same genre of "Path Swappers" as used in loops!
+// Although in Sonic 1/Sonic 2 they're dedicated objects that can be placed, in Sonic CD the chunks are instead swapped in real-time, just like the original game
+// And, the system used in R7's loops is handled in the stage's respective [R7X Setup] script, not here
+// This object is just the little Sonic sign that you can jump at
+
 // Aliases
+#alias 0 : PATHSWAP_IDLE
+#alias 1 : PATHSWAP_SPINNING
+
 #alias Object.Value0 : Object.Timer
-#alias Object.Value7 : Object.Interacted
+
+// If the Player has touched this Path Swapper last frame, used to distinguish new touches from old touches
+#alias Object.Value7 : Object.PrevTouch
 
 #alias Object.Value1 : Object.ChunkX1
 #alias Object.Value3 : Object.ChunkX2
 #alias Object.Value2 : Object.ChunkY1
 #alias Object.Value4 : Object.ChunkY2
 
-// Old holds the chunk ID of what's already there on the level map, New holds what it should be replaced with
+// Holds the chunk ID of what's already there on the level map, New holds what it should be replaced with
 #alias Object.Value5 : Object.ChunkIDOld
 #alias Object.Value6 : Object.ChunkIDNew
-
-#alias 0 : PATHSWAP_UNTOUCHED
-#alias 1 : PATHSWAP_INTERACTED
 
 // Priority
 #alias 0	:	PRIORITY_BOUNDS
@@ -24,11 +31,11 @@
 
 
 sub ObjectMain
-	if Object.State == PATHSWAP_INTERACTED
+	if Object.State == PATHSWAP_SPINNING
 		if Object.Timer < 39
 			Object.Timer++
 		else
-			Object.State = PATHSWAP_UNTOUCHED
+			Object.State = PATHSWAP_IDLE
 			Object.Timer = 0
 			Object.Priority = PRIORITY_BOUNDS
 		end if
@@ -57,16 +64,19 @@ end sub
 
 
 sub ObjectPlayerInteraction
+	
 	if Object.PropertyValue < 2
-		if Object.State == PATHSWAP_UNTOUCHED
+		if Object.State == PATHSWAP_IDLE
 			if PathSwap_Frame == 0
 				PlayerObjectCollision(C_TOUCH, -16, -16, 16, 16)
 				if CheckResult == true
-					if Object.Interacted == false
-						Object.State = PATHSWAP_INTERACTED
+					if Object.PrevTouch == false
+						Object.State = PATHSWAP_SPINNING
 						Object.Priority = PRIORITY_ACTIVE
-						Object.Interacted = true
+						Object.PrevTouch = true
 						
+						// This is a weird way to do it... but sure
+						// A `^= true` would work just as well here too, though you don't see those all too often in CD
 						PathSwap_Flag++
 						PathSwap_Flag &= true
 						
@@ -78,7 +88,7 @@ sub ObjectPlayerInteraction
 						
 					end if
 				else
-					Object.Interacted = false
+					Object.PrevTouch = false
 				end if
 			end if
 		end if
@@ -156,8 +166,6 @@ sub RSDKEdit
 	if Editor.ReturnVariable == true
 		switch Editor.VariableID
 		case EDIT_VAR_PROPVAL // Property Value
-			CheckResult = Object.PropertyValue
-			break
 		case 0 // Type
 			CheckResult = Object.PropertyValue
 			break
@@ -165,8 +173,6 @@ sub RSDKEdit
 	else
 		switch Editor.VariableID
 		case EDIT_VAR_PROPVAL // Property Value
-			Object.PropertyValue = Editor.VariableValue
-			break
 		case 0 // Type
 			Object.PropertyValue = Editor.VariableValue
 			break
@@ -176,22 +182,8 @@ end sub
 
 
 sub RSDKDraw
-	CheckEqual(Object.PropertyValue, 2)
-	Object.InkEffect = CheckResult
-	
+	GetBit(Object.InkEffect, Object.PropertyValue, 1) // Invis types get to be blended
 	DrawSpriteFX(0, FX_INK, Object.XPos, Object.YPos)
-	
-	if Editor.ShowGizmos == true
-		Editor.DrawingOverlay = true
-		
-		TempValue0 = Object.iXPos
-		TempValue0 -= 16
-		TempValue1 = Object.iYPos
-		TempValue1 -= 16
-		DrawRectOutline(TempValue0, TempValue1, 32, 32, 255, 0, 0, 0)
-		
-		Editor.DrawingOverlay = false
-	end if
 end sub
 
 

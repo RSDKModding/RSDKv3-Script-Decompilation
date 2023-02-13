@@ -2,30 +2,41 @@
 //--------Scripted by Christian Whitehead 'The Taxman'--------//
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
+// ========================
 // Aliases
-#alias Object.Value0	:	Object.ShoulderEntity
-#alias Object.Value2	:	Object.XOffSet
-#alias Object.Value4	:	Object.Charging
-#alias Object.Value5	:	Object.YOffSet
+// ========================
 
-// Shoulder Aliases
-#alias Object.Xpos		:	Shoulder.XPos
-#alias Object.YPos		:	Shoulder.YPos
+#alias Object.Value0 : Object.ShoulderEntity
+#alias Object.Value2 : Object.XOffSet
+#alias Object.Value4 : Object.Charging
+#alias Object.Value5 : Object.YOffSet
 
 // States
-#alias 0	:	BOSSARMJOINT_SETUP
-#alias 1	:	BOSSARMJOINT_REPOSITION_F
-#alias 2	:	BOSSARMJOINT_HANDLE_F_JOINT
-#alias 3	:	BOSSARMJOINT_REPOSITION_B
-#alias 4	:	BOSSARMJOINT_HANDLE_B_JOINT
-#alias 5	:	BOSSARMJOINT_DESTROYED
+#alias 0 : BOSSARMJOINT_SETUP
+#alias 1 : BOSSARMJOINT_REPOSITION_F
+#alias 2 : BOSSARMJOINT_HANDLE_F_JOINT
+#alias 3 : BOSSARMJOINT_REPOSITION_B
+#alias 4 : BOSSARMJOINT_HANDLE_B_JOINT
+#alias 5 : BOSSARMJOINT_DESTROYED
 
-// Priotity
-#alias 0	:	PRIORITY_BOUNDS
+// Boss Shoulder Aliases
+#alias Object.XPos : Shoulder.XPos
+#alias Object.YPos : Shoulder.YPos
 
-// Function declarations
+// Priority Aliases
+#alias 0 : PRIORITY_BOUNDS
+
+
+// ========================
+// Function Declarations
+// ========================
+
 #function BossArmJoint_HandleMovement
 
+
+// ========================
+// Functiion Definitions
+// ========================
 
 function BossArmJoint_HandleMovement
 	TempValue0  = Object.XOffSet
@@ -51,20 +62,24 @@ function BossArmJoint_HandleMovement
 end function
 
 
+// ========================
+// Events
+// ========================
+
 sub ObjectMain
 	switch Object.State
 	case BOSSARMJOINT_SETUP
 		if Object.DrawOrder == 3	// Left Arm Joint
-			Object.XOffSet = 128		// Delays the left arm joint
+			Object.XOffSet = 128		// Delay the left arm joint a bit
 		end if
 		Object.State = BOSSARMJOINT_REPOSITION_B
-		// Fall Through
+		// [Fallthrough]
 	case BOSSARMJOINT_REPOSITION_F
 		Object.XOffSet -= 2
 		if Object.XOffSet <= 0
 			Object.State = BOSSARMJOINT_HANDLE_F_JOINT
 			Object.XOffSet = 0
-			SetBit(Object.Charging, 0, 1)
+			SetBit(Object.Charging, 0, true)
 		end if
 
 		CallFunction(BossArmJoint_HandleMovement)
@@ -79,7 +94,7 @@ sub ObjectMain
 		if Object.XOffSet >= 48
 			Object.State = BOSSARMJOINT_HANDLE_B_JOINT
 			Object.XOffSet = 48
-			SetBit(Object.Charging, 0, 1)
+			SetBit(Object.Charging, 0, true)
 		end if
 		
 		CallFunction(BossArmJoint_HandleMovement)

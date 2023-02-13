@@ -17,7 +17,7 @@
 #alias Player.Value11		:	Player.ActionPeelout
 #alias Player.Value12		:	Player.ActionSpindash
 #alias Player.Value13		:	Player.Unused1			// Completely unused
-#alias Player.Value14		:	Player.DropDashCharge	// Origins new value
+#alias Player.Value14		:	Player.DropDashCharge	// Originally unused in the 2011 release, but Origins gave it a purpose
 #alias Player.Value15		:	Player.FlightVelocity
 
 // Flailing states, v4 names explains this much better
@@ -123,8 +123,8 @@
 #alias 27	:	SFX_G_SELECT
 #alias 28	:	SFX_G_DROPDASH	// Origins Exclusive
 
-// GameModes
-#alias 2	:	GAMEMODE_TIMEATTACK
+// Game Mode Aliases
+#alias 2	:	MODE_TIMEATTACK
 
 // Warp Destination
 #alias 0	:	WARPDEST_NONE
@@ -1734,6 +1734,7 @@ function Player_State_Spindash_CD
 	else
 		Screen.CameraStyle = CAMERASTYLE_EXTENDED_OFFSET_R
 	end if
+	
 	// Keep the camera lock, cancel the spin dash
 	if Player.Gravity == GRAVITY_AIR
 
@@ -1832,6 +1833,7 @@ function Player_State_Peelout_S2
 			Player.Animation = ANI_RUNNING
 		end if
 	end if
+	
 	// Release
 	if Player.Up == false
 		Player.ScrollDelay = 15
@@ -1880,6 +1882,7 @@ function Player_State_Peelout_CD
 		Player.Speed = 0
 		Screen.CameraStyle = CAMERASTYLE_EXTENDED
 	end if
+	
 	// Charge
 	if Player.GravityStrength == 0x1000
 		if Player.AbilityTimer < 0x60000
@@ -1910,6 +1913,7 @@ function Player_State_Peelout_CD
 			Player.Animation = ANI_RUNNING
 		end if
 	end if
+	
 	// Release
 	if Player.Up == false
 		Screen.CameraStyle = CAMERASTYLE_EXTENDED
@@ -2319,7 +2323,7 @@ function Player_State_Death
 			DeathEvent.Text2XPos += 232
 		end if
 
-		if Options.GameMode == GAMEMODE_TIMEATTACK
+		if Options.GameMode == MODE_TIMEATTACK
 			DeathEvent.Timer = 0
 			DeathEvent.State = DEATHEVENT_TIMEATTACK
 		else
@@ -2416,7 +2420,7 @@ function Player_State_Drown
 		DeathEvent.Text2XPos  = Screen.CenterX
 		DeathEvent.Text2XPos += 232
 
-		if Options.GameMode == GAMEMODE_TIMEATTACK
+		if Options.GameMode == MODE_TIMEATTACK
 			DeathEvent.Timer = 0
 			DeathEvent.State = DEATHEVENT_TIMEATTACK
 		else

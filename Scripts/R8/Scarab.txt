@@ -10,7 +10,7 @@
 #alias Object.Value4	:	Object.LaunchDelay
 #alias Object.Value5	:	Object.LaunchSpeed
 #alias Object.Value6	:	Object.OnObject
-#alias Object.Value7	:	Object.CarriesMonitor
+#alias Object.Value7	:	Object.CaryingMonitor
 
 // States
 #alias 0	:	SCARAB_MOVE
@@ -100,7 +100,7 @@ sub ObjectMain
 		end if
 	end if
 
-	if Object.CarriesMonitor == true
+	if Object.CaryingMonitor == true
 		if Object[+1].Type == TypeName[Monitor]
 			Object[+1].XPos  = Object.XPos
 			Object[+1].XPos -= 0x180000
@@ -109,7 +109,7 @@ sub ObjectMain
 			Object[+1].YPos -= 0x40000
 		else
 			Object[+1].Type = TypeName[Blank Object]
-			Object.CarriesMonitor = false
+			Object.CaryingMonitor = false
 		end if
 	end if
 
@@ -121,7 +121,7 @@ sub ObjectMain
 		Object.XPos = Object.XOriginPos
 		Object.YPos = Object.YOriginPos
 
-		if Object.OutOfBounds == true	//...?
+		if Object.OutOfBounds == true // If starting position was out of bounds too, then we can safely go back
 			Object.Priority = PRIORITY_BOUNDS
 			Object.State = SCARAB_MOVE
 			Object.Timer = 0
@@ -230,11 +230,11 @@ sub ObjectDraw
 		if Object.DrawOrder == 3
 			Object.Frame  = Object.AnimationTimer
 			Object.Frame /= 20
-			Object.Frame += Object[ArrayPos0].PropertyValue
+			Object.Frame += Object[ArrayPos0].PropertyValue // where's this ArrayPos0 even coming from..?
 			DrawSpriteFX(Object.Frame, FX_FLIP, Object.XPos, Object.YPos)
 			Object.Frame += 2
-			SetDrawListEntityRef(Object.EntityNo, 4, Screen[4].DrawListSize)
-			Screen[4].DrawListSize++
+			SetDrawListEntityRef(Object.EntityNo, 4, Screen.DrawListSize[4])
+			Screen.DrawListSize[4]++
 			Object.DrawOrder = 4
 		else
 			DrawSpriteFX(Object.Frame, FX_FLIP, Object.XPos, Object.YPos)
@@ -304,7 +304,7 @@ sub ObjectStartup
 				Object[ArrayPos0].AnimationSpeed	= 2
 				Object[ArrayPos0].Direction			= FACING_RIGHT
 				Object[ArrayPos0].LaunchSpeed		= -0xA0000
-				Object[ArrayPos0].CarriesMonitor	= true
+				Object[ArrayPos0].CaryingMonitor	= true
 				break
 			end switch
 		end if

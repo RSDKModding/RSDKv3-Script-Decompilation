@@ -27,7 +27,7 @@
 #alias 9 : STAGEFINISH_LOADLEVELSELECT
 
 // Game Mode Aliases
-#alias 2 : GAMEMODE_TIMEATTACK
+#alias 2 : MODE_TIMEATTACK
 
 // Stage SFX
 #alias 5 : SFX_S_TIMEUFO
@@ -62,7 +62,7 @@ sub ObjectMain
 		if Stage.TimeEnabled == true
 			// However, this is a bit faulty and results on a time ufo sometimes appearing in time attack, so let's exclude any of this from time attack for decomp
 #platform: Use_Decomp		
-			if Options.GameMode != GAMEMODE_TIMEATTACK
+			if Options.GameMode != MODE_TIMEATTACK
 #endplatform
 				// Progress the timer
 				HUD[4].TimeFrames++
@@ -96,7 +96,7 @@ sub ObjectMain
 						end if
 					else
 						// This will never happen on Time Attack
-						if Options.GameMode != GAMEMODE_TIMEATTACK
+						if Options.GameMode != MODE_TIMEATTACK
 							// Time's over, so start the stage results
 							Object[30].Type = TypeName[Stage Finish]
 							if Stage.ActNo == 8
@@ -122,7 +122,7 @@ sub ObjectMain
 								HUD[4].TimeSeconds -= TempValue0
 							else
 								// In Time Attack, you can't run out of time
-								if Options.GameMode != GAMEMODE_TIMEATTACK
+								if Options.GameMode != MODE_TIMEATTACK
 									// No more time left, end the stage by spawning the results
 									Object[30].Type = TypeName[Stage Finish]
 									
@@ -159,7 +159,7 @@ sub ObjectMain
 							else
 								
 								// In Time Attack, you can't muddle your time up and time out
-								if Options.GameMode != GAMEMODE_TIMEATTACK
+								if Options.GameMode != MODE_TIMEATTACK
 									
 									// Player wasted too much time puddling around and now time's up, end the stage
 									Object[30].Type=TypeName[Stage Finish]
@@ -248,7 +248,7 @@ sub ObjectStartup
 	Stage.PauseEnabled = false
 	
 	// Origins changed this up a bit - before, Time would always be disabled, but Origins makes it enabled for standard play
-	if Options.GameMode == GAMEMODE_TIMEATTACK
+	if Options.GameMode == MODE_TIMEATTACK
 		Stage.TimeEnabled = false
 	else
 		Stage.TimeEnabled = true

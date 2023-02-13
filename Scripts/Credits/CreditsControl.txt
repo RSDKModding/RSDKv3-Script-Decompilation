@@ -17,8 +17,6 @@
 #alias 2	:	CREDITSCONTROL_MAIN
 #alias 3	:	CREDITSCONTROL_FADEOUT
 
-// On Standard Platforms (ie PC 2012 & consoles) "Data/Game/Credits_Console.txt" is used instead
-
 // Soundtrack
 #alias 0	:	OST_JP
 
@@ -132,6 +130,7 @@ sub ObjectMain
 			// Go back to the menu now
 #platform: Use_Origins	// Call Origins movie
 			Engine.State = ENGINE_WAIT
+			
 			// Unlock ending on the Museum
 			game.callbackParam0 = true
 			EngineCallback(NOTIFY_STATS_MOVIE)
@@ -159,8 +158,8 @@ end sub
 
 
 sub ObjectDraw
-	// The scene doesn't have a background or anything, so draw a Black Rectangle here to avoid frame smear
 	
+	// The scene doesn't have a background or anything, so draw a Black Rectangle here to avoid frame smear
 	DrawRect(0, 0, Screen.XSize, Screen.YSize, 0, 0, 0, 255)
 	
 end sub
@@ -169,7 +168,7 @@ end sub
 sub ObjectStartup
 	
 	// There's no exact "credits" song for either regions, per se, so
-	// the LANG_JAPANESE soundtrack uses the Time Attack theme and the
+	// the Japanese soundtrack uses the Time Attack theme and the
 	// American soundtrack uses the DA Garden theme
 	if Options.Soundtrack == OST_JP
 		SetMusicTrack("JP/TimeAttack.ogg", 0, 100512)
@@ -177,6 +176,8 @@ sub ObjectStartup
 		SetMusicTrack("US/DAGarden.ogg", 0, 117382)
 	end if
 	
+	// Note: On Standard Platforms (ie PC 2012 & consoles) "Data/Game/Credits_Console.txt" is used instead
+	// (Though, Origins does indeed use the "Mobile" file, and mobile versions of couse do too)
 	LoadTextFile(MENU_1, "Data/Game/Credits_Mobile.txt", false)
 	
 	// In this scene, we control the camera manually

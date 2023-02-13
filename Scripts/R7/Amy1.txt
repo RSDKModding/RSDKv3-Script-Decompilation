@@ -22,11 +22,14 @@
 // Global SFX
 #alias 22 : SFX_G_EXPLOSION
 
-// Game modes
-#alias 2  : GAMEMODE_TIMEATTACK
+// Game Mode Aliases
+#alias 2  : MODE_TIMEATTACK
 
 
 sub ObjectMain
+	
+	// (AMY1_CAUGHT has no code here, all of that state's stuff is done over in PlayerObjectCollision)
+	
 	if Object.State == AMY1_FALLING
 		
 		// Update falling movements
@@ -46,8 +49,9 @@ sub ObjectMain
 			Object.DrawOrder = 4
 			
 			// Set Amy's bounds to make sure she doesn't go too far
-			Object.Bounds.Left  = 0x3EA40000 // Hardcoded left bounds  (16036 with the in-game debug position display)
-			Object.Bounds.Right = 0x40000000 // Hardcoded right bounds (16384 with the in-game debug position display)
+			// they're hardcoded positions btw :(
+			Object.Bounds.Left  = 0x3EA40000 // Left bounds  (16036 with the in-game debug position display)
+			Object.Bounds.Right = 0x40000000 // Right bounds (16384 with the in-game debug position display)
 			
 #platform: Use_Origins
 			// Some additional stuff for Origins
@@ -55,7 +59,7 @@ sub ObjectMain
 			// Let the game know we've finished the boss!
 			// This is somewhat unused, as in ths Boss Rush, Metal Sonic already does this same thing,
 			//  so Amy never gets a turn before the stage switches
-			// In normal play though this hits, though at that point it doesn't have any effect at all
+			// In normal play this hits, though at that point it doesn't really have any effect at all
 			game.callbackParam0 = true
 			EngineCallback(NOTIFY_BOSS_END)
 			
@@ -73,6 +77,9 @@ end sub
 
 
 sub ObjectPlayerInteraction
+	
+	// (The opposite case of ObjectMain, there's nothing for AMY1_FALLING at all here)
+	
 	if Object.State == AMY1_CAUGHT
 		
 		// Due to how the engine works, there's a single frame upon landing where this code is actually
@@ -112,10 +119,13 @@ end sub
 
 
 sub ObjectDraw
+	
 	if Object.State == AMY1_CAUGHT
 		TempValue0   = Object.Frame
 		TempValue0 >>= 3
 		DrawSprite(TempValue0)
+		
+		// Animation is done here as well
 		Object.Frame++
 		Object.Frame &= 31
 	else
@@ -138,7 +148,7 @@ sub ObjectStartup
 			
 			// Only appear for Sonic
 			if Stage.PlayerListPos == PLAYER_SONIC
-				if Options.GameMode == GAMEMODE_TIMEATTACK
+				if Options.GameMode == MODE_TIMEATTACK
 					// Don't appear in time attack, unload
 					
 					Object[ArrayPos0].Type = TypeName[Blank Object]

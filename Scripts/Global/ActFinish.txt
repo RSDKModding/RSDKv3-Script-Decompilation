@@ -5,7 +5,7 @@
 // Aliases
 #alias Object.Value0			:	Object.Timer
 
-// All textx have their own X Position values
+// All texts have their own X Position values
 #alias Object.XPos  			:	Object.LineXPos0	// "SONIC GOT" Line
 #alias Object.Value1			:	Object.LineXPos1	// "THROUGH ZONE X" Line
 #alias Object.Value2			:	Object.LineXPos2	// Score Line
@@ -37,7 +37,7 @@
 #alias 5	:	ACTFINISH_FADEOUT
 
 #alias 6	:	ACTFINISH_HOLDOVERRESTART	// Origins exclusive
-#alias 7	:	ACTFINISH_WAITFORHE2		// Origins exclusive
+#alias 7	:	ACTFINISH_WAITFORCALLBACK	// Origins exclusive
 
 
 #alias 0	:	PLAYER_SONIC
@@ -65,9 +65,9 @@
 #alias 11	:	CALLBACK_TRIAL_ENDED
 
 // Game Modes
-#alias 1	:	GAMEMODE_SAVEGAME
-#alias 2	:	GAMEMODE_TIMEATTACK
-#alias 3	:	GAMEMODE_TRIALGAME
+#alias 1	:	MODE_NORMAL
+#alias 2	:	MODE_TIMEATTACK
+#alias 3	:	MODE_TRIAL
 
 // Presentation List Stages
 #alias 0 	:	STAGE_P_TITLE
@@ -81,8 +81,7 @@
 sub ObjectMain
 	switch Object.State
 	case ACTFINISH_INIT
-		
-		// Setup initial text positions
+		// Setup initial values such as text positions
 		
 		// "SONIC GOT" is gonna come from the left, while all the other text slides in from the right
 		Object.LineXPos0 = -799
@@ -91,7 +90,7 @@ sub ObjectMain
 		Object.LineXPos3 = 0x527
 		Object.LineXPos4 = 0x57A
 
-#platform:	Use_Standalone
+#platform: Use_Standalone
 		Object.State = ACTFINISH_SLIDEIN
 #endplatform
 		
@@ -483,7 +482,7 @@ sub ObjectMain
 					
 				end switch
 				
-				if Options.GameMode == GAMEMODE_SAVEGAME
+				if Options.GameMode == MODE_NORMAL
 					ArrayPos1   = Options.SaveSlot
 					ArrayPos1 <<= 3
 					SaveRAM[ArrayPos1] = Stage.PlayerListPos					
@@ -522,7 +521,7 @@ sub ObjectMain
 					Stage.ActiveList = REGULAR_STAGE
 					Stage.ListPos    = Object.StagePosP
 
-					Object.State = ACTFINISH_WAITFORHE2
+					Object.State = ACTFINISH_WAITFORCALLBACK
 				else
 					TempValue0 = Engine.TrialMode
 					if Stage.ListPos >= Stage.ListSize
@@ -616,7 +615,7 @@ sub ObjectMain
 					
 				end switch
 				
-				if Options.GameMode == GAMEMODE_SAVEGAME
+				if Options.GameMode == MODE_NORMAL
 					ArrayPos1   = Options.SaveSlot
 					ArrayPos1 <<= 3
 					SaveRAM[ArrayPos1] = Stage.PlayerListPos					
@@ -649,9 +648,9 @@ sub ObjectMain
 				if game.oneStageFlag != false
 					Stage.ActiveList = REGULAR_STAGE
 					Stage.ListPos    = Object.StagePosP
-					Object.State     = ACTFINISH_WAITFORHE2
+					Object.State     = ACTFINISH_WAITFORCALLBACK
 				else
-					if Options.GameMode == GAMEMODE_TIMEATTACK
+					if Options.GameMode == MODE_TIMEATTACK
 						if Stage.PlayerListPos == PLAYER_SONIC
 							// Get the act number
 							TempValue0   = Stage.ListPos
@@ -698,7 +697,7 @@ sub ObjectMain
 						LoadStage()
 					else
 						// Don't lie to me SEGA, there was a demo for origins planned!!!
-						if Options.GameMode < GAMEMODE_TRIALGAME
+						if Options.GameMode < MODE_TRIAL
 							TempValue0 = Engine.TrialMode
 						else
 							TempValue0 = false
@@ -725,7 +724,7 @@ sub ObjectMain
 
 #platform: Use_Standalone
 				// this check can only happen in mobile
-				if Options.GameMode == GAMEMODE_TRIALGAME
+				if Options.GameMode == MODE_TRIAL
 					// Set Trial Recoerds
 					TimeAttack.Result  = Stage.Seconds
 					TimeAttack.Result *= 100
@@ -753,7 +752,7 @@ sub ObjectMain
 					Stage.ListPos	 = STAGE_P_DOWNLOADSCREEN
 				end if
 
-				if Options.GameMode == GAMEMODE_TIMEATTACK
+				if Options.GameMode == MODE_TIMEATTACK
 					TimeAttack.Result  = Stage.Seconds
 					TimeAttack.Result *= 100
 					TempValue0  = Stage.Minutes
@@ -765,13 +764,13 @@ sub ObjectMain
 					LoadStage()
 				else
 					// this check can only happen in mobile
-					if Options.GameMode < GAMEMODE_TRIALGAME
+					if Options.GameMode < MODE_TRIAL
 						TempValue0 = Engine.TrialMode
 					else
 						TempValue0 = false
 					end if
 
-					if Stage.ListPos >= Stage.ListSize	// tldr; check if you are playing a trial
+					if Stage.ListPos >= Stage.ListSize	// tldr - check if you are playing a trial
 						TempValue0 = true
 					end if
 
@@ -797,22 +796,19 @@ sub ObjectMain
 		end if
 		break
 		
-	case ACTFINISH_WAITFORHE2
+	case ACTFINISH_WAITFORCALLBACK
 		SetScreenFade(0, 0, 0, 255)
 		break
 #endplatform
 	end switch
-	
-endsub
+end sub
 
 
 sub ObjectDraw
-	
 	// First two lines are dependant on if Sonic made a Good Future or not
 	// Regardless of the path taken here, TempValue0 afterwards should be where the "Zone" text is drawn,
 	// in order for the following code to be done correctly
 	if Good_Future == false
-		
 		// No Good Future here, just do the normal results
 		
 		// First line - "Sonic GOT"
@@ -825,9 +821,7 @@ sub ObjectDraw
 		TempValue0 = Object.LineXPos1
 		TempValue0 += 128
 		DrawSpriteScreenXY(5, TempValue0, 89)
-		
 	else
-		
 		// We made a Good Future!
 		// Let's used the altered version of the text to let the Player know
 		
@@ -841,7 +835,6 @@ sub ObjectDraw
 		TempValue0 = Object.LineXPos1
 		TempValue0 += 140
 		DrawSpriteScreenXY(5, TempValue0, 89)
-		
 	end if
 	
 	// From where the "Zone" text was drawn, draw the Act Number next to it
@@ -881,12 +874,10 @@ sub ObjectDraw
 	//And now, draw the Time Bonus numbers at the end of the line
 	TempValue0 += 123
 	DrawNumbers(10, TempValue0, 169, Object.TimeBonus, 5, 8, 0)
-	
-endsub
+end sub
 
 
 sub ObjectStartup
-	
 	// Load the appropriate sheet based on the current character
 	if Stage.PlayerListPos == PLAYER_SONIC
 		LoadSpriteSheet("Global/Display.gif")
@@ -939,8 +930,7 @@ sub ObjectStartup
 	
 	// 21 - "FUTURE IN"
 	SpriteFrame(-12, 0, 136,   16, 0,   223)
-	
-endsub
+end sub
 
 
 // ========================

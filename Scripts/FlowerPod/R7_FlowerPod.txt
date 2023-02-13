@@ -20,8 +20,8 @@
 // Control Modes
 #alias -1	:	CONTROLMODE_NONE
 
-// Game modes
-#alias 2	:	GAMEMODE_TIMEATTACK
+// Game Mode Aliases
+#alias 2	:	MODE_TIMEATTACK
 
 // Ink Effects
 #alias 2	:	INK_ALPHA
@@ -219,7 +219,7 @@ sub ObjectPlayerInteraction
 #endplatform
 
 #platform: Use_Origins
-				// Tell HE2 that the boss fight ended
+				// Tell the engine that the boss fight has ended
 				game.callbackParam0 = true
 				EngineCallback(NOTIFY_BOSS_END)
 #endplatform
@@ -256,7 +256,6 @@ end sub
 
 
 sub ObjectStartup
-
 	LoadSpriteSheet("R7/Objects2.gif")
 
 	// Flowerpod Frames
@@ -279,7 +278,7 @@ sub ObjectStartup
 		if Object[ArrayPos0].Type == TypeName[Flower Pod]
 		
 			if Stage.PlayerListPos == PLAYER_SONIC
-				if Options.GameMode != GAMEMODE_TIMEATTACK
+				if Options.GameMode != MODE_TIMEATTACK
 					// If Sonic's the main character and he's not in Time Attack, then unload
 					Object[ArrayPos0].Type = TypeName[Blank Object]
 				end if
@@ -289,7 +288,6 @@ sub ObjectStartup
 		
 		ArrayPos0++
 	loop
-	
 end sub
 
 
@@ -304,15 +302,8 @@ end sub
 
 
 sub RSDKLoad
-
 	LoadSpriteSheet("R7/Objects2.gif")
-
-	// Flowerpod Frames
-	
-	// Base
 	SpriteFrame(-32, 6, 64, 42, 1, 55)
-	
-	// Full Body Frame
 	SpriteFrame(-32, -48, 64, 54, 1, 1)
 
 	SetVariableAlias(ALIAS_VAR_PROPVAL, "unused")

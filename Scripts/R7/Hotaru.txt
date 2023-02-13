@@ -12,14 +12,22 @@
 // Aliases
 
 #alias Object.Value0		: Object.Timer
+
 #alias Object.Value1		: Object.StartPosX
 #alias Object.Value2		: Object.StartPosY
+
 // Stored as offsets from the base Hotaru object, not complete positions
 #alias Object.Value3		: Object.Hotaru1X
 #alias Object.Value4		: Object.Hotaru2X
+
+// (Y distance remains the same between both, see Object.HotaruRadius)
+
 // Bit-field that represents the state of the active Hotarus, bit 0 is Hotaru 1 and bit 1 is Hotaru 2
 #alias Object.Value5		: Object.ActiveHotarus
+
+// True or false, for if the floating sparks connecting the Hotarus are active
 #alias Object.Value6		: Object.EletricityActive
+
 // Y-Offset, half the distance between the two Hotarus
 #alias Object.Value7		: Object.HotaruRadius
 
@@ -336,7 +344,6 @@ sub ObjectMain
 		case HOTARU_FLASHING
 			// This is the state where the Sparks are active, although none of them are managed here
 			// Head over to ObjectDraw and ObjectPlayerInteraction for that
-			// (Or don't... it's not like the sparks even work right...)
 			
 			if Object.Timer < 100
 				Object.Timer++
@@ -532,7 +539,7 @@ sub ObjectMain
 			break
 			
 		case HOTARU_FLASHING
-			// This is the state where the Sparks are active, but Bad Hotarus have broken bulbs so they don't get to light up...
+			// This is the state where the Sparks should be active, but Bad Hotarus have broken bulbs so they don't get to light up...
 			
 			if Object.Timer < 200
 				Object.Timer++
@@ -563,7 +570,7 @@ sub ObjectMain
 				Object.Timer = 0
 				
 				// Place the Hotarus back at their starting positions
-				// State's being set to HOTARU_OFFSCREEN so that there won't be any visible teleporting
+				// Because the State's set to HOTARU_OFFSCREEN, that there won't be any visible teleporting
 				Object.XPos = Object.StartPosX
 				Object.YPos = Object.StartPosY
 				
@@ -575,7 +582,7 @@ sub ObjectMain
 			break
 			
 		case HOTARU_OFFSCREEN
-			// This state is here so that, if the Hotarus' start position is within bounds, they won't just suddently teleport in front of the player
+			// This state is here so that, if the Hotarus' start position is within bounds, they won't just visibly teleport in front of the player
 			if Object.OutOfBounds == true
 				Object.State = HOTARU_IDLE1
 				Object.Priority = PRIORITY_BOUNDS
@@ -618,11 +625,13 @@ sub ObjectPlayerInteraction
 			if Object.Hotaru1X < 0
 				TempValue0 = Object.Hotaru1X
 				TempValue0 >>= 16
+				
 				TempValue1 = Object.Hotaru2X
 				TempValue1 >>= 16
 			else
 				TempValue0 = Object.Hotaru2X
 				TempValue0 >>= 16
+				
 				TempValue1 = Object.Hotaru1X
 				TempValue1 >>= 16
 			end if
@@ -637,6 +646,7 @@ sub ObjectPlayerInteraction
 			end if
 		
 		end if
+		
 		// No break?
 		// Well, I suppose it's not too important...
 		
@@ -1193,13 +1203,18 @@ end sub
 
 
 sub RSDKDraw
-	GetBit(TempValue5, Object.PropertyValue, 0)
+	// We got a whole lot to do, we're essentially setting up a new Hotaru every time since we can't depend on values from the last frame
 	
-	TempValue0 = Object.PropertyValue
+	// First, get the sprite to be used
+	GetBit(TempValue5, Object.Quality, 0)
+	
+	// Then, get the movement values based on the Hotaru's designated Formation
+	TempValue0 = Object.Quality
 	TempValue0 &= 254
+	
 	switch TempValue0
 	case 0
-	default
+	default // inaccurate to how it'll be in-game if given an invalid formation, but it doesn't matter too much
 		TempValue2 =  0x3C0000
 		TempValue3 = -0x230000
 		break
@@ -1227,12 +1242,30 @@ sub RSDKDraw
 	Object.Direction = FACING_LEFT
 	DrawSpriteFX(TempValue5, FX_FLIP, TempValue0, TempValue1)
 
-	TempValue0 = TempValue4
-	TempValue0 += Object.XPos
-	TempValue1 = Object.YPos
-	TempValue1 += TempValue2
+	TempValue6 = TempValue4
+	TempValue6 += Object.XPos
+	TempValue7 = Object.YPos
+	TempValue7 += TempValue2
 	Object.Direction = FACING_RIGHT
-	DrawSpriteFX(TempValue5, FX_FLIP, TempValue0, TempValue1)
+	DrawSpriteFX(TempValue5, FX_FLIP, TempValue6, TempValue7)
+	
+	if Editor.ShowGizmos == true
+		Editor.DrawingOverlay = true
+		
+		// First, draw the Hotaru's movement ranges
+		DrawLine(TempValue0, TempValue1, TempValue6, TempValue1, 255, 255, 255)
+		DrawLine(TempValue6, TempValue7, TempValue0, TempValue7, 255, 255, 255)
+		
+		Object.InkEffect = 1
+		
+		// Then, draw some lines to indicate this Hotaru's following Flower entities
+		DrawArrow(Object.XPos, Object.YPos, Object[+1].XPos, Object[+1].YPos, 255, 255, 0)
+		DrawArrow(Object.XPos, Object.YPos, Object[+2].XPos, Object[+2].YPos, 255, 255, 0)
+		
+		Object.InkEffect = 0
+		
+		Editor.DrawingOverlay = false
+	end if
 end sub
 
 

@@ -49,8 +49,8 @@
 // Player Aliases
 #alias 0 : PLAYER_SONIC
 
-// Game modes
-#alias 2 : GAMEMODE_TIMEATTACK
+// Game Mode Aliases
+#alias 2 : MODE_TIMEATTACK
 
 // Language Aliases
 #alias 0 : LANG_ENGLISH
@@ -79,8 +79,8 @@
 #alias 4 : STAGE_P_SOUNDTEST
 #alias 7 : STAGE_P_CREDITS
 
-// Game Modes
-#alias 1 : GAMEMODE_SAVEGAME
+// Game Mode Aliases
+#alias 1 : MODE_NORMAL
 
 // Control Mode
 #alias 0 : CONTROLMODE_NORMAL
@@ -527,7 +527,7 @@ sub ObjectMain
 			SetScreenFade(208, 255, 224, Object.Timer)
 			
 			if Object.Timer == 1024
-				if Options.GameMode == GAMEMODE_SAVEGAME
+				if Options.GameMode == MODE_NORMAL
 					
 					// Save the Player's progress
 					// This used to be useless, because the Player's progress was already saved previously in the Object,
@@ -650,7 +650,7 @@ sub ObjectMain
 			Stage.ActiveList = PRESENTATION_STAGE
 			
 #platform: Use_Origins
-			// Origins  -I still have no idea, to be honest...
+			// Origins - I still have no idea, to be honest...
 			
 			Stage.ListPos = STAGE_P_SOUNDTEST
 #endplatform
@@ -700,7 +700,7 @@ sub ObjectMain
 			SpecialStage.ListPos = BackupSpecialStageListPos
 			SpecialStage.TimeStones = BackupTimeStones
 			
-			if Options.GameMode == GAMEMODE_SAVEGAME
+			if Options.GameMode == MODE_NORMAL
 				ArrayPos1 = Options.SaveSlot
 				ArrayPos1 <<= 3
 				
@@ -730,7 +730,7 @@ sub ObjectMain
 				WriteSaveRAM()
 			end if
 			
-			if Options.GameMode == GAMEMODE_TIMEATTACK
+			if Options.GameMode == MODE_TIMEATTACK
 				
 				// Save up the Time Attack results
 				
@@ -1087,8 +1087,10 @@ sub ObjectStartup
 	SpriteFrame(0, 0, 16, 16, 86, 31)
 	SpriteFrame(0, 0, 16, 16, 103, 31)
 	
-	// 27-28 - Small Player Icons
+	// 27-28 - Small Foot-Tapping Player Icons
 	if Stage.PlayerListPos == PLAYER_SONIC
+		// Do note, these are separate from the ones used in the Pause Menu
+		// These ones are bluer, as well as having a hole in Sonic's head...
 		SpriteFrame(0, 0, 16, 23, 169, 24)
 		SpriteFrame(0, 0, 16, 23, 186, 24)
 	else

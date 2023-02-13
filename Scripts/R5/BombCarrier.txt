@@ -2,42 +2,51 @@
 //--------Scripted by Christian Whitehead 'The Taxman'--------//
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
+// ========================
 // Aliases
-#alias Object.Value0	:	Object.Timer
-#alias Object.Value1	:	Object.Angle
+// ========================
 
-// Boss Platform Aliases
-#alias Object.Value5	:	Object.Grind
+#alias Object.Value0 : Object.Timer
+#alias Object.Value1 : Object.Angle
 
 // States
-#alias 0	:	BOMBCARRIER_AWAITPLAYER
-#alias 1	:	BOMBCARRIER_WAITFORBOSSFIGHT
-#alias 2	:	BOMBCARRIER_GRABBOMB
-#alias 3	:	BOMBCARRIER_SLIDERIGHT
-#alias 4	:	BOMBCARRIER_SLIDELEFT
-#alias 5	:	BOMBCARRIER_RELEASEBOMB
-#alias 6	:	BOMBCARRIER_HOVER
+#alias 0 : BOMBCARRIER_IDLE
+#alias 1 : BOMBCARRIER_WAITFORBOSSFIGHT
+#alias 2 : BOMBCARRIER_GRABBOMB
+#alias 3 : BOMBCARRIER_SLIDERIGHT
+#alias 4 : BOMBCARRIER_SLIDELEFT
+#alias 5 : BOMBCARRIER_RELEASEBOMB
+#alias 6 : BOMBCARRIER_HOVER
 
-// Eggman Animations
-#alias 0	:	EGGMAN_IDLE
-#alias 1	:	EGGMAN_CONTROL
-#alias 5	:	EGGMAN_PANICK_CONTROL
-#alias 6	:	EGGMAN_FLEE
+// Boss Platform Aliases
+#alias Object.Value5 : Object.Grind
 
-// Boss Bomb States
-#alias 1	:	BOSSBOMB_ACTIVE
+#alias 8 : BOSSPLATFORM_FALL_4
+#alias 9 : BOSSPLATFORM_FIGHT_4
 
-// Stage SFX
-#alias 5	:	SFX_S_BOMBCARRIER
+// Eggman Aliases
+#alias 0 : EGGMAN_IDLE
+#alias 1 : EGGMAN_CONTROL
+#alias 5 : EGGMAN_PANICK_CONTROL
+#alias 6 : EGGMAN_FLEE
 
-// Fade Music Property Values
-#alias 0	:	FADEMUSIC_TO_BOSS
+// Boss Bomb Aliases
+#alias 1 : BOSSBOMB_ACTIVE
 
+// Stage SFX Aliases
+#alias 5 : SFX_S_BOMBCARRIER
+
+// Fade Music Aliases
+#alias 0 : FADEMUSIC_TO_BOSS
+
+
+// ========================
+// Events
+// ========================
 
 sub ObjectMain
-	
 	switch Object.State
-	case BOMBCARRIER_AWAITPLAYER
+	case BOMBCARRIER_IDLE
 		TempValue0 = Object.XPos
 		TempValue0 += 0x200000
 		
@@ -56,34 +65,39 @@ sub ObjectMain
 				Object.State = BOMBCARRIER_SLIDELEFT
 				PlayStageSfx(SFX_S_BOMBCARRIER, false)
 				
-				// If the Boss Platform
-				if Object[+4].State < 8
+				if Object[+4].State < BOSSPLATFORM_FALL_4
+					// If the Boss Platform is still in its main phase, then make Robotnik resume his control animation
+					
 					Object[+3].State = EGGMAN_CONTROL
 				else
+					// If the Boss Platform is just about to die, then make Robotnik worried for himself too
+					
 					Object[+3].State = EGGMAN_PANICK_CONTROL
 					Object[+3].Timer = 0
 					Object[+3].Frame = 0
 				end if
 			end if
 		else
-			
 			// Robotnik's Fleeing, so Unload this Object as well
-			ResetObjectEntity(Object.EntityNo, TypeName[Blank Object], 0, 0, 0)
 			
+			ResetObjectEntity(Object.EntityNo, TypeName[Blank Object], 0, 0, 0)
 		end if
 		break
 
 	case BOMBCARRIER_SLIDERIGHT
 		if Object.XPos < Object[+1].XPos
+			// If we haven't reached the Boss Top yet, then keep on moving
+			
 			Object.XPos += 0x1E000
 		else
 			Object.State = BOMBCARRIER_GRABBOMB
 			Object.XPos  = Object[+1].XPos
 			Object.Timer = 0
-			if Object[+4].State > 8
+			
+			if Object[+4].State > BOSSPLATFORM_FALL_4
 				
 				// If the Boss Platform is XXX
-				if Object[+4].State > 9
+				if Object[+4].State > BOSSPLATFORM_FIGHT_4
 					ResetObjectEntity(Object.EntityNo, TypeName[Blank Object], 0, 0, 0)
 				end if
 				
@@ -113,7 +127,7 @@ sub ObjectMain
 				Object.XPos = Player.XPos
 				
 				// if the Boss Platform XXX, then make Robotnik go back to his Idle State
-				if Object[+4].State < 8
+				if Object[+4].State < BOSSPLATFORM_FALL_4
 					Object[+3].State = EGGMAN_IDLE
 				end if
 				
@@ -195,14 +209,12 @@ sub ObjectMain
 		break
 
 	end switch
-	
 end sub
 
 
 sub ObjectDraw
-
 	switch Object.State
-	case BOMBCARRIER_AWAITPLAYER
+	case BOMBCARRIER_IDLE
 	case BOMBCARRIER_WAITFORBOSSFIGHT
 	case BOMBCARRIER_GRABBOMB
 	case BOMBCARRIER_SLIDERIGHT
@@ -228,7 +240,6 @@ sub ObjectDraw
 		break
 		
 	end switch
-	
 end sub
 
 
@@ -241,10 +252,9 @@ sub ObjectStartup
 	// Active Carrier Frame
 	SpriteFrame(-16, -12, 32, 24, 100, 113)
 
-	// Force Levitation Frames
+	// Levitation Effect Frames
 	SpriteFrame(-16, 12, 32, 16, 33, 239)
 	SpriteFrame(-16, 12, 32, 16, 1, 239)
-
 end sub
 
 
@@ -258,8 +268,8 @@ end sub
 
 
 sub RSDKLoad
-	LoadSpriteSheet("Global/Display.gif")
-	SpriteFrame(-16, -16, 32, 32, 1, 143)		// #0 - "Script" Icon
+	LoadSpriteSheet("R5/Objects2.gif")
+	SpriteFrame(-16, -12, 32, 24, 33, 215)
 
 	SetVariableAlias(ALIAS_VAR_PROPVAL, "unused")
 end sub

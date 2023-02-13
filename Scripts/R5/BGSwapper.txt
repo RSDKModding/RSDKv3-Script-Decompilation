@@ -2,18 +2,21 @@
 //--------Scripted by Christian Whitehead 'The Taxman'--------//
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
+// ========================
 // Aliases
-#alias 1	:	LAYER_INSIDE
-#alias 2	:	LAYER_OUTSIDE
+// ========================
 
-// Property Values
-#alias 0	:	OUTSIDE_RIGHT_INSIDE_LEFT
-#alias 1	:	OUTSIDE_LEFT_INSIDE_RIGHT
+// Layer Aliases, correspond to BG layers in the scene file
+#alias 1 : LAYER_INSIDE
+#alias 2 : LAYER_OUTSIDE
 
+
+// ========================
+// Events
+// ========================
 
 sub ObjectDraw
-
-	if Object.PropertyValue == OUTSIDE_RIGHT_INSIDE_LEFT
+	if Object.PropertyValue == 0
 		// Inside to the left of the BG Swapper object, outside to the right
 
 		if Player.XPos > Object.XPos
@@ -30,14 +33,12 @@ sub ObjectDraw
 			Stage.ActiveLayer[0] = LAYER_OUTSIDE
 		end if
 	end if
-
 end sub
 
 
 sub ObjectStartup
-
-	// Find the initial BG that should be used in the level
-	// Needed not only for initial spawn, but also for checkpoints as well
+	// In this setup, we're gonna find what the initial BG should be when starting the level
+	// This is based on seeing what BG Swapper checkpoints the player spawns between
 
 	// TempValue0 is iXPos of first BG Swapper
 	//    (Default of 64 chunks in)
@@ -79,7 +80,6 @@ sub ObjectStartup
 	else
 		Stage.ActiveLayer[0] = LAYER_INSIDE
 	end if
-
 end sub
 
 
@@ -93,26 +93,29 @@ sub RSDKEdit
 		case EDIT_VAR_PROPVAL // Property Value
 			CheckResult = Object.PropertyValue
 			break
+			
 		case 0 // Type
 			CheckResult = Object.PropertyValue
 			break
+			
 		end switch
 	else
 		switch Editor.VariableID
 		case EDIT_VAR_PROPVAL // Property Value
 			Object.PropertyValue = Editor.VariableValue
 			break
+			
 		case 0 // Type
 			Object.PropertyValue = Editor.VariableValue
 			break
+			
 		end switch
 	end if
 end sub
 
 
 sub RSDKDraw
-	
-	Editor.Drawingoverlay = true
+	Editor.DrawingOverlay = true
 	
 	// draw a cool little line behind the Trigger icon
 	TempValue0  = Object.YPos
@@ -120,11 +123,10 @@ sub RSDKDraw
 	
 	DrawRectWorld(Object.XPos, TempValue0, 1, 16, 255, 255, 255, 255)
 	
-	Editor.Drawingoverlay = false
+	Editor.DrawingOverlay = false
 	
 	// and then draw the Trigger icon, atop the line
 	DrawSprite(0)
-	
 end sub
 
 

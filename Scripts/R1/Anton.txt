@@ -2,27 +2,38 @@
 //--------Scripted by Christian Whitehead 'The Taxman'--------//
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
+// ========================
 // Aliases
-#alias Object.Value0		:	Object.Timer
+// ========================
 
-#alias Object.PropertyValue	:	Object.Quality
+#alias Object.PropertyValue : Object.Quality
+
+#alias Object.Value0 : Object.Timer
 
 // States
-#alias 0	:	ANTON_MOVING_LEFT
-#alias 1	:	ANTON_MOVING_RIGHT
+#alias 0 : ANTON_MOVING_LEFT
+#alias 1 : ANTON_MOVING_RIGHT
 
-// Collision Sides
-#alias 0	:	CSIDE_FLOOR
+// Direction Aliases
+#alias 0 : FLIP_NONE
+#alias 1 : FLIP_X
 
-// Badnik Quality / Property Values
-#alias 0	:	GOOD_QUALITY
-#alias 1	:	BAD_QUALITY
+// Collision Side Aliases
+#alias 0 : CSIDE_FLOOR
 
+// Badnik Quality (Property Value) Aliases
+#alias 0 : QUALITY_GOOD
+#alias 1 : QUALITY_BAD
+
+
+// ========================
+// Events
+// ========================
 
 sub ObjectMain
-	if Object.Quality == GOOD_QUALITY
-
+	if Object.Quality == QUALITY_GOOD
 		Object.Frame += 2
+		
 		switch Object.State
 		case ANTON_MOVING_LEFT
 			Object.XPos -= 0x10000
@@ -30,14 +41,14 @@ sub ObjectMain
 			Object.Timer--
 			if Object.Timer == -128
 				Object.State = ANTON_MOVING_RIGHT
-				Object.Direction = FACING_LEFT
+				Object.Direction = FLIP_X
 			end if
 
 			ObjectTileGrip(CSIDE_FLOOR, 0, 20, 0)
 			if CheckResult == false
 				Object.State = ANTON_MOVING_RIGHT
 				Object.Timer = -128
-				Object.Direction = FACING_LEFT
+				Object.Direction = FLIP_X
 			end if
 			break
 
@@ -47,22 +58,21 @@ sub ObjectMain
 			Object.Timer++
 			if Object.Timer == 128
 				Object.State = ANTON_MOVING_LEFT
-				Object.Direction = FACING_RIGHT
+				Object.Direction = FLIP_NONE
 			end if
 
 			ObjectTileGrip(CSIDE_FLOOR, 0, 20, 0)
 			if CheckResult == false
 				Object.State = ANTON_MOVING_LEFT
 				Object.Timer = 128
-				Object.Direction = FACING_RIGHT
+				Object.Direction = FLIP_NONE
 			end if
 			break
 			
 		end switch
-
 	else
-
 		Object.Frame++
+		
 		switch Object.State
 		case ANTON_MOVING_LEFT
 			Object.XPos -= 0x8000
@@ -70,14 +80,14 @@ sub ObjectMain
 			Object.Timer--
 			if Object.Timer == -256
 				Object.State = ANTON_MOVING_RIGHT
-				Object.Direction = FACING_LEFT
+				Object.Direction = FLIP_X
 			end if
 
 			ObjectTileGrip(CSIDE_FLOOR, 0, 20, 0)
 			if CheckResult == false
 				Object.State = ANTON_MOVING_RIGHT
 				Object.Timer = -256
-				Object.Direction = FACING_LEFT
+				Object.Direction = FLIP_X
 			end if
 			break
 
@@ -87,14 +97,14 @@ sub ObjectMain
 			Object.Timer++
 			if Object.Timer == 256
 				Object.State = ANTON_MOVING_LEFT
-				Object.Direction = FACING_RIGHT
+				Object.Direction = FLIP_NONE
 			end if
 
 			ObjectTileGrip(CSIDE_FLOOR, 0, 20, 0)
 			if CheckResult == false
 				Object.State = ANTON_MOVING_LEFT
 				Object.Timer = 256
-				Object.Direction = FACING_RIGHT
+				Object.Direction = FLIP_NONE
 			end if
 			break
 
@@ -118,7 +128,7 @@ end sub
 sub ObjectDraw
 	TempValue0   = Object.Frame
 	TempValue0 >>= 3
-	if Object.Quality == GOOD_QUALITY
+	if Object.Quality == QUALITY_GOOD
 		TempValue0 += 4
 		DrawSpriteFX(TempValue0, FX_FLIP, Object.XPos, Object.YPos)	// Wheel
 		TempValue0 -= 4
@@ -160,23 +170,16 @@ sub RSDKEdit
 	if Editor.ReturnVariable == true
 		switch Editor.VariableID
 		case EDIT_VAR_PROPVAL // Property Value
-			CheckResult  = Object.Quality
-			CheckResult &= 1
-			break
-		case 0 // type
-			CheckResult  = Object.Quality
-			CheckResult &= 1
+		case 0 // quality
+			GetBit(CheckResult, Object.Quality, 0)
 			break
 		end switch
 	else
 		switch Editor.VariableID
 		case EDIT_VAR_PROPVAL // Property Value
+		case 0 // quality
 			Object.Quality  = Editor.VariableValue
-			Object.Quality &= 1
-			break
-		case 0 // type
-			Object.Quality  = Editor.VariableValue
-			Object.Quality &= 1
+			Object.Quality &= QUALITY_BAD
 			break
 		end switch
 	end if
@@ -203,9 +206,8 @@ sub RSDKLoad
 	SpriteFrame(-8, 4, 16, 16, 1, 34)		// #2 - Anton Wheel
 	SpriteFrame(-8, 4, 16, 16, 18, 34)		// #3 - Old Anton Wheel
 
-
-	AddEditorVariable("Quality")
-	SetActiveVariable("Quality")
-	AddEnumVariable("Good", 0)
-	AddEnumVariable("Bad", 1)
+	AddEditorVariable("quality")
+	SetActiveVariable("quality")
+	AddEnumVariable("Good", QUALITY_GOOD)
+	AddEnumVariable("Bad",  QUALITY_BAD)
 end sub
