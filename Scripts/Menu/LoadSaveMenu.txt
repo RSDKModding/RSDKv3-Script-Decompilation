@@ -82,10 +82,10 @@
 #alias 1	:	MODE_SAVEGAME
 
 // Save Modes
-#alias 0	:	MODE_NORMAL
-#alias 1	:	MODE_NORMAL_SELECTED
-#alias 2	:	MODE_DELETE
-#alias 3	:	MODE_DELETE_SELECTED
+#alias 0	:	SAVEMODE_NORMAL
+#alias 1	:	SAVEMODE_NORMAL_SELECTED
+#alias 2	:	SAVEMODE_DELETE
+#alias 3	:	SAVEMODE_DELETE_SELECTED
 
 // Buttons
 #alias -1	:	BUTTON_NONE // Touching nothing on mobile
@@ -282,7 +282,7 @@ end function
 
 function LoadSaveMenu_DrawDeleteNoSave
 	// Draw the Delete button
-	if Object.SaveMode >= MODE_DELETE
+	if Object.SaveMode >= SAVEMODE_DELETE
 		if Object.SelectedOption == BUTTON_DELETE
 			DrawSpriteScreenXY(55, Delete.XPos, Delete.YPos)
 		else
@@ -621,7 +621,7 @@ sub ObjectMain
 				end if
 #endplatform
 				switch Object.SaveMode
-				case MODE_NORMAL
+				case SAVEMODE_NORMAL
 					Object.ShowDeleteButton = false
 					ArrayPos0 = Object.SelectedOption
 					Object[+ArrayPos0].SaveStatus = SAVE_NORMAL_SELECTED
@@ -636,7 +636,7 @@ sub ObjectMain
 					end if
 					break
 					
-				case MODE_DELETE
+				case SAVEMODE_DELETE
 					ArrayPos0 = Object.SelectedOption
 					if Object[+ArrayPos0].StageListPos > 0 // Is this save used?
 						Object.ShowDeleteButton		  = false
@@ -647,14 +647,14 @@ sub ObjectMain
 						Object.SaveFourStatus		  = SAVE_NORMAL
 						Object[+ArrayPos0].SaveStatus = SAVE_DELETE_SELECTED
 
-						Object.SaveMode = MODE_NORMAL
+						Object.SaveMode = SAVEMODE_NORMAL
 						PlaySfx(SFX_G_LAMPPOST, false) 
 					else
 						Object.SaveOneStatus	 = SAVE_NORMAL
 						Object.SaveTwoStatus	 = SAVE_NORMAL
 						Object.SaveThreeStatus	 = SAVE_NORMAL
 						Object.SaveFourStatus	 = SAVE_NORMAL
-						Object.SaveMode = MODE_NORMAL
+						Object.SaveMode = SAVEMODE_NORMAL
 #platform: Use_Origins
 						if Options.PhysicalControls == false
 							Object.SelectedOption = BUTTON_NONE
@@ -1130,7 +1130,7 @@ sub ObjectMain
 			Object.SaveTwoStatus   = SAVE_NORMAL
 			Object.SaveThreeStatus = SAVE_NORMAL
 			Object.SaveFourStatus  = SAVE_NORMAL
-			Object.SaveMode		   = MODE_NORMAL
+			Object.SaveMode		   = SAVEMODE_NORMAL
 			CallFunction(LoadSaveMenu_SetShowDelete)
 		end if
 		break
@@ -1191,13 +1191,13 @@ sub ObjectMain
 				Object.SaveTwoStatus	= SAVE_NORMAL
 				Object.SaveThreeStatus	= SAVE_NORMAL
 				Object.SaveFourStatus	= SAVE_NORMAL
-				Object.SaveMode			= MODE_NORMAL
+				Object.SaveMode			= SAVEMODE_NORMAL
 			else
 				Object.SaveOneStatus	= SAVE_DELETE
 				Object.SaveTwoStatus	= SAVE_DELETE
 				Object.SaveThreeStatus	= SAVE_DELETE
 				Object.SaveFourStatus	= SAVE_DELETE
-				Object.SaveMode			= MODE_DELETE
+				Object.SaveMode			= SAVEMODE_DELETE
 			end if
 		end if
 		break
