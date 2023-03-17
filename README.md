@@ -1,6 +1,4 @@
-# Sonic CD 2011 Script Decompilation (WIP Cleanup Branch)
-
-## **Please don't use this branch for your mods, as we're still bug testing!**
+# Sonic CD 2011 Script Decompilation
 
 A full decompilation for the scripts in Sonic CD's 2011 remake.
 
