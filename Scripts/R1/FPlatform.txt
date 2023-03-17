@@ -1,109 +1,185 @@
-//------------Sonic CD Fall Platform Script-------------//
+//---------------Sonic CD Fall Platform Script----------------//
 //--------Scripted by Christian Whitehead 'The Taxman'--------//
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
-//-------Aliases-------//
-#alias 42: TYPE_FALLPLATFORM
+// Aliases
+#alias Object.Value0	:	Object.Falling
+#alias Object.Value1	:	Object.Timer
+#alias Object.Value2	:	Object.YPlayerFloor
+#alias Object.Value3	:	Object.FallTimer
+#alias Object.Value4	:	Object.YVelocity
+#alias Object.Value5	:	Object.YOriginPos
+
+// States
+#alias 0	:	FALLPLATFORM_IDLE
+#alias 1	:	FALLPLATFORM_CRUMBLE
+#alias 2	:	FALLPLATFORM_FALL
+#alias 3	:	FALLPLATFORM_RESTORE
+
+// Property Values
+#alias 0	:	FALLING_PLATFORM
+#alias 1	:	STATIC_PLATFORM
+
+// Priority
+#alias 0	:	PRIORITY_BOUNDS
+#alias 1	:	PRIORITY_ACTIVE
 
 
 sub ObjectMain
-	if Object.Value0==1
-		if Object.State==0
-			Object.State=1
-		endif
-		if Object.Value1<16
-			Object.Value1++
-			TempValue0=Object.Value1
-			TempValue0&=3
-			if TempValue0==3
-				Object.Value2=65536
+	if Object.Falling == true
+
+		if Object.State == FALLPLATFORM_IDLE
+			Object.State = FALLPLATFORM_CRUMBLE
+		end if
+
+		if Object.Timer < 16
+			Object.Timer++
+
+			TempValue0  = Object.Timer
+			TempValue0 &= 3
+
+			if TempValue0 == 3
+				Object.YPlayerFloor = 0x10000
 			else
-				Object.Value2=0
-			endif
+				Object.YPlayerFloor = 0
+			end if
+
 		else
-			Object.Value2=0
-		endif
+			Object.YPlayerFloor = 0
+		end if
+
 	else
-		if Object.Value1>0
-			Object.Value1--
-			TempValue0=Object.Value1
-			TempValue0&=3
-			if TempValue0==3
-				Object.Value2=-65536
+		if Object.Timer > 0
+			Object.Timer--
+
+			TempValue0  = Object.Timer
+			TempValue0 &= 3
+
+			if TempValue0 == 3
+				Object.YPlayerFloor = -0x10000
 			else
-				Object.Value2=0
-			endif
+				Object.YPlayerFloor = 0
+			end if
+
 		else
-			Object.Value2=0
-		endif
-	endif
-	Object.Value0=0
-	if Object.PropertyValue==0
+			Object.YPlayerFloor = 0
+		end if
+
+	end if
+	Object.Falling = false
+
+	if Object.PropertyValue == FALLING_PLATFORM
 		switch Object.State
-		case 1
-			if Object.Value3<30
-				Object.Value3++
+		case FALLPLATFORM_CRUMBLE
+			if Object.FallTimer < 30
+				Object.FallTimer++
 			else
-				Object.Value4=0
-				Object.Value3=0
-				Object.State=2
-				Object.Priority=1
-			endif
+				Object.YVelocity = 0
+				Object.FallTimer = 0
+				Object.State = FALLPLATFORM_FALL
+				Object.Priority = PRIORITY_ACTIVE
+			end if
 			break
-		case 2
-			if Object.Value4<262144
-				Object.Value4+=8192
-			endif
-			Object.Value2+=Object.Value4
-			if Object.OutOfBounds==1
-				Object.YPos=Object.Value5
-				Object.State=3
-				Object.Value4=0
-			endif
+
+		case FALLPLATFORM_FALL
+			if Object.YVelocity < 0x40000
+				Object.YVelocity += 0x2000
+			end if
+			Object.YPlayerFloor += Object.YVelocity
+			if Object.OutOfBounds == true
+				Object.YPos = Object.YOriginPos
+				Object.State = FALLPLATFORM_RESTORE
+				Object.YVelocity = 0
+			end if
 			break
-		case 3
-			if Object.OutOfBounds==1
-				Object.State=0
-				Object.Priority=0
-			endif
+
+		case FALLPLATFORM_RESTORE
+			if Object.OutOfBounds == true
+				Object.State = FALLPLATFORM_IDLE
+				Object.Priority = PRIORITY_BOUNDS
+			end if
 			break
-		endswitch
-	endif
-endsub
+		end switch
+	end if
+end sub
 
 
 sub ObjectPlayerInteraction
-	if Object.State<3
-		PlayerObjectCollision(C_PLATFORM,-32,-9,32,12)
-		if CheckResult==1
-			Object.Value0=1
-			Player.YPos+=Object.Value2
-		endif
-	endif
-endsub
+	if Object.State < FALLPLATFORM_RESTORE
+		PlayerObjectCollision(C_PLATFORM, -32, -9, 32, 12)
+		if CheckResult == true
+			Object.Falling = true
+			Player.YPos += Object.YPlayerFloor
+		end if
+	end if
+end sub
 
 
 sub ObjectDraw
-	Object.YPos+=Object.Value2
-	if Object.State<3
+	Object.YPos += Object.YPlayerFloor
+	if Object.State < FALLPLATFORM_RESTORE
 		DrawSprite(0)
-	endif
-endsub
+	end if
+end sub
 
 
 sub ObjectStartup
 	LoadSpriteSheet("R1/Objects.gif")
-	SpriteFrame(-32,-16,64,32,101,109)
-	ArrayPos0=32
-	while ArrayPos0<1056
-		if Object[ArrayPos0].Type==TypeName[FallPlatform]
-			Object[ArrayPos0].Value5=Object[ArrayPos0].YPos
-		endif
+
+	SpriteFrame(-32, -16, 64, 32, 101, 109)		// #0 - Fall Platform
+
+	ArrayPos0 = 32
+	while ArrayPos0 < 1056
+		if Object[ArrayPos0].Type == TypeName[Fall Platform]
+			Object[ArrayPos0].YOriginPos = Object[ArrayPos0].YPos
+		end if
 		ArrayPos0++
 	loop
-endsub
+end sub
 
-sub RSDK
-	LoadSpriteSheet("Global/Display.gif")
-	SetEditorIcon(Icon0,SingleIcon,-16,-16,32,32,1,143)
-endsub
+
+// ========================
+// Editor Subs
+// ========================
+
+sub RSDKEdit
+	if Editor.ReturnVariable == true
+		switch Editor.VariableID
+		case EDIT_VAR_PROPVAL // Property Value
+			CheckResult  = Object.PropertyValue
+			CheckResult &= 1
+			break
+		case 0 // type
+			CheckResult  = Object.PropertyValue
+			CheckResult &= 1
+			break
+		end switch
+	else
+		switch Editor.VariableID
+		case EDIT_VAR_PROPVAL // Property Value
+			Object.PropertyValue  = Editor.VariableValue
+			Object.PropertyValue &= 1
+			break
+		case 0 // type
+			Object.PropertyValue  = Editor.VariableValue
+			Object.PropertyValue &= 1
+			break
+		end switch
+	end if
+end sub
+
+
+sub RSDKDraw
+	DrawSprite(0)
+end sub
+
+
+sub RSDKLoad
+	LoadSpriteSheet("R1/Objects.gif")
+	SpriteFrame(-32, -16, 64, 32, 101, 109)		// #0 - Fall Platform
+
+	AddEditorVariable("type")
+	SetActiveVariable("type")
+	AddEnumVariable("Falling Platform", 0)
+	AddEnumVariable("Static Platform", 1)
+end sub

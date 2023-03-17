@@ -1,27 +1,50 @@
-//------------Sonic CD Conveyor Wheel Script-------------//
+//--------------Sonic CD Conveyor Wheel Script----------------//
 //--------Scripted by Christian Whitehead 'The Taxman'--------//
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
-//-------Aliases-------//
-#alias 51: TYPE_CONVEYORWHEEL
+// Aliases
+#alias 0	:	GRAVITY_GROUND
 
 
 sub ObjectPlayerInteraction
-	PlayerObjectCollision(C_TOUCH,-64,-64,64,64)
-	if CheckResult==1
-		if Player.Gravity==0
-			if Player.Speed<327680
-				Player.Speed=327680
+	PlayerObjectCollision(C_TOUCH, -64, -64, 64, 64)
+	if CheckResult == true
+		if Player.Gravity == GRAVITY_GROUND
+			if Player.Speed < 0x50000
+				Player.Speed = 0x50000
 			else
-				if Player.Speed>1048576
-					Player.Speed=1048576
-				endif
-			endif
-		endif
-	endif
-endsub
+				if Player.Speed > 0x100000
+					Player.Speed = 0x100000
+				end if
+			end if
+		end if
+	end if
+end sub
 
-sub RSDK
+
+// ========================
+// Editor Subs
+// ========================
+
+sub RSDKDraw
+	if Editor.ShowGizmos == true
+		Editor.DrawingOverlay = true
+		TempValue0   = Object.iXPos
+		TempValue0  -= 64
+		TempValue0 <<= 16
+		TempValue1   = Object.iYPos
+		TempValue1  -= 64
+		TempValue1 <<= 16
+		DrawRectOutline(TempValue0, TempValue1, 128, 128, 255, 255, 0, 255)
+		Editor.DrawingOverlay = false
+	end if
+	DrawSprite(0)
+end sub
+
+
+sub RSDKLoad
 	LoadSpriteSheet("Global/Display.gif")
-	SetEditorIcon(Icon0,SingleIcon,-16,-16,32,32,1,143)
-endsub
+	SpriteFrame(-16, -16, 32, 32, 1, 143)		// #0 - "Script" Icon
+
+	SetVariableAlias(ALIAS_VAR_PROPVAL, "unused")
+end sub

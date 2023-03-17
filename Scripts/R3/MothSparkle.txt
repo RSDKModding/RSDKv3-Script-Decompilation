@@ -1,39 +1,54 @@
-//------------Sonic CD MothSparkle Script-------------//
+//----------------Sonic CD Moth Sparkle Script----------------//
 //--------Scripted by Christian Whitehead 'The Taxman'--------//
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
-//-------Aliases-------//
-#alias 55: TYPE_MOTHSPARKLE
+// Aliases
+#alias Object.Value0	:	Object.Timer
 
 
 sub ObjectMain
-	Object.Value0++
-	Object.YPos+=65536
-	if Object.Value0==6
-		Object.Value0=0
+	Object.Timer++
+	Object.YPos += 0x10000
+	if Object.Timer == 6
+		Object.Timer = 0
 		Object.Frame++
-		Object.Frame&=3
-	endif
-	if Object.OutOfBounds==1
-		Object.Type=TypeName[BlankObject]
-	endif
-endsub
+		Object.Frame &= 3
+	end if
+
+	if Object.OutOfBounds == true
+		Object.Type = TypeName[Blank Object]
+	end if
+end sub
 
 
 sub ObjectDraw
 	DrawSprite(Object.Frame)
-endsub
+end sub
 
 
 sub ObjectStartup
 	LoadSpriteSheet("Global/Items.gif")
-	SpriteFrame(-8,-8,16,16,1,202)
-	SpriteFrame(-8,-8,16,16,18,202)
-	SpriteFrame(-8,-8,16,16,1,219)
-	SpriteFrame(-8,-8,16,16,18,219)
-endsub
+	
+	SpriteFrame(-8, -8, 16, 16, 1, 202)		// #0 - Moth Sparkle Frame 0
+	SpriteFrame(-8, -8, 16, 16, 18, 202)	// #1 - Moth Sparkle Frame 1
+	SpriteFrame(-8, -8, 16, 16, 1, 219)		// #2 - Moth Sparkle Frame 2
+	SpriteFrame(-8, -8, 16, 16, 18, 219)	// #3 - Moth Sparkle Frame 3
+end sub
 
-sub RSDK
-	LoadSpriteSheet("Global/Display.gif")
-	SetEditorIcon(Icon0,SingleIcon,-16,-16,32,32,1,143)
-endsub
+
+// ========================
+// Editor Subs
+// ========================
+
+sub RSDKDraw
+	DrawSprite(0)
+end sub
+
+
+sub RSDKLoad
+	LoadSpriteSheet("Global/Items.gif")
+	
+	SpriteFrame(-8, -8, 16, 16, 1, 202)		// #0 - Moth Sparkle
+
+	SetVariableAlias(ALIAS_VAR_PROPVAL, "unused")
+end sub

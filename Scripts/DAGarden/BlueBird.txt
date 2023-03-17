@@ -1,52 +1,76 @@
-//------------Sonic CD BlueBird Script-------------//
+//----------------Sonic CD Blue Bird Script-------------------//
 //--------Scripted by Christian Whitehead 'The Taxman'--------//
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
-//-------Aliases-------//
-#alias 8: TYPE_BLUEBIRD
+// Aliases
+#alias Object.Value1		:	Object.YOffSet
+#alias Object.Value2		:	Object.Wobble
+#alias Object.PropertyValue	:	Object.WobbleIncrease
+
+// States
+#alias 0	:	BLUEBIRD_SETUP
+#alias 1	:	BLUEBIRD_MOVEMENT
 
 
 sub ObjectMain
-	if Object.Direction==FACING_RIGHT
-		Object.XPos+=32768
+	if Object.Direction == FACING_RIGHT
+		Object.XPos += 0x8000
 	else
-		Object.XPos-=32768
-	endif
+		Object.XPos -= 0x8000
+	end if
+
 	switch Object.State
-	case 0
-		Object.Value1=Object.YPos
+	case BLUEBIRD_SETUP
+		Object.YOffSet = Object.YPos
 		Object.State++
 		break
-	case 1
-		Object.Value2+=Object.PropertyValue
-		Object.Value2&=511
-		Sin(Object.YPos,Object.Value2)
-		Object.YPos<<=10
-		Object.YPos+=Object.Value1
+
+	case BLUEBIRD_MOVEMENT
+		Object.Wobble += Object.WobbleIncrease
+		Object.Wobble &= 511
+		Sin(Object.YPos, Object.Wobble)
+		Object.YPos  <<= 10
+		Object.YPos   += Object.YOffSet
 		break
-	endswitch
-	if Object.OutOfBounds==1
-		Object.Type=TypeName[BlankObject]
-	endif
-endsub
+
+	end switch
+
+	if Object.OutOfBounds == true
+		Object.Type = TypeName[Blank Object]
+	end if
+end sub
 
 
 sub ObjectDraw
-	TempValue0=Object.AnimationSpeed
-	TempValue0>>=3
-	DrawSpriteFX(TempValue0,FX_FLIP,Object.XPos,Object.YPos)
+	TempValue0   = Object.AnimationSpeed
+	TempValue0 >>= 3
+	DrawSpriteFX(TempValue0, FX_FLIP, Object.XPos, Object.YPos)
+
 	Object.AnimationSpeed++
-	Object.AnimationSpeed&=15
-endsub
+	Object.AnimationSpeed &= 15
+end sub
 
 
 sub ObjectStartup
 	LoadSpriteSheet("DAGarden/Objects.gif")
-	SpriteFrame(-8,-9,16,16,466,577)
-	SpriteFrame(-8,-8,16,16,483,577)
-endsub
+	
+	SpriteFrame(-8, -9, 16, 16, 466, 577)	// Blue Bird Frame 0
+	SpriteFrame(-8, -8, 16, 16, 483, 577)	// Blue Bird Frame 1
+end sub
 
-sub RSDK
-	LoadSpriteSheet("Global/Display.gif")
-	SetEditorIcon(Icon0,SingleIcon,-16,-16,32,32,1,143)
-endsub
+
+// ========================
+// Editor Subs
+// ========================
+
+sub RSDKDraw
+	DrawSprite(0)
+end sub
+
+
+sub RSDKLoad
+	LoadSpriteSheet("DAGarden/Objects.gif")
+	SpriteFrame(-8, -9, 16, 16, 466, 577)	// Blue Bird Frame 0
+
+	SetVariableAlias(ALIAS_VAR_PROPVAL, "unused")
+end sub

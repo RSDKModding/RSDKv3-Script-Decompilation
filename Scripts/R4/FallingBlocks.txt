@@ -1,134 +1,254 @@
-//------------Sonic CD Falling Blocks Script-------------//
+//----------------Sonic CD Falling Blocks Script--------------//
 //--------Scripted by Christian Whitehead 'The Taxman'--------//
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
-//-------Aliases-------//
-#alias 61: TYPE_FALLINGBLOCKS
+// Aliases
+#alias Object.Value0			:	Object.Timer
+#alias Object.Value1			:	Object.YVelocity
+#alias Object.Value2			:	Object.YOriginPos
+#alias Object.Value3			:	Object.TargetHeight
+#alias Object.Value4			:	Object.R4BlockSheet
+#alias Object.Value5			:	Object.SpikeSheet
+
+// HUD alias
+#alias Object[24].PropertyValue	:	HUD.CurrentTimePeriod
+
+// States
+#alias 0	:	FALLINGBLOCKS_SETUP
+#alias 1	:	FALLINGBLOCKS_CRUMBLE
+#alias 2	:	FALLINGBLOCKS_DELAY
+#alias 3	:	FALLINGBLOCKS_FALL
+
+// Time Periods
+#alias 0	:	TIME_PRESENT
+#alias 1	:	TIME_PAST
+#alias 2	:	TIME_GOOD_FUTURE
+#alias 3	:	TIME_BAD_FUTURE
+
+// Priority
+#alias 0	:	PRIORITY_BOUNDS
+#alias 1	:	PRIORITY_ACTIVE
+
+// Collision Sides
+#alias 0	:	CSIDE_FLOOR
+
+// Collision
+#alias 4	:	PLAYER_COL_ROOF
+
+// Gravity
+#alias 1	:	GRAVITY_AIR
 
 
 sub ObjectMain
 	switch Object.State
-	case 0
-		PlayerObjectCollision(C_TOUCH,-16,-64,16,192)
-		if CheckResult==1
-			Object.Priority=1
-			Object.Value1=0
-			Object.Value3=Object.YPos
-			Object.Value3+=2097152
+	case FALLINGBLOCKS_SETUP
+		PlayerObjectCollision(C_TOUCH, -16, -64, 16, 192)
+		if CheckResult == true
+			Object.Priority  = PRIORITY_ACTIVE
+
+			Object.YVelocity = 0
+
+			Object.TargetHeight  = Object.YPos
+			Object.TargetHeight += 0x200000	
+
 			Object.State++
-		endif
+		end if
 		break
-	case 1
-		Object.Value1+=8192
-		Object.YPos+=Object.Value1
-		if Object.YPos>=Object.Value3
-			Object.YPos=Object.Value3
-			Object.Value1=0
+
+	case FALLINGBLOCKS_CRUMBLE
+		Object.YVelocity += 0x2000
+		Object.YPos 	 += Object.YVelocity
+		if Object.YPos >= Object.TargetHeight
+			Object.YPos = Object.TargetHeight
+			Object.YVelocity = 0
+
 			Object.State++
-		endif
+		end if
 		break
-	case 2
-		if Object.Value0<30
-			Object.Value0++
+
+	case FALLINGBLOCKS_DELAY
+		if Object.Timer < 30
+			Object.Timer++
 		else
-			Object.Value0=0
+			Object.Timer = 0
 			Object.State++
-		endif
+		end if
 		break
-	case 3
-		Object.Value1+=8192
-		Object.YPos+=Object.Value1
-		ObjectTileCollision(0,0,32,0)
-		if CheckResult==1
+
+	case FALLINGBLOCKS_FALL
+		Object.YVelocity += 0x2000
+		Object.YPos 	 += Object.YVelocity
+
+		ObjectTileCollision(CSIDE_FLOOR, 0, 32, 0)
+		if CheckResult == true
 			Object.State++
-		endif
+		end if
 		break
-	endswitch
-	if Object.OutOfBounds==1
-		Object.YPos=Object.Value2
-		Object.Priority=0
-		Object.State=0
-	endif
-endsub
+
+	end switch
+
+	if Object.OutOfBounds == true
+		Object.YPos		= Object.YOriginPos
+		Object.Priority = PRIORITY_BOUNDS
+		
+		Object.State	= FALLINGBLOCKS_SETUP
+	end if
+end sub
 
 
 sub ObjectPlayerInteraction
-	PlayerObjectCollision(C_BOX,-16,-64,16,62)
-	if CheckResult==4
-		if Player.Gravity==1
-			CallFunction(PlayerObject_Hit)
+	PlayerObjectCollision(C_BOX, -16, -64, 16, 62)
+	if CheckResult == PLAYER_COL_ROOF
+		if Player.Gravity == GRAVITY_AIR
+			CallFunction(Player_Hit)
 		else
-			CallFunction(PlayerObject_Kill)
-		endif
-	endif
-endsub
+			CallFunction(Player_Kill)
+		end if
+	end if
+end sub
 
 
 sub ObjectDraw
-	Object.SpriteSheet=Object.Value4
-	DrawSpriteXY(0,Object.XPos,Object.YPos)
-	DrawSpriteXY(1,Object.XPos,Object.YPos)
-	DrawSpriteXY(2,Object.XPos,Object.YPos)
-	Object.SpriteSheet=Object.Value5
-	DrawSpriteXY(3,Object.XPos,Object.YPos)
-endsub
+	Object.SpriteSheet = Object.R4BlockSheet
+	DrawSpriteXY(0, Object.XPos, Object.YPos)
+	DrawSpriteXY(1, Object.XPos, Object.YPos)
+	DrawSpriteXY(2, Object.XPos, Object.YPos)
+
+	Object.SpriteSheet = Object.SpikeSheet
+	DrawSpriteXY(3, Object.XPos, Object.YPos)
+end sub
 
 
 sub ObjectStartup
-	switch Object[24].PropertyValue
-	case 0
+	switch HUD.CurrentTimePeriod
+	case TIME_PRESENT
 		LoadSpriteSheet("R4/Objects.gif")
-		TempValue0=163
-		TempValue1=1
-		TempValue2=196
-		SpriteFrame(-16,-64,32,32,TempValue0,TempValue1)
-		SpriteFrame(-16,-32,32,32,TempValue0,TempValue1)
-		SpriteFrame(-16,0,32,32,TempValue0,TempValue1)
+		TempValue0 = 163
+		TempValue1 = 1
+		TempValue2 = 196
+		SpriteFrame(-16, -64, 32, 32, TempValue0, TempValue1)	// #0 - R4 Block 1
+		SpriteFrame(-16, -32, 32, 32, TempValue0, TempValue1)	// #1 - R4 Block 2
+		SpriteFrame(-16, 0, 32, 32, TempValue0, TempValue1)		// #2 - R4 Block 3
 		break
-	case 1
+
+	case TIME_PAST
 		LoadSpriteSheet("R4/Objects2.gif")
-		TempValue0=1
-		TempValue1=157
-		TempValue2=34
-		SpriteFrame(-16,-64,32,32,TempValue0,TempValue1)
-		SpriteFrame(-16,-32,32,32,TempValue0,TempValue1)
-		SpriteFrame(-16,0,32,32,TempValue2,TempValue1)
+		TempValue0 = 1
+		TempValue1 = 157
+		TempValue2 = 34
+		SpriteFrame(-16, -64, 32, 32, TempValue0, TempValue1)	// #0 - R4 Block 1
+		SpriteFrame(-16, -32, 32, 32, TempValue0, TempValue1)	// #1 - R4 Block 2
+		SpriteFrame(-16, 0, 32, 32, TempValue2, TempValue1)		// #2 - R4 Block 3
 		break
-	case 2
+
+	case TIME_GOOD_FUTURE
 		LoadSpriteSheet("R4/Objects2.gif")
-		TempValue0=1
-		TempValue1=190
-		TempValue2=34
-		SpriteFrame(-16,-64,32,32,TempValue0,TempValue1)
-		SpriteFrame(-16,-32,32,32,TempValue0,TempValue1)
-		SpriteFrame(-16,0,32,32,TempValue0,TempValue1)
+		TempValue0 = 1
+		TempValue1 = 190
+		TempValue2 = 34
+		SpriteFrame(-16, -64, 32, 32, TempValue0, TempValue1)	// #0 - R4 Block 1
+		SpriteFrame(-16, -32, 32, 32, TempValue0, TempValue1)	// #1 - R4 Block 2
+		SpriteFrame(-16, 0, 32, 32, TempValue0, TempValue1)		// #2 - R4 Block 3
 		break
-	case 3
+
+	case TIME_BAD_FUTURE
 		LoadSpriteSheet("R4/Objects2.gif")
-		TempValue0=1
-		TempValue1=223
-		TempValue2=34
-		SpriteFrame(-16,-64,32,32,TempValue0,TempValue1)
-		SpriteFrame(-16,-32,32,32,TempValue0,TempValue1)
-		SpriteFrame(-16,0,32,32,TempValue0,TempValue1)
+		TempValue0 = 1
+		TempValue1 = 223
+		TempValue2 = 34
+		SpriteFrame(-16, -64, 32, 32, TempValue0, TempValue1)	// #0 - R4 Block 1
+		SpriteFrame(-16, -32, 32, 32, TempValue0, TempValue1)	// #1 - R4 Block 2
+		SpriteFrame(-16, 0, 32, 32, TempValue0, TempValue1)		// #2 - R4 Block 3
 		break
-	endswitch
-	TempValue0=Object.SpriteSheet
+
+	end switch
+	TempValue0 = Object.SpriteSheet
+
 	LoadSpriteSheet("Global/Items3.gif")
-	TempValue1=Object.SpriteSheet
-	SpriteFrame(-16,32,32,32,50,100)
-	ArrayPos0=32
-	while ArrayPos0<1056
-		if Object[ArrayPos0].Type==TypeName[FallingBlocks]
-			Object[ArrayPos0].Value4=TempValue0
-			Object[ArrayPos0].Value5=TempValue1
-			Object[ArrayPos0].Value2=Object[ArrayPos0].YPos
-		endif
+	TempValue1 = Object.SpriteSheet
+	SpriteFrame(-16, 32, 32, 32, 50, 100)	// #3 - Spikes
+
+	ArrayPos0 = 32
+	while ArrayPos0 < 1056
+		if Object[ArrayPos0].Type == TypeName[Falling Blocks]
+			Object[ArrayPos0].R4BlockSheet = TempValue0
+			Object[ArrayPos0].SpikeSheet   = TempValue1
+			Object[ArrayPos0].YOriginPos   = Object[ArrayPos0].YPos
+		end if
 		ArrayPos0++
 	loop
-endsub
+end sub
 
-sub RSDK
-	LoadSpriteSheet("Global/Display.gif")
-	SetEditorIcon(Icon0,SingleIcon,-16,-16,32,32,1,143)
-endsub
+
+// ========================
+// Editor Subs
+// ========================
+
+sub RSDKDraw
+	LoadSpriteSheet("R4/Objects.gif")
+	TempValue0 = Object.SpriteSheet
+	LoadSpriteSheet("Global/Items3.gif")
+	TempValue1 = Object.SpriteSheet
+	
+	Object.SpriteSheet = TempValue0
+	DrawSpriteXY(0, Object.XPos, Object.YPos)
+	DrawSpriteXY(1, Object.XPos, Object.YPos)
+	DrawSpriteXY(2, Object.XPos, Object.YPos)
+
+	Object.SpriteSheet = TempValue1
+	DrawSpriteXY(3, Object.XPos, Object.YPos)
+end sub
+
+
+sub RSDKLoad
+	CallFunction(EditorHelpers_FindTimePeriod)
+	switch CheckResult
+	case TIME_PRESENT
+		LoadSpriteSheet("R4/Objects.gif")
+		TempValue0 = 163
+		TempValue1 = 1
+		TempValue2 = 196
+		SpriteFrame(-16, -64, 32, 32, TempValue0, TempValue1)	// #0 - R4 Block 1
+		SpriteFrame(-16, -32, 32, 32, TempValue0, TempValue1)	// #1 - R4 Block 2
+		SpriteFrame(-16, 0, 32, 32, TempValue0, TempValue1)		// #2 - R4 Block 3
+		break
+
+	case TIME_PAST
+		LoadSpriteSheet("R4/Objects2.gif")
+		TempValue0 = 1
+		TempValue1 = 157
+		TempValue2 = 34
+		SpriteFrame(-16, -64, 32, 32, TempValue0, TempValue1)	// #0 - R4 Block 1
+		SpriteFrame(-16, -32, 32, 32, TempValue0, TempValue1)	// #1 - R4 Block 2
+		SpriteFrame(-16, 0, 32, 32, TempValue2, TempValue1)		// #2 - R4 Block 3
+		break
+
+	case TIME_GOOD_FUTURE
+		LoadSpriteSheet("R4/Objects2.gif")
+		TempValue0 = 1
+		TempValue1 = 190
+		TempValue2 = 34
+		SpriteFrame(-16, -64, 32, 32, TempValue0, TempValue1)	// #0 - R4 Block 1
+		SpriteFrame(-16, -32, 32, 32, TempValue0, TempValue1)	// #1 - R4 Block 2
+		SpriteFrame(-16, 0, 32, 32, TempValue0, TempValue1)		// #2 - R4 Block 3
+		break
+
+	case TIME_BAD_FUTURE
+		LoadSpriteSheet("R4/Objects2.gif")
+		TempValue0 = 1
+		TempValue1 = 223
+		TempValue2 = 34
+		SpriteFrame(-16, -64, 32, 32, TempValue0, TempValue1)	// #0 - R4 Block 1
+		SpriteFrame(-16, -32, 32, 32, TempValue0, TempValue1)	// #1 - R4 Block 2
+		SpriteFrame(-16, 0, 32, 32, TempValue0, TempValue1)		// #2 - R4 Block 3
+		break
+
+	end switch
+	TempValue0 = Object.SpriteSheet
+
+	LoadSpriteSheet("Global/Items3.gif")
+	TempValue1 = Object.SpriteSheet
+	SpriteFrame(-16, 32, 32, 32, 50, 100)	// #3 - Spikes
+
+	SetVariableAlias(ALIAS_VAR_PROPVAL, "unused")
+end sub

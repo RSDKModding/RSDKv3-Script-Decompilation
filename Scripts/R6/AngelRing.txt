@@ -1,53 +1,86 @@
-//------------Sonic CD Angel Ring Script-------------//
+//-----------------Sonic CD Angel Ring Script-----------------//
 //--------Scripted by Christian Whitehead 'The Taxman'--------//
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
-//-------Aliases-------//
-#alias 60: TYPE_ANGELRING
+// Aliases
+#alias Object.Value3	:	Object.Timer
+#alias Object.Value2	:	Object.RingTimer
+
+// Lose Ring Aliases
+#alias Object.Value0	:	Object.XVelocity
+#alias Object.Value1	:	Object.YVelocity
+
+// States
+#alias 0	:	ANGELRING_INACTIVE
+#alias 1	:	ANGELRING_RING_SHOWER
+
+// Players
+#alias 0	:	PLAYER_SONIC
+
+// Priority
+#alias 0	:	PRIORITY_BOUNDS
+#alias 1	:	PRIORITY_ACTIVE
 
 
 sub ObjectMain
-	if Object.OutOfBounds==1
-		Object.State=0
-		Object.Value3=0
-		Object.Value2=0
-		Object.Priority=0
-	endif
-	if Object.Value3>0
-		if Object.Value2<12
-			Object.Value2++
+	if Object.OutOfBounds == true
+		Object.State	 = ANGELRING_INACTIVE
+		Object.Timer	 = 0
+		Object.RingTimer = 0
+		Object.Priority  = PRIORITY_BOUNDS
+	end if
+
+	if Object.Timer > 0
+		if Object.RingTimer < 12
+			Object.RingTimer++
 		else
-			Object.Value2=0
-			CreateTempObject(TypeName[LoseRing],0,Object.XPos,Object.YPos)
-			Rand(Object[TempObjectPos].Value0,8)
-			Object[TempObjectPos].Value0<<=15
-			Object[TempObjectPos].Value0-=81920
-			Object[TempObjectPos].Value1=-131072
-			Object[TempObjectPos].AnimationSpeed=256
-			Object.Value3--
-		endif
-	endif
-endsub
+			Object.RingTimer = 0
+			CreateTempObject(TypeName[LoseRing], 0, Object.XPos, Object.YPos)
+			Rand(Object[TempObjectPos].XVelocity, 8)
+			Object[TempObjectPos].XVelocity <<=  15
+			Object[TempObjectPos].XVelocity  -=  0x14000
+
+			Object[TempObjectPos].YVelocity   = -0x20000
+			
+			Object[TempObjectPos].AnimationSpeed = 256
+			Object.Timer--
+		end if
+	end if
+end sub
 
 
 sub ObjectPlayerInteraction
-	if Object.State==0
-		PlayerObjectCollision(C_TOUCH,-64,-64,-12,96)
-		if CheckResult==1
-			Object.State=1
-			Object.Value3=60
-			Object.Priority=1
-			Object.Value2=0
-			if Stage.PlayerListPos==0
-				if Stage.DebugMode==0
-					SetAchievement(5,100)
-				endif
-			endif
-		endif
-	endif
-endsub
+	if Object.State == ANGELRING_INACTIVE
+		PlayerObjectCollision(C_TOUCH, -64, -64, -12, 96)
+		if CheckResult == true
+			Object.State	 = ANGELRING_RING_SHOWER
+			Object.Timer	 = 60
+			Object.Priority  = PRIORITY_ACTIVE
+			Object.RingTimer = 0
 
-sub RSDK
+			// Statue Saviour
+			if Stage.PlayerListPos == PLAYER_SONIC
+				if Stage.DebugMode == false
+					SetAchievement(5, 100)
+				end if
+			end if
+		end if
+	end if
+end sub
+
+
+// ========================
+// Editor Subs
+// ========================
+
+sub RSDKDraw
+	DrawSprite(0)
+end sub
+
+
+sub RSDKLoad
 	LoadSpriteSheet("Global/Display.gif")
-	SetEditorIcon(Icon0,SingleIcon,-16,-16,32,32,1,143)
-endsub
+	SpriteFrame(-16, -16, 32, 32, 1, 143)		// #0 - "Script" Icon
+
+	SetVariableAlias(ALIAS_VAR_PROPVAL, "unused")
+end sub

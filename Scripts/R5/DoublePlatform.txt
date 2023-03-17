@@ -1,88 +1,150 @@
-//------------Sonic CD Double Platform Script-------------//
+//--------------Sonic CD Double Platform Script---------------//
 //--------Scripted by Christian Whitehead 'The Taxman'--------//
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
-//-------Aliases-------//
-#alias 68: TYPE_DOUBLEPLATFORM
+// Aliases
+#alias Object.Value0			:	Object.Angle
+#alias Object.Value1			:	Object.PlatformX
+#alias Object.Value2			:	Object.PlatformY
+#alias Object.Value3			:	Object.ChangeX
+#alias Object.Value4			:	Object.ChangeY
+
+// HUD Alias
+#alias Object[24].PropertyValue	:	HUD.CurrentTimePeriod
+
+// Time Period Aliases
+#alias 0	:	TIME_PRESENT
+#alias 1	:	TIME_PAST
+#alias 2	:	TIME_GOOD_FUTURE
+#alias 3	:	TIME_BAD_FUTURE
 
 
 sub ObjectMain
-	Object.Value0+=2
-	Object.Value0&=511
-	if Object.Value0>0
-		Object.Value3=Object.Value0
-		Object.Value3*=-16384
-		Object.Value3+=Object.XPos
-		Object.Value3&=-65536
-		Object.Value3-=Object.Value1
+	
+	Object.Angle += 2
+	Object.Angle &= 511
+	
+	if Object.Angle > 0
+		Object.ChangeX = Object.Angle
+		Object.ChangeX *= -0x4000
+		Object.ChangeX += Object.XPos
+		Object.ChangeX &= 0xFFFF0000 // Truncate the value
+		Object.ChangeX -= Object.PlatformX
 	else
-		Object.Value3=0
-	endif
-	Cos(Object.Value4,Object.Value0)
-	Object.Value4*=12288
-	Object.Value4+=Object.YPos
-	Object.Value4&=-65536
-	Object.Value4-=Object.Value2
-endsub
+		Object.ChangeX = 0
+	end if
+	
+	Cos(Object.ChangeY, Object.Angle)
+	Object.ChangeY *= 0x3000
+	Object.ChangeY += Object.YPos
+	Object.ChangeY &= 0xFFFF0000 // Truncate the value
+	Object.ChangeY -= Object.PlatformY
+	
+end sub
 
 
 sub ObjectPlayerInteraction
-	TempValue0=Object.XPos
-	TempValue1=Object.YPos
-	Object.XPos=Object.Value1
-	Object.YPos=Object.Value2
-	PlayerObjectCollision(C_PLATFORM,-32,-16,32,16)
-	if CheckResult==1
-		Player.XPos+=Object.Value3
-		Player.YPos+=Object.Value4
-	endif
-	PlayerObjectCollision(C_PLATFORM,96,-16,160,16)
-	if CheckResult==1
-		Player.XPos+=Object.Value3
-		Player.YPos+=Object.Value4
-	endif
-	Object.XPos=TempValue0
-	Object.YPos=TempValue1
-endsub
+	
+	// First, backup the Object's base position
+	TempValue0 = Object.XPos
+	TempValue1 = Object.YPos
+	
+	// Now, move the Object to where it's Platforms really are
+	Object.XPos = Object.PlatformX
+	Object.YPos = Object.PlatformY
+	
+	// Check Platform 1
+	PlayerObjectCollision(C_PLATFORM, -32, -16, 32, 16)
+	if CheckResult == true
+		Player.XPos += Object.ChangeX
+		Player.YPos += Object.ChangeY
+	end if
+	
+	// Check Platform 2
+	PlayerObjectCollision(C_PLATFORM, 96, -16, 160, 16)
+	if CheckResult == true
+		Player.XPos += Object.ChangeX
+		Player.YPos += Object.ChangeY
+	end if
+	
+	// We can restore the Object's base position now
+	Object.XPos = TempValue0
+	Object.YPos = TempValue1
+	
+end sub
 
 
 sub ObjectDraw
-	Object.Value1=Object.Value0
-	Object.Value1*=-16384
-	Object.Value1+=Object.XPos
-	Object.Value1&=-65536
-	Cos(Object.Value2,Object.Value0)
-	Object.Value2*=12288
-	Object.Value2+=Object.YPos
-	Object.Value2&=-65536
-	DrawSpriteXY(0,Object.Value1,Object.Value2)
-	DrawSpriteXY(1,Object.Value1,Object.Value2)
-endsub
+	
+	Object.PlatformX = Object.Angle
+	Object.PlatformX *= -0x4000
+	Object.PlatformX += Object.XPos
+	Object.PlatformX &= 0xFFFF0000 // Truncate the value
+	
+	Cos(Object.PlatformY, Object.Angle)
+	Object.PlatformY *= 0x3000
+	Object.PlatformY += Object.YPos
+	Object.PlatformY &= 0xFFFF0000 // Truncate the value
+	
+	DrawSpriteXY(0, Object.PlatformX, Object.PlatformY)
+	DrawSpriteXY(1, Object.PlatformX, Object.PlatformY)
+	
+end sub
 
 
 sub ObjectStartup
 	LoadSpriteSheet("R5/Objects3.gif")
-	switch Object[24].PropertyValue
-	case 0
-		SpriteFrame(-32,-16,64,32,66,98)
-		SpriteFrame(96,-16,64,32,66,98)
+	
+	// Use different sprites for the different time periods
+	switch HUD.CurrentTimePeriod
+	case TIME_PRESENT
+		SpriteFrame(-32, -16, 64, 32, 66, 98)
+		SpriteFrame(96, -16, 64, 32, 66, 98)
 		break
-	case 1
-		SpriteFrame(-32,-16,64,32,66,98)
-		SpriteFrame(96,-16,64,32,66,98)
+		
+	case TIME_PAST
+		SpriteFrame(-32, -16, 64, 32, 66, 98)
+		SpriteFrame(96, -16, 64, 32, 66, 98)
 		break
-	case 2
-		SpriteFrame(-32,-16,64,32,66,98)
-		SpriteFrame(96,-16,64,32,66,98)
+		
+	case TIME_GOOD_FUTURE
+		SpriteFrame(-32, -16, 64, 32, 66, 98)
+		SpriteFrame(96, -16, 64, 32, 66, 98)
 		break
-	case 3
-		SpriteFrame(-32,-16,64,32,131,98)
-		SpriteFrame(96,-16,64,32,131,98)
+		
+	case TIME_BAD_FUTURE
+		SpriteFrame(-32, -16, 64, 32, 131, 98)
+		SpriteFrame(96, -16, 64, 32, 131, 98)
 		break
-	endswitch
-endsub
+		
+	end switch
 
-sub RSDK
-	LoadSpriteSheet("Global/Display.gif")
-	SetEditorIcon(Icon0,SingleIcon,-16,-16,32,32,1,143)
-endsub
+end sub
+
+
+// ========================
+// Editor Subs
+// ========================
+
+sub RSDKDraw
+	TempValue1 = Object.XPos
+	TempValue1 &= 0xFFFF0000 // Truncate the value
+	Cos(TempValue2, 0)
+	TempValue2 *= 0x3000
+	TempValue2 += Object.YPos
+	TempValue2 &= 0xFFFF0000 // Truncate the value
+	DrawSpriteXY(0, TempValue1, TempValue2)
+	DrawSpriteXY(1, TempValue1, TempValue2)
+end sub
+
+
+sub RSDKLoad
+	LoadSpriteSheet("R5/Objects3.gif")
+
+	// TODO: support other time periods
+	// Surely there's a better way to do it than a bunch of unique and boring checkCurrentStageFolder checks?
+	SpriteFrame(-32, -16, 64, 32, 66, 98)
+	SpriteFrame(96, -16, 64, 32, 66, 98)
+
+	SetVariableAlias(ALIAS_VAR_PROPVAL, "unused")
+end sub

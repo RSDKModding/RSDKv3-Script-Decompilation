@@ -1,127 +1,199 @@
-//------------Sonic CD Escalator Script-------------//
+//----------------Sonic CD Escalator Script-------------------//
 //--------Scripted by Christian Whitehead 'The Taxman'--------//
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
-//-------Aliases-------//
-#alias 47: TYPE_ESCALATOR
+// Aliases
+#alias Object.Value0			:	Object.Timer
+#alias Object.Value1			:	Object.OnObject
+#alias Object.Value2			:	Object.Speed
+#alias Object.Value3			:	Object.TimerSet
+
+// HUD alias
+#alias Object[24].PropertyValue	:	HUD.CurrentTimePeriod
+
+// States
+#alias 0	:	ESCALATOR_IDLE
+#alias 1	:	ESCALATOR_ASCEND
+#alias 2	:	ESCALATOR_STOPPED
+#alias 3	:	ESCALATOR_RESTORE
+
+// Player Collision
+#alias 1	:	PLAYER_COL_FLOOR
+
+// Time Periods
+#alias 0	:	TIME_PRESENT
+#alias 1	:	TIME_PAST
+#alias 2	:	TIME_GOOD_FUTURE
+#alias 3	:	TIME_BAD_FUTURE
+
+// Priority
+#alias 0	:	PRIORITY_BOUNDS
+#alias 1	:	PRIORITY_ACTIVE
+
 
 
 sub ObjectMain
 	switch Object.State
-	case 1
-		if Object.Value0>0
-			Object.Value0--
-			Object.XPos+=Object.Value2
-			Object.YPos-=Object.Value2
+	case ESCALATOR_ASCEND
+		if Object.Timer > 0
+			Object.Timer--
+			Object.XPos += Object.Speed
+			Object.YPos -= Object.Speed
 		else
 			Object.State++
-		endif
+		end if
 		break
-	case 2
-		if Object.OutOfBounds==1
-			Object.State=3
-			Object.XPos-=10485760
-			Object.YPos+=10485760
-		endif
+		
+	case ESCALATOR_STOPPED
+		if Object.OutOfBounds == true
+			Object.State = ESCALATOR_RESTORE
+			Object.XPos -= 0xA00000
+			Object.YPos += 0xA00000
+		end if
 		break
-	case 3
-		if Object.OutOfBounds==1
-			Object.State=0
-			Object.Priority=0
-		endif
+
+	case ESCALATOR_RESTORE
+		if Object.OutOfBounds == true
+			Object.State	= ESCALATOR_IDLE
+			Object.Priority = PRIORITY_BOUNDS
+		end if
 		break
-	endswitch
-endsub
+	end switch
+end sub
 
 
 sub ObjectPlayerInteraction
 	switch Object.State
-	case 0
-		PlayerObjectCollision(C_BOX,-16,-16,16,16)
-		if CheckResult==1
-			Object.State=1
-			Object.Value0=Object.Value3
-			Object.Priority=1
-			Player.TileCollisions=0
-			Object.Value1=1
+	case ESCALATOR_IDLE
+		PlayerObjectCollision(C_BOX, -16, -16, 16, 16)
+		if CheckResult == PLAYER_COL_FLOOR
+			Object.State    = ESCALATOR_ASCEND
+			Object.Timer    = Object.TimerSet
+			Object.Priority = PRIORITY_ACTIVE
+
+			Player.TileCollisions = false
+
+			Object.OnObject = true
 		else
-			if Object.Value1==1
-				Player.TileCollisions=1
-			endif
-			Object.Value1=0
-		endif
+			if Object.OnObject == true
+				Player.TileCollisions = true
+			end if
+
+			Object.OnObject = false
+		end if
 		break
-	case 1
-		PlayerObjectCollision(C_BOX,-16,-16,16,16)
-		if CheckResult==1
-			Player.XPos+=Object.Value2
-			Player.TileCollisions=0
-			Object.Value1=1
-			PlayerObjectCollision(C_BOX,20,-32,32,-16)
-			Player.Pushing=0
+
+	case ESCALATOR_ASCEND
+		PlayerObjectCollision(C_BOX, -16, -16, 16, 16)
+		if CheckResult == PLAYER_COL_FLOOR
+			Player.XPos += Object.Speed
+
+			Player.TileCollisions = false
+
+			Object.OnObject = true
+
+			PlayerObjectCollision(C_BOX, 20, -32, 32, -16)
+			Player.Pushing = false
 		else
-			if Object.Value1==1
-				Player.TileCollisions=1
-			endif
-			Object.Value1=0
-		endif
+			if Object.OnObject == true
+				Player.TileCollisions = true
+			end if
+
+			Object.OnObject = false
+		end if
 		break
-	case 2
-		Player.Pushing=0
-		PlayerObjectCollision(C_BOX,-16,-16,16,16)
-		if CheckResult==1
-			Player.TileCollisions=0
-			Object.Value1=1
+
+	case ESCALATOR_STOPPED
+		Player.Pushing = false
+		PlayerObjectCollision(C_BOX, -16, -16, 16, 16)
+		if CheckResult == PLAYER_COL_FLOOR
+			Player.TileCollisions = false
+
+			Object.OnObject = true
 		else
-			if Object.Value1==1
-				Player.TileCollisions=1
-			endif
-			Object.Value1=0
-		endif
+			if Object.OnObject == true
+				Player.TileCollisions = true
+			end if
+			Object.OnObject = false
+		end if
 		break
-	endswitch
-endsub
+
+	end switch
+end sub
 
 
 sub ObjectDraw
-	if Object.State<3
+	if Object.State < ESCALATOR_RESTORE
 		DrawSprite(0)
-	endif
-endsub
+	end if
+end sub
 
 
 sub ObjectStartup
-	switch Object[24].PropertyValue
-	case 0
-	case 1
+	switch HUD.CurrentTimePeriod
+	case TIME_PRESENT
+	case TIME_PAST
 		LoadSpriteSheet("R4/Objects.gif")
-		SpriteFrame(-16,-16,32,32,130,1)
+		SpriteFrame(-16, -16, 32, 32, 130, 1)	// #0 - Escalator
 		break
-	case 2
+
+	case TIME_GOOD_FUTURE
 		LoadSpriteSheet("R4/Objects3.gif")
-		SpriteFrame(-16,-16,32,32,1,150)
+		SpriteFrame(-16, -16, 32, 32, 1, 150)	// #0 - Escalator
 		break
-	case 3
+
+	case TIME_BAD_FUTURE
 		LoadSpriteSheet("R4/Objects3.gif")
-		SpriteFrame(-16,-16,32,32,1,183)
+		SpriteFrame(-16, -16, 32, 32, 1, 183)	// #0 - Escalator
 		break
-	endswitch
-	ArrayPos0=32
-	while ArrayPos0<1056
-		if Object[ArrayPos0].Type==TypeName[Escalator]
-			if Object[24].PropertyValue<2
-				Object[ArrayPos0].Value2=65536
-				Object[ArrayPos0].Value3=160
+
+	end switch
+
+	ArrayPos0 = 32
+	while ArrayPos0 < 1056
+		if Object[ArrayPos0].Type == TypeName[Escalator]
+			if HUD.CurrentTimePeriod < 2	// aka present or past
+				Object[ArrayPos0].Speed		= 0x10000
+				Object[ArrayPos0].TimerSet  = 160
 			else
-				Object[ArrayPos0].Value2=131072
-				Object[ArrayPos0].Value3=80
-			endif
-		endif
+				Object[ArrayPos0].Speed		= 0x20000
+				Object[ArrayPos0].TimerSet  = 80
+			end if
+		end if
 		ArrayPos0++
 	loop
-endsub
+end sub
 
-sub RSDK
-	LoadSpriteSheet("Global/Display.gif")
-	SetEditorIcon(Icon0,SingleIcon,-16,-16,32,32,1,143)
-endsub
+
+// ========================
+// Editor Subs
+// ========================
+
+sub RSDKDraw
+	DrawSprite(0)
+end sub
+
+
+sub RSDKLoad
+	CallFunction(EditorHelpers_FindTimePeriod)
+	switch CheckResult
+	case TIME_PRESENT
+	case TIME_PAST
+		LoadSpriteSheet("R4/Objects.gif")
+		SpriteFrame(-16, -16, 32, 32, 130, 1)	// #0 - Escalator
+		break
+
+	case TIME_GOOD_FUTURE
+		LoadSpriteSheet("R4/Objects3.gif")
+		SpriteFrame(-16, -16, 32, 32, 1, 150)	// #0 - Escalator
+		break
+
+	case TIME_BAD_FUTURE
+		LoadSpriteSheet("R4/Objects3.gif")
+		SpriteFrame(-16, -16, 32, 32, 1, 183)	// #0 - Escalator
+		break
+
+	end switch
+
+	SetVariableAlias(ALIAS_VAR_PROPVAL, "unused")
+end sub

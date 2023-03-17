@@ -1,59 +1,83 @@
-//------------Sonic CD Water Splash Script-------------//
+//----------------Sonic CD Water Splash Script----------------//
 //--------Scripted by Christian Whitehead 'The Taxman'--------//
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
-//-------Aliases-------//
-#alias 65: TYPE_WATERSPLASH
+// Aliases
+#alias Object.Value0	:	Object.Timer
+
+// States
+#alias 0	:	WATERSPLASH_IDLE
+#alias 1	:	WATERSPLASH_DELAY
+#alias 2	:	WATERSPLASH_DRAW
+
+// Stage SFX
+#alias 3	:	SFX_S_WATERSPLASH
 
 
 sub ObjectPlayerInteraction
-	if Object.State==0
-		PlayerObjectCollision(C_TOUCH,-16,0,16,32)
-		if CheckResult==1
-			Object.Value0=4
-			Object.State=1
-			Object.DrawOrder=4
-			Object.Frame=0
-		endif
-	endif
-endsub
+	if Object.State == WATERSPLASH_IDLE
+		PlayerObjectCollision(C_TOUCH, -16, 0, 16, 32)
+		if CheckResult == true
+			Object.Timer	 = 4
+			Object.State	 = WATERSPLASH_DELAY
+			Object.DrawOrder = 4
+			Object.Frame	 = 0
+		end if
+	end if
+end sub
 
 
 sub ObjectDraw
 	switch Object.State
-	case 1
-		if Object.Value0>0
-			Object.Value0--
+	case WATERSPLASH_DELAY
+		if Object.Timer > 0
+			Object.Timer--
 		else
-			Object.State=2
-			PlayStageSfx(3,0)
-		endif
+			Object.State = WATERSPLASH_DRAW
+			PlayStageSfx(SFX_S_WATERSPLASH, false)
+		end if
 		break
-	case 2
+
+	case WATERSPLASH_DRAW
 		DrawSprite(Object.Frame)
-		Object.Value0++
-		if Object.Value0>4
-			Object.Value0=0
+		Object.Timer++
+		if Object.Timer > 4
+			Object.Timer = 0
+
 			Object.Frame++
-			if Object.Frame>4
-				Object.State=0
-			endif
-		endif
+			if Object.Frame > 4
+				Object.State = WATERSPLASH_IDLE
+			end if
+
+		end if
 		break
-	endswitch
-endsub
+	end switch
+end sub
 
 
 sub ObjectStartup
 	LoadSpriteSheet("R1/Objects3.gif")
-	SpriteFrame(-16,-16,32,16,166,51)
-	SpriteFrame(-16,-64,32,64,148,101)
-	SpriteFrame(-16,-48,32,48,115,101)
-	SpriteFrame(-16,-32,32,32,107,68)
-	SpriteFrame(-16,-32,32,32,140,68)
-endsub
+	
+	SpriteFrame(-16, -16, 32, 16, 166, 51)		// #0 - WaterSplash Frame 0
+	SpriteFrame(-16, -64, 32, 64, 148, 101)		// #1 - WaterSplash Frame 1
+	SpriteFrame(-16, -48, 32, 48, 115, 101)		// #2 - WaterSplash Frame 2
+	SpriteFrame(-16, -32, 32, 32, 107, 68)		// #3 - WaterSplash Frame 3
+	SpriteFrame(-16, -32, 32, 32, 140, 68)		// #4 - WaterSplash Frame 4
+end sub
 
-sub RSDK
-	LoadSpriteSheet("Global/Display.gif")
-	SetEditorIcon(Icon0,SingleIcon,-16,-16,32,32,1,143)
-endsub
+
+// ========================
+// Editor Subs
+// ========================
+
+sub RSDKDraw
+	DrawSprite(0)
+end sub
+
+
+sub RSDKLoad
+	LoadSpriteSheet("R1/Objects3.gif")
+	SpriteFrame(-16, -32, 32, 32, 107, 68)		// #3 - WaterSplash Frame 3
+
+	SetVariableAlias(ALIAS_VAR_PROPVAL, "unused")
+end sub

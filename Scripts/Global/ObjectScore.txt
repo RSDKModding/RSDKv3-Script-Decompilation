@@ -1,47 +1,82 @@
-//------------Sonic CD ObjectScore Script-------------//
+//----------------Sonic CD Object Score Script----------------//
 //--------Scripted by Christian Whitehead 'The Taxman'--------//
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
-//-------Aliases-------//
-#alias 32: TYPE_OBJECTSCORE
+// Aliases
+#alias Object.Value0	:	Object.Timer
+#alias Object.Value1	:	Object.Gravity	// i don't think this is actually used
+
+// States
+#alias 0	:	OBJECTSCORE_SPAWN
+#alias 1	:	OBJECTSCORE_DESPAWN
+
+// Priority
+#alias 1	:	PRIORITY_ACTIVE
 
 
 sub ObjectDraw
-	if Object.State==0
+	if Object.State == OBJECTSCORE_SPAWN
+#platform: Use_Origins
+		if game.playMode == BOOT_PLAYMODE_MIRRORING
+			Object.Direction = FACING_LEFT
+			DrawSpriteFX(Object.PropertyValue, FX_FLIP, Object.XPos, Object.YPos)
+		else
+			DrawSprite(Object.PropertyValue)
+		end if
+#endplatform
+
+#platform: Use_Standalone
 		DrawSprite(Object.PropertyValue)
-		Object.YPos-=131072
-		Object.Value0++
-		if Object.Value0==24
-			Object.Type=TypeName[BlankObject]
-			if Object[26].Type==TypeName[ObjectScore]
-				if Object[26].Value0<3
-					Object[26].Value0++
-				endif
+#endplatform
+
+		Object.YPos -= 0x20000
+
+		Object.Timer++
+		if Object.Timer == 24
+			Object.Type = TypeName[Blank Object]
+			if Object[26].Type == TypeName[Object Score]
+				if Object[26].Timer < 3
+					Object[26].Timer++
+				end if
 			else
-				Object[26].Type=TypeName[ObjectScore]
-				Object[26].Value0=1
-			endif
-			Object[26].State=1
-			Object[26].Value1=Player.Gravity
-			Object[26].Priority=1
-		endif
+				Object[26].Type = TypeName[Object Score]
+				Object[26].Timer = 1
+			end if
+
+			Object[26].State	= OBJECTSCORE_DESPAWN
+			Object[26].Gravity  = Player.Gravity
+			Object[26].Priority = PRIORITY_ACTIVE
+		end if
 	else
-		if Object.Value1!=Player.Gravity
-			ResetObjectEntity(26,TypeName[BlankObject],0,0,0)
-		endif
-	endif
-endsub
+		if Object.Gravity != Player.Gravity
+			ResetObjectEntity(26, TypeName[Blank Object], 0, 0, 0)
+		end if
+	end if
+end sub
 
 
 sub ObjectStartup
 	LoadSpriteSheet("Global/Items3.gif")
-	SpriteFrame(-6,-4,12,8,0,246)
-	SpriteFrame(-7,-4,13,8,20,246)
-	SpriteFrame(-7,-4,13,8,33,246)
-	SpriteFrame(-8,-4,16,8,0,246)
-endsub
 
-sub RSDK
-	LoadSpriteSheet("Global/Display.gif")
-	SetEditorIcon(Icon0,SingleIcon,-16,-16,32,32,1,143)
-endsub
+	SpriteFrame(-6, -4, 12, 8, 0, 246)		// #0 - 100
+	SpriteFrame(-7, -4, 13, 8, 20, 246)		// #1 - 200
+	SpriteFrame(-7, -4, 13, 8, 33, 246)		// #2 - 500
+	SpriteFrame(-8, -4, 16, 8, 0, 246)		// #3 - 1000
+end sub
+
+
+// ========================
+// Editor Subs
+// ========================
+
+sub RSDKDraw
+	DrawSprite(0)
+end sub
+
+
+sub RSDKLoad
+	LoadSpriteSheet("Global/Items3.gif")
+	SpriteFrame(-6, -4, 12, 8, 0, 246)		// #0 - 100
+
+	SetVariableAlias(ALIAS_VAR_PROPVAL, "unused")
+end sub

@@ -1,125 +1,187 @@
-//------------Sonic CD CBSwitch Script-------------//
+//------------------Sonic CD CBSwitch Script------------------//
 //--------Scripted by Christian Whitehead 'The Taxman'--------//
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
-//-------Aliases-------//
-#alias 37: TYPE_CBSWITCH
+// Aliases
+#alias Object.Value0			: Object.Timer
+#alias Object.Value1			: Object.PrevResult
+
+// HUD Alias
+#alias Object[24].PropertyValue	: HUD.CurrentTimePeriod
+
+// States
+#alias 0 : CBSWITCH_POINTRIGHT_MAIN
+#alias 4 : CBSWITCH_POINTRIGHT_START
+#alias 5 : CBSWITCH_POINTRIGHT_TRANSITION
+
+#alias 3 : CBSWITCH_POINTLEFT_MAIN
+#alias 1 : CBSWITCH_POINTLEFT_START
+#alias 2 : CBSWITCH_POINTLEFT_TRANSITION
+
+// Stage SFX
+#alias 3 : SFX_S_SWITCH
+
+// Time Period Aliases
+#alias 1 : TIME_PAST
 
 
 sub ObjectPlayerInteraction
-	if Object.Value1==0
-		if Player.XPos>Object.XPos
-			PlayerObjectCollision(C_TOUCH,0,-12,16,16)
-			Object.Value1=CheckResult
-			if CheckResult==1
+	
+	// Only do checks if the Player wasn't already in the Switch last frame
+	if Object.PrevResult == false
+		if Player.XPos > Object.XPos
+			PlayerObjectCollision(C_TOUCH, 0, -12, 16, 16)
+			
+			// Regardless of what it is, store the current result for next frame
+			Object.PrevResult = CheckResult
+			
+			// Now that it's been stored, take a look at the actual result
+			if CheckResult == true
 				switch Object.State
-				case 0
-				case 3
-					PlayStageSfx(3,0)
+				case CBSWITCH_POINTRIGHT_MAIN
+				case CBSWITCH_POINTLEFT_MAIN
+					PlayStageSfx(SFX_S_SWITCH, false)
+			
 #platform: Use_Haptics
-					HapticEffect(20,0,0,0)
+					HapticEffect(20, 0, 0, 0)
 #endplatform
-					if ConveyorBelt_Flag==0
-						ConveyorBelt_Flag=3
-						Object.State=1
+
+					if ConveyorBelt_Flag == 0
+						ConveyorBelt_Flag = 3
+						Object.State = CBSWITCH_POINTLEFT_START
 					else
-						ConveyorBelt_Flag=0
-						Object.State=4
-					endif
-				endswitch
-			endif
+						ConveyorBelt_Flag = 0
+						Object.State = CBSWITCH_POINTRIGHT_START
+					end if
+					break	// not from the original scripts and unnecesary, but the syntax will look wrong otherwise
+				end switch
+			end if
 		else
-			PlayerObjectCollision(C_TOUCH,-16,-12,0,16)
-			Object.Value1=CheckResult
-			if CheckResult==1
+			PlayerObjectCollision(C_TOUCH, -16, -12, 0, 16)
+			
+			// Store the result for next frame
+			Object.PrevResult = CheckResult
+			
+			// And now look at the actual result
+			if CheckResult == true
 				switch Object.State
-				case 0
-				case 3
-					PlayStageSfx(3,0)
+				case CBSWITCH_POINTRIGHT_MAIN
+				case CBSWITCH_POINTLEFT_MAIN
+					PlayStageSfx(SFX_S_SWITCH, false)
+			
 #platform: Use_Haptics
-					HapticEffect(20,0,0,0)
+					HapticEffect(20, 0, 0, 0)
 #endplatform
-					if ConveyorBelt_Flag==0
-						ConveyorBelt_Flag=3
-						Object.State=1
+
+					if ConveyorBelt_Flag == 0
+						ConveyorBelt_Flag = 3
+						Object.State = CBSWITCH_POINTLEFT_START
 					else
-						ConveyorBelt_Flag=0
-						Object.State=4
-					endif
-				endswitch
-			endif
-		endif
+						ConveyorBelt_Flag = 0
+						Object.State = CBSWITCH_POINTRIGHT_START
+					end if
+
+					break	// not from the original scripts and unnecesary, but the syntax will look wrong otherwise
+				end switch
+			end if
+		end if
 	else
-		if Player.XPos>Object.XPos
-			PlayerObjectCollision(C_TOUCH,0,-12,16,16)
-			Object.Value1=CheckResult
+		// The Player's still touched the Switch right after a, well, Switch
+		// so just hold and wait for them to move away
+		if Player.XPos > Object.XPos
+			PlayerObjectCollision(C_TOUCH, 0, -12, 16, 16)
+			Object.PrevResult = CheckResult
 		else
-			PlayerObjectCollision(C_TOUCH,-16,-12,0,16)
-			Object.Value1=CheckResult
-		endif
-	endif
-endsub
+			PlayerObjectCollision(C_TOUCH, -16, -12, 0, 16)
+			Object.PrevResult = CheckResult
+		end if
+	end if
+	
+end sub
 
 
 
 
 sub ObjectDraw
+	
 	switch Object.State
-	case 1
-		if Object.Value0<7
-			Object.Value0++
+	case CBSWITCH_POINTLEFT_START
+		if Object.Timer < 7
+			Object.Timer++
 		else
-			Object.Value0=0
-			ConveyorBelt_Frame=1
-			Object.State=2
-		endif
+			Object.Timer = 0
+			ConveyorBelt_Frame = 1
+			Object.State = CBSWITCH_POINTLEFT_TRANSITION
+		end if
 		break
-	case 2
-		if Object.Value0<7
-			Object.Value0++
+
+	case CBSWITCH_POINTLEFT_TRANSITION
+		if Object.Timer < 7
+			Object.Timer++
 		else
-			Object.Value0=0
-			ConveyorBelt_Frame=2
-			Object.State=3
-		endif
+			Object.Timer = 0
+			ConveyorBelt_Frame = 2
+			Object.State = CBSWITCH_POINTLEFT_MAIN
+		end if
 		break
-	case 4
-		if Object.Value0<7
-			Object.Value0++
+
+	case CBSWITCH_POINTRIGHT_START
+		if Object.Timer < 7
+			Object.Timer++
 		else
-			Object.Value0=0
-			ConveyorBelt_Frame=1
-			Object.State=5
-		endif
+			Object.Timer = 0
+			ConveyorBelt_Frame = 1
+			Object.State = CBSWITCH_POINTRIGHT_TRANSITION
+		end if
 		break
-	case 5
-		if Object.Value0<7
-			Object.Value0++
+
+	case CBSWITCH_POINTRIGHT_TRANSITION
+		if Object.Timer < 7
+			Object.Timer++
 		else
-			Object.Value0=0
-			ConveyorBelt_Frame=0
-			Object.State=0
-		endif
+			Object.Timer = 0
+			ConveyorBelt_Frame = 0
+			Object.State = CBSWITCH_POINTRIGHT_MAIN
+		end if
 		break
-	endswitch
+		
+	end switch
+
 	DrawSprite(ConveyorBelt_Frame)
-endsub
+
+end sub
 
 
 sub ObjectStartup
 	LoadSpriteSheet("R5/Objects.gif")
-	if Object[24].PropertyValue==1
-		SpriteFrame(-4,-16,32,28,1,225)
-		SpriteFrame(-8,-36,16,48,206,207)
-		SpriteFrame(-28,-16,32,28,34,225)
-	else
-		SpriteFrame(-4,-16,32,28,1,18)
-		SpriteFrame(-8,-36,16,48,125,1)
-		SpriteFrame(-28,-16,32,28,34,18)
-	endif
-endsub
 
-sub RSDK
-	LoadSpriteSheet("Global/Display.gif")
-	SetEditorIcon(Icon0,SingleIcon,-16,-16,32,32,1,143)
-endsub
+	if HUD.CurrentTimePeriod == TIME_PAST
+		// The Past gets different Sprite Frames
+		
+		SpriteFrame(-4, -16, 32, 28, 1, 225)
+		SpriteFrame(-8, -36, 16, 48, 206, 207)
+		SpriteFrame(-28, -16, 32, 28, 34, 225)
+	else
+		SpriteFrame(-4, -16, 32, 28, 1, 18)
+		SpriteFrame(-8, -36, 16, 48, 125, 1)
+		SpriteFrame(-28, -16, 32, 28, 34, 18)
+	end if
+	
+end sub
+
+
+// ========================
+// Editor Subs
+// ========================
+
+sub RSDKDraw
+	DrawSprite(0)
+end sub
+
+
+sub RSDKLoad
+	LoadSpriteSheet("R5/Objects.gif")
+	SpriteFrame(-4, -16, 32, 28, 1, 18)
+
+	SetVariableAlias(ALIAS_VAR_PROPVAL, "unused")
+end sub

@@ -1,24 +1,33 @@
-//------------Sonic CD Vertical Wrap Script-------------//
+//---------------Sonic CD Vertical Wrap B Script--------------//
 //--------Scripted by Christian Whitehead 'The Taxman'--------//
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
-//-------Aliases-------//
-#alias 43: TYPE_VERTICALWRAP
-
 
 sub ObjectMain
-	if Screen.YOffset>2047
-		Player.YPos-=134217728
-		Screen.YOffset-=2048
+	if Screen.YOffset > 2047
+		Player.YPos -= 0x8000000
+		Screen.YOffset -= 2048
 	else
-		if Screen.YOffset==0
-			Player.YPos+=134217728
-			Screen.YOffset+=2048
-		endif
-	endif
-endsub
+		if Screen.YOffset == 0
+			Player.YPos += 0x8000000
+			Screen.YOffset += 2048
+		end if
+	end if
+end sub
 
-sub RSDK
+
+// ========================
+// Editor Subs
+// ========================
+
+sub RSDKDraw
+	DrawSprite(0)
+end sub
+
+
+sub RSDKLoad
 	LoadSpriteSheet("Global/Display.gif")
-	SetEditorIcon(Icon0,SingleIcon,-16,-16,32,32,1,143)
-endsub
+	SpriteFrame(-16, -16, 32, 32, 1, 143)		// #0 - "Script" Icon
+
+	SetVariableAlias(ALIAS_VAR_PROPVAL, "unused")
+end sub

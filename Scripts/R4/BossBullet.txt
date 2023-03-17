@@ -1,148 +1,209 @@
-//------------Sonic CD BossBullet Script-------------//
+//----------------Sonic CD Boss Bullet Script-----------------//
 //--------Scripted by Christian Whitehead 'The Taxman'--------//
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
-//-------Aliases-------//
-#alias 49: TYPE_BOSSBULLET
+// Aliases
+#alias Object.Value0	:	Object.Timer
+#alias Object.Value1	:	Object.XVelocity
+#alias Object.Value2	:	Object.YVelocity
+#alias Object.Value5	:	Object.BossEntity
+#alias Object.Value7	:	Object.Animation
+
+// R4 Eggman aliases
+#alias Object.Value7	:	Boss.Animation
+#alias Object.XPos		:	Boss.XPos
+#alias Object.YPos		:	Boss.YPos
+#alias Object.State		:	Boss.State
+
+// States
+#alias 0	:	BOSS_BULLET_SETUP
+#alias 1	:	BOSS_BULLET_CHARGE
+#alias 2	:	BOSS_BULLET_SHOT
+
+// R4 Eggman states
+#alias 13	:	R4_EGG_BUBBLE_MOVE_TO_L
+
+// R4 Eggman animations
+#alias 1	:	EGGANI_LAUGH
 
 
 sub ObjectMain
 	switch Object.State
-	case 0
-		if Object.Value0<56
-			Object.Value0++
+	case BOSS_BULLET_SETUP
+		if Object.Timer < 56
+			Object.Timer++
 		else
 			switch Object.PropertyValue
 			case 0
-				Object.Value1=-81920
-				Object.Value2=81920
+				Object.XVelocity = -0x14000
+				Object.YVelocity =  0x14000
 				break
+
 			case 1
-				Object.Value1=0
-				Object.Value2=114688
+				Object.XVelocity =  0
+				Object.YVelocity =  0x1C000
 				break
+
 			case 2
-				Object.Value1=65536
-				Object.Value2=98304
+				Object.XVelocity =  0x10000
+				Object.YVelocity =  0x18000
 				break
+
 			case 3
-				Object.Value1=81920
-				Object.Value2=81920
+				Object.XVelocity =  0x14000
+				Object.YVelocity =  0x14000
 				break
+
 			case 4
-				Object.Value1=81920
-				Object.Value2=81920
+				Object.XVelocity =  0x14000
+				Object.YVelocity =  0x14000
 				break
+
 			case 5
-				Object.Value1=0
-				Object.Value2=114688
+				Object.XVelocity =  0
+				Object.YVelocity =  0x1C000
 				break
+
 			case 6
-				Object.Value1=-65536
-				Object.Value2=98304
+				Object.XVelocity = -0x10000
+				Object.YVelocity =  0x18000
 				break
+
 			case 7
-				Object.Value1=-81920
-				Object.Value2=81920
+				Object.XVelocity = -0x14000
+				Object.YVelocity =  0x14000
 				break
-			endswitch
-			Object.Value0=0
+
+			end switch
+
+			Object.Timer = 0
 			Object.State++
-		endif
-		ArrayPos0=Object.Value5
-		Object.XPos=Object[ArrayPos0].XPos
-		Object.YPos=Object[ArrayPos0].YPos
+		end if
+
+		ArrayPos0 = Object.BossEntity
+
+		Object.XPos = Boss[ArrayPos0].XPos
+		Object.YPos = Boss[ArrayPos0].YPos
+
 		switch Object.PropertyValue
 		case 0
-			Object.XPos-=1900544
-			Object.YPos+=1507328
+			Object.XPos -= 0x1D0000
+			Object.YPos += 0x170000
 			break
+
 		case 1
-			Object.XPos-=393216
-			Object.YPos+=2097152
+			Object.XPos -= 0x60000
+			Object.YPos += 0x200000	
 			break
+
 		case 2
-			Object.XPos+=1114112
-			Object.YPos+=1900544
+			Object.XPos += 0x110000
+			Object.YPos += 0x1D0000
 			break
+
 		case 3
-			Object.XPos+=1900544
-			Object.YPos+=1114112
+			Object.XPos += 0x1D0000
+			Object.YPos += 0x110000
 			break
+
 		case 4
-			Object.XPos+=1900544
-			Object.YPos+=1507328
+			Object.XPos += 0x1D0000
+			Object.YPos += 0x170000
 			break
+
 		case 5
-			Object.XPos+=393216
-			Object.YPos+=2097152
+			Object.XPos += 0x60000
+			Object.YPos += 0x200000	
 			break
+
 		case 6
-			Object.XPos-=1114112
-			Object.YPos+=1900544
+			Object.XPos -= 0x110000
+			Object.YPos += 0x1D0000
 			break
+
 		case 7
-			Object.XPos-=1900544
-			Object.YPos+=1114112
+			Object.XPos -= 0x1D0000
+			Object.YPos += 0x110000
 			break
-		endswitch
+
+		end switch
 		break
-	case 1
-		Object.XPos+=Object.Value1
-		Object.YPos+=Object.Value2
-		if Object.Value0<60
-			Object.Value0++
+
+	case BOSS_BULLET_CHARGE
+		Object.XPos += Object.XVelocity
+		Object.YPos += Object.YVelocity
+		if Object.Timer < 60
+			Object.Timer++
 		else
-			Object.Value0=0
-			Object.DrawOrder=3
+			Object.Timer = 0
+			Object.DrawOrder = 3
 			Object.State++
-		endif
+		end if
 		break
-	case 2
-		Object.XPos+=Object.Value1
-		Object.YPos+=Object.Value2
+
+	case BOSS_BULLET_SHOT
+		Object.XPos += Object.XVelocity
+		Object.YPos += Object.YVelocity
 		break
-	endswitch
-	if Object.OutOfBounds==1
-		Object.Type=TypeName[BlankObject]
-	endif
-	ArrayPos0=Object.Value5
-	if Object[ArrayPos0].State>13
-		Object.Type=TypeName[BlankObject]
-	endif
-endsub
+
+	end switch
+
+	if Object.OutOfBounds == true
+		Object.Type = TypeName[Blank Object]
+	end if
+	
+	ArrayPos0 = Object.BossEntity
+	if Boss[ArrayPos0].State > R4_EGG_BUBBLE_MOVE_TO_L
+		Object.Type = TypeName[Blank Object]
+	end if
+end sub
 
 
 sub ObjectPlayerInteraction
-	if Object.State>0
-		PlayerObjectCollision(C_TOUCH,-4,-4,4,4)
-		if CheckResult==1
-			CallFunction(PlayerObject_Hit)
-			if Player.State==PlayerObject_Hurt
-				ArrayPos0=Object.Value5
-				Object[ArrayPos0].Value7=1
-			endif
-		endif
-	endif
-endsub
+	if Object.State > BOSS_BULLET_SETUP
+		PlayerObjectCollision(C_TOUCH, -4, -4, 4, 4)
+		if CheckResult == true
+			CallFunction(Player_Hit)
+			if Player.State == Player_State_GotHit
+				ArrayPos0 = Object.BossEntity
+				Boss[ArrayPos0].Animation = EGGANI_LAUGH
+			end if
+		end if
+	end if
+end sub
 
 
 sub ObjectDraw
-	TempValue0=Object.Frame
-	TempValue0>>=1
+	TempValue0   = Object.Frame
+	TempValue0 >>= 1
 	DrawSprite(TempValue0)
+
 	Object.Frame++
-	Object.Frame&=3
-endsub
+	Object.Frame &= 3
+end sub
 
 
 sub ObjectStartup
 	LoadSpriteSheet("R4/Objects2.gif")
-	SpriteFrame(-4,-4,8,8,52,35)
-	SpriteFrame(-4,-4,8,8,52,44)
-endsub
 
-sub RSDK
-	LoadSpriteSheet("Global/Display.gif")
-	SetEditorIcon(Icon0,SingleIcon,-16,-16,32,32,1,143)
-endsub
+	SpriteFrame(-4, -4, 8, 8, 52, 35)	// #0 - Boss Bullet frame 0
+	SpriteFrame(-4, -4, 8, 8, 52, 44)	// #1 - Boss Bullet frame 1
+end sub
+
+
+// ========================
+// Editor Subs
+// ========================
+
+sub RSDKDraw
+	DrawSprite(0)
+end sub
+
+
+sub RSDKLoad
+	LoadSpriteSheet("R4/Objects2.gif")
+
+	SpriteFrame(-4, -4, 8, 8, 52, 35)	// #0 - Boss Bullet
+
+	SetVariableAlias(ALIAS_VAR_PROPVAL, "unused")
+end sub

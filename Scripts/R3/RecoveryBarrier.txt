@@ -1,68 +1,93 @@
-//------------Sonic CD Recovery Barrier Script-------------//
+//--------------Sonic CD Recovery Barrier Script--------------//
 //--------Scripted by Christian Whitehead 'The Taxman'--------//
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
-//-------Aliases-------//
-#alias 57: TYPE_RECOVERYBARRIER
+// Aliases
+#alias Object.Value0		:	Object.Timer
+#alias Object[-4].Value2	:	SpinGate.CurrentLight
+
+// States
+#alias 0	:	RBARRIER_INACTIVE
+#alias 1	:	RBARRIER_TURNING
+#alias 2	:	RBARRIER_ACTIVE
+#alias 3	:	RBARRIER_TURNING_BACK
 
 
 sub ObjectMain
 	switch Object.State
-	case 0
-		Object.Frame=0
-		if Object[-4].Value2==3
-			Object.State=1
-		endif
+	case RBARRIER_INACTIVE
+		Object.Frame = 0
+		if SpinGate.CurrentLight == 3
+			Object.State = RBARRIER_TURNING
+		end if
 		break
-	case 1
-		Object.Frame=1
-		if Object.Value0<30
-			Object.Value0++
+
+	case RBARRIER_TURNING
+		Object.Frame = 1
+		if Object.Timer < 30
+			Object.Timer++
 		else
-			Object.State=2
-		endif
+			Object.State = RBARRIER_ACTIVE
+		end if
 		break
-	case 2
-		Object.Frame=2
-		if Object[-4].Value2==0
-			Object.State=3
-		endif
+
+	case RBARRIER_ACTIVE
+		Object.Frame = 2
+		if SpinGate.CurrentLight == 0
+			Object.State = RBARRIER_TURNING_BACK
+		end if
 		break
-	case 3
-		Object.Frame=3
-		if Object.Value0<30
-			Object.Value0++
+
+	case RBARRIER_TURNING_BACK
+		Object.Frame = 3	// Pretty sure this should be 1, or we are missing a frame, either goes
+		if Object.Timer < 30
+			Object.Timer++
 		else
-			Object.State=0
-		endif
+			Object.State = RBARRIER_INACTIVE
+		end if
 		break
-	endswitch
-endsub
+
+	end switch
+end sub
 
 
 sub ObjectPlayerInteraction
-	if Object.State==2
-		PlayerObjectCollision(C_TOUCH,-16,-8,16,8)
-		if CheckResult==1
-			Player.YVelocity=-262144
-		endif
-	endif
-endsub
+// Bouncy Player
+	if Object.State == RBARRIER_ACTIVE
+		PlayerObjectCollision(C_TOUCH, -16, -8, 16, 8)
+		if CheckResult == true
+			Player.YVelocity = -0x40000
+		end if
+	end if
+end sub
 
 
 sub ObjectDraw
 	DrawSprite(Object.Frame)
-endsub
+end sub
 
 
 sub ObjectStartup
 	LoadSpriteSheet("R3/Objects2.gif")
-	SpriteFrame(-16,-8,32,16,51,33)
-	SpriteFrame(-16,-8,32,16,84,33)
-	SpriteFrame(-16,-8,32,16,51,50)
-endsub
 
-sub RSDK
-	LoadSpriteSheet("Global/Display.gif")
-	SetEditorIcon(Icon0,SingleIcon,-16,-16,32,32,1,143)
-endsub
+	SpriteFrame(-16, -8, 32, 16, 51, 33)	// #0 - Recoverty Barrier Inactive
+	SpriteFrame(-16, -8, 32, 16, 84, 33)	// #1 - Recoverty Barrier Turning
+	SpriteFrame(-16, -8, 32, 16, 51, 50)	// #2 - Recoverty Barrier Active
+end sub
+
+
+// ========================
+// Editor Subs
+// ========================
+
+sub RSDKDraw
+	DrawSprite(0)
+end sub
+
+
+sub RSDKLoad
+	LoadSpriteSheet("R3/Objects2.gif")
+	SpriteFrame(-16, -8, 32, 16, 51, 50)	// #2 - Recoverty Barrier Active
+
+	SetVariableAlias(ALIAS_VAR_PROPVAL, "unused")
+end sub

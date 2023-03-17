@@ -1,129 +1,236 @@
-//------------Sonic CD Rise Platform Script-------------//
+//---------------Sonic CD Rise Platform Script----------------//
 //--------Scripted by Christian Whitehead 'The Taxman'--------//
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
-//-------Aliases-------//
-#alias 70: TYPE_RISEPLATFORM
+// Aliases
+#alias Object.Value0	:	Object.Pressed
+#alias Object.Value1	:	Object.PlatformY
+#alias Object.Value2	:	Object.ChangeY
+#alias Object.Value3	:	Object.YVelocity
+#alias Object.Value4	:	Object.StartPosY
+#alias Object.Value5	:	Object.Timer
+
+// States
+#alias 0	:	RISEPLATFORM_AWAITPLAYER
+#alias 1	:	RISEPLATFORM_PRELAUNCH
+#alias 2	:	RISEPLATFORM_LAUNCH
+#alias 3	:	RISEPLATFORM_RISE
+#alias 4	:	RISEPLATFORM_HALT
+#alias 5	:	RISEPLATFORM_ARRIVED
+
+// Priority
+#alias 1	:	PRIORITY_ACTIVE
+#alias 3	:	PRIORITY_XBOUNDS
 
 
 sub ObjectMain
+
 	switch Object.State
-	case 0
-		Object.Value2=0
-		if Object.Value0==1
-			Object.State=1
-			Object.Priority=1
-			Object.Value3=0
-			Object.Value5=0
-		endif
+	case RISEPLATFORM_AWAITPLAYER
+		Object.ChangeY = 0
+		
+		if Object.Pressed == true
+			// If the Player's stepped onto the Platform, then get ready
+
+			Object.State = RISEPLATFORM_PRELAUNCH
+			
+			// Make the Object always active, needed for its respawn restoring method
+			Object.Priority = PRIORITY_ACTIVE
+			
+			Object.YVelocity = 0
+			Object.Timer = 0
+		end if
 		break
-	case 1
-		Object.Value2=Object.Value3
-		if Object.Value5<8
-			Object.Value5++
+		
+	case RISEPLATFORM_PRELAUNCH
+		// Dip for a moment before taking off
+
+		Object.ChangeY = Object.YVelocity
+		
+		if Object.Timer < 8
+			Object.Timer++
 		else
-			Object.Value5=0
+			Object.Timer = 0
 			Object.State++
-		endif
+		end if
 		break
-	case 2
-		if Object.Value3>-327680
-			Object.Value3-=4096
+		
+	case RISEPLATFORM_LAUNCH
+	
+		// If the Object hasn't yet reached a speed of 5 pixels per frame, then...
+		if Object.YVelocity > -0x50000
+			// Speed it up at a rate of 0.0625 pixels per frame upwards
+			Object.YVelocity -= 0x1000
 		else
+			// Ideal Velocity reached, switch to the timer-based State now
 			Object.State++
-		endif
-		Object.Value2=Object.Value3
+		end if
+		
+		Object.ChangeY = Object.YVelocity
 		break
-	case 3
-		if Object.Value5<80
-			Object.Value5++
+		
+	case RISEPLATFORM_RISE
+		if Object.Timer < 80
+			// Just rise for about a second and some
+			Object.Timer++
 		else
-			Object.Value5=0
+			Object.Timer = 0
 			Object.State++
-		endif
-		Object.Value2=Object.Value3
+		end if
+		
+		Object.ChangeY = Object.YVelocity
 		break
-	case 4
-		if Object.Value3<0
-			Object.Value3+=4096
+		
+	case RISEPLATFORM_HALT
+		
+		// Until the Object's fully stopped, decelerate at a rate of 0.0625 pixels per frame
+		if Object.YVelocity < 0
+			Object.YVelocity += 0x1000
 		else
+			// Ding! - And now we've arrived!
 			Object.State++
-		endif
-		Object.Value2=Object.Value3
+		end if
+		
+		Object.ChangeY = Object.YVelocity
 		break
-	case 5
-		if Object.Value0==1
-			if Object.Value1<16
-				Object.Value1++
-				TempValue0=Object.Value1
-				TempValue0&=3
-				if TempValue0==3
-					Object.Value2=65536
+		
+	case RISEPLATFORM_ARRIVED
+		// From here, the Object just acts as a normal Platform
+
+		if Object.Pressed == true
+			if Object.PlatformY < 16
+				Object.PlatformY++
+				TempValue0 = Object.PlatformY
+				TempValue0 &= 3
+				if TempValue0 == 3
+					Object.ChangeY = 0x10000
 				else
-					Object.Value2=0
-				endif
+					Object.ChangeY = 0
+				end if
 			else
-				Object.Value2=0
-			endif
+				Object.ChangeY = 0
+			end if
 		else
-			if Object.Value1>0
-				Object.Value1--
-				TempValue0=Object.Value1
-				TempValue0&=3
-				if TempValue0==3
-					Object.Value2=-65536
+			if Object.PlatformY > 0
+				Object.PlatformY--
+				TempValue0 = Object.PlatformY
+				TempValue0 &= 3
+				if TempValue0 == 3
+					Object.ChangeY = -0x10000
 				else
-					Object.Value2=0
-				endif
+					Object.ChangeY = 0
+				end if
 			else
-				Object.Value2=0
-			endif
-		endif
+				Object.ChangeY = 0
+			end if
+		end if
 		break
-	endswitch
-	if Object.OutOfBounds==1
-		TempValue0=Object.YPos
-		Object.YPos=Object.Value4
-		if Object.OutOfBounds==1
-			Object.Value1=0
-			Object.State=0
+		
+	end switch
+	
+	// If the Object is Out Of Bounds, then...
+	if Object.OutOfBounds == true
+	
+		// First, backup the object's current Y Position
+		TempValue0 = Object.YPos
+		
+		// Then, move the Object back to its starting Y Position
+		Object.YPos = Object.StartPosY
+		
+		// See if this new, original position is Out Of Bounds too
+		if Object.OutOfBounds == true
+		
+			// If it is, then restore the Object to its original state (incl. keeping it at its starting position, from above)
+			Object.PlatformY = 0
+			Object.State = RISEPLATFORM_AWAITPLAYER
+			
 		else
-			Object.YPos=TempValue0
-		endif
-	endif
-	Object.Value0=0
-endsub
+		
+			// That spot is still in bounds, so in order to prevent teleporting in front of the Player,
+			// Move the Platform back to its current Y Position
+			Object.YPos = TempValue0
+			
+		end if
+	end if
+	
+	// Reset for next frame
+	Object.Pressed = false
+	
+end sub
 
 
 sub ObjectPlayerInteraction
-	PlayerObjectCollision(C_PLATFORM,-16,-16,16,12)
-	if CheckResult==1
-		Object.Value0=1
-		Player.YPos+=Object.Value2
-	endif
-endsub
+
+	PlayerObjectCollision(C_PLATFORM, -16, -16, 16, 12)
+	
+	if CheckResult == true
+		// If the Player is on the Platform, then move the Player along with it and let the Platform Object know
+		Object.Pressed = true
+		Player.YPos += Object.ChangeY
+	end if
+	
+end sub
 
 
 sub ObjectDraw
-	Object.YPos+=Object.Value2
+
+	// Movement is done here rather than ObjectMain because of the ObjectPlayerInteraction inbetween
+	Object.YPos += Object.ChangeY
+	
+	// And now just draw the Platform at its Position, no DrawSpriteXY needed here or anything!
 	DrawSprite(0)
-endsub
+	
+end sub
 
 
 sub ObjectStartup
 	LoadSpriteSheet("R5/Objects.gif")
-	SpriteFrame(-16,-16,32,32,1,51)
-	ArrayPos0=32
-	while ArrayPos0<1056
-		if Object[ArrayPos0].Type==TypeName[RisePlatform]
-			Object[ArrayPos0].Value4=Object[ArrayPos0].YPos
-			Object[ArrayPos0].Priority=3
-		endif
+	
+	// Small Platform Frame
+	SpriteFrame(-16, -16, 32, 32, 1, 51)
+	
+	// Cycle through all Rise Platform Objects in the Stage
+	ArrayPos0 = 32
+	while ArrayPos0 < 1056
+		if Object[ArrayPos0].Type == TypeName[Rise Platform]
+		
+			// Store the Platform's starting Y Position
+			Object[ArrayPos0].StartPosY = Object[ArrayPos0].YPos
+			
+			Object[ArrayPos0].Priority = PRIORITY_XBOUNDS
+			
+		end if
+		
 		ArrayPos0++
 	loop
-endsub
+	
+end sub
 
-sub RSDK
-	LoadSpriteSheet("Global/Display.gif")
-	SetEditorIcon(Icon0,SingleIcon,-16,-16,32,32,1,143)
-endsub
+
+// ========================
+// Editor Subs
+// ========================
+
+sub RSDKDraw
+	DrawSprite(0)
+	
+	if Editor.ShowGizmos == true
+		Editor.DrawingOverlay = true
+		
+		// Draw the Platform's destination
+		
+		TempValue0 = Object.YPos
+		TempValue0 -= 53084160
+		DrawArrow(Object.XPos, Object.YPos, Object.XPos, TempValue0, 255, 255, 255)
+		
+		Editor.DrawingOverlay = false
+	end if
+end sub
+
+
+sub RSDKLoad
+	LoadSpriteSheet("R5/Objects.gif")
+	SpriteFrame(-16, -16, 32, 32, 1, 51)
+
+	SetVariableAlias(ALIAS_VAR_PROPVAL, "unused")
+end sub

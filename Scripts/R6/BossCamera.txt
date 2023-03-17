@@ -1,45 +1,63 @@
-//------------Sonic CD BossCamera Script-------------//
+//----------------Sonic CD Boss Camera Script-----------------//
 //--------Scripted by Christian Whitehead 'The Taxman'--------//
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
-//-------Aliases-------//
-#alias 61: TYPE_BOSSCAMERA
+// Aliases
+#alias Object.Value0	:	Object.CameraHeight
+#alias Object.Value1	:	Object.BoundaryHeight
 
 
 sub ObjectMain
-	TempValue0=Object.YPos
-	TempValue0-=Player.YPos
-	TempValue0>>=25
-	if TempValue0!=Object.Value0
-		if Object.Value0<TempValue0
-			Stage.NewYBoundary2=TempValue0
-			Stage.NewYBoundary2*=-512
-			Stage.NewYBoundary2+=Object.iYPos
-			Object.Value1=Stage.NewYBoundary2
-		else
-			Stage.YBoundary2=TempValue0
-			Stage.YBoundary2*=-512
-			Stage.YBoundary2+=Object.iYPos
-			Object.Value1=Stage.YBoundary2
-		endif
-		Object.Value0=TempValue0
-	else
-		if Object.Value1<Stage.YBoundary2
-			Stage.YBoundary2--
-			if Object.Value1<Stage.YBoundary2
-				Stage.YBoundary2--
-			endif
-			if Object.Value1<Stage.YBoundary2
-				Stage.YBoundary2--
-			endif
-			if Object.Value1<Stage.YBoundary2
-				Stage.YBoundary2--
-			endif
-		endif
-	endif
-endsub
+	TempValue0   = Object.YPos
+	TempValue0  -= Player.YPos
+	TempValue0 >>= 25
 
-sub RSDK
+	if TempValue0 != Object.CameraHeight
+		if Object.CameraHeight < TempValue0
+			Stage.NewYBoundary2  = TempValue0
+			Stage.NewYBoundary2 *= -512
+			Stage.NewYBoundary2 += Object.iYPos
+			Object.BoundaryHeight = Stage.NewYBoundary2
+		else
+			Stage.YBoundary2  = TempValue0
+			Stage.YBoundary2 *= -512
+			Stage.YBoundary2 += Object.iYPos
+			Object.BoundaryHeight = Stage.YBoundary2
+		end if
+
+		Object.CameraHeight = TempValue0
+	else
+		if Object.BoundaryHeight < Stage.YBoundary2
+			Stage.YBoundary2--
+
+			if Object.BoundaryHeight < Stage.YBoundary2
+				Stage.YBoundary2--
+			end if
+
+			if Object.BoundaryHeight < Stage.YBoundary2
+				Stage.YBoundary2--
+			end if
+
+			if Object.BoundaryHeight < Stage.YBoundary2
+				Stage.YBoundary2--
+			end if
+		end if
+	end if
+end sub
+
+
+// ========================
+// Editor Subs
+// ========================
+
+sub RSDKDraw
+	DrawSprite(0)
+end sub
+
+
+sub RSDKLoad
 	LoadSpriteSheet("Global/Display.gif")
-	SetEditorIcon(Icon0,SingleIcon,-16,-16,32,32,1,143)
-endsub
+	SpriteFrame(-16, -16, 32, 32, 1, 143)		// #0 - "Script" Icon
+
+	SetVariableAlias(ALIAS_VAR_PROPVAL, "unused")
+end sub

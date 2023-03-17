@@ -1,50 +1,76 @@
-//------------Sonic CD SasuriBullet Script-------------//
+//---------------Sonic CD Sasuri Bullet Script----------------//
 //--------Scripted by Christian Whitehead 'The Taxman'--------//
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
-//-------Aliases-------//
-#alias 51: TYPE_SASURIBULLET
+// Aliases
+#alias Object.Value1	:	Object.XVelocity
 
 
 sub ObjectMain
-	Object.XPos+=Object.Value1
-	if Object.OutOfBounds==1
-		Object.Type=TypeName[BlankObject]
+	
+	Object.XPos += Object.XVelocity
+	
+	if Object.OutOfBounds == true
+		// If Out Of Bounds, then Unload
+		Object.Type = TypeName[Blank Object]
 	else
-		TempValue0=Screen.YOffset
-		TempValue0-=8
-		TempValue0<<=16
-		if Object.YPos<TempValue0
-			Object.Type=TypeName[BlankObject]
-		endif
-	endif
-endsub
+		// Another condition for Unloading - be far enough from the screen on the Y Axis too
+		TempValue0 = Screen.YOffset
+		TempValue0 -= 8
+		TempValue0 <<= 16
+		
+		if Object.YPos < TempValue0
+			Object.Type = TypeName[Blank Object]
+		end if
+	end if
+	
+end sub
 
 
 sub ObjectPlayerInteraction
-	PlayerObjectCollision(C_TOUCH,-6,-6,6,6)
-	if CheckResult==1
-		CallFunction(PlayerObject_Hit)
-	endif
-endsub
+	
+	PlayerObjectCollision(C_TOUCH, -6, -6, 6, 6)
+	if CheckResult == true
+		CallFunction(Player_Hit)
+	end if
+	
+end sub
 
 
 sub ObjectDraw
-	TempValue0=Object.Frame
-	TempValue0>>=1
+	
+	TempValue0 = Object.Frame
+	TempValue0 >>= 1
 	DrawSprite(TempValue0)
+	
 	Object.Frame++
-	Object.Frame&=3
-endsub
+	Object.Frame &= 3
+	
+end sub
 
 
 sub ObjectStartup
 	LoadSpriteSheet("R5/Objects.gif")
-	SpriteFrame(-8,-8,16,16,67,27)
-	SpriteFrame(-8,-8,16,16,133,127)
-endsub
 
-sub RSDK
-	LoadSpriteSheet("Global/Display.gif")
-	SetEditorIcon(Icon0,SingleIcon,-16,-16,32,32,1,143)
-endsub
+	// Bullet Frames
+	SpriteFrame(-8, -8, 16, 16, 67, 27)
+	SpriteFrame(-8, -8, 16, 16, 133, 127)
+	
+end sub
+
+
+// ========================
+// Editor Subs
+// ========================
+
+sub RSDKDraw
+	DrawSprite(0)
+end sub
+
+
+sub RSDKLoad
+	LoadSpriteSheet("R5/Objects.gif")
+	SpriteFrame(-8, -8, 16, 16, 67, 27)
+
+	SetVariableAlias(ALIAS_VAR_PROPVAL, "unused")
+end sub

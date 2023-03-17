@@ -1,37 +1,54 @@
-//------------Sonic CD PaletteAnimation Script-------------//
+//-------------Sonic CD Palette Animation Script--------------//
 //--------Scripted by Christian Whitehead 'The Taxman'--------//
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
-//-------Aliases-------//
-#alias 64: TYPE_PALETTEANIMATION
+// Aliases
+#alias Object.Value0	:	Object.Timer
+#alias Object.Value1	:	Object.CurrentPalette
+
+// Priority
+#alias 1	:	PRIORITY_ACTIVE
 
 
 sub ObjectMain
-	Object.Value0++
-	if Object.Value0==8
-		Object.Value0=0
-		Object.Value1++
-		Object.Value1%=3
-		SetActivePalette(Object.Value1,0,240)
-	endif
-endsub
+	Object.Timer++
+	if Object.Timer == 8
+		Object.Timer = 0
+		Object.CurrentPalette++
+		Object.CurrentPalette %= 3
+		SetActivePalette(Object.CurrentPalette, 0, 240)
+	end if
+end sub
 
 
 sub ObjectStartup
-	Object[19].Type=TypeName[PaletteAnimation]
-	Object[19].Priority=1
-	TempValue0=1
-	while TempValue0<3
-		RotatePalette(177,179,1)
-		RotatePalette(172,174,0)
-		CopyPalette(0,TempValue0)
+	Object[19].Type 	= TypeName[PaletteAnimation]
+	Object[19].Priority = PRIORITY_ACTIVE
+	
+	TempValue0 = 1
+	while TempValue0 < 3
+		RotatePalette(177, 179, 1)
+		RotatePalette(172, 174, 0)
+		CopyPalette(0, TempValue0)
 		TempValue0++
 	loop
-	RotatePalette(177,179,1)
-	RotatePalette(172,174,0)
-endsub
+	RotatePalette(177, 179, 1)
+	RotatePalette(172, 174, 0)
+end sub
 
-sub RSDK
+
+// ========================
+// Editor Subs
+// ========================
+
+sub RSDKDraw
+	DrawSprite(0)
+end sub
+
+
+sub RSDKLoad
 	LoadSpriteSheet("Global/Display.gif")
-	SetEditorIcon(Icon0,SingleIcon,-16,-16,32,32,1,143)
-endsub
+	SpriteFrame(-16, -16, 32, 32, 1, 143)		// #0 - "Script" Icon
+
+	SetVariableAlias(ALIAS_VAR_PROPVAL, "unused")
+end sub

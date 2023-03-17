@@ -1,341 +1,567 @@
-//------------Sonic CD Red Spring Script-------------//
+//----------------Sonic CD Red Spring Script------------------//
 //--------Scripted by Christian Whitehead 'The Taxman'--------//
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
-//-------Aliases-------//
-#alias 13: TYPE_REDSPRING
-#alias Player.Value7:Player.AnimationCheck
+// Aliases
+#alias Object.Value0	:	Object.ActiveSpringFrame
+#alias Object.Value7	:	Object.YFlipped	// Only flipped in functionality, not in the way it displays
+
+// Player Aliases
+#alias Player.Value7	:	Player.AnimationReserve
+
+// Directions
+#alias 2	:	FACING_UPEND_RIGHT
+
+// Gravity
+#alias 0	:	GRAVITY_GROUND
+#alias 1	:	GRAVITY_AIR
+
+// Collision Modes
+#alias 0	:	CMODE_FLOOR
+#alias 2	:	CMODE_ROOF
+
+// Global SFX
+#alias 11	:	SFX_G_SPRING
+
+// Property Values
+#alias 0	:	FACE_FACING_UP
+#alias 1	:	FACE_FACING_RIGHT
+#alias 2	:	FACE_FACING_LEFT
+#alias 3	:	FACE_FACING_DOWN
+#alias 4	:	FACE_FACING_DIAGONAL_UR
+#alias 5	:	FACE_FACING_DIAGONAL_UL
+#alias 6	:	FACE_FACING_DIAGONAL_DR	// Actually not facing down
+#alias 7	:	FACE_FACING_DIAGONAL_DL	// Actually not facing down
 
 
 sub ObjectPlayerInteraction
 	switch Object.PropertyValue
-	case 0
-		TempValue0=0
-		if Player.Gravity==1
-			TempValue0=1
-		endif
-		if Player.CollisionMode>0
-			if Player.YVelocity<0
-				TempValue0=1
-			endif
-		endif
-		if TempValue0==0
-			PlayerObjectCollision(C_BOX,-16,-8,16,8)
-			PlayerObjectCollision(C_TOUCH,-15,-10,15,-6)
-			if CheckResult==1
-				Player.AnimationCheck=ANI_WALKING
-				if Player.Animation==ANI_RUNNING
-					Player.AnimationCheck=ANI_RUNNING
-				endif
-				if Player.Animation==ANI_PEELOUT
-					Player.AnimationCheck=ANI_PEELOUT
-				endif
-				Object.Value0=1
-				Player.State=PlayerObject_HandleAir
-				Player.Gravity=1
-				Player.YVelocity=-1048576
-				Player.Animation=11
-				Player.Timer=0
-				PlaySfx(11,0)
-#platform: Use_Haptics
-				HapticEffect(9,0,0,0)
+	case FACE_FACING_UP
+		TempValue0 = false
+		if Player.Gravity == GRAVITY_AIR
+			TempValue0 = true
+		end if
+
+		if Player.CollisionMode > CMODE_FLOOR
+			if Player.YVelocity < 0
+				TempValue0 = true
+			end if
+		end if
+
+		if TempValue0 == false
+			PlayerObjectCollision(C_BOX, -16, -8, 16, 8)
+
+			PlayerObjectCollision(C_TOUCH, -16, -10, 16, -6)
+			if CheckResult == true
+				Player.AnimationReserve = ANI_WALKING
+
+				if Player.Animation == ANI_RUNNING
+					Player.AnimationReserve = ANI_RUNNING
+				end if
+
+				if Player.Animation == ANI_PEELOUT
+					Player.AnimationReserve = ANI_PEELOUT
+				end if
+
+				Object.ActiveSpringFrame = 1
+
+#platform: Use_Origins
+				Player.State	 = Player_State_Air_NoDropDash
 #endplatform
-			endif
+
+#platform: Use_Standalone
+				Player.State	 = Player_State_Air
+#endplatform
+
+				Player.Gravity	 = GRAVITY_AIR
+				Player.YVelocity = -0x100000
+				Player.Animation = ANI_BOUNCING
+				Player.Timer	 = 0
+
+				PlaySfx(SFX_G_SPRING, false)
+				
+#platform: Use_Haptics
+				HapticEffect(9, 0, 0, 0)
+#endplatform
+
+			end if
 		else
-			if Player.YVelocity>=0
-				PlayerObjectCollision(C_PLATFORM,-16,-8,16,8)
-				PlayerObjectCollision(C_TOUCH,-15,-10,15,-6)
-				if CheckResult==1
-					Player.AnimationCheck=ANI_WALKING
-					if Player.Animation==ANI_RUNNING
-						Player.AnimationCheck=ANI_RUNNING
-					endif
-					if Player.Animation==ANI_PEELOUT
-						Player.AnimationCheck=ANI_PEELOUT
-					endif
-					Object.Value0=1
-					Player.State=PlayerObject_HandleAir
-					Player.Gravity=1
-					Player.YVelocity=-1048576
-					Player.Animation=11
-					Player.Timer=0
-					PlaySfx(11,0)
-#platform: Use_Haptics
-					HapticEffect(9,0,0,0)
+			if Player.YVelocity >= 0
+				PlayerObjectCollision(C_PLATFORM, -16, -8, 16, 8)
+
+				PlayerObjectCollision(C_TOUCH, -16, -10, 16, -6)
+				if CheckResult == true
+
+					Player.AnimationReserve = ANI_WALKING
+					
+					if Player.Animation == ANI_RUNNING
+						Player.AnimationReserve = ANI_RUNNING
+					end if
+
+					if Player.Animation == ANI_PEELOUT
+						Player.AnimationReserve = ANI_PEELOUT
+					end if
+					
+					Object.ActiveSpringFrame = 1
+					
+#platform: Use_Origins
+					Player.State	 = Player_State_Air_NoDropDash
 #endplatform
-				endif
-			endif
-		endif
+
+#platform: Use_Standalone
+					Player.State	 = Player_State_Air
+#endplatform
+
+					Player.Gravity	 = GRAVITY_AIR
+					Player.YVelocity = -0x100000
+					Player.Animation = ANI_BOUNCING
+					Player.Timer	 = 0
+
+					PlaySfx(SFX_G_SPRING, false)
+				
+#platform: Use_Haptics
+					HapticEffect(9, 0, 0, 0)
+#endplatform
+
+				end if
+			end if
+		end if
 		break
-	case 1
-		PlayerObjectCollision(C_BOX,-8,-16,8,16)
-		if Player.Gravity==0
-			PlayerObjectCollision(C_TOUCH,6,-15,11,15)
-			if CheckResult==1
-				Object.Value0=1
-				Player.Angle=0
-				Player.Speed=1048576
-				Player.CollisionMode=0
-				Player.Pushing=0
-				Player.Direction=FACING_RIGHT
-				Player.ControlLock=16
-				PlaySfx(11,0)
-#platform: Use_Haptics
-				HapticEffect(9,0,0,0)
-#endplatform
-			endif
+
+	case FACE_FACING_RIGHT
+		PlayerObjectCollision(C_BOX, -8, -16, 8, 16)
+		if Player.Gravity == GRAVITY_GROUND
+
+			PlayerObjectCollision(C_TOUCH, 6, -15, 11, 15)
+			if CheckResult == true
+				Object.ActiveSpringFrame = 1
+
+				Player.Angle		 = 0
+				Player.Speed		 = 0x100000
+				Player.CollisionMode = CMODE_FLOOR
+				Player.Pushing		 = false
+				Player.Direction	 = FACING_RIGHT
+				Player.ControlLock	 = 16
+
+				PlaySfx(SFX_G_SPRING, false)
+			end if
 		else
-			if Object.Value7==1
-				PlayerObjectCollision(C_TOUCH,6,-15,11,15)
-				if CheckResult==1
-					Object.Value0=1
-					Player.Angle=0
-					Player.Speed=1048576
-					Player.CollisionMode=0
-					Player.Pushing=0
-					Player.Direction=FACING_RIGHT
-					Player.ControlLock=16
-					PlaySfx(11,0)
+			if Object.YFlipped == true
+				PlayerObjectCollision(C_TOUCH, 6, -15, 11, 15)
+				if CheckResult == true
+					Object.ActiveSpringFrame = 1
+
+					Player.Angle		 = 0
+					Player.Speed		 = 0x100000
+					Player.CollisionMode = CMODE_FLOOR
+					Player.Pushing		 = false
+					Player.Direction	 = FACING_RIGHT
+					Player.ControlLock	 = 16
+
+					PlaySfx(SFX_G_SPRING, false)
+				
 #platform: Use_Haptics
-					HapticEffect(9,0,0,0)
+					HapticEffect(9, 0, 0, 0)
 #endplatform
-				endif
-			endif
-		endif
+
+				end if
+			end if
+		end if
 		break
-	case 2
-		PlayerObjectCollision(C_BOX,-8,-16,8,16)
-		if Player.Gravity==0
-			PlayerObjectCollision(C_TOUCH,-10,-15,-6,15)
-			if CheckResult==1
-				Object.Value0=1
-				Player.Speed=-1048576
-				Player.CollisionMode=0
-				Player.Pushing=0
-				Player.Direction=FACING_LEFT
-				Player.ControlLock=16
-				PlaySfx(11,0)
-#platform: Use_Haptics
-				HapticEffect(9,0,0,0)
-#endplatform
-			endif
+
+	case FACE_FACING_LEFT
+		PlayerObjectCollision(C_BOX, -8, -16, 8, 16)
+		if Player.Gravity == GRAVITY_GROUND
+
+			PlayerObjectCollision(C_TOUCH, -10, -15, -6, 15)
+			if CheckResult == true
+				Object.ActiveSpringFrame = 1
+				
+				Player.Speed		 = -0x100000
+				Player.CollisionMode = CMODE_FLOOR
+				Player.Pushing		 = false
+				Player.Direction	 = FACING_LEFT
+				Player.ControlLock	 = 16
+
+				PlaySfx(SFX_G_SPRING, false)
+			end if
 		else
-			if Object.Value7==1
-				PlayerObjectCollision(C_TOUCH,-10,-15,-6,15)
-				if CheckResult==1
-					Object.Value0=1
-					Player.Speed=-1048576
-					Player.YVelocity=131072
-					Player.CollisionMode=0
-					Player.Pushing=0
-					Player.Direction=FACING_LEFT
-					Player.ControlLock=16
-					PlaySfx(11,0)
+			if Object.YFlipped == true
+
+				PlayerObjectCollision(C_TOUCH, -10, -15, -6, 15)
+				if CheckResult == true
+					Object.ActiveSpringFrame = 1
+
+					Player.Speed		 = -0x100000
+					Player.YVelocity	 = 0x20000
+					Player.CollisionMode = CMODE_FLOOR
+					Player.Pushing		 = false
+					Player.Direction	 = FACING_LEFT
+					Player.ControlLock	 = 16
+
+					PlaySfx(SFX_G_SPRING, false)
+				
 #platform: Use_Haptics
-					HapticEffect(9,0,0,0)
+					HapticEffect(9, 0, 0, 0)
 #endplatform
-				endif
-			endif
-		endif
+
+				end if
+			end if
+		end if
 		break
-	case 3
-		PlayerObjectCollision(C_BOX,-16,-8,16,8)
-		PlayerObjectCollision(C_TOUCH,-15,6,15,10)
-		if CheckResult==1
-			if Player.CollisionMode==2
+
+	case FACE_FACING_DOWN
+		PlayerObjectCollision(C_BOX, -16, -8, 16, 8)
+		PlayerObjectCollision(C_TOUCH, -15, 6, 15, 10)
+		if CheckResult == true
+			if Player.CollisionMode == CMODE_ROOF
 				FlipSign(Player.Speed)
 				FlipSign(Player.XVelocity)
-			endif
-			Object.Value0=1
-			Player.State=PlayerObject_HandleAir
-			Player.Gravity=1
-			Player.YVelocity=1048576
-			Player.Timer=0
-			PlaySfx(11,0)
-#platform: Use_Haptics
-			HapticEffect(9,0,0,0)
+			end if
+			Object.ActiveSpringFrame = 1
+			
+#platform: Use_Origins
+			Player.State	 = Player_State_Air_NoDropDash
 #endplatform
-		endif
+
+#platform: Use_Standalone
+			Player.State	 = Player_State_Air
+#endplatform
+
+			Player.Gravity	 = GRAVITY_AIR
+			Player.YVelocity = 0x100000
+			Player.Timer	 = 0
+
+			PlaySfx(SFX_G_SPRING, false)
+				
+#platform: Use_Haptics
+			HapticEffect(9, 0, 0, 0)
+#endplatform
+
+		end if
 		break
-	case 4
-		PlayerObjectCollision(C_TOUCH,-12,-16,12,12)
-		if Player.Gravity==0
-			if CheckResult==1
-				Object.Value0=1
-				Player.State=PlayerObject_HandleAir
-				Player.Gravity=1
-				Player.Speed=737280
-				Player.YVelocity=-737280
-				Player.Animation=5
-				Player.Direction=FACING_RIGHT
-				Player.Timer=0
-				PlaySfx(11,0)
-#platform: Use_Haptics
-				HapticEffect(9,0,0,0)
+
+	case FACE_FACING_DIAGONAL_UR
+		PlayerObjectCollision(C_TOUCH, -12, -16, 12, 12)
+		if Player.Gravity == GRAVITY_GROUND
+			if CheckResult == true
+				Player.Animation = ANI_WALKING
+				Object.ActiveSpringFrame = 1
+				
+#platform: Use_Origins
+				Player.State	 = Player_State_Air_NoDropDash
 #endplatform
-			endif
-		endif
-		if Player.YVelocity>=0
-			if CheckResult==1
-				Object.Value0=1
-				Player.State=PlayerObject_HandleAir
-				Player.Gravity=1
-				Player.Speed=737280
-				Player.YVelocity=-737280
-				Player.Animation=5
-				Player.Direction=FACING_RIGHT
-				Player.Timer=0
-				PlaySfx(11,0)
-#platform: Use_Haptics
-				HapticEffect(9,0,0,0)
+
+#platform: Use_Standalone
+				Player.State	 = Player_State_Air
 #endplatform
-			endif
-		endif
+
+				Player.Gravity	 = GRAVITY_AIR
+				Player.Speed	 = 0xB4000
+				Player.YVelocity = -0xB4000
+				Player.Direction = FACING_RIGHT
+				Player.Timer	 = 0
+
+				PlaySfx(SFX_G_SPRING, false)
+				
+#platform: Use_Haptics
+				HapticEffect(9, 0, 0, 0)
+#endplatform
+
+			end if
+		end if
+		if Player.YVelocity >= 0
+			if CheckResult == true
+				Player.Animation		 = ANI_WALKING
+				Object.ActiveSpringFrame = 1
+				
+#platform: Use_Origins
+				Player.State			 = Player_State_Air_NoDropDash
+#endplatform
+
+#platform: Use_Standalone
+				Player.State			 = Player_State_Air
+#endplatform
+
+				Player.Gravity			 = GRAVITY_AIR
+				Player.Speed			 = 0xB4000
+				Player.YVelocity		 = -0xB4000
+				Player.Direction		 = FACING_RIGHT
+				Player.Timer			 = 0
+
+				PlaySfx(SFX_G_SPRING, false)
+				
+#platform: Use_Haptics
+				HapticEffect(9, 0, 0, 0)
+#endplatform
+
+			end if
+		end if
 		break
-	case 5
-		PlayerObjectCollision(C_TOUCH,-12,-16,12,12)
-		if Player.YVelocity>=0
-			if CheckResult==1
-				Object.Value0=1
-				Player.State=PlayerObject_HandleAir
-				Player.Gravity=1
-				Player.Speed=-737280
-				Player.YVelocity=-737280
-				Player.Animation=5
-				Player.Direction=FACING_LEFT
-				Player.Timer=0
-				PlaySfx(11,0)
-#platform: Use_Haptics
-				HapticEffect(9,0,0,0)
+
+	case FACE_FACING_DIAGONAL_UL
+		PlayerObjectCollision(C_TOUCH, -12, -16, 12, 12)
+		if Player.YVelocity >= 0
+			if CheckResult == true
+				Player.Animation		 = ANI_WALKING
+				Object.ActiveSpringFrame = 1
+				
+#platform: Use_Origins
+				Player.State			 = Player_State_Air_NoDropDash
 #endplatform
-			endif
-		endif
-		if Player.Gravity==0
-			if CheckResult==1
-				Object.Value0=1
-				Player.State=PlayerObject_HandleAir
-				Player.Gravity=1
-				Player.Speed=-737280
-				Player.YVelocity=-737280
-				Player.Animation=5
-				Player.Direction=FACING_LEFT
-				Player.Timer=0
-				PlaySfx(11,0)
-#platform: Use_Haptics
-				HapticEffect(9,0,0,0)
+
+#platform: Use_Standalone
+				Player.State			 = Player_State_Air
 #endplatform
-			endif
-		endif
+
+				Player.Gravity			 = GRAVITY_AIR
+				Player.Speed			 = -0xB4000
+				Player.YVelocity		 = -0xB4000
+				Player.Direction		 = FACING_LEFT
+				Player.Timer			 = 0
+
+				PlaySfx(SFX_G_SPRING, false)
+				
+#platform: Use_Haptics
+				HapticEffect(9, 0, 0, 0)
+#endplatform
+
+			end if
+		end if
+		if Player.Gravity == GRAVITY_GROUND
+			if CheckResult == true
+				Player.Animation		 = ANI_WALKING
+				Object.ActiveSpringFrame = 1
+				
+#platform: Use_Origins
+				Player.State			 = Player_State_Air_NoDropDash
+#endplatform
+
+#platform: Use_Standalone
+				Player.State			 = Player_State_Air
+#endplatform
+
+				Player.Gravity			 = GRAVITY_AIR
+				Player.Speed			 = -0xB4000
+				Player.YVelocity		 = -0xB4000
+				Player.Direction		 = FACING_LEFT
+				Player.Timer			 = 0
+
+				PlaySfx(SFX_G_SPRING, false)
+				
+#platform: Use_Haptics
+				HapticEffect(9, 0, 0, 0)
+#endplatform
+
+			end if
+		end if
 		break
-	case 6
-		PlayerObjectCollision(C_TOUCH,-12,-12,12,12)
-		if CheckResult==1
-			Object.Value0=1
-			Player.State=PlayerObject_HandleAir
-			Player.Gravity=1
-			Player.Speed=737280
-			Player.YVelocity=737280
-			Player.Timer=0
-			PlaySfx(11,0)
-#platform: Use_Haptics
-			HapticEffect(9,0,0,0)
+
+	case FACE_FACING_DIAGONAL_DR
+		PlayerObjectCollision(C_TOUCH, -12, -12, 12, 12)
+		if CheckResult == true
+			Object.ActiveSpringFrame = 1
+			
+#platform: Use_Origins
+			Player.State	 = Player_State_Air_NoDropDash
 #endplatform
-		endif
-		break
-	case 7
-		PlayerObjectCollision(C_TOUCH,-12,-12,12,12)
-		if CheckResult==1
-			Object.Value0=1
-			Player.State=PlayerObject_HandleAir
-			Player.Gravity=1
-			Player.Speed=-737280
-			Player.YVelocity=737280
-			Player.Timer=0
-			PlaySfx(11,0)
-#platform: Use_Haptics
-			HapticEffect(9,0,0,0)
+
+#platform: Use_Standalone
+			Player.State	 = Player_State_Air
 #endplatform
-		endif
+
+			Player.Gravity	 = GRAVITY_AIR
+			Player.Speed	 = 0xB4000
+			Player.YVelocity = 0xB4000
+			Player.Timer	 = 0
+			PlaySfx(SFX_G_SPRING, false)
+				
+#platform: Use_Haptics
+			HapticEffect(9, 0, 0, 0)
+#endplatform
+
+		end if
 		break
-	endswitch
-endsub
+
+	case FACE_FACING_DIAGONAL_DL
+		PlayerObjectCollision(C_TOUCH, -12, -12, 12, 12)
+		if CheckResult == true
+			Object.ActiveSpringFrame = 1
+			
+#platform: Use_Origins
+			Player.State	 = Player_State_Air_NoDropDash
+#endplatform
+
+#platform: Use_Standalone
+			Player.State	 = Player_State_Air
+#endplatform
+
+			Player.Gravity	 = GRAVITY_AIR
+			Player.Speed	 = -0xB4000
+			Player.YVelocity = 0xB4000
+			Player.Timer	 = 0
+
+			PlaySfx(SFX_G_SPRING, false)
+				
+#platform: Use_Haptics
+			HapticEffect(9, 0, 0, 0)
+#endplatform
+
+		end if
+		break
+	end switch
+end sub
 
 
 sub ObjectDraw
-	if Object.Value0==0
-		DrawSpriteFX(Object.PropertyValue,FX_FLIP,Object.XPos,Object.YPos)
+	if Object.ActiveSpringFrame == 0
+		DrawSpriteFX(Object.PropertyValue, FX_FLIP, Object.XPos, Object.YPos)
 	else
-		Object.Value0++
-		TempValue0=Object.Value0
-		TempValue0>>=1
+		Object.ActiveSpringFrame++
+
+		TempValue0   = Object.ActiveSpringFrame
+		TempValue0 >>= 1
 		switch TempValue0
 		case 0
 		case 1
-			DrawSpriteFX(Object.PropertyValue,FX_FLIP,Object.XPos,Object.YPos)
+			DrawSpriteFX(Object.PropertyValue, FX_FLIP, Object.XPos, Object.YPos)
 			break
+
 		case 2
 		case 6
-			TempValue1=Object.PropertyValue
-			TempValue1+=8
-			DrawSpriteFX(TempValue1,FX_FLIP,Object.XPos,Object.YPos)
+			TempValue1  = Object.PropertyValue
+			TempValue1 += 8
+			DrawSpriteFX(TempValue1, FX_FLIP, Object.XPos, Object.YPos)
 			break
+
 		case 3
 		case 4
 		case 5
-			TempValue1=Object.PropertyValue
-			TempValue1+=16
-			DrawSpriteFX(TempValue1,FX_FLIP,Object.XPos,Object.YPos)
+			TempValue1  = Object.PropertyValue
+			TempValue1 += 16
+			DrawSpriteFX(TempValue1, FX_FLIP, Object.XPos, Object.YPos)
 			break
-		endswitch
-		if Object.Value0>12
-			Object.Value0=0
-		endif
-	endif
-endsub
+
+		end switch
+
+		if Object.ActiveSpringFrame > 12
+			Object.ActiveSpringFrame = 0
+		end if
+	end if
+end sub
 
 
 sub ObjectStartup
 	LoadSpriteSheet("Global/Items.gif")
-	ArrayPos0=32
-	while ArrayPos0<1056
-		if Object[ArrayPos0].Type==TypeName[RedSpring]
-			if Object[ArrayPos0].PropertyValue>7
-				Object[ArrayPos0].PropertyValue-=8
-				Object[ArrayPos0].Value7=1
-			endif
-			if Object[ArrayPos0].PropertyValue>5
-				Object[ArrayPos0].Direction=2
-			endif
-		endif
+	
+	// Springs
+	SpriteFrame(-16, -8, 32, 16, 84, 1)			// #0  - Red Spring facing up
+	SpriteFrame(-8, -16, 16, 32, 117, 1)		// #1  - Red Spring facing right
+	SpriteFrame(-8, -16, 16, 32, 175, 1)		// #2  - Red Spring facing left
+	SpriteFrame(-16, -8, 32, 16, 84, 59)		// #3  - Red Spring facing down
+	SpriteFrame(-16, -16, 32, 32, 84, 117)		// #4  - Red Spring facing diagonal right
+	SpriteFrame(-16, -16, 32, 32, 117, 165)		// #5  - Red Spring facing diagonal left
+	SpriteFrame(-16, -16, 32, 32, 84, 117)		// #6  - Red Spring facing diagonal right 2
+	SpriteFrame(-16, -16, 32, 32, 117, 165)		// #7  - Red Spring facing diagonal left 2
+
+	// Spring Recoil
+	SpriteFrame(-16, 0, 32, 8, 84, 1)			// #8  - Red Spring Head facing up
+	SpriteFrame(-8, -16, 8, 32, 125, 1)			// #9  - Red Spring Head facing right
+	SpriteFrame(0, -16, 8, 32, 175, 1)			// #10 - Red Spring Head facing left
+	SpriteFrame(-16, -8, 32, 8, 84, 67)			// #11 - Red Spring Head facing down
+	SpriteFrame(-16, -16, 32, 32, 84, 150)		// #12 - Red Spring Recoiled diagonal right
+	SpriteFrame(-16, -16, 32, 32, 150, 165)		// #13 - Red Spring Recoiled diagonal left
+	SpriteFrame(-16, -16, 32, 32, 84, 150)		// #14 - Red Spring Recoiled diagonal right 2
+	SpriteFrame(-16, -16, 32, 32, 150, 165)		// #15 - Red Spring Recoiled diagonal left 2
+	// Spring Launch
+	SpriteFrame(-16, -32, 32, 40, 84, 18)		// #16 - Red Spring Launch facing up
+	SpriteFrame(-8, -16, 40, 32, 134, 1)		// #17 - Red Spring Launch facing right
+	SpriteFrame(-16, -16, 40, 32, 192, 1)		// #18 - Red Spring Launch facing left
+	SpriteFrame(-16, -8, 32, 40, 84, 76)		// #19 - Red Spring Launch facing down
+	SpriteFrame(-16, -32, 48, 48, 117, 34)		// #20 - Red Spring Launch diagonal right
+	SpriteFrame(-32, -32, 48, 48, 166, 34)		// #21 - Red Spring Launch diagonal left
+	SpriteFrame(-16, -32, 48, 48, 117, 34)		// #22 - Red Spring Launch diagonal right 2
+	SpriteFrame(-32, -32, 48, 48, 166, 34)		// #23 - Red Spring Launch diagonal left 2
+
+	// Used to be below LoadSpriteSheet, moved here for consistency
+	ArrayPos0 = 32
+	while ArrayPos0 < 1056
+		if Object[ArrayPos0].Type == TypeName[Red Spring]
+			if Object[ArrayPos0].PropertyValue > 7
+				Object[ArrayPos0].PropertyValue -= 8
+				Object[ArrayPos0].YFlipped		 = true
+			end if
+			if Object[ArrayPos0].PropertyValue > 5
+				Object[ArrayPos0].Direction = FACING_UPEND_RIGHT
+			end if
+		end if
 		ArrayPos0++
 	loop
-	SpriteFrame(-16,-8,32,16,84,1)
-	SpriteFrame(-8,-16,16,32,117,1)
-	SpriteFrame(-8,-16,16,32,175,1)
-	SpriteFrame(-16,-8,32,16,84,59)
-	SpriteFrame(-16,-16,32,32,84,117)
-	SpriteFrame(-16,-16,32,32,117,165)
-	SpriteFrame(-16,-16,32,32,84,117)
-	SpriteFrame(-16,-16,32,32,117,165)
-	SpriteFrame(-16,0,32,8,84,1)
-	SpriteFrame(-8,-16,8,32,125,1)
-	SpriteFrame(0,-16,8,32,175,1)
-	SpriteFrame(-16,-8,32,8,84,67)
-	SpriteFrame(-16,-16,32,32,84,150)
-	SpriteFrame(-16,-16,32,32,150,165)
-	SpriteFrame(-16,-16,32,32,84,150)
-	SpriteFrame(-16,-16,32,32,150,165)
-	SpriteFrame(-16,-32,32,40,84,18)
-	SpriteFrame(-8,-16,40,32,134,1)
-	SpriteFrame(-16,-16,40,32,192,1)
-	SpriteFrame(-16,-8,32,40,84,76)
-	SpriteFrame(-16,-32,48,48,117,34)
-	SpriteFrame(-32,-32,48,48,166,34)
-	SpriteFrame(-16,-32,48,48,117,34)
-	SpriteFrame(-32,-32,48,48,166,34)
-endsub
 
-sub RSDK
-	LoadSpriteSheet("Global/Display.gif")
-	SetEditorIcon(Icon0,SingleIcon,-16,-16,32,32,1,143)
-endsub
+end sub
+
+
+// ========================
+// Editor Subs
+// ========================
+
+sub RSDKEdit
+	if Editor.ReturnVariable == true
+		switch Editor.VariableID
+		case EDIT_VAR_PROPVAL // Property Value
+			CheckResult = Object.PropertyValue
+			break
+		case 0 // Type
+			CheckResult = Object.PropertyValue
+			CheckResult &= 7
+			break
+		end switch
+	else
+		switch Editor.VariableID
+		case EDIT_VAR_PROPVAL // Property Value
+			Object.PropertyValue = Editor.VariableValue
+			break
+		case 0 // Type
+			Object.PropertyValue = Editor.VariableValue
+			Object.PropertyValue &= 7
+			break
+		end switch
+	end if
+end sub
+
+
+sub RSDKDraw
+	if Object.PropertyValue > 5
+		// Fun little fact - the official RSDKv3 editor displayed down diagonal springs wrong
+		// Here though, we may as well right that
+		Object.Direction = 2 // FLIP_Y
+	else
+		Object.Direction = 0 // FLIP_NONE
+	end if
+
+	DrawSpriteFX(Object.PropertyValue, FX_FLIP, Object.XPos, Object.YPos)
+end sub
+
+
+sub RSDKLoad
+	LoadSpriteSheet("Global/Items.gif")
+	SpriteFrame(-16, -8, 32, 16, 84, 1)			// #0  - Red Spring facing up
+	SpriteFrame(-8, -16, 16, 32, 117, 1)		// #1  - Red Spring facing right
+	SpriteFrame(-8, -16, 16, 32, 175, 1)		// #2  - Red Spring facing left
+	SpriteFrame(-16, -8, 32, 16, 84, 59)		// #3  - Red Spring facing down
+	SpriteFrame(-16, -16, 32, 32, 84, 117)		// #4  - Red Spring facing diagonal right
+	SpriteFrame(-16, -16, 32, 32, 117, 165)		// #5  - Red Spring facing diagonal left
+	SpriteFrame(-16, -16, 32, 32, 84, 117)		// #6  - Red Spring facing diagonal right 2
+	SpriteFrame(-16, -16, 32, 32, 117, 165)		// #7  - Red Spring facing diagonal left 2
+
+	AddEditorVariable("Type")
+	SetActiveVariable("Type")
+	AddEnumVariable("Up", 0)
+	AddEnumVariable("Right", 1)
+	AddEnumVariable("Left", 2)
+	AddEnumVariable("Down", 3)
+	AddEnumVariable("Diagonal (Up Right)", 4)
+	AddEnumVariable("Diagonal (Up Left)", 5)
+	AddEnumVariable("Diagonal (Down Right)", 6)
+	AddEnumVariable("Diagonal (Down Right)", 7)
+end sub

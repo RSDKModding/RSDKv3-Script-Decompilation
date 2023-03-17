@@ -1,32 +1,44 @@
-//------------Sonic CD Help Text Script-------------//
+//-----------------Sonic CD Help Text Script------------------//
 //--------Scripted by Christian Whitehead 'The Taxman'--------//
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
-//-------Aliases-------//
-#alias 2: TYPE_HELPTEXT
-
+// Property Values
+#alias 0	:	TEXT_HEADER
+#alias 1	:	TEXT_CONTENT
 
 sub ObjectDraw
-	Object.DrawOrder=4
-	TempValue0=Object.XPos
-	TempValue0>>=16
-	TempValue0-=Screen.XOffset
-	TempValue1=Object.YPos
-	TempValue1>>=16
-	TempValue1-=Screen.YOffset
-	if Object.PropertyValue==0
-		DrawText(MENU_1,TempValue0,TempValue1,192,0,0,1)
+	Object.DrawOrder = 4
+	TempValue0   = Object.XPos
+	TempValue0 >>= 16
+	TempValue0  -= Screen.XOffset
+	TempValue1   = Object.YPos
+	TempValue1 >>= 16
+	TempValue1  -= Screen.YOffset
+	if Object.PropertyValue == TEXT_HEADER
+		DrawText(MENU_1, TempValue0, TempValue1, 192, 0, 0, 1)
 	else
-		DrawText(MENU_1,TempValue0,TempValue1,114,41,1,-1)
-	endif
-endsub
+		DrawText(MENU_1, TempValue0, TempValue1, 114, 41, 1, -1)
+	end if
+end sub
 
 
 sub ObjectStartup
 	LoadSpriteSheet("Menu/HelpText.gif")
-endsub
+end sub
 
-sub RSDK
+
+// ========================
+// Editor Subs
+// ========================
+
+sub RSDKDraw
+	DrawSprite(0)
+end sub
+
+
+sub RSDKLoad
 	LoadSpriteSheet("Global/Display.gif")
-	SetEditorIcon(Icon0,SingleIcon,-16,-16,32,32,1,143)
-endsub
+	SpriteFrame(-16, -16, 32, 32, 1, 143)		// #0 - "Script" Icon
+
+	SetVariableAlias(ALIAS_VAR_PROPVAL, "unused")
+end sub

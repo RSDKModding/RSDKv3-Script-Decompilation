@@ -1,59 +1,87 @@
-//------------Sonic CD SemiBomb Script-------------//
+//---------------Sonic CD Semi Bomb Script--------------------//
 //--------Scripted by Christian Whitehead 'The Taxman'--------//
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
-//-------Aliases-------//
-#alias 52: TYPE_SEMIBOMB
+// Aliases
+#alias Object.Value0	:	Object.Timer
+#alias Object.Value1	:	Object.YVelocity
+
+// States
+#alias 0	:	BOMB_FALLING
+#alias 1	:	BOMB_TICKING
+
+// Collision Sides
+#alias 0	:	CSIDE_FLOOR
+
+// Global SFX
+#alias 22	:	SFX_G_EXPLOSION
 
 
 sub ObjectMain
-	if Object.OutOfBounds==1
-		Object.Type=TypeName[BlankObject]
-	endif
-	if Object.State==0
-		Object.YPos+=Object.Value1
-		Object.Value1+=8192
-		ObjectTileCollision(0,0,8,0)
-		if CheckResult==1
-			Object.State=1
-		endif
+	if Object.State == BOMB_FALLING
+		Object.YPos += Object.YVelocity
+		Object.YVelocity += 0x2000
+		
+		ObjectTileCollision(CSIDE_FLOOR, 0, 8, 0)
+		if CheckResult == true
+			Object.State = BOMB_TICKING
+		end if
 	else
-		if Object.Value0<240
-			Object.Value0++
+		if Object.Timer < 240
+			Object.Timer++
 		else
-			Object.Type=TypeName[BlankObject]
-			CreateTempObject(TypeName[Explosion],0,Object.XPos,Object.YPos)
-			PlaySfx(22,0)
-		endif
-		if Object.Value0>120
-			Object.Frame=Object.Value0
-			Object.Frame&=3
-			Object.Frame>>=1
-		endif
-	endif
-endsub
+			Object.Type = TypeName[Blank Object]
+			CreateTempObject(TypeName[Explosion], 0, Object.XPos, Object.YPos)
+			PlaySfx(SFX_G_EXPLOSION, false) 
+		end if
+
+		if Object.Timer > 120
+			Object.Frame   = Object.Timer
+			Object.Frame  &= 3
+			Object.Frame >>= 1
+		end if
+	end if
+
+	if Object.OutOfBounds == true
+		Object.Type = TypeName[Blank Object]
+	end if
+end sub
 
 
 sub ObjectPlayerInteraction
-	PlayerObjectCollision(C_TOUCH,-8,-8,8,8)
-	if CheckResult==1
-		CallFunction(PlayerObject_Hit)
-	endif
-endsub
+	PlayerObjectCollision(C_TOUCH, -8, -8, 8, 8)
+	if CheckResult == true
+		CallFunction(Player_Hit)
+	end if
+end sub
 
 
 sub ObjectDraw
 	DrawSprite(Object.Frame)
-endsub
+end sub
 
 
 sub ObjectStartup
 	LoadSpriteSheet("R6/Objects.gif")
-	SpriteFrame(-8,-8,16,16,43,67)
-	SpriteFrame(-8,-8,16,16,60,67)
-endsub
 
-sub RSDK
-	LoadSpriteSheet("Global/Display.gif")
-	SetEditorIcon(Icon0,SingleIcon,-16,-16,32,32,1,143)
-endsub
+	SpriteFrame(-8, -8, 16, 16, 43, 67)	// #0 - Bomb
+	SpriteFrame(-8, -8, 16, 16, 60, 67)	// #1 - Flashing Bomb
+end sub
+
+
+// ========================
+// Editor Subs
+// ========================
+
+sub RSDKDraw
+	DrawSprite(0)
+end sub
+
+
+sub RSDKLoad
+	LoadSpriteSheet("R6/Objects.gif")
+
+	SpriteFrame(-8, -8, 16, 16, 43, 67)	// #0 - Bomb
+
+	SetVariableAlias(ALIAS_VAR_PROPVAL, "unused")
+end sub

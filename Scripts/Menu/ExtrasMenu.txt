@@ -1,885 +1,1197 @@
-//------------Sonic CD ExtrasMenu Script-------------//
+//----------------Sonic CD Extras Menu Script-----------------//
 //--------Scripted by Christian Whitehead 'The Taxman'--------//
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
-//-------Aliases-------//
-#alias 9: TYPE_EXTRASMENU
+// Aliases
+#alias Object.Value0			:	Object.Timer
+#alias Object.Value1			:	Object.CurrentButton
+
+//Object[+4] and [+ArrayPos0] are blank objects just to add values
+#alias Object[+4].Value1		:	Helper.VMCurrentButtom
+#alias Object.Value2			:	Helper.FlickerState
+
+//Object[33] is MenuHeading
+#alias Object[33].State			:	MenuHeading.State
+#alias Object[33].PropertyValue	:	MenuHeading.Header
+
+//Object[-1] is MenuWindow
+#alias Object[-1].State			:	MenuWindow.State
+#alias Object[1].Value4			:	MenuWindow.BackTouchPress
+
+// States
+#alias 0 	:	EXTRASMENU_ENTER_MENU
+#alias 1 	:	EXTRASMENU_CONTROLS
+#alias 2 	:	EXTRASMENU_SELECTED_OPTION
+#alias 3 	:	EXTRASMENU_LOAD_EXTRA_STAGE
+#alias 4 	:	EXTRASMENU_LOAD_VISUALMODE
+#alias 5 	:	EXTRASMENU_VISUALMODE_FADEIN
+#alias 6 	:	EXTRASMENU_VISUALMODE
+#alias 7 	:	EXTRASMENU_VISUALMODE_SELECTED
+#alias 8 	:	EXTRASMENU_VISUALMODE_VIDEOPLAY
+#alias 9 	:	EXTRASMENU_VISUALMODE_FADEOUT
+#alias 10	:	EXTRASMENU_VISUALMODE_RETURN
+#alias 11	:	EXTRASMENU_EXIT_MENU
+#alias 12	:	EXTRASMENU_FADEIN
+#alias 13	:	EXTRASMENU_RETURN_TO_TITLE
+
+// Menu Heading States
+#alias 1	:	MENUHEADING_LEAVE_SCREEN
+
+// Menu Heading Property Values
+#alias 5	:	MAINMENU_HEADER
+
+// Menu Window States
+#alias 3	:	MENUWINDOW_SHRINK
+
+// Menu Button States
+#alias 1	:	MENUBUTTON_BUTTONS_IN
+
+// Presentation Stages
+#alias 0	:	STAGE_P_TITLE
+#alias 3	:	STAGE_P_STAGESELECT
+#alias 4	:	STAGE_P_SOUNDTEST
+#alias 5	:	STAGE_P_DAGARDEN
+
+// Player
+#alias 0	:	PLAYER_SONIC
+
+// Global SFX
+#alias 23	:	SFX_G_MENUBUTTON
+#alias 27	:	SFX_G_SELECT
+
+// Stage SFX
+#alias 1	:	SFX_S_BACKBUTTON
+
+// Languages
+#alias 0	:	LANG_ENGLISH
+#alias 1	:	LANG_FRENCH
+#alias 2	:	LANG_ITALIAN
+#alias 3	:	LANG_DEUTSCH
+#alias 4	:	LANG_SPANISH
+#alias 5	:	LANG_JAPANESE
+
+// Soundtrack
+#alias 0	:	OST_JP
+
+//Engine & CallBacks
+#alias 2	:	MESSAGE_LOSTFOCUS
 
 // Function declarations
-#function ExtrasMenu_Function7
+#function ExtrasMenu_DrawUnlocks
 
-function ExtrasMenu_Function7
-	switch Object[+ArrayPos0].Value2
-	case 0
-		if ArrayPos0==Object.Value1
-			DrawSpriteScreenFX(9,FX_INK,Object.XPos,Object.YPos)
-			TempValue0=ArrayPos0
-			TempValue0+=14
-			DrawSpriteScreenFX(TempValue0,FX_INK,Object.XPos,Object.YPos)
+
+function ExtrasMenu_DrawUnlocks
+	switch Helper[+ArrayPos0].FlickerState
+	case false
+		if ArrayPos0 == Object.CurrentButton
+			DrawSpriteScreenFX(9, FX_INK, Object.XPos, Object.YPos)
+			TempValue0  = ArrayPos0
+			TempValue0 += 14
+			DrawSpriteScreenFX(TempValue0, FX_INK, Object.XPos, Object.YPos)
 		else
-			TempValue0=ArrayPos0
-			TempValue0+=10
-			DrawSpriteScreenFX(TempValue0,FX_INK,Object.XPos,Object.YPos)
-		endif
+			TempValue0  = ArrayPos0
+			TempValue0 += 10
+			DrawSpriteScreenFX(TempValue0, FX_INK, Object.XPos, Object.YPos)
+		end if
 		break
-	case 1
-		TempValue0=Object.Value0
-		TempValue0&=3
-		TempValue0>>=1
-		DrawSpriteScreenFX(9,FX_INK,Object.XPos,Object.YPos)
-		if TempValue0==0
-			TempValue0=ArrayPos0
-			TempValue0+=14
-			DrawSpriteScreenFX(TempValue0,FX_INK,Object.XPos,Object.YPos)
-		endif
+
+	case true
+		TempValue0   = Object.Timer
+		TempValue0  &= 3
+		TempValue0 >>= 1
+		DrawSpriteScreenFX(9, FX_INK, Object.XPos, Object.YPos)
+		if TempValue0 == 0
+			TempValue0  = ArrayPos0
+			TempValue0 += 14
+			DrawSpriteScreenFX(TempValue0, FX_INK, Object.XPos, Object.YPos)
+		end if
 		break
-	endswitch
-	DrawSpriteScreenFX(8,FX_INK,Object.XPos,Object.YPos)
+
+	end switch
+
+	DrawSpriteScreenFX(8, FX_INK, Object.XPos, Object.YPos)
 	switch ArrayPos0
 	case 0
-		if Options.DAGardenFlag==1
-			DrawSpriteScreenFX(0,FX_INK,Object.XPos,Object.YPos)
+		if Options.DAGardenFlag == true
+			DrawSpriteScreenFX(0, FX_INK, Object.XPos, Object.YPos)
 		else
-			DrawSpriteScreenFX(1,FX_INK,Object.XPos,Object.YPos)
-		endif
+			DrawSpriteScreenFX(1, FX_INK, Object.XPos, Object.YPos)
+		end if
 		break
+
 	case 1
-		if Options.VisualModeFlag==1
-			DrawSpriteScreenFX(0,FX_INK,Object.XPos,Object.YPos)
+		if Options.VisualModeFlag == true
+			DrawSpriteScreenFX(0, FX_INK, Object.XPos, Object.YPos)
 		else
-			DrawSpriteScreenFX(1,FX_INK,Object.XPos,Object.YPos)
-		endif
+			DrawSpriteScreenFX(1, FX_INK, Object.XPos, Object.YPos)
+		end if
 		break
+
 	case 2
-		if Options.SoundTestFlag==1
-			DrawSpriteScreenFX(0,FX_INK,Object.XPos,Object.YPos)
+		if Options.SoundTestFlag == true
+			DrawSpriteScreenFX(0, FX_INK, Object.XPos, Object.YPos)
 		else
-			DrawSpriteScreenFX(1,FX_INK,Object.XPos,Object.YPos)
-		endif
+			DrawSpriteScreenFX(1, FX_INK, Object.XPos, Object.YPos)
+		end if
 		break
+		
 	case 3
-		if Options.StageSelectFlag==1
-			DrawSpriteScreenFX(0,FX_INK,Object.XPos,Object.YPos)
+		if Options.StageSelectFlag == true
+			DrawSpriteScreenFX(0, FX_INK, Object.XPos, Object.YPos)
 		else
-			DrawSpriteScreenFX(1,FX_INK,Object.XPos,Object.YPos)
-		endif
+			DrawSpriteScreenFX(1, FX_INK, Object.XPos, Object.YPos)
+		end if
 		break
-	endswitch
-endfunction
+	end switch
+end function
 
 
 sub ObjectMain
 	switch Object.State
-	case 0
-#platform: Mobile
-		if Options.PhysicalControls==0
-			Object.Value1=-1
-		endif
-#endplatform
-		Object.XPos=Screen.CenterX
-		Object.XPos-=126
-		if Object.Value0<256
-			Object.Alpha=Object.Value0
-			Object.Value0+=6
-		else
-			Object.Value0=0
-			Object.Alpha=255
-			Object.State++
-		endif
-		break
-	case 1
-#platform: Mobile
-		if Options.PhysicalControls==1
-#endplatform
-		if KeyPress.Up==1
-			Object.Value1--
-			if Object.Value1<0
-				Object.Value1=3
-			endif
-			PlaySfx(23,0)
-		endif
-		if KeyPress.Down==1
-			Object.Value1++
-			if Object.Value1>3
-				Object.Value1=0
-			endif
-			PlaySfx(23,0)
-		endif
-#platform: Mobile
-		CheckTouchRect(0,0,Screen.XSize,Screen.YSize)
-			if CheckResult>-1
-				Options.PhysicalControls=0
-				Object.Value1=-1
-			endif
-		else
-			CheckTouchRect(0,0,Screen.XSize,Screen.YSize)
-			TempValue3=CheckResult
-			TempValue0=0
-			CallFunction(LoadSaveMenu_CheckTouchSave)
-			if CheckResult>-1
-				Object.Value1=0
-			else
-				if TempValue3<0
-					if Object.Value1==0
-						KeyPress.Start=1
-					endif
-				else
-					if Object.Value1==0
-						Object.Value1=-1
-					endif
-				endif
-			endif
-			TempValue0=1
-			CallFunction(LoadSaveMenu_CheckTouchSave)
-			if CheckResult>-1
-				Object.Value1=1
-			else
-				if TempValue3<0
-					if Object.Value1==1
-						KeyPress.Start=1
-					endif
-				else
-					if Object.Value1==1
-						Object.Value1=-1
-					endif
-				endif
-			endif
-			TempValue0=2
-			CallFunction(LoadSaveMenu_CheckTouchSave)
-			if CheckResult>-1
-				Object.Value1=2
-			else
-				if TempValue3<0
-					if Object.Value1==2
-						KeyPress.Start=1
-					endif
-				else
-					if Object.Value1==2
-						Object.Value1=-1
-					endif
-				endif
-			endif
-			TempValue0=3
-			CallFunction(LoadSaveMenu_CheckTouchSave)
-			if CheckResult>-1
-				Object.Value1=3
-			else
-				if TempValue3<0
-					if Object.Value1==3
-						KeyPress.Start=1
-					endif
-				else
-					if Object.Value1==3
-						Object.Value1=-1
-					endif
-				endif
-			endif
-			CallFunction(MenuHeading_Function0)
-			if KeyPress.Up==1
-				Object.Value1=3
-				Options.PhysicalControls=1
-			endif
-			if KeyPress.Down==1
-				Object.Value1=0
-				Options.PhysicalControls=1
-			endif
-		endif
-#endplatform
-		CheckResult=0
-#platform: Mobile	 
-		if Object.Value1>-1
-#endplatform
-			if KeyPress.Start==1
-				CheckResult=1
-			endif
-			if KeyPress.ButtonA==1
-				CheckResult=1
-#platform: Mobile	 
-		endif
+	case EXTRASMENU_ENTER_MENU
+
+#platform: Use_Origins
+		if Options.PhysicalControls == false
+			Object.CurrentButton = -1
+		end if
 #endplatform
 
-		endif
-		if CheckResult==1
-			if Object.Value1<4
-				switch Object.Value1
-				case 0
-					if Options.DAGardenFlag==1
-						ArrayPos0=Object.Value1
-						Object[+ArrayPos0].Value2=1
-						Object.State++
-						StopMusic()
-						PlaySfx(27,0)
-					else
 #platform: Mobile
-						if Options.PhysicalControls==0
-							Object.Value1=-1
-						endif
+		if Options.PhysicalControls == false
+			Object.CurrentButton = -1
+		end if
 #endplatform
-					endif
-					break
-				case 1
-					if Options.VisualModeFlag==1
-						ArrayPos0=Object.Value1
-						Object[+ArrayPos0].Value2=1
-						Object.State++
-						PlaySfx(27,0)
-					else
-#platform: Mobile
-						if Options.PhysicalControls==0
-							Object.Value1=-1
-						endif
-#endplatform
-					endif
-					break
-				case 2
-					if Options.SoundTestFlag==1
-						ArrayPos0=Object.Value1
-						Object[+ArrayPos0].Value2=1
-						Object.State++
-						StopMusic()
-						PlaySfx(27,0)
-					else
-#platform: Mobile
-						if Options.PhysicalControls==0
-							Object.Value1=-1
-						endif
-#endplatform
-					endif
-					break
-				case 3
-					if Options.StageSelectFlag==1
-						ArrayPos0=Object.Value1
-						Object[+ArrayPos0].Value2=1
-						Object.State++
-						StopMusic()
-						PlaySfx(27,0)
-					else
-#platform: Mobile
-						if Options.PhysicalControls==0
-							Object.Value1=-1
-						endif
-#endplatform
-					endif
-					break
-				endswitch
-			endif
-		endif
-		if KeyPress.ButtonB==1
-			Object.Value0=248
-			Object.State=11
-			PlayStageSfx(1,0)
-		endif
-		break
-	case 2
-		if Object.Value0<30
-			Object.Value0++
+
+		Object.XPos  = Screen.CenterX
+		Object.XPos -= 126
+		if Object.Timer < 256
+			Object.Alpha  = Object.Timer
+			Object.Timer += 6
 		else
-			Object.Value0=0
-			ArrayPos0=Object.Value1
-			Object[+ArrayPos0].Value2=0
-			switch Object.Value1
-			case 0
-				Object.State=3
-				break
-			case 1
-				Object.State=4
-				Object.YPos=40
-				Object.YPos*=Object.Value1
-				Object.YPos+=Screen.CenterY
-				Object.YPos-=87
-				break
-			case 2
-				Object.State=3
-				break
-			case 3
-				Object.State=3
-				break
-			endswitch
-		endif
-		break
-	case 3
-		if Object.Value0<320
-			Object.Value0+=8
-		else
-			switch Object.Value1
-			case 0
-				Stage.ListPos=5
-				LoadStage()
-				break
-			case 2
-				Stage.ListPos=4
-				LoadStage()
-				break
-			case 3
-				Stage.ListPos=3
-				LoadStage()
-				break
-			endswitch
-		endif
-		TempValue0=Object.Value0
-		if TempValue0>255
-			TempValue0=255
-		endif
-		SetScreenFade(0,0,0,TempValue0)
-		break
-	case 4
-		TempValue0=Screen.CenterY
-		TempValue0-=87
-		if Object.YPos>TempValue0
-			Object.YPos-=8
-			if Object.YPos<TempValue0
-				Object.YPos=TempValue0
-			endif
-		else
+			Object.Timer = 0
+			Object.Alpha = 255
 			Object.State++
-			Object.Alpha=0
-#platform: Mobile
-			if Options.PhysicalControls==0
-				Object[+4].Value1=-1
-			else
-				Object[+4].Value1=0
-			endif
-#endplatform	 
+		end if
+		break
+
+	case EXTRASMENU_CONTROLS
+
 #platform: Standard
-			Object[+4].Value1=0
+		CheckResult = true
 #endplatform
-		endif
-		break
-	case 5
-		if Object.Value0<256
-			Object.Alpha=Object.Value0
-			Object.Value0+=8
+
+#platform: Mobile
+		CheckEqual(Options.PhysicalControls, true)
+#endplatform
+
+#platform: Use_Origins
+		CheckEqual(Options.PhysicalControls, true)
+#endplatform
+		
+		// 2011 Steam lacks Options.PhysicalControls, so we force it here first and the other platforms can override it
+		if CheckResult == true
+			if KeyPress[0].Up == true
+				Object.CurrentButton--
+				if Object.CurrentButton < 0
+					Object.CurrentButton = 3
+				end if
+				PlaySfx(SFX_G_MENUBUTTON, false) 
+			end if
+
+			if KeyPress[0].Down == true
+				Object.CurrentButton++
+				if Object.CurrentButton > 3
+					Object.CurrentButton = 0
+				end if
+				PlaySfx(SFX_G_MENUBUTTON, false) 
+			end if
+
+			CheckTouchRect(0, 0, Screen.XSize, Screen.YSize)		//Touch Behaviour Check
+			if CheckResult > -1
+#platform: Mobile
+				Options.PhysicalControls = false
+				Object.CurrentButton = -1
+#endplatform
+#platform: Use_Origins
+				Options.PhysicalControls = false
+				Object.CurrentButton = -1
+#endplatform
+			end if
 		else
-			Object.Value0=0
-			Object.Alpha=255
+			CheckTouchRect(0, 0, Screen.XSize, Screen.YSize)		//Touch Press Reset
+			TempValue3 = CheckResult
+
+			TempValue0 = 0
+			CallFunction(LoadSaveMenu_CheckTouchSave)				//D. A. Garden Touch Press
+			if CheckResult > -1
+				Object.CurrentButton = 0
+			else
+				if TempValue3 < 0
+					if Object.CurrentButton == 0
+						KeyPress[0].Start = true
+					end if
+				else
+					if Object.CurrentButton == 0
+						Object.CurrentButton = -1
+					end if
+				end if
+			end if
+
+			TempValue0 = 1
+			CallFunction(LoadSaveMenu_CheckTouchSave)				//Visual Mode Touch Press
+			if CheckResult > -1
+				Object.CurrentButton = 1
+			else
+				if TempValue3 < 0
+					if Object.CurrentButton == 1
+						KeyPress[0].Start = true
+					end if
+				else
+					if Object.CurrentButton == 1
+						Object.CurrentButton = -1
+					end if
+				end if
+			end if
+
+			TempValue0 = 2
+			CallFunction(LoadSaveMenu_CheckTouchSave)				//Sound Test Touch Press
+			if CheckResult > -1
+				Object.CurrentButton = 2
+			else
+				if TempValue3 < 0
+					if Object.CurrentButton == 2
+						KeyPress[0].Start = true
+					end if
+				else
+					if Object.CurrentButton == 2
+						Object.CurrentButton = -1
+					end if
+				end if
+			end if
+
+			TempValue0 = 3
+			CallFunction(LoadSaveMenu_CheckTouchSave)				//Stage Select Touch Press
+			if CheckResult > -1
+				Object.CurrentButton = 3
+			else
+				if TempValue3 < 0
+					if Object.CurrentButton == 3
+						KeyPress[0].Start = true
+					end if
+				else
+					if Object.CurrentButton == 3
+						Object.CurrentButton = -1
+					end if
+				end if
+			end if
+
+			CallFunction(MenuHeading_CheckTouchBack)				//Back Button Touch Press
+			if KeyPress[0].Up == true
+				Object.CurrentButton = 3
+#platform: Mobile
+				Options.PhysicalControls = true
+#endplatform
+
+#platform: Use_Origins
+				Options.PhysicalControls = true
+#endplatform
+			end if
+
+			if KeyPress[0].Down == true
+				Object.CurrentButton = 0
+#platform: Mobile
+				Options.PhysicalControls = true
+#endplatform
+
+#platform: Use_Origins
+				Options.PhysicalControls = true
+#endplatform
+			end if
+		end if
+
+		CheckResult = false
+		if Object.CurrentButton > -1
+			if KeyPress[0].Start == true
+				CheckResult = true
+			end if
+
+			if KeyPress[0].ButtonA == true
+				CheckResult = true
+			end if
+		end if
+
+		if CheckResult == true
+			if Object.CurrentButton < 4
+				switch Object.CurrentButton
+				case 0
+					if Options.DAGardenFlag == true
+						ArrayPos0 = Object.CurrentButton
+						Helper[+ArrayPos0].FlickerState = true
+						Object.State++
+						StopMusic()
+						PlaySfx(SFX_G_SELECT, false)
+					else
+#platform: Use_Origins
+						if Options.PhysicalControls == false
+							Object.CurrentButton = -1
+						end if
+#endplatform
+
+#platform: Mobile
+						if Options.PhysicalControls == false
+							Object.CurrentButton = -1
+						end if
+#endplatform
+					end if
+					break
+
+				case 1
+					if Options.VisualModeFlag == true
+						ArrayPos0 = Object.CurrentButton
+						Helper[+ArrayPos0].FlickerState = true
+						Object.State++
+						PlaySfx(SFX_G_SELECT, false)
+					else
+#platform: Use_Origins
+						if Options.PhysicalControls == false
+							Object.CurrentButton = -1
+						end if
+#endplatform
+
+#platform: Mobile
+						if Options.PhysicalControls == false
+							Object.CurrentButton = -1
+						end if
+#endplatform
+					end if
+					break
+
+				case 2
+					if Options.SoundTestFlag == true
+						ArrayPos0 = Object.CurrentButton
+						Helper[+ArrayPos0].FlickerState = true
+						Object.State++
+						StopMusic()
+						PlaySfx(SFX_G_SELECT, false)
+					else
+#platform: Use_Origins
+						if Options.PhysicalControls == false
+							Object.CurrentButton = -1
+						end if
+#endplatform
+
+#platform: Mobile
+						if Options.PhysicalControls == false
+							Object.CurrentButton = -1
+						end if
+#endplatform
+					end if
+					break
+
+				case 3
+					if Options.StageSelectFlag == true
+						ArrayPos0 = Object.CurrentButton
+						Helper[+ArrayPos0].FlickerState = true
+						Object.State++
+						StopMusic()
+						PlaySfx(SFX_G_SELECT, false)
+					else
+#platform: Use_Origins
+						if Options.PhysicalControls == false
+							Object.CurrentButton = -1
+						end if
+#endplatform
+
+#platform: Mobile
+						if Options.PhysicalControls == false
+							Object.CurrentButton = -1
+						end if
+#endplatform
+					end if
+					break
+
+				end switch
+			end if
+		end if
+
+#platform: Use_Origins
+		if KeyPress[0].ButtonB == true
+			Object.State = EXTRASMENU_RETURN_TO_TITLE
+			Object.Timer = 0
+			StopMusic()
+		end if
+#endplatform
+
+#platform: Use_Standalone
+		if KeyPress[0].ButtonB == true
+			Object.Timer = 248
+			Object.State = EXTRASMENU_EXIT_MENU
+			PlayStageSfx(SFX_S_BACKBUTTON, false)
+		end if
+#endplatform
+		break
+
+	case EXTRASMENU_SELECTED_OPTION
+		if Object.Timer < 30
+			Object.Timer++
+		else
+			Object.Timer = 0
+			ArrayPos0 = Object.CurrentButton
+			Helper[+ArrayPos0].FlickerState = false
+			switch Object.CurrentButton
+			case 0
+				Object.State = EXTRASMENU_LOAD_EXTRA_STAGE
+				break
+
+			case 1
+				Object.State = EXTRASMENU_LOAD_VISUALMODE
+				Object.YPos  = 40
+				Object.YPos *= Object.CurrentButton
+				Object.YPos += Screen.CenterY
+				Object.YPos -= 87
+				break
+
+			case 2
+				Object.State = EXTRASMENU_LOAD_EXTRA_STAGE
+				break
+
+			case 3
+				Object.State = EXTRASMENU_LOAD_EXTRA_STAGE
+				break
+
+			end switch
+		end if
+		break
+
+	case EXTRASMENU_LOAD_EXTRA_STAGE
+		if Object.Timer < 320
+			Object.Timer += 8
+		else
+
+#platform: Use_Origins
+			game.callbackParam0 = 1
+			EngineCallback(NOTIFY_LEVEL_SELECT_MENU)
+			game.callbackParam0 = 0
+			EngineCallback(NOTIFY_PLAYER_SET)
+			Stage.PlayerListPos = PLAYER_SONIC
+#endplatform
+
+			switch Object.CurrentButton
+			case 0
+				Stage.ListPos = STAGE_P_DAGARDEN
+				LoadStage()
+				break
+
+			case 2
+				Stage.ListPos = STAGE_P_SOUNDTEST
+				LoadStage()
+				break
+
+			case 3
+				Stage.ListPos = STAGE_P_STAGESELECT
+				LoadStage()
+				break
+
+			end switch
+		end if
+
+		TempValue0 = Object.Timer
+		if TempValue0 > 255
+			TempValue0 = 255
+		end if
+		SetScreenFade(0, 0, 0, TempValue0)
+		break
+
+	case EXTRASMENU_LOAD_VISUALMODE
+		TempValue0  = Screen.CenterY
+		TempValue0 -= 87
+		if Object.YPos > TempValue0
+			Object.YPos -= 8
+			if Object.YPos < TempValue0
+				Object.YPos = TempValue0
+			end if
+		else
 			Object.State++
-		endif
+			Object.Alpha = 0
+			Helper.VMCurrentButtom = 0
+
+#platform: Mobile
+			if Options.PhysicalControls == false
+				Helper.VMCurrentButtom = -1
+			end if
+#endplatform 
+
+		end if
 		break
-	case 6
-		ArrayPos0=Object.Value1
-#platform: Mobile
-		if Options.PhysicalControls==1
-#endplatform
-			if KeyPress.Left==1
-				Object[+4].Value1--
-				PlaySfx(23,0)
-				if Object[+4].Value1<0
-					Object[+4].Value1=3
-				endif
-			endif
-			if KeyPress.Right==1
-				Object[+4].Value1++
-				PlaySfx(23,0)
-				if Object[+4].Value1>3
-					Object[+4].Value1=0
-				endif
-			endif
-			if KeyPress.Up==1
-				Object[+4].Value1-=2
-				PlaySfx(23,0)
-				if Object[+4].Value1<0
-					Object[+4].Value1+=4
-				endif
-			endif
-			if KeyPress.Down==1
-				Object[+4].Value1+=2
-				PlaySfx(23,0)
-				if Object[+4].Value1>3
-					Object[+4].Value1-=4
-				endif
-			endif
-#platform: Mobile
-			CheckTouchRect(0,0,Screen.XSize,Screen.YSize)
-			if CheckResult>-1
-				Options.PhysicalControls=0
-				Object[+4].Value1=-1
-			endif
+		
+	case EXTRASMENU_VISUALMODE_FADEIN
+		if Object.Timer < 256
+			Object.Alpha  = Object.Timer
+			Object.Timer += 8
 		else
-			if Engine.Message==2
-				Object[+4].Value1=-1
-			endif
-			CheckTouchRect(0,0,Screen.XSize,Screen.YSize)
-			TempValue3=CheckResult
-			TempValue0=Screen.CenterX
-			TempValue0-=88
-			TempValue1=Screen.CenterX
-			TempValue1-=40
-			CheckTouchRect(TempValue0,72,TempValue1,120)
-			if CheckResult>-1
-				Object[+4].Value1=0
-			else
-				if TempValue3<0
-					if Object[+4].Value1==0
-						KeyPress.Start=1
-					endif
-				else
-					if Object[+4].Value1==0
-						Object[+4].Value1=-1
-					endif
-				endif
-			endif
-			CheckTouchRect(TempValue0,129,TempValue1,177)
-			if CheckResult>-1
-				Object[+4].Value1=2
-			else
-				if TempValue3<0
-					if Object[+4].Value1==2
-						KeyPress.Start=1
-					endif
-				else
-					if Object[+4].Value1==2
-						Object[+4].Value1=-1
-					endif
-				endif
-			endif
-			TempValue0=Screen.CenterX
-			TempValue0+=40
-			TempValue1=Screen.CenterX
-			TempValue1+=88
-			CheckTouchRect(TempValue0,72,TempValue1,120)
-			if CheckResult>-1
-				Object[+4].Value1=1
-			else
-				if TempValue3<0
-					if Object[+4].Value1==1
-						KeyPress.Start=1
-					endif
-				else
-					if Object[+4].Value1==1
-						Object[+4].Value1=-1
-					endif
-				endif
-			endif
-			CheckTouchRect(TempValue0,129,TempValue1,177)
-			if CheckResult>-1
-				Object[+4].Value1=3
-			else
-				if TempValue3<0
-					if Object[+4].Value1==3
-						KeyPress.Start=1
-					endif
-				else
-					if Object[+4].Value1==3
-						Object[+4].Value1=-1
-					endif
-				endif
-			endif
-			TempValue0=Screen.XSize
-			TempValue0-=96
-			CheckTouchRect(TempValue0,192,Screen.XSize,Screen.YSize)
-			if CheckResult>-1
-				Object[+4].Value1=4
-				Object[1].Value4=1
-			else
-				Object[1].Value4=0
-				if TempValue3<0
-					if Object[+4].Value1==4
-						KeyPress.ButtonB=1
-					endif
-				else
-					if Object[+4].Value1==4
-						Object[+4].Value1=-1
-					endif
-				endif
-			endif
-			if KeyPress.Left==1
-				Object[+4].Value1=1
-				Options.PhysicalControls=1
-			endif
-			if KeyPress.Right==1
-				Object[+4].Value1=0
-				Options.PhysicalControls=1
-			endif
-			if KeyPress.Up==1
-				Object[+4].Value1=3
-				Options.PhysicalControls=1
-			endif
-			if KeyPress.Down==1
-				Object[+4].Value1=0
-				Options.PhysicalControls=1
-			endif
-		endif
+			Object.Timer = 0
+			Object.Alpha = 255
+			Object.State++
+		end if
+		break
+
+	case EXTRASMENU_VISUALMODE
+		ArrayPos0 = Object.CurrentButton
+#platform: Standard
+		CheckResult = true
 #endplatform
-		CheckResult=0
-#platform: Mobile	
-		if Object[+4].Value1>-1
-#endplatform		
-			if KeyPress.Start==1
-				CheckResult=1
-			endif
-			if KeyPress.ButtonA==1
-				CheckResult=1
-#platform: Mobile	
-		endif
-#endplatform	
-		endif
-		if CheckResult==1
-			PlaySfx(27,0)
+
+#platform: Mobile
+		CheckEqual(Options.PhysicalControls,true)
+#endplatform
+
+#platform: Use_Origins
+		CheckEqual(Options.PhysicalControls,true)
+#endplatform
+
+		// 2011 Steam lacks Options.PhysicalControls, so we force it here first and the other platforms can override it
+		if CheckResult == true
+			if KeyPress[0].Left == true
+				Helper.VMCurrentButtom--
+				PlaySfx(SFX_G_MENUBUTTON, false) 
+				if Helper.VMCurrentButtom < 0
+					Helper.VMCurrentButtom = 3
+				end if
+			end if
+
+			if KeyPress[0].Right == true
+				Helper.VMCurrentButtom++
+				PlaySfx(SFX_G_MENUBUTTON, false) 
+				if Helper.VMCurrentButtom > 3
+					Helper.VMCurrentButtom = 0
+				end if
+			end if
+
+			if KeyPress[0].Up == true
+				Helper.VMCurrentButtom -= 2
+				PlaySfx(SFX_G_MENUBUTTON, false) 
+				if Helper.VMCurrentButtom < 0
+					Helper.VMCurrentButtom += 4
+				end if
+			end if
+
+			if KeyPress[0].Down == true
+				Helper.VMCurrentButtom += 2
+				PlaySfx(SFX_G_MENUBUTTON, false) 
+				if Helper.VMCurrentButtom > 3
+					Helper.VMCurrentButtom -= 4
+				end if
+			end if
+
+		end if
+
+#platform: Mobile
+		// Just to make it look neat, instead of continuing the code from an open if on another platform, we ask again for a check in the physical controls
+		if Options.PhysicalControls == true
+			CheckTouchRect(0, 0, Screen.XSize, Screen.YSize)		//Touch Behaviour Check
+			if CheckResult > -1
+				Options.PhysicalControls = false
+				Helper.VMCurrentButtom = -1
+			end if
+
+		else
+			if Engine.Message == MESSAGE_LOSTFOCUS
+				Helper.VMCurrentButtom = -1
+			end if
+			CheckTouchRect(0, 0, Screen.XSize, Screen.YSize)		//Touch Input Reset
+			TempValue3 = CheckResult
+
+			TempValue0  = Screen.CenterX
+			TempValue0 -= 88
+			TempValue1  = Screen.CenterX
+			TempValue1 -= 40
+			CheckTouchRect(TempValue0, 72, TempValue1, 120)			//Opening Touch Press
+			if CheckResult > -1
+				Helper.VMCurrentButtom = 0
+			else
+				if TempValue3 < 0
+					if Helper.VMCurrentButtom == 0
+						KeyPress[0].Start = true
+					end if
+				else
+					if Helper.VMCurrentButtom == 0
+						Helper.VMCurrentButtom = -1
+					end if
+				end if
+			end if
+
+			CheckTouchRect(TempValue0, 129, TempValue1, 177)		//Good Ending Touch Press
+			if CheckResult > -1
+				Helper.VMCurrentButtom = 2
+			else
+				if TempValue3 < 0
+					if Helper.VMCurrentButtom == 2
+						KeyPress[0].Start = true
+					end if
+				else
+					if Helper.VMCurrentButtom == 2
+						Helper.VMCurrentButtom = -1
+					end if
+				end if
+			end if
+			
+			TempValue0  = Screen.CenterX
+			TempValue0 += 40
+			TempValue1  = Screen.CenterX
+			TempValue1 += 88
+			CheckTouchRect(TempValue0, 72, TempValue1, 120)			//Pencil Test Touch Press
+			if CheckResult > -1
+				Helper.VMCurrentButtom = 1
+			else
+				if TempValue3 < 0
+					if Helper.VMCurrentButtom == 1
+						KeyPress[0].Start = true
+					end if
+				else
+					if Helper.VMCurrentButtom == 1
+						Helper.VMCurrentButtom = -1
+					end if
+				end if
+			end if
+
+			CheckTouchRect(TempValue0, 129, TempValue1, 177)		//Bad Ending Touch Press
+			if CheckResult > -1
+				Helper.VMCurrentButtom = 3
+			else
+				if TempValue3 < 0
+					if Helper.VMCurrentButtom == 3
+						KeyPress[0].Start = true
+					end if
+				else
+					if Helper.VMCurrentButtom == 3
+						Helper.VMCurrentButtom = -1
+					end if
+				end if
+			end if
+
+			TempValue0  = Screen.XSize
+			TempValue0 -= 96
+			CheckTouchRect(TempValue0, 192, Screen.XSize, Screen.YSize)		//Back Touch Press
+			if CheckResult > -1
+				Helper.VMCurrentButtom = 4
+				MenuWindow.BackTouchPress = true
+			else
+				MenuWindow.BackTouchPress = false
+				if TempValue3 < 0
+					if Helper.VMCurrentButtom == 4
+						KeyPress[0].ButtonB = true
+					end if
+				else
+					if Helper.VMCurrentButtom == 4
+						Helper.VMCurrentButtom = -1
+					end if
+				end if
+			end if
+			//Turn on Physical Controls
+			if KeyPress[0].Left == true
+				Helper.VMCurrentButtom = 1
+				Options.PhysicalControls = true
+			end if
+
+			if KeyPress[0].Right == true
+				Helper.VMCurrentButtom = 0
+				Options.PhysicalControls = true
+			end if
+
+			if KeyPress[0].Up == true
+				Helper.VMCurrentButtom = 3
+				Options.PhysicalControls = true
+			end if
+
+			if KeyPress[0].Down == true
+				Helper.VMCurrentButtom = 0
+				Options.PhysicalControls = true
+			end if
+		end if
+#endplatform
+
+		CheckResult = false
+
+		if Helper.VMCurrentButtom > -1
+			if KeyPress[0].Start == true
+				CheckResult = true
+			end if
+
+			if KeyPress[0].ButtonA == true
+				CheckResult = true
+			end if
+		end if
+
+		if CheckResult == true
+			PlaySfx(SFX_G_SELECT, false)
 			StopMusic()
 			Object.State++
-		endif
-		if KeyPress.ButtonB==1
-			Object.State=9
-			Object.Value0=248
-			PlayStageSfx(1,0)
-		endif
+		end if
+
+		if KeyPress[0].ButtonB == true
+			Object.State = EXTRASMENU_VISUALMODE_FADEOUT
+			Object.Timer = 248
+			PlayStageSfx(SFX_S_BACKBUTTON, false)
+		end if
 		break
-	case 7
-		if Object.Value0<30
-			Object.Value0++
+
+	case EXTRASMENU_VISUALMODE_SELECTED
+		if Object.Timer < 30
+			Object.Timer++
 		else
-			Object.Value0=0
+			Object.Timer = 0
 			Object.State++
-		endif
+		end if
+
 		break
-	case 8
-		if Object.Value0<384
-			Object.Value0+=8
+
+	case EXTRASMENU_VISUALMODE_VIDEOPLAY
+		if Object.Timer < 384
+			Object.Timer += 8
 		else
-			switch Object[+4].Value1
+#platform: Use_Origins
+			game.callbackParam0 = 1
+			EngineCallback(NOTIFY_EXTRAS_MODE)
+#endplatform
+
+			switch Helper.VMCurrentButtom
 			case 0
-#platform: Standard			
 				LoadVideo("Opening")
-#endplatform
-#platform: Mobile
-				if Options.Soundtrack==0
-					LoadVideo("Opening")
-				else
-					LoadVideo("OpeningUS")
-				endif
-#endplatform
 				break
+
 			case 1
 				LoadVideo("Pencil_Test")
 				break
+
 			case 2
-#platform: Standard
 				LoadVideo("Good_Ending")
-#endplatform
-#platform: Mobile
-				if Options.Soundtrack==0
-					LoadVideo("Good_Ending")
-				else
-					LoadVideo("Good_EndingUS")
-				endif
-#endplatform
 				break
+
 			case 3
-#platform: Standard	
 				LoadVideo("Bad_Ending")
-#endplatform
-#platform: Mobile
-				if Options.Soundtrack==0
-					LoadVideo("Bad_Ending")
-				else
-					LoadVideo("Bad_EndingUS")
-				endif
-#endplatform
 				break
-			endswitch
-#platform: Mobile
-			Object[+4].Value1=-1
+
+			end switch
+// Because of the way mobile cd worked (using the phone's native video player)
+// it needed to reproduce separated videos depending of the soundtrack option
+// for the sake of clarity and simplicity, the mobile code got commented out
+// 
+//			switch Helper.VMCurrentButtom
+//			case 0
+//				if Options.Soundtrack == OST_JP
+//					LoadVideo("Opening")
+//				else
+//					LoadVideo("OpeningUS")
+//				end if
+//				break
+//
+//			case 1
+//				LoadVideo("Pencil_Test")
+//				break
+//			
+//			case 2
+//				if Options.Soundtrack == OST_JP
+//					LoadVideo("Good_Ending")
+//				else
+//					LoadVideo("Good_EndingUS")
+//				end if
+//				break
+//			
+//			case 3
+//				if Options.Soundtrack == OST_JP
+//					LoadVideo("Bad_Ending")
+//				else
+//					LoadVideo("Bad_EndingUS")
+//				end if
+//				break
+//
+//			end switch
+
+#platform: Use_Origins
+			game.callbackParam0 = 0
+			EngineCallback(NOTIFY_EXTRAS_MODE)
 #endplatform
-			Object.State=12
-		endif
-		TempValue0=Object.Value0
-		if TempValue0>255
-			TempValue0=255
-		endif
-		SetScreenFade(0,0,0,TempValue0)
+
+#platform: Mobile
+			Helper.VMCurrentButtom = -1
+#endplatform
+
+			Object.State = EXTRASMENU_FADEIN
+		end if
+		
+		TempValue0 = Object.Timer
+		if TempValue0 > 255
+			TempValue0 = 255
+		end if
+		SetScreenFade(0, 0, 0, TempValue0)
 		break
-	case 9
-		if Object.Value0>0
-			Object.Alpha=Object.Value0
-			Object.Value0-=8
+
+	case EXTRASMENU_VISUALMODE_FADEOUT
+		if Object.Timer > 0
+			Object.Alpha  = Object.Timer
+			Object.Timer -= 8
 		else
-			Object.Alpha=0
+			Object.Alpha = 0
 			Object.State++
-		endif
+		end if
 		break
-	case 10
-		TempValue0=Object.Value1
-		TempValue0*=40
-		TempValue0+=Screen.CenterY
-		TempValue0-=87
-		if Object.YPos<TempValue0
-			Object.YPos+=8
-			if Object.YPos>TempValue0
-				Object.YPos=TempValue0
-			endif
-			Object.Alpha=0
+
+	case EXTRASMENU_VISUALMODE_RETURN
+		TempValue0  = Object.CurrentButton
+		TempValue0 *= 40
+		TempValue0 += Screen.CenterY
+		TempValue0 -= 87
+		if Object.YPos < TempValue0
+			Object.YPos += 8
+			if Object.YPos > TempValue0
+				Object.YPos = TempValue0
+			end if
+			Object.Alpha = 0
 		else
-#platform: Mobile
-			if Options.PhysicalControls==0
-				Object.Value1=-1
-			endif
+#platform: Use_Origins
+			if Options.PhysicalControls == false
+				Object.CurrentButton = -1
+			end if
 #endplatform
-			Object.State=1
-			Object.Alpha=255
-		endif
+
+#platform: Mobile
+			if Options.PhysicalControls == false
+				Object.CurrentButton = -1
+			end if
+#endplatform
+			Object.State = EXTRASMENU_CONTROLS
+			Object.Alpha = 255
+		end if
 		break
-	case 11
-		if Object.Value0>0
-			Object.Alpha=Object.Value0
-			Object.Value0-=8
+
+	case EXTRASMENU_EXIT_MENU
+		if Object.Timer > 0
+			Object.Alpha  = Object.Timer
+			Object.Timer -= 8
 		else
-			Object.Type=TypeName[BlankObject]
-			Object[-1].State=3
-			Object[34].State=1
-			Object[35].State=1
-			Object[36].State=1
-			Object[37].State=1
-			Object[38].State=1
-			Object[39].State=1
-			Object[40].State=1
-			Object[41].State=1
-			Object[42].State=1
-			Object[33].State=1
-			Object[33].PropertyValue=5
-		endif
+			Object.Type = TypeName[Blank Object]
+			MenuWindow.State = MENUWINDOW_SHRINK
+			//All of this is MenuButton objects
+			Object[34].State = MENUBUTTON_BUTTONS_IN
+			Object[35].State = MENUBUTTON_BUTTONS_IN
+			Object[36].State = MENUBUTTON_BUTTONS_IN
+			Object[37].State = MENUBUTTON_BUTTONS_IN
+			Object[38].State = MENUBUTTON_BUTTONS_IN
+			Object[39].State = MENUBUTTON_BUTTONS_IN
+			Object[40].State = MENUBUTTON_BUTTONS_IN
+			Object[41].State = MENUBUTTON_BUTTONS_IN
+			Object[42].State = MENUBUTTON_BUTTONS_IN
+			//End
+			MenuHeading.State  = MENUHEADING_LEAVE_SCREEN
+			MenuHeading.Header = MAINMENU_HEADER
+		end if
 		break
-	case 12
-		if Object.Value0>0
-			Object.Value0-=8
+
+	case EXTRASMENU_FADEIN
+		if Object.Timer > 0
+			Object.Timer -= 8
 		else
-			Object.State=6
+			Object.State = EXTRASMENU_VISUALMODE
 			PlayMusic(Options.Soundtrack)
-		endif
-		TempValue0=Object.Value0
-		if TempValue0>255
-			TempValue0=255
-		endif
-		SetScreenFade(0,0,0,TempValue0)
+		end if
+		TempValue0 = Object.Timer
+		if TempValue0 > 255
+			TempValue0 = 255
+		end if
+		SetScreenFade(0, 0, 0, TempValue0)
 		break
-	endswitch
-endsub
+
+	case EXTRASMENU_RETURN_TO_TITLE
+		Object.Timer += 4
+		if Object.Timer == 384
+			Stage.ActiveList = PRESENTATION_STAGE
+			Stage.ListPos	 = STAGE_P_TITLE
+			LoadStage()
+		end if
+		SetScreenFade(0, 0, 0, Object.Timer)
+		break
+
+	end switch
+end sub
 
 
 sub ObjectDraw
 	switch Object.State
-	case 0
-	case 1
-	case 2
-	case 3
-	case 11
-		Object.YPos=Screen.CenterY
-		Object.YPos-=87
-		ArrayPos0=0
-		CallFunction(ExtrasMenu_Function7)
-		Object.YPos+=40
+	case EXTRASMENU_ENTER_MENU
+	case EXTRASMENU_CONTROLS
+	case EXTRASMENU_SELECTED_OPTION
+	case EXTRASMENU_LOAD_EXTRA_STAGE
+	case EXTRASMENU_EXIT_MENU
+	case EXTRASMENU_RETURN_TO_TITLE
+		Object.YPos  = Screen.CenterY
+		Object.YPos -= 87
+		ArrayPos0 = 0
+		CallFunction(ExtrasMenu_DrawUnlocks)		//Draw DA Garden
+		
+		Object.YPos += 40
 		ArrayPos0++
-		CallFunction(ExtrasMenu_Function7)
-		Object.YPos+=40
+		CallFunction(ExtrasMenu_DrawUnlocks)		//Draw Visual Mode
+
+		Object.YPos += 40
 		ArrayPos0++
-		CallFunction(ExtrasMenu_Function7)
-		Object.YPos+=40
+		CallFunction(ExtrasMenu_DrawUnlocks)		//Draw Sound Test
+
+		Object.YPos += 40
 		ArrayPos0++
-		CallFunction(ExtrasMenu_Function7)
+		CallFunction(ExtrasMenu_DrawUnlocks)		//Draw Stage Select
 		break
-	case 4
-		ArrayPos0=Object.Value1
-		CallFunction(ExtrasMenu_Function7)
+
+	case EXTRASMENU_LOAD_VISUALMODE
+		ArrayPos0 = Object.CurrentButton
+		CallFunction(ExtrasMenu_DrawUnlocks)
 		break
-	case 5
-	case 6
-	case 8
-	case 9
-	case 10
-	case 12
-		TempValue0=Screen.CenterX
-		TempValue0-=64
-		DrawSpriteScreenFX(4,FX_INK,TempValue0,96)
-		if Object[+4].Value1==0
-			DrawSpriteScreenFX(26,FX_INK,TempValue0,96)
-			DrawSpriteScreenFX(22,FX_INK,TempValue0,96)
+
+	case EXTRASMENU_VISUALMODE_FADEIN
+	case EXTRASMENU_VISUALMODE
+	case EXTRASMENU_VISUALMODE_VIDEOPLAY
+	case EXTRASMENU_VISUALMODE_FADEOUT
+	case EXTRASMENU_VISUALMODE_RETURN
+	case EXTRASMENU_FADEIN
+		TempValue0  = Screen.CenterX
+		TempValue0 -= 64
+		DrawSpriteScreenFX(4, FX_INK, TempValue0, 96)
+
+		if Helper.VMCurrentButtom == 0
+			DrawSpriteScreenFX(26, FX_INK, TempValue0, 96)
+			DrawSpriteScreenFX(22, FX_INK, TempValue0, 96)
 		else
-			DrawSpriteScreenFX(18,FX_INK,TempValue0,96)
-		endif
-		DrawSpriteScreenFX(6,FX_INK,TempValue0,153)
-		if Object[+4].Value1==2
-			DrawSpriteScreenFX(26,FX_INK,TempValue0,153)
-			DrawSpriteScreenFX(24,FX_INK,TempValue0,153)
+			DrawSpriteScreenFX(18, FX_INK, TempValue0, 96)
+		end if
+
+		DrawSpriteScreenFX(6, FX_INK, TempValue0, 153)
+
+		if Helper.VMCurrentButtom == 2
+			DrawSpriteScreenFX(26, FX_INK, TempValue0, 153)
+			DrawSpriteScreenFX(24, FX_INK, TempValue0, 153)
 		else
-			DrawSpriteScreenFX(20,FX_INK,TempValue0,153)
-		endif
-		TempValue0+=128
-		DrawSpriteScreenFX(5,FX_INK,TempValue0,96)
-		if Object[+4].Value1==1
-			DrawSpriteScreenFX(26,FX_INK,TempValue0,96)
-			DrawSpriteScreenFX(23,FX_INK,TempValue0,96)
+			DrawSpriteScreenFX(20, FX_INK, TempValue0, 153)
+		end if
+
+		TempValue0 += 128
+		DrawSpriteScreenFX(5, FX_INK, TempValue0, 96)
+		if Helper.VMCurrentButtom == 1
+			DrawSpriteScreenFX(26, FX_INK, TempValue0, 96)
+			DrawSpriteScreenFX(23, FX_INK, TempValue0, 96)
 		else
-			DrawSpriteScreenFX(19,FX_INK,TempValue0,96)
-		endif
-		DrawSpriteScreenFX(7,FX_INK,TempValue0,153)
-		if Object[+4].Value1==3
-			DrawSpriteScreenFX(26,FX_INK,TempValue0,153)
-			DrawSpriteScreenFX(25,FX_INK,TempValue0,153)
+			DrawSpriteScreenFX(19, FX_INK, TempValue0, 96)
+		end if
+
+		DrawSpriteScreenFX(7, FX_INK, TempValue0, 153)
+		if Helper.VMCurrentButtom == 3
+			DrawSpriteScreenFX(26, FX_INK, TempValue0, 153)
+			DrawSpriteScreenFX(25, FX_INK, TempValue0, 153)
 		else
-			DrawSpriteScreenFX(21,FX_INK,TempValue0,153)
-		endif
-		Object.Alpha=255
-		CallFunction(ExtrasMenu_Function7)
+			DrawSpriteScreenFX(21, FX_INK, TempValue0, 153)
+		end if
+		Object.Alpha = 255
+		CallFunction(ExtrasMenu_DrawUnlocks)
 		break
-	case 7
-		TempValue1=Object.Value0
-		TempValue1&=3
-		TempValue1>>=1
-		TempValue0=Screen.CenterX
-		TempValue0-=64
-		if Object[+4].Value1==0
-			if TempValue1==0
-				DrawSpriteScreenFX(4,FX_INK,TempValue0,96)
-				DrawSpriteScreenFX(26,FX_INK,TempValue0,96)
-			endif
-			DrawSpriteScreenFX(22,FX_INK,TempValue0,96)
+
+	case EXTRASMENU_VISUALMODE_SELECTED
+		TempValue1   = Object.Timer
+		TempValue1  &= 3
+		TempValue1 >>= 1
+
+		TempValue0  = Screen.CenterX
+		TempValue0 -= 64
+		if Helper.VMCurrentButtom == 0
+			if TempValue1 == 0
+				DrawSpriteScreenFX(4, FX_INK, TempValue0, 96)
+				DrawSpriteScreenFX(26, FX_INK, TempValue0, 96)
+			end if
+			DrawSpriteScreenFX(22, FX_INK, TempValue0, 96)
 		else
-			DrawSpriteScreenFX(4,FX_INK,TempValue0,96)
-			DrawSpriteScreenFX(18,FX_INK,TempValue0,96)
-		endif
-		if Object[+4].Value1==2
-			if TempValue1==0
-				DrawSpriteScreenFX(6,FX_INK,TempValue0,153)
-				DrawSpriteScreenFX(26,FX_INK,TempValue0,153)
-			endif
-			DrawSpriteScreenFX(24,FX_INK,TempValue0,153)
+			DrawSpriteScreenFX(4, FX_INK, TempValue0, 96)
+			DrawSpriteScreenFX(18, FX_INK, TempValue0, 96)
+		end if
+
+		if Helper.VMCurrentButtom == 2
+			if TempValue1 == 0
+				DrawSpriteScreenFX(6, FX_INK, TempValue0, 153)
+				DrawSpriteScreenFX(26, FX_INK, TempValue0, 153)
+			end if
+			DrawSpriteScreenFX(24, FX_INK, TempValue0, 153)
 		else
-			DrawSpriteScreenFX(6,FX_INK,TempValue0,153)
-			DrawSpriteScreenFX(20,FX_INK,TempValue0,153)
-		endif
-		TempValue0+=128
-		if Object[+4].Value1==1
-			if TempValue1==0
-				DrawSpriteScreenFX(5,FX_INK,TempValue0,96)
-				DrawSpriteScreenFX(26,FX_INK,TempValue0,96)
-			endif
-			DrawSpriteScreenFX(23,FX_INK,TempValue0,96)
+			DrawSpriteScreenFX(6, FX_INK, TempValue0, 153)
+			DrawSpriteScreenFX(20, FX_INK, TempValue0, 153)
+		end if
+		
+		TempValue0 += 128
+		if Helper.VMCurrentButtom == 1
+			if TempValue1 == 0
+				DrawSpriteScreenFX(5, FX_INK, TempValue0, 96)
+				DrawSpriteScreenFX(26, FX_INK, TempValue0, 96)
+			end if
+			DrawSpriteScreenFX(23, FX_INK, TempValue0, 96)
 		else
-			DrawSpriteScreenFX(5,FX_INK,TempValue0,96)
-			DrawSpriteScreenFX(19,FX_INK,TempValue0,96)
-		endif
-		if Object[+4].Value1==3
-			if TempValue1==0
-				DrawSpriteScreenFX(7,FX_INK,TempValue0,153)
-				DrawSpriteScreenFX(26,FX_INK,TempValue0,153)
-			endif
-			DrawSpriteScreenFX(25,FX_INK,TempValue0,153)
+			DrawSpriteScreenFX(5, FX_INK, TempValue0, 96)
+			DrawSpriteScreenFX(19, FX_INK, TempValue0, 96)
+		end if
+		if Helper.VMCurrentButtom == 3
+			if TempValue1 == 0
+				DrawSpriteScreenFX(7, FX_INK, TempValue0, 153)
+				DrawSpriteScreenFX(26, FX_INK, TempValue0, 153)
+			end if
+			DrawSpriteScreenFX(25, FX_INK, TempValue0, 153)
 		else
-			DrawSpriteScreenFX(7,FX_INK,TempValue0,153)
-			DrawSpriteScreenFX(21,FX_INK,TempValue0,153)
-		endif
-		Object.Alpha=255
-		CallFunction(ExtrasMenu_Function7)
+			DrawSpriteScreenFX(7, FX_INK, TempValue0, 153)
+			DrawSpriteScreenFX(21, FX_INK, TempValue0, 153)
+		end if
+		Object.Alpha = 255
+		CallFunction(ExtrasMenu_DrawUnlocks)
 		break
-	endswitch
-endsub
+	end switch
+end sub
 
 
 sub ObjectStartup
 	switch Engine.Language
-	case 0
+	case LANG_ENGLISH
 		LoadSpriteSheet("Menu/MenuGfx2_EN.gif")
 		break
-	case 1
+
+	case LANG_FRENCH
 		LoadSpriteSheet("Menu/MenuGfx2_FR.gif")
 		break
-	case 2
+
+	case LANG_ITALIAN
 		LoadSpriteSheet("Menu/MenuGfx2_IT.gif")
 		break
-	case 3
+
+	case LANG_DEUTSCH
 		LoadSpriteSheet("Menu/MenuGfx2_DE.gif")
 		break
-	case 4
+
+	case LANG_SPANISH
 		LoadSpriteSheet("Menu/MenuGfx2_ES.gif")
 		break
-	case 5
+
+	case LANG_JAPANESE
 		LoadSpriteSheet("Menu/MenuGfx2_JP.gif")
 		break
-	endswitch
-	SpriteFrame(4,2,32,32,479,34)
-	SpriteFrame(4,2,32,32,479,359)
-	SpriteFrame(4,2,32,32,479,34)
-	SpriteFrame(4,2,32,32,479,34)
-	SpriteFrame(-18,-18,36,36,476,106)
-	SpriteFrame(-18,-18,36,36,476,143)
-	SpriteFrame(-18,-18,36,36,476,285)
-	SpriteFrame(-18,-18,36,36,476,322)
-	SpriteFrame(45,12,13,13,488,1)
-	SpriteFrame(0,0,250,37,259,421)
-	ArrayPos0=32
-	ArrayPos1=48
-	TempValue0=0
-	TempValue1=0
-	while ArrayPos0<39
-		TempValue0+=SaveRAM[ArrayPos1]
+
+	end switch
+
+	SpriteFrame(4, 2, 32, 32, 479, 34)			// #0 - Gear
+	SpriteFrame(4, 2, 32, 32, 479, 359)			// #1 - Lock Gear
+	SpriteFrame(4, 2, 32, 32, 479, 34)			// #2 - Gear 2
+	SpriteFrame(4, 2, 32, 32, 479, 34)			// #3 - Gear 3
+
+	SpriteFrame(-18, -18, 36, 36, 476, 106)		// #4 - Opening Icon
+	SpriteFrame(-18, -18, 36, 36, 476, 143)		// #5 - Pencil Test
+	SpriteFrame(-18, -18, 36, 36, 476, 285)		// #6 - Good Ending
+	SpriteFrame(-18, -18, 36, 36, 476, 322)		// #7 - Bad Ending
+
+	SpriteFrame(45, 12, 13, 13, 488, 1)			// #8 - Orange Triangle
+	SpriteFrame(0, 0, 250, 37, 259, 421)		// #9 - Selection Border
+
+	ArrayPos0 = 32
+	ArrayPos1 = 48
+	TempValue0 = 0
+	TempValue1 = 0
+	while ArrayPos0 < 39
+		TempValue0 += SaveRAM[ArrayPos1]
 		ArrayPos1++
-		TempValue1+=SaveRAM[ArrayPos1]
-		ArrayPos1+=5
-		TempValue0+=SaveRAM[ArrayPos1]
-		ArrayPos1+=6
-		TempValue0+=SaveRAM[ArrayPos1]
-		ArrayPos1+=6
+		TempValue1 += SaveRAM[ArrayPos1]
+		ArrayPos1  += 5
+		TempValue0 += SaveRAM[ArrayPos1]
+		ArrayPos1  += 6
+		TempValue0 += SaveRAM[ArrayPos1]
+		ArrayPos1  += 6
 		ArrayPos0++
 	loop
-	if TempValue0==0
-		TempValue0=400000
-		TempValue1=400000
-	endif
-	if TempValue0<224757
-		SpriteFrame(64,12,128,16,1,120)
-		Options.DAGardenFlag=1
-	else
-		SpriteFrame(64,12,128,16,1,426)
-	endif
-	if TempValue0<154612
-		SpriteFrame(64,12,128,16,1,137)
-		Options.VisualModeFlag=1
-	else
-		SpriteFrame(64,12,128,16,130,426)
-	endif
-	if TempValue1<24207
-		SpriteFrame(64,12,128,16,1,154)
-		Options.SoundTestFlag=1
-	else
-		SpriteFrame(64,12,48,16,404,285)
-	endif
-	if TempValue1<30125
-		SpriteFrame(64,12,128,16,1,171)
-		Options.StageSelectFlag=1
-	else
-		SpriteFrame(64,12,48,16,404,285)
-	endif
-	if TempValue0<224757
-		SpriteFrame(64,12,128,16,130,120)
-	else
-		SpriteFrame(64,12,128,16,1,426)
-	endif
-	if TempValue0<154612
-		SpriteFrame(64,12,128,16,130,137)
-	else
-		SpriteFrame(64,12,128,16,130,426)
-	endif
-	if TempValue1<24207
-		SpriteFrame(64,12,128,16,130,154)
-	else
-		SpriteFrame(64,12,48,16,404,285)
-	endif
-	if TempValue1<30125
-		SpriteFrame(64,12,128,16,130,171)
-	else
-		SpriteFrame(64,12,48,16,404,285)
-	endif
-	SpriteFrame(-48,25,96,8,1,496)
-	SpriteFrame(-48,25,96,8,1,504)
-	SpriteFrame(-48,25,96,8,98,496)
-	SpriteFrame(-48,25,96,8,98,504)
-	SpriteFrame(-48,25,96,8,195,496)
-	SpriteFrame(-48,25,96,8,195,504)
-	SpriteFrame(-48,25,96,8,292,496)
-	SpriteFrame(-48,25,96,8,292,504)
-	SpriteFrame(-24,-24,48,48,405,88)
-endsub
 
-sub RSDK
-	LoadSpriteSheet("Global/Display.gif")
-	SetEditorIcon(Icon0,SingleIcon,-16,-16,32,32,1,143)
-endsub
+	// TempValue0 will be used to check regular zones total time in time attack
+	// TempValue1 checks for special stages total time instead
+	if TempValue0 == 0
+		TempValue0 = 400000
+
+		TempValue1 = 400000
+	end if
+
+	if TempValue0 < 224757
+		SpriteFrame(64, 12, 128, 16, 1, 120)	// #10 - D. A. Garden
+		Options.DAGardenFlag = true
+	else
+		SpriteFrame(64, 12, 128, 16, 1, 426)	// #10 - Locked D. A. Garden
+	end if
+
+	if TempValue0 < 154612
+		SpriteFrame(64, 12, 128, 16, 1, 137)	// #11 - Visual Mode
+		Options.VisualModeFlag = true
+	else
+		SpriteFrame(64, 12, 128, 16, 130, 426)	// #11 - Locked Visual Mode
+	end if
+
+	if TempValue1 < 24207
+		SpriteFrame(64, 12, 128, 16, 1, 154)	// #12 - Sound Test
+		Options.SoundTestFlag = true
+	else
+		SpriteFrame(64, 12, 48, 16, 404, 285)	// #12 - Locked Sound Test
+	end if
+
+	if TempValue1 < 30125
+		SpriteFrame(64, 12, 128, 16, 1, 171)	// #13 - Stage Select
+		Options.StageSelectFlag = true
+	else
+		SpriteFrame(64, 12, 48, 16, 404, 285)	// #13 - Locked Stage Select
+	end if
+
+	if TempValue0 < 224757
+		SpriteFrame(64, 12, 128, 16, 130, 120)	// #14 - Select D. A. Garden
+	else
+		SpriteFrame(64, 12, 128, 16, 1, 426)	// #14 - Locked D. A. Garden
+	end if
+
+	if TempValue0 < 154612
+		SpriteFrame(64, 12, 128, 16, 130, 137)	// #15 - Select Visual Mode
+	else
+		SpriteFrame(64, 12, 128, 16, 130, 426)	// #15 - Locked Visual Mode
+	end if
+
+	if TempValue1 < 24207
+		SpriteFrame(64, 12, 128, 16, 130, 154)	// #16 - Select Sound Test
+	else
+		SpriteFrame(64, 12, 48, 16, 404, 285)	// #16 - Locked Sound Test
+	end if
+
+	if TempValue1 < 30125
+		SpriteFrame(64, 12, 128, 16, 130, 171)	// #17 - Select Stage Select
+	else
+		SpriteFrame(64, 12, 48, 16, 404, 285)	// #17 - Locked Stage Select
+	end if
+	
+	SpriteFrame(-48, 25, 96, 8, 1, 496)			// #18 - Opening Text
+	SpriteFrame(-48, 25, 96, 8, 1, 504)			// #19 - Pencil Test Text
+	SpriteFrame(-48, 25, 96, 8, 98, 496)		// #20 - Good Ending
+	SpriteFrame(-48, 25, 96, 8, 98, 504)		// #21 - Bad Ending
+
+	SpriteFrame(-48, 25, 96, 8, 195, 496)		// #22 - Opening Text Highlight
+	SpriteFrame(-48, 25, 96, 8, 195, 504)		// #23 - Pencil Test Text Highlight
+	SpriteFrame(-48, 25, 96, 8, 292, 496)		// #24 - Good Ending Text Highlight
+	SpriteFrame(-48, 25, 96, 8, 292, 504)		// #25 - Bad Ending Text Highlight
+
+	SpriteFrame(-24, -24, 48, 48, 405, 88)		// #26 - Icon Border
+end sub
+
+
+// ========================
+// Editor Subs
+// ========================
+
+sub RSDKDraw
+	DrawSprite(0)
+end sub
+
+
+sub RSDKLoad
+	LoadSpriteSheet("Menu/MenuGfx2_EN.gif")
+	SpriteFrame(32, 0, 160, 30, 1, 708)			// #8 Extras
+
+	SetVariableAlias(ALIAS_VAR_PROPVAL, "unused")
+end sub

@@ -1,105 +1,145 @@
-//------------Sonic CD AirBubble Script-------------//
+//-----------------Sonic CD Air Bubble Script-----------------//
 //--------Scripted by Christian Whitehead 'The Taxman'--------//
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
-//-------Aliases-------//
-#alias 40: TYPE_AIRBUBBLE
+// Aliases
+#alias Object.Value0	:	Object.Timer
+#alias Object.Value1	:	Object.Angle
+#alias Object.Value2	:	Object.XVelocity
+#alias Object.Value3	:	Object.YVelocity
+
+// States
+#alias 0	:	AIRBUBBLE_ACTIVE
+#alias 1	:	AIRBUBBLE_USED
+
+// Stage SFX
+#alias 6	:	SFX_S_BREATHING
+
+// Air Bubble Property Values
+#alias 2	:	BUBBLE_SMALL
+#alias 4	:	BUBBLE_MEDIUM
+#alias 5	:	BUBBLE_BREATHABLE
+#alias 6	:	BUBBLE_EXPLODE
 
 
 sub ObjectMain
-	if Object.State==0
-		Object.Value0++
-		if Object.Value0>15
-			Object.Value0=0
-			if Object.Frame==6
-				Object.Type=TypeName[BlankObject]
-			endif
-			if Object.Frame<Object.PropertyValue
+	if Object.State == AIRBUBBLE_ACTIVE
+		Object.Timer++
+		if Object.Timer > 15
+			Object.Timer = 0
+			if Object.Frame == 6
+				Object.Type = TypeName[Blank Object]
+			end if
+			// Property value determines the max size of the bubble
+			if Object.Frame < Object.PropertyValue
 				Object.Frame++
-			endif
-		endif
-		Object.YPos+=Object.Value3
-		if Player.Animation==ANI_FANROTATE
-			if Object.PropertyValue<3
-				Object.Value2+=262144
-			endif
-		endif
-		if Player.Animation==ANI_CLINGING
-			if Object.PropertyValue<3
-				Object.Value2+=262144
-			endif
-		endif
-		if Object.Frame<6
-			Sin(Object.XPos,Object.Value1)
-			Object.XPos<<=9
-			Object.XPos+=Object.Value2
-			Object.Value1+=4
-			Object.Value1&=511
-		endif
-		if Object.iYPos<Stage.WaterLevel
-			if Object.PropertyValue==5
-				Object.Frame=6
-				Object.PropertyValue=6
-				Object.Value0=0
-				Object.Value3=0
+			end if
+		end if
+
+		Object.YPos += Object.YVelocity
+
+		// Small bubbles fly away while sonic is pushed by water streams
+		if Player.Animation == ANI_FANROTATE
+			if Object.PropertyValue < 3
+				Object.XVelocity += 0x40000
+			end if
+		end if
+		if Player.Animation == ANI_CLINGING
+			if Object.PropertyValue < 3
+				Object.XVelocity += 0x40000
+			end if
+		end if
+
+		if Object.Frame < 6
+			Sin(Object.XPos, Object.Angle)
+			Object.XPos <<= 9
+			Object.XPos  += Object.XVelocity
+
+			Object.Angle += 4
+			Object.Angle &= 511
+		end if
+
+		if Object.iYPos < Stage.WaterLevel
+			if Object.PropertyValue == BUBBLE_BREATHABLE
+				Object.Frame = 6
+				Object.PropertyValue = BUBBLE_EXPLODE
+				Object.Timer = 0
+				Object.YVelocity = 0
 			else
-				if Object.PropertyValue<5
-					Object.Type=TypeName[BlankObject]
-				endif
-			endif
-		endif
+				// Despawn small and medium bubbles above water level
+				if Object.PropertyValue < 5
+					Object.Type = TypeName[Blank Object]
+				end if
+			end if
+		end if
+
 	else
-		if Object.Value0<20
-			Object.Value0++
-			Player.Animation=ANI_BREATHING
+		if Object.Timer < 20
+			Object.Timer++
+			Player.Animation = ANI_BREATHING
 		else
-			Object.Type=TypeName[BlankObject]
-			Player.Animation=ANI_WALKING
-			Player.AnimationSpeed=20
-		endif
-	endif
-	if Object.OutOfBounds==1
-		Object.Type=TypeName[BlankObject]
-	endif
-endsub
+			Object.Type = TypeName[Blank Object]
+			Player.Animation = ANI_WALKING
+			Player.AnimationSpeed = 20
+		end if
+	end if
+
+	if Object.OutOfBounds == true
+		Object.Type = TypeName[Blank Object]
+	end if
+end sub
 
 
 sub ObjectPlayerInteraction
-	if Object.Frame==5
-		PlayerObjectCollision(C_TOUCH,-4,-4,4,4)
-		if CheckResult==1
-			Object.Frame=6
-			Object.State=1
-			Object.Value0=0
-			Object.Value3=0
-			Player.YVelocity=0
-			Player.XVelocity=0
-			Player.Speed=0
-			Player.Animation=ANI_BREATHING
-			Player.AirTimer=0
-			PlayStageSfx(6,0)
-		endif
-	endif
-endsub
+	if Object.Frame == 5
+		PlayerObjectCollision(C_TOUCH, -4, -4, 4, 4)
+		if CheckResult == true
+			Object.Frame = 6
+			Object.State = AIRBUBBLE_USED
+			Object.Timer = 0
+			Object.YVelocity = 0
+
+			Player.YVelocity = 0
+			Player.XVelocity = 0
+			Player.Speed = 0
+			Player.Animation = ANI_BREATHING
+			Player.AirTimer = 0
+			PlayStageSfx(SFX_S_BREATHING, false)
+		end if
+	end if
+end sub
 
 
 sub ObjectDraw
 	DrawSprite(Object.Frame)
-endsub
+end sub
 
 
 sub ObjectStartup
 	LoadSpriteSheet("R4/Objects.gif")
-	SpriteFrame(-4,-4,8,8,212,61)
-	SpriteFrame(-4,-4,8,8,212,70)
-	SpriteFrame(-4,-4,8,8,246,18)
-	SpriteFrame(-8,-8,16,16,116,181)
-	SpriteFrame(-8,-8,16,16,116,198)
-	SpriteFrame(-16,-16,32,32,148,194)
-	SpriteFrame(-16,-16,32,32,181,201)
-endsub
+	
+	SpriteFrame(-4, -4, 8, 8, 212, 61)		// #0 - Small Bubble
+	SpriteFrame(-4, -4, 8, 8, 212, 70)		// #1 - Small Bubble 2
+	SpriteFrame(-4, -4, 8, 8, 246, 18)		// #2 - Small Bubble 3
+	SpriteFrame(-8, -8, 16, 16, 116, 181)	// #3 - Medium Bubble
+	SpriteFrame(-8, -8, 16, 16, 116, 198)	// #4 - Medium Bubble 2
+	SpriteFrame(-16, -16, 32, 32, 148, 194)	// #5 - Big Bubble
+	SpriteFrame(-16, -16, 32, 32, 181, 201)	// #6 - Big Bubble 2
+end sub
 
-sub RSDK
-	LoadSpriteSheet("Global/Display.gif")
-	SetEditorIcon(Icon0,SingleIcon,-16,-16,32,32,1,143)
-endsub
+
+// ========================
+// Editor Subs
+// ========================
+
+sub RSDKDraw
+	DrawSprite(0)
+end sub
+
+
+sub RSDKLoad
+	LoadSpriteSheet("R4/Objects.gif")
+	SpriteFrame(-16, -16, 32, 32, 148, 194)	// #5 - Big Bubble
+
+	SetVariableAlias(ALIAS_VAR_PROPVAL, "unused")
+end sub

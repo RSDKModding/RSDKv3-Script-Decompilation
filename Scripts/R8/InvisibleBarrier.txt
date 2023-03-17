@@ -1,29 +1,45 @@
-//------------Sonic CD InvisibleBarrier Script-------------//
+//------------Sonic CD Invisible Barrier Script---------------//
 //--------Scripted by Christian Whitehead 'The Taxman'--------//
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
-//-------Aliases-------//
-#alias 44: TYPE_INVISIBLEBARRIER
-
 
 sub ObjectPlayerInteraction
-	PlayerObjectCollision(C_TOUCH,-16,-14,16,16)
-	if CheckResult==1
-		if Player.XPos<Object.XPos
-			Player.XPos=Player.CollisionLeft
-			Player.XPos<<=16
-			Player.XPos+=Object.XPos
-			Player.XPos-=1048576
+	PlayerObjectCollision(C_TOUCH, -16, -14, 16, 16)
+	if CheckResult == true
+		if Player.XPos < Object.XPos
+			Player.XPos   = Player.CollisionLeft
+			Player.XPos <<= 16
+			Player.XPos  += Object.XPos
+			Player.XPos  -= 0x100000
 		else
-			Player.XPos=Player.CollisionRight
-			Player.XPos<<=16
-			Player.XPos+=Object.XPos
-			Player.XPos+=1048576
-		endif
-	endif
-endsub
+			Player.XPos   = Player.CollisionRight
+			Player.XPos <<= 16
+			Player.XPos  += Object.XPos
+			Player.XPos  += 0x100000
+		end if
+	end if
+end sub
 
-sub RSDK
+
+// ========================
+// Editor Subs
+// ========================
+
+sub RSDKDraw
+	TempValue0  = Object.XPos
+	TempValue0 -= 0x100000
+	TempValue1  = Object.YPos
+	TempValue1 -= 0xE0000
+	DrawRectOutline(TempValue0,TempValue1,0x20,0x1C,255,255,0,255)
+	Object.InkEffect = 2
+	Object.Alpha = 1
+	DrawSpriteFX(0, FX_INK, Object.XPos, Object.YPos)
+end sub
+
+
+sub RSDKLoad
 	LoadSpriteSheet("Global/Display.gif")
-	SetEditorIcon(Icon0,SingleIcon,-16,-16,32,32,1,143)
-endsub
+	SpriteFrame(-16, -14, 32, 28, 1, 143)		// #0 - "Script" Icon
+
+	SetVariableAlias(ALIAS_VAR_PROPVAL, "unused")
+end sub

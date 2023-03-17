@@ -1,70 +1,112 @@
-//------------Sonic CD Water Stream L Script-------------//
+//---------------Sonic CD Water Stream L Script---------------//
 //--------Scripted by Christian Whitehead 'The Taxman'--------//
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
-//-------Aliases-------//
-#alias 75: TYPE_WATERSTREAML
+// Aliases
+#alias Object.Value1		:	Object.HitboxLeft
+#alias Object.Value2		:	Object.HitboxRight
+
+#alias Object.PropertyValue	:	Object.ActiveWaterStream
+
+// Previous Object alias
+#alias Object.PropertyValue	:	PrevObject.Active
+
+// Control Mode
+#alias 0	:	CONTROLMODE_NORMAL
 
 
 sub ObjectPlayerInteraction
-	if Object[-1].PropertyValue==1
-		Object.PropertyValue=1
-		PlayerObjectCollision(C_TOUCH,Object.Value1,-32,Object.Value2,32)
-		if CheckResult==1
-			if Player.State!=PlayerObject_Knockback
-				if Player.State!=PlayerObject_Death
-					if Player.State!=PlayerObject_Drown
-						if Player.State!=PlayerObject_Blank
-							Player.State=PlayerObject_DebugMode
-							Player.Animation=ANI_FANROTATE
-							if Player.Up==0
-								if Player.Down==0
-									if Player.YPos<Object.YPos
-										Player.YPos+=65536
-									endif
-									if Player.YPos>Object.YPos
-										Player.YPos-=65536
-									endif
-								endif
-							endif
-							Player.XVelocity=-262144
-							Player.Speed=-262144
-							if Player.WaterStream==0
-								Player.YVelocity=0
-								Player.WaterStream=1
-							endif
-						endif
-					endif
-				endif
-			endif
+	// Water streams are activated through a chain, originated from a blank object or a fan
+	if PrevObject[-1].Active == true
+		Object.ActiveWaterStream = true
+		PlayerObjectCollision(C_TOUCH, Object.HitboxLeft, -32, Object.HitboxRight, 32)
+		if CheckResult == true
+			if Player.State != Player_State_Hurt
+				if Player.State != Player_State_Death
+					if Player.State != Player_State_Drown
+						if Player.State != Player_State_Static
+							Player.State	 = Player_State_WaterCurrent
+							Player.Animation = ANI_FANROTATE
+
+							if Player.Up == false
+								if Player.Down == false
+									if Player.YPos < Object.YPos
+										Player.YPos += 0x10000
+									end if
+									if Player.YPos > Object.YPos
+										Player.YPos -= 0x10000
+									end if
+								end if
+							end if
+
+							Player.XVelocity = -0x40000
+							Player.Speed     = -0x40000
+
+							if Player.WaterStream == false
+								Player.YVelocity   = 0
+								Player.WaterStream = true
+							end if
+						end if
+					end if
+				end if
+			end if
 		else
-			if Player.State==PlayerObject_DebugMode
-				if Player.WaterStream==0
-					Player.State=PlayerObject_HandleAir
-					Player.ControlMode=0
-					Player.Animation=ANI_WALKING
-				endif
-			endif
-		endif
-	endif
-endsub
+			if Player.State == Player_State_WaterCurrent
+				if Player.WaterStream == false
+
+#platform: Use_Origins
+					Player.State = Player_State_Air_NoDropDash
+#endplatform
+
+#platform: Use_Standalone
+					Player.State = Player_State_Air
+#endplatform
+
+					Player.ControlMode = CONTROLMODE_NORMAL
+					Player.Animation   = ANI_WALKING
+				end if
+			end if
+		end if
+	end if
+end sub
 
 
 sub ObjectStartup
-	ArrayPos0=32
-	while ArrayPos0<1056
-		if Object[ArrayPos0].Type==TypeName[WaterStreamL]
-			Object[ArrayPos0].Value1=Object[ArrayPos0].PropertyValue
-			Object[ArrayPos0].Value1<<=3
-			Object[ArrayPos0].Value2=Object[ArrayPos0].Value1
-			FlipSign(Object[ArrayPos0].Value1)
-			Object[ArrayPos0].PropertyValue=0
-		endif
+	ArrayPos0 = 32
+	while ArrayPos0 < 1056
+		if Object[ArrayPos0].Type == TypeName[Water Stream L]
+			Object[ArrayPos0].HitboxLeft   = Object[ArrayPos0].PropertyValue
+			Object[ArrayPos0].HitboxLeft <<= 3
+			Object[ArrayPos0].HitboxRight  = Object[ArrayPos0].HitboxLeft
+			FlipSign(Object[ArrayPos0].HitboxLeft)
+			Object[ArrayPos0].ActiveWaterStream = false
+		end if
 		ArrayPos0++
 	loop
-endsub
+end sub
 
-sub RSDK
-	LoadSpriteSheet("Global/Display.gif")
-	SetEditorIcon(Icon0,SingleIcon,-16,-16,32,32,1,143)
-endsub
+
+// ========================
+// Editor Subs
+// ========================
+
+sub RSDKDraw
+	if Editor.ShowGizmos == true
+		DrawLine(Object.XPos, Object.YPos, Object[-1].XPos, Object.YPos, 0, 255, 255)
+		DrawLine(Object[-1].XPos, Object.YPos, Object[-1].XPos, Object[-1].YPos, 0, 255, 255)
+	end if
+	Object.InkEffect = 2
+	Object.Alpha = 198
+	DrawSpriteFX(0, FX_INK, Object.XPos, Object.YPos)
+	TempValue0  = Object.XPos
+	TempValue0 -= 0x400000
+	DrawArrow(Object.XPos, Object.YPos, TempValue0, Object.YPos, 255, 255, 0)
+	
+end sub
+
+sub RSDKLoad
+	LoadSpriteSheet("Players/Sonic3.gif")
+	SpriteFrame(-28, -12, 56, 24, 199, 100)		// #0 - Sonic Fan Rotate frame 2
+
+	SetVariableAlias(ALIAS_VAR_PROPVAL, "unused")
+end sub

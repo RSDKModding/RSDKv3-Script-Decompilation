@@ -1,336 +1,655 @@
-//------------Sonic CD Tube SW Script-------------//
+//----------------Sonic CD Tube Switch Script-----------------//
 //--------Scripted by Christian Whitehead 'The Taxman'--------//
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
-//-------Aliases-------//
-#alias 58: TYPE_TUBESW
-#alias Player.Value6:Player.MinRollSpeed
+// Aliases
+#alias Object.Value0	:	Object.OnObject
+#alias Object.Value1	:	Object.LeaveObject
+#alias Object.Value2	:	Object.ColLeftTop
+#alias Object.Value3	:	Object.ColRightBottom
+#alias Object.Value4	:	Object.OnJumpArea
+
+// Player Alias
+#alias Player.Value6	:	Player.MinRollSpeed
+
+// Property Values
+#alias 0	:	TUBESW_ENTER_H
+#alias 1	:	TUBESW_EXIT_H
+#alias 2	:	TUBESW_DROP
+#alias 3	:	TUBESW_ENTER_V_TOP
+#alias 4	:	TUBESW_EXIT_V_TOP
+#alias 5	:	TUBESW_SPIN_WHEEL_L_U	// Diagonal Left Up
+#alias 6	:	TUBESW_SPIN_WHEEL_R_U	// Diagonal Right Up
+#alias 7	:	TUBESW_SPIN_WHEEL_OVERLAP
+#alias 8	:	TUBESW_SPIN_WHEEL_L_D	// Diagonal Left Down
+#alias 9	:	TUBESW_ENTER_V_BOTTOM
+#alias 10	:	TUBESW_EXIT_V_BOTTOM
+#alias 11	:	TUBESW_SPIN_WHEEL
+#alias 12	:	TUBESW_CURVE
+
+// Global SFX
+#alias 7	:	SFX_G_RELEASE
+
+// Gravity
+#alias 0	:	GRAVITY_GROUND
+#alias 1	:	GRAVITY_AIR
+
+// Collision Modes
+#alias 0	:	CMODE_FLOOR
+#alias 1	:	CMODE_LWALL
+#alias 2	:	CMODE_ROOF
+#alias 3	:	CMODE_RWALL
 
 
 sub ObjectPlayerInteraction
-	PlayerObjectCollision(C_TOUCH,Object.Value2,Object.Value2,Object.Value3,Object.Value3)
-	if CheckResult==1
+	PlayerObjectCollision(C_TOUCH, Object.ColLeftTop, Object.ColLeftTop, Object.ColRightBottom, Object.ColRightBottom)
+	if CheckResult == true
 		switch Object.PropertyValue
-		case 0
-			if Player.Speed>-1
-				Player.Direction=FACING_RIGHT
-				Player.Speed=655360
-				Player.State=PlayerObject_Tunnel
-				Player.Animation=ANI_JUMPING
-				Player.MinRollSpeed=655360
+		case TUBESW_ENTER_H
+			if Player.Speed > -1
+				Player.Direction	= FACING_RIGHT
+				Player.Speed		= 0xA0000
+
+				Player.State		= Player_State_TubeRoll
+				Player.Animation	= ANI_JUMPING
+				
+				Player.MinRollSpeed = 0xA0000
 			else
-				Player.State=PlayerObject_HandleRolling
-				Player.Animation=ANI_JUMPING
-			endif
+				Player.State	 = Player_State_Roll
+				Player.Animation = ANI_JUMPING
+			end if
 			break
-		case 1
-			if Player.CollisionMode==0
-				if Player.Speed<1
-					Player.Direction=FACING_LEFT
-					Player.Speed=-655360
-					Player.State=PlayerObject_Tunnel
-					Player.Animation=ANI_JUMPING
-					Player.MinRollSpeed=655360
+
+		case TUBESW_EXIT_H
+			if Player.CollisionMode == CMODE_FLOOR
+				if Player.Speed < 1
+					Player.Direction	= FACING_LEFT
+					Player.Speed		= -0xA0000
+					
+					Player.State		= Player_State_TubeRoll
+					Player.Animation	= ANI_JUMPING
+
+					Player.MinRollSpeed = 0xA0000
 				else
-					Player.State=PlayerObject_HandleRolling
-					Player.Animation=ANI_JUMPING
-				endif
+					Player.State	 = Player_State_Roll
+					Player.Animation = ANI_JUMPING
+				end if
 			else
-				Player.Gravity=1
+				Player.Gravity   = GRAVITY_AIR
 				FlipSign(Player.Speed)
-				Player.XVelocity=Player.Speed
-				Player.State=PlayerObject_HandleAir
-			endif
+				Player.XVelocity = Player.Speed
+
+#platform: Use_Origins
+				Player.State	 = Player_State_Air_NoDropDash
+#endplatform
+#platform: Use_Standalone
+				Player.State	 = Player_State_Air
+#endplatform
+
+			end if
 			break
-		case 2
-			Player.Gravity=1
-			Player.CollisionMode=0
-			Player.XVelocity=0
-			Player.Speed=0
+
+		case TUBESW_DROP
+			Player.Gravity		 = GRAVITY_AIR
+			Player.CollisionMode = CMODE_FLOOR
+			Player.XVelocity	 = 0
+			Player.Speed		 = 0
 			break
-		case 3
-			if Player.YVelocity<1
-				Player.State=PlayerObject_Tunnel
-				Player.MinRollSpeed=786432
-				Player.Speed=-786432
-				Player.Gravity=0
-				Player.Angle=64
-				Player.CollisionMode=3
-				Player.Animation=ANI_JUMPING
-				Screen.AdjustCameraY=0
+
+		case TUBESW_ENTER_V_TOP
+			if Player.YVelocity < 1
+				Player.State		 = Player_State_TubeRoll
+
+				Player.MinRollSpeed  = 0xC0000
+				Player.Speed		 = -0xC0000
+				Player.Gravity		 = GRAVITY_GROUND
+				Player.Angle		 = 64
+
+				Player.CollisionMode = CMODE_RWALL
+				Player.Animation	 = ANI_JUMPING
+				Screen.AdjustCameraY = 0
 			else
-				if Player.State!=PlayerObject_HandleTailsFlight
-					Player.Animation=ANI_JUMPING
-				endif
-			endif
+				if Player.State != Player_State_Fly
+					Player.Animation = ANI_JUMPING
+				end if
+			end if
 			break
-		case 4
-			if Player.State==PlayerObject_Tunnel
-				Player.State=PlayerObject_HandleRolling
-			endif
+
+		case TUBESW_EXIT_V_TOP
+			if Player.State == Player_State_TubeRoll
+				Player.State = Player_State_Roll
+			end if
 			break
-		case 5
-			if Player.State==PlayerObject_StartTTCtrlLock
-				if Player.JumpPress==1
-					Object.Value1=1
+
+		case TUBESW_SPIN_WHEEL_L_U
+			if Player.State == Player_State_TubeAirRoll
+				if Player.JumpPress == true
+					Object.LeaveObject = true
 				else
-					if Player.JumpHold==0
-						Object.Value1=0
-					endif
-				endif
-				if Object.Value1==1
-					PlayerObjectCollision(C_TOUCH,-16,-16,16,16)
-					if CheckResult==1
-						Player.State=PlayerObject_HandleAir
-						Player.Gravity=1
-						Player.XPos=Object.XPos
-						Player.YPos=Object.YPos
-						Player.Speed=-524288
-						Player.XVelocity=-524288
-						Player.YVelocity=-262144
-						Object.Value1=0
-						Object.Value4=1
-					endif
-				endif
+					if Player.JumpHold == false
+						Object.LeaveObject = false
+					end if
+				end if
+
+				if Object.LeaveObject == true
+					PlayerObjectCollision(C_TOUCH, -16, -16, 16, 16)
+					if CheckResult == true
+
+#platform: Use_Origins
+						Player.State	 = Player_State_Air_NoDropDash
+#endplatform
+#platform: Use_Standalone
+						Player.State	 = Player_State_Air
+#endplatform
+
+						Player.Gravity	 = GRAVITY_AIR
+
+						Player.XPos		 = Object.XPos
+						Player.YPos		 = Object.YPos
+
+						Player.Speed	 = -0x80000
+						Player.XVelocity = -0x80000
+						Player.YVelocity = -0x40000
+
+						Object.LeaveObject = false
+						Object.OnJumpArea  = true
+					end if
+				end if
 			else
-				PlayerObjectCollision(C_TOUCH,-16,-16,16,16)
-				if CheckResult==1
-					if Object.Value4==0
-						Player.Gravity=0
-						Player.XPos=Object.XPos
-						Player.YPos=Object.YPos
-						Player.XVelocity=0
-						Player.YVelocity=0
-						Player.Speed=524288
-						Player.State=PlayerObject_StartTTCtrlLock
-						Player.Animation=ANI_JUMPING
-						Player.MinRollSpeed=524288
-						Player.Angle=224
-						Player.CollisionMode=0
-						PlaySfx(7,0)
-						Object.Value4=1
-					endif
+				PlayerObjectCollision(C_TOUCH, -16, -16, 16, 16)
+				if CheckResult == true
+					if Object.OnJumpArea == false
+						Player.Gravity			= GRAVITY_GROUND
+
+						Player.XPos				= Object.XPos
+						Player.YPos				= Object.YPos
+
+						Player.XVelocity		= 0
+						Player.YVelocity		= 0
+						Player.Speed			= 0x80000
+
+						Player.State			= Player_State_TubeAirRoll
+						Player.Animation		= ANI_JUMPING
+
+						Player.MinRollSpeed		= 0x80000
+						Player.Angle			= 224
+						Player.CollisionMode	= CMODE_FLOOR
+
+						PlaySfx(SFX_G_RELEASE, false) 
+						Object.OnJumpArea = true
+					end if
 				else
-					Object.Value4=0
-				endif
-			endif
+					Object.OnJumpArea = false
+				end if
+			end if
 			break
-		case 6
-			if Player.State==PlayerObject_StartTTCtrlLock
-				if Player.JumpPress==1
-					Object.Value1=1
+
+		case TUBESW_SPIN_WHEEL_R_U
+			if Player.State == Player_State_TubeAirRoll
+				if Player.JumpPress == true
+					Object.LeaveObject = true
 				else
-					if Player.JumpHold==0
-						Object.Value1=0
-					endif
-				endif
-				if Object.Value1==1
-					PlayerObjectCollision(C_TOUCH,-16,-16,16,16)
-					if CheckResult==1
-						Player.State=PlayerObject_HandleAir
-						Player.Gravity=1
-						Player.XPos=Object.XPos
-						Player.YPos=Object.YPos
-						Object.Value1=0
-						Player.Speed=524288
-						Player.XVelocity=524288
-						Player.YVelocity=-262144
-						Object.Value4=1
-					endif
-				endif
+					if Player.JumpHold == false
+						Object.LeaveObject = false
+					end if
+				end if
+
+				if Object.LeaveObject == true
+					PlayerObjectCollision(C_TOUCH, -16, -16, 16, 16)
+					if CheckResult == true
+
+#platform: Use_Origins
+						Player.State		= Player_State_Air_NoDropDash
+#endplatform
+#platform: Use_Standalone
+						Player.State		= Player_State_Air
+#endplatform
+
+						Player.Gravity		= GRAVITY_AIR
+						Player.XPos			= Object.XPos
+						Player.YPos			= Object.YPos
+
+						Object.LeaveObject	= false
+
+						Player.Speed	 	=  0x80000
+						Player.XVelocity	=  0x80000
+						Player.YVelocity 	= -0x40000
+
+						Object.OnJumpArea = true
+					end if
+				end if
 			else
-				PlayerObjectCollision(C_TOUCH,-16,-16,16,16)
-				if CheckResult==1
-					if Object.Value4==0
-						Player.Gravity=0
-						Player.XPos=Object.XPos
-						Player.YPos=Object.YPos
-						Player.XVelocity=0
-						Player.YVelocity=0
-						Player.Speed=524288
-						Player.State=PlayerObject_StartTTCtrlLock
-						Player.Animation=ANI_JUMPING
-						Player.MinRollSpeed=524288
-						Player.Angle=36
-						Player.CollisionMode=3
-						PlaySfx(7,0)
-						Object.Value4=1
-					endif
+				PlayerObjectCollision(C_TOUCH, -16, -16, 16, 16)
+				if CheckResult == true
+					if Object.OnJumpArea == false
+						Player.Gravity			= GRAVITY_GROUND
+
+						Player.XPos				= Object.XPos
+						Player.YPos				= Object.YPos
+
+						Player.XVelocity		= 0
+						Player.YVelocity		= 0
+						Player.Speed			= 0x80000
+
+						Player.State			= Player_State_TubeAirRoll
+						Player.Animation		= ANI_JUMPING
+
+						Player.MinRollSpeed 	= 0x80000
+						Player.Angle			= 36
+						Player.CollisionMode	= CMODE_RWALL
+
+						PlaySfx(SFX_G_RELEASE, false) 
+						Object.OnJumpArea = true
+					end if
 				else
-					Object.Value4=0
-				endif
-			endif
+					Object.OnJumpArea = false
+				end if
+			end if
 			break
-		case 7
-			if Object.Value0==0
-				if Player.State==PlayerObject_StartTTCtrlLock
+
+		case TUBESW_SPIN_WHEEL_OVERLAP
+			if Object.OnObject == false
+				if Player.State == Player_State_TubeAirRoll
 					FlipSign(Player.Speed)
-					if Player.CollisionMode==0
-						Player.CollisionMode=2
-						Player.Angle=128
+					if Player.CollisionMode == CMODE_FLOOR
+						Player.CollisionMode = CMODE_ROOF
+						Player.Angle		 = 128
 					else
-						Player.CollisionMode=0
-						Player.Angle=0
-					endif
-				endif
-			endif
+						Player.CollisionMode = CMODE_FLOOR
+						Player.Angle		 = 0
+					end if
+				end if
+			end if
 			break
-		case 8
-			if Player.State==PlayerObject_StartTTCtrlLock
-				if Player.JumpPress==1
-					Object.Value1=1
+
+		case TUBESW_SPIN_WHEEL_L_D
+			if Player.State == Player_State_TubeAirRoll
+				if Player.JumpPress == true
+					Object.LeaveObject = true
 				else
-					if Player.JumpHold==0
-						Object.Value1=0
-					endif
-				endif
-				if Object.Value1==1
-					PlayerObjectCollision(C_TOUCH,-16,-16,16,16)
-					if CheckResult==1
-						Player.State=PlayerObject_HandleAir
-						Player.Gravity=1
-						Player.XPos=Object.XPos
-						Player.YPos=Object.YPos
-						Player.Speed=-524288
-						Player.XVelocity=-524288
-						Player.YVelocity=131072
-						Object.Value1=0
-						Object.Value4=1
-					endif
-				endif
+					if Player.JumpHold == false
+						Object.LeaveObject = false
+					end if
+				end if
+				
+				if Object.LeaveObject == true
+					PlayerObjectCollision(C_TOUCH, -16, -16, 16, 16)
+					if CheckResult == true
+
+#platform: Use_Origins
+						Player.State 	 = Player_State_Air_NoDropDash
+#endplatform
+#platform: Use_Standalone
+						Player.State	 = Player_State_Air
+#endplatform
+
+						Player.Gravity	 = GRAVITY_AIR
+						
+						Player.XPos		 = Object.XPos
+						Player.YPos		 = Object.YPos
+
+						Player.Speed	 = -0x80000
+						Player.XVelocity = -0x80000
+						Player.YVelocity =  0x20000
+
+						Object.LeaveObject = false
+						Object.OnJumpArea  = true
+					end if
+				end if
 			else
-				PlayerObjectCollision(C_TOUCH,-16,-16,16,16)
-				if CheckResult==1
-					if Object.Value4==0
-						Player.Speed=-524288
-						Player.Gravity=0
-						Player.XPos=Object.XPos
-						Player.YPos=Object.YPos
-						Player.XVelocity=0
-						Player.YVelocity=0
-						Player.State=PlayerObject_StartTTCtrlLock
-						Player.Animation=ANI_JUMPING
-						Player.MinRollSpeed=524288
-						Player.Angle=172
-						Player.CollisionMode=1
-						PlaySfx(7,0)
-						Object.Value4=1
-					endif
+				PlayerObjectCollision(C_TOUCH, -16, -16, 16, 16)
+				if CheckResult == true
+					if Object.OnJumpArea == false
+						Player.Speed		 = -0x80000
+						Player.Gravity		 = GRAVITY_GROUND
+
+						Player.XPos			 = Object.XPos
+						Player.YPos			 = Object.YPos
+
+						Player.XVelocity	 = 0
+						Player.YVelocity	 = 0
+						Player.State		 = Player_State_TubeAirRoll
+						Player.Animation	 = ANI_JUMPING
+
+						Player.MinRollSpeed	 = 0x80000
+						Player.Angle		 = 172
+						Player.CollisionMode = CMODE_LWALL
+						
+						PlaySfx(SFX_G_RELEASE, false) 
+						Object.OnJumpArea = true
+					end if
 				else
-					Object.Value4=0
-				endif
-			endif
+					Object.OnJumpArea = false
+				end if
+			end if
 			break
-		case 9
-			if Player.YVelocity<1
-				Player.State=PlayerObject_Tunnel
-				Player.MinRollSpeed=786432
-				Player.Speed=786432
-				Player.Gravity=0
-				Player.Angle=192
-				Player.CollisionMode=1
-				Player.Animation=ANI_JUMPING
-				Screen.AdjustCameraY=0
+
+		case TUBESW_ENTER_V_BOTTOM
+			if Player.YVelocity < 1
+				Player.State		 = Player_State_TubeRoll
+				Player.MinRollSpeed	 = 0xC0000
+				Player.Speed		 = 0xC0000
+
+				Player.Gravity		 = GRAVITY_GROUND
+				Player.Angle		 = 192
+				Player.CollisionMode = CMODE_LWALL
+				Player.Animation	 = ANI_JUMPING
+				
+				Screen.AdjustCameraY = 0
 			else
-				Player.Animation=ANI_JUMPING
-			endif
+				Player.Animation = ANI_JUMPING
+			end if
 			break
-		case 10
-			if Object.Value0==0
-				if Player.State==PlayerObject_HandleRolling
-					Player.State=PlayerObject_HandleAir
-					Player.Gravity=1
-					Player.Speed=0
-					Player.XVelocity=0
-				endif
-				if Player.State==PlayerObject_Tunnel
-					Player.State=PlayerObject_HandleRolling
-				endif
-			endif
+
+		case TUBESW_EXIT_V_BOTTOM
+			if Object.OnObject == false
+				if Player.State == Player_State_Roll
+					
+#platform: Use_Origins
+					Player.State	 = Player_State_Air_NoDropDash
+#endplatform
+#platform: Use_Standalone
+					Player.State	 = Player_State_Air
+#endplatform
+
+					Player.Gravity	 = GRAVITY_AIR
+					Player.Speed	 = 0
+					Player.XVelocity = 0
+				end if
+
+				if Player.State == Player_State_TubeRoll
+					Player.State = Player_State_Roll
+				end if
+			end if
 			break
-		case 11
-			if Player.State!=PlayerObject_StartTTCtrlLock
-				if Object.Value0==0
-					Player.Gravity=0
-					Player.XPos=Object.XPos
-					Player.YPos=Object.YPos
-					Player.XVelocity=0
-					Player.YVelocity=0
-					Player.Speed=524288
-					Player.State=PlayerObject_StartTTCtrlLock
-					Player.Animation=ANI_JUMPING
-					Player.MinRollSpeed=524288
-					Player.Angle=224
-					Player.CollisionMode=0
-					PlaySfx(7,0)
-				endif
-			endif
+
+		case TUBESW_SPIN_WHEEL
+			if Player.State != Player_State_TubeAirRoll
+				if Object.OnObject == false
+					Player.Gravity		 = GRAVITY_GROUND
+
+					Player.XPos			 = Object.XPos
+					Player.YPos			 = Object.YPos
+
+					Player.XVelocity	 = 0
+					Player.YVelocity	 = 0
+					Player.Speed		 = 0x80000
+
+					Player.State		 = Player_State_TubeAirRoll
+					Player.Animation	 = ANI_JUMPING
+					Player.MinRollSpeed  = 0x80000
+					Player.Angle		 = 224
+					Player.CollisionMode = CMODE_FLOOR
+
+					PlaySfx(SFX_G_RELEASE, false) 
+				end if
+			end if
 			break
-		case 12
-			if Player.YVelocity>-1
-				Player.State=PlayerObject_Tunnel
-				Player.MinRollSpeed=786432
-				Player.Speed=-786432
-				Player.Gravity=0
-				Player.Angle=192
-				Player.CollisionMode=1
-				Player.Animation=ANI_JUMPING
-				Screen.AdjustCameraY=0
+
+		case TUBESW_CURVE
+			if Player.YVelocity > -1
+				Player.State		 = Player_State_TubeRoll
+
+				Player.MinRollSpeed	 = 0xC0000
+				Player.Speed		 = -0xC0000
+
+				Player.Gravity		 = GRAVITY_GROUND
+				Player.Angle		 = 192
+				Player.CollisionMode = CMODE_LWALL
+				Player.Animation	 = ANI_JUMPING
+
+				Screen.AdjustCameraY = 0
 			else
-				Player.State=PlayerObject_Tunnel
-				Player.MinRollSpeed=786432
-				Player.Speed=Player.YVelocity
+				Player.State		 = Player_State_TubeRoll
+
+				Player.MinRollSpeed	 = 0xC0000
+				Player.Speed		 = Player.YVelocity
 				FlipSign(Player.Speed)
-				Player.Gravity=0
-				Player.Angle=192
-				Player.CollisionMode=1
-				Player.Animation=ANI_JUMPING
-			endif
+
+				Player.Gravity		 = GRAVITY_GROUND
+				Player.Angle		 = 192
+				Player.CollisionMode = CMODE_LWALL
+				Player.Animation	 = ANI_JUMPING
+			end if
 			break
-		endswitch
-		Object.Value0=1
+		end switch
+
+		Object.OnObject = true
 	else
-		Object.Value0=0
-	endif
-endsub
+		Object.OnObject = false
+	end if
+end sub
 
 
 sub ObjectStartup
-	ArrayPos0=32
-	while ArrayPos0<1056
-		if Object[ArrayPos0].Type==TypeName[TubeSW]
+	ArrayPos0 = 32
+	while ArrayPos0 < 1056
+		if Object[ArrayPos0].Type == TypeName[Tube SW]
 			switch Object[ArrayPos0].PropertyValue
-			case 0
-			case 1
-			case 2
-			case 3
-			case 4
-			case 7
-				Object[ArrayPos0].Value2=-16
-				Object[ArrayPos0].Value3=16
+			case TUBESW_ENTER_H
+			case TUBESW_EXIT_H
+			case TUBESW_DROP
+			case TUBESW_ENTER_V_TOP
+			case TUBESW_EXIT_V_TOP
+			case TUBESW_SPIN_WHEEL_OVERLAP
+				Object[ArrayPos0].ColLeftTop	 = -16
+				Object[ArrayPos0].ColRightBottom =  16
 				break
-			case 5
-			case 6
-			case 8
-				Object[ArrayPos0].Value2=-48
-				Object[ArrayPos0].Value3=48
+
+			case TUBESW_SPIN_WHEEL_L_U
+			case TUBESW_SPIN_WHEEL_R_U
+			case TUBESW_SPIN_WHEEL_L_D
+				Object[ArrayPos0].ColLeftTop	 = -48
+				Object[ArrayPos0].ColRightBottom =  48
 				break
-			case 9
-			case 10
-				Object[ArrayPos0].Value2=-8
-				Object[ArrayPos0].Value3=8
+
+			case TUBESW_ENTER_V_BOTTOM
+			case TUBESW_EXIT_V_BOTTOM
+				Object[ArrayPos0].ColLeftTop	 = -8
+				Object[ArrayPos0].ColRightBottom =  8
 				break
-			case 11
-				Object[ArrayPos0].Value2=-16
-				Object[ArrayPos0].Value3=16
+				
+			case TUBESW_SPIN_WHEEL
+				Object[ArrayPos0].ColLeftTop	 = -16
+				Object[ArrayPos0].ColRightBottom =  16
 				break
-			endswitch
-		endif
+			end switch
+		end if
 		ArrayPos0++
 	loop
-endsub
+end sub
 
-sub RSDK
+
+// ========================
+// Editor Subs
+// ========================
+
+sub RSDKEdit
+	if Editor.ReturnVariable == true
+		switch Editor.VariableID
+		case EDIT_VAR_PROPVAL // Property Value
+			CheckResult  = Object.PropertyValue
+			CheckResult %= 13
+			break
+		case 0 // type
+			CheckResult  = Object.PropertyValue
+			CheckResult %= 13
+			break
+		end switch
+	else
+		switch Editor.VariableID
+		case EDIT_VAR_PROPVAL // Property Value
+			Object.PropertyValue  = Editor.VariableValue
+			Object.PropertyValue %= 13
+			break
+		case 0 // type
+			Object.PropertyValue  = Editor.VariableValue
+			Object.PropertyValue %= 13
+			break
+		end switch
+	end if
+end sub
+
+
+sub RSDKDraw
+	TempValue0  = Object.XPos
+	TempValue0 -= 0x80000
+	TempValue1  = Object.YPos
+	TempValue1 -= 0x80000
+
+	DrawSpriteXY(0, TempValue0, TempValue1)
+
+	TempValue0 += 0x100000
+	DrawSpriteXY(0, TempValue0, TempValue1)
+
+	TempValue1 += 0x100000
+	DrawSpriteXY(0, TempValue0, TempValue1)
+
+	TempValue0 -= 0x100000
+	DrawSpriteXY(0, TempValue0, TempValue1)
+	if Editor.ShowGizmos == true
+		Editor.DrawingOverlay = true
+		switch Object.PropertyValue
+		case TUBESW_ENTER_H
+		case TUBESW_EXIT_H
+		case TUBESW_DROP
+		case TUBESW_ENTER_V_TOP
+		case TUBESW_EXIT_V_TOP
+		case TUBESW_SPIN_WHEEL_OVERLAP
+			TempValue0   = -16
+			TempValue0 <<=  16
+			TempValue1   = -16
+			TempValue1 <<=  16
+			TempValue2   =  32
+			break
+
+		case TUBESW_SPIN_WHEEL_L_U
+		case TUBESW_SPIN_WHEEL_R_U
+		case TUBESW_SPIN_WHEEL_L_D
+			TempValue0   = -48
+			TempValue0 <<=  16
+			TempValue1   = -48
+			TempValue1 <<=  16
+			TempValue2   =  96
+			break
+
+		case TUBESW_ENTER_V_BOTTOM
+		case TUBESW_EXIT_V_BOTTOM
+			TempValue0   = -8
+			TempValue0 <<= 16
+			TempValue1   = -8
+			TempValue1 <<= 16
+			TempValue2   = 16
+			break
+			
+		case TUBESW_SPIN_WHEEL
+			TempValue0   = -16
+			TempValue0 <<=  16
+			TempValue1   = -16
+			TempValue1 <<=  16
+			TempValue2   =  32
+			break
+		end switch
+		TempValue0 += Object.XPos
+		TempValue1 += Object.YPos
+		DrawRectOutline(TempValue0, TempValue1, TempValue2, TempValue2, 255, 255, 0, 255)
+		Editor.DrawingOverlay = false
+	end if
+
+	TempValue0  = Object.XPos
+	TempValue1  = Object.YPos
+	switch Object.PropertyValue
+	case TUBESW_ENTER_H
+		TempValue0 += 0x200000
+		DrawArrow(Object.XPos, Object.YPos, TempValue0, Object.YPos, 255, 255, 0)
+		break
+
+	case TUBESW_EXIT_H
+		TempValue0 += 0x200000
+		DrawArrow(Object.XPos, Object.YPos, TempValue0, Object.YPos, 255, 0, 0)
+		break
+		
+	case TUBESW_DROP
+		TempValue1 += 0x200000
+		DrawArrow(Object.XPos, Object.YPos, Object.XPos, TempValue1, 255, 0, 0)
+		break
+
+	case TUBESW_ENTER_V_TOP
+		TempValue1 -= 0x200000
+		DrawArrow(Object.XPos, Object.YPos, Object.XPos, TempValue1, 255, 255, 0)
+		break
+
+	case TUBESW_EXIT_V_TOP
+		TempValue1 -= 0x200000
+		DrawArrow(Object.XPos, Object.YPos, Object.XPos, TempValue1, 255, 0, 0)
+		break
+
+	case TUBESW_SPIN_WHEEL_L_U
+		TempValue0 -= 0x200000
+		TempValue1 -= 0x200000
+		DrawArrow(Object.XPos, Object.YPos, TempValue0, TempValue1, 255, 255, 0)
+		break
+
+	case TUBESW_SPIN_WHEEL_R_U
+		TempValue0 += 0x200000
+		TempValue1 -= 0x200000
+		DrawArrow(Object.XPos, Object.YPos, TempValue0, TempValue1, 255, 255, 0)
+		break
+
+	case TUBESW_SPIN_WHEEL_OVERLAP
+		TempValue0 -= 0x200000
+		TempValue1 += 0x100000
+		TempValue2  = Object.XPos
+		TempValue2 += 0x200000
+		TempValue3  = Object.YPos
+		TempValue3 -= 0x100000
+
+		DrawArrow(TempValue0, TempValue3, TempValue2, TempValue1, 128, 255, 0)
+		DrawArrow(TempValue0, TempValue1, TempValue2, TempValue3, 255, 128, 0)
+		break
+
+	case TUBESW_SPIN_WHEEL_L_D
+		TempValue0 -= 0x200000
+		TempValue1 += 0x200000
+		DrawArrow(Object.XPos, Object.YPos, TempValue0, TempValue1, 255, 255, 0)
+		break
+
+	case TUBESW_ENTER_V_BOTTOM
+		TempValue1 += 0x200000
+		DrawArrow(Object.XPos, Object.YPos, Object.XPos, TempValue1, 255, 255, 0)
+		break
+
+	case TUBESW_EXIT_V_BOTTOM
+		TempValue1 += 0x200000
+		DrawArrow(Object.XPos, Object.YPos, Object.XPos, TempValue1, 255, 0, 0)
+		break
+	case TUBESW_CURVE
+		TempValue1 += 0x200000
+		DrawArrow(Object.XPos, Object.YPos, Object.XPos, TempValue1, 255, 255, 0)
+		TempValue1 -= 0x400000
+		DrawArrow(Object.XPos, Object.YPos, Object.XPos, TempValue1, 255, 255, 0)
+		break
+	end switch
+end sub
+
+
+sub RSDKLoad
 	LoadSpriteSheet("Global/Display.gif")
-	SetEditorIcon(Icon0,SingleIcon,-16,-16,32,32,1,143)
-endsub
+	SpriteFrame(-8, -8, 16, 16, 173, 67)		// #0 - "T" Icon
+
+	AddEditorVariable("type")
+	SetActiveVariable("type")
+	AddEnumVariable("Horizontal Entry", TUBESW_ENTER_H)
+	AddEnumVariable("Horizontal Exit", TUBESW_EXIT_H)
+	AddEnumVariable("Drop", TUBESW_DROP)
+	AddEnumVariable("Vertical Entry (Top)", TUBESW_ENTER_V_TOP)
+	AddEnumVariable("Vertical Exit (Top)", TUBESW_EXIT_V_TOP)
+	AddEnumVariable("Spin wheel, Diag L-U Exit", TUBESW_SPIN_WHEEL_L_U)
+	AddEnumVariable("Spin wheel, Diag R-U Exit", TUBESW_SPIN_WHEEL_R_U)
+	AddEnumVariable("Spin wheel, Overlap", TUBESW_SPIN_WHEEL_OVERLAP)
+	AddEnumVariable("Spin wheel, Diag L-D Exit", TUBESW_SPIN_WHEEL_L_D)
+	AddEnumVariable("Vertical Entry 2 (Bottom)", TUBESW_ENTER_V_BOTTOM)
+	AddEnumVariable("Vertical Exit 2 (Bottom)", TUBESW_EXIT_V_BOTTOM)
+	AddEnumVariable("Spin wheel, No Exit", TUBESW_SPIN_WHEEL)
+	AddEnumVariable("Curve", TUBESW_CURVE)
+end sub

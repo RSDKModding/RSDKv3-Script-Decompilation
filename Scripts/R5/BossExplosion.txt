@@ -1,43 +1,74 @@
-//------------Sonic CD BossExplosion Script-------------//
+//---------------Sonic CD BossExplosion Script----------------//
 //--------Scripted by Christian Whitehead 'The Taxman'--------//
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
-//-------Aliases-------//
-#alias 65: TYPE_BOSSEXPLOSION
+// Aliases
+#alias Object.Value0	:	Object.Timer
+#alias Object.Value1	:	Object.Loops
+
+// Player Aliases
+#alias 0	:	PLAYER_SONIC
 
 
 sub ObjectDraw
+	
 	DrawSprite(Object.Frame)
-	Object.YPos-=196608
-	Object.Value0++
-	if Object.Value0>3
-		Object.Value0=0
+	
+	// Make the Object rise by 3 pixels
+	Object.YPos -= 0x30000
+	
+	// Animate the Explosion
+	
+	Object.Timer++
+	if Object.Timer > 3
+		Object.Timer = 0
+		
 		Object.Frame++
-		if Object.Frame>4
-			Object.Frame=0
-			Object.Value1++
-			if Object.Value1==2
-				Object.Type=TypeName[BlankObject]
-			endif
-		endif
-	endif
-endsub
+		if Object.Frame > 4
+			Object.Frame = 0
+			
+			Object.Loops++
+			if Object.Loops == 2
+				// Upon reaching the third loop, unload
+				Object.Type = TypeName[Blank Object]
+			end if
+		end if
+	end if
+	
+end sub
 
 
 sub ObjectStartup
-	if Stage.PlayerListPos==0
+	
+	if Stage.PlayerListPos == PLAYER_SONIC
 		LoadSpriteSheet("Global/Items2.gif")
 	else
 		LoadSpriteSheet("Global/Items2_t.gif")
-	endif
-	SpriteFrame(-16,-8,32,16,1,1)
-	SpriteFrame(-16,-16,32,32,1,84)
-	SpriteFrame(-16,-16,32,32,1,117)
-	SpriteFrame(-24,-24,48,48,34,1)
-	SpriteFrame(-24,-24,48,48,34,50)
-endsub
+	end if
+	
+	// Explosion Frames
+	
+	SpriteFrame(-16, -8, 32, 16, 1, 1)
+	SpriteFrame(-16, -16, 32, 32, 1, 84)
+	SpriteFrame(-16, -16, 32, 32, 1, 117)
+	SpriteFrame(-24, -24, 48, 48, 34, 1)
+	SpriteFrame(-24, -24, 48, 48, 34, 50)
+	
+end sub
 
-sub RSDK
-	LoadSpriteSheet("Global/Display.gif")
-	SetEditorIcon(Icon0,SingleIcon,-16,-16,32,32,1,143)
-endsub
+
+// ========================
+// Editor Subs
+// ========================
+
+sub RSDKDraw
+	DrawSprite(0)
+end sub
+
+
+sub RSDKLoad
+	LoadSpriteSheet("Global/Items2.gif")
+	SpriteFrame(-16, -8, 32, 16, 1, 1)
+
+	SetVariableAlias(ALIAS_VAR_PROPVAL, "unused")
+end sub

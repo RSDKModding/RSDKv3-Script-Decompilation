@@ -1,54 +1,87 @@
-//------------Sonic CD BlueShield Script-------------//
+//----------------Sonic CD Blue Shield Script-----------------//
 //--------Scripted by Christian Whitehead 'The Taxman'--------//
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
-//-------Aliases-------//
-#alias 25: TYPE_BLUESHIELD
+// Aliases
+#alias Object.Value0		:	Object.Timer
+
+// Player Aliases
+#alias Object[-2].DrawOrder	:	PlayerObject.DrawOrder
+
+// Player Aliases
+#alias 0	:	PLAYER_SONIC
 
 
 sub ObjectMain
-	Object.DrawOrder=Object[-2].DrawOrder
-	if Player.State==PlayerObject_Death
-		Object.Type=TypeName[BlankObject]
-	endif
-	if Player.State==PlayerObject_Drown
-		Object.Type=TypeName[BlankObject]
-	endif
-endsub
+	// Match the Player's Draw Order
+	Object.DrawOrder = PlayerObject.DrawOrder
+	
+	// If the Player's dead, then unload
+	
+	if Player.State == Player_State_Death
+		Object.Type = TypeName[Blank Object]
+	end if
+	
+	if Player.State == Player_State_Drown
+		Object.Type = TypeName[Blank Object]
+	end if
+	
+end sub
 
 
 sub ObjectDraw
-	Object.Value0++
-	if Object.Value0==2
-		Object.Value0=0
+	Object.Timer++
+	
+	if Object.Timer == 2
+		Object.Timer = 0
 		Object.Frame++
-		if Object.Frame>5
-			Object.Frame=0
-		endif
-	endif
-	if Warp.Timer==0
-		if Player.Visible==1
-			DrawSpriteFX(Object.Frame,FX_INK,Player.XPos,Player.YPos)
-		endif
-	endif
-endsub
+		if Object.Frame > 5
+			Object.Frame = 0
+		end if
+	end if
+	
+	if Warp.Timer == 0
+		if Player.Visible == true
+			DrawSpriteFX(Object.Frame, FX_INK, Player.XPos, Player.YPos)
+		end if
+	end if
+	
+end sub
 
 
 sub ObjectStartup
-	if Stage.PlayerListPos==0
+	
+	// Load the corresponding sheet for the current Player
+	if Stage.PlayerListPos == PLAYER_SONIC
 		LoadSpriteSheet("Global/Items2.gif")
 	else
 		LoadSpriteSheet("Global/Items2_t.gif")
-	endif
-	SpriteFrame(-24,-24,48,48,109,196)
-	SpriteFrame(0,0,0,0,109,196)
-	SpriteFrame(-24,-24,48,48,158,196)
-	SpriteFrame(0,0,0,0,109,196)
-	SpriteFrame(-24,-24,48,48,207,196)
-	SpriteFrame(0,0,0,0,109,196)
-endsub
+	end if
+	
+	// 0-5 - Blue Shield Frames
+	// Every other frame is blank
+	SpriteFrame(-24, -24, 48, 48, 109, 196)
+	SpriteFrame(0, 0, 0, 0, 109, 196)
+	SpriteFrame(-24, -24, 48, 48, 158, 196)
+	SpriteFrame(0, 0, 0, 0, 109, 196)
+	SpriteFrame(-24, -24, 48, 48, 207, 196)
+	SpriteFrame(0, 0, 0, 0, 109, 196)
+	
+end sub
 
-sub RSDK
-	LoadSpriteSheet("Global/Display.gif")
-	SetEditorIcon(Icon0,SingleIcon,-16,-16,32,32,1,143)
-endsub
+
+// ========================
+// Editor Subs
+// ========================
+
+sub RSDKDraw
+	DrawSprite(0)
+end sub
+
+
+sub RSDKLoad
+	LoadSpriteSheet("Global/Items2.gif")
+	SpriteFrame(-24, -24, 48, 48, 109, 196) // Blue Shield, first frame
+
+	SetVariableAlias(ALIAS_VAR_PROPVAL, "unused")
+end sub

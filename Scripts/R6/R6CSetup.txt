@@ -1,274 +1,332 @@
-//------------Sonic CD R6 Setup Script-------------//
+//-----------------Sonic CD R6 C Setup Script-----------------//
 //--------Scripted by Christian Whitehead 'The Taxman'--------//
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
-//-------Aliases-------//
-#alias 36: TYPE_R6SETUP
-#alias Player.Value4:Player.Invincible
+// Aliases
+#alias Object.Value0	:	Object.Timer
+#alias Object.Value1	:	Object.PaletteBank
+#alias Object.Value4	:	Object.LightTile
+#alias Object.Value5	:	Object.ElectricTile
+#alias Object.Value6	:	Object.BounceFloorAnim
+#alias Object.Value7	:	Object.BounceFloorTile
+#alias Object.Scale		:	Object.BounceFloorFlag
+#alias Object.Direction	:	Object.WebDirection
+
+// Player Aliases
+#alias Player.Value4	:	Player.InvincibleTimer
+
+// States
+#alias 2	:	R6C_SETUP_WEB_SHOCK
+
+// Web Directions
+#alias 0	:	VERTICAL_WEB
+#alias 1	:	HORIZONTAL_WEB
+#alias 2	:	DIAGONAL_WEB
+
+// Gravity
+#alias 1	:	GRAVITY_AIR
+
+// Stage SFX
+#alias 0	:	SFX_S_BOUNCEFLOOR
+#alias 2	:	SFX_S_CATCH
+
+// Priority
+#alias 1	:	PRIORITY_ACTIVE
+
+// Tile Info
+#alias 8	:	TILEINFO_ANGLEB
 
 
 sub ObjectMain
-	TempValue0=Object.Value4
-	TempValue0&=1
-	if TempValue0==0
-		TempValue0=Object.Value4
-		TempValue0>>=1
-		TempValue0+=808
-		Copy16x16Tile(579,TempValue0)
-	endif
-	Object.Value4++
-	Object.Value4%=24
-	Object.Value0++
-	Object.Value0%=120
-	if Object.Value0<31
-		TempValue0=Object.Value5
-		TempValue0%=5
-		if TempValue0==0
-			TempValue0=Object.Value5
-			TempValue0/=5
-			TempValue0+=820
-			Copy16x16Tile(580,TempValue0)
-			TempValue0+=3
-			Copy16x16Tile(581,TempValue0)
-		endif
-		Object.Value5++
-		Object.Value5%=15
+	TempValue0 = Object.LightTile
+	TempValue0 &= 1
+	if TempValue0 == 0
+		TempValue0 = Object.LightTile
+		TempValue0 >>= 1
+		TempValue0 += 808
+		Copy16x16Tile(579, TempValue0)
+	end if
+	Object.LightTile++
+	Object.LightTile %= 24
+
+	Object.Timer++
+	Object.Timer %= 120
+	if Object.Timer < 31
+		TempValue0 = Object.ElectricTile
+		TempValue0 %= 5
+		if TempValue0 == 0
+			TempValue0 = Object.ElectricTile
+			TempValue0 /= 5
+			TempValue0 += 820
+			Copy16x16Tile(580, TempValue0)
+			TempValue0 += 3
+			Copy16x16Tile(581, TempValue0)
+		end if
+		Object.ElectricTile++
+		Object.ElectricTile %= 15
 	else
-		Copy16x16Tile(580,832)
-		Copy16x16Tile(581,832)
-	endif
-	TempValue0=Object.Value6
-	TempValue0&=1
-	if TempValue0==0
-		TempValue0=Object.Value7
-		TempValue0+=826
-		Object.Value7++
-		Object.Value7%=6
-		Copy16x16Tile(543,TempValue0)
-	endif
-	Object.Value6++
-	Object.Value6&=511
-	Object.Scale=1
-	TempValue0=Object.Value1
-	TempValue0>>=1
-	SetActivePalette(TempValue0,0,Screen.YSize)
-	Object.Value1++
-	Object.Value1%=6
-endsub
+		Copy16x16Tile(580, 832)
+		Copy16x16Tile(581, 832)
+	end if
+
+	TempValue0 = Object.BounceFloorAnim
+	TempValue0 &= 1
+	if TempValue0 == 0
+		TempValue0 = Object.BounceFloorTile
+		TempValue0 += 826
+		Object.BounceFloorTile++
+		Object.BounceFloorTile %= 6
+		Copy16x16Tile(543, TempValue0)
+	end if
+	Object.BounceFloorAnim++
+	Object.BounceFloorAnim &= 511
+
+	Object.BounceFloorFlag = true
+
+	TempValue0 = Object.PaletteBank
+	TempValue0 >>= 1
+	SetActivePalette(TempValue0, 0, Screen.YSize)
+	Object.PaletteBank++
+	Object.PaletteBank %= 6
+end sub
 
 
 sub ObjectPlayerInteraction
-	TempValue2=Player.XPos
-	TempValue2>>=16
-	TempValue2+=Player.CollisionRight
-	TempValue3=Player.YPos
-	TempValue3>>=16
-	TempValue3+=Player.CollisionBottom
-	TempValue3+=2
-	Get16x16TileInfo(TempValue0,TempValue2,TempValue3,8)
-	TempValue2=Player.XPos
-	TempValue2>>=16
-	TempValue2+=Player.CollisionLeft
-	Get16x16TileInfo(TempValue1,TempValue2,TempValue3,8)
-	TempValue0|=TempValue1
-	if TempValue0==1
-		if Object.Scale==1
-			if Player.YVelocity>-1
-				Player.Animation=ANI_JUMPING
-				Player.Gravity=1
-				Player.Timer=0
-				Player.YVelocity=-1441792
-				Player.State=PlayerObject_HandleAir
-				PlayStageSfx(0,0)
+	TempValue2 = Player.XPos
+	TempValue2 >>= 16
+	TempValue2 += Player.CollisionRight
+	TempValue3 = Player.YPos
+	TempValue3 >>= 16
+	TempValue3 += Player.CollisionBottom
+	TempValue3 += 2
+	Get16x16TileInfo(TempValue0, TempValue2, TempValue3, TILEINFO_ANGLEB)
+
+	TempValue2 = Player.XPos
+	TempValue2 >>= 16
+	TempValue2 += Player.CollisionLeft
+	Get16x16TileInfo(TempValue1, TempValue2, TempValue3, TILEINFO_ANGLEB)
+
+	TempValue0 |= TempValue1
+	if TempValue0 == 1
+		if Object.BounceFloorFlag == true
+			if Player.YVelocity > -1
+				Player.Animation = ANI_JUMPING
+				Player.Gravity = GRAVITY_AIR
+				Player.Timer = 0
+				Player.YVelocity = -0x160000
+
+#platform: Use_Origins
+				Player.State = Player_State_Air_NoDropDash
+#endplatform
+
+#platform: Use_Standalone
+				Player.State = Player_State_Air
+#endplatform
+				PlayStageSfx(SFX_S_BOUNCEFLOOR, false)
+				
 #platform: Use_Haptics
-				HapticEffect(60,0,0,0)
+				HapticEffect(60, 0, 0, 0)
 #endplatform
-			endif
-		endif
-	endif
-	TempValue2-=Player.CollisionLeft
-	TempValue3-=Player.CollisionBottom
-	TempValue3-=2
-	Get16x16TileInfo(TempValue0,TempValue2,TempValue3,8)
+
+			end if
+		end if
+	end if
+
+	TempValue2 -= Player.CollisionLeft
+	TempValue3 -= Player.CollisionBottom
+	TempValue3 -= 2
+	// You will see constant checks for R6C_SETUP_WEB_SHOCK state
+	// while there are web shocks on the stage, in the good future those are permanently turned off
+	Get16x16TileInfo(TempValue0, TempValue2, TempValue3, TILEINFO_ANGLEB)
 	switch TempValue0
 	case 2
-		if Object.Value0<31
-			if Player.Invincible==0
-				Player.State=PlayerObject_Hurt
-				if Player.Direction==FACING_LEFT
-					Player.Speed=131072
+		if Object.Timer < 31
+			if Player.InvincibleTimer == 0
+				Player.State = Player_State_GotHit
+				if Player.Direction == FACING_LEFT
+					Player.Speed = 0x20000
 				else
-					Player.Speed=-131072
-				endif
-			endif
-		endif
+					Player.Speed = -0x20000
+				end if
+			end if
+		end if
 		break
 	case 5
-		if Object.State==2
-			if Player.Invincible==0
-				Player.State=PlayerObject_Hurt
-				if Player.Direction==FACING_LEFT
-					Player.Speed=131072
+		if Object.State == R6C_SETUP_WEB_SHOCK
+			if Player.InvincibleTimer == 0
+				Player.State = Player_State_GotHit
+				if Player.Direction == FACING_LEFT
+					Player.Speed = 0x20000
 				else
-					Player.Speed=-131072
-				endif
-			endif
-		endif
+					Player.Speed = -0x20000
+				end if
+			end if
+		end if
 		break
 	case 6
-		if Object.State==2
-			if Object.Direction==FACING_RIGHT
-				if Player.Invincible==0
-					Player.State=PlayerObject_Hurt
-					if Player.Direction==FACING_LEFT
-						Player.Speed=131072
+		if Object.State == R6C_SETUP_WEB_SHOCK
+			if Object.WebDirection == VERTICAL_WEB
+				if Player.InvincibleTimer == 0
+					Player.State = Player_State_GotHit
+					if Player.Direction == FACING_LEFT
+						Player.Speed = 0x20000
 					else
-						Player.Speed=-131072
-					endif
-				endif
-			endif
-		endif
+						Player.Speed = -0x20000
+					end if
+				end if
+			end if
+		end if
 		break
 	case 7
-		if Object.State==2
-			if Object.Direction==FACING_LEFT
-				if Player.Invincible==0
-					Player.State=PlayerObject_Hurt
-					if Player.Direction==FACING_LEFT
-						Player.Speed=131072
+		if Object.State == R6C_SETUP_WEB_SHOCK
+			if Object.WebDirection == HORIZONTAL_WEB
+				if Player.InvincibleTimer == 0
+					Player.State = Player_State_GotHit
+					if Player.Direction == FACING_LEFT
+						Player.Speed = 0x20000
 					else
-						Player.Speed=-131072
-					endif
-				endif
-			endif
-		endif
+						Player.Speed = -0x20000
+					end if
+				end if
+			end if
+		end if
 		break
 	case 8
-		if Object.State==2
-			if Object.Direction==2
-				if Player.Invincible==0
-					Player.State=PlayerObject_Hurt
-					if Player.Direction==FACING_LEFT
-						Player.Speed=131072
+		if Object.State == R6C_SETUP_WEB_SHOCK
+			if Object.WebDirection == DIAGONAL_WEB
+				if Player.InvincibleTimer == 0
+					Player.State = Player_State_GotHit
+					if Player.Direction == FACING_LEFT
+						Player.Speed = 0x20000
 					else
-						Player.Speed=-131072
-					endif
-				endif
-			endif
-		endif
+						Player.Speed = -0x20000
+					end if
+				end if
+			end if
+		end if
 		break
-	endswitch
-	TempValue3-=4
-	Get16x16TileInfo(TempValue0,TempValue2,TempValue3,8)
+	end switch
+	TempValue3 -= 4
+	Get16x16TileInfo(TempValue0, TempValue2, TempValue3, TILEINFO_ANGLEB)
 	switch TempValue0
 	case 2
-#platform: Mobile
-		if Object.Value0<31		
-#endplatform 
-			if Player.Invincible==0
-				Player.State=PlayerObject_Hurt
-				if Player.Direction==FACING_LEFT
-					Player.Speed=131072
+		if Object.Timer < 31
+			if Player.InvincibleTimer == 0
+				Player.State = Player_State_GotHit
+				if Player.Direction == FACING_LEFT
+					Player.Speed = 0x20000
 				else
-					Player.Speed=-131072
-				endif
-			endif
-#platform: Mobile
-		endif
-#endplatform
+					Player.Speed = -0x20000
+				end if
+			end if
+		end if
 		break
 	case 5
-		if Object.State==2
-			if Player.Invincible==0
-				Player.State=PlayerObject_Hurt
-				if Player.Direction==FACING_LEFT
-					Player.Speed=131072
+		if Object.State == R6C_SETUP_WEB_SHOCK
+			if Player.InvincibleTimer == 0
+				Player.State = Player_State_GotHit
+				if Player.Direction == FACING_LEFT
+					Player.Speed = 0x20000
 				else
-					Player.Speed=-131072
-				endif
-			endif
-		endif
+					Player.Speed = -0x20000
+				end if
+			end if
+		end if
 		break
 	case 6
-		if Object.State==2
-			if Object.Direction==FACING_RIGHT
-				if Player.Invincible==0
-					Player.State=PlayerObject_Hurt
-					if Player.Direction==FACING_LEFT
-						Player.Speed=131072
+		if Object.State == R6C_SETUP_WEB_SHOCK
+			if Object.WebDirection == VERTICAL_WEB
+				if Player.InvincibleTimer == 0
+					Player.State = Player_State_GotHit
+					if Player.Direction == FACING_LEFT
+						Player.Speed = 0x20000
 					else
-						Player.Speed=-131072
-					endif
-				endif
-			endif
-		endif
+						Player.Speed = -0x20000
+					end if
+				end if
+			end if
+		end if
 		break
 	case 7
-		if Object.State==2
-			if Object.Direction==FACING_LEFT
-				if Player.Invincible==0
-					Player.State=PlayerObject_Hurt
-					if Player.Direction==FACING_LEFT
-						Player.Speed=131072
+		if Object.State == R6C_SETUP_WEB_SHOCK
+			if Object.WebDirection == HORIZONTAL_WEB
+				if Player.InvincibleTimer == 0
+					Player.State = Player_State_GotHit
+					if Player.Direction == FACING_LEFT
+						Player.Speed = 0x20000
 					else
-						Player.Speed=-131072
-					endif
-				endif
-			endif
-		endif
+						Player.Speed = -0x20000
+					end if
+				end if
+			end if
+		end if
 		break
 	case 8
-		if Object.State==2
-			if Object.Direction==2
-				if Player.Invincible==0
-					Player.State=PlayerObject_Hurt
-					if Player.Direction==FACING_LEFT
-						Player.Speed=131072
+		if Object.State == R6C_SETUP_WEB_SHOCK
+			if Object.WebDirection == DIAGONAL_WEB
+				if Player.InvincibleTimer == 0
+					Player.State = Player_State_GotHit
+					if Player.Direction == FACING_LEFT
+						Player.Speed = 0x20000
 					else
-						Player.Speed=-131072
-					endif
-				endif
-			endif
-		endif
+						Player.Speed = -0x20000
+					end if
+				end if
+			end if
+		end if
 		break
-	endswitch
-	TempValue3+=4
-	TempValue3+=Player.CollisionTop
-	Get16x16TileInfo(TempValue0,TempValue2,TempValue3,8)
-	if TempValue0==3
-		TempValue4=TempValue3
-		TempValue4&=15
-		if TempValue4<8
-			if Player.State!=PlayerObject_CheckTile
-				Player.State=PlayerObject_CheckTile
-				Player.YVelocity=0
-				Player.Animation=ANI_HANGING
-				TempValue3&=32752
-				TempValue3+=4
-				TempValue3-=Player.CollisionTop
-				Player.iYPos=TempValue3
-				PlayStageSfx(2,0)
-				Screen.AdjustCameraY=0
-			endif
-		endif
-	endif
-endsub
+	end switch
+
+	TempValue3 += 4
+	TempValue3 += Player.CollisionTop
+	Get16x16TileInfo(TempValue0, TempValue2, TempValue3, TILEINFO_ANGLEB)
+	if TempValue0 == 3
+		TempValue4 = TempValue3
+		TempValue4 &= 15
+		if TempValue4 < 8
+			if Player.State != Player_State_HangBar
+				Player.State = Player_State_HangBar
+				Player.YVelocity = 0
+				Player.Animation = ANI_HANGING
+				TempValue3 &= 0x7FF0
+				TempValue3 += 4
+				TempValue3 -= Player.CollisionTop
+				Player.iYPos = TempValue3
+				PlayStageSfx(SFX_S_CATCH, false)
+				Screen.AdjustCameraY = 0
+			end if
+		end if
+	end if
+end sub
 
 
 sub ObjectStartup
-	Object[19].Type=TypeName[R6Setup]
-	Object[19].Priority=1
-	Object[19].DrawOrder=2
-	TempValue0=1
-	while TempValue0<3
-		RotatePalette(161,163,0)
-		CopyPalette(0,TempValue0)
+	Object[19].Type = TypeName[R6 Setup]
+	Object[19].Priority  = PRIORITY_ACTIVE
+	Object[19].DrawOrder = 2
+	
+	TempValue0 = 1
+	while TempValue0 < 3
+		RotatePalette(161, 163, 0)
+		CopyPalette(0, TempValue0)
 		TempValue0++
 	loop
-	RotatePalette(161,163,0)
-endsub
+	RotatePalette(161, 163, 0)
+end sub
 
-sub RSDK
+
+// ========================
+// Editor Subs
+// ========================
+
+sub RSDKDraw
+	DrawSprite(0)
+end sub
+
+
+sub RSDKLoad
 	LoadSpriteSheet("Global/Display.gif")
-	SetEditorIcon(Icon0,SingleIcon,-16,-16,32,32,1,143)
-endsub
+	SpriteFrame(-16, -16, 32, 32, 1, 143)		// #0 - "Script" Icon
+
+	SetVariableAlias(ALIAS_VAR_PROPVAL, "unused")
+end sub

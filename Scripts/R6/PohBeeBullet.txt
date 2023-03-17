@@ -1,75 +1,99 @@
-//------------Sonic CD PohBeeBullet Script-------------//
+//---------------Sonic CD PohBee Bullet Script----------------//
 //--------Scripted by Christian Whitehead 'The Taxman'--------//
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
-//-------Aliases-------//
-#alias 50: TYPE_POHBEEBULLET
+// Aliases
+#alias Object.Value0	:	Object.Timer
+#alias Object.Value1	:	Object.XVelocity
+#alias Object.Value2	:	Object.YVelocity
+
+// States
+#alias 0	:	POHBEEBULLET_BURST
+#alias 1	:	POHBEEBULLET_FIRE
+#alias 2	:	POHBEEBULLET_PROJECTILE
 
 
 sub ObjectMain
 	switch Object.State
-	case 0
-		if Object.Value0<4
-			Object.Value0++
+	case POHBEEBULLET_BURST
+		if Object.Timer < 4
+			Object.Timer++
 		else
-			Object.Value0=0
+			Object.Timer = 0
 			Object.State++
-			Object.Frame=1
-		endif
+			Object.Frame = 1
+		end if
 		break
-	case 1
-		Object.XPos+=Object.Value1
-		Object.YPos+=Object.Value2
-		if Object.Value0<12
-			Object.Value0++
+
+	case POHBEEBULLET_FIRE
+		Object.XPos += Object.XVelocity
+		Object.YPos += Object.YVelocity
+		if Object.Timer < 12
+			Object.Timer++
 		else
-			Object.Value0=0
+			Object.Timer = 0
 			Object.State++
-			Object.Frame=2
-		endif
+			Object.Frame = 2
+		end if
 		break
-	case 2
-		Object.XPos+=Object.Value1
-		Object.YPos+=Object.Value2
-		if Object.Value0>1
-			Object.Frame=3
+
+	case POHBEEBULLET_PROJECTILE
+		Object.XPos += Object.XVelocity
+		Object.YPos += Object.YVelocity
+		if Object.Timer > 1
+			Object.Frame = 3
 		else
-			Object.Frame=2
-		endif
-		Object.Value0++
-		Object.Value0&=3
+			Object.Frame = 2
+		end if
+		Object.Timer++
+		Object.Timer &= 3
 		break
-	endswitch
-	if Object.OutOfBounds==1
-		Object.Type=TypeName[BlankObject]
-	endif
-endsub
+	end switch
+
+	if Object.OutOfBounds == true
+		Object.Type = TypeName[Blank Object]
+	end if
+end sub
 
 
 sub ObjectPlayerInteraction
-	if Object.State>0
-		PlayerObjectCollision(C_TOUCH,-6,-6,6,6)
-		if CheckResult==1
-			CallFunction(PlayerObject_Hit)
-		endif
-	endif
-endsub
+	if Object.State > POHBEEBULLET_BURST
+		PlayerObjectCollision(C_TOUCH, -6, -6, 6, 6)
+		if CheckResult == true
+			CallFunction(Player_Hit)
+		end if
+	end if
+end sub
 
 
 sub ObjectDraw
-	DrawSpriteFX(Object.Frame,FX_FLIP,Object.XPos,Object.YPos)
-endsub
+	DrawSpriteFX(Object.Frame, FX_FLIP, Object.XPos, Object.YPos)
+end sub
 
 
 sub ObjectStartup
 	LoadSpriteSheet("R6/Objects.gif")
-	SpriteFrame(-8,-8,16,16,197,68)
-	SpriteFrame(-8,-8,16,16,69,117)
-	SpriteFrame(-8,-8,16,16,1,134)
-	SpriteFrame(-8,-8,16,16,17,134)
-endsub
 
-sub RSDK
-	LoadSpriteSheet("Global/Display.gif")
-	SetEditorIcon(Icon0,SingleIcon,-16,-16,32,32,1,143)
-endsub
+	SpriteFrame(-8, -8, 16, 16, 197, 68)	// #0 - Firing Animation frame 0
+	SpriteFrame(-8, -8, 16, 16, 69, 117)	// #1 - Firing Animation frame 1
+
+	SpriteFrame(-8, -8, 16, 16, 1, 134)		// #2 - Bullet Animation frame 0
+	SpriteFrame(-8, -8, 16, 16, 17, 134)	// #3 - Bullet Animation frame 1
+end sub
+
+
+// ========================
+// Editor Subs
+// ========================
+
+sub RSDKDraw
+	DrawSprite(0)
+end sub
+
+
+sub RSDKLoad
+	LoadSpriteSheet("R6/Objects.gif")
+	SpriteFrame(-8, -8, 16, 16, 1, 134)		// #0 - Bullet Animation
+
+	SetVariableAlias(ALIAS_VAR_PROPVAL, "unused")
+end sub

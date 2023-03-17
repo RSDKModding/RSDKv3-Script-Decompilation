@@ -1,97 +1,195 @@
-//------------Sonic CD Solid Barrier Script-------------//
+//----------------Sonic CD Solid Barrier Script---------------//
 //--------Scripted by Christian Whitehead 'The Taxman'--------//
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
-//-------Aliases-------//
-#alias 53: TYPE_SOLIDBARRIER
+// Aliases
+#alias Object.Value0			:	Object.Timer
+
+// HUD Alias
+#alias Object[24].PropertyValue	:	HUD.CurrentTimePeriod
+
+// Property Values
+#alias 0	:	INACTIVE
+#alias 1	:	CLOSE_CHECK
+#alias 2	:	CLOSE_AUTO
+#alias 3	:	OPEN_EGGMAN
+
+// Time Periods
+#alias 0	:	TIME_PRESENT
+#alias 1	:	TIME_PAST
+#alias 2	:	TIME_GOOD_FUTURE
+#alias 3	:	TIME_BAD_FUTURE
 
 
 sub ObjectMain
 	switch Object.PropertyValue
-	case 1
-		PlayerObjectCollision(C_TOUCH,112,-64,256,256)
-		if CheckResult==1
-			Object.PropertyValue=2
-		endif
+	case CLOSE_CHECK
+		PlayerObjectCollision(C_TOUCH, 112, -64, 256, 256)
+		if CheckResult == true
+			Object.PropertyValue = CLOSE_AUTO
+		end if
 		break
-	case 2
-		if Object.Value0<64
-			Object.Value0+=4
-			Object.YPos+=262144
+
+	case CLOSE_AUTO
+		if Object.Timer < 64
+			Object.Timer += 4
+			Object.YPos  += 0x40000
 		else
-			Object.PropertyValue=0
-		endif
+			Object.PropertyValue = INACTIVE
+		end if
 		break
-	case 3
-		if Object.Value0<128
-			Object.Value0+=4
-			Object.YPos+=262144
+
+	case OPEN_EGGMAN
+		if Object.Timer < 128
+			Object.Timer += 4
+			Object.YPos  += 0x40000
 		else
-			Object.PropertyValue=0
-		endif
+			Object.PropertyValue = INACTIVE
+		end if
 		break
-	endswitch
-endsub
+
+	end switch
+end sub
 
 
 sub ObjectPlayerInteraction
-#platform: Mobile
-if Object.PropertyValue>1
-		PlayerObjectCollision(C_BOX,-64,-64,64,128)
+	if Object.PropertyValue > 1
+		PlayerObjectCollision(C_BOX, -64, -64, 64, 128)
 	else
-#endplatform
-		PlayerObjectCollision(C_BOX,-64,-64,64,64)
-#platform: Mobile
-	endif 
-#endplatform
-endsub
+		PlayerObjectCollision(C_BOX, -64, -64, 64, 64)
+	end if 
+end sub
 
 
 sub ObjectDraw
-	TempValue0=0
-	while TempValue0<16
+	TempValue0 = 0
+	while TempValue0 < 16
 		DrawSprite(TempValue0)
 		TempValue0++
 	loop
-endsub
+end sub
 
 
 sub ObjectStartup
-	switch Object[24].PropertyValue
-	case 0
+	switch HUD.CurrentTimePeriod
+	case TIME_PRESENT
 		LoadSpriteSheet("R4/Objects.gif")
-		TempValue2=163
-		TempValue3=1
+		TempValue2 = 163
+		TempValue3 = 1
 		break
-	case 1
-		LoadSpriteSheet("R4/Objects2.gif")
-		TempValue2=1
-		TempValue3=157
-		break
-	case 2
-		LoadSpriteSheet("R4/Objects2.gif")
-		TempValue2=1
-		TempValue3=190
-		break
-	case 3
-		LoadSpriteSheet("R4/Objects2.gif")
-		TempValue2=1
-		TempValue3=223
-		break
-	endswitch
-	TempValue0=-64
-	TempValue1=-64
-	while TempValue1<64
-		while TempValue0<64
-			SpriteFrame(TempValue0,TempValue1,32,32,TempValue2,TempValue3)
-			TempValue0+=32
-		loop
-		TempValue0=-64
-		TempValue1+=32
-	loop
-endsub
 
-sub RSDK
-	LoadSpriteSheet("Global/Display.gif")
-	SetEditorIcon(Icon0,SingleIcon,-16,-16,32,32,1,143)
-endsub
+	case TIME_PAST
+		LoadSpriteSheet("R4/Objects2.gif")
+		TempValue2 = 1
+		TempValue3 = 157
+		break
+
+	case TIME_GOOD_FUTURE
+		LoadSpriteSheet("R4/Objects2.gif")
+		TempValue2 = 1
+		TempValue3 = 190
+		break
+
+	case TIME_BAD_FUTURE
+		LoadSpriteSheet("R4/Objects2.gif")
+		TempValue2 = 1
+		TempValue3 = 223
+		break
+
+	end switch
+
+	TempValue0 = -64
+	TempValue1 = -64
+	while TempValue1 < 64
+		while TempValue0 < 64
+			SpriteFrame(TempValue0, TempValue1, 32, 32, TempValue2, TempValue3)
+			TempValue0 += 32
+		loop
+		TempValue0  = -64
+		TempValue1 += 32
+	loop
+end sub
+
+
+// ========================
+// Editor Subs
+// ========================
+
+sub RSDKEdit
+	if Editor.ReturnVariable == true
+		switch Editor.VariableID
+		case EDIT_VAR_PROPVAL // Property Value
+			CheckResult = Object.PropertyValue
+			break
+		case 0 // blocks
+			CheckResult = Object.PropertyValue
+			break
+		end switch
+	else
+		switch Editor.VariableID
+		case EDIT_VAR_PROPVAL // Property Value
+			Object.PropertyValue = Editor.VariableValue
+			break
+		case 0 // blocks
+			Object.PropertyValue = Editor.VariableValue
+			break
+		end switch
+	end if
+end sub
+
+
+sub RSDKDraw
+	TempValue0 = 0
+	while TempValue0 < 16
+		DrawSprite(TempValue0)
+		TempValue0++
+	loop
+end sub
+
+
+sub RSDKLoad
+	CallFunction(EditorHelpers_FindTimePeriod)
+	switch CheckResult
+	case TIME_PRESENT
+		LoadSpriteSheet("R4/Objects.gif")
+		TempValue2 = 163
+		TempValue3 = 1
+		break
+
+	case TIME_PAST
+		LoadSpriteSheet("R4/Objects2.gif")
+		TempValue2 = 1
+		TempValue3 = 157
+		break
+
+	case TIME_GOOD_FUTURE
+		LoadSpriteSheet("R4/Objects2.gif")
+		TempValue2 = 1
+		TempValue3 = 190
+		break
+
+	case TIME_BAD_FUTURE
+		LoadSpriteSheet("R4/Objects2.gif")
+		TempValue2 = 1
+		TempValue3 = 223
+		break
+
+	end switch
+
+	TempValue0 = -64
+	TempValue1 = -64
+	while TempValue1 < 64
+		while TempValue0 < 64
+			SpriteFrame(TempValue0, TempValue1, 32, 32, TempValue2, TempValue3)
+			TempValue0 += 32
+		loop
+		TempValue0  = -64
+		TempValue1 += 32
+	loop
+	AddEditorVariable("behaviour")
+	SetActiveVariable("behaviour")
+	AddEnumVariable("Inactive", INACTIVE)
+	AddEnumVariable("Check player to close", CLOSE_CHECK)
+	AddEnumVariable("Close automatically", CLOSE_AUTO)
+	AddEnumVariable("Open by Eggman", OPEN_EGGMAN)
+end sub

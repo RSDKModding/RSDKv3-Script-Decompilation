@@ -1,229 +1,351 @@
-//------------Sonic CD TagaTaga Script-------------//
+//-----------------Sonic CD TagaTaga Script-------------------//
 //--------Scripted by Christian Whitehead 'The Taxman'--------//
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
-//-------Aliases-------//
-#alias 40: TYPE_TAGATAGA
+// Aliases
+#alias Object.Value0		:	Object.Timer
+#alias Object.Value1		:	Object.YVelocity
+#alias Object.Value2		:	Object.YOriginPos
+
+#alias Object.PropertyValue	:	Object.Quality
+
+// States
+#alias 0	:	TAGATAGA_SET_LAUNCH_SPEED
+#alias 1	:	TAGATAGA_EMERGE
+#alias 2	:	TAGATAGA_MOVE_PINCH_1
+#alias 3	:	TAGATAGA_TURN_1
+#alias 4	:	TAGATAGA_TURN_2
+#alias 5	:	TAGATAGA_TURN_3
+#alias 6	:	TAGATAGA_MOVE_PINCH_2
+#alias 7	:	TAGATAGA_SUBMERGE
+
+// Stage SFX
+#alias 3	:	SFX_S_WATERSPLASH
+
+// Badnik Quality / Property Values
+#alias 0	:	GOOD_QUALITY
+#alias 1	:	BAD_QUALITY
+
+// Priority
+#alias 0	:	PRIORITY_BOUNDS
+#alias 1	:	PRIORITY_ACTIVE
 
 
 sub ObjectMain
-	if Object.PropertyValue==0
+	if Object.Quality == GOOD_QUALITY
+
 		switch Object.State
-		case 0
-			Object.Value1=-262144
-			Object.Value0=1
-			Object.State=1
+		case TAGATAGA_SET_LAUNCH_SPEED
+			Object.YVelocity = -0x40000
+
+			Object.Timer = 1
+
+			Object.State = TAGATAGA_EMERGE
 			break
-		case 1
-			Object.Value1+=4096
-			Object.YPos+=Object.Value1
-			Object.Value0++
-			if Object.Value0>24
-				Object.State=2
-			endif
+
+		case TAGATAGA_EMERGE
+			Object.YVelocity += 0x1000
+			Object.YPos += Object.YVelocity
+
+			Object.Timer++
+			if Object.Timer > 24
+				Object.State = TAGATAGA_MOVE_PINCH_1
+			end if
 			break
-		case 2
-			Object.Value1+=4096
-			Object.YPos+=Object.Value1
-			Object.Value0++
-			if Object.Value0>48
-				Object.State=3
-			endif
+
+		case TAGATAGA_MOVE_PINCH_1
+			Object.YVelocity += 0x1000
+			Object.YPos += Object.YVelocity
+
+			Object.Timer++
+			if Object.Timer > 48
+				Object.State = TAGATAGA_TURN_1
+			end if
 			break
-		case 3
-			Object.Value1+=4096
-			Object.YPos+=Object.Value1
-			Object.Value0++
-			if Object.Value0>56
-				Object.State=4
-			endif
+
+		case TAGATAGA_TURN_1
+			Object.YVelocity += 0x1000
+			Object.YPos += Object.YVelocity
+
+			Object.Timer++
+			if Object.Timer > 56
+				Object.State = TAGATAGA_TURN_2
+			end if
 			break
-		case 4
-			Object.Value1+=4096
-			Object.YPos+=Object.Value1
-			Object.Value0++
-			if Object.Value0>64
-				Object.State=5
-			endif
+
+		case TAGATAGA_TURN_2
+			Object.YVelocity += 0x1000
+			Object.YPos += Object.YVelocity
+
+			Object.Timer++
+			if Object.Timer > 64
+				Object.State = TAGATAGA_TURN_3
+			end if
 			break
-		case 5
-			Object.Value1+=4096
-			Object.YPos+=Object.Value1
-			Object.Value0++
-			if Object.Value0>96
-				Object.State=6
-			endif
+
+		case TAGATAGA_TURN_3
+			Object.YVelocity += 0x1000
+			Object.YPos += Object.YVelocity
+
+			Object.Timer++
+			if Object.Timer > 96
+				Object.State = TAGATAGA_MOVE_PINCH_2
+			end if
 			break
-		case 6
-			Object.Value1+=4096
-			Object.YPos+=Object.Value1
-			Object.Value0++
-			if Object.Value0>128
-				Object.State=7
-				PlayStageSfx(3,0)
-			endif
+
+		case TAGATAGA_MOVE_PINCH_2
+			Object.YVelocity += 0x1000
+			Object.YPos += Object.YVelocity
+
+			Object.Timer++
+			if Object.Timer > 128
+				Object.State = TAGATAGA_SUBMERGE
+				PlayStageSfx(SFX_S_WATERSPLASH, false)
+			end if
 			break
-		case 7
-			Object.Value0++
-			if Object.Value0>204
-				Object.State=0
-				Object.Value0=0
-				Object.YPos=Object.Value2
-				PlayStageSfx(3,0)
-			endif
+
+		case TAGATAGA_SUBMERGE
+			Object.Timer++
+			if Object.Timer > 204
+				Object.State = TAGATAGA_SET_LAUNCH_SPEED
+
+				Object.Timer = 0
+
+				Object.YPos = Object.YOriginPos
+				PlayStageSfx(SFX_S_WATERSPLASH, false)
+			end if
 			break
-		endswitch
+
+		end switch
+
 	else
 		switch Object.State
-		case 0
-			Object.Value1=-196608
-			Object.Value0=1
-			Object.State=1
+		case TAGATAGA_SET_LAUNCH_SPEED
+			Object.YVelocity = -0x30000
+
+			Object.Timer = 1
+
+			Object.State = TAGATAGA_EMERGE
 			break
-		case 1
-			Object.Value1+=3780
-			Object.YPos+=Object.Value1
-			Object.Value0++
-			if Object.Value0>40
-				Object.State=2
-			endif
+
+		case TAGATAGA_EMERGE
+			Object.YVelocity += 0xEC4
+			Object.YPos += Object.YVelocity
+
+			Object.Timer++
+			if Object.Timer > 40
+				Object.State = TAGATAGA_MOVE_PINCH_1
+			end if
 			break
-		case 2
-			Object.Value1+=3780
-			Object.YPos+=Object.Value1
-			Object.Value0++
-			if Object.Value0>50
-				Object.State=3
-			endif
+
+		case TAGATAGA_MOVE_PINCH_1
+			Object.YVelocity += 0xEC4
+			Object.YPos += Object.YVelocity
+
+			Object.Timer++
+			if Object.Timer > 50
+				Object.State = TAGATAGA_TURN_1
+			end if
 			break
-		case 3
-			Object.Value1+=3780
-			Object.YPos+=Object.Value1
-			Object.Value0++
-			if Object.Value0>60
-				Object.State=4
-			endif
+
+		case TAGATAGA_TURN_1
+			Object.YVelocity += 0xEC4
+			Object.YPos += Object.YVelocity
+
+			Object.Timer++
+			if Object.Timer > 60
+				Object.State = TAGATAGA_TURN_2
+			end if
 			break
-		case 4
-			Object.Value1+=3780
-			Object.YPos+=Object.Value1
-			Object.Value0++
-			if Object.Value0>104
-				Object.State=5
-				PlayStageSfx(3,0)
-			endif
+
+		case TAGATAGA_TURN_2
+			Object.YVelocity += 0xEC4
+			Object.YPos += Object.YVelocity
+
+			Object.Timer++
+			if Object.Timer > 104
+				Object.State = TAGATAGA_TURN_3
+				PlayStageSfx(SFX_S_WATERSPLASH, false)
+			end if
 			break
-		case 5
-			Object.Value0++
-			if Object.Value0>188
-				Object.State=0
-				Object.Value0=0
-				Object.YPos=Object.Value2
-				PlayStageSfx(3,0)
-			endif
+
+		case TAGATAGA_TURN_3
+			Object.Timer++
+			if Object.Timer > 188
+				Object.State = TAGATAGA_SET_LAUNCH_SPEED
+
+				Object.Timer = 0
+
+				Object.YPos = Object.YOriginPos
+				PlayStageSfx(SFX_S_WATERSPLASH, false)
+			end if
 			break
-		endswitch
-	endif
-	CallFunction(StageSetup_CheckGoodFuture)
-endsub
+
+		end switch
+
+	end if
+	CallFunction(StageSetup_CheckGoodFuture)	// Check if it should be a flower
+end sub
 
 
 sub ObjectPlayerInteraction
-	if Object.PropertyValue==0
-		if Object.State<7
-			PlayerObjectCollision(C_TOUCH,-16,-16,16,16)
-			if CheckResult==1
-				CallFunction(PlayerObject_BadnikBreak)
-			endif
-		endif
+	if Object.Quality == GOOD_QUALITY
+		if Object.State < TAGATAGA_SUBMERGE
+			PlayerObjectCollision(C_TOUCH, -16, -16, 16, 16)
+			if CheckResult == true
+				CallFunction(Player_BadnikBreak)
+			end if
+		end if
 	else
-		if Object.State<5
-			PlayerObjectCollision(C_TOUCH,-16,-16,16,16)
-			if CheckResult==1
-				CallFunction(PlayerObject_BadnikBreak)
-			endif
-		endif
-	endif
-endsub
+		if Object.State < TAGATAGA_TURN_3
+			PlayerObjectCollision(C_TOUCH, -16, -16, 16, 16)
+			if CheckResult == true
+				CallFunction(Player_BadnikBreak)
+			end if
+		end if
+	end if
+end sub
 
 
 sub ObjectDraw
-	if Object.PropertyValue==0
+	if Object.Quality == GOOD_QUALITY
 		switch Object.State
-		case 0
-		case 1
+		case TAGATAGA_SET_LAUNCH_SPEED
+		case TAGATAGA_EMERGE
 			DrawSprite(0)
 			break
-		case 2
-			TempValue0=Object.Value0
-			TempValue0&=15
-			if TempValue0<8
+
+		case TAGATAGA_MOVE_PINCH_1
+			TempValue0  = Object.Timer
+			TempValue0 &= 15
+			if TempValue0 < 8
 				DrawSprite(0)
 			else
 				DrawSprite(1)
-			endif
+			end if
 			break
-		case 3
+
+		case TAGATAGA_TURN_1
 			DrawSprite(2)
 			break
-		case 4
+			
+		case TAGATAGA_TURN_2
 			DrawSprite(3)
 			break
-		case 5
+
+		case TAGATAGA_TURN_3
 			DrawSprite(4)
 			break
-		case 6
-			TempValue0=Object.Value0
-			TempValue0&=15
-			if TempValue0<8
+
+		case TAGATAGA_MOVE_PINCH_2
+			TempValue0  = Object.Timer
+			TempValue0 &= 15
+			if TempValue0 < 8
 				DrawSprite(4)
 			else
 				DrawSprite(5)
-			endif
+			end if
 			break
-		endswitch
+
+		end switch
 	else
 		switch Object.State
-		case 0
-		case 1
+		case TAGATAGA_SET_LAUNCH_SPEED
+		case TAGATAGA_EMERGE
 			DrawSprite(6)
 			break
-		case 2
+
+		case TAGATAGA_MOVE_PINCH_1
 			DrawSprite(7)
 			break
-		case 3
+
+		case TAGATAGA_TURN_1
 			DrawSprite(8)
 			break
-		case 4
+
+		case TAGATAGA_TURN_2
 			DrawSprite(9)
 			break
-		endswitch
-	endif
-endsub
+
+		end switch
+	end if
+end sub
 
 
 sub ObjectStartup
 	LoadSpriteSheet("R1/Objects.gif")
-	ArrayPos0=32
-	while ArrayPos0<1056
-		if Object[ArrayPos0].Type==TypeName[TagaTaga]
-			Object[ArrayPos0].Value2=Object[ArrayPos0].YPos
-		endif
+	
+	// Good TagaTaga
+	SpriteFrame(-16, -22, 32, 44, 223, 154)		// #0 - TagaTaga emerge Frame 0
+	SpriteFrame(-16, -22, 32, 44, 223, 199)		// #1 - TagaTaga emerge Frame 1
+	SpriteFrame(-16, -16, 32, 32, 35, 109)		// #2 - TagaTaga turning Frame 0
+	SpriteFrame(-16, -16, 32, 32, 68, 109)		// #3 - TagaTaga turning Frame 1
+	SpriteFrame(-16, -22, 32, 44, 1, 101)		// #4 - TagaTaga submerge Frame 0
+	SpriteFrame(-16, -22, 32, 44, 1, 146)		// #5 - TagaTaga submerge Frame 1
+
+	// Bad TagaTaga
+	SpriteFrame(-16, -22, 32, 44, 223, 154)		// #6 - TagaTaga emerge Frame 0
+	SpriteFrame(-16, -16, 32, 32, 35, 109)		// #7 - TagaTaga turning Frame 0
+	SpriteFrame(-16, -16, 32, 32, 35, 142)		// #8 - TagaTaga turning Frame 1
+	SpriteFrame(-16, -22, 32, 44, 1, 191)		// #9 - TagaTaga submerge Frame 0
+
+	// Used to be below LoadSpriteSheet, moved here for consistency
+	ArrayPos0 = 32
+	while ArrayPos0 < 1056
+		if Object[ArrayPos0].Type == TypeName[TagaTaga]
+			Object[ArrayPos0].YOriginPos = Object[ArrayPos0].YPos
+		end if
 		ArrayPos0++
 	loop
-	SpriteFrame(-16,-22,32,44,223,154)
-	SpriteFrame(-16,-22,32,44,223,199)
-	SpriteFrame(-16,-16,32,32,35,109)
-	SpriteFrame(-16,-16,32,32,68,109)
-	SpriteFrame(-16,-22,32,44,1,101)
-	SpriteFrame(-16,-22,32,44,1,146)
-	SpriteFrame(-16,-22,32,44,223,154)
-	SpriteFrame(-16,-16,32,32,35,109)
-	SpriteFrame(-16,-16,32,32,35,142)
-	SpriteFrame(-16,-22,32,44,1,191)
-endsub
+end sub
 
-sub RSDK
-	LoadSpriteSheet("Global/Display.gif")
-	SetEditorIcon(Icon0,SingleIcon,-16,-16,32,32,1,143)
-endsub
+
+// ========================
+// Editor Subs
+// ========================
+
+sub RSDKEdit
+	if Editor.ReturnVariable == true
+		switch Editor.VariableID
+		case EDIT_VAR_PROPVAL // Property Value
+			CheckResult  = Object.PropertyValue
+			CheckResult &= 1
+			break
+		case 0 // type
+			CheckResult  = Object.PropertyValue
+			CheckResult &= 1
+			break
+		end switch
+	else
+		switch Editor.VariableID
+		case EDIT_VAR_PROPVAL // Property Value
+			Object.PropertyValue  = Editor.VariableValue
+			Object.PropertyValue &= 1
+			break
+		case 0 // type
+			Object.PropertyValue  = Editor.VariableValue
+			Object.PropertyValue &= 1
+			break
+		end switch
+	end if
+end sub
+
+
+sub RSDKDraw
+	DrawSprite(Object.PropertyValue)
+end sub
+
+
+sub RSDKLoad
+	LoadSpriteSheet("R1/Objects.gif")
+	
+	// Good TagaTaga
+	SpriteFrame(-16, -22, 32, 44, 223, 154)		// #0 - TagaTaga emerge
+	// Bad TagaTaga
+	SpriteFrame(-16, -22, 32, 44, 223, 154)		// #1 - TagaTaga emerge
+
+	AddEditorVariable("condition")
+	SetActiveVariable("condition")
+	AddEnumVariable("Good Quality", GOOD_QUALITY)
+	AddEnumVariable("Bad Quality", BAD_QUALITY)
+end sub

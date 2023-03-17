@@ -3,15 +3,21 @@
 A full decompilation for the scripts in Sonic CD's 2011 remake.
 
 These scripts have been manually reverted back to what the original scripts could've looked like. This means that:
-* Function IDs have been recoverted back to function names
-* Some function names have been given proper names
+* Function IDs have been recovered back to proper function names
 * Functions are in the proper order
 * Default aliases have been re-added where possible
-* Mobile/Haptic code has been added into scripts via the use of `#platform:` markers
+* Added editor renders and variables for (almost) every object
+* Origins/Haptic/Renderer code have all been included via the use of `#platform:` markers
 
-To use these scripts in mods:
- * RSDKv3/RSDKv5U Decompilation: Extract the scripts folder to the exe's root directory: eg `[rootdir]/Scripts/`.
- * Standalone Steam release: If you're using an up-to-date version of the Steam mod loader, it will download and install these scripts automatically.
+Some portions of the code have been slightly modified for compatibility purposes.
+
+To use these scripts in mods: 
+* RSDKv3/RSDKv5U Decompilation: Extract the `Scripts` folder to the exe's root directory: eg `[rootdir]/Scripts/`.
+* Sonic Origins (Requires [HedgeModManager](https://github.com/thesupersonic16/HedgeModManager)):
+  * Navigate to game's executable directory. The easy way to get to it is by clicking `Open Game Directory` in the Settings tab of HedgeModManager.
+  * Once you're there, extract the `Scripts` folder into a folder named `SonicCDu` in the exe's root directory: eg `[rootdir]/SonicCDu/Scripts/`.
+
+These scripts do NOT work with the standalone Steam release of the game.
 
 Mods are only required to include the scripts that have been changed.
 

@@ -1,93 +1,123 @@
-//------------Sonic CD BossBumper Script-------------//
+//----------------Sonic CD Boss Bumper Script-----------------//
 //--------Scripted by Christian Whitehead 'The Taxman'--------//
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
-//-------Aliases-------//
-#alias 54: TYPE_BOSSBUMPER
+// Aliases
+#alias Object.Value0	:	Object.ArmEntity
+#alias Object.Value2	:	Object.XOffSet
+#alias Object.Value5	:	Object.YOffSet
+
+// Arm Aliases
+#alias Object.Frame		:	Arm.Frame
+#alias Object.XPos		:	Arm.XPos
+#alias Object.YPos		:	Arm.YPos
+
+// States
+#alias 0	:	BOSSBUMPER_SETUP
+#alias 1	:	BOSSBUMPER_IDLE
+#alias 2	:	BOSSBUMPER_DESTROYED
+
+// Global SFX
+#alias 11	:	SFX_G_SPRING
+
+// Priority
+#alias 0	:	PRIORITY_BOUNDS
 
 
 sub ObjectMain
 	switch Object.State
-	case 0
-		Object.State=1
-		ArrayPos0=Object.Value0
-		Object.XPos=Object[ArrayPos0].XPos
-		Object.XPos-=1245184
-		Object.YPos=Object[ArrayPos0].YPos
-		if Object[ArrayPos0].Frame!=0
-			if Object[ArrayPos0].Frame==1
-				Object.XPos+=524288
+	case BOSSBUMPER_SETUP
+		Object.State = BOSSBUMPER_IDLE
+		// Fall-Through
+	case BOSSBUMPER_IDLE
+		ArrayPos0 = Object.ArmEntity
+
+		Object.XPos  = Arm[ArrayPos0].XPos
+		Object.XPos -= 0x130000
+		Object.YPos = Arm[ArrayPos0].YPos
+		
+		if Arm[ArrayPos0].Frame != 0
+			if Arm[ArrayPos0].Frame == 1
+				Object.XPos += 0x80000
 			else
-				Object.XPos+=1048576
-			endif
-		endif
+				Object.XPos += 0x100000
+			end if
+		end if
 		break
-	case 1
-		ArrayPos0=Object.Value0
-		Object.XPos=Object[ArrayPos0].XPos
-		Object.XPos-=1245184
-		Object.YPos=Object[ArrayPos0].YPos
-		if Object[ArrayPos0].Frame!=0
-			if Object[ArrayPos0].Frame==1
-				Object.XPos+=524288
-			else
-				Object.XPos+=1048576
-			endif
-		endif
+
+	case BOSSBUMPER_DESTROYED
+		Object.XOffSet -= 0x500
+		Object.XPos += Object.XOffSet
+
+		Object.YOffSet += 0x1800
+		Object.YPos += Object.YOffSet
+
+		if Object.OutOfBounds == true
+			Object.Type = TypeName[Blank Object]
+			Object.Priority = PRIORITY_BOUNDS
+		end if
 		break
-	case 2
-		Object.Value2-=1280
-		Object.Value5+=6144
-		Object.XPos+=Object.Value2
-		Object.YPos+=Object.Value5
-		if Object.OutOfBounds==1
-			Object.Type=TypeName[BlankObject]
-			Object.Priority=0
-		endif
-		break
-	endswitch
-endsub
+	end switch
+end sub
 
 
 sub ObjectPlayerInteraction
-	if Object.State<2
-		if Player.Animation!=ANI_HURT
-			ArrayPos0=Object.Value0
-			if Object[ArrayPos0].Frame==0
-				PlayerObjectCollision(C_TOUCH,-10,-16,14,16)
-				if CheckResult==1
-					Player.Speed=-262144
-					Player.XVelocity=-262144
-					if Object.Frame==0
-						PlaySfx(11,0)
-					endif
-					Object.Frame=2
+	if Object.State < BOSSBUMPER_DESTROYED
+		if Player.Animation != ANI_HURT
+			ArrayPos0 = Object.ArmEntity
+
+			if Arm[ArrayPos0].Frame == 0
+				PlayerObjectCollision(C_TOUCH, -10, -16, 14, 16)
+				if CheckResult == true
+
+					Player.Speed	 = -0x40000
+					Player.XVelocity = -0x40000
+
+					if Object.Frame == 0
+						PlaySfx(SFX_G_SPRING, false) 
+					end if
+					Object.Frame = 2
+					
 #platform: Use_Haptics
-					HapticEffect(10,0,0,0)
+					HapticEffect(10, 0, 0, 0)
 #endplatform
-				endif
-			endif
-		endif
-	endif
-endsub
+				end if
+			end if
+		end if
+	end if
+end sub
 
 
 sub ObjectDraw
 	DrawSprite(Object.Frame)
-	if Object.Frame>0
+
+	if Object.Frame > 0
 		Object.Frame--
-	endif
-endsub
+	end if
+end sub
 
 
 sub ObjectStartup
 	LoadSpriteSheet("R1/Objects3.gif")
-	SpriteFrame(-14,-16,24,32,99,26)
-	SpriteFrame(-18,-16,24,32,99,26)
-	SpriteFrame(-18,-16,24,32,99,26)
-endsub
 
-sub RSDK
-	LoadSpriteSheet("Global/Display.gif")
-	SetEditorIcon(Icon0,SingleIcon,-16,-16,32,32,1,143)
-endsub
+	SpriteFrame(-14, -16, 24, 32, 99, 26)	// #0 - EGG-HVC-001 Bumper
+	SpriteFrame(-18, -16, 24, 32, 99, 26)	// #1 - EGG-HVC-001 Bumper (different offset)
+	SpriteFrame(-18, -16, 24, 32, 99, 26)	// #2 - EGG-HVC-001 Bumper (same offset as frame 1, here to pad out animation length)
+end sub
+
+
+// ========================
+// Editor Subs
+// ========================
+
+sub RSDKDraw
+	DrawSprite(0)
+end sub
+
+
+sub RSDKLoad
+	LoadSpriteSheet("R1/Objects3.gif")
+	SpriteFrame(-14, -16, 24, 32, 99, 26)	// #0 - EGG-HVC-001 Bumper
+
+	SetVariableAlias(ALIAS_VAR_PROPVAL, "unused")
+end sub
