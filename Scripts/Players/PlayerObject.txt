@@ -351,53 +351,39 @@ function Player_Kill
 end function
 
 function Player_ProcessUpdate
+	// We have to force the decomp to use standalone behavior, so let's check for the platforms
+	CheckResult = false
 #platform: Standard
-	if Options.AttractMode == false
-		if Player.ControlMode == CONTROLMODE_NORMAL
-			if Object[9].Type == TypeName[Blank Object]
-				if KeyPress[1].Start == true
-					KeyPress[1].Start = false
-					if Options.DevMenuFlag == true
-						Stage.State = STAGE_PAUSED
-						PauseMusic()
-						PlaySfx(SFX_G_SELECT, false) 
-						StopSFX(SFX_G_FLYING)
-						StopSFX(SFX_G_TIRED)
-						Object[9].Type = TypeName[Pause Menu]
-						PauseMenu.DrawOrder = 7
-						PauseMenu.Priority	= PRIORITY_ALWAYS
-					else
-						EngineCallback(CALLBACK_PAUSE_REQUESTED) // ask the engine to open the "native" pause menu
-					end if
-				end if
-			end if
-		end if
-
-		ProcessPlayerControl()
-	end if
+	CheckResult = true
 #endplatform
-
 #platform: Use_Decomp
-	if Options.AttractMode == false
-		if Player.ControlMode == CONTROLMODE_NORMAL
-			if Object[9].Type == TypeName[Blank Object]
-				if Engine.Message == MESSAGE_LOSTFOCUS
-					Stage.State = STAGE_PAUSED
-					PauseMusic()
-					PlaySfx(SFX_G_SELECT, false) 
-					StopSFX(SFX_G_FLYING)
-					StopSFX(SFX_G_TIRED)
-					Object[9].Type = TypeName[Pause Menu]
-					PauseMenu.DrawOrder = 7
-					PauseMenu.Priority	= PRIORITY_ALWAYS
-					if Engine.FrameSkipTimer > -1
-						Engine.FrameSkipTimer = -1
+	CheckResult = true
+#endplatform
+	if CheckResult == true
+		if Options.AttractMode == false
+			if Player.ControlMode == CONTROLMODE_NORMAL
+				if Object[9].Type == TypeName[Blank Object]
+					if KeyPress[1].Start == true
+						KeyPress[1].Start = false
+						if Options.DevMenuFlag == true
+							Stage.State = STAGE_PAUSED
+							PauseMusic()
+							PlaySfx(SFX_G_SELECT, false) 
+							StopSFX(SFX_G_FLYING)
+							StopSFX(SFX_G_TIRED)
+							Object[9].Type = TypeName[Pause Menu]
+							PauseMenu.DrawOrder = 7
+							PauseMenu.Priority	= PRIORITY_ALWAYS
+						else
+							EngineCallback(CALLBACK_PAUSE_REQUESTED) // ask the engine to open the "native" pause menu
+						end if
 					end if
 				end if
 			end if
+
+			ProcessPlayerControl()
 		end if
 	end if
-#endplatform
 
 #platform: Mobile
 	if Options.AttractMode == false
@@ -413,7 +399,7 @@ function Player_ProcessUpdate
 					TempValue1  = TouchScreen[ArrayPos0].YPos
 					TempValue1 -= 192
 
-					// tldr; check what did you touch in the d-pad
+					// tldr: check what did you touch in the d-pad
 					ATan2(TempValue2, TempValue0, TempValue1)
 					TempValue2  += 32
 					TempValue2  &= 255
@@ -445,7 +431,6 @@ function Player_ProcessUpdate
 
 				DebugMode.ButtonA = KeyDown[1].ButtonA
 				if Object[9].Type == TypeName[Blank Object]
-
 					CheckTouchRect(240, 0, Screen.XSize, 40)
 					if CheckResult > -1
 						Stage.State = STAGE_PAUSED
@@ -481,7 +466,6 @@ function Player_ProcessUpdate
 			if Player.ControlMode == CONTROLMODE_NORMAL
 				if Object[9].Type == TypeName[Blank Object]
 					if KeyPress[1].Start == true
-
 						KeyPress[1].Start = false
 						Stage.State = STAGE_PAUSED
 						PauseMusic()
