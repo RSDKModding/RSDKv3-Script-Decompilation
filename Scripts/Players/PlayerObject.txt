@@ -377,6 +377,28 @@ function Player_ProcessUpdate
 	end if
 #endplatform
 
+#platform: Use_Decomp
+	if Options.AttractMode == false
+		if Player.ControlMode == CONTROLMODE_NORMAL
+			if Object[9].Type == TypeName[Blank Object]
+				if Engine.Message == MESSAGE_LOSTFOCUS
+					Stage.State = STAGE_PAUSED
+					PauseMusic()
+					PlaySfx(SFX_G_SELECT, false) 
+					StopSFX(SFX_G_FLYING)
+					StopSFX(SFX_G_TIRED)
+					Object[9].Type = TypeName[Pause Menu]
+					PauseMenu.DrawOrder = 7
+					PauseMenu.Priority	= PRIORITY_ALWAYS
+					if Engine.FrameSkipTimer > -1
+						Engine.FrameSkipTimer = -1
+					end if
+				end if
+			end if
+		end if
+	end if
+#endplatform
+
 #platform: Mobile
 	if Options.AttractMode == false
 		if Options.TouchControls == true
