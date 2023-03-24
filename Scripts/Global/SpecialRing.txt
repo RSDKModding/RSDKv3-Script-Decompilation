@@ -130,7 +130,6 @@ sub ObjectDraw
 		TempValue0 >>= 2
 
 #platform: Use_Standalone	// 2011 Scripts
-
 		if Object.CheckVersion != UPDATED_VERSION
 			// Old Steam vanish animation
 			TempValue0   = Object.Frame
@@ -170,11 +169,9 @@ sub ObjectDraw
 				ResetObjectEntity(Object.EntityNo, TypeName[Blank Object], 0, 0, 0)
 			end if
 		end if
-
 #endplatform
 
 #platform: Use_Origins	// Origins animation, Same as 2011 mobile
-
 		if TempValue0 > 11
 			Object.Direction = FACING_LEFT
 		else
@@ -229,69 +226,63 @@ sub ObjectStartup
 	SpriteFrame(0, -32, 32, 64, 222, 1)		// #14 - Ring Vanishing Frame 6
 	SpriteFrame(-32, -32, 32, 64, 124, 131)	// #15 - Ring Vanishing Frame 7
 #endplatform
-
-
+	
 #platform: Use_Decomp
 	// Custom decomp check of versions
 	// Checks the amount of rows Credits_Console has, a file that doesn't exist on mobile data files.
 	// if it's equal or less than 1 (depending of platform), means there's no such file in the game, therefore we're using a mobile data file, and the updated animation is needed
 	// otherwise, it means we are playing with a Steam/Blit datafile, and as such we need to use the old animation
-	LoadTextFile(MENU_1,"Data/Game/Credits_Console.txt", false)
+	LoadTextFile(MENU_1, "Data/Game/Credits_Console.txt", false)
 	GetTextInfo(CheckResult, MENU_1, TEXTINFO_ROWCOUNT, 0, 0)
-	ArrayPos0 = 32
-	while ArrayPos0 < 1056
-		if Object[ArrayPos0].Type == TypeName[Special Ring]
-			if CheckResult > 1
+	if CheckResult > 1
+		ArrayPos0 = 32
+		while ArrayPos0 < 1056
+			if Object[ArrayPos0].Type == TypeName[Special Ring]
 				Object[ArrayPos0].CheckVersion = OLD_VERSION
 			end if
-		end if
-		ArrayPos0++
-	loop
+			ArrayPos0++
+		loop
+	end if
 #endplatform
 
 #platform: Use_Standalone
-	// only the spriteframes are the original code, the rest is custom code to ensure compatibility
-	ArrayPos0 = 32
-	while ArrayPos0 < 1056
-		if Object[ArrayPos0].Type == TypeName[Special Ring]
-			if Object[ArrayPos0].CheckVersion == UPDATED_VERSION
-				// Special Ring Frames Mobile
-				SpriteFrame(-32, -32, 64, 64, 83, 1)	// #0  - Special Ring Frame 0
-				SpriteFrame(-28, -32, 56, 64, 199, 131)	// #1  - Special Ring Frame 1
-				SpriteFrame(-24, -32, 48, 64, 148, 1)	// #2  - Special Ring Frame 2
-				SpriteFrame(-16, -32, 32, 64, 223, 66)	// #3  - Special Ring Frame 3
-				SpriteFrame(-12, -32, 24, 64, 197, 1)	// #4  - Special Ring Frame 4
-				SpriteFrame(-16, -32, 32, 64, 223, 66)	// #5  - Special Ring Frame 5
-				SpriteFrame(-24, -32, 48, 64, 148, 1)	// #6  - Special Ring Frame 6
-				SpriteFrame(-28, -32, 56, 64, 199, 131)	// #7  - Special Ring Frame 7
-				// Vanishing Frames
-				SpriteFrame(0, -32, 32, 64, 222, 1)		// #8  - Ring Vanishing Frame 0
-				SpriteFrame(-16, -32, 48, 64, 101, 66)	// #9  - Ring Vanishing Frame 1
-				SpriteFrame(-24, -32, 56, 64, 150, 66)	// #10 - Ring Vanishing Frame 2
-				SpriteFrame(0, -32, 32, 64, 156, 131)	// #11 - Ring Vanishing Frame 3
-				SpriteFrame(-24, -32, 56, 64, 150, 66)	// #12 - Ring Vanishing Frame 4
-				SpriteFrame(-16, -32, 48, 64, 101, 66)	// #13 - Ring Vanishing Frame 5
-				SpriteFrame(0, -32, 32, 64, 222, 1)		// #14 - Ring Vanishing Frame 6
-				SpriteFrame(-32, -32, 32, 64, 124, 131)	// #15 - Ring Vanishing Frame 7
-			else
-				// Special Ring Frames Steam
-				SpriteFrame(-32, -32, 64, 64, 83, 1)	// #0  - Special Ring Frame 0
-				SpriteFrame(-24, -32, 48, 64, 148, 1)	// #1  - Special Ring Frame 1
-				SpriteFrame(-12, -32, 24, 64, 197, 1)	// #2  - Special Ring Frame 2
-				SpriteFrame(-24, -32, 48, 64, 101, 66)	// #3  - Special Ring Frame 3
-				// Vanishing Frames
-				SpriteFrame(0, -32, 32, 64, 222, 1)		// #4  - Ring Vanishing Frame 0
-				SpriteFrame(-16, -32, 48, 64, 150, 66)	// #5  - Ring Vanishing Frame 1
-				SpriteFrame(-24, -32, 56, 64, 199, 66)	// #6  - Ring Vanishing Frame 2
-				SpriteFrame(-32, -32, 64, 64, 191, 131)	// #7  - Ring Vanishing Frame 3
-				SpriteFrame(-24, -32, 56, 64, 199, 66)	// #8  - Ring Vanishing Frame 4
-				SpriteFrame(-16, -32, 48, 64, 150, 66)	// #9  - Ring Vanishing Frame 5
-				SpriteFrame(0, -32, 32, 64, 222, 1)		// #10 - Ring Vanishing Frame 6
-				SpriteFrame(-32, -32, 64, 64, 126, 131)	// #11 - Ring Vanishing Frame 7
-			end if
-		end if
-		ArrayPos0++
-	loop
+	if CheckResult > 1
+		// Special Ring Frames (Mobile)
+		SpriteFrame(-32, -32, 64, 64, 83, 1)	// #0  - Special Ring Frame 0
+		SpriteFrame(-28, -32, 56, 64, 199, 131)	// #1  - Special Ring Frame 1
+		SpriteFrame(-24, -32, 48, 64, 148, 1)	// #2  - Special Ring Frame 2
+		SpriteFrame(-16, -32, 32, 64, 223, 66)	// #3  - Special Ring Frame 3
+		SpriteFrame(-12, -32, 24, 64, 197, 1)	// #4  - Special Ring Frame 4
+		SpriteFrame(-16, -32, 32, 64, 223, 66)	// #5  - Special Ring Frame 5
+		SpriteFrame(-24, -32, 48, 64, 148, 1)	// #6  - Special Ring Frame 6
+		SpriteFrame(-28, -32, 56, 64, 199, 131)	// #7  - Special Ring Frame 7
+		
+		// Vanishing Frames
+		SpriteFrame(0, -32, 32, 64, 222, 1)		// #8  - Ring Vanishing Frame 0
+		SpriteFrame(-16, -32, 48, 64, 101, 66)	// #9  - Ring Vanishing Frame 1
+		SpriteFrame(-24, -32, 56, 64, 150, 66)	// #10 - Ring Vanishing Frame 2
+		SpriteFrame(0, -32, 32, 64, 156, 131)	// #11 - Ring Vanishing Frame 3
+		SpriteFrame(-24, -32, 56, 64, 150, 66)	// #12 - Ring Vanishing Frame 4
+		SpriteFrame(-16, -32, 48, 64, 101, 66)	// #13 - Ring Vanishing Frame 5
+		SpriteFrame(0, -32, 32, 64, 222, 1)		// #14 - Ring Vanishing Frame 6
+		SpriteFrame(-32, -32, 32, 64, 124, 131)	// #15 - Ring Vanishing Frame 7
+	else
+		// Special Ring Frames (Blit)
+		SpriteFrame(-32, -32, 64, 64, 83, 1)	// #0  - Special Ring Frame 0
+		SpriteFrame(-24, -32, 48, 64, 148, 1)	// #1  - Special Ring Frame 1
+		SpriteFrame(-12, -32, 24, 64, 197, 1)	// #2  - Special Ring Frame 2
+		SpriteFrame(-24, -32, 48, 64, 101, 66)	// #3  - Special Ring Frame 3
+		
+		// Vanishing Frames
+		SpriteFrame(0, -32, 32, 64, 222, 1)		// #4  - Ring Vanishing Frame 0
+		SpriteFrame(-16, -32, 48, 64, 150, 66)	// #5  - Ring Vanishing Frame 1
+		SpriteFrame(-24, -32, 56, 64, 199, 66)	// #6  - Ring Vanishing Frame 2
+		SpriteFrame(-32, -32, 64, 64, 191, 131)	// #7  - Ring Vanishing Frame 3
+		SpriteFrame(-24, -32, 56, 64, 199, 66)	// #8  - Ring Vanishing Frame 4
+		SpriteFrame(-16, -32, 48, 64, 150, 66)	// #9  - Ring Vanishing Frame 5
+		SpriteFrame(0, -32, 32, 64, 222, 1)		// #10 - Ring Vanishing Frame 6
+		SpriteFrame(-32, -32, 64, 64, 126, 131)	// #11 - Ring Vanishing Frame 7
+	end if
 #endplatform
 	
 	// If all Time Stones are collected, we don't need any Special Stages anymore

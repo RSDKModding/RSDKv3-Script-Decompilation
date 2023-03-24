@@ -5,9 +5,6 @@
 // Aliases
 #alias Object.Value0 : Object.Fade
 
-// Decomp usage only, to check which behaviour of the special ring animation should be used for 2011 data files
-#alias Object.Value7 : Object.CheckVersion
-
 // States
 #alias 0	:	LOGO_WHITE_FADEIN
 #alias 1	:	LOGO_SONIC_ANIMATE
@@ -15,10 +12,6 @@
 
 // Callbacks & Engine States
 #alias 7	:	CALLBACK_EXIT_SELECTED
-
-// Decomp Usage alias
-#alias 0	:	UPDATED_VERSION
-#alias 1	:	OLD_VERSION
 
 #alias 2	:	TEXTINFO_ROWCOUNT // Menu Alias
 
@@ -168,42 +161,24 @@ sub ObjectStartup
 #platform: Use_Origins
 	SpriteFrame(-144, 0, 144, 68, 257, 251)	// Latest - Origins
 #endplatform
-
+	
 #platform: Use_Decomp
 	// Custom decomp check of versions
 	// Checks the amount of rows Credits_Console has, a file that doesn't exist on mobile data files.
 	// if it's equal or less than 1 (depending of platform), means there's no such file in the game, therefore we're using a mobile data file, otherwise is the older blit version
 	// depending of the version the position of the right mountain is different
 	// so we need to check which version we are using to avoid glitchy looks
-	LoadTextFile(MENU_1,"Data/Game/Credits_Console.txt", false)
+	LoadTextFile(MENU_1, "Data/Game/Credits_Console.txt", false)
 	GetTextInfo(CheckResult, MENU_1, TEXTINFO_ROWCOUNT, 0, 0)
-	ArrayPos0 = 0
-	while ArrayPos0 < 1056
-		// we use the Sega object since is the only one loaded on the stage at startup
-		if Object[ArrayPos0].Type == TypeName[Sega]
-			if CheckResult > 1
-				Object[ArrayPos0].CheckVersion = OLD_VERSION
-			end if
-		end if
-		ArrayPos0++
-	loop
 #endplatform
 
 #platform: Use_Standalone
-	ArrayPos0 = 0
-	while ArrayPos0 < 1056
-		// we use the Sega object since is the only one loaded on the stage at startup
-		if Object[ArrayPos0].Type == TypeName[Sega]
-			if Object[ArrayPos0].CheckVersion == OLD_VERSION
-				SpriteFrame(-124, 0, 124, 68, 256, 77)	// Blit
-			else
-				SpriteFrame(-174, 0, 174, 68, 246, 267)	// Mobile
-			end if
-		end if
-		ArrayPos0++
-	loop
+	if CheckResult > 1
+		SpriteFrame(-124, 0, 124, 68, 256, 77)	// Blit
+	else
+		SpriteFrame(-174, 0, 174, 68, 246, 267)	// Mobile
+	end if
 #endplatform
-	
 end sub
 
 
