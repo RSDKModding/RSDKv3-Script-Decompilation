@@ -45,17 +45,6 @@
 sub ObjectMain
 	switch Object.State
 	case FLOWERPOD_IDLE
-		TempValue0  = Object.YPos
-		TempValue0 += 0x40005A
-		if Player.YPos < TempValue0
-			Stage.NewXBoundary1   = Object.XPos
-			Stage.NewXBoundary1 >>= 16
-			Stage.NewXBoundary1  -= Screen.CenterX
-
-			Stage.NewXBoundary2   = Object.XPos
-			Stage.NewXBoundary2 >>= 16
-			Stage.NewXBoundary2  += Screen.CenterX
-		end if
 
 		if Object.Timer < 60
 			Object.Frame = 1
@@ -173,16 +162,10 @@ sub ObjectMain
 	case FLOWERPOD_TRIGGER_ACTFINISH
 		if Player.ControlMode == CONTROLMODE_NONE
 			Player.Left		= false
-			Player.Right 	= true
+			Player.Right 	= false
 			Player.Up 		= false
 			Player.Down 	= false
 			Player.JumpHold = false
-		end if
-
-		TempValue0  = Object.XPos
-		TempValue0 += 0xA00000
-
-		if Player.XPos > TempValue0
 			PlayMusic(1)
 			Object.State = FLOWERPOD_CONTROL_PLAYER
 			Object[30].Type = TypeName[ActFinish]
@@ -193,7 +176,7 @@ sub ObjectMain
 
 	case FLOWERPOD_CONTROL_PLAYER
 		if Player.ControlMode == CONTROLMODE_NONE
-			Player.Right = true
+			Player.Right = false
 		end if
 		break
 	end switch
