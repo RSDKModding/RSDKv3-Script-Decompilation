@@ -45,7 +45,6 @@
 sub ObjectMain
 	switch Object.State
 	case FLOWERPOD_IDLE
-
 		if Object.Timer < 60
 			Object.Frame = 1
 		else
@@ -209,21 +208,6 @@ sub ObjectPlayerInteraction
 			end if
 		end if
 	end if
-	TempValue0   = Screen.CenterX
-	TempValue0  += 40
-	TempValue0 <<= 16
-
-	TempValue1   = Object.XPos
-	TempValue1  += TempValue0
-
-	if Player.XPos > TempValue1
-		Player.XPos  = TempValue1
-		Player.Speed = 0
-		Player.XVelocity = 0
-		if Player.Gravity == GRAVITY_GROUND
-			Player.YVelocity = 0
-		end if
-	end if
 end sub
 
 
@@ -246,22 +230,17 @@ sub ObjectStartup
 	SpriteFrame(-32, -48, 64, 54, 1, 98)	// #2 - FlowerPod Bulb Flash
 	SpriteFrame(-32, -10, 64, 16, 1, 153)	// #3 - FlowerPod Bulb Destroyed
 
-
-	
 	// Unload the Flowepod object if needed
 	ArrayPos0 = 32
 	while ArrayPos0 < 1056
 		if Object[ArrayPos0].Type == TypeName[Flower Pod]
-		
 			if Stage.PlayerListPos == PLAYER_SONIC
 				if Options.GameMode != MODE_TIMEATTACK
 					// If Sonic's the main character and he's not in Time Attack, then unload
 					Object[ArrayPos0].Type = TypeName[Blank Object]
 				end if
 			end if
-		
 		end if
-		
 		ArrayPos0++
 	loop
 end sub
