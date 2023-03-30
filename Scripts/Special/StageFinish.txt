@@ -140,10 +140,6 @@ sub ObjectMain
 		Object.RingBonus = HUD[4].Rings
 		Object.RingBonus *= 200
 		
-		// Origins removed this pair of lines, in favour of using the Backup values instead
-//		Stage.ListPos = SpecialStage.NextZone
-//		Stage.ActiveList = REGULAR_STAGE
-		
 		if BackupTimeStones < 127
 			TempValue0 = false
 			while TempValue0 == false
@@ -182,6 +178,13 @@ sub ObjectMain
 #endplatform
 		
 #platform: Use_Standalone
+		// Setup the Ring Bonus
+		Object.RingBonus = HUD[4].Rings
+		Object.RingBonus *= 200
+		
+		Stage.ListPos = SpecialStage.NextZone
+		Stage.ActiveList = REGULAR_STAGE
+		
 		if SpecialStage.TimeStones < 127
 			TempValue0 = false
 			while TempValue0 == false
@@ -281,9 +284,11 @@ sub ObjectMain
 		if Object.Timer == 0
 			Object.State = STAGEFINISH_SCROLLTEXT
 			
-			// These following two lines were introduced in Origins
+#platform: Use_Origins
+			// We can actually set the stage now
 			Stage.ActiveList = REGULAR_STAGE
 			Stage.ListPos = SpecialStage.NextZone
+#endplatform
 		end if
 		
 		SetScreenFade(208, 255, 224, Object.Timer)
@@ -461,7 +466,6 @@ sub ObjectMain
 			
 #platform: Use_Origins
 			// In Origins, give either Coins or Lives based on the current mode
-			
 			if game.coinMode == false
 				Player.Lives++
 			else
@@ -471,8 +475,7 @@ sub ObjectMain
 #endplatform
 			
 #platform: Use_Standalone
-			// In Standalone, we don't have Lives at all
-			
+			// In Standalone, we only have lives
 			Player.Lives++
 #endplatform
 			
