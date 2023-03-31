@@ -6,7 +6,7 @@
 #alias Object.Value0			:	Object.BarPos
 #alias Object.Value1			:	Object.TextPos
 #alias Object.Value2			:	Object.TextSize
-#alias Object.Value3			:	Object.FadeA
+#alias Object.Value3			:	Object.Timer
 #alias Object.Value4			:	Object.FadeR
 #alias Object.Value5			:	Object.FadeG
 #alias Object.Value6			:	Object.FadeB
@@ -30,18 +30,19 @@
 // Players
 #alias 0	:	PLAYER_SONIC
 
-// Time Periods
+// Time Period Aliases
 #alias 0	:	TIME_PRESENT
 #alias 1	:	TIME_PAST
 #alias 2	:	TIME_GOOD_FUTURE
 #alias 3	:	TIME_BAD_FUTURE
 
-// Priority
-#alias 1	:	PRIORITY_ACTIVE
 
-// Control Mode
+// ControlMode Aliases
 #alias -1	:	CONTROLMODE_NONE
 #alias 0	:	CONTROLMODE_NORMAL
+
+// Priority
+#alias 1	:	PRIORITY_ACTIVE
 
 
 sub ObjectPlayerInteraction
@@ -65,8 +66,8 @@ sub ObjectDraw
 			Player.Speed = 0
 		end if
 
-		if Object.FadeA > 0
-			if Object.FadeA == 256
+		if Object.Timer > 0
+			if Object.Timer == 256
 				PlayMusic(0)
 				if Warp.XPos > 0
 					// Restore values post-warp
@@ -89,8 +90,8 @@ sub ObjectDraw
 				Warp.Frame = 0
 			end if
 
-			SetScreenFade(Object.FadeR, Object.FadeG, Object.FadeB, Object.FadeA)
-			Object.FadeA -= 8
+			SetScreenFade(Object.FadeR, Object.FadeG, Object.FadeB, Object.Timer)
+			Object.Timer -= 8
 		else
 			Fade_Colour = 0
 
@@ -101,7 +102,7 @@ sub ObjectDraw
 			TempValue0 &= CheckResult
 			if TempValue0 == true
 				Object.State = TITLECARD_SLIDEIN
-				Object.FadeA = 0
+				Object.Timer = 0
 			else
 				Player.ControlMode = CONTROLMODE_NORMAL
 				Stage.TimeEnabled  = true
@@ -117,44 +118,69 @@ sub ObjectDraw
 		TempValue0 += Object.CharPos
 
 		if Object.TextPos > TempValue0
+			// Slide the text to the left
 			Object.TextPos -= 8
+			
+			// Now, this part got changed in an update
+			
 		else
+			// -> Updated version - both the text AND the bar have to be on screen for the title card to progress
+
 			if Object.BarPos == 0
 				Object.State = TITLECARD_DISPLAY
 			end if
 		end if
-
+		
 		if Object.BarPos < 0
+			// Move the Bar down
 			Object.BarPos += 8
+			
+			// There used to be code here in older versions, but not anymore...
+			// -> Initial version - only the bar needed to be in the proper position for the title card to continue
+			//    This had text get incorrectly often
+			
 		end if
 		break
 
 	case TITLECARD_DISPLAY
-		if Object.FadeA == 90
+		// Hold for a moment to let the Player see what a nice Title Card this is
+		
+		if Object.Timer == 90
+			// Time's up, start sliding out!
 			Object.State = TITLECARD_SLIDEOUT
 		else
-			Object.FadeA++
+			Object.Timer++
 		end if
 		break
 
 	case TITLECARD_SLIDEOUT
 		if Object.TextPos < 408
+		
+			// Move the text to the right, and...
 			Object.TextPos += 16
-			Object.BarPos  -= 16
+			
+			// ...move the bar upwards as well
+			Object.BarPos -= 16
+			
 		else
+			// Free Sonic's control, and enable the stage timer.
 			Player.ControlMode = CONTROLMODE_NORMAL
 			Stage.TimeEnabled  = true
-
+			
+			// The Title Card's job is done, despawn it
 			ResetObjectEntity(20, TypeName[Blank Object], 0, 0, 0)
 			Warp.XPos = 0
 		end if
 		break
+		
 	end switch
-
-	// Make sure that this object isn't already blanked, before drawing
+	
+	// Before drawing, make sure this object hasn't been blanked already
+	// (Under certain circumstances, this can otherwise cause major graphical issues!!)
 	if Object.Type > TypeName[Blank Object]
 		TempValue0  = 136
 		TempValue0 += Object.CharPos
+		
 		// Draw the Red Bar
 		DrawSpriteScreenXY(0, TempValue0, Object.BarPos)
 
@@ -170,26 +196,31 @@ sub ObjectDraw
 #platform: Use_Decomp	// Creates a black rectangle that fills the empty space on wider resolutions
 		Tempvalue0  = Object.TextPos
 		TempValue0 += 220
-		DrawRect(TempValue0,163,Screen.XSize,9,0,0,0,255)
+		DrawRect(TempValue0, 163, Screen.XSize, 9, 0, 0, 0, 255)
 #endplatform
-
-		// Draw the Round Name
+		
+		// And then Draw the Round Name
+		// (Letters start at Sprite Frame 8)
 		TempValue0 = 8
 		while TempValue0 < Object.TextSize
 			DrawSpriteScreenXY(TempValue0, Object.TextPos, 80)
 			TempValue0++
 		loop
 	end if
+	
 end sub
 
 
 sub ObjectStartup
+	
+	// Load the Display sheet for the current Player
 	if Stage.PlayerListPos == PLAYER_SONIC
 		LoadSpriteSheet("Global/Display.gif")
 	else
 		LoadSpriteSheet("Global/Display_t.gif")
 	end if
-
+	
+	// Set the music for the Stage
 	if Options.Soundtrack == OST_JP
 		switch HUD.CurrentTimePeriod
 		case TIME_PRESENT
@@ -224,35 +255,44 @@ sub ObjectStartup
 
 	Flower_TypeNo   = TypeName[Flower]
 	Object[20].Type = TypeName[Title Card]
-
+	
+	// Different Fade-In times depending on if this is a new level load or if the Player is warping in
 	if Warp.XPos > 0
-		Object[20].FadeA = 256
+		// If the Player is warping in, have a shorter fade-in time
+		Object[20].Timer = 256
 	else
-		Object[20].FadeA = 384
+		Object[20].Timer = 384
 	end if
 
+	// Make the Title Card always active, and have it draw above everything
 	Object[20].Priority  = PRIORITY_ACTIVE
 	Object[20].DrawOrder = 6
-
-	Object[20].BarPos   = -216
-	Object[20].TextPos  = 336
+	
+	// Set initial Bar & Text Positions
+	Object[20].BarPos = -216
+	Object[20].TextPos = 336
+	
 
 	Object[20].CharPos  = Screen.CenterX
 	Object[20].CharPos -= 160
+	
 	if Object[20].CharPos > 3
 		Object[20].CharPos -= 4
 	end if
-	Object[20].CharPos  &= 248
+	
+	Object[20].CharPos &= 248
 
 	Object[20].TextPos  += Object[20].CharPos
 	Object[20].TextPos  += Object[20].CharPos
 
 	// "Wacky Workbench" is 14 letters long
 	Object[20].TextSize  = 14
+	
 	// Bump the value by 8 to correspond with the order of the Sprite Frames
 	Object[20].TextSize += 8
-
-	// Fade_Colour is stored as RRGGBB, in hex
+	
+	// Preserve the colour used from the last fade. Fade_Colour is stored as RRGGBB, in hex
+	
 	Object[20].FadeR   = Fade_Colour
 	Object[20].FadeR >>= 16
 
@@ -262,12 +302,19 @@ sub ObjectStartup
 
 	Object[20].FadeB   = Fade_Colour
 	Object[20].FadeB  &= 0x0000FF
-
-	SpriteFrame(0, 0, 32, 200, 223, 1)		// #0  - Bar
-	SpriteFrame(96, 96, 48, 48, 41, 1)		// #1  - Zone 1 Circle
-	SpriteFrame(96, 96, 48, 48, 90, 1)		// #2  - Zone 2 Circle
-	SpriteFrame(96, 96, 48, 48, 139, 1)		// #3  - Zone 3 Circle
-	SpriteFrame(64, 97, 48, 16, 41, 67)		// #4  - Zone Text
+	
+	// 0 - Red Bar Frame
+	SpriteFrame(0, 0, 32, 200, 223, 1)
+	
+	// 1-3 - Act Bubbles
+	SpriteFrame(96, 96, 48, 48, 41, 1)
+	SpriteFrame(96, 96, 48, 48, 90, 1)
+	SpriteFrame(96, 96, 48, 48, 139, 1)
+	
+	// 4 - "Zone" text
+	SpriteFrame(64, 97, 48, 16, 41, 67)
+	
+	// 5 - Main part of the "SONIC THE HEGDEHOG CD" bar
 	
 	// Workaround for steam datafile to show this sprite correctly
 #platform: Use_Origins
@@ -286,9 +333,13 @@ sub ObjectStartup
 	#endplatform
 #endplatform
 
-	SpriteFrame(20, 81, 160, 16, 41, 50)	// #6  - Sonic CD Bar Extension
-	SpriteFrame(108, 32, 24, 48, 188, 1)	// #7  - Three Lines
-	// Round Name
+	// 6 - Continuation of the Sonic CD bar
+	SpriteFrame(16, 81, 160, 16, 41, 50)
+	
+	// 7 - Set of three lines
+	SpriteFrame(108, 32, 24, 48, 188, 1)
+	
+	// 8-21 - Individual letters spelling out Wacky Workbench
 	SpriteFrame(0, 0, 20, 55, 121, 133)		// #8  - W
 	SpriteFrame(20, 32, 11, 23, 43, 84)		// #9  - A
 	SpriteFrame(32, 32, 9, 23, 176, 108)	// #10 - C
@@ -337,13 +388,69 @@ end sub
 // ========================
 
 sub RSDKDraw
-	DrawSprite(0)
+	Object.TextSize = 14
+	Object.TextSize += 8
+
+	TempValue0 = 136
+	TempValue0 += Object.CharPos
+	TempValue0 <<= 16
+
+	TempValue1 = 0x500000
+	TempValue1 += Object.YPos
+
+	DrawSpriteXY(0, Object.XPos, Object.YPos)
+	DrawSpriteXY(Stage.ActNo, Object.XPos, TempValue1)
+	DrawSpriteXY(4, Object.XPos, TempValue1)
+	DrawSpriteXY(5, Object.XPos, TempValue1)
+	DrawSpriteXY(6, Object.XPos, TempValue1)
+	DrawSpriteXY(7, Object.XPos, TempValue1)
+
+	TempValue0 = 8
+	while TempValue0 < Object.TextSize
+		DrawSpriteXY(TempValue0, Object.XPos, TempValue1)
+		TempValue0++
+	loop
 end sub
 
 
 sub RSDKLoad
 	LoadSpriteSheet("Global/Display.gif")
-	SpriteFrame(-16, -16, 32, 32, 1, 143)		// #0 - "Script" Icon
+	// 0 - Bar Frame
+	SpriteFrame(0, 0, 32, 200, 223, 1)
+	
+	// 1-3 - Act Bubbles
+	SpriteFrame(96, 96, 48, 48, 41, 1)
+	SpriteFrame(96, 96, 48, 48, 90, 1)
+	SpriteFrame(96, 96, 48, 48, 139, 1)
+	
+	// 4 - "Zone" text
+	SpriteFrame(64, 97, 48, 16, 41, 67)
+	
+	// 5 - "Sonic the Hedgehog CD" bar
+	SpriteFrame(64, 81, 160, 16, 41, 50)
+	
+	// 6 - Continuation of the Sonic CD bar
+	SpriteFrame(16, 81, 160, 16, 41, 50)
+	
+	// 7 - Set of three lines
+	SpriteFrame(108, 32, 24, 48, 188, 1)
+	
+	// 8-21 - Individual letters spelling out Wacky Workbench
+	SpriteFrame(0, 0, 20, 55, 121, 133)		// #8  - W
+	SpriteFrame(20, 32, 11, 23, 43, 84)		// #9  - A
+	SpriteFrame(32, 32, 9, 23, 176, 108)	// #10 - C
+	SpriteFrame(41, 32, 11, 23, 147, 84)	// #11 - K
+	SpriteFrame(53, 32, 11, 23, 146, 108)	// #12 - Y
+
+	SpriteFrame(0, 56, 20, 55, 121, 133)	// #13 - W
+	SpriteFrame(20, 56, 11, 23, 199, 84)	// #14 - O
+	SpriteFrame(32, 56, 12, 23, 57, 108)	// #15 - R
+	SpriteFrame(44, 56, 11, 23, 147, 84)	// #16 - K
+	SpriteFrame(56, 56, 11, 23, 55, 84)		// #17 - B
+	SpriteFrame(67, 56, 9, 23, 88, 84)		// #18 - E
+	SpriteFrame(76, 56, 11, 23, 187, 84)	// #19 - N
+	SpriteFrame(88, 56, 9, 23, 176, 108)	// #20 - C
+	SpriteFrame(97, 56, 11, 23, 119, 84)	// #21 - H
 
 	SetVariableAlias(ALIAS_VAR_PROPVAL, "unused")
 end sub

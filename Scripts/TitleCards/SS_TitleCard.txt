@@ -3,21 +3,21 @@
 //-------Unpacked By Rubberduckycooly's Script Unpacker-------//
 
 // Aliases
-#alias Object.Value0		:	Object.BarPos
-#alias Object.Value1		:	Object.TextPos
-#alias Object.Value2		:	Object.TextSize
-#alias Object.Value3		:	Object.Timer
-#alias Object.Value4		:	Object.FadeR
-#alias Object.Value5		:	Object.FadeG
-#alias Object.Value6		:	Object.FadeB
-#alias Object.Value7		:	Object.CharPos
+#alias Object.Value0			:	Object.BarPos
+#alias Object.Value1			:	Object.TextPos
+#alias Object.Value2			:	Object.TextSize
+#alias Object.Value3			:	Object.Timer
+#alias Object.Value4			:	Object.FadeR
+#alias Object.Value5			:	Object.FadeG
+#alias Object.Value6			:	Object.FadeB
+#alias Object.Value7			:	Object.CharPos
 
 // SS Sonic aliases
-#alias Player.ControlMode	:	SSSonic.ControlMode
+#alias Player.ControlMode		:	SSSonic.ControlMode
 
 // HUD Alias
-#alias Object.Value1		:	HUD.TimeSeconds
-#alias Object.Value2		:	HUD.TimeFrames
+#alias Object.Value1			:	HUD.TimeSeconds
+#alias Object.Value2			:	HUD.TimeFrames
 
 // States
 #alias 0	:	TITLECARD_FADEIN
@@ -79,6 +79,7 @@ sub ObjectDraw
 	case TITLECARD_SLIDEIN
 		TempValue0  = 144
 		TempValue0 += Object.CharPos
+
 		if Object.TextPos > TempValue0
 			// Slide the text to the left
 			Object.TextPos -= 8
@@ -121,7 +122,7 @@ sub ObjectDraw
 			// Move the text to the right, and...
 			Object.TextPos += 16
 			
-			// ...move the bar updwards as well
+			// ...move the bar upwards as well
 			Object.BarPos -= 16
 			
 		else
@@ -149,24 +150,18 @@ sub ObjectDraw
 		// Draw the Title Card Bar
 		DrawSpriteScreenXY(0, TempValue0, Object.BarPos)
 		
-		// SpriteFrames 1-4 aren't needed here, they're just leftovers from the traditional zone Title Card format
-		
-#platform: Use_Decomp
-		// Extension of the black Sonic CD bar, since the base sprite isn't wide enough on Steam data files
-		
-		TempValue0  = Object.TextPos
-		TempValue0 += 150
-		DrawRect(TempValue0, 147, 180, 9, 0, 0, 0, 255)
-#endplatform
-		
-		// Draw the "SONIC THE HEDGEHOG" bar proper now
+		// And then draw the Sonic CD bar and the weird three lines
 		DrawSpriteScreenXY(5, Object.TextPos, 64)
 		DrawSpriteScreenXY(6, Object.TextPos, 64)
-		
-		// And also the set of three squiggly lines following
 		DrawSpriteScreenXY(7, Object.TextPos, 64)
 		
-		// And then draw all the Letters
+#platform: Use_Decomp // Creates a black rectangle that fills the empty space on wider resolutions	
+		TempValue0  = Object.TextPos
+		TempValue0 += 150
+		DrawRect(TempValue0, 147, Screen.XSize, 9, 0, 0, 0, 255)
+#endplatform
+		
+		// And then Draw the Round Name
 		// (Letters start at Sprite Frame 8)
 		TempValue0 = 8
 		while TempValue0 < Object.TextSize
@@ -210,18 +205,22 @@ sub ObjectStartup
 	Object[20].Type  = TypeName[TitleCard]
 	Object[20].Timer = 384
 	
-	// The Title Card is a HUD object, so it should always be active and draw above other sprites
+	// Make the Title Card always active, and have it draw above everything
 	Object[20].Priority  = PRIORITY_ACTIVE
 	Object[20].DrawOrder = 6
 	
+	// Set initial Bar & Text Positions
 	Object[20].BarPos  = -216
-	Object[20].TextPos =  336
+	Object[20].TextPos = 336
 	
+
 	Object[20].CharPos  = Screen.CenterX
 	Object[20].CharPos -= 160
+	
 	if Object[20].CharPos > 3
 		Object[20].CharPos -= 4
 	end if
+	
 	Object[20].CharPos &= 248
 	
 	Object[20].TextPos += Object[20].CharPos
@@ -230,10 +229,10 @@ sub ObjectStartup
 	// "SPECIAL STAGE" is 12 letters
 	Object[20].TextSize = 12
 	
-	// And there are 8 Sprite Frames that preceed the letters
+	// Bump the value by 8 to correspond with the order of the Sprite Frames
 	Object[20].TextSize += 8
 	
-	// Preserve the colour used from the last fade
+	// Preserve the colour used from the last fade. Fade_Colour is stored as RRGGBB, in hex
 	
 	Object[20].FadeR   = Fade_Colour
 	Object[20].FadeR >>= 16
@@ -243,7 +242,7 @@ sub ObjectStartup
 	Object[20].FadeG >>= 8
 	
 	Object[20].FadeB = Fade_Colour
-	Object[20].FadeB &= 255
+	Object[20].FadeB &= 0x0000FF
 	
 	// 0 - Red Bar Frame
 	SpriteFrame(0, 0, 32, 184, 224, 37)
@@ -263,7 +262,8 @@ sub ObjectStartup
 	// All the letters used by the Title Card
 	// They got updated a bit post-release, we're using the updated version here
 	
-	// 5 - Main part of the "SONIC THE HEGDEHOG" bar	
+	// 5 - Main part of the "SONIC THE HEGDEHOG CD" bar	
+	
 	// Workaround for steam datafile to show this sprite correctly
 #platform: Use_Origins
 	SpriteFrame(72, 81, 160, 16, 60, 227)	 // #5  - Sonic The Hedgehog CD
@@ -281,27 +281,26 @@ sub ObjectStartup
 	#endplatform
 #endplatform
 
-	// 6 - Other part of the Sonic bar
+	// 6 - Continuation of the Sonic CD bar
 	SpriteFrame(16, 81, 160, 16, 52, 227)
 	
-	// 7 - Three lines
+	// 7 - Set of three lines
 	SpriteFrame(100, 32, 24, 48, 182, 124)
 	
 	// 8-19 - Individual letters spelling out "Special Stage"
+	SpriteFrame(0, 0, 16, 55, 207, 124)		// #8  - S
+	SpriteFrame(17, 32, 10, 23, 176, 180)	// #9  - P
+	SpriteFrame(28, 32, 9, 23, 187, 180)	// #10 - E
+	SpriteFrame(38, 32, 8, 23, 197, 180)	// #11 - C
+	SpriteFrame(47, 32, 6, 23, 206, 180)	// #12 - I
+	SpriteFrame(54, 32, 11, 23, 212, 180)	// #13 - A
+	SpriteFrame(66, 32, 9, 23, 176, 203)	// #14 - L
 	
-	SpriteFrame(0, 0, 16, 55, 207, 124)		// S
-	SpriteFrame(17, 32, 10, 23, 176, 180)	// P
-	SpriteFrame(28, 32, 9, 23, 187, 180)	// E
-	SpriteFrame(38, 32, 8, 23, 197, 180)	// C
-	SpriteFrame(47, 32, 6, 23, 206, 180)	// I
-	SpriteFrame(54, 32, 11, 23, 212, 180)	// A
-	SpriteFrame(66, 32, 9, 23, 176, 203)	// L
-	
-	SpriteFrame(0, 56, 16, 55, 207, 124)	// S
-	SpriteFrame(17, 56, 10, 23, 186, 203)	// T
-	SpriteFrame(28, 56, 11, 23, 212, 180)	// A
-	SpriteFrame(40, 56, 10, 23, 197, 203)	// G
-	SpriteFrame(51, 56, 9, 23, 187, 180)	// E
+	SpriteFrame(0, 56, 16, 55, 207, 124)	// #15 - S
+	SpriteFrame(17, 56, 10, 23, 186, 203)	// #16 - T
+	SpriteFrame(28, 56, 11, 23, 212, 180)	// #17 - A
+	SpriteFrame(40, 56, 10, 23, 197, 203)	// #18 - G
+	SpriteFrame(51, 56, 9, 23, 187, 180)	// #19 - E
 	
 #platform: Use_Origins
 	// There aren't any Special Stage missions nor are any of them part of the Boss Rush, so god knows why this code is here
@@ -337,21 +336,23 @@ end sub
 // ========================
 
 sub RSDKDraw
+	Object.TextSize = 12
+	Object.TextSize += 8
+
 	TempValue0 = 136
+	TempValue0 += Object.CharPos
 	TempValue0 <<= 16
-	TempValue0 += Object.XPos
-	
-	TempValue1 = 64
-	TempValue1 <<= 16
+
+	TempValue1 = 0x500000
 	TempValue1 += Object.YPos
 	
-	DrawSpriteXY(0, TempValue0, Object.YPos)
+	DrawSpriteXY(0, Object.XPos, Object.YPos)
 	DrawSpriteXY(5, Object.XPos, TempValue1)
 	DrawSpriteXY(6, Object.XPos, TempValue1)
 	DrawSpriteXY(7, Object.XPos, TempValue1)
 	
 	TempValue0 = 8
-	while TempValue0 < 20 // 12 letters
+	while TempValue0 < Object.TextSize
 		DrawSpriteXY(TempValue0, Object.XPos, TempValue1)
 		TempValue0++
 	loop
@@ -360,26 +361,40 @@ end sub
 
 sub RSDKLoad
 	LoadSpriteSheet("Special/ScoreScreen.gif")
+	// 0 - Red Bar Frame
 	SpriteFrame(0, 0, 32, 184, 224, 37)
+	
+	// 1-3 - Act Bubbles, not used here.
 	SpriteFrame(96, 96, 48, 48, 41, 1)
 	SpriteFrame(96, 96, 48, 48, 90, 1)
 	SpriteFrame(96, 96, 48, 48, 139, 1)
+	
+	// 4 - "Zone" text, not used here.
 	SpriteFrame(64, 97, 48, 16, 41, 67)
+	
+	// 5 - Main part of the "SONIC THE HEGDEHOG CD" bar
 	SpriteFrame(72, 81, 160, 16, 60, 227)
+	
+	// 6 - Continuation of the Sonic CD bar
 	SpriteFrame(16, 81, 160, 16, 52, 227)
+	
+	// 7 - Set of three lines
 	SpriteFrame(100, 32, 24, 48, 182, 124)
-	SpriteFrame(0, 0, 16, 55, 207, 124)
-	SpriteFrame(17, 32, 10, 23, 176, 180)
-	SpriteFrame(28, 32, 9, 23, 187, 180)
-	SpriteFrame(38, 32, 8, 23, 197, 180)
-	SpriteFrame(47, 32, 6, 23, 206, 180)
-	SpriteFrame(54, 32, 11, 23, 212, 180)
-	SpriteFrame(66, 32, 9, 23, 176, 203)
-	SpriteFrame(0, 56, 16, 55, 207, 124)
-	SpriteFrame(17, 56, 10, 23, 186, 203)
-	SpriteFrame(28, 56, 11, 23, 212, 180)
-	SpriteFrame(40, 56, 10, 23, 197, 203)
-	SpriteFrame(51, 56, 9, 23, 187, 180)
+	
+	// 8-19 - Individual letters spelling out "Special Stage"
+	SpriteFrame(0, 0, 16, 55, 207, 124)		// #8  - S
+	SpriteFrame(17, 32, 10, 23, 176, 180)	// #9  - P
+	SpriteFrame(28, 32, 9, 23, 187, 180)	// #10 - E
+	SpriteFrame(38, 32, 8, 23, 197, 180)	// #11 - C
+	SpriteFrame(47, 32, 6, 23, 206, 180)	// #12 - I
+	SpriteFrame(54, 32, 11, 23, 212, 180)	// #13 - A
+	SpriteFrame(66, 32, 9, 23, 176, 203)	// #14 - L
+	
+	SpriteFrame(0, 56, 16, 55, 207, 124)	// #15 - S
+	SpriteFrame(17, 56, 10, 23, 186, 203)	// #16 - T
+	SpriteFrame(28, 56, 11, 23, 212, 180)	// #17 - A
+	SpriteFrame(40, 56, 10, 23, 197, 203)	// #18 - G
+	SpriteFrame(51, 56, 9, 23, 187, 180)	// #19 - E
 
 	SetVariableAlias(ALIAS_VAR_PROPVAL, "unused")
 end sub
