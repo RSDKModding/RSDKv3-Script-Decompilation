@@ -29,6 +29,7 @@
 #alias Object[+2].Value3			:	Helper2.WingSpawnXPos
 #alias Object[+2].Value4			:	Helper2.MaxOscillation
 #alias Object[+2].Value6			:	Helper2.CutsceneRightBound
+#alias Object[+2].Value7			:	Helper2.SfxState
 #alias Object[+2].AnimationTimer	:	Helper2.SfxTimer
 #alias Object[+2].AnimationSpeed	:	Helper2.SfxUsed
 
@@ -826,7 +827,7 @@ function Helper1Controller_FourWings
 			Helper1.TargetPos -= 0x680000
 			Object.OscillationValue = -16
 		end if
-		Helper2.AnimSpeedState = 1
+		Helper2.SfxState = 1
 		Helper2.SfxUsed = 0
 		Helper2.SfxTimer = 0
 		break
@@ -853,7 +854,7 @@ function Helper1Controller_FourWings
 		Object.State = EggMobile_StopMovement
 		Helper2.StopTimer = 60
 		Object.OscillationValue = 0
-		Helper2.AnimSpeedState = 0
+		Helper2.SfxState = 0
 		Helper2.SfxTimer = 0
 		break
 	case 10
@@ -1009,7 +1010,7 @@ function Helper1Controller_ThreeWings
 			Helper1.TargetPos += 0x140000
 			Object.OscillationValue = -16
 		end if
-		Helper2.AnimSpeedState = 1
+		Helper2.SfxState = 1
 		Helper2.SfxUsed = 0
 		Helper2.SfxTimer = 0
 		break
@@ -1036,7 +1037,7 @@ function Helper1Controller_ThreeWings
 		Object.State = EggMobile_StopMovement
 		Helper2.StopTimer = 60
 		Object.OscillationValue = 0
-		Helper2.AnimSpeedState = 2
+		Helper2.SfxState = 2
 		Helper2.SfxTimer = 0
 		break
 	case 10
@@ -1623,7 +1624,7 @@ sub ObjectMain
 	end if
 
 	if Object.OscillationValue != 0
-		switch Helper2.AnimSpeedState
+		switch Helper2.SfxState
 		case 0
 			Helper2.SfxTimer += 6
 			if Helper2.SfxTimer == 42
@@ -1743,7 +1744,7 @@ sub ObjectPlayerInteraction
 						Helper2.SecondaryState = 0
 						Object.AnimationTimer  = 0
 						Helper1.ControllerDisabled = true
-						Helper2.AnimSpeedState = 5
+						Helper2.SfxState = 5
 
 #platform: Use_Haptics	
 						HapticEffect(90, 0, 0, 0)
@@ -1759,7 +1760,7 @@ sub ObjectPlayerInteraction
 						Helper1.Controller = Helper1Controller_OneWing
 						Object.Timer	 = 0
 						Object.Animation = EGGANI_HURT
-						Helper2.AnimSpeedState = 4
+						Helper2.SfxState = 4
 						PlayStageSFX(SFX_S_BOSSHIT, false)
 
 #platform: Use_Haptics	
@@ -1776,7 +1777,7 @@ sub ObjectPlayerInteraction
 						Helper1.Controller = Helper1Controller_TwoWings
 						Object.Timer = 0
 						Object.Animation = EGGANI_HURT
-						Helper2.AnimSpeedState = 3
+						Helper2.SfxState = 3
 						PlayStageSFX(SFX_S_BOSSHIT, false)
 
 #platform: Use_Haptics	
@@ -1793,7 +1794,7 @@ sub ObjectPlayerInteraction
 						Helper1.Controller = Helper1Controller_ThreeWings
 						Object.Timer = 0
 						Object.Animation = EGGANI_HURT
-						Helper2.AnimSpeedState = 2
+						Helper2.SfxState = 2
 						PlayStageSFX(SFX_S_BOSSHIT, false)
 						
 #platform: Use_Haptics	
