@@ -4,16 +4,16 @@
 
 // Aliases
 #alias Object.Value0	:	Object.Fade
-#alias Object.Value1	:	Object.ButtonCount
+#alias Object.Value1	:	Object.Selection
 
 // States
-#alias 0	:	UpsellDL_SETUP_INFADE
-#alias 1	:	UpsellDL_FADEIN
-#alias 2	:	UpsellDL_CONTROLS
-#alias 3	:	UpsellDL_EXIT
+#alias 0	:	UPSELLDL_SETUP_INFADE
+#alias 1	:	UPSELLDL_FADEIN
+#alias 2	:	UPSELLDL_CONTROLS
+#alias 3	:	UPSELLDL_EXIT
 
 // Presentation List Stages
-#alias 0	:	STAGE_P_MENU
+#alias 1	:	STAGE_P_MENU
 
 // Global SFX
 #alias 23	:	SFX_G_MENUBUTTON
@@ -35,11 +35,11 @@
 
 sub ObjectMain
 	switch Object.State
-	case UpsellDL_SETUP_INFADE
+	case UPSELLDL_SETUP_INFADE
 		if Options.PhysicalControls == false
-			Object.ButtonCount = -1
+			Object.Selection = -1
 		else
-			Object.ButtonCount = 0
+			Object.Selection = 0
 		end if
 
 		if Object.Fade < 16
@@ -51,7 +51,7 @@ sub ObjectMain
 		SetScreenFade(0, 0, 0, 255)
 		break
 
-	case UpsellDL_FADEIN
+	case UPSELLDL_FADEIN
 		if Object.Fade > 0
 			Object.Fade -= 8
 		else
@@ -60,42 +60,42 @@ sub ObjectMain
 		SetScreenFade(0, 0, 0, Object.Fade)
 		break
 
-	case UpsellDL_CONTROLS
+	case UPSELLDL_CONTROLS
 		if Options.PhysicalControls == true
 			if KeyPress[0].Up == true
-				Object.ButtonCount--
-				if Object.ButtonCount < 0
-					Object.ButtonCount = 1
+				Object.Selection--
+				if Object.Selection < 0
+					Object.Selection = 1
 				end if
 				PlaySfx(SFX_G_MENUBUTTON, false) 
 			end if
 
 			if KeyPress[0].Down == true
-				Object.ButtonCount++
-				if Object.ButtonCount > 1
-					Object.ButtonCount = 0
+				Object.Selection++
+				if Object.Selection > 1
+					Object.Selection = 0
 				end if
 				PlaySfx(SFX_G_MENUBUTTON, false) 
 			end if
 
 			if KeyPress[0].Start == true
-				switch Object.ButtonCount
+				switch Object.Selection
 				case 0
 					EngineCallback(CALLBACK_BUY_FULL_GAME_SELECTED)
 					break
 				case 1
-					Object.State = UpsellDL_EXIT
+					Object.State = UPSELLDL_EXIT
 					break
 				end switch
 			end if
 
 			if KeyPress[0].ButtonA == true
-				switch Object.ButtonCount
+				switch Object.Selection
 				case 0
 					EngineCallback(CALLBACK_BUY_FULL_GAME_SELECTED)
 					break
 				case 1
-					Object.State = UpsellDL_EXIT
+					Object.State = UPSELLDL_EXIT
 					break
 				end switch
 			end if
@@ -103,7 +103,7 @@ sub ObjectMain
 			CheckTouchRect(0, 0, Screen.XSize, Screen.YSize)
 			if CheckResult > -1
 				Options.PhysicalControls = false
-				Object.ButtonCount = -1
+				Object.Selection = -1
 			end if
 		else
 			CheckTouchRect(0, 0, Screen.XSize, Screen.YSize)
@@ -114,16 +114,16 @@ sub ObjectMain
 			TempValue1 += 80
 			CheckTouchRect(TempValue0, 168, TempValue1, 200)
 			if CheckResult > -1
-				Object.ButtonCount = 0
+				Object.Selection = 0
 			else
 				if TempValue3 < 0
-					if Object.ButtonCount == 0
+					if Object.Selection == 0
 						EngineCallback(CALLBACK_BUY_FULL_GAME_SELECTED)
-						Object.ButtonCount = -1
+						Object.Selection = -1
 					end if
 				else
-					if Object.ButtonCount == 0
-						Object.ButtonCount = -1
+					if Object.Selection == 0
+						Object.Selection = -1
 					end if
 				end if
 			end if
@@ -134,37 +134,36 @@ sub ObjectMain
 			TempValue1 += 64
 			CheckTouchRect(TempValue0, 208, TempValue1, 236)
 			if CheckResult > -1
-				Object.ButtonCount = 1
+				Object.Selection = 1
 			else
 				if TempValue3 < 0
-					if Object.ButtonCount == 1
-						Object.State = UpsellDL_EXIT
-						Object.ButtonCount = -1
+					if Object.Selection == 1
+						Object.State = UPSELLDL_EXIT
+						Object.Selection = -1
 					end if
 				else
-					if Object.ButtonCount == 1
-						Object.ButtonCount = -1
+					if Object.Selection == 1
+						Object.Selection = -1
 					end if
 				end if
 			end if
 
 			if KeyPress[0].Up == true
-				Object.ButtonCount = 1
+				Object.Selection = 1
 				Options.PhysicalControls = true
 			end if
 
 			if KeyPress[0].Down == true
-				Object.ButtonCount = 0
+				Object.Selection = 0
 				Options.PhysicalControls = true
 			end if
 		end if
 		break
 
-	case UpsellDL_EXIT
+	case UPSELLDL_EXIT
 		if Object.Fade < 288
 			Object.Fade += 8
 		else
-			// Going back to normal-quality graphics, signal the engine to exit high-res mode
 			Engine.State = ENGINE_EXIT_HIRESMODE
 			
 			Stage.ActiveList = PRESENTATION_STAGE
@@ -185,20 +184,18 @@ end sub
 sub ObjectDraw
 	Object.Scale = 216
 	DrawSpriteScreenFX(0, FX_SCALE, Screen.CenterX, Screen.CenterY)
-	if Object.ButtonCount == 0
-		// The "Buy full game" button is selected, draw its selected sprite as well
+	
+	if Object.Selection == 0 // Buy full game
 		DrawSpriteScreenFX(1, FX_SCALE, Screen.CenterX, 186)
 	end if
 
-	if Object.ButtonCount == 1
-		// The "Play again" button is selected, draw its selected sprite as well
+	if Object.Selection == 1 // Play again
 		DrawSpriteScreenFX(2, FX_SCALE, Screen.CenterX, 222)
 	end if
 end sub
 
 
 sub ObjectStartup
-
 	// Cycle through all scene objects and find if there are any Upsell DL Objects
 	TempValue0 = false
 	ArrayPos0 = 32
@@ -216,7 +213,7 @@ sub ObjectStartup
 	if TempValue0 == true
 		switch Engine.Language
 		case LANG_ENGLISH
-//			LoadSpriteSheet("Upsell/UpsellDL_EN.pvr")		// Sonic CD Lite used PVRs, but the latest releases use gif instead
+			// LoadSpriteSheet("Upsell/UpsellDL_EN.pvr") // Sonic CD Lite used PVRs, but the latest releases use gif instead
 			LoadSpriteSheet("Upsell/UpsellDL_EN.gif")
 			break
 		case LANG_FRENCH
@@ -232,7 +229,7 @@ sub ObjectStartup
 			LoadSpriteSheet("Upsell/UpsellDL_ES.gif")
 			break
 		case LANG_JAPANESE
-//			LoadSpriteSheet("Upsell/UpsellDL_JP.pvr")		// Sonic CD Lite used PVRs, but the latest releases use gif instead
+			// LoadSpriteSheet("Upsell/UpsellDL_JP.pvr") // Sonic CD Lite used PVRs, but the latest releases use gif instead
 			LoadSpriteSheet("Upsell/UpsellDL_JP.gif")
 			break
 		end switch
@@ -241,27 +238,18 @@ sub ObjectStartup
 		LoadPalette("UpsellDL.act", 0, 0, 0, 256)
 	end if
 	
-	// The gif is a high-res sprite, so signal to the Engine to start up High-Res mode
 	Engine.State = ENGINE_ENTER_HIRESMODE
 
-	// Entire BG sprite
-	SpriteFrame(-512, -288, 1024, 576, 0, 0)
+	SpriteFrame(-512, -288, 1024, 576, 0, 0) // Entire BG sprite
 
 	// The LANG_JAPANESE version of the selected frames are just a tad bit taller
 	if Engine.Language != LANG_JAPANESE
-		// "Buy full game" (or some equivalent in the chosen language)
-		SpriteFrame(-128, -35, 260, 69, 381, 580)
-
-		// "Try again" (or some equivalent in the chosen language)
-		SpriteFrame(-91, -24, 182, 49, 420, 673)
+		SpriteFrame(-128, -35, 260, 69, 381, 580) // "Buy full game" (or some equivalent in the chosen language)
+		SpriteFrame(-91, -24, 182, 49, 420, 673) // "Try again" (or some equivalent in the chosen language)
 	else
-		// "完全版の購入"
-		SpriteFrame(-128, -36, 260, 69, 381, 580)
-
-		// "もう一度遊ぶ"
-		SpriteFrame(-91, -24, 183, 49, 420, 677)
+		SpriteFrame(-128, -36, 260, 69, 381, 580) // "完全版の購入"
+		SpriteFrame(-91, -24, 183, 49, 420, 677) // "もう一度遊ぶ"
 	end if
-
 end sub
 
 
