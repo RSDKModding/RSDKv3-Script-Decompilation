@@ -5,11 +5,11 @@
 // Aliases
 #alias Object.Value0	:	Object.Timer
 #alias Object.Value1	:	Object.Flicker
-#alias Object.Value2	:	Object.Oscillation
+#alias Object.Value2	:	Object.Angle
 #alias Object.Value3	:	Object.CurrentFrame
 #alias Object.Value4	:	Object.ProjectorSheet
 #alias Object.Value5	:	Object.AnimalSheet
-#alias Object.Value6	:	Object.FramesUsed
+#alias Object.Value6	:	Object.Speed // "speed" as in angle increase, not as in movement speed or anything
 
 // States
 #alias 0	:	MSPROJECTOR_ANIM_1
@@ -17,7 +17,7 @@
 #alias 2	:	MSPROJECTOR_DESTROYED
 
 // Player
-#alias 0	:	PLAYER_SONIC
+#alias 0	:	PLAYER_SONIC_A
 
 // Gravity
 #alias 1	:	GRAVITY_AIR
@@ -94,16 +94,46 @@ end sub
 
 sub ObjectPlayerInteraction
 	if Object.State < MSPROJECTOR_DESTROYED
-		if Player.Animation == ANI_JUMPING
+//		if Player.Animation == ANI_JUMPING // Standalone original check
+		CheckEqual(Player.Animation, ANI_JUMPING)
+		TempValue0 = CheckResult
+		
+#platform: Use_Origins
+		CheckEqual(Player.Animation, ANI_GLIDING)
+		TempValue0 |= CheckResult
+		if Stage.PlayerListPos == PLAYER_AMY
+			if Player.Animation == ANI_HAMMER_JUMP
+				TempValue0 = true
+			end if
+			if Player.Animation == ANI_HAMMER_DASH
+				TempValue0 = true
+			end if
+		end if
+#endplatform
+
+		if TempValue0 == true
+#platform: Use_Standalone
 			PlayerObjectCollision(C_TOUCH, -13, -13, 13, 13)
+#endplatform
+#platform: Use_Origins
+			PlayerObjectCollision(C_ENEMY, -13, -13, 13, 13)
+#endplatform
 			if CheckResult == true
 				Object.Timer		 = 0
 				MetalSonic_Destroyed = true
 				Object.Priority		 = PRIORITY_ACTIVE
 				Object.State		 = MSPROJECTOR_DESTROYED
 				MetalSonic_List++
+
+#platform: Use_Origins
+				if Stage.PlayerListPos == PLAYER_AMY
+					game.callbackParam0 = 0
+					game.callbackParam1 = 3
+					EngineCallback(NOTIFY_STATS_BREAK_OBJECT)
+				end if
+#endplatform
 				// Saviour of the Planet Unlock Criteria
-				if Stage.PlayerListPos == PLAYER_SONIC
+				if Stage.PlayerListPos == PLAYER_SONIC_A	// PLAYER_SONIC in origins
 					if Stage.DebugMode == false
 						if Good_Future_List > 16382	// 0b11111111111110
 							if MetalSonic_List > 11
@@ -139,10 +169,10 @@ sub ObjectDraw
 		TempValue2 >>= 4
 		TempValue2  += 7
 
-		Object.Oscillation += Object.FramesUsed
-		Object.Oscillation &= 511		
-		Cos(TempValue0, Object.Oscillation)
-		Sin(TempValue1, Object.Oscillation)
+		Object.Angle += Object.Speed
+		Object.Angle &= 511
+		Cos(TempValue0, Object.Angle)
+		Sin(TempValue1, Object.Angle)
 		if TempValue1 < 0
 			Object.Direction = FACING_RIGHT
 		else
@@ -170,7 +200,7 @@ sub ObjectDraw
 		end if
 
 		if Object.Flicker < 2
-			if Object.FramesUsed == 8	// This is true for every animal except the TTZ Fishes
+			if Object.Speed == 8	// This is true for every animal except the TTZ Fishes
 				// Metal and stomped animal
 				if Object.Frame < 28
 					Object.SpriteSheet = Object.AnimalSheet
@@ -199,7 +229,7 @@ sub ObjectDraw
 				// Fishes
 				Object.SpriteSheet = Object.AnimalSheet
 				DrawSpriteFX(TempValue2, FX_FLIP, TempValue0, TempValue1)
-				TempValue4  = Object.Oscillation
+				TempValue4  = Object.Angle
 				TempValue4 += 320
 				TempValue4 &= 511
 				Cos(TempValue0, TempValue4)
@@ -235,6 +265,26 @@ sub ObjectStartup
 	SpriteFrame(-108, -28, 40, 40, 216, 136)	// #4 - Metal Hologram Frame 1
 
 	TempValue2  = Stage.ListPos
+#platform: Use_Decomp
+	// Origins Plus uses a hacky engine edit to work around the Anniversary Mode layouts not properly loading SpriteFrames
+	// Rather than implement that in the decomp, let's just correct the stage pos here instead
+	if TempValue2 >= 70 // If past the regular layouts and in the Anniversary Mode ones
+		// R11A - R12D
+		if TempValue2 <= 77
+			TempValue2 -= 70
+		else
+			// R31A - R42D
+			if TempValue2 <= 95
+				TempValue2 -= 68
+			else
+				// R61A - R82D
+				if TempValue2 <= 133
+					TempValue2 -= 56
+				end if
+			end if
+		end if
+	end if
+#endplatform
 	TempValue2 /= 10
 	switch TempValue2
 	case 0
@@ -299,7 +349,7 @@ sub ObjectStartup
 		if Object[ArrayPos0].Type == TypeName[MSProjector]
 			Object[ArrayPos0].ProjectorSheet = TempValue0
 			Object[ArrayPos0].AnimalSheet	 = TempValue1
-			Object[ArrayPos0].FramesUsed	 = TempValue3
+			Object[ArrayPos0].Speed			 = TempValue3
 			if MetalSonic_Destroyed == true
 				Object[ArrayPos0].Type = TypeName[Blank Object]
 			end if

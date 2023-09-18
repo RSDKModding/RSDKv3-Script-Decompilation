@@ -14,7 +14,7 @@
 #alias 2	:	TRANSPORTER_EXPLODE
 
 // Player
-#alias 0	:	PLAYER_SONIC
+#alias 0	:	PLAYER_SONIC_A
 
 // Property Values
 #alias 0	:	OPERATIVE
@@ -31,7 +31,7 @@
 #alias 1	:	PRIORITY_ACTIVE
 
 // Directions
-#alias 2	:	FACING_UPEND_RIGHT
+#alias 2	:	FLIP_Y
 
 
 sub ObjectMain
@@ -94,7 +94,23 @@ end sub
 sub ObjectPlayerInteraction
 	if Object.PropertyValue == OPERATIVE
 		if Object.State < TRANSPORTER_EXPLODE
-			if Player.Animation == ANI_JUMPING
+//			if Player.Animation == ANI_JUMPING // Original check
+
+			CheckEqual(Player.Animation, ANI_JUMPING)
+			TempValue0 = CheckResult
+#platform: Use_Origins
+			CheckEqual(Player.Animation, ANI_GLIDING)
+			TempValue0 |= CheckResult
+			if Stage.PlayerListPos == PLAYER_AMY
+				if Player.Animation == ANI_HAMMER_JUMP
+					TempValue0 = true
+				end if
+				if Player.Animation == ANI_HAMMER_DASH
+					TempValue0 = true
+				end if
+			end if
+#endplatform
+			if TempValue0 == true
 				PlayerObjectCollision(C_TOUCH, -38, -32, 38, 32)
 				if CheckResult == true
 					Object.State = TRANSPORTER_EXPLODE
@@ -117,7 +133,7 @@ sub ObjectPlayerInteraction
 					end if
 
 					// Saviour of the Planet unlock criteria
-					if Stage.PlayerListPos == PLAYER_SONIC
+					if Stage.PlayerListPos == PLAYER_SONIC_A // PLAYER_SONIC in origins
 						if Stage.DebugMode == false
 							if Good_Future_List > 16382	// 0b11111111111110
 								if MetalSonic_List > 11
@@ -193,7 +209,6 @@ end sub
 
 sub ObjectStartup
 	LoadSpriteSheet("Global/Items3.gif")
-
 	SpriteFrame(-40, -32, 80, 24, 175, 61)	// #0  - Transporter Frame 0
 	SpriteFrame(-40, -32, 80, 24, 175, 86)	// #1  - Transporter Frame 1
 	SpriteFrame(-40, -32, 80, 24, 175, 111)	// #2  - Transporter Frame 2
@@ -217,7 +232,8 @@ sub ObjectStartup
 	ArrayPos0 = 32
 	while ArrayPos0 < 1056
 		if Object[ArrayPos0].Type == TypeName[Transporter]
-			Object[ArrayPos0].Direction = FACING_UPEND_RIGHT
+			Object[ArrayPos0].Direction = FLIP_Y
+			
 			if Transporter_Destroyed == true
 				switch Object[ArrayPos0].PropertyValue
 				case OPERATIVE
@@ -231,6 +247,7 @@ sub ObjectStartup
 				if Object[ArrayPos0].PropertyValue == OPERATIVE
 					Object[ArrayPos0].iYPos -= 16
 				end if
+
 				Object[ArrayPos0].YOriginPos  = Object[ArrayPos0].YPos
 				Object[ArrayPos0].Oscillation = -0x2000
 			end if
@@ -244,22 +261,46 @@ end sub
 // Editor Subs
 // ========================
 
-sub RSDKDraw		
-	// Machine	
-	Object.Direction = FACING_UPEND_RIGHT
-	DrawSprite(0)
-	DrawSpriteFX(0, FX_FLIP, Object.XPos, Object.YPos)
+sub RSDKEdit
+	if Editor.ReturnVariable == true
+		switch Editor.VariableID
+		case EDIT_VAR_PROPVAL // Property Value
+		case 0 // inactive
+			CheckResult = Object.PropertyValue
+			break
+		end switch
+	else
+		switch Editor.VariableID
+		case EDIT_VAR_PROPVAL // Property Value
+		case 0 // inactive
+			Object.PropertyValue = Editor.VariableValue
+			break
+		end switch
+	end if
+end sub
 
-	// Electricity
-	DrawSprite(4)
-	DrawSprite(8)
-	DrawSprite(12)
+
+sub RSDKDraw
+	Object.Direction = FLIP_Y
+	
+	if Object.PropertyValue == OPERATIVE
+		// Machine
+		DrawSprite(0)
+		DrawSpriteFX(0, FX_FLIP, Object.XPos, Object.YPos)
+
+		// Electricity
+		DrawSprite(4)
+		DrawSprite(8)
+		DrawSprite(12)
+	else
+		DrawSprite(17)
+		DrawSpriteFX(17, FX_FLIP, Object.XPos, Object.YPos)
+	end if
 end sub
 
 
 sub RSDKLoad
 	LoadSpriteSheet("Global/Items3.gif")
-
 	SpriteFrame(-40, -32, 80, 24, 175, 61)	// #0  - Transporter Frame 0
 	SpriteFrame(-40, -32, 80, 24, 175, 86)	// #1  - Transporter Frame 1
 	SpriteFrame(-40, -32, 80, 24, 175, 111)	// #2  - Transporter Frame 2
@@ -276,8 +317,12 @@ sub RSDKLoad
 	SpriteFrame(10, -8, 12, 16, 162, 1)		// #13 - Electricity Frame 9
 	SpriteFrame(10, -8, 12, 16, 149, 18)	// #14 - Electricity Frame 10
 	SpriteFrame(10, -8, 12, 16, 162, 18)	// #15 - Electricity Frame 11
+	SpriteFrame(-40, 16, 80, 16, 175, 44)	// #16 - Transporter Destroyed
+	SpriteFrame(-40, -32, 80, 25, 175, 18)	// #17 - Transporter Old
+	SpriteFrame(-40, 16, 80, 16, 175, 1)	// #18 - Transporter Old Destroyed
 
-	// Not used by editor
-	// TODO: i'm like, half sure it is, but i'll need to check more (and maybe have RE2 in my hands :))))) in order to confirm
-	SetVariableAlias(ALIAS_VAR_PROPVAL, "unused")
+	AddEditorVariable("inactive")
+	SetActiveVariable("inactive")
+	AddEnumVariable("False", false)
+	AddEnumVariable("True", true)
 end sub

@@ -79,8 +79,30 @@ sub ObjectPlayerInteraction
 
 	if Object.PropertyValue < 1
 		if Object.Destroyed == false
+			CheckResult = false
 			if Player.Animation == ANI_JUMPING
+				CheckResult = true
+			end if
+#platform: Use_Origins
+			if Stage.PlayerListPos == PLAYER_KNUCKLES
+				CheckResult = true
+			end if
+			if Stage.PlayerListPos == PLAYER_AMY
+				if Player.Animation == ANI_HAMMER_JUMP
+					CheckResult = true
+				end if
+				if Player.Animation == ANI_HAMMER_DASH
+					CheckResult = true
+				end if
+			end if
+#endplatform
+			if CheckResult == true
+#platform: Use_Origins
+				PlayerObjectCollision(C_ENEMY, -18, -48, 18, 48)
+#endplatform
+#platform: Use_Standalone
 				PlayerObjectCollision(C_TOUCH, -18, -48, 18, 48)
+#endplatform
 				if CheckResult == true
 					Object.Destroyed = true
 					Object.Priority = PRIORITY_ACTIVE

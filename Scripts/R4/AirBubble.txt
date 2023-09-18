@@ -8,6 +8,8 @@
 #alias Object.Value2	:	Object.XVelocity
 #alias Object.Value3	:	Object.YVelocity
 
+#alias Player.Value14	:	Player.DropDashCharge
+
 // States
 #alias 0	:	AIRBUBBLE_ACTIVE
 #alias 1	:	AIRBUBBLE_USED
@@ -79,8 +81,23 @@ sub ObjectMain
 			Player.Animation = ANI_BREATHING
 		else
 			Object.Type = TypeName[Blank Object]
+			
 			Player.Animation = ANI_WALKING
 			Player.AnimationSpeed = 20
+
+#platform: Use_Origins
+			if Player.State == Player_State_GlideRight
+				Player.Animation = ANI_GLIDING
+			end if
+			if Player.State == Player_State_GlideLeft
+				Player.Animation = ANI_GLIDING
+			end if
+			
+			if Player.DropDashCharge >= 20
+				Player.PrevAnimation  = ANI_WALKING
+				Player.AnimationSpeed = 200
+			end if
+#endplatform
 		end if
 	end if
 

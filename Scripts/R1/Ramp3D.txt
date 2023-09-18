@@ -34,6 +34,55 @@
 #alias -1	:	CONTROLMODE_NONE
 #alias  0	:	CONTROLMODE_NORMAL
 
+// Function declarations
+#function Ramp3D_SetPlayerLaunch
+
+function Ramp3D_SetPlayerLaunch
+#platform: Use_Origins
+	PlayerObjectCollision(C_TOUCH, -16, -16, 16, 16)
+	if CheckResult == 1
+		Player.Timer = 0
+		Player.State = Player_State_Air_NoDropDash
+
+		Player.TileCollisions = true
+		
+		Player.Speed	 =  0x80000
+		Player.XVelocity =  0x80000
+		Player.YVelocity = -0xE0000
+
+		Player.Gravity  = GRAVITY_AIR
+		Player.Rotation = 384
+
+		Stage.NewYBoundary2 = 1280
+		Stage.NewXBoundary1 = 2080
+
+		if Player.Animation == ANI_ROLL3D
+			Player.Animation = ANI_JUMPING
+		else
+			if Player.Animation != ANI_JUMPING
+				Player.Animation = ANI_WALKING
+			end if
+		end if
+
+		Object[15].Type = TypeName[BackgroundFX]
+		Object[15].Priority  = PRIORITY_ACTIVE
+		Object[15].DrawOrder = 0
+
+		ArrayPos0 = 0
+		while ArrayPos0 < 2
+			HParallax[ArrayPos0].ScrollPos = 0
+			ArrayPos0++
+		loop
+	end if
+	if Player.YVelocity < 0
+		Player.ControlMode  = CONTROLMODE_NONE
+		Player.Left			= false
+		Player.Right		= false
+		Object.Priority 	= PRIORITY_ACTIVE
+	end if
+#endplatform
+end function
+
 
 sub ObjectPlayerInteraction
 	switch Object.PropertyValue
@@ -224,7 +273,7 @@ sub ObjectPlayerInteraction
 		Player.XOriginPos = Player.XPos
 		break
 		
-	case RAMP3D_DROP		
+	case RAMP3D_DROP
 	#platform: Use_Origins
 		CheckEqual(Player.State, Player_State_Air_NoDropDash)
 		TempValue0  = CheckResult
@@ -276,17 +325,11 @@ sub ObjectPlayerInteraction
 		break
 
 	case RAMP3D_EXIT_BOOST
+#platform: Use_Standalone
 		PlayerObjectCollision(C_TOUCH, -16, -16, 16, 16)
 		if CheckResult == true
 			Player.Timer = 0
-
-#platform: Use_Origins
-			Player.State = Player_State_Air_NoDropDash
-#endplatform
-
-#platform: Use_Standalone
 			Player.State = Player_State_Air
-#endplatform
 
 			Player.TileCollisions = true
 
@@ -309,7 +352,7 @@ sub ObjectPlayerInteraction
 			end if
 
 			Object[15].Type = TypeName[Background FX]
-			Object[15].Priority = PRIORITY_ACTIVE
+			Object[15].Priority  = PRIORITY_ACTIVE
 			Object[15].DrawOrder = 0
 
 			ArrayPos0 = 0
@@ -328,6 +371,28 @@ sub ObjectPlayerInteraction
 			Player.ControlMode  = CONTROLMODE_NORMAL
 			Object.Priority		= PRIORITY_BOUNDS
 		end if
+#endplatform
+
+#platform: Use_Origins
+		if Stage.PlayerListPos == PLAYER_KNUCKLES
+			PlayerObjectCollision(C_TOUCH, -16, -16, 16, 16)
+			if CheckResult == true
+				TempValue0 = true
+				if Player.Angle == 0
+					TempValue0 = false
+				end if
+				if TempValue0 == true
+					CallFunction(Ramp3D_SetPlayerLaunch)
+				end if
+			end if
+		else
+			CallFunction(Ramp3D_SetPlayerLaunch)
+		end if
+		if Player.YVelocity >= 0
+			Player.ControlMode  = CONTROLMODE_NORMAL
+			Object.Priority		= PRIORITY_BOUNDS
+		end if
+#endplatform
 		
 		break
 	end switch

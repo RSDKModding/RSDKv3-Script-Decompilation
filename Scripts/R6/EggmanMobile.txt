@@ -220,7 +220,7 @@ end function
 
 function R6_EGG_STEAM
 	if Object.AnimationTimer == 0
-		PlaySfx(SFX_G_EXPLOSION, false) 
+		PlaySfx(SFX_G_EXPLOSION, false)
 	end if
 	
 	if Object.AnimationTimer < 12
@@ -396,13 +396,43 @@ sub ObjectPlayerInteraction
 	
 	if Player.Animation != ANI_HURT
 		if Object.FaceTimer == 0
+#platform: Use_Standalone
 			PlayerObjectCollision(C_TOUCH, -64, -48, 64, 16)
 			TempValue0  = CheckResult
 			PlayerObjectCollision(C_TOUCH, -32, 16, 32, 32)
 			TempValue0 |= CheckResult
+#endplatform
+#platform: Use_Origins
+			PlayerObjectCollision(C_ENEMY, -64, -48, 64, 16)
+			TempValue0  = CheckResult
+			PlayerObjectCollision(C_ENEMY, -32, 16, 32, 32)
+			TempValue0 |= CheckResult
+#endplatform
 			if TempValue0 == true
+				TempValue0 = false
 				if Player.Animation == ANI_JUMPING
-			
+					TempValue0 = true
+				end if
+#platform: Use_Origins
+				if Stage.PlayerListPos == PLAYER_AMY
+					if Player.Animation == ANI_HAMMER_JUMP
+						TempValue0 = true
+					end if
+					if Player.Animation == ANI_HAMMER_DASH
+						TempValue0 = true
+					end if
+				end if
+				if Stage.PlayerListPos == PLAYER_KNUCKLES
+					if Player.Animation == ANI_GLIDING
+						TempValue0 = true
+					end if
+					if Player.Animation == ANI_GLIDING_STOP
+						TempValue0 = true
+					end if
+				end if
+#endplatform
+
+				if TempValue0 == true
 #platform: Use_Haptics
 					HapticEffect(75, 0, 0, 0)
 #endplatform
@@ -445,7 +475,7 @@ sub ObjectPlayerInteraction
 
 						Copy16x16Tile(810, 863)
 
-						PlaySfx(SFX_G_EXPLOSION, false) 
+						PlaySfx(SFX_G_EXPLOSION, false)
 					end if
 				else
 					CallFunction(Player_Hit)

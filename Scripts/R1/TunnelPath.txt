@@ -14,7 +14,8 @@
 #alias 1	:	TUNNELPATH_ACTIVE
 
 // Players
-#alias 0	:	PLAYER_SONIC
+#alias 0	:	PLAYER_SONIC_A
+#alias 1	:	PLAYER_TAILS_A
 
 // Global SFX
 #alias 7	:	SFX_G_RELEASE
@@ -715,7 +716,7 @@ sub ObjectPlayerInteraction
 				Object.Timer = 0
 				Object.Priority = PRIORITY_ACTIVE
 
-				PlaySfx(SFX_G_RELEASE, false) 
+				PlaySfx(SFX_G_RELEASE, false)
 			end if
 		end if
 	end if
@@ -730,15 +731,25 @@ end sub
 
 
 sub ObjectStartup
-	if Stage.PlayerListPos == PLAYER_SONIC
+	// #0 - Wall Hole
+	if Stage.PlayerListPos == PLAYER_SONIC_A // PLAYER_SONIC in origins
 		LoadSpriteSheet("R1/Objects.gif")
-
-		SpriteFrame(-16, -16, 32, 32, 34, 175)	// #0 - Wall Hole
-	else
-		LoadSpriteSheet("R1/Objects3.gif")
-
-		SpriteFrame(-14, -16, 29, 32, 115, 167)	// #0 - Wall Hole
+		SpriteFrame(-16, -16, 32, 32, 34, 175)
 	end if
+	if Stage.PlayerListPos == PLAYER_TAILS_A // PLAYER_TAILS in origins
+		LoadSpriteSheet("R1/Objects3.gif")
+		SpriteFrame(-14, -16, 29, 32, 115, 167)
+	end if
+#platform: Use_Origins
+	if Stage.PlayerListPos == PLAYER_KNUCKLES
+		LoadSpriteSheet("R1/Objects3.gif")
+		SpriteFrame(-17, -20, 34, 40, 123, 214)
+	end if
+	if Stage.PlayerListPos == PLAYER_AMY
+		LoadSpriteSheet("R1/Objects3.gif")
+		SpriteFrame(-16, -20, 32, 40, 158, 214)
+	end if
+#endplatform
 end sub
 
 

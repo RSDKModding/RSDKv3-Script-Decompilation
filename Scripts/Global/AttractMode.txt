@@ -28,7 +28,8 @@
 #alias 2	:	MESSAGE_LOSTFOCUS
 
 // Player Aliases
-#alias 0	:	PLAYER_SONIC
+#alias 0	:	PLAYER_SONIC_A
+#alias 1	:	PLAYER_TAILS_A
 
 // Presentation Stages
 #alias 0	:	STAGE_P_TITLE
@@ -147,15 +148,23 @@ end sub
 
 sub ObjectStartup
 	
-	// This Object never draws anything anyways, but load a sheet and set up Sprite Frames anyways
+	// This Object never draws anything anyway, but load a sheet and set up Sprite Frames anyway
 	if Stage.ActiveList == REGULAR_STAGE
-		
 		// Load the corresponding Display sheet for the current character
-		if Stage.PlayerListPos == PLAYER_SONIC
+		if Stage.PlayerListPos == PLAYER_SONIC_A
 			LoadSpriteSheet("Global/Display.gif")
-		else
+		end if
+		if Stage.PlayerListPos == PLAYER_TAILS_A
 			LoadSpriteSheet("Global/Display_t.gif")
 		end if
+#platform: Use_Origins
+		if Stage.PlayerListPos == PLAYER_KNUCKLES
+			LoadSpriteSheet("Global/Display_k.gif")
+		end if
+		if Stage.PlayerListPos == PLAYER_AMY
+			LoadSpriteSheet("Global/Display_a.gif")
+		end if
+#endplatform
 		
 		// "Demo" - unused
 		SpriteFrame(-17, -5, 34, 11, 1, 176)

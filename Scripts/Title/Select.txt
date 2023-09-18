@@ -101,6 +101,9 @@
 // Game Mode Aliases
 #alias 1 : MODE_SAVEGAME
 
+// Player List Pos Aliases
+#alias 0 : PLAYER_SONIC_A
+
 
 sub ObjectMain
 	switch Object.State
@@ -423,6 +426,11 @@ sub ObjectMain
 		break
 		
 	case SELECT_EXTRAS
+		// Force Sonic's SaveRAM Data to load
+		// (In Origins, each character has their own dedicated SaveRAM data, but we want to make sure Extras unlocks are applied regardless of character)
+		game.callbackParam0 = PLAYER_SONIC_A
+		EngineCallback(NOTIFY_PLAYER_SET)
+		
 		// Yup it's your favourite Menu again, but now the Extras tab!
 		game.mainMenuMode = MAINMENUMODE_EXTRAS
 		Stage.ActiveList  = PRESENTATION_STAGE
@@ -454,7 +462,8 @@ sub ObjectMain
 		if game.callbackResult > 0
 			// Based on the result, either exit or actually follow the selected option
 			if game.continueFlag != false
-				Object.CurrentSelection = SELECTION_CONTINUE
+				// There used to be a Object.CurrentSelection = SELECTION_CONTINUE line here, but it was removed in Origins Plus
+				// Not sure what this really fixed?
 				Object.State = SELECT_FADEOUT_E
 			else
 				ReadSaveRAM()

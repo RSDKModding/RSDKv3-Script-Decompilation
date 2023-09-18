@@ -5,6 +5,7 @@
 // Aliases
 #alias Object.Value0	:	Object.OnObject
 #alias Object.Value1	:	Object.LaunchSpeed
+#alias Object.Value2	:	Object.LedgeStop
 
 // Player Aliases
 #alias Player.Value6	:	Player.MinRollSpeed
@@ -36,12 +37,28 @@
 
 sub ObjectPlayerInteraction
 	PlayerObjectCollision(C_TOUCH, -16, -16, 16, 16)
+#platform: Use_Origins
+	if CheckResult == true
+		if Stage.PlayerListPos == PLAYER_KNUCKLES
+			if Player.State == Player_State_LedgePullUp
+				CheckResult   = false
+				Object.LedgeStop = true
+			end if
+		end if
+	end if
+#endplatform
 	if CheckResult == true
 		switch Object.PropertyValue
 		case HORIZONTAL_TUBE
+#platform: Use_Origins
+			if Object.LedgeStop == true
+				Player.Speed  = 1
+				Object.LedgeStop = false
+			end if
+#endplatform
 			if Player.Speed > 0
 				if Player.State != Player_State_TubeRoll
-					PlaySfx(SFX_G_RELEASE, false) 
+					PlaySfx(SFX_G_RELEASE, false)
 				end if
 
 				Player.Direction = FACING_RIGHT
@@ -68,7 +85,7 @@ sub ObjectPlayerInteraction
 
 		case VERTICAL_TUBE
 			if Player.State != Player_State_TubeRoll
-				PlaySfx(SFX_G_RELEASE, false) 
+				PlaySfx(SFX_G_RELEASE, false)
 			end if
 			Player.Gravity	 = GRAVITY_GROUND
 			Player.State	 = Player_State_TubeRoll
@@ -117,7 +134,7 @@ sub ObjectPlayerInteraction
 		case HORIZONTAL_EXIT_TUBE
 			if Player.Speed < 0
 				if Player.State != Player_State_TubeRoll
-					PlaySfx(SFX_G_RELEASE, false) 
+					PlaySfx(SFX_G_RELEASE, false)
 				end if
 
 				Player.State	 = Player_State_TubeRoll
@@ -174,6 +191,12 @@ sub ObjectPlayerInteraction
 		end switch
 		
 		Object.OnObject = true
+
+#platform: Use_Origins
+		if Player.State == Player_State_Climb
+			Player.Animation = ANI_CLIMBING
+		end if
+#endplatform
 	else
 		Object.OnObject = false
 	end if

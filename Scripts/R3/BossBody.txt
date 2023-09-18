@@ -267,7 +267,7 @@ sub ObjectMain
 			TempValue1 <<= 16
 			TempValue1  += Object.YPos
 			CreateTempObject(TypeName[Explosion], 0, TempValue0, TempValue1)
-			PlaySfx(SFX_G_EXPLOSION, false) 
+			PlaySfx(SFX_G_EXPLOSION, false)
 		end if
 
 		Object.Timer++
@@ -286,7 +286,12 @@ sub ObjectPlayerInteraction
 	switch Object.State
 	case BOSSBODY_DROP_BOMBS
 	case BOSSBODY_DRAG_EGGMAN_1
+#platform: Use_Standalone
 		PlayerObjectCollision(C_TOUCH, -64, -16, 64, 16)
+#endplatform
+#platform: Use_Origins
+		PlayerObjectCollision(C_ENEMY, -64, -16, 64, 16)
+#endplatform
 		if CheckResult == true
 			Player.YVelocity  = 0
 			Object.YVelocity -= 0x480000
@@ -295,7 +300,7 @@ sub ObjectPlayerInteraction
 			Object.State++
 
 			Eggman.State = EGGANI_HURT
-			PlaySfx(SFX_G_EXPLOSION, false) 
+			PlaySfx(SFX_G_EXPLOSION, false)
 
 #platform: Use_Haptics
 			HapticEffect(75, 0, 0, 0)
@@ -304,7 +309,12 @@ sub ObjectPlayerInteraction
 		break
 
 	case BOSSBODY_DRAG_EGGMAN_2
+#platform: Use_Standalone
 		PlayerObjectCollision(C_TOUCH, -64, -16, 64, 16)
+#endplatform
+#platform: Use_Origins
+		PlayerObjectCollision(C_ENEMY, -64, -16, 64, 16)
+#endplatform
 		if CheckResult == true
 #platform: Use_Origins
 			EngineCallback(NOTIFY_KILL_BOSS)
@@ -319,7 +329,7 @@ sub ObjectPlayerInteraction
 			Object.YVelocity -= 0x800000
 			Object.DamageTimer = 1
 			Object.State++
-			PlaySfx(SFX_G_EXPLOSION, false) 
+			PlaySfx(SFX_G_EXPLOSION, false)
 
 #platform: Use_Haptics
 			HapticEffect(75, 0, 0, 0)

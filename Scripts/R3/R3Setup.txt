@@ -105,6 +105,12 @@ sub ObjectPlayerInteraction
 		break
 
 	case 3
+#platform: Use_Origins
+		if Player.Animation == ANI_CLIMBING
+			// Before bouncing him away, let's make sure Knuckles is in his normal air state, first
+			CallFunction(Player_CancelClimb)
+		end if
+#endplatform
 		TempValue7 = 3
 		Get16x16TileInfo(TempValue6, TempValue4, TempValue5, TILEINFO_DIRECTION)
 		break
@@ -269,12 +275,21 @@ sub ObjectPlayerInteraction
 
 	switch TempValue7
 	case 1
+#platform: Use_Origins
+		if Player.Animation == ANI_CLIMBING
+			// Before bouncing him away, let's make sure Knuckles is in his normal air state, first
+			CallFunction(Player_CancelClimb)
+		end if
+#endplatform
 		if Player.XVelocity > 0
 			Player.XVelocity = -0x50000
 		else
 			Player.XVelocity = 0x50000
 		end if
 		Player.Speed = Player.XVelocity
+#platform: Use_Origins
+		Player.Timer = 0
+#endplatform
 		PlayStageSfx(SFX_S_BUMPER2, false)
 		break
 

@@ -9,6 +9,14 @@
 sub ObjectPlayerInteraction
 	PlayerObjectCollision(C_TOUCH, -64, -64, 64, 64)
 	if CheckResult == true
+#platform: Use_Origins
+		if Player.State == Player_State_GlideSlide
+			Player.State = Player_State_Ground
+			CallFunction(Player_HandleOnGround)
+			Player.Skidding = 0
+		end if
+#endplatform
+
 		if Player.Gravity == GRAVITY_GROUND
 			if Player.Speed < 0x50000
 				Player.Speed = 0x50000

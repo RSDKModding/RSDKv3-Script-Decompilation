@@ -40,7 +40,7 @@ sub ObjectMain
 	// The different Kanabun types have their own main update routines
 	// However, their main State Switches are exactly the same, it's only the small bit of code after that differs between the two
 
-	if Object.Quality == GOOD_QUALITY		
+	if Object.Quality == GOOD_QUALITY
 		switch Object.State
 		case KANABUN_FLYL
 			// This Kanabun is initially given always-active priority, in order for its OOB state to work properly
@@ -208,8 +208,12 @@ sub ObjectPlayerInteraction
 	if Object.State < KANABUN_OFFSCREEN
 		if Object.Depth == 0
 			// If in the Foreground, then act as a normal badnik
-			
+#platform: Use_Standalone
 			PlayerObjectCollision(C_TOUCH, -14, -14, 14, 14)
+#endplatform
+#platform: Use_Origins
+			PlayerObjectCollision(C_ENEMY, -14, -14, 14, 14)
+#endplatform
 			if CheckResult == true
 				CallFunction(Player_BadnikBreak)
 			end if
@@ -218,7 +222,12 @@ sub ObjectPlayerInteraction
 			// (Don't want to damage them unfairly!)
 			
 			if Player.Animation == ANI_JUMPING
+#platform: Use_Standalone
 				PlayerObjectCollision(C_TOUCH, -14, -14, 14, 14)
+#endplatform
+#platform: Use_Origins
+				PlayerObjectCollision(C_ENEMY, -14, -14, 14, 14)
+#endplatform
 				if CheckResult == true
 					CallFunction(Player_BadnikBreak)
 				end if

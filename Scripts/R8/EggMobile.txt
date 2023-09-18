@@ -71,7 +71,7 @@
 #alias 1	:	CUTSCENE_SKIP
 
 // Players
-#alias 0	:	PLAYER_SONIC
+#alias 0	:	PLAYER_SONIC_A
 
 // Collision Sides
 #alias 0	:	CSIDE_FLOOR
@@ -1343,7 +1343,7 @@ function EggMobile_Destroyed
 			Player.Down 		= false
 
 			Helper2.SecondaryState++
-			if Stage.PlayerListPos == PLAYER_SONIC
+			if Stage.PlayerListPos == PLAYER_SONIC_A	// PLAYER_SONIC in origins
 				if Stage.DebugMode == false
 					SetAchievement(9, 100)
 				end if
@@ -1418,7 +1418,7 @@ function EggMobile_Destroyed
 		CreateTempObject(TypeName[Explosion], 0, TempValue0, TempValue1)
 		if Object.AnimationTimer == 0
 			if Object[+5].Type == TypeName[Blank Object]
-				PlaySfx(SFX_G_EXPLOSION, false) 
+				PlaySfx(SFX_G_EXPLOSION, false)
 			end if
 		end if
 	end if
@@ -1487,7 +1487,7 @@ function EggMobile_Destroyed_NoAmy
 		CreateTempObject(TypeName[Explosion], 0, TempValue0, TempValue1)
 		if Object.AnimationTimer == 0
 			if Object[+5].Type == TypeName[Blank Object]
-				PlaySfx(SFX_G_EXPLOSION, false) 
+				PlaySfx(SFX_G_EXPLOSION, false)
 			end if
 		end if
 	end if
@@ -1681,9 +1681,42 @@ end sub
 sub ObjectPlayerInteraction
 	if Helper2.BossInvincible == false
 		if Object.InvulnerableTimer == 0
+#platform: Use_Standalone
 			PlayerObjectCollision(C_TOUCH, -24, -24, 24, 24)
+#endplatform
+#platform: Use_Origins
+			PlayerObjectCollision(C_ENEMY, -24, -24, 24, 24)
+#endplatform
 			if CheckResult == true
-				if Player.Animation != ANI_JUMPING
+				CheckResult = false
+				if Player.Animation == ANI_JUMPING
+					CheckResult = true
+				end if
+				if Player.Animation == ANI_SPINDASH
+					CheckResult = true
+				end if
+#platform: Use_Origins
+				if Stage.PlayerListPos == PLAYER_AMY
+					if Player.Animation == ANI_HAMMER_JUMP
+						CheckResult = true
+					end if
+					if Player.Animation == ANI_HAMMER_DASH
+						CheckResult = true
+					end if
+				end if
+				TempValue0 = false
+				if Stage.PlayerListPos == PLAYER_KNUCKLES
+					if Player.Animation == ANI_GLIDING
+						CheckResult = true
+						TempValue0  = true
+					end if
+					if Player.Animation == ANI_GLIDING_STOP
+						CheckResult = true
+						TempValue0  = true
+					end if
+				end if
+#endplatform
+				if CheckResult == false
 					CallFunction(Player_Hit)
 					if Player.State == Player_State_GotHit
 						Object.Animation = EGGANI_LAUGH
@@ -1691,9 +1724,30 @@ sub ObjectPlayerInteraction
 				else
 					Object.Oscillation >>= 5
 					Object.Oscillation <<= 5
+#platform: Use_Standalone
 					FlipSign(Player.Speed)
 					FlipSign(Player.XVelocity)
 					FlipSign(Player.YVelocity)
+#endplatform
+#platform: Use_Origins
+					if TempValue0 == false
+						FlipSign(Player.Speed)
+						FlipSign(Player.XVelocity)
+						FlipSign(Player.YVelocity)
+					else
+						FlipSign(Player.YVelocity)
+						Player.XVelocity = 0x30000
+						if Player.XPos < Object.XPos
+							FlipSign(Player.XVelocity)
+						end if
+						
+						Player.Speed = Player.XVelocity
+						if Player.Animation == ANI_GLIDING
+							Player.Animation = ANI_GLIDING_DROP
+							Player.State	 = Player_State_GlideDrop
+						end if
+					end if
+#endplatform
 					TempValue0 = 0
 					ArrayPos0 = Object.EntityNo
 					ArrayPos0--
@@ -1746,7 +1800,7 @@ sub ObjectPlayerInteraction
 						Helper1.ControllerDisabled = true
 						Helper2.SfxState = 5
 
-#platform: Use_Haptics	
+#platform: Use_Haptics
 						HapticEffect(90, 0, 0, 0)
 #endplatform
 
@@ -1763,7 +1817,7 @@ sub ObjectPlayerInteraction
 						Helper2.SfxState = 4
 						PlayStageSFX(SFX_S_BOSSHIT, false)
 
-#platform: Use_Haptics	
+#platform: Use_Haptics
 						HapticEffect(75, 0, 0, 0)
 #endplatform
 
@@ -1780,7 +1834,7 @@ sub ObjectPlayerInteraction
 						Helper2.SfxState = 3
 						PlayStageSFX(SFX_S_BOSSHIT, false)
 
-#platform: Use_Haptics	
+#platform: Use_Haptics
 						HapticEffect(75, 0, 0, 0)
 #endplatform
 
@@ -1797,7 +1851,7 @@ sub ObjectPlayerInteraction
 						Helper2.SfxState = 2
 						PlayStageSFX(SFX_S_BOSSHIT, false)
 						
-#platform: Use_Haptics	
+#platform: Use_Haptics
 						HapticEffect(75, 0, 0, 0)
 #endplatform
 

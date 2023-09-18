@@ -4,7 +4,7 @@
 
 // Aliases
 #alias Object.Value0			:	Object.Angle
-#alias Object.Value1			:	Object.Increment
+#alias Object.Value1			:	Object.Speed
 #alias Object.Value2			:	Object.SpawnedSpikes
 
 // HUD Alias
@@ -21,7 +21,7 @@
 
 
 sub ObjectMain
-	Object.Angle += Object.Increment
+	Object.Angle += Object.Speed
 	if Object.Angle < 0
 		Object.Angle += 512
 	end if
@@ -96,7 +96,7 @@ sub ObjectStartup
 		if Object[ArrayPos0].Type == TypeName[Rotating Spikes]
 			switch Object[ArrayPos0].PropertyValue
 			case MAXSPIKES_RIGHT
-				Object[ArrayPos0].Increment = 2
+				Object[ArrayPos0].Speed = 2
 				if HUD.CurrentTimePeriod > 1	// In the future it has 4 spikes
 					Object[ArrayPos0].SpawnedSpikes = 4
 				else
@@ -105,7 +105,7 @@ sub ObjectStartup
 				break
 
 			case MAXSPIKES_LEFT
-				Object[ArrayPos0].Increment = -2
+				Object[ArrayPos0].Speed = -2
 				if HUD.CurrentTimePeriod > 1	// In the future it has 4 spikes
 					Object[ArrayPos0].SpawnedSpikes = 4
 				else
@@ -114,12 +114,12 @@ sub ObjectStartup
 				break
 
 			case TWO_SPIKES_RIGHT
-				Object[ArrayPos0].Increment = 2
+				Object[ArrayPos0].Speed = 2
 				Object[ArrayPos0].SpawnedSpikes = 2
 				break
 
 			case TWO_SPIKES_LEFT
-				Object[ArrayPos0].Increment = -2
+				Object[ArrayPos0].Speed = -2
 				Object[ArrayPos0].SpawnedSpikes = 2
 				break
 
@@ -155,7 +155,7 @@ sub RSDKEdit
 		case 0 // spikeType
 			Object.PropertyValue  = Editor.VariableValue
 			Object.PropertyValue &= 3
-			break		
+			break
 		end switch
 	end if
 end sub
@@ -188,7 +188,7 @@ sub RSDKDraw
 	if Editor.ShowGizmos == true
 		switch Object.PropertyValue
 		case 0
-		case 2		
+		case 2
 			TempValue0   = Object.iXPos
 			TempValue0  += 32
 			TempValue0 <<= 16
@@ -196,10 +196,10 @@ sub RSDKDraw
 			TempValue1   = Object.iYPos
 			TempValue1  += 32
 			TempValue1 <<= 16
-			DrawArrow(TempValue0, Object.YPos, Object.XPos, TempValue1, 255, 255, 255, 0)	
+			DrawArrow(TempValue0, Object.YPos, Object.XPos, TempValue1, 255, 255, 255, 0)
 			break
 		case 1
-		case 3	
+		case 3
 			TempValue0   = Object.iXPos
 			TempValue0  += 32
 			TempValue0 <<= 16
@@ -207,7 +207,7 @@ sub RSDKDraw
 			TempValue1   = Object.iYPos
 			TempValue1  += 32
 			TempValue1 <<= 16
-			DrawArrow(Object.XPos, TempValue1, TempValue0, Object.YPos, 255, 255, 255, 0)	
+			DrawArrow(Object.XPos, TempValue1, TempValue0, Object.YPos, 255, 255, 255, 0)
 			break
 		end switch
 	end if

@@ -185,11 +185,7 @@ sub RSDKEdit
 			CheckResult = Object.PropertyValue
 			break
 		case 0 // startStreched
-			if Object.PropertyValue < 127
-				CheckResult = 0
-			else
-				CheckResult = 1
-			end if
+			GetBit(CheckResult, Object.PropertyValue, 7)
 			break
 		case 1 // direction
 			CheckResult  = Object.PropertyValue
@@ -202,30 +198,13 @@ sub RSDKEdit
 			Object.PropertyValue  = Editor.VariableValue
 			break
 		case 0 // startStreched
-			CheckLower(Object.PropertyValue, 127)
-			TempValue0  = CheckResult
-			CheckEqual(Editor.VariableValue, true)
-			TempValue0 &= CheckResult
-			if TempValue0 == true
-				Object.PropertyValue += 128
-			end if
-
-			CheckGreater(Object.PropertyValue, 127)
-			TempValue0  = CheckResult
-			CheckEqual(Editor.VariableValue, false)
-			TempValue0 &= CheckResult
-			if TempValue0 == true
-				Object.PropertyValue -= 128
-			end if
+			Object.PropertyValue &= 127
+			SetBit(Object.PropertyValue, 7, Editor.VariableValue)
 			break
 
 		case 1 // direction
-			if Object.PropertyValue < 127
-				Object.PropertyValue = Editor.VariableValue
-			else
-				Object.PropertyValue = 128
-				Object.PropertyValue += Editor.VariableValue
-			end if
+			Object.PropertyValue &= 128
+			Object.PropertyValue |= Editor.VariableValue
 			break
 		end switch
 	end if

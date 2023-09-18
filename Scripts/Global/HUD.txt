@@ -13,7 +13,8 @@
 // Player Aliases
 #alias Player.Value0 : Player.Rings
 
-#alias 0 : PLAYER_SONIC
+#alias 0 : PLAYER_SONIC_A
+#alias 1 : PLAYER_TAILS_A
 
 // Warp Destination
 #alias 1 : WARPDEST_PAST
@@ -81,10 +82,10 @@ function HUD_DrawStandard
 			// Combine the previous two results into one
 			CheckResult |= TempValue5
 			
-			if CheckResult != false		// If we exceeded the 10 minutes, display 9'59'99		
+			if CheckResult != false		// If we exceeded the 10 minutes, display 9'59'99
 				TempValue2 = 9
 				TempValue3 = 59
-				TempValue4 = 99				
+				TempValue4 = 99
 			end if
 			
 			// Start flashing Time at minute 9
@@ -152,7 +153,7 @@ function HUD_DrawStandard
 				
 				if TempValue0 < 0
 					// YPos is always drawn as positive
-					FlipSign(TempValue0)					
+					FlipSign(TempValue0)
 				end if
 				
 				// Draw the Y Position
@@ -405,16 +406,22 @@ end sub
 
 
 sub ObjectStartup
-	// Load the appropriate sheet for the current character
-	if Stage.PlayerListPos == PLAYER_SONIC
-		LoadSpriteSheet("Global/Display.gif")
-	else
-		LoadSpriteSheet("Global/Display_t.gif")
-	end if
-	
 	// Standard Platforms and Mobile Platforms have different drawing routines
 	// In Origins, only the Standard version was updated and the Mobile version was left
+	if Stage.PlayerListPos == PLAYER_SONIC_A // PLAYER_SONIC in origins
+		LoadSpriteSheet("Global/Display.gif")
+	end if
+	if Stage.PlayerListPos == PLAYER_TAILS_A // PLAYER_TAILS in origins
+		LoadSpriteSheet("Global/Display_t.gif")
+	end if
 #platform: Use_Origins
+	if Stage.PlayerListPos == PLAYER_KNUCKLES
+		LoadSpriteSheet("Global/Display_K.gif")
+	end if
+	if Stage.PlayerListPos == PLAYER_AMY
+		LoadSpriteSheet("Global/Display_A.gif")
+	end if
+
 	if Engine.DeviceType == RETRO_STANDARD
 		Object[24].DrawFunction = HUD_DrawStandard
 	else

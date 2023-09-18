@@ -103,8 +103,8 @@
 
 // Character Select Options
 #alias -1	:	PLAYER_NONE // Touching nothing on mobile
-#alias  0	:	PLAYER_SONIC
-#alias  1	:	PLAYER_TAILS
+#alias  0	:	PLAYER_SONIC_A
+#alias  1	:	PLAYER_TAILS_A
 #alias  2	:	PLAYER_BACK
 
 // Delete Confirm Options
@@ -149,7 +149,7 @@
 function LoadSaveMenu_DrawSaveFiles
 	switch Object[+ArrayPos0].SaveStatus
 	case SAVE_DELETE
-		if Object[+ArrayPos0].StageListPos > 0	
+		if Object[+ArrayPos0].StageListPos > 0
 			Object.Alpha = 64
 			DrawSpriteScreenFX(56, FX_INK, Object.XPos, Object.YPos)
 			Object.Alpha = 255
@@ -428,14 +428,14 @@ sub ObjectMain
 			if Object.ShowDeleteButton == false
 				if KeyPress[0].Up == true
 					Object.SelectedOption--
-					PlaySfx(SFX_G_MENUBUTTON, false) 
+					PlaySfx(SFX_G_MENUBUTTON, false)
 					if Object.SelectedOption < BUTTON_SAVE_ONE
 						Object.SelectedOption = BUTTON_SAVE_FOUR
 					end if
 				end if
 				if KeyPress[0].Down == true
 					Object.SelectedOption++
-					PlaySfx(SFX_G_MENUBUTTON, false) 
+					PlaySfx(SFX_G_MENUBUTTON, false)
 					if Object.SelectedOption > BUTTON_SAVE_FOUR
 						Object.SelectedOption = BUTTON_SAVE_ONE
 					end if
@@ -443,14 +443,14 @@ sub ObjectMain
 			else
 				if KeyPress[0].Up == true
 					Object.SelectedOption--
-					PlaySfx(SFX_G_MENUBUTTON, false) 
+					PlaySfx(SFX_G_MENUBUTTON, false)
 					if Object.SelectedOption < BUTTON_SAVE_ONE
 						Object.SelectedOption = BUTTON_DELETE
 					end if
 				end if
 				if KeyPress[0].Down == true
 					Object.SelectedOption++
-					PlaySfx(SFX_G_MENUBUTTON, false) 
+					PlaySfx(SFX_G_MENUBUTTON, false)
 					if Object.SelectedOption > BUTTON_DELETE
 						Object.SelectedOption = BUTTON_SAVE_ONE
 					end if
@@ -648,7 +648,7 @@ sub ObjectMain
 						Object[+ArrayPos0].SaveStatus = SAVE_DELETE_SELECTED
 
 						Object.SaveMode = SAVEMODE_NORMAL
-						PlaySfx(SFX_G_LAMPPOST, false) 
+						PlaySfx(SFX_G_LAMPPOST, false)
 					else
 						Object.SaveOneStatus	 = SAVE_NORMAL
 						Object.SaveTwoStatus	 = SAVE_NORMAL
@@ -672,7 +672,7 @@ sub ObjectMain
 			end if
 			
 			if Object.SelectedOption == BUTTON_DELETE
-				PlaySfx(SFX_G_LAMPPOST, false) 
+				PlaySfx(SFX_G_LAMPPOST, false)
 				Object.State = STATE_TOGGLE_DELETE_MODE
 			end if
 		end if
@@ -850,15 +850,15 @@ sub ObjectMain
 			if KeyPress[0].Left == true
 				Object[+ArrayPos0].PlayerListPos--
 				PlaySfx(SFX_G_MENUBUTTON, false)
-				if Object[+ArrayPos0].PlayerListPos < PLAYER_SONIC
-					Object[+ArrayPos0].PlayerListPos = PLAYER_TAILS
+				if Object[+ArrayPos0].PlayerListPos < PLAYER_SONIC_A
+					Object[+ArrayPos0].PlayerListPos = PLAYER_TAILS_A
 				end if
 			end if
 			if KeyPress[0].Right == true
 				Object[+ArrayPos0].PlayerListPos++
-				PlaySfx(SFX_G_MENUBUTTON, false) 
-				if Object[+ArrayPos0].PlayerListPos > PLAYER_TAILS
-					Object[+ArrayPos0].PlayerListPos = PLAYER_SONIC
+				PlaySfx(SFX_G_MENUBUTTON, false)
+				if Object[+ArrayPos0].PlayerListPos > PLAYER_TAILS_A
+					Object[+ArrayPos0].PlayerListPos = PLAYER_SONIC_A
 				end if
 			end if
 
@@ -893,14 +893,14 @@ sub ObjectMain
 			TempValue1 -= 8
 			CheckTouchRect(TempValue0, 126, TempValue1, 184)
 			if CheckResult > -1
-				Object[+ArrayPos0].PlayerListPos = PLAYER_SONIC
+				Object[+ArrayPos0].PlayerListPos = PLAYER_SONIC_A
 			else
 				if TempValue3 < 0
-					if Object[+ArrayPos0].PlayerListPos == PLAYER_SONIC
+					if Object[+ArrayPos0].PlayerListPos == PLAYER_SONIC_A
 						KeyPress[0].Start = true
 					end if
 				else
-					if Object[+ArrayPos0].PlayerListPos == PLAYER_SONIC
+					if Object[+ArrayPos0].PlayerListPos == PLAYER_SONIC_A
 						Object[+ArrayPos0].PlayerListPos = PLAYER_NONE
 					end if
 				end if
@@ -913,14 +913,14 @@ sub ObjectMain
 			TempValue1 += 56
 			CheckTouchRect(TempValue0, 126, TempValue1, 184)
 			if CheckResult > -1
-				Object[+ArrayPos0].PlayerListPos = PLAYER_TAILS
+				Object[+ArrayPos0].PlayerListPos = PLAYER_TAILS_A
 			else
 				if TempValue3 < 0
-					if Object[+ArrayPos0].PlayerListPos == PLAYER_TAILS
+					if Object[+ArrayPos0].PlayerListPos == PLAYER_TAILS_A
 						KeyPress[0].Start = true
 					end if
 				else
-					if Object[+ArrayPos0].PlayerListPos == PLAYER_TAILS
+					if Object[+ArrayPos0].PlayerListPos == PLAYER_TAILS_A
 						Object[+ArrayPos0].PlayerListPos = PLAYER_NONE
 					end if
 				end if
@@ -948,7 +948,7 @@ sub ObjectMain
 
 			// Enable physical controls if a button is pressed
 			if KeyPress[0].Left == true
-				Object[+ArrayPos0].PlayerListPos = PLAYER_TAILS
+				Object[+ArrayPos0].PlayerListPos = PLAYER_TAILS_A
 #platform: Mobile
 				Options.PhysicalControls = true
 #endplatform
@@ -959,7 +959,7 @@ sub ObjectMain
 			end if
 
 			if KeyPress[0].Right == true
-				Object[+ArrayPos0].PlayerListPos = PLAYER_SONIC
+				Object[+ArrayPos0].PlayerListPos = PLAYER_SONIC_A
 #platform: Mobile
 				Options.PhysicalControls = true
 #endplatform
@@ -983,14 +983,14 @@ sub ObjectMain
 				StopMusic()
 				Object.State = STATE_CHARACTER_SELECTED
 			else
-				if Object[+ArrayPos0].PlayerListPos == PLAYER_SONIC
+				if Object[+ArrayPos0].PlayerListPos == PLAYER_SONIC_A
 					PlaySfx(SFX_G_SELECT, false)
 					StopMusic()
 					Object.State = STATE_CHARACTER_SELECTED
 				else
 #platform: Mobile
-					Object[+ArrayPos0].PlayerListPos = PLAYER_NONE	
-#endplatform					
+					Object[+ArrayPos0].PlayerListPos = PLAYER_NONE
+#endplatform
 				end if
 			end if
 		end if
@@ -1073,7 +1073,7 @@ sub ObjectMain
 
 			LoadStage()
 			
-			if Stage.PlayerListPos == PLAYER_SONIC
+			if Stage.PlayerListPos == PLAYER_SONIC_A // PLAYER_SONIC in origins
 				LoadVideo("Opening")
 
 //	#platform: Mobile
@@ -1166,7 +1166,7 @@ sub ObjectMain
 			Object.FadeValue = 0
 			Object.State = STATE_MAIN_SAVE_MENU
 
-#platform: Standard		 
+#platform: Standard
 			Object.SelectedOption = BUTTON_SAVE_ONE
 #endplatform
 
@@ -1231,7 +1231,7 @@ sub ObjectMain
 			Object.State = STATE_FADEIN_DELETECONFIRM
 			Object.Alpha = 0
 
-#platform: Standard		 
+#platform: Standard
 			DeleteConfirm.Highlight = DELETE_YES
 #endplatform
 
@@ -1287,7 +1287,7 @@ sub ObjectMain
 		if CheckResult == true
 			if KeyPress[0].Up == true
 				DeleteConfirm.Highlight--
-				PlaySfx(SFX_G_MENUBUTTON, false) 
+				PlaySfx(SFX_G_MENUBUTTON, false)
 				if DeleteConfirm.Highlight < DELETE_YES
 					DeleteConfirm.Highlight = DELETE_NO
 				end if
@@ -1295,7 +1295,7 @@ sub ObjectMain
 
 			if KeyPress[0].Down == true
 				DeleteConfirm.Highlight++
-				PlaySfx(SFX_G_MENUBUTTON, false) 
+				PlaySfx(SFX_G_MENUBUTTON, false)
 				if DeleteConfirm.Highlight > DELETE_NO
 					DeleteConfirm.Highlight = DELETE_YES
 				end if
@@ -1410,7 +1410,7 @@ sub ObjectMain
 			end if
 			if KeyPress[0].ButtonA == true
 				CheckResult = true
-			end if 
+			end if
 		end if
 
 		if CheckResult == true
@@ -1538,7 +1538,7 @@ sub ObjectDraw
 		TempValue0  = Screen.CenterX
 		TempValue0 -= 32
 		ArrayPos0 = Object.SelectedOption
-		if Object[+ArrayPos0].PlayerListPos == PLAYER_SONIC
+		if Object[+ArrayPos0].PlayerListPos == PLAYER_SONIC_A
 			DrawSpriteScreenFX(31, FX_INK, TempValue0, 136)
 			DrawSpriteScreenFX(36, FX_INK, TempValue0, 164)
 			DrawSpriteScreenFX(33, FX_INK, TempValue0, 136)
@@ -1547,7 +1547,7 @@ sub ObjectDraw
 			DrawSpriteScreenFX(34, FX_INK, TempValue0, 164)
 		end if
 		TempValue0 += 64
-		if Object[+ArrayPos0].PlayerListPos == PLAYER_TAILS
+		if Object[+ArrayPos0].PlayerListPos == PLAYER_TAILS_A
 			DrawSpriteScreenFX(32, FX_INK, TempValue0, 136)
 			DrawSpriteScreenFX(37, FX_INK, TempValue0, 164)
 			DrawSpriteScreenFX(33, FX_INK, TempValue0, 136)
@@ -1570,7 +1570,7 @@ sub ObjectDraw
 		TempValue1  &= 3
 		TempValue1 >>= 1
 		
-		if Object[+ArrayPos0].PlayerListPos == PLAYER_SONIC
+		if Object[+ArrayPos0].PlayerListPos == PLAYER_SONIC_A
 			if TempValue1 == 0
 				DrawSpriteScreenFX(31, FX_INK, TempValue0, 136)
 			end if
@@ -1581,7 +1581,7 @@ sub ObjectDraw
 			DrawSpriteScreenFX(34, FX_INK, TempValue0, 164)
 		end if
 		TempValue0 += 64
-		if Object[+ArrayPos0].PlayerListPos == PLAYER_TAILS
+		if Object[+ArrayPos0].PlayerListPos == PLAYER_TAILS_A
 			if TempValue1 == 0
 				DrawSpriteScreenFX(32, FX_INK, TempValue0, 136)
 			end if
@@ -1743,25 +1743,35 @@ sub ObjectStartup
 	end if
 	
 	SpriteFrame(-112, 0, 224, 16, 1, 477)		// #30 - Player Select
+	
 	SpriteFrame(-16, -20, 32, 40, 26, 357)		// #31 - Sonic
 	if Options.TailsUnlocked == true
 		SpriteFrame(-16, -12, 32, 32, 59, 365)	// #32 - Tails
 	else
 		SpriteFrame(-16, -12, 32, 32, 72, 332)	// #32 - Locked Tails
 	end if
+	
 	SpriteFrame(-24, -24, 48, 48, 405, 88)		// #33 - Character Border
+	
 	SpriteFrame(-14, 0, 27, 8, 454, 88)			// #34 - Sonic Name
 	if Options.TailsUnlocked == true
+		// Bug Details:
+		// This works fine everywhere else, but in the Blit releases of the game, this sprite was
+		// extended in the JP spritesheet to match the width of (unused) Japanese text sprites
+		// This difference wasn't taken into account here, causing Tails' name to be cut off in-game
 		SpriteFrame(-12, 0, 24, 8, 482, 88)		// #35 - Tails Name
 	else
 		SpriteFrame(-12, 0, 24, 8, 92, 365)		// #35 - Tails Name Locked
 	end if
+	
 	SpriteFrame(-14, 0, 27, 8, 454, 97)			// #36 - Sonic Name Highlight
 	if Options.TailsUnlocked == true
+		// Bug Details: Same as above
 		SpriteFrame(-12, 0, 24, 8, 482, 97)		// #37 - Tails Name Highlight
 	else
 		SpriteFrame(-12, 0, 24, 8, 92, 374)		// #37 - Tails Name Locked
 	end if
+	
 	SpriteFrame(224, 7, 8, 8, 404, 137)			// #38 - Green Time Stone
 	SpriteFrame(232, 7, 8, 8, 413, 137)			// #39 - Orange Time Stone
 	SpriteFrame(220, 15, 8, 8, 422, 137)		// #40 - Yellow Time Stone

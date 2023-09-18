@@ -4,7 +4,7 @@
 
 // Aliases
 #alias Object.Value0	:	Object.ActiveSpring
-#alias Object.Value7	:	Object.YFlipped	// Only flipped in functionality, not in the way it displays
+#alias Object.Value2	:	Object.Unused // "introduced" in Origins Plus but it isn't really used for anything
 
 // Player Aliases
 #alias Player.Value7	:	Player.AnimationReserve
@@ -17,11 +17,8 @@
 #alias 0	:	CMODE_FLOOR
 #alias 2	:	CMODE_ROOF
 
-// Player Collision
-#alias 1	:	PLAYER_COL_FLOOR
-
 // Directions
-#alias 2	:	FACING_UPEND_RIGHT
+#alias 2	:	FLIP_Y
 
 // Global SFX
 #alias 11	:	SFX_G_SPRING
@@ -33,8 +30,8 @@
 #alias 3	:	FACE_FACING_DOWN
 #alias 4	:	FACE_FACING_DIAGONAL_UR
 #alias 5	:	FACE_FACING_DIAGONAL_UL
-#alias 6	:	FACE_FACING_DIAGONAL_DR	// Not actually facing down
-#alias 7	:	FACE_FACING_DIAGONAL_DL	// Not actually facing down
+#alias 6	:	FACE_FACING_DIAGONAL_DR	// Not actually facing down when spawned from debug mode
+#alias 7	:	FACE_FACING_DIAGONAL_DL	// Not actually facing down when spawned from debug mode
 
 
 sub ObjectPlayerInteraction
@@ -56,6 +53,16 @@ sub ObjectPlayerInteraction
 			PlayerObjectCollision(C_BOX, -16, -8, 16, 8)
 
 			PlayerObjectCollision(C_TOUCH, -16, -10, 16, -6)
+#platform: Use_Origins
+			if CheckResult == true
+				if Stage.PlayerListPos == PLAYER_KNUCKLES
+					if Player.State == Player_State_LedgePullUp
+						CheckResult = false
+						Object.Unused = 1
+					end if
+				end if
+			end if
+#endplatform
 			if CheckResult == true
 				Player.AnimationReserve = ANI_WALKING
 
@@ -94,6 +101,16 @@ sub ObjectPlayerInteraction
 				PlayerObjectCollision(C_PLATFORM, -16, -8, 16, 8)
 
 				PlayerObjectCollision(C_TOUCH, -16, -10, 16, -6)
+#platform: Use_Origins
+				if CheckResult == true
+					if Stage.PlayerListPos == PLAYER_KNUCKLES
+						if Player.State == Player_State_LedgePullUp
+							CheckResult = false
+							Object.Unused = 1
+						end if
+					end if
+				end if
+#endplatform
 				if CheckResult == true
 					Player.AnimationReserve = ANI_WALKING
 
@@ -133,50 +150,86 @@ sub ObjectPlayerInteraction
 
 	case FACE_FACING_RIGHT
 		PlayerObjectCollision(C_BOX, -8, -16, 8, 16)
-		if Player.Gravity == GRAVITY_GROUND
-
-			PlayerObjectCollision(C_TOUCH, 6, -15, 11, 15)
-			if CheckResult == true
-				Object.ActiveSpring = true
-
-				Player.Angle		 = 0
-				Player.Speed		 = 0xA0000
-				Player.CollisionMode = CMODE_FLOOR
-				Player.Pushing		 = false
-				Player.Direction	 = FACING_RIGHT
-				Player.ControlLock	 = 16
-
-				PlaySfx(SFX_G_SPRING, false)
-				
-#platform: Use_Haptics
-				HapticEffect(10, 0, 0, 0)
+#platform: Use_Origins
+		if Player.Animation != ANI_GLIDING
 #endplatform
+			if Player.Gravity == GRAVITY_GROUND
 
+				PlayerObjectCollision(C_TOUCH, 6, -15, 11, 15)
+				if CheckResult == true
+#platform: Use_Origins
+					CheckResult = false
+					if Player.State == Player_State_GlideSlide
+						CheckResult = true
+					end if
+					if Player.State == Player_State_HammerDash
+						CheckResult = true
+					end if
+					if CheckResult == true
+						Player.State = Player_State_Ground
+					end if
+#endplatform
+					Object.ActiveSpring = true
+
+					Player.Angle		 = 0
+					Player.Speed		 = 0xA0000
+					Player.CollisionMode = CMODE_FLOOR
+					Player.Pushing		 = false
+					Player.Direction	 = FACING_RIGHT
+					Player.ControlLock	 = 16
+
+					PlaySfx(SFX_G_SPRING, false)
+					
+	#platform: Use_Haptics
+					HapticEffect(10, 0, 0, 0)
+	#endplatform
+
+				end if
 			end if
+#platform: Use_Origins
 		end if
+#endplatform
 		break
 
 	case FACE_FACING_LEFT
 		PlayerObjectCollision(C_BOX, -8, -16, 8, 16)
-		if Player.Gravity == GRAVITY_GROUND
-
-			PlayerObjectCollision(C_TOUCH, -10, -15, -6, 15)
-			if CheckResult == true
-				Object.ActiveSpring	 = true
-				Player.Speed		 = -0xA0000
-				Player.CollisionMode = CMODE_FLOOR
-				Player.Pushing		 = false
-				Player.Direction	 = FACING_LEFT
-				Player.ControlLock	 = 16
-
-				PlaySfx(SFX_G_SPRING, false)
-				
-#platform: Use_Haptics
-				HapticEffect(10, 0, 0, 0)
+#platform: Use_Origins
+		if Player.Animation != ANI_GLIDING
 #endplatform
+			if Player.Gravity == GRAVITY_GROUND
 
+				PlayerObjectCollision(C_TOUCH, -10, -15, -6, 15)
+				if CheckResult == true
+#platform: Use_Origins
+					CheckResult = false
+					if Player.State == Player_State_GlideSlide
+						CheckResult = true
+					end if
+					if Player.State == Player_State_HammerDash
+						CheckResult = true
+					end if
+					if CheckResult == true
+						Player.State = Player_State_Ground
+					end if
+#endplatform
+					Object.ActiveSpring	 = true
+					Player.Speed		 = -0xA0000
+					Player.CollisionMode = CMODE_FLOOR
+					Player.Pushing		 = false
+					Player.Direction	 = FACING_LEFT
+					Player.ControlLock	 = 16
+
+					PlaySfx(SFX_G_SPRING, false)
+					
+	#platform: Use_Haptics
+					HapticEffect(10, 0, 0, 0)
+	#endplatform
+
+				end if
 			end if
+#platform: Use_Origins
 		end if
+#endplatform
 		break
 
 	case FACE_FACING_DOWN
@@ -212,6 +265,16 @@ sub ObjectPlayerInteraction
 		break
 	case FACE_FACING_DIAGONAL_UR
 		PlayerObjectCollision(C_TOUCH, -12, -16, 12, 12)
+#platform: Use_Origins
+		if CheckResult == true
+			if Stage.PlayerListPos == PLAYER_KNUCKLES
+				if Player.State == Player_State_LedgePullUp
+					CheckResult = false
+					Object.Unused = 1
+				end if
+			end if
+		end if
+#endplatform
 		if Player.Gravity == GRAVITY_GROUND
 			if CheckResult == true
 				Player.Animation	= ANI_WALKING
@@ -271,33 +334,16 @@ sub ObjectPlayerInteraction
 
 	case FACE_FACING_DIAGONAL_UL
 		PlayerObjectCollision(C_TOUCH, -12, -16, 12, 12)
-		if Player.YVelocity >= 0
-			if CheckResult == true
-				Player.Animation	= ANI_WALKING
-				Object.ActiveSpring = true
-				
 #platform: Use_Origins
-				Player.State		= Player_State_Air_NoDropDash
-#endplatform
-
-#platform: Use_Standalone
-				Player.State		= Player_State_Air
-#endplatform
-
-				Player.Gravity		= GRAVITY_AIR
-				Player.Speed		= -0x74000
-				Player.YVelocity	= -0x74000
-				Player.Direction	= FACING_LEFT
-				Player.Timer		= 0
-
-				PlaySfx(SFX_G_SPRING, false)
-				
-#platform: Use_Haptics
-				HapticEffect(10, 0, 0, 0)
-#endplatform
-
+		if CheckResult == true
+			if Stage.PlayerListPos == PLAYER_KNUCKLES
+				if Player.State == Player_State_LedgePullUp
+					CheckResult = false
+					Object.Unused = 1
+				end if
 			end if
 		end if
+#endplatform
 		if Player.Gravity == GRAVITY_GROUND
 			if CheckResult == true
 				Player.Animation	= ANI_WALKING
@@ -325,10 +371,48 @@ sub ObjectPlayerInteraction
 
 			end if
 		end if
+
+		if Player.YVelocity >= 0
+			if CheckResult == true
+				Player.Animation	= ANI_WALKING
+				Object.ActiveSpring = true
+				
+#platform: Use_Origins
+				Player.State		= Player_State_Air_NoDropDash
+#endplatform
+
+#platform: Use_Standalone
+				Player.State		= Player_State_Air
+#endplatform
+
+				Player.Gravity		= GRAVITY_AIR
+				Player.Speed		= -0x74000
+				Player.YVelocity	= -0x74000
+				Player.Direction	= FACING_LEFT
+				Player.Timer		= 0
+
+				PlaySfx(SFX_G_SPRING, false)
+				
+#platform: Use_Haptics
+				HapticEffect(10, 0, 0, 0)
+#endplatform
+
+			end if
+		end if
 		break
 
 	case FACE_FACING_DIAGONAL_DR
 		PlayerObjectCollision(C_TOUCH, -12, -12, 12, 12)
+#platform: Use_Origins
+		if CheckResult == true
+			if Stage.PlayerListPos == PLAYER_KNUCKLES
+				if Player.State == Player_State_LedgePullUp
+					CheckResult = false
+					Object.Unused = 1
+				end if
+			end if
+		end if
+#endplatform
 		if CheckResult == true
 			Object.ActiveSpring = true
 			
@@ -458,7 +542,7 @@ sub ObjectStartup
 	while ArrayPos0 < 1056
 		if Object[ArrayPos0].Type == TypeName[Yellow Spring]
 			if Object[ArrayPos0].PropertyValue > 5
-				Object[ArrayPos0].Direction = FACING_UPEND_RIGHT
+				Object[ArrayPos0].Direction = FLIP_Y
 			end if
 		end if
 		ArrayPos0++

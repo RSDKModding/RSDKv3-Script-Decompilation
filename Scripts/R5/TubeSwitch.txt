@@ -4,6 +4,7 @@
 
 // Aliases
 #alias Object.Value0	:	Object.InTube
+#alias Object.Value1	:	Object.LedgeStop
 
 // Player Aliases
 #alias Player.Value2	:	Player.RollAnimationSpeed
@@ -31,7 +32,7 @@
 // 0 - standard (biased towards right)
 // 1 - standard (biased towards left)
 // 2 - downards sender
-// 3 - downards conveyer tube 
+// 3 - downards conveyer tube
 // 4 - upwards conveyer tube
 // 5 - XXXXXX
 // 7 - vertical tunnel, middle
@@ -41,12 +42,27 @@
 sub ObjectPlayerInteraction
 
 	PlayerObjectCollision(C_TOUCH, -16, -16, 16, 16)
+#platform: Use_Origins
+	if CheckResult == true
+		if Stage.PlayerListPos == PLAYER_KNUCKLES
+			if Player.State == Player_State_LedgePullUp
+				CheckResult	     = false
+				Object.LedgeStop = true
+			end if
+		end if
+	end if
+#endplatform
+
 	if CheckResult == true
 		switch Object.PropertyValue
 		case 0
+			if Object.LedgeStop == false
+				Player.Speed     = 1
+				Object.LedgeStop = false
+			end if
 			if Player.Speed >= 0
 				if Player.State != Player_State_TubeRoll
-					PlaySfx(SFX_G_CHARGE, false) 
+					PlaySfx(SFX_G_CHARGE, false)
 				end if
 				Player.Direction = FACING_RIGHT
 				Player.State = Player_State_TubeRoll
@@ -67,7 +83,7 @@ sub ObjectPlayerInteraction
 		case 1
 			if Player.Speed <= 0
 				if Player.State != Player_State_TubeRoll
-					PlaySfx(SFX_G_CHARGE, false) 
+					PlaySfx(SFX_G_CHARGE, false)
 				end if
 				Player.State = Player_State_TubeRoll
 				Player.Animation = ANI_JUMPING
@@ -95,7 +111,7 @@ sub ObjectPlayerInteraction
 			if ConveyorBelt_Flag == 0
 				if Player.YPos < Object.YPos
 					if Player.State != Player_State_Static
-						PlaySfx(SFX_G_RELEASE, false) 
+						PlaySfx(SFX_G_RELEASE, false)
 					end if
 					Player.State = Player_State_Static
 					if Player.Animation != ANI_JUMPING
@@ -141,7 +157,7 @@ sub ObjectPlayerInteraction
 					end if
 
 					if Player.State != Player_State_Static
-						PlaySfx(SFX_G_RELEASE, false) 
+						PlaySfx(SFX_G_RELEASE, false)
 					end if
 					
 					Player.State = Player_State_Static
@@ -222,7 +238,7 @@ sub ObjectPlayerInteraction
 				Player.Speed = -0xD0000
 				Player.MinRollSpeed = 0xD0000
 				if Object.InTube == false
-					PlaySfx(SFX_G_RELEASE, false) 
+					PlaySfx(SFX_G_RELEASE, false)
 				end if
 			end if
 			break

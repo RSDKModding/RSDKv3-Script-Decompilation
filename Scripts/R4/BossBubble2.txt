@@ -54,7 +54,26 @@ end sub
 
 sub ObjectPlayerInteraction
 	if Object.State == BOSSBUBBLE2_BREATHABLE
+		CheckResult = false
 		if Player.Animation == ANI_JUMPING
+			CheckResult = true
+		end if
+#platform: Use_Origins
+		if Stage.PlayerListPos == PLAYER_KNUCKLES
+			if Player.Animation == ANI_GLIDING
+				CheckResult = true
+			end if
+			if Player.Animation == ANI_GLIDING_STOP
+				CheckResult = true
+			end if
+		end if
+		if Stage.PlayerListPos == PLAYER_AMY
+			if Player.Animation == ANI_HAMMER_JUMP
+				CheckResult = true
+			end if
+		end if
+#endplatform
+		if CheckResult == true
 			PlayerObjectCollision(C_TOUCH, -8, -8, 8, 8)
 			if CheckResult == true
 				Object.State = BOSSBUBBLE2_CONSUMED
@@ -62,6 +81,11 @@ sub ObjectPlayerInteraction
 				FlipSign(Player.XVelocity)
 
 				Player.YVelocity = 0x40000
+#platform: Use_Origins
+				if Player.Animation == ANI_HAMMER_JUMP
+					Player.State = Player_State_Air_NoDropDash
+				end if
+#endplatform
 
 				Player.Animation = ANI_BREATHING
 				Player.AirTimer  = 0

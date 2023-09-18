@@ -114,15 +114,23 @@ sub ObjectPlayerInteraction
 #endplatform
 
 			Player.Timer = 0
-			PlaySfx(SFX_G_JUMP, false) 
+			PlaySfx(SFX_G_JUMP, false)
 		end if
 	else
 		if Object.KickPlayer == true
 			if Player.State == Player_State_SpinningTop
 				if Player.Gravity == GRAVITY_GROUND
-					Player.State = Player_State_Ground
+					Player.State	  = Player_State_Ground
 					Object.KickPlayer = false
-					Player.Timer = 0
+					Player.Timer	  = 0
+				else
+#platform: Use_Origins
+					Object.KickPlayer = false
+					Player.Timer	  = 0
+					Player.State 	  = Player_State_Air_NoDropDash
+					Player.Animation  = ANI_WALKING
+					CallFunction(Player_HandleAirMovement)
+#endplatform
 				end if
 			end if
 		end if

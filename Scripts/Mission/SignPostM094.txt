@@ -21,9 +21,6 @@
 #alias 3	:	SIGNPOSTM094_STOP_PLAYER
 #alias 4	:	SIGNPOSTM094_BLANK
 
-// Player
-#alias 0	:	PLAYER_SONIC
-
 // Control Mode
 #alias -1	:	CONTROLMODE_NONE
 
@@ -57,7 +54,7 @@ sub ObjectMain
 				Object.State	  = SIGNPOSTM094_FLIP
 				Object.Timer	  = 8
 
-				PlaySfx(SFX_G_SIGNPOST, false) 
+				PlaySfx(SFX_G_SIGNPOST, false)
 			end if
 		end if
 		break
@@ -88,9 +85,8 @@ sub ObjectMain
 					if Object[0].Type == TypeName[Blank Object]	// Check if the player already leave by itself
 						
 						Object.State = SIGNPOSTM094_BLANK
-						if Object.OutOfBounds == false
-							PlayMusic(1)
-						end if
+						
+						PlayMusic(1)
 
 						Object[30].Type		= TypeName[ActFinish]
 						ActFinish.DrawOrder = 6
@@ -199,8 +195,15 @@ end sub
 sub ObjectStartup
 	if Stage.PlayerListPos == PLAYER_SONIC
 		LoadSpriteSheet("Global/Items2.gif")
-	else
+	end if
+	if Stage.PlayerListPos == PLAYER_TAILS
 		LoadSpriteSheet("Global/Items2_t.gif")
+	end if
+	if Stage.PlayerListPos == PLAYER_KNUCKLES
+		LoadSpriteSheet("Global/Items2_K.gif")
+	end if
+	if Stage.PlayerListPos == PLAYER_AMY
+		LoadSpriteSheet("Global/Items2_A.gif")
 	end if
 
 	SpriteFrame(-12, -12, 24, 24, 0, 150)		// #0 - Sign Post

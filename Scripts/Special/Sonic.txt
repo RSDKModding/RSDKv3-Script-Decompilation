@@ -110,7 +110,8 @@
 #alias Object.Value5 : Object.ScreenDepth
 
 // Player aliases
-#alias 0 : PLAYER_SONIC
+#alias 0 : PLAYER_SONIC_A
+#alias 1 : PLAYER_TAILS_A
 
 // Global SFX
 #alias 0  : SFX_G_JUMP
@@ -245,7 +246,7 @@ function Sonic_ProcessPlayer
 						// Give the Pause Menu object the special PRIORITY_ALWAYS priority in order to keep it running while the stage is paused
 						Object[9].Priority = PRIORITY_ALWAYS
 						
-						// Disable Frame Skip here, not too much is happening while paused anyways
+						// Disable Frame Skip here, not too much is happening while paused anyway
 						if Engine.FrameSkipTimer > -1
 							Engine.FrameSkipTimer = -1
 						end if
@@ -283,7 +284,7 @@ function Sonic_ProcessPlayer
 						// Give the Pause Menu object the special PRIORITY_ALWAYS priority in order to keep it running while the stage is paused
 						Object[9].Priority = PRIORITY_ALWAYS
 						
-						// Disable Frame Skip, it's not like much is happening while paused anyways
+						// Disable Frame Skip, it's not like much is happening while paused anyway
 						if Engine.FrameSkipTimer > -1
 							Engine.FrameSkipTimer = -1
 						end if
@@ -333,7 +334,7 @@ function Sonic_ProcessPlayer
 						// And give the Pause Menu a special priority to make sure it'll keep on running while the stage is paused
 						Object[9].Priority = PRIORITY_ALWAYS
 						
-						// Disable frame skip, pausing doesn't have much activity anyways
+						// Disable frame skip, pausing doesn't have much activity anyway
 						if Engine.FrameSkipTimer > -1
 							Engine.FrameSkipTimer = -1
 						end if
@@ -379,9 +380,9 @@ function Sonic_ProcessPlayer
 						
 					end if
 					
-				end if 
-			end if 
-		end if 
+				end if
+			end if
+		end if
 #endplatform
 		
 #platform: Standard
@@ -429,7 +430,7 @@ function Sonic_ProcessPlayer
 						
 						// In normal gameplay, call the engine's built-in pause menu
 						// (Although, do note, that with the fan-made engine decompilation of the game,
-						// this callback will just call the in-game Pause Menu anyways...)
+						// this callback will just call the in-game Pause Menu anyway...)
 						EngineCallback(CALLBACK_PAUSE_REQUESTED)
 						
 					end if
@@ -511,7 +512,7 @@ function Sonic_HandlePause
 					Object[9].DrawOrder = 6
 					Object[9].Priority = PRIORITY_ALWAYS
 					
-					// No frame skip needed when paused, not much really happens then anyways
+					// No frame skip needed when paused, not much really happens then anyway
 					if Engine.FrameSkipTimer > -1
 						Engine.FrameSkipTimer = -1
 					end if
@@ -563,7 +564,7 @@ function Sonic_HandlePause
 						EngineCallback(CALLBACK_PAUSE_REQUESTED)
 						
 						// It may be worth noting, though, that when using the fan decompilation of the game, the Pause Menu callback
-						// just becomes a roundabout way of calling the in-game Pause Menu Object anyways...
+						// just becomes a roundabout way of calling the in-game Pause Menu Object anyway...
 						
 					end if
 				end if
@@ -1779,11 +1780,21 @@ end sub
 sub ObjectStartup
 	
 	// Load the correct sprite sheet based on the current player
-	if Stage.PlayerListPos == PLAYER_SONIC
+
+	if Stage.PlayerListPos == PLAYER_SONIC_A // PLAYER_SONIC
 		LoadSpriteSheet("Special/Sonic.gif")
-	else
+	end if
+	if Stage.PlayerListPos == PLAYER_TAILS_A // PLAYER_TAILS in origins
 		LoadSpriteSheet("Special/Tails.gif")
 	end if
+#platform: Use_Origins
+	if Stage.PlayerListPos == PLAYER_KNUCKLES
+		LoadSpriteSheet("Special/Knuckles.gif")
+	end if
+	if Stage.PlayerListPos == PLAYER_AMY
+		LoadSpriteSheet("Special/Amy.gif")
+	end if
+#endplatform
 	
 	// Place a Sonic object into reserved object slot 2 and initialise its values
 	SSSonic[2].Type = TypeName[Sonic]
@@ -1902,14 +1913,25 @@ sub ObjectStartup
 	SpriteFrame(-20, -48, 40, 48, 51, 344)
 	SpriteFrame(-21, -48, 42, 48, 182, 295)
 	SpriteFrame(-25, -48, 49, 48, 1, 344)
-	if Stage.PlayerListPos == PLAYER_SONIC // A few frames with different boxes for each player
+	if Stage.PlayerListPos == PLAYER_SONIC_A // PLAYER_SONIC in origins
 		SpriteFrame(-21, -48, 42, 48, 135, 410)
 		SpriteFrame(-20, -48, 40, 48, 178, 410)
-	else
+	end if
+	if Stage.PlayerListPos == PLAYER_TAILS_A // PLAYER_TAILS in origins
 		SpriteFrame(-21, -48, 42, 48, 135, 426)
 		SpriteFrame(-20, -48, 40, 48, 178, 426)
 	end if
-	
+
+#platform: Use_Origins
+	if Stage.PlayerListPos == PLAYER_KNUCKLES
+		SpriteFrame(-21, -48, 42, 48, 135, 410)
+		SpriteFrame(-20, -48, 40, 48, 178, 410)
+	end if
+	if Stage.PlayerListPos == PLAYER_AMY
+		SpriteFrame(-21, -48, 42, 48, 135, 410)
+		SpriteFrame(-20, -48, 40, 48, 178, 410)
+	end if
+#endplatform
 	// 48-53 - Fan Animation
 	SpriteFrame(-16, -32, 54, 32, 17, 442)  // Not accurate to the pink sprite box, it's actually cropped a bit from that
 	SpriteFrame(-26, -32, 52, 32, 78, 442)  // Same story here, too
@@ -1923,7 +1945,7 @@ sub ObjectStartup
 	SpriteFrame(-30, -32, 60, 32, 54, 475)
 	
 	// Most Frames in the animation varies between Sonic and Tails
-	if Stage.PlayerListPos == PLAYER_SONIC
+	if Stage.PlayerListPos != PLAYER_TAILS_A
 		SpriteFrame(-29, -32, 58, 32, 149, 344)
 		SpriteFrame(-30, -32, 60, 32, 149, 377)
 		SpriteFrame(-30, -32, 60, 32, 149, 377)

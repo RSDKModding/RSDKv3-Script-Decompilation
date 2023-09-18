@@ -154,6 +154,13 @@ sub ObjectMain
 		break
 
 	case FLOWERPOD_TRIGGER_ACTFINISH
+#platform: Use_Origins
+		// Palmtree Panic is the only zone where you can climb in the same area where the flower pod is
+		if Player.State == Player_State_Climb
+			CallFunction(Player_Unstick)
+			Player.ControlMode = CONTROLMODE_NONE
+		end if
+#endplatform
 		if Player.ControlMode == CONTROLMODE_NONE
 			Player.Left 	= false
 			Player.Right 	= true
@@ -185,8 +192,37 @@ end sub
 
 sub ObjectPlayerInteraction
 	if Object.State == FLOWERPOD_IDLE
+//		if Player.Animation == ANI_JUMPING // Standalone/Preplus check
+
+		CheckResult = false
 		if Player.Animation == ANI_JUMPING
+			CheckResult = true
+		end if
+#platform: Use_Origins
+		if Stage.PlayerListPos == PLAYER_KNUCKLES
+			if Player.Animation == ANI_GLIDING
+				CheckResult = true
+			end if
+			if Player.Animation == ANI_GLIDING_STOP
+				CheckResult = true
+			end if
+		end if
+		if Stage.PlayerListPos == PLAYER_AMY
+			if Player.Animation == ANI_HAMMER_DASH
+				CheckResult = true
+			end if
+			if Player.Animation == ANI_HAMMER_JUMP
+				CheckResult = true
+			end if
+		end if
+#endplatform
+		if CheckResult == true
+#platform: Use_Origins
+			PlayerObjectCollision(C_ENEMY, -28, -46, 28, 6)
+#endplatform
+#platform: Use_Standalone
 			PlayerObjectCollision(C_TOUCH, -28, -46, 28, 6)
+#endplatform
 			if CheckResult == true
 				Stage.TimeEnabled = false
 

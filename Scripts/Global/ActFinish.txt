@@ -40,7 +40,8 @@
 #alias 7	:	ACTFINISH_WAITFORCALLBACK	// Origins exclusive
 
 
-#alias 0	:	PLAYER_SONIC
+#alias 0	:	PLAYER_SONIC_A
+#alias 1	:	PLAYER_TAILS_A
 
 
 // Time Period Aliases
@@ -181,11 +182,11 @@ sub ObjectMain
 		if game.playMode == BOOT_PLAYMODE_MISSION
 			Object.State = ACTFINISH_NULL
 			// Back it up a bit
-			Stage.ListPos = Object.StagePosP			
+			Stage.ListPos = Object.StagePosP
 		else
 			// In Boss Rush, we don't need Act Results either
-			if game.playMode == BOOT_PLAYMODE_BOSSRUSH				
-				Object.State = ACTFINISH_NULL				
+			if game.playMode == BOOT_PLAYMODE_BOSSRUSH
+				Object.State = ACTFINISH_NULL
 			else
 				// We're in a normal mode, let's just show the Results normally
 				Object.State = ACTFINISH_SLIDEIN
@@ -204,6 +205,11 @@ sub ObjectMain
 		
 		// Signal to the Engine that the current level is over
 		EngineCallback(NOTIFY_ACT_FINISH)
+		if Stage.PlayerListPos == PLAYER_KNUCKLES
+			if Good_Future == true
+				EngineCallback(NOTIFY_STATS_SAVE_FUTURE)
+			end if
+		end if
 		
 		// Reset loads of stuff...
 		StageStatsUsabilityParam1 = 0
@@ -226,14 +232,14 @@ sub ObjectMain
 		// Update position of the "SONIC GOT" line
 		if Object.LineXPos0 < TempValue0
 			Object.LineXPos0 += 16
-			if Object.LineXPos0 > TempValue0				
+			if Object.LineXPos0 > TempValue0
 				// Past the max, enforce it
 				Object.LineXPos0 = TempValue0
 				
 			end if
 		else
 			// Just stay put for now
-			Object.LineXPos0 = TempValue0			
+			Object.LineXPos0 = TempValue0
 		end if
 		
 		// Update Position of the "THROUGH Zone" line
@@ -242,11 +248,11 @@ sub ObjectMain
 			Object.LineXPos1 -= 16
 			if Object.LineXPos1 < TempValue0
 				// Enforce a minimum
-				Object.LineXPos1 = TempValue0				
+				Object.LineXPos1 = TempValue0
 			end if
 		else
 			// Hold!
-			Object.LineXPos1 = TempValue0			
+			Object.LineXPos1 = TempValue0
 		end if
 		
 		// The Score, Ring, and Time bonuses are all around the same X Position
@@ -301,7 +307,7 @@ sub ObjectMain
 				Object.State = ACTFINISH_TALLYUP
 				
 				// See if the Paradise Found achievement should be unlocked
-				if Stage.PlayerListPos == PLAYER_SONIC
+				if Stage.PlayerListPos == PLAYER_SONIC_A	// PLAYER_SONIC in origins
 					if HUD.CurrentTimePeriod == TIME_GOOD_FUTURE
 						if Stage.DebugMode == false
 							SetAchievement(2, 100)
@@ -320,7 +326,7 @@ sub ObjectMain
 				Object.State = ACTFINISH_TALLYUP
 				
 				// See if the Paradise Found achievement should be unlocked
-				if Stage.PlayerListPos == PLAYER_SONIC
+				if Stage.PlayerListPos == PLAYER_SONIC_A	// PLAYER_SONIC in origins
 					if HUD.CurrentTimePeriod == TIME_GOOD_FUTURE
 						if Stage.DebugMode == false
 							SetAchievement(2, 100)
@@ -485,21 +491,21 @@ sub ObjectMain
 				if Options.GameMode == MODE_SAVEGAME
 					ArrayPos1   = Options.SaveSlot
 					ArrayPos1 <<= 3
-					SaveRAM[ArrayPos1] = Stage.PlayerListPos					
+					SaveRAM[ArrayPos1] = Stage.PlayerListPos
 					ArrayPos1++
-					SaveRAM[ArrayPos1] = Player.Lives					
+					SaveRAM[ArrayPos1] = Player.Lives
 					ArrayPos1++
-					SaveRAM[ArrayPos1] = Player.Score					
+					SaveRAM[ArrayPos1] = Player.Score
 					ArrayPos1++
 					SaveRAM[ArrayPos1] = Stage.ListPos
 					// Add 81 to the Stage List Pos to signify that it's a Special Stage save
-					SaveRAM[ArrayPos1] += 81					
+					SaveRAM[ArrayPos1] += 81
 					ArrayPos1++
-					SaveRAM[ArrayPos1] = SpecialStage.TimeStones					
+					SaveRAM[ArrayPos1] = SpecialStage.TimeStones
 					ArrayPos1++
-					SaveRAM[ArrayPos1] = SpecialStage.ListPos					
+					SaveRAM[ArrayPos1] = SpecialStage.ListPos
 					ArrayPos1++
-					SaveRAM[ArrayPos1] = Player.ScoreBonus	
+					SaveRAM[ArrayPos1] = Player.ScoreBonus
 									
 					ArrayPos1++
 					SaveRAM[ArrayPos1]   = MetalSonic_List
@@ -618,18 +624,18 @@ sub ObjectMain
 				if Options.GameMode == MODE_SAVEGAME
 					ArrayPos1   = Options.SaveSlot
 					ArrayPos1 <<= 3
-					SaveRAM[ArrayPos1] = Stage.PlayerListPos					
+					SaveRAM[ArrayPos1] = Stage.PlayerListPos
 					ArrayPos1++
-					SaveRAM[ArrayPos1] = Player.Lives					
+					SaveRAM[ArrayPos1] = Player.Lives
 					ArrayPos1++
-					SaveRAM[ArrayPos1] = Player.Score					
+					SaveRAM[ArrayPos1] = Player.Score
 					ArrayPos1++
 					SaveRAM[ArrayPos1] = Stage.ListPos
-					SaveRAM[ArrayPos1]++					
+					SaveRAM[ArrayPos1]++
 					ArrayPos1++
-					SaveRAM[ArrayPos1] = SpecialStage.TimeStones					
+					SaveRAM[ArrayPos1] = SpecialStage.TimeStones
 					ArrayPos1++
-					SaveRAM[ArrayPos1] = SpecialStage.ListPos					
+					SaveRAM[ArrayPos1] = SpecialStage.ListPos
 					ArrayPos1++
 					SaveRAM[ArrayPos1] = Player.ScoreBonus
 					
@@ -826,7 +832,15 @@ sub ObjectDraw
 		// Let's used the altered version of the text to let the Player know
 		
 		// Draw "SONIC MADE A GOOD" for the first line
+		// (For Knux, this is just "MADE A GOOD", with his name being drawn separately down below)
 		DrawSpriteScreenXY(20, Object.LineXPos0, 65)
+
+#platform: Use_Origins
+		if Stage.PlayerListPos == PLAYER_KNUCKLES
+			// "KNUCKLES"
+			DrawSpriteScreenXY(22, Object.XPos, 65)
+		end if
+#endplatform
 		
 		// Then, comes "FUTURE IN"
 		DrawSpriteScreenXY(21, Object.LineXPos1, 89)
@@ -847,7 +861,7 @@ sub ObjectDraw
 	// And then to the right of that, draw the Score numbers
 	TempValue0 = Object.LineXPos2
 	TempValue0 += 163
-	DrawNumbers(10, TempValue0, 121, Player.Score, 6, 8, 0)
+	DrawNumbers(10, TempValue0, 121, Player.Score, 6, 8, false)
 	
 	// The fourth line holds the Rings text
 	DrawSpriteScreenXY(7, Object.LineXPos3, 145)
@@ -859,7 +873,7 @@ sub ObjectDraw
 	
 	// And on the same line, draw the Ring Bonus
 	TempValue0 += 123
-	DrawNumbers(10, TempValue0, 145, Object.RingBonus, 5, 8, 0)
+	DrawNumbers(10, TempValue0, 145, Object.RingBonus, 5, 8, false)
 	
 	// The fifth line holds the Time Bonus
 	
@@ -873,22 +887,42 @@ sub ObjectDraw
 	
 	//And now, draw the Time Bonus numbers at the end of the line
 	TempValue0 += 123
-	DrawNumbers(10, TempValue0, 169, Object.TimeBonus, 5, 8, 0)
+	DrawNumbers(10, TempValue0, 169, Object.TimeBonus, 5, 8, false)
 end sub
 
 
 sub ObjectStartup
 	// Load the appropriate sheet based on the current character
-	if Stage.PlayerListPos == PLAYER_SONIC
+	if Stage.PlayerListPos == PLAYER_SONIC_A
 		LoadSpriteSheet("Global/Display.gif")
-	else
+	end if
+	if Stage.PlayerListPos == PLAYER_TAILS_A
 		LoadSpriteSheet("Global/Display_t.gif")
 	end if
-	
+
+#platform: Use_Origins
+	if Stage.PlayerListPos == PLAYER_KNUCKLES
+		LoadSpriteSheet("Global/Display_k.gif")
+	end if
+	if Stage.PlayerListPos == PLAYER_AMY
+		LoadSpriteSheet("Global/Display_a.gif")
+	end if
 	// Act Results Frames
 	
+	if Stage.PlayerListPos == PLAYER_KNUCKLES
+		// 0 - "KNUCKLES GOT"
+		SpriteFrame(-27, 0, 191, 16, 35, 257)
+	else
+		// 0 - "SONIC GOT"
+		SpriteFrame(0, 0, 136, 16, 0, 206)
+	end if
+#endplatform
+
+#platform: Use_Standalone
 	// 0 - "SONIC GOT"
 	SpriteFrame(0,   0,   136, 16, 0,   206)
+#endplatform
+
 	
 	// 1-3 - Act Numbers
 	SpriteFrame(0,   0,   8,   16, 194, 223)
@@ -924,12 +958,31 @@ sub ObjectStartup
 	SpriteFrame(0,   0,   8,   11, 28,  62)
 	SpriteFrame(0,   0,   8,   11, 1,   74)
 	SpriteFrame(0,   0,   8,   11, 10,  74)
-	
+
+#platform: Use_Standalone
 	// 20 - "SONIC MADE A GOOD"
 	SpriteFrame(-60, 0, 256,   16, 0,   240)
 	
 	// 21 - "FUTURE IN"
 	SpriteFrame(-12, 0, 136,   16, 0,   223)
+#endplatform
+
+#platform: Use_Origins
+	if Stage.PlayerListPos == PLAYER_KNUCKLES
+		// 20 - "         MADE A GOOD"
+		SpriteFrame(-41, 0, 256, 16, 0, 240)
+		// 21 - "FUTURE IN"
+		SpriteFrame(-12, 0, 136, 16, 0, 223)
+		// 22 - "KNUCKLES"
+		SpriteFrame(-79, 0, 127, 16, 35, 257)
+	else
+		// 20 - "SONIC MADE A GOOD"
+		SpriteFrame(-60, 0, 256, 16, 0, 240)
+		// 21 - "FUTURE IN"
+		SpriteFrame(-12, 0, 136, 16, 0, 223)
+	end if
+
+#endplatform
 end sub
 
 

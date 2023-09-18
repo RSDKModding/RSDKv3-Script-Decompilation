@@ -17,7 +17,7 @@
 #alias 1	:	PAN_LEFT
 
 // Player
-#alias 0	:	PLAYER_SONIC
+#alias 0	:	PLAYER_SONIC_A
 
 // Game Mode Aliases
 #alias 2	:	MODE_TIMEATTACK
@@ -55,7 +55,7 @@ sub ObjectPlayerInteraction
 						Player.Lives++
 #endplatform
 
-						if Stage.PlayerListPos == PLAYER_SONIC
+						if Stage.PlayerListPos == PLAYER_SONIC_A	// PLAYER_SONIC in origins
 							PlaySfx(SFX_G_1UP, false)
 						else
 							PlaySfx(SFX_G_ACHIEVEMENT, false)
@@ -71,7 +71,7 @@ sub ObjectPlayerInteraction
 
 					// King of the Rings achievement criteria
 					if Player.Rings >= 200
-						if Stage.PlayerListPos == PLAYER_SONIC
+						if Stage.PlayerListPos == PLAYER_SONIC_A // PLAYER_SONIC in origins
 							if Stage.DebugMode == false
 								SetAchievement(4, 100)
 							end if
@@ -132,8 +132,32 @@ end sub
 // Editor Subs
 // ========================
 
+sub RSDKEdit
+	if Editor.ReturnVariable == true
+		switch Editor.VariableID
+		case EDIT_VAR_PROPVAL // Property Value
+			CheckResult = Object.PropertyValue
+			break
+		case 0 // Plane Type
+			CheckResult  = Object.PropertyValue
+			break
+		end switch
+	else
+		switch Editor.VariableID
+		case EDIT_VAR_PROPVAL // Property Value
+			Object.PropertyValue = Editor.VariableValue
+			break
+		case 0 // Plane Type
+			Object.PropertyValue = Editor.VariableValue
+			break
+		end switch
+	end if
+end sub
+
+
 sub RSDKDraw
-	DrawSprite(0)
+	Object.InkEffect = Object.PropertyValue
+	DrawSpriteFX(0, FX_INK, Object.XPos, Object.YPos)
 end sub
 
 
@@ -141,5 +165,8 @@ sub RSDKLoad
 	LoadSpriteSheet("Global/Items.gif")
 	SpriteFrame(-8, -8, 16, 16, 1, 1)		// #0 - Ring Frame 0
 
-	SetVariableAlias(ALIAS_VAR_PROPVAL, "unused")
+	AddEditorVariable("Plane Type")
+	SetActiveVariable("Plane Type")
+	AddEnumVariable("Plane A", 0)
+	AddEnumVariable("Plane B", 1)
 end sub

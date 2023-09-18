@@ -119,11 +119,45 @@ end sub
 
 sub ObjectPlayerInteraction
 	if Object.State == EGGMANSTATUE_INACTIVE
-		if Player.Animation == ANI_JUMPING
+		CheckEqual(Player.Animation, ANI_JUMPING)
+		TempValue0 = CheckResult
+#platform: Use_Origins
+		CheckEqual(Player.Animation, ANI_GLIDING)
+		TempValue0 |= CheckResult
+		if Stage.PlayerListPos == PLAYER_AMY
+			if Player.Animation == ANI_HAMMER_JUMP
+				TempValue0 = true
+			end if
+			if Player.Animation == ANI_HAMMER_DASH
+				TempValue0 = true
+			end if
+		end if
+#endplatform
+		if TempValue0 == true
+
+#platform: Use_Origins
+			PlayerObjectCollision(C_ENEMY, -16, -24, 16, 24)
+			if CheckResult == true
+				if Stage.PlayerListPos == PLAYER_AMY
+					game.callbackParam0 = 1
+					game.callbackParam1 = 3
+					EngineCallback(NOTIFY_STATS_BREAK_OBJECT)
+				end if
+				if Stage.PlayerListPos == PLAYER_KNUCKLES
+					game.callbackParam0 = 1
+					game.callbackParam1 = 2
+					EngineCallback(NOTIFY_STATS_BREAK_OBJECT)
+				end if
+				Object.State = EGGMANSTATUE_DESTROYED
+			end if
+#endplatform
+
+#platform: Use_Standalone
 			PlayerObjectCollision(C_TOUCH, -16, -24, 16, 24)
 			if CheckResult == true
 				Object.State = EGGMANSTATUE_DESTROYED
 			end if
+#endplatform
 		end if
 	end if
 end sub

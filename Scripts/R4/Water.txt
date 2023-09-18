@@ -157,6 +157,11 @@ sub ObjectMain
 
 				Player.GravityStrength  =  0x1000
 				Player.JumpStrength		=  0x38000
+#platform: Use_Origins
+				if Stage.PlayerListPos == PLAYER_KNUCKLES
+					Player.JumpStrength = 0x30000
+				end if
+#endplatform
 				Player.JumpCap			= -0x20000
 
 				CreateTempObject(TypeName[Water Splash], 0, Player.XPos, Stage.WaterLevel)
@@ -368,6 +373,9 @@ sub ObjectMain
 				Player.AirDeceleration = 0x600
 
 				Player.GravityStrength	= 0x3800
+				// Bug Details:
+				// The line below doesn't check for Knuckles.
+				// So if Knuckles jumps into water and exits it, he will get Sonic's jump height.
 				Player.JumpStrength		= 0x68000
 				Player.JumpCap			= -0x40000
 
@@ -432,7 +440,7 @@ sub ObjectStartup
 			end if
 			break
 			
-		end switch		
+		end switch
 		break
 
 	case 2
@@ -495,6 +503,10 @@ sub ObjectStartup
 				Player.AirDeceleration >>= 1
 
 				Player.GravityStrength  = 0x1000
+				
+				// Bug Details:
+				// The line below doesn't check for Knuckles, prolly should though
+				// So if Knuckles starts a scene underwater (whether it be with a checkpoint, time travelling, or anything), he'll have Sonic's jump height
 				Player.JumpStrength		= 0x38000
 
 				Object.ConstBubbleTimer = 52

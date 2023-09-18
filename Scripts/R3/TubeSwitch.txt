@@ -4,6 +4,7 @@
 
 // Aliases
 #alias Object.Value0	:	Object.OnObject
+#alias Object.Value1	:	Object.LedgeStop
 
 // Player Aliases
 #alias Player.Value6	:	Player.MinRollSpeed
@@ -40,17 +41,33 @@
 
 sub ObjectPlayerInteraction
 	PlayerObjectCollision(C_TOUCH, -16, -16, 16, 16)
+#platform: Use_Origins
+	if CheckResult == true
+		if Stage.PlayerListPos == PLAYER_KNUCKLES
+			if Player.State == Player_State_LedgePullUp
+				CheckResult   = false
+				Object.LedgeStop = true
+			end if
+		end if
+	end if
+#endplatform
 	if CheckResult == true
 		switch Object.PropertyValue
 		case TUBESWITCH_H_L
+#platform: Use_Origins
+			if Object.LedgeStop == true
+				Player.Speed	 = 1
+				Object.LedgeStop = false
+			end if
+#endplatform
 			if Player.Speed > 0
 				Player.Direction = FACING_RIGHT
 				Player.State = Player_State_TubeRoll
 				Player.Animation = ANI_JUMPING
 				Player.MinRollSpeed = 0xA0000
 
-				if Player.Speed < 0xA0000	
-					Player.Speed = 0xA0000	
+				if Player.Speed < 0xA0000
+					Player.Speed = 0xA0000
 				end if
 
 				if Player.Gravity == GRAVITY_AIR
@@ -156,7 +173,16 @@ sub ObjectPlayerInteraction
 			if Player.Gravity == GRAVITY_GROUND
 				Player.State = Player_State_Roll
 			else
+#platform: Use_Origins
+				if Player.State != Player_State_Climb
+					Player.XPos = Object.XPos
+				end if
+#endplatform
+
+#platform: Use_Standalone
 				Player.XPos = Object.XPos
+#endplatform
+
 			end if
 			if Player.Animation != ANI_JUMPING
 				Player.Animation = ANI_JUMPING
@@ -175,7 +201,7 @@ sub ObjectPlayerInteraction
 					Player.CollisionMode = CMODE_RWALL
 
 					Player.Angle = 64
-					Player.Speed = 0x100000	
+					Player.Speed = 0x100000
 					Player.MinRollSpeed = 0x100000
 					
 				end if
@@ -279,14 +305,14 @@ sub ObjectPlayerInteraction
 				if Player.XPos > Object.XPos
 					TempValue0  = Player.XPos
 					TempValue0 -= Object.XPos
-					if TempValue0 < 0x60000		
+					if TempValue0 < 0x60000
 						Player.Gravity = GRAVITY_AIR
 						Player.YVelocity = -0x30000
 					end if
 				else
 					TempValue0  = Object.XPos
 					TempValue0 -= Player.XPos
-					if TempValue0 < 0x60000		
+					if TempValue0 < 0x60000
 						Player.Gravity = GRAVITY_AIR
 						Player.YVelocity = -0x30000
 					end if

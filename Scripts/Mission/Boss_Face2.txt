@@ -368,7 +368,7 @@ sub ObjectMain
 
 				CreateTempObject(TypeName[Explosion], 0, TempValue0, TempValue1)
 
-				PlaySfx(SFX_G_EXPLOSION, false) 
+				PlaySfx(SFX_G_EXPLOSION, false)
 			end if
 
 			if Object.Timer == 94
@@ -648,9 +648,18 @@ sub ObjectPlayerInteraction
 	if Object.State > R1_EGGMAN2_WAIT_PLAYER
 		if Player.Animation != ANI_HURT
 			if Object.Hit < 3
-				PlayerObjectCollision(C_TOUCH, -28, -28, 28, 28)
+				PlayerObjectCollision(C_ENEMY, -28, -28, 28, 28)
 				if CheckResult == true
-					if Player.Animation == ANI_JUMPING
+					TempValue2  = false
+					CheckEqual(Player.Animation, ANI_JUMPING)
+					TempValue2 |= CheckResult
+#platform: Use_Origins
+					CheckEqual(Player.Animation, ANI_HAMMER_JUMP)
+					TempValue2 |= CheckResult
+					CheckEqual(Player.Animation, ANI_HAMMER_DASH)
+					TempValue2 |= CheckResult
+#endplatform
+					if TempValue2 == true
 						Player.XVelocity   = Player.XPos
 						Player.XVelocity  -= Object.XPos
 						Player.XVelocity >>= 3
@@ -662,7 +671,7 @@ sub ObjectPlayerInteraction
 
 						if Object.Timer == 0
 							if BossBody.State != BOSSBODY2_DESCEND
-								PlaySfx(SFX_G_EXPLOSION, false) 
+								PlaySfx(SFX_G_EXPLOSION, false)
 								
 								switch Object.Hit
 								case 0

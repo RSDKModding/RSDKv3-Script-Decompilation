@@ -137,7 +137,7 @@ function BossPlatform_Conveyor_Update
 			end if
 			
 			// And now compare the Player's speed with Temp0
-			// (Do note, TempValue0 is a speed in the left direction, where values are negative, 
+			// (Do note, TempValue0 is a speed in the left direction, where values are negative,
 			//  so "smaller" values are faster)
 			if Player.Speed < TempValue0
 				// If the Player's going faster than Temp0, enforce a maximum speed
@@ -876,7 +876,7 @@ sub ObjectMain
 			Object.Timer = 0
 			
 			// Both this object and BossTop uses alpha for it's red flashing
-			Object.InkEffect	 = INK_ALPHA			
+			Object.InkEffect	 = INK_ALPHA
 			Object[-3].InkEffect = INK_ALPHA
 			
 #platform: Use_Haptics
@@ -995,7 +995,7 @@ sub ObjectPlayerInteraction
 			Player.YVelocity = TempValue1
 			Object.State = BOSSPLATFORM_SHAKE
 			
-			// Set the Object's Base/Origin Position, this needs to be stored as the Object will 
+			// Set the Object's Base/Origin Position, this needs to be stored as the Object will
 			// slightly shake horizontally during the Boss Fight
 			Object.BaseX = Object.XPos
 			
@@ -1010,6 +1010,15 @@ sub ObjectPlayerInteraction
 			
 #platform: Use_Haptics
 			HapticEffect(97, 0, 0, 0)
+#endplatform
+
+#platform: Use_Origins
+			if Stage.PlayerListPos == PLAYER_KNUCKLES
+				if Player.Animation == ANI_GLIDING
+					Player.Animation = ANI_GLIDING_DROP
+					Player.State	 = Player_State_GlideDrop
+				end if
+			end if
 #endplatform
 		end if
 	else

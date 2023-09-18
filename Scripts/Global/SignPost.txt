@@ -24,7 +24,8 @@
 #alias -1	:	CONTROLMODE_NONE
 
 // Player
-#alias 0	:	PLAYER_SONIC
+#alias 0	:	PLAYER_SONIC_A
+#alias 1	:	PLAYER_TAILS_A
 
 // Global SFX
 #alias 15	:	SFX_G_SIGNPOST
@@ -194,6 +195,17 @@ sub ObjectMain
 			Object[30].Type		= TypeName[ActFinish]
 			ActFinish.DrawOrder = 6
 			ActFinish.Priority	= PRIORITY_ACTIVE
+		else
+#platform: Use_Origins
+			// Some Mission Mode stuff
+			if Player.Animation == ANI_PUSHING
+				PlayMusic(1)
+				Object.State = SIGNPOST_BLANK
+				Object[30].Type = TypeName[ActFinish]
+				Object[30].DrawOrder = 6
+				Object[30].Priority = PRIORITY_ACTIVE
+			end if
+#endplatform
 		end if
 		break
 
@@ -219,7 +231,7 @@ sub ObjectMain
 #platform: Use_Origins
 	if game.playMode == BOOT_PLAYMODE_MISSION
 		if Object.State > SIGNPOST_IDLE
-			// 	// Origins gives the player invincibility, in case the game stops you close to a hazard
+			// Origins gives the player invincibility, in case the game stops you close to a hazard
 			Player.InvincibleTimer = 80
 		end if
 	end if
@@ -234,11 +246,21 @@ end sub
 
 
 sub ObjectStartup
-	if Stage.PlayerListPos == PLAYER_SONIC
+	if Stage.PlayerListPos == PLAYER_SONIC_A // PLAYER_SONIC in origins
 		LoadSpriteSheet("Global/Items2.gif")
-	else
+	end if
+	if Stage.PlayerListPos == PLAYER_TAILS_A // PLAYER_TAILS in origins
 		LoadSpriteSheet("Global/Items2_t.gif")
 	end if
+#platform: Use_Origins
+	// the file name suffixes are lowercase in every other script, but for some reason they're uppercase here in this script only? sure ig..?
+	if Stage.PlayerListPos == PLAYER_KNUCKLES
+		LoadSpriteSheet("Global/Items2_K.gif")
+	end if
+	if Stage.PlayerListPos == PLAYER_AMY
+		LoadSpriteSheet("Global/Items2_A.gif")
+	end if
+#endplatform
 
 	SpriteFrame(-12, -12, 24, 24, 0, 150)		// #0 - Sign Post
 	SpriteFrame(-24, -44, 48, 32, 34, 99)		// #1 - Sign Post Head (Eggman)
@@ -254,6 +276,8 @@ sub ObjectStartup
 	while ArrayPos0 < 1056
 		if Object[ArrayPos0].Type == TypeName[Sign Post]
 			Object[ArrayPos0].Priority = PRIORITY_XBOUNDS
+
+			// If needed, let's extend the stage a bit by repeating the last column of chunks
 			if Object[ArrayPos0].PropertyValue < 2
 				TempValue0  = TileLayer[0].XSize
 				TempValue0 -= 2

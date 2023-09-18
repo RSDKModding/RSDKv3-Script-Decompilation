@@ -27,7 +27,7 @@
 #alias 2	:	INK_ALPHA
 
 // Player
-#alias 0	:	PLAYER_SONIC
+#alias 0	:	PLAYER_SONIC_A
 
 // Gravity
 #alias 0	:	GRAVITY_GROUND
@@ -184,8 +184,37 @@ end sub
 
 sub ObjectPlayerInteraction
 	if Object.State == FLOWERPOD_IDLE
+//		if Player.Animation == ANI_JUMPING // Standalone/Preplus check
+
+		CheckResult = false
 		if Player.Animation == ANI_JUMPING
+			CheckResult = true
+		end if
+#platform: Use_Origins
+		if Stage.PlayerListPos == PLAYER_KNUCKLES
+			if Player.Animation == ANI_GLIDING
+				CheckResult = true
+			end if
+			if Player.Animation == ANI_GLIDING_STOP
+				CheckResult = true
+			end if
+		end if
+		if Stage.PlayerListPos == PLAYER_AMY
+			if Player.Animation == ANI_HAMMER_DASH
+				CheckResult = true
+			end if
+			if Player.Animation == ANI_HAMMER_JUMP
+				CheckResult = true
+			end if
+		end if
+#endplatform
+		if CheckResult == true
+#platform: Use_Origins
+			PlayerObjectCollision(C_ENEMY, -28, -46, 28, 6)
+#endplatform
+#platform: Use_Standalone
 			PlayerObjectCollision(C_TOUCH, -28, -46, 28, 6)
+#endplatform
 			if CheckResult == true
 				Stage.TimeEnabled = false
 
@@ -234,7 +263,7 @@ sub ObjectStartup
 	ArrayPos0 = 32
 	while ArrayPos0 < 1056
 		if Object[ArrayPos0].Type == TypeName[Flower Pod]
-			if Stage.PlayerListPos == PLAYER_SONIC
+			if Stage.PlayerListPos == PLAYER_SONIC_A // PLAYER_SONIC in origins
 				if Options.GameMode != MODE_TIMEATTACK
 					// If Sonic's the main character and he's not in Time Attack, then unload
 					Object[ArrayPos0].Type = TypeName[Blank Object]

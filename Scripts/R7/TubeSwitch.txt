@@ -4,6 +4,7 @@
 
 // Aliases
 #alias Object.Value0 : Object.InTube
+#alias Object.Value2 : Object.LedgeStop
 // Player Aliases
 #alias Player.Value6 : Player.MinRollSpeed
 
@@ -30,9 +31,25 @@
 
 sub ObjectPlayerInteraction
 	PlayerObjectCollision(C_TOUCH, -16, -16, 16, 16)
+#platform: Use_Origins
+	if CheckResult == true
+		if Stage.PlayerListPos == PLAYER_KNUCKLES
+			if Player.State == Player_State_LedgePullUp
+				CheckResult      = false
+				Object.LedgeStop = true
+			end if
+		end if
+	end if
+#endplatform
 	if CheckResult == true
 		switch Object.PropertyValue
 		case TUBESW_ENTER_H_L
+#platform: Use_Origins
+			if Object.LedgeStop == true
+				Player.Speed     = 1
+				Object.LedgeStop = false
+			end if
+#endplatform
 			if Object.InTube == false
 				if Player.State != Player_State_TubeAirRoll
 					Player.State = Player_State_TubeAirRoll

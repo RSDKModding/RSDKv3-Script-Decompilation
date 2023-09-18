@@ -56,7 +56,7 @@
 
 // States
 
-// This Object can't have its value setup via a normal loop in ObjectStartup since it doesn't even exist 
+// This Object can't have its value setup via a normal loop in ObjectStartup since it doesn't even exist
 // normally - it's spawned in by the Sonic Object instead - so the first state is for initialising its values
 #alias 0 : PAUSEMENU_INIT
 
@@ -89,7 +89,8 @@
 #alias -64 : PAUSEMENU_LEFTMOST
 
 // Player Aliases
-#alias 0 : PLAYER_SONIC
+#alias 0 : PLAYER_SONIC_A
+#alias 1 : PLAYER_TAILS_A
 
 // Presentation Stages
 #alias 0 : STAGE_P_TITLE
@@ -182,7 +183,7 @@ sub ObjectMain
 			Object.RestartDisabled = true
 		else
 			
-			// This version of the Pause Menu is only used in Special Stages anyways... so why is this check here?
+			// This version of the Pause Menu is only used in Special Stages anyway... so why is this check here?
 			// Likely just a result of copy-pasting the maingame one, if I had to guess, as that one
 			// has the same check there despite it being the opposite situation, where it'll never be true since it's only used in regular/bonus stages
 #platform: Use_Standalone
@@ -264,7 +265,7 @@ sub ObjectMain
 		if Object.Timer < 256
 			Object.Timer += 16
 			
-			// Because Object.Alpha is a byte and will overflow if over 255, 
+			// Because Object.Alpha is a byte and will overflow if over 255,
 			// we have to do this instead
 			if Object.Timer < 255
 				Object.Alpha = Object.Timer
@@ -453,7 +454,7 @@ sub ObjectMain
 			// Now, the Restart button
 			// As said before, RestartDisabled is always gonna be true in a Special Stage so this whole chunk of code is essentially useless...
 			
-			// Yeah, I guess they just kept it here anyways because it looked cool or something idk
+			// Yeah, I guess they just kept it here anyway because it looked cool or something idk
 			if Object.RestartDisabled == false
 				
 				// See if the Player's got their finger over the Restart button
@@ -887,7 +888,7 @@ sub ObjectDraw
 		TempValue1 += 48
 		
 		// Draw the Continue sprite, based on whether it's enabled or not
-		// (It's always gonna be disabled anyways though)
+		// (It's always gonna be disabled anyway though)
 		if Object.RestartDisabled == false
 			DrawSpriteScreenFX(7, FX_INK, TempValue0, TempValue1)
 		else
@@ -1197,24 +1198,39 @@ sub ObjectStartup
 		break
 		
 	end switch
-	
+
 	// The mini character frames should, of course, be different for each character
-	if Stage.PlayerListPos == PLAYER_SONIC
+	if Stage.PlayerListPos == PLAYER_SONIC_A	// PLAYER_SONIC in origins
 		// 0 - Standing Sonic
 		SpriteFrame(-28, -14, 16, 24, 1, 231)
-		
 		// 1-2 - Impatient Sonic
 		SpriteFrame(-28, -14, 16, 24, 18, 231)
 		SpriteFrame(-28, -14, 16, 24, 35, 231)
-	else
+	end if
+	if Stage.PlayerListPos == PLAYER_TAILS_A // PLAYER_TAILS in origins
 		// 0 - Normal Tails
 		SpriteFrame(-28, -14, 16, 24, 122, 202)
-		
 		// 1-2 - Tapping Tails
 		SpriteFrame(-28, -14, 16, 24, 139, 202)
 		SpriteFrame(-28, -14, 16, 24, 156, 202)
 	end if
-	
+
+#platform: Use_Origins
+	if Stage.PlayerListPos == PLAYER_KNUCKLES
+		// 0 - Normal Knuckles
+		SpriteFrame(-28, -14, 16, 24, 1, 256)
+		// 1-2 - Tapping Knuckles
+		SpriteFrame(-28, -14, 16, 24, 18, 256)
+		SpriteFrame(-28, -14, 16, 24, 35, 256)
+	end if
+	if Stage.PlayerListPos == PLAYER_AMY
+		// 0 - Normal Amy
+		SpriteFrame(-28, -14, 16, 24, 52, 256)
+		// 1-2 - Tapping Amy
+		SpriteFrame(-28, -14, 16, 24, 70, 256)
+		SpriteFrame(-28, -14, 16, 24, 88, 256)
+	end if
+#endplatform
 	// 3 - Wave
 	SpriteFrame(0, 0, 128, 32, 0, 128)
 	

@@ -35,7 +35,7 @@
 #alias Object.DrawOrder		:	Bubble2.DrawOrder
 #alias Object.Type			:	Bubble2.Type
 
-// Boss Bullet alias		
+// Boss Bullet alias
 #alias Object.DrawOrder		:	Bullet.DrawOrder
 #alias Object.Value5		:	Bullet.BossEntity
 
@@ -297,7 +297,7 @@ sub ObjectMain
 			Object.State = R4_EGG_BUBBLE_INTRO
 
 			Helper.XPos  = Object.XPos
-			Helper.XPos -= 0x600000	
+			Helper.XPos -= 0x600000
 
 			Helper.YPos  = Object.YPos
 
@@ -535,7 +535,7 @@ sub ObjectMain
 	case R4_EGG_BUBBLE_MOVE_TO_R
 		Object.XPos += 0x10000
 
-		if Object.BubbleRadius < 0x3000	
+		if Object.BubbleRadius < 0x3000
 			Object.BubbleRadius += 0x60
 			Object.Angle += 8
 		else
@@ -543,7 +543,7 @@ sub ObjectMain
 		end if
 
 		TempValue0  = Helper.XPos
-		TempValue0 += 0x600000	
+		TempValue0 += 0x600000
 
 		if Object.XPos > TempValue0
 			Object.XPos  = TempValue0
@@ -594,7 +594,7 @@ sub ObjectMain
 		end if
 
 		TempValue0  = Helper.XPos
-		TempValue0 -= 0x600000	
+		TempValue0 -= 0x600000
 
 		if Object.XPos < TempValue0
 			Object.XPos  = TempValue0
@@ -622,7 +622,7 @@ sub ObjectMain
 				TempValue1  += Object.YPos
 
 				CreateTempObject(TypeName[Explosion], 0, TempValue0, TempValue1)
-				PlaySfx(SFX_G_EXPLOSION, false) 
+				PlaySfx(SFX_G_EXPLOSION, false)
 			end if
 			Object.Timer++
 		else
@@ -678,12 +678,32 @@ end sub
 sub ObjectPlayerInteraction
 	if Object.State > R4_EGG_BUBBLE_EXPAND_SHIELD
 		if Object.State < R4_EGG_BUBBLE_EXPLODE
+#platform: Use_Standalone
 			PlayerObjectCollision(C_TOUCH, -24, -16, 24, 16)
+#endplatform
+#platform: Use_Origins
+			PlayerObjectCollision(C_ENEMY, -24, -16, 24, 16)
+#endplatform
 			if CheckResult == true
 				CheckEqual(Player.Animation, ANI_JUMPING)
 				TempValue0  = CheckResult
 				CheckEqual(Player.Animation, ANI_SPINDASH)
 				TempValue0 |= CheckResult
+#platform: Use_Origins
+				// making really sure you're the one character that can glide or the one character that has a hammer
+				if Stage.PlayerListPos == PLAYER_KNUCKLES
+					CheckEqual(Player.Animation, ANI_GLIDING)
+					TempValue0 |= CheckResult
+					CheckEqual(Player.Animation, ANI_GLIDING_STOP)
+					TempValue0 |= CheckResult
+				end if
+				if Stage.PlayerListPos == PLAYER_AMY
+					CheckEqual(Player.Animation, ANI_HAMMER_JUMP)
+					TempValue0 |= CheckResult
+					CheckEqual(Player.Animation, ANI_HAMMER_DASH)
+					TempValue0 |= CheckResult
+				end if
+#endplatform
 
 				ArrayPos0   = Player.EntityNo
 				ArrayPos0  += 2
@@ -710,6 +730,15 @@ sub ObjectPlayerInteraction
 					Player.YVelocity   = Player.YPos
 					Player.YVelocity  -= Object.YPos
 					Player.YVelocity >>= 3
+					
+#platform: Use_Origins
+					if Stage.PlayerListPos == PLAYER_KNUCKLES
+						if Player.Animation == ANI_GLIDING
+							Player.Animation = ANI_GLIDING_DROP
+							Player.State	 = Player_State_GlideDrop
+						end if
+					end if
+#endplatform
 
 					Object.State	   = R4_EGG_BUBBLE_EXPLODE
 					Object.Animation   = EGGANI_HURT

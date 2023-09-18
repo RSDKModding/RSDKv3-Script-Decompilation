@@ -13,7 +13,8 @@
 #alias 1	:	UPPERGOAL
 
 // Player
-#alias 0	:	PLAYER_SONIC
+#alias 0	:	PLAYER_SONIC_A
+#alias 1	:	PLAYER_TAILS_A
 
 
 sub ObjectMain
@@ -37,7 +38,7 @@ sub ObjectMain
 					PlayerObjectCollision(C_TOUCH, -32, -256, 32, 16)
 					if CheckResult == true
 						// Take The High Road Unlock Criteria
-						if Stage.PlayerListPos == PLAYER_SONIC
+						if Stage.PlayerListPos == PLAYER_SONIC_A	// PLAYER_SONIC in Origins
 							if Stage.DebugMode == false
 								SetAchievement(3, 100)
 							end if
@@ -56,12 +57,20 @@ end sub
 
 
 sub ObjectStartup
-	if Stage.PlayerListPos == PLAYER_SONIC
+	if Stage.PlayerListPos == PLAYER_SONIC_A // PLAYER_SONIC in origins
 		LoadSpriteSheet("Global/Items2.gif")
-	else
+	end if
+	if Stage.PlayerListPos == PLAYER_TAILS_A // PLAYER_TAILS in origins
 		LoadSpriteSheet("Global/Items2_t.gif")
 	end if
-
+#platform: Use_Origins
+	if Stage.PlayerListPos == PLAYER_KNUCKLES
+		LoadSpriteSheet("Global/Items2_k.gif")
+	end if
+	if Stage.PlayerListPos == PLAYER_AMY
+		LoadSpriteSheet("Global/Items2_a.gif")
+	end if
+#endplatform
 	SpriteFrame(-20, -44, 40, 56, 34, 165)	// #0 - Goal Post
 end sub
 

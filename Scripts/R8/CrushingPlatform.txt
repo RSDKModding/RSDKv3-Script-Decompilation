@@ -103,7 +103,12 @@ sub ObjectPlayerInteraction
 	Object.YPos = Object.YDrawPos
 
 	if Object.LargePlatform == false
+#platform: Use_Origins
+		PlayerObjectCollision(C_BOX2, -32, -32, 32, 32)
+#endplatform
+#platform: Use_Standalone
 		PlayerObjectCollision(C_BOX, -32, -32, 32, 32)
+#endplatform
 		if CheckResult == PLAYER_COL_FLOOR
 			Player.YPos += Object.YCollisionOffset
 		else
@@ -114,11 +119,22 @@ sub ObjectPlayerInteraction
 					else
 						Player.YPos = TempValue1
 					end if
+				else
+#platform: Use_Origins
+					if Player.State == Player_State_LedgePullUp
+						CallFunction(Player_Kill)
+					end if
+#endplatform
 				end if
 			end if
 		end if
 	else
+#platform: Use_Origins
+		PlayerObjectCollision(C_BOX2, -32, -96, 32, 96)
+#endplatform
+#platform: Use_Standalone
 		PlayerObjectCollision(C_BOX, -32, -96, 32, 96)
+#endplatform
 		if CheckResult == PLAYER_COL_FLOOR
 			Player.YPos += Object.YCollisionOffset
 			if Object.Oscillation == 320
@@ -144,6 +160,12 @@ sub ObjectPlayerInteraction
 					else
 						Player.YPos = TempValue1
 					end if
+				else
+#platform: Use_Origins
+					if Player.State == Player_State_LedgePullUp
+						CallFunction(Player_Kill)
+					end if
+#endplatform
 				end if
 			end if
 		end if

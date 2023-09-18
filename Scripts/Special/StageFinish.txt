@@ -8,8 +8,8 @@
 #alias Object.Value6 : Object.RingBonus
 
 // This can be Coins bonus too, depending on the current mode
-// For simplicity's sake, we're just going to continue calling it Continues
-#alias Object.Value7 : Object.Continues
+// For simplicity's sake, we're just going to continue calling it ExtraLives
+#alias Object.Value7 : Object.ExtraLives
 
 // All texts have their own X position values
 #alias Object.XPos   : Object.LineXPos0
@@ -47,7 +47,8 @@
 #alias 2 : STAGEFINISH_T_ALLSTONESOBTAINED
 
 // Player Aliases
-#alias 0 : PLAYER_SONIC
+#alias 0 : PLAYER_SONIC_A
+#alias 1 : PLAYER_TAILS_A
 
 // Game Mode Aliases
 #alias 2 : MODE_TIMEATTACK
@@ -207,7 +208,7 @@ sub ObjectMain
 			
 			Good_Future_Count = 2
 			
-			if Stage.PlayerListPos == PLAYER_SONIC
+			if Stage.PlayerListPos == PLAYER_SONIC_A
 				// If all Stones are collected, unlock the "Treasure Hunter" achievement
 				SetAchievement(8, 100)
 			end if
@@ -462,7 +463,7 @@ sub ObjectMain
 		end if
 		
 		if Player.Score >= Player.ScoreBonus
-			Object.Continues++
+			Object.ExtraLives++
 			
 #platform: Use_Origins
 			// In Origins, give either Coins or Lives based on the current mode
@@ -470,18 +471,17 @@ sub ObjectMain
 				Player.Lives++
 			else
 				game.callbackParam0 = 1	// Set the amount of coins to add
-				EngineCallback(NOTIFY_ADD_COIN) // CD's Special Stages only give 1 Coin while the others give 3? But CD's is the coolest...
+				EngineCallback(NOTIFY_ADD_COIN)
 			end if
 #endplatform
 			
 #platform: Use_Standalone
-			// In Standalone, we only have lives
-			Player.Lives++
+			Player.Lives++ // In Standalone, we only have lives
 #endplatform
 			
 			Player.ScoreBonus += 50000
 			
-			if Stage.PlayerListPos == PLAYER_SONIC
+			if Stage.PlayerListPos == PLAYER_SONIC_A // PLAYER_SONIC in origins
 				PlaySfx(SFX_G_1UP, false)
 			else
 				PlaySfx(SFX_G_ACHIEVEMENT, false)
@@ -566,13 +566,13 @@ sub ObjectMain
 					WriteSaveRAM()
 				end if
 				
+#platform: Use_Origins
 				// A small Origins tweak - backup the Player's score (again)
 				// So I guess in return for one redundancy loss, we got another one in return...
-#platform: Use_Origins
 				recScore = Player.Score
 #endplatform
 				
-				// Write the correct colours to Fade_Colour so that the maingame fades back in with the same white
+				// Write the correct colors to Fade_Colour so that the maingame fades back in with the same white
 				// (This is setting Fade_Colout to 0xD0FFE0, in hex form)
 				Fade_Colour = 208
 				Fade_Colour <<= 16
@@ -653,14 +653,10 @@ sub ObjectMain
 			Stage.ActiveList = PRESENTATION_STAGE
 			
 #platform: Use_Origins
-			// Origins - I still have no idea, to be honest...
-			
-			Stage.ListPos = STAGE_P_SOUNDTEST
+			Stage.ListPos = STAGE_P_SOUNDTEST // I still have no idea, to be honest...
 #endplatform
 			
 #platform: Use_Standalone
-			// Standalone/Original - go to the credits
-			
 			Stage.ListPos = STAGE_P_CREDITS
 #endplatform
 			LoadStage()
@@ -670,8 +666,8 @@ sub ObjectMain
 		break
 		
 #platform: Use_Origins
-		// the Origins folk put an extra break in here lol
-		// This code never hits anyways, so I guess it's fine?
+		// The Origins folks put an extra break in here LOL
+		// This code never hits anyway, so I guess it's fine?
 		break
 		
 	case STAGEFINISH_CHECKRETRYCOND
@@ -951,8 +947,7 @@ sub ObjectDraw
 		// Bump it up to match its corresponding Sprite Frame ID
 		TempValue1 += 27
 		
-		// (The Coins and Continues bonus use the same variable, just labelled as Continues here)
-		TempValue2 = Object.Continues
+		TempValue2 = Object.ExtraLives
 		
 #platform: Use_Origins
 		// Now, draw either Continues or Coins
@@ -1091,17 +1086,26 @@ sub ObjectStartup
 	SpriteFrame(0, 0, 16, 16, 103, 31)
 	
 	// 27-28 - Small Foot-Tapping Player Icons
-	if Stage.PlayerListPos == PLAYER_SONIC
+	if Stage.PlayerListPos == PLAYER_SONIC_A // PLAYER_SONIC in origins
 		// Do note, these are separate from the ones used in the Pause Menu
 		// These ones are bluer, as well as having a hole in Sonic's head...
 		SpriteFrame(0, 0, 16, 23, 169, 24)
 		SpriteFrame(0, 0, 16, 23, 186, 24)
-	else
+	end if
+	if Stage.PlayerListPos == PLAYER_TAILS_A // PLAYER_TAILS in origins
 		SpriteFrame(0, 0, 16, 23, 139, 203)
 		SpriteFrame(0, 0, 16, 23, 156, 203)
 	end if
-	
 #platform: Use_Origins
+	if Stage.PlayerListPos == PLAYER_KNUCKLES
+		SpriteFrame(0, 0, 16, 22, 18, 256)
+		SpriteFrame(0, 0, 16, 22, 35, 256)
+	end if
+	if Stage.PlayerListPos == PLAYER_AMY
+		SpriteFrame(0, 0, 17, 22, 70, 256)
+		SpriteFrame(0, 0, 17, 22, 88, 256)
+	end if
+	
 	// These below ones are new to Origins
 	
 	// 29 - Coins icon

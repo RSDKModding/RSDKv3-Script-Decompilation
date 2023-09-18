@@ -7,12 +7,12 @@
 // Position for where the checkpoint should progress to its next version
 #alias Object.Value1			:	Object.Checkpoint
 
-// The colours the Spotlight should use
-// Just like everything else, these colours are in RRGGBB
-#alias Object.Value2			:	Object.PrimaryBaseColour
-#alias Object.Value3			:	Object.SecondaryBaseColour
-#alias Object.Value4			:	Object.PrimaryDisplayColour
-#alias Object.Value5			:	Object.SecondaryDisplayColour
+// The colors the Spotlight should use
+// Just like everything else, these colors are in RRGGBB
+#alias Object.Value2			:	Object.PrimaryBaseColor
+#alias Object.Value3			:	Object.SecondaryBaseColor
+#alias Object.Value4			:	Object.PrimaryDisplayColor
+#alias Object.Value5			:	Object.SecondaryDisplayColor
 
 // There are several different types of spotlights that appear in the stage
 #alias Object.Value0			:	Object.SpotlightType
@@ -96,15 +96,15 @@ sub ObjectMain
 	TempValue2 >>= 5
 	TempValue2 += 64
 	
-	// Make the spotlight colours oscillate
+	// Make the spotlight colors oscillate
 	
-	Object.PrimaryDisplayColour = TempValue1
-	Object.PrimaryDisplayColour <<= 24
-	Object.PrimaryDisplayColour += Object.PrimaryBaseColour
+	Object.PrimaryDisplayColor = TempValue1
+	Object.PrimaryDisplayColor <<= 24
+	Object.PrimaryDisplayColor += Object.PrimaryBaseColor
 	
-	Object.SecondaryDisplayColour = TempValue2
-	Object.SecondaryDisplayColour <<= 24
-	Object.SecondaryDisplayColour += Object.SecondaryBaseColour
+	Object.SecondaryDisplayColor = TempValue2
+	Object.SecondaryDisplayColor <<= 24
+	Object.SecondaryDisplayColor += Object.SecondaryBaseColor
 	
 	// Check if the current spotlight type should be switched
 	
@@ -159,9 +159,9 @@ sub ObjectMain
 		// 1st Spotlight offset - move it a bit to the left
 		Object.XPos -= 48
 		
-		// Mirror the face colour to match the targetted colour
-		FaceBuffer[0].Color = Object.PrimaryDisplayColour
-		FaceBuffer[1].Color = Object.PrimaryDisplayColour
+		// Mirror the face color to match the targetted color
+		FaceBuffer[0].Color = Object.PrimaryDisplayColor
+		FaceBuffer[1].Color = Object.PrimaryDisplayColor
 		
 		
 		// First do spotlight 1 (the left one)
@@ -254,8 +254,8 @@ sub ObjectMain
 		3DScene.NoVertices = 4
 		3DScene.NoFaces = 1
 		
-		// Set its colour to what it should be
-		FaceBuffer[0].Color = Object.PrimaryDisplayColour
+		// Set its color to what it should be
+		FaceBuffer[0].Color = Object.PrimaryDisplayColor
 		
 		// Handle spotlight movement
 		TempValue0 = Oscillation
@@ -301,16 +301,16 @@ sub ObjectMain
 		3DScene.NoVertices = 8
 		3DScene.NoFaces = 2
 		
-		// Set the display colours...
-		FaceBuffer[0].Color = Object.SecondaryDisplayColour
-		FaceBuffer[1].Color = Object.SecondaryDisplayColour
+		// Set the display colors...
+		FaceBuffer[0].Color = Object.SecondaryDisplayColor
+		FaceBuffer[1].Color = Object.SecondaryDisplayColor
 		
 		// ...and then apply the spotlight offset...
 		Object.XPos -= 48
 		
-		// ..but then set the colours again? Why is this done twice?
-		FaceBuffer[0].Color = Object.SecondaryDisplayColour
-		FaceBuffer[1].Color = Object.SecondaryDisplayColour
+		// ..but then set the colors again? Why is this done twice?
+		FaceBuffer[0].Color = Object.SecondaryDisplayColor
+		FaceBuffer[1].Color = Object.SecondaryDisplayColor
 		
 		// Make the spotlight move
 		TempValue0 = Oscillation
@@ -393,7 +393,7 @@ sub ObjectMain
 		3DScene.NoVertices = 4
 		3DScene.NoFaces = 1
 		
-		FaceBuffer[0].Color = Object.PrimaryDisplayColour
+		FaceBuffer[0].Color = Object.PrimaryDisplayColor
 		
 		// Bounce the spotlight as needed
 		TempValue0 = 512
@@ -441,8 +441,8 @@ sub ObjectMain
 		
 		Object.XPos -= 48
 		
-		FaceBuffer[0].Color = Object.PrimaryDisplayColour
-		FaceBuffer[1].Color = Object.SecondaryDisplayColour
+		FaceBuffer[0].Color = Object.PrimaryDisplayColor
+		FaceBuffer[1].Color = Object.SecondaryDisplayColor
 		
 		// First do spotlight 1
 		
@@ -564,62 +564,62 @@ sub ObjectStartup
 			// And set up the initial starting checkpoint value as well
 			Object[ArrayPos0].Checkpoint = Screen.CenterX
 			
-			// Setup the Spotlight's colours based on the current time period
+			// Setup the Spotlight's colors based on the current time period
 			switch HUD.CurrentTimePeriod
 			case TIME_PRESENT
-				// Present gets standard colours - set the primary spotlight to green
-				Object[ArrayPos0].PrimaryBaseColour = 128
-				Object[ArrayPos0].PrimaryBaseColour <<= 16
+				// Present gets standard colors - set the primary spotlight to green
+				Object[ArrayPos0].PrimaryBaseColor = 128
+				Object[ArrayPos0].PrimaryBaseColor <<= 16
 				TempValue0 = 224
 				TempValue0 <<= 8
-				Object[ArrayPos0].PrimaryBaseColour += TempValue0
-				Object[ArrayPos0].PrimaryBaseColour += 128
+				Object[ArrayPos0].PrimaryBaseColor += TempValue0
+				Object[ArrayPos0].PrimaryBaseColor += 128
 				
 				// Set the secondary spotlight to yellow
-				Object[ArrayPos0].SecondaryBaseColour = 224
-				Object[ArrayPos0].SecondaryBaseColour <<= 16
+				Object[ArrayPos0].SecondaryBaseColor = 224
+				Object[ArrayPos0].SecondaryBaseColor <<= 16
 				TempValue0 = 224
 				TempValue0 <<= 8
-				Object[ArrayPos0].SecondaryBaseColour += TempValue0
-				Object[ArrayPos0].SecondaryBaseColour += 0
+				Object[ArrayPos0].SecondaryBaseColor += TempValue0
+				Object[ArrayPos0].SecondaryBaseColor += 0
 				break
 				
 			// No case 1 since spotlights didn't even exist in the Past...
 			
 			case TIME_GOOD_FUTURE
-				// The Good Future gets nice and bright colours - primary spotlight is brown
-				Object[ArrayPos0].PrimaryBaseColour = 192
-				Object[ArrayPos0].PrimaryBaseColour <<= 16
+				// The Good Future gets nice and bright colors - primary spotlight is brown
+				Object[ArrayPos0].PrimaryBaseColor = 192
+				Object[ArrayPos0].PrimaryBaseColor <<= 16
 				TempValue0 = 128
 				TempValue0 <<= 8
-				Object[ArrayPos0].PrimaryBaseColour += TempValue0
-				Object[ArrayPos0].PrimaryBaseColour += 0
+				Object[ArrayPos0].PrimaryBaseColor += TempValue0
+				Object[ArrayPos0].PrimaryBaseColor += 0
 				
 				// And the secondary spotlight is blue
-				Object[ArrayPos0].SecondaryBaseColour = 0
-				Object[ArrayPos0].SecondaryBaseColour <<= 16
+				Object[ArrayPos0].SecondaryBaseColor = 0
+				Object[ArrayPos0].SecondaryBaseColor <<= 16
 				TempValue0 = 192
 				TempValue0 <<= 8
-				Object[ArrayPos0].SecondaryBaseColour += TempValue0
-				Object[ArrayPos0].SecondaryBaseColour += 224
+				Object[ArrayPos0].SecondaryBaseColor += TempValue0
+				Object[ArrayPos0].SecondaryBaseColor += 224
 				break
 				
 			case TIME_BAD_FUTURE
-				// Bad Future gets cool and fancy colours, primary spotlight is pink
-				Object[ArrayPos0].PrimaryBaseColour = 224
-				Object[ArrayPos0].PrimaryBaseColour <<= 16
+				// Bad Future gets cool and fancy colors, primary spotlight is pink
+				Object[ArrayPos0].PrimaryBaseColor = 224
+				Object[ArrayPos0].PrimaryBaseColor <<= 16
 				TempValue0 = 64
 				TempValue0 <<= 8
-				Object[ArrayPos0].PrimaryBaseColour += TempValue0
-				Object[ArrayPos0].PrimaryBaseColour += 128
+				Object[ArrayPos0].PrimaryBaseColor += TempValue0
+				Object[ArrayPos0].PrimaryBaseColor += 128
 				
 				// And secondary spotlight is purple
-				Object[ArrayPos0].SecondaryBaseColour = 224
-				Object[ArrayPos0].SecondaryBaseColour <<= 16
+				Object[ArrayPos0].SecondaryBaseColor = 224
+				Object[ArrayPos0].SecondaryBaseColor <<= 16
 				TempValue0 = 128
 				TempValue0 <<= 8
-				Object[ArrayPos0].SecondaryBaseColour += TempValue0
-				Object[ArrayPos0].SecondaryBaseColour += 192
+				Object[ArrayPos0].SecondaryBaseColor += TempValue0
+				Object[ArrayPos0].SecondaryBaseColor += 192
 				break
 				
 			end switch
@@ -652,7 +652,7 @@ sub RSDKLoad
 	SpriteFrame(-16, -16, 32, 32, 1, 143) // "Script" Icon
 
 	// This object uses 3d, so there's not really any good way to show it in the editor...
-	// It's normally placed out of bounds though, so it doesn't matter too much anyways
+	// It's normally placed out of bounds though, so it doesn't matter too much anyway
 
 	SetVariableAlias(ALIAS_VAR_PROPVAL, "unused")
 end sub

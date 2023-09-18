@@ -182,11 +182,17 @@ end sub
 
 
 sub ObjectPlayerInteraction
+	// They changed up how the Bounce Floor works in Origins Plus, see the new R6BounceFloor object
+	// This is just (most of) the code from Standalone here.
+	
 	TempValue2   = Player.XPos
 	TempValue2 >>= 16
+#platform: Use_Standalone
 	TempValue2  += Player.CollisionRight
+#endplatform
 	TempValue3   = Player.YPos
 	TempValue3 >>= 16
+#platform: Use_Standalone
 	TempValue3  += Player.CollisionBottom
 	TempValue3  += 2
 	Get16x16TileInfo(TempValue0, TempValue2, TempValue3, TILEINFO_ANGLEB)
@@ -205,24 +211,22 @@ sub ObjectPlayerInteraction
 				Player.Timer = 0
 				Player.YVelocity = -0x160000
 
-#platform: Use_Origins
-				Player.State = Player_State_Air_NoDropDash
-#endplatform
-
-#platform: Use_Standalone
 				Player.State = Player_State_Air
-#endplatform
 
-				PlayStageSfx(SFX_S_BOUNCEFLOOR, false)				
+				PlayStageSfx(SFX_S_BOUNCEFLOOR, false)
+#endplatform
 #platform: Use_Haptics
 				HapticEffect(60, 0, 0, 0)
 #endplatform
+#platform: Use_Standalone
 			end if
 		end if
 	end if
 	TempValue2 -= Player.CollisionLeft
 	TempValue3 -= Player.CollisionBottom
 	TempValue3 -= 2
+#endplatform
+	
 	Get16x16TileInfo(TempValue0, TempValue2, TempValue3, TILEINFO_ANGLEB)
 	switch TempValue0
 	case 2
@@ -235,6 +239,7 @@ sub ObjectPlayerInteraction
 			end if
 		end if
 		break
+		
 	case 5
 		if Object.State == R6_SETUP_WEB_SHOCK
 			if Player.InvincibleTimer == 0
@@ -247,6 +252,7 @@ sub ObjectPlayerInteraction
 			end if
 		end if
 		break
+		
 	case 6
 		if Object.State == R6_SETUP_WEB_SHOCK
 			if Object.WebDirection == VERTICAL_WEB
@@ -261,6 +267,7 @@ sub ObjectPlayerInteraction
 			end if
 		end if
 		break
+		
 	case 7
 		if Object.State == R6_SETUP_WEB_SHOCK
 			if Object.WebDirection == HORIZONTAL_WEB
@@ -275,6 +282,7 @@ sub ObjectPlayerInteraction
 			end if
 		end if
 		break
+		
 	case 8
 		if Object.State == R6_SETUP_WEB_SHOCK
 			if Object.WebDirection == DIAGONAL_WEB
@@ -393,21 +401,27 @@ sub ObjectDraw
 		case 2
 			DrawRect(0, 0, Screen.XSize, Screen.YSize, 128, 0, 64, 64)
 			break
+			
 		case 3
 			DrawRect(0, 0, Screen.XSize, Screen.YSize, 128, 0, 64, 32)
 			break
+			
 		case 4
 			DrawRect(0, 0, Screen.XSize, Screen.YSize, 255, 128, 255, 32)
 			break
+			
 		case 5
 			DrawRect(0, 0, Screen.XSize, Screen.YSize, 128, 0, 64, 64)
 			break
+			
 		case 6
 			DrawRect(0, 0, Screen.XSize, Screen.YSize, 128, 0, 64, 32)
 			break
+			
 		case 7
 			DrawRect(0, 0, Screen.XSize, Screen.YSize, 255, 128, 255, 32)
 			break
+			
 		case 8
 			DrawRect(0, 0, Screen.XSize, Screen.YSize, 128, 0, 64, 32)
 			break
@@ -442,7 +456,7 @@ end sub
 
 sub RSDKLoad
 	LoadSpriteSheet("Global/Display.gif")
-	SpriteFrame(-16, -16, 32, 32, 1, 143)		// #0 - "Script" Icon
+	SpriteFrame(-16, -16, 32, 32, 1, 143) // #0 - "Script" Icon
 
 	SetVariableAlias(ALIAS_VAR_PROPVAL, "unused")
 end sub

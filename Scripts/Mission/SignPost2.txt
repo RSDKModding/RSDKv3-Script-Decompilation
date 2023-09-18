@@ -21,9 +21,6 @@
 #alias 3	:	SIGNPOST2_STOP_PLAYER
 #alias 4	:	SIGNPOST2_BLANK
 
-// Players
-#alias 0	:	PLAYER_SONIC
-
 // Control Mode
 #alias -1	:	CONTROLMODE_NONE
 
@@ -45,8 +42,9 @@ sub ObjectMain
 
 		if Player.YPos < TempValue0
 			if Object.SignPostBound > 0
-				TempValue0   = Object.iXPos
-				TempValue0  -= Player.iXPos
+				TempValue0   = Object.XPos
+				TempValue0  -= Player.XPos
+				TempValue0 >>= 16
 				CheckGreater(TempValue0, 0)
 				TempValue1   = CheckResult
 				CheckLower(TempValue0, Object.SignPostBound)
@@ -80,7 +78,7 @@ sub ObjectMain
 				Object.State	  = SIGNPOST2_FLIP
 				Object.Timer	  = 8
 
-				PlaySfx(SFX_G_SIGNPOST, false) 
+				PlaySfx(SFX_G_SIGNPOST, false)
 				
 			end if
 		end if
@@ -194,6 +192,14 @@ sub ObjectMain
 			Object[30].Type 	= TypeName[ActFinish]
 			ActFinish.DrawOrder = 6
 			ActFinish.Priority	= PRIORITY_ACTIVE
+		else
+			if Player.Animation == ANI_PUSHING
+				PlayMusic(1)
+				Object.State   		= SIGNPOST2_BLANK
+				Object[30].Type		= TypeName[ActFinish]
+				ActFinish.DrawOrder = 6
+				ActFinish.Priority  = PRIORITY_ACTIVE
+			end if
 		end if
 		break
 
@@ -230,15 +236,18 @@ sub ObjectMain
 			CheckGreater(Player.iXPos, TempValue1)
 			TempValue0 |= CheckResult
 			if TempValue0 == true
-				Player.State		 = Player_State_Ground
 				Player.ControlMode   = CONTROLMODE_NONE
 				Player.JumpHold		 = false
 				Player.Right		 = false
 				Player.Left			 = false
 				Player.Up			 = false
 				Player.Down			 = false
-				Player.XVelocity 	 = 0
-				Player.YVelocity 	 = 0
+
+				if Player.State == Player_State_Ground
+					Player.XVelocity = 0
+					Player.YVelocity = 0
+				end if
+
 				Player.Speed 		 = 0
 				Screen.CameraEnabled = false
 			end if
@@ -260,8 +269,15 @@ end sub
 sub ObjectStartup
 	if Stage.PlayerListPos == PLAYER_SONIC
 		LoadSpriteSheet("Global/Items2.gif")
-	else
+	end if
+	if Stage.PlayerListPos == PLAYER_TAILS
 		LoadSpriteSheet("Global/Items2_t.gif")
+	end if
+	if Stage.PlayerListPos == PLAYER_KNUCKLES
+		LoadSpriteSheet("Global/Items2_K.gif")
+	end if
+	if Stage.PlayerListPos == PLAYER_AMY
+		LoadSpriteSheet("Global/Items2_A.gif")
 	end if
 
 	SpriteFrame(-12, -12, 24, 24, 0, 150)		// #0 - Sign Post

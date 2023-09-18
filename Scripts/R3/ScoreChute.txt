@@ -21,7 +21,7 @@
 #alias 7	:	SCORECHUTE_COOLDOWN
 
 // Players
-#alias 0	:	PLAYER_SONIC
+#alias 0	:	PLAYER_SONIC_A
 
 // Stage SFX
 #alias 2	:	SFX_S_SCORECHUTE
@@ -76,7 +76,7 @@ sub ObjectMain
 			Object.State = SCORECHUTE_GIVE_POINTS
 			Object.Timer = 0
 		end if
-		// in case of time over 
+		// in case of time over
 		if Player.State == Player_State_Death
 			Object.State = SCORECHUTE_COOLDOWN
 			Object.Timer = 0
@@ -118,7 +118,7 @@ sub ObjectMain
 			Object.State = SCORECHUTE_EJECT_PLAYER
 			Object.Timer = 0
 		end if
-		if Player.State == Player_State_Death	// in case of time over 
+		if Player.State == Player_State_Death	// in case of time over
 			Object.State = SCORECHUTE_COOLDOWN
 			Object.Timer = 0
 			Player.Visible = true
@@ -233,16 +233,48 @@ end sub
 
 
 sub ObjectStartup
+#platform: Use_Standalone
 	LoadSpriteSheet("R3/Objects.gif")
 	SpriteFrame(-24, -8, 48, 16, 117, 233)			// #0 - Score Chute Active
 
-	if Stage.PlayerListPos == PLAYER_SONIC
+	if Stage.PlayerListPos == PLAYER_SONIC_A
 		SpriteFrame(-16, -24, 32, 16, 2, 240)		// #1 - Jump Insert Frame 0
 		SpriteFrame(-8, -16, 16, 8, 35, 241)		// #2 - Jump Insert Frame 1
 	else
 		SpriteFrame(-12, -20, 24, 12, 228, 244)		// #1 - Jump Insert Frame 0
 		SpriteFrame(-8, -16, 16, 8, 211, 247)		// #2 - Jump Insert Frame 1
 	end if
+#endplatform
+
+#platform: Use_Origins
+	if Stage.PlayerListPos == PLAYER_SONIC
+		LoadSpriteSheet("R3/Objects.gif")
+		SpriteFrame(-24, -8, 48, 16, 117, 233)	// #0 - Score Chute Active
+		SpriteFrame(-16, -24, 32, 16, 2, 240)	// #1 - Jump Insert Frame 0
+		SpriteFrame(-8, -16, 16, 8, 35, 241)	// #2 - Jump Insert Frame 1
+	end if
+
+	if Stage.PlayerListPos == PLAYER_TAILS
+		LoadSpriteSheet("R3/Objects.gif")
+		SpriteFrame(-24, -8, 48, 16, 117, 233)	// #0 - Score Chute Active
+		SpriteFrame(-12, -20, 24, 12, 228, 244)	// #1 - Jump Insert Frame 0
+		SpriteFrame(-8, -16, 16, 8, 211, 247)	// #2 - Jump Insert Frame 1
+	end if
+
+	if Stage.PlayerListPos == PLAYER_KNUCKLES
+		LoadSpriteSheet("R3/Objects3.gif")
+		SpriteFrame(-24, -8, 48, 16, 99, 133)	// #0 - Score Chute Active
+		SpriteFrame(-16, -24, 32, 16, 66, 150)	// #1 - Jump Insert Frame 0
+		SpriteFrame(-8, -16, 16, 8, 116, 150)	// #2 - Jump Insert Frame 1
+	end if
+
+	if Stage.PlayerListPos == PLAYER_AMY
+		LoadSpriteSheet("R3/Objects3.gif")
+		SpriteFrame(-24, -8, 48, 16, 99, 133)	// #0 - Score Chute Active
+		SpriteFrame(-16, -24, 32, 16, 66, 133)	// #1 - Jump Insert Frame 0
+		SpriteFrame(-8, -16, 16, 8, 99, 150)	// #2 - Jump Insert Frame 1
+	end if
+#endplatform
 
 	// Used to be below LoadSpriteSheet, moved here for consistency
 	ArrayPos0 = 32

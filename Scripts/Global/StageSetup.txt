@@ -37,7 +37,7 @@
 #alias 2	:	MODE_TIMEATTACK
 
 // Player
-#alias 0	:	PLAYER_SONIC
+#alias 0	:	PLAYER_SONIC_A
 
 // Control Mode
 #alias -1	:	CONTROLMODE_NONE
@@ -213,7 +213,7 @@ sub ObjectMain
 #endplatform
 
 			Player.ScoreBonus += 50000
-			if Stage.PlayerListPos == PLAYER_SONIC
+			if Stage.PlayerListPos == PLAYER_SONIC_A // PLAYER_SONIC in origins
 				PlaySfx(SFX_G_1UP, false)
 			else
 				PlaySfx(SFX_G_ACHIEVEMENT, false)
@@ -349,7 +349,10 @@ sub ObjectStartup
 		ArrayPos0++
 	loop
 	
+// In origins this is reset by player object so, goodbye!
+#platform: Use_Standalone
 	Warp.Timer = 0
+#endplatform
 	if Warp.XPos > 0	// if the player comes from a time travel, load the warp values
 		// Reload the previous player stats
 		Player.XPos			 = Warp.XPos
@@ -435,7 +438,7 @@ function EditorHelpers_DrawHitbox
 	
 #platform: Editor
 	
-	// This function is called in order to draw an object's hitbox, as a white 
+	// This function is called in order to draw an object's hitbox, as a white
 	// Editor.DrawingOverlay isn't set here
 	
 	// Preconditions:

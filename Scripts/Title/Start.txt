@@ -85,7 +85,6 @@ function TouchStart_HandleCheatCodes
 	
 	TempValue0 = CHEATINPUT_NONE
 	
-	// Funnily enough, they updated this in Origins to use the new input syntax, but it stayed unused all the same...
 	if KeyPress[0].Up == true
 		TempValue0 = CHEATINPUT_UP
 	end if
@@ -182,7 +181,6 @@ function TouchStart_HandleCheatCodes
 			end if
 		end if
 		break
-		
 	end switch
 	
 	// Down, Down, Down, Left, Right, A
@@ -265,7 +263,6 @@ sub ObjectMain
 	
 	switch Object.State
 	case START_SETUP
-		
 		CheckTouchRect(0, 0, Screen.XSize, 240)
 		
 #platform: Use_Origins
@@ -274,7 +271,14 @@ sub ObjectMain
 			EngineCallback(NOTIFY_BACK_TO_MAINMENU)
 		end if
 		
-		// Along with tapping the screen, you can also press the Start button of course
+		if KeyPress[0].Start == true
+			CheckResult = false
+		end if
+		
+		if KeyPress[0].ButtonA == true
+			CheckResult = false
+		end if
+
 		if input.pressButton == true
 			CheckResult = false
 		end if
@@ -307,10 +311,7 @@ sub ObjectMain
 #platform: Use_Haptics
 			HapticEffect(31, 0, 0, 0)
 #endplatform
-
 		else
-			// The game never really reaches here...
-			
 			Object.DemoTimer++
 			
 			if Object.DemoTimer == 1550
@@ -334,8 +335,8 @@ sub ObjectMain
 			Stage.ListPos = STAGE_P_MENU
 			LoadStage()
 		end if
+		
 		SetScreenFade(0, 0, 0, Object.Fade)
-
 #endplatform
 		break
 		
@@ -368,16 +369,11 @@ sub ObjectMain
 		break
 		
 	case START_GOTO_DEMO
-		// This state's unused as well...
-		// The game's supposed to fade out and watch a demo, but Origins broke it so
-		
 		Object.Fade += 4
 		
 		if Object.Fade == 384
-			
 			Engine.HapticsEnabled = false
 			
-			// The game is to fade in from a black screen
 			Fade_Colour = 0x000000
 			
 			// Reset loads of stuff
@@ -432,13 +428,20 @@ sub ObjectMain
 				Stage.ActiveList = REGULAR_STAGE
 				Stage.ListPos	 = STAGE_R_R82A
 				break
-				
 			end switch
 			
 			// Cycle through the same 6 demos
 			Options.DemoNumber++
 			Options.DemoNumber %= 5
-			
+
+#platform: Use_Origins
+			// Sonic Team REALLY hates the concept of Amy being in attract demos
+			// The Sonic object already sets the player to him, so this is pretty redundant
+			if Stage.PlayerListPos == PLAYER_AMY
+				Stage.PlayerListPos = PLAYER_SONIC
+			end if
+#endplatform
+
 			LoadStage()
 		end if
 		
@@ -463,7 +466,7 @@ sub ObjectDraw
 			Object.AnimationTimer = 0
 		end if
 		
-		// If in the upper half of a second, then 
+		// If in the upper half of a second, then
 		if Object.AnimationTimer > 29
 			if Engine.DeviceType == RETRO_STANDARD
 				// On standard Platforms, display the "Press Button" text
@@ -474,7 +477,7 @@ sub ObjectDraw
 				DrawSprite(1)
 				
 			end if
-		end if		
+		end if
 	end if
 	
 	// Get the cordinates for the bottom right of the screen
@@ -514,26 +517,20 @@ end sub
 
 
 sub ObjectStartup
-	
-
-	// Some callbacks, to let the engine know what's happening
 #platform: Use_Origins
-	game.callbackParam0 = 0
+	game.callbackParam0 = false
 	EngineCallback(NOTIFY_LEVEL_SELECT_MENU)
 #endplatform
 	LoadSpriteSheet("Title/Title.gif")
 
 	// The following Sprites differ between languages
 	
-	// They follow the order of 
+	// They follow the order of
 	//   0 - Press to Start
 	//   1 - Touch to Start!
 	
 	// But of course in the language they correspond to
 	
-	// Do note, sprite 0 - the Press to Start one - is unused
-	
-
 	switch Engine.Language
 	case LANG_ENGLISH
 	case LANG_JAPANESE

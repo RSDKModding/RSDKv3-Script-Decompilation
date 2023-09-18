@@ -16,7 +16,7 @@
 #alias Object.Value7 : Object.HeartTimer
 
 // States
-#alias 0 : AMY_LOOKING_AROUND
+#alias 0 : AMY_IDLE
 #alias 1 : AMY_CHASE
 #alias 2 : AMY_AWAIT_RIGHT
 #alias 3 : AMY_CHEER_LEFT
@@ -35,7 +35,7 @@
 #alias 1 : GRAVITY_AIR
 
 // Player Aliases
-#alias 1 : PLAYER_TAILS
+#alias 0 : PLAYER_SONIC_A
 
 // Collision Side Aliases
 #alias 0 : CSIDE_FLOOR
@@ -63,7 +63,7 @@ sub ObjectMain
 	end if
 	
 	switch Object.State
-	case AMY_LOOKING_AROUND
+	case AMY_IDLE
 		TempValue0  = Object.FrameTimer
 		TempValue0 /= 10
 		TempValue0 += 11
@@ -488,7 +488,7 @@ sub ObjectMain
 
 	if Object.OutOfBounds == true
 		Object.Priority = PRIORITY_BOUNDS
-		Object.State = AMY_LOOKING_AROUND
+		Object.State = AMY_IDLE
 		Object.SonicHugged = false
 	end if
 end sub
@@ -548,7 +548,8 @@ sub ObjectStartup
 	ArrayPos0 = 32
 	while ArrayPos0 < 1056
 		if Object[ArrayPos0].Type == TypeName[Amy Rose]
-			if Stage.PlayerListPos == PLAYER_TAILS
+			//if Stage.PlayerListPos == PLAYER_TAILS // Standalones/Preplus check
+			if Stage.PlayerListPos != PLAYER_SONIC_A // PLAYER_SONIC in origins
 				Object[ArrayPos0].Type = TypeName[Blank Object]
 			else
 				if Options.GameMode == MODE_TIMEATTACK

@@ -6,10 +6,11 @@
 #alias Object.Value0	:	Object.Timer
 
 // Property Values
-#alias 0	:	TIMEWARPFIX_ERASE_TOUCH		// Touch this while trying to warp, no more time travel for you
-#alias 1	:	TIMEWARPFIX_ERASE_AREA		// Get past this, no more warp for you
-#alias 2	:	TIMEWARPFIX_SAVE_POINT		// Sets your position to the next object after time-travelling
-#alias 3	:	TIMEWARPFIX_SAVE_POINT_AIR	// Sets your position to the next object after time-travelling, but in the air
+#alias 0	:	TIMEWARPFIX_ERASE_TOUCH			// Touch this while trying to warp, no more time travel for you
+#alias 1	:	TIMEWARPFIX_ERASE_AREA			// Get past this, no more warp for you
+#alias 2	:	TIMEWARPFIX_SAVE_POINT			// Sets your position to the next object after time-travelling
+#alias 3	:	TIMEWARPFIX_SAVE_POINT_AIR		// Sets your position to the next object after time-travelling, but in the air
+#alias 4	:	TIMEWARPFIX_FORCE_ERASE_TOUCH	// Touch this, no more time travel for you (introduced in Origins Plus)
 
 // Gravity
 #alias 1	:	GRAVITY_AIR
@@ -69,6 +70,18 @@ sub ObjectMain
 		if Object.Timer == 2
 			Object.Type = TypeName[Blank Object]
 		end if
+		break
+		
+	case TIMEWARPFIX_FORCE_ERASE_TOUCH
+#platform: Use_Origins
+		PlayerObjectCollision(C_TOUCH, -16, -16, 16, 16)
+		if CheckResult == true
+			if Warp.Destination > WARP_NONE
+				Warp.Destination = WARP_NONE
+				Warp.Timer = 0
+			end if
+		end if
+#endplatform
 		break
 		
 	end switch
@@ -131,6 +144,7 @@ sub RSDKDraw
 		
 		switch Object.PropertyValue
 		case TIMEWARPFIX_ERASE_TOUCH
+		case TIMEWARPFIX_FORCE_ERASE_TOUCH
 			TempValue0 = 16; TempValue1 = 16; TempValue2 = 16; TempValue3 = 16;
 			break
 			
@@ -176,4 +190,5 @@ sub RSDKLoad
 	AddEnumVariable("Erase Time Warp on Pass", 1)
 	AddEnumVariable("Set Time Warp Pos (Ground)", 2)
 	AddEnumVariable("Set Time Warp Pos (Air)", 3)
+	AddEnumVariable("Erase Time Warp on Touch", 4)
 end sub

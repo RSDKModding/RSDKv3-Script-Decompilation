@@ -8,6 +8,7 @@
 #alias Object.Value2	:	Object.ColLeftTop
 #alias Object.Value3	:	Object.ColRightBottom
 #alias Object.Value4	:	Object.OnJumpArea
+#alias Object.Value5	:	Object.LedgeStop
 
 // Player Alias
 #alias Player.Value6	:	Player.MinRollSpeed
@@ -43,9 +44,23 @@
 
 sub ObjectPlayerInteraction
 	PlayerObjectCollision(C_TOUCH, Object.ColLeftTop, Object.ColLeftTop, Object.ColRightBottom, Object.ColRightBottom)
+#platform: Use_Origins
+	if CheckResult == true
+		if Stage.PlayerListPos == PLAYER_KNUCKLES
+			if Player.State == Player_State_LedgePullUp
+				CheckResult      = false
+				Object.LedgeStop = true
+			end if
+		end if
+	end if
+#endplatform
 	if CheckResult == true
 		switch Object.PropertyValue
 		case TUBESW_ENTER_H
+			if Object.LedgeStop == true
+				Player.Speed     = 1
+				Object.LedgeStop = false
+			end if
 			if Player.Speed > -1
 				Player.Direction	= FACING_RIGHT
 				Player.Speed		= 0xA0000
@@ -175,7 +190,7 @@ sub ObjectPlayerInteraction
 						Player.Angle			= 224
 						Player.CollisionMode	= CMODE_FLOOR
 
-						PlaySfx(SFX_G_RELEASE, false) 
+						PlaySfx(SFX_G_RELEASE, false)
 						Object.OnJumpArea = true
 					end if
 				else
@@ -238,7 +253,7 @@ sub ObjectPlayerInteraction
 						Player.Angle			= 36
 						Player.CollisionMode	= CMODE_RWALL
 
-						PlaySfx(SFX_G_RELEASE, false) 
+						PlaySfx(SFX_G_RELEASE, false)
 						Object.OnJumpArea = true
 					end if
 				else
@@ -315,7 +330,7 @@ sub ObjectPlayerInteraction
 						Player.Angle		 = 172
 						Player.CollisionMode = CMODE_LWALL
 						
-						PlaySfx(SFX_G_RELEASE, false) 
+						PlaySfx(SFX_G_RELEASE, false)
 						Object.OnJumpArea = true
 					end if
 				else
@@ -381,7 +396,7 @@ sub ObjectPlayerInteraction
 					Player.Angle		 = 224
 					Player.CollisionMode = CMODE_FLOOR
 
-					PlaySfx(SFX_G_RELEASE, false) 
+					PlaySfx(SFX_G_RELEASE, false)
 				end if
 			end if
 			break

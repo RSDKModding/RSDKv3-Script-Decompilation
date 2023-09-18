@@ -366,7 +366,7 @@ sub ObjectMain
 
 				CreateTempObject(TypeName[Explosion], 0, TempValue0, TempValue1)
 
-				PlaySfx(SFX_G_EXPLOSION, false) 
+				PlaySfx(SFX_G_EXPLOSION, false)
 			end if
 
 			if Object.Timer == 94
@@ -641,9 +641,38 @@ sub ObjectPlayerInteraction
 	if Object.State > R1_EGGMAN_WAIT_PLAYER
 		if Player.Animation != ANI_HURT
 			if Object.Hit < 3
+#platform: Use_Origins
+				PlayerObjectCollision(C_ENEMY, -28, -28, 28, 28)
+#endplatform
+#platform: Use_Standalone
 				PlayerObjectCollision(C_TOUCH, -28, -28, 28, 28)
+#endplatform
 				if CheckResult == true
+//					if Player.Animation == ANI_JUMPING // Standalone/Preplus check
+
+					CheckResult = false
 					if Player.Animation == ANI_JUMPING
+						CheckResult = true
+					end if
+#platform: Use_Origins
+					if Stage.PlayerListPos == PLAYER_KNUCKLES
+						if Player.Animation == ANI_GLIDING
+							CheckResult = true
+						end if
+						if Player.Animation == ANI_GLIDING_STOP
+							CheckResult = true
+						end if
+					end if
+					if Stage.PlayerListPos == PLAYER_AMY
+						if Player.Animation == ANI_HAMMER_JUMP
+							CheckResult = true
+						end if
+						if Player.Animation == ANI_HAMMER_DASH
+							CheckResult = true
+						end if
+					end if
+#endplatform
+					if CheckResult == true
 						Player.XVelocity   = Player.XPos
 						Player.XVelocity  -= Object.XPos
 						Player.XVelocity >>= 3
@@ -652,10 +681,18 @@ sub ObjectPlayerInteraction
 						Player.YVelocity   = Player.YPos
 						Player.YVelocity  -= Object.YPos
 						Player.YVelocity >>= 3
+#platform: Use_Origins
+						if Stage.PlayerListPos == PLAYER_KNUCKLES
+							if Player.Animation == ANI_GLIDING
+								Player.Animation = ANI_GLIDING_DROP
+								Player.State = Player_State_GlideDrop
+							end if
+						end if
+#endplatform
 
 						if Object.Timer == 0
 							if BossBody.State != BOSSBODY_DESCEND
-								PlaySfx(SFX_G_EXPLOSION, false) 
+								PlaySfx(SFX_G_EXPLOSION, false)
 								
 #platform: Use_Haptics
 								HapticEffect(75, 0, 0, 0)

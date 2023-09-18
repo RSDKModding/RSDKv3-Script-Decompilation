@@ -19,7 +19,9 @@
 #alias 1 : INK_BLEND
 
 // Player Collision
+#alias 4 : C_BOX3
 #alias 2 : PLAYER_COL_LWALL
+#alias 3 : PLAYER_COL_RWALL
 #alias 4 : PLAYER_COL_ROOF
 
 // Property Values
@@ -34,58 +36,128 @@
 
 
 sub ObjectPlayerInteraction
+#platform: Use_Origins
 	TempValue0 = Player.YPos
-	
-	// Different collision widths & heights for different block types
-	switch Object.PropertyValue
-	case BLOCK_SINGLE
-	case BLOCK_INVISIBLE
-		PlayerObjectCollision(C_BOX, -16, -16, 16, 16)
-		break
-		
-	case BLOCK_TWO_H
-		PlayerObjectCollision(C_BOX, -32, -16, 32, 16)
-		break
-		
-	case BLOCK_THREE_H
-		PlayerObjectCollision(C_BOX, -48, -16, 48, 16)
-		break
-		
-	case BLOCK_FOUR_H
-		PlayerObjectCollision(C_BOX, -64, -16, 64, 16)
-		break
-		
-	case BLOCK_TWO_V
-		PlayerObjectCollision(C_BOX, -16, -32, 16, 32)
-		break
-		
-	case BLOCK_THREE_V
-		PlayerObjectCollision(C_BOX, -16, -48, 16, 48)
-		break
-		
-	case BLOCK_FOUR_V
-		PlayerObjectCollision(C_BOX, -16, -64, 16, 64)
-		break
-		
-	end switch
-	
-	// Left Wall Collsion (on the block) detected?
-	if CheckResult == PLAYER_COL_LWALL
-		// Set the Player's Right Collision Flag to true
-		// (Used in the Metal Sonic race sequence, but set by the Block regardless of current level)
-		
-		Player.RCollisionFlag = true
-	end if
-	
-	// Roof collision detected while the player's on the ground?
-	if Player.Gravity == GRAVITY_GROUND
-		if CheckResult == PLAYER_COL_ROOF
-			// Move the player back ontop of the block
-			
-			Player.YPos = TempValue0
+	if Player.State != Player_State_LedgePullUp
+		if Player.Animation == ANI_CLIMBING
+			switch Object.PropertyValue
+			case BLOCK_SINGLE
+			case BLOCK_INVISIBLE
+				PlayerObjectCollision(C_BOX3, -16, -16, 16, 16)
+				break
+				
+			case BLOCK_TWO_H
+				PlayerObjectCollision(C_BOX3, -32, -16, 32, 16)
+				break
+				
+			case BLOCK_THREE_H
+				PlayerObjectCollision(C_BOX3, -48, -16, 48, 16)
+				break
+				
+			case BLOCK_FOUR_H
+				PlayerObjectCollision(C_BOX3, -64, -16, 64, 16)
+				break
+				
+			case BLOCK_TWO_V
+				PlayerObjectCollision(C_BOX3, -16, -32, 16, 32)
+				break
+				
+			case BLOCK_THREE_V
+				PlayerObjectCollision(C_BOX3, -16, -48, 16, 48)
+				break
+				
+			case BLOCK_FOUR_V
+				PlayerObjectCollision(C_BOX3, -16, -64, 16, 64)
+				break
+			end switch
+		else
+			if Player.Animation == ANI_GLIDING
+				switch Object.PropertyValue
+				case BLOCK_SINGLE
+				case BLOCK_INVISIBLE
+					PlayerObjectCollision(C_BOX3, -16, -16, 16, 16)
+					break
+					
+				case BLOCK_TWO_H
+					PlayerObjectCollision(C_BOX3, -32, -16, 32, 16)
+					break
+					
+				case BLOCK_THREE_H
+					PlayerObjectCollision(C_BOX3, -48, -16, 48, 16)
+					break
+					
+				case BLOCK_FOUR_H
+					PlayerObjectCollision(C_BOX3, -64, -16, 64, 16)
+					break
+					
+				case BLOCK_TWO_V
+					PlayerObjectCollision(C_BOX3, -16, -32, 16, 32)
+					break
+					
+				case BLOCK_THREE_V
+					PlayerObjectCollision(C_BOX3, -16, -48, 16, 48)
+					break
+					
+				case BLOCK_FOUR_V
+					PlayerObjectCollision(C_BOX3, -16, -64, 16, 64)
+					break
+				end switch
+				
+				if Player.Animation == ANI_GLIDING
+					switch CheckResult
+					case PLAYER_COL_LWALL
+					case PLAYER_COL_RWALL
+						CallFunction(Player_ClimbBlock)
+						break
+					end switch
+				end if
+			else
+#endplatform
+				switch Object.PropertyValue
+				case BLOCK_SINGLE
+				case BLOCK_INVISIBLE
+					PlayerObjectCollision(C_BOX, -16, -16, 16, 16)
+					break
+					
+				case BLOCK_TWO_H
+					PlayerObjectCollision(C_BOX, -32, -16, 32, 16)
+					break
+					
+				case BLOCK_THREE_H
+					PlayerObjectCollision(C_BOX, -48, -16, 48, 16)
+					break
+					
+				case BLOCK_FOUR_H
+					PlayerObjectCollision(C_BOX, -64, -16, 64, 16)
+					break
+					
+				case BLOCK_TWO_V
+					PlayerObjectCollision(C_BOX, -16, -32, 16, 32)
+					break
+					
+				case BLOCK_THREE_V
+					PlayerObjectCollision(C_BOX, -16, -48, 16, 48)
+					break
+					
+				case BLOCK_FOUR_V
+					PlayerObjectCollision(C_BOX, -16, -64, 16, 64)
+					break
+				end switch
+#platform: Use_Origins
+			end if
 		end if
 	end if
+#endplatform
+
+	if CheckResult == PLAYER_COL_LWALL
+		Player.RCollisionFlag = true // Used in the Metal Sonic race sequence, but set by the Block regardless of current level
+	end if
 	
+	if Player.Gravity == GRAVITY_GROUND
+		if CheckResult == PLAYER_COL_ROOF
+			Player.YPos = TempValue0 // Move the player back ontop of the block
+		end if
+	end if
 end sub
 
 
@@ -156,14 +228,11 @@ sub ObjectDraw
 		break
 		
 	// case 7, the invisible block, doesn't draw anything of course
-	
 	end switch
-	
 end sub
 
 
 sub ObjectStartup
-	
 	LoadSpriteSheet("R7/Objects.gif")
 	
 	// Load the appropriate version of the sprite based on the current time period
@@ -180,7 +249,6 @@ sub ObjectStartup
 		SpriteFrame(-16, -16, 32, 32, 117, 219)
 		break
 	end switch
-
 end sub
 
 
@@ -293,7 +361,6 @@ sub RSDKDraw
 		TempValue1 -= 16
 		DrawRectOutline(TempValue0, TempValue1, 32, 32, 255, 255, 255, 255)
 		break
-		
 	end switch
 end sub
 
@@ -304,12 +371,12 @@ sub RSDKLoad
 
 	AddEditorVariable("Type")
 	SetActiveVariable("Type")
-	AddEnumVariable("Single Block", 0)
-	AddEnumVariable("Two Blocks (Horizontal)", 1)
-	AddEnumVariable("Three Blocks (Horizontal)", 2)
-	AddEnumVariable("Four Blocks (Horizontal)", 3)
-	AddEnumVariable("Two Blocks (Vertical)", 4)
-	AddEnumVariable("Three Blocks (Vertical)", 5)
-	AddEnumVariable("Four Blocks (Vertical)", 6)
-	AddEnumVariable("Invisible Block", 7)
+	AddEnumVariable("Single Block", BLOCK_SINGLE)
+	AddEnumVariable("Two Blocks (Horizontal)", BLOCK_TWO_H)
+	AddEnumVariable("Three Blocks (Horizontal)", BLOCK_THREE_H)
+	AddEnumVariable("Four Blocks (Horizontal)", BLOCK_FOUR_H)
+	AddEnumVariable("Two Blocks (Vertical)", BLOCK_TWO_V)
+	AddEnumVariable("Three Blocks (Vertical)", BLOCK_THREE_V)
+	AddEnumVariable("Four Blocks (Vertical)", BLOCK_FOUR_V)
+	AddEnumVariable("Invisible Block", BLOCK_INVISIBLE)
 end sub

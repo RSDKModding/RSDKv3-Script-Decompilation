@@ -25,7 +25,8 @@
 #alias 0	:	CSIDE_FLOOR
 
 // Players
-#alias 0	:	PLAYER_SONIC
+#alias 0	:	PLAYER_SONIC_A
+#alias 1	:	PLAYER_TAILS_A
 
 // Directions
 #alias 2	:	FACING_UPEND_RIGHT
@@ -109,6 +110,16 @@ sub ObjectMain
 				PlayStageSfx(SFX_S_GLASSSMASH, false)
 			end if
 
+#platform: Use_Origins
+			if CheckResult == false
+				ObjectTileCollision(CSIDE_FLOOR, 0, 22, 0)
+				if CheckResult == true
+					Object.State	 = ICEBLOCK_BREAKICE
+					Object.YVelocity = 0
+					PlayStageSfx(SFX_S_GLASSSMASH, 0)
+				end if
+			end if
+#endplatform
 			Player.XPos = Object.XPos
 			Player.YPos = Object.YPos
 		else
@@ -224,23 +235,48 @@ end sub
 
 
 sub ObjectStartup
-	if Stage.PlayerListPos == PLAYER_SONIC
-		LoadSpriteSheet("R6/Objects.gif")
+	// #0 - Character Ice Block
+	// #1 - Ice Chunk (Big)
+	// #2 - Ice Chunk (Medium)
+	// #3 - Ice Chunk (Medium)
+	// #4 - Ice Chunk (Small)
 
-		SpriteFrame(-24, -24, 48, 48, 34, 18)	// #0 - Sonic Ice Block
-		SpriteFrame(-8, -12, 16, 24, 206, 1)	// #1 - Ice Chunk (Big)
-		SpriteFrame(-8, -8, 16, 16, 66, 1)		// #2 - Ice Chunk (Medium)
-		SpriteFrame(-8, -8, 16, 16, 66, 1)		// #3 - Ice Chunk (Medium)
-		SpriteFrame(-4, -4, 8, 8, 34, 67)		// #4 - Ice Chunk (Small)
-	else
-		LoadSpriteSheet("R6/Objects3.gif")
-		
-		SpriteFrame(-24, -24, 48, 48, 1, 101)	// #0 - Sonic Ice Block
-		SpriteFrame(-8, -12, 16, 24, 50, 86)	// #1 - Ice Chunk (Big)
-		SpriteFrame(-8, -8, 16, 16, 50, 111)	// #2 - Ice Chunk (Medium)
-		SpriteFrame(-8, -8, 16, 16, 50, 111)	// #3 - Ice Chunk (Medium)
-		SpriteFrame(-4, -4, 8, 8, 50, 128)		// #4 - Ice Chunk (Small)
+	if Stage.PlayerListPos == PLAYER_SONIC_A
+		LoadSpriteSheet("R6/Objects.gif")
+		SpriteFrame(-24, -24, 48, 48, 34, 18)
+		SpriteFrame(-8, -12, 16, 24, 206, 1)
+		SpriteFrame(-8, -8, 16, 16, 66, 1)
+		SpriteFrame(-8, -8, 16, 16, 66, 1)
+		SpriteFrame(-4, -4, 8, 8, 34, 67)
 	end if
+
+	if Stage.PlayerListPos == PLAYER_TAILS_A
+		LoadSpriteSheet("R6/Objects3.gif")
+		SpriteFrame(-24, -24, 48, 48, 1, 101)
+		SpriteFrame(-8, -12, 16, 24, 50, 86)
+		SpriteFrame(-8, -8, 16, 16, 50, 111)
+		SpriteFrame(-8, -8, 16, 16, 50, 111)
+		SpriteFrame(-4, -4, 8, 8, 50, 128)
+	end if
+#platform: Use_Origins
+	if Stage.PlayerListPos == PLAYER_KNUCKLES
+		LoadSpriteSheet("R6/Objects4.gif")
+		SpriteFrame(-24, -24, 48, 48, 1, 194)
+		SpriteFrame(-8, -12, 16, 24, 99, 194)
+		SpriteFrame(-8, -8, 16, 16, 99, 219)
+		SpriteFrame(-8, -8, 16, 16, 99, 219)
+		SpriteFrame(-4, -4, 8, 8, 99, 236)
+	end if
+
+	if Stage.PlayerListPos == PLAYER_AMY
+		LoadSpriteSheet("R6/Objects4.gif")
+		SpriteFrame(-24, -24, 48, 48, 50, 194)
+		SpriteFrame(-8, -12, 16, 24, 99, 194)
+		SpriteFrame(-8, -8, 16, 16, 99, 219)
+		SpriteFrame(-8, -8, 16, 16, 99, 219)
+		SpriteFrame(-4, -4, 8, 8, 99, 236)
+	end if
+#endplatform
 end sub
 
 

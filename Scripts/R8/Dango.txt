@@ -354,7 +354,7 @@ sub ObjectMain
 				Object.State = DANGO_WALK
 				if Object.ChaseChain > 7
 					// Been going in the same direction for 8 cycles now...
-					// Even if it may be opposite of the player, go ahead and change direction because much isn't happening now anyways
+					// Even if it may be opposite of the player, go ahead and change direction because much isn't happening now anyway
 					Object.Direction++
 					Object.Direction &= FACING_LEFT
 					Object.ChaseChain = 0
@@ -430,14 +430,24 @@ sub ObjectPlayerInteraction
 	case DANGO_UNCURL1
 	case DANGO_UNCURL2
 	case DANGO_UNCURLED
+#platform: Use_Standalone
 		PlayerObjectCollision(C_TOUCH, -14, -10, 14, 10)
+#endplatform
+#platform: Use_Origins
+		PlayerObjectCollision(C_ENEMY, -14, -10, 14, 10)
+#endplatform
 		if CheckResult == true
 			CallFunction(Player_BadnikBreak)
 		end if
 		break
 		
 	case DANGO_CHARGEROLL
+#platform: Use_Standalone
 		PlayerObjectCollision(C_TOUCH, -14, -10, 14, 10)
+#endplatform
+#platform: Use_Origins
+		PlayerObjectCollision(C_ENEMY, -14, -10, 14, 10)
+#endplatform
 		if CheckResult == true
 			CheckEqual(Player.Animation, ANI_JUMPING)
 			TempValue0  = CheckResult
@@ -465,7 +475,12 @@ sub ObjectPlayerInteraction
 		break
 
 	case DANGO_ROLLING
+#platform: Use_Standalone
 		PlayerObjectCollision(C_TOUCH, -14, -10, 14, 10)
+#endplatform
+#platform: Use_Origins
+		PlayerObjectCollision(C_ENEMY, -14, -10, 14, 10)
+#endplatform
 		if CheckResult == true
 			CheckEqual(Player.Animation, ANI_JUMPING)
 			TempValue0 = CheckResult

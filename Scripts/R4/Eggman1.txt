@@ -399,7 +399,7 @@ sub ObjectMain
 		else
 			Object[TempObjectPos].XPos += 0x80000
 		end if
-		PlaySfx(SFX_G_EXPLOSION, false) 
+		PlaySfx(SFX_G_EXPLOSION, false)
 		Object.ExplosionTimer = 34
 	else
 		if Object.ExplosionTimer > 0
@@ -411,12 +411,32 @@ end sub
 
 sub ObjectPlayerInteraction
 	if Object.FrameTimer == 0
+#platform: Use_Standalone
 		PlayerObjectCollision(C_TOUCH, -32, -24, 32, 24)
+#endplatform
+#platform: Use_Origins
+		PlayerObjectCollision(C_ENEMY, -32, -24, 32, 24)
+#endplatform
 		if CheckResult == true
 			CheckEqual(Player.Animation, ANI_JUMPING)
 			TempValue0  = CheckResult
 			CheckEqual(Player.Animation, ANI_SPINDASH)
 			TempValue0 |= CheckResult
+#platform: Use_Origins
+			// making really sure you're the one character that can glide or the one character that has a hammer
+			if Stage.PlayerListPos == PLAYER_KNUCKLES
+				CheckEqual(Player.Animation, ANI_GLIDING)
+				TempValue0 |= CheckResult
+				CheckEqual(Player.Animation, ANI_GLIDING_STOP)
+				TempValue0 |= CheckResult
+			end if
+			if Stage.PlayerListPos == PLAYER_AMY
+				CheckEqual(Player.Animation, ANI_HAMMER_JUMP)
+				TempValue0 |= CheckResult
+				CheckEqual(Player.Animation, ANI_HAMMER_DASH)
+				TempValue0 |= CheckResult
+			end if
+#endplatform
 			if Player.Animation == ANI_FLYING
 				CheckGreater(Player.YPos, Object.YPos)
 				TempValue0 |= CheckResult
@@ -437,6 +457,15 @@ sub ObjectPlayerInteraction
 				Player.YVelocity   = Player.YPos
 				Player.YVelocity  -= Object.YPos
 				Player.YVelocity >>= 3
+
+#platform: Use_Origins
+				if Stage.PlayerListPos == PLAYER_KNUCKLES
+					if Player.Animation == ANI_GLIDING
+						Player.Animation = ANI_GLIDING_DROP
+						Player.State	 = Player_State_GlideDrop
+					end if
+				end if
+#endplatform
 
 				Object.Hits++
 				if Object.Hits == 4

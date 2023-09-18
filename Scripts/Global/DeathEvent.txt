@@ -22,7 +22,8 @@
 #alias 5	:	DEATHEVENT_FADEOUTRESTART
 
 // Player Aliases
-#alias 0	:	PLAYER_SONIC
+#alias 0	:	PLAYER_SONIC_A
+#alias 1	:	PLAYER_TAILS_A
 
 // Game Mode Aliases
 #alias 1	:	MODE_SAVEGAME
@@ -62,10 +63,8 @@ sub ObjectMain
 				Object.TimeOver = true
 			end if
 		end if
-		
-		// Fall through
 #endplatform
-
+		// [Fallthrough]
 	case DEATHEVENT_TIMEOVER
 
 #platform: Use_Origins
@@ -73,7 +72,7 @@ sub ObjectMain
 		
 		// In Boss Rush, you can't Game Over (thankfully..?)
 		if game.playMode == BOOT_PLAYMODE_BOSSRUSH
-			Object.Type = TypeName[BlankObject]
+			Object.Type = TypeName[Blank Object]
 		end if
 #endplatform
 
@@ -158,7 +157,6 @@ sub ObjectMain
 			Music.Volume -= 2
 			SetScreenFade(0, 0, 0, Object.Timer)
 		else
-			
 			// Looking at index 1? What's that for?
 			
 			if KeyPress[1].ButtonA == true
@@ -172,7 +170,6 @@ sub ObjectMain
 			if KeyPress[1].ButtonC == true
 				Object.Timer = 0
 			end if
-			
 		end if
 		break
 		
@@ -258,7 +255,7 @@ sub ObjectMain
 		
 		SetScreenFade(0, 0, 0, Object.Timer)
 
-#platform: Use_Origins		
+#platform: Use_Origins
 		game.callbackParam0 = StageStatsUsabilityParam1	// Enemies destroyed by any means
 		game.callbackParam1 = StageStatsUsabilityParam2	// Enemies destroyed by rolling
 		game.callbackParam2 = 0
@@ -279,10 +276,9 @@ sub ObjectMain
 		StatsUsabilityParam3 = 0
 		StatsUsabilityParam4 = 0
 #endplatform
-
 		break
 		
-#platform: Use_Origins		
+#platform: Use_Origins
 	case DEATHEVENT_HOLDOVERRESTART
 		if game.callbackResult >= 0
 			Object.Timer = 0
@@ -307,12 +303,10 @@ sub ObjectMain
 		
 #endplatform
 	end switch
-	
 end sub
 
 
 sub ObjectDraw
-	
 	switch Object.State
 	case DEATHEVENT_GAMEOVER
 #platform: Use_Origins
@@ -353,17 +347,24 @@ sub ObjectDraw
 		break
 		
 	end switch
-	
 end sub
 
 
 sub ObjectStartup
-	
-	if Stage.PlayerListPos == PLAYER_SONIC
+	if Stage.PlayerListPos == PLAYER_SONIC_A
 		LoadSpriteSheet("Global/Display.gif")
-	else
+	end if
+	if Stage.PlayerListPos == PLAYER_TAILS_A
 		LoadSpriteSheet("Global/Display_t.gif")
 	end if
+#platform: Use_Origins
+	if Stage.PlayerListPos == PLAYER_KNUCKLES
+		LoadSpriteSheet("Global/Display_k.gif")
+	end if
+	if Stage.PlayerListPos == PLAYER_AMY
+		LoadSpriteSheet("Global/Display_a.gif")
+	end if
+#endplatform
 	
 	// 0 - "Game"
 	SpriteFrame(-32, 0, 64, 16, 0, 189)
@@ -373,7 +374,6 @@ sub ObjectStartup
 	
 	// 2 - "Over"
 	SpriteFrame(-32, 0, 64, 16, 122, 189)
-	
 end sub
 
 

@@ -170,7 +170,6 @@ sub ObjectMain
 		CheckGreater(Player.iXPos, TempValue1)
 		TempValue0 |= CheckResult
 		if TempValue0 == true
-			Player.State = Player_State_Ground
 			Player.ControlMode	= CONTROLMODE_NONE
 			Player.JumpHold		= false
 			Player.Right		= false
@@ -178,8 +177,10 @@ sub ObjectMain
 			Player.Up			= false
 			Player.Down			= false
 
-			Player.XVelocity 	= 0
-			Player.YVelocity	= 0
+			if Player.State == Player_State_Ground
+				Player.XVelocity = 0
+				Player.YVelocity = 0
+			end if
 			Player.Speed		= 0
 			
 			Screen.CameraEnabled = false

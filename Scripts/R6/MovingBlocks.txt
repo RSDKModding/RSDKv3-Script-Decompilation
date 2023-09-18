@@ -4,15 +4,16 @@
 
 // Aliases
 #alias Object.Value0	:	Object.BlockXPos_1
-#alias Object.Value1	:	Object.BlockYPos_1	
-#alias Object.Value2	:	Object.BlockXPos_2	
-#alias Object.Value3	:	Object.BlockYPos_2	
-#alias Object.Value4	:	Object.BlockXPos_3	
-#alias Object.Value5	:	Object.BlockYPos_3	
-#alias Object.Value6	:	Object.BlockXPos_4	
+#alias Object.Value1	:	Object.BlockYPos_1
+#alias Object.Value2	:	Object.BlockXPos_2
+#alias Object.Value3	:	Object.BlockYPos_2
+#alias Object.Value4	:	Object.BlockXPos_3
+#alias Object.Value5	:	Object.BlockYPos_3
+#alias Object.Value6	:	Object.BlockXPos_4
 #alias Object.Value7	:	Object.BlockYPos_4
 #alias Object.Direction	:	Object.BlockState
 #alias Object.Rotation	:	Object.MovePattern
+#alias Object.InkEffect	:	Object.CrushCheck
 
 #alias 0	:	FORMATION_L_AND_LINES
 #alias 1	:	FORMATION_TETROMINOS_LEFT
@@ -25,18 +26,29 @@
 
 // Player Collision
 #alias 1	:	PLAYER_COL_FLOOR
+#alias 2	:	PLAYER_COL_LWALL
+#alias 3	:	PLAYER_COL_RWALL
+#alias 4	:	PLAYER_COL_ROOF
+
+#alias 0	:	GRAVITY_GROUND
 
 // Function declarations
 #function MovingBlocks_MoveType_1
 #function MovingBlocks_MoveType_2
 #function MovingBlocks_MoveType_3
 #function MovingBlocks_MoveType_4
+#function MovingBlocks_CrushCheck
+#function MovingBlocks_CrushCheckTop
 
 
 function MovingBlocks_MoveType_1
 	switch Object.BlockState
 	case 0
 		Object.BlockYPos_1 -= 0x8000
+#platform: Use_Origins
+		TempValue2 = 1
+		TempValue3 = 1
+#endplatform
 		if Object.AnimationTimer == 64
 			Object.BlockYPos_2 = Object.BlockYPos_1
 		end if
@@ -44,6 +56,10 @@ function MovingBlocks_MoveType_1
 
 	case 1
 		Object.BlockYPos_1 -= 0x8000
+#platform: Use_Origins
+		TempValue2 = 1
+		TempValue3 = 1
+#endplatform
 		if Object.AnimationTimer == 64
 			Object.BlockYPos_3 = Object.BlockYPos_1
 		end if
@@ -51,6 +67,10 @@ function MovingBlocks_MoveType_1
 
 	case 2
 		Object.BlockYPos_1 -= 0x8000
+#platform: Use_Origins
+		TempValue2 = 1
+		TempValue3 = 1
+#endplatform
 		if Object.AnimationTimer == 64
 			Object.BlockYPos_4 = Object.BlockYPos_1
 			Object.BlockYPos_1 = Object.YPos
@@ -60,6 +80,10 @@ function MovingBlocks_MoveType_1
 	case 3
 		Object.BlockXPos_1 += 0x8000
 		Object.BlockYPos_4 += 0x8000
+#platform: Use_Origins
+		TempValue2 = 1
+		TempValue3 = 3
+#endplatform
 		if Object.AnimationTimer == 64
 			Object.BlockXPos_3 = Object.BlockXPos_1
 			Object.BlockYPos_3 = Object.BlockYPos_1
@@ -69,6 +93,10 @@ function MovingBlocks_MoveType_1
 	case 4
 		Object.BlockXPos_1 += 0x8000
 		Object.BlockYPos_4 += 0x8000
+#platform: Use_Origins
+		TempValue2 = 1
+		TempValue3 = 3
+#endplatform
 		if Object.AnimationTimer == 64
 			Object.BlockXPos_2 = Object.BlockXPos_1
 			Object.BlockYPos_2 = Object.BlockYPos_1
@@ -78,6 +106,10 @@ function MovingBlocks_MoveType_1
 	case 5
 		Object.BlockXPos_1 += 0x8000
 		Object.BlockYPos_4 += 0x8000
+#platform: Use_Origins
+		TempValue2 = 1
+		TempValue3 = 3
+#endplatform
 		if Object.AnimationTimer == 64
 			Object.BlockXPos_4 = Object.BlockXPos_1
 			Object.BlockXPos_1 = Object.XPos
@@ -87,6 +119,10 @@ function MovingBlocks_MoveType_1
 	case 6
 		Object.BlockYPos_1 += 0x8000
 		Object.BlockXPos_4 -= 0x8000
+#platform: Use_Origins
+		TempValue2 = 1
+		TempValue3 = 4
+#endplatform
 		if Object.AnimationTimer == 64
 			Object.BlockXPos_2 = Object.BlockXPos_1
 			Object.BlockYPos_2 = Object.BlockYPos_1
@@ -96,6 +132,10 @@ function MovingBlocks_MoveType_1
 	case 7
 		Object.BlockYPos_1 += 0x8000
 		Object.BlockXPos_4 -= 0x8000
+#platform: Use_Origins
+		TempValue2 = 1
+		TempValue3 = 4
+#endplatform
 		if Object.AnimationTimer == 64
 			Object.BlockXPos_3 = Object.BlockXPos_1
 			Object.BlockYPos_3 = Object.BlockYPos_1
@@ -105,6 +145,10 @@ function MovingBlocks_MoveType_1
 	case 8
 		Object.BlockYPos_1 += 0x8000
 		Object.BlockXPos_4 -= 0x8000
+#platform: Use_Origins
+		TempValue2 = 1
+		TempValue3 = 4
+#endplatform
 		if Object.AnimationTimer == 64
 			Object.BlockYPos_4 = Object.BlockYPos_1
 			Object.BlockYPos_1 = Object.YPos
@@ -114,6 +158,10 @@ function MovingBlocks_MoveType_1
 	case 9
 		Object.BlockXPos_1 -= 0x8000
 		Object.BlockYPos_4 -= 0x8000
+#platform: Use_Origins
+		TempValue2 = 1
+		TempValue3 = 2
+#endplatform
 		if Object.AnimationTimer == 64
 			Object.BlockXPos_3 = Object.BlockXPos_1
 			Object.BlockYPos_3 = Object.BlockYPos_1
@@ -123,6 +171,10 @@ function MovingBlocks_MoveType_1
 	case 10
 		Object.BlockXPos_1 -= 0x8000
 		Object.BlockYPos_4 -= 0x8000
+#platform: Use_Origins
+		TempValue2 = 1
+		TempValue3 = 2
+#endplatform
 		if Object.AnimationTimer == 64
 			Object.BlockXPos_2 = Object.BlockXPos_1
 			Object.BlockYPos_2 = Object.BlockYPos_1
@@ -132,6 +184,10 @@ function MovingBlocks_MoveType_1
 	case 11
 		Object.BlockXPos_1 -= 0x8000
 		Object.BlockYPos_4 -= 0x8000
+#platform: Use_Origins
+		TempValue2 = 1
+		TempValue3 = 2
+#endplatform
 		if Object.AnimationTimer == 64
 			Object.BlockXPos_4 = Object.BlockXPos_1
 			Object.BlockYPos_4 = Object.BlockYPos_1
@@ -142,6 +198,10 @@ function MovingBlocks_MoveType_1
 	case 12
 		Object.BlockYPos_1 -= 0x8000
 		Object.BlockXPos_4 += 0x8000
+#platform: Use_Origins
+		TempValue2 = 1
+		TempValue3 = 1
+#endplatform
 		if Object.AnimationTimer == 64
 			Object.BlockXPos_2 = Object.BlockXPos_1
 			Object.BlockYPos_2 = Object.BlockYPos_1
@@ -151,6 +211,10 @@ function MovingBlocks_MoveType_1
 	case 13
 		Object.BlockYPos_1 -= 0x8000
 		Object.BlockXPos_4 += 0x8000
+#platform: Use_Origins
+		TempValue2 = 1
+		TempValue3 = 1
+#endplatform
 		if Object.AnimationTimer == 64
 			Object.BlockXPos_3 = Object.BlockXPos_1
 			Object.BlockYPos_3 = Object.BlockYPos_1
@@ -160,6 +224,10 @@ function MovingBlocks_MoveType_1
 	case 14
 		Object.BlockYPos_1 -= 0x8000
 		Object.BlockXPos_4 += 0x8000
+#platform: Use_Origins
+		TempValue2 = 1
+		TempValue3 = 1
+#endplatform
 		if Object.AnimationTimer == 64
 			Object.BlockYPos_4 = Object.BlockYPos_1
 			Object.BlockYPos_1 = Object.YPos
@@ -173,6 +241,10 @@ function MovingBlocks_MoveType_2
 	switch Object.Direction
 	case 0
 		Object.BlockYPos_1 -= 0x8000
+#platform: Use_Origins
+		TempValue2 = 1
+		TempValue3 = 1
+#endplatform
 		if Object.AnimationTimer == 64
 			Object.BlockYPos_2 = Object.BlockYPos_1
 		end if
@@ -180,6 +252,10 @@ function MovingBlocks_MoveType_2
 
 	case 1
 		Object.BlockYPos_1 -= 0x8000
+#platform: Use_Origins
+		TempValue2 = 1
+		TempValue3 = 1
+#endplatform
 		if Object.AnimationTimer == 64
 			Object.BlockYPos_3 = Object.BlockYPos_1
 		end if
@@ -187,6 +263,10 @@ function MovingBlocks_MoveType_2
 
 	case 2
 		Object.BlockYPos_1 -= 0x8000
+#platform: Use_Origins
+		TempValue2 = 1
+		TempValue3 = 1
+#endplatform
 		if Object.AnimationTimer == 64
 			Object.BlockYPos_4 = Object.BlockYPos_1
 			Object.BlockYPos_1 = Object.YPos
@@ -195,6 +275,10 @@ function MovingBlocks_MoveType_2
 	case 3
 		Object.BlockXPos_1 -= 0x8000
 		Object.BlockYPos_4 += 0x8000
+#platform: Use_Origins
+		TempValue2 = 1
+		TempValue3 = 2
+#endplatform
 		if Object.AnimationTimer == 64
 			Object.BlockXPos_3 = Object.BlockXPos_1
 			Object.BlockYPos_3 = Object.BlockYPos_1
@@ -204,6 +288,10 @@ function MovingBlocks_MoveType_2
 	case 4
 		Object.BlockXPos_1 -= 0x8000
 		Object.BlockYPos_4 += 0x8000
+#platform: Use_Origins
+		TempValue2 = 1
+		TempValue3 = 2
+#endplatform
 		if Object.AnimationTimer == 64
 			Object.BlockXPos_2 = Object.BlockXPos_1
 			Object.BlockYPos_2 = Object.BlockYPos_1
@@ -213,6 +301,10 @@ function MovingBlocks_MoveType_2
 	case 5
 		Object.BlockXPos_1 -= 0x8000
 		Object.BlockYPos_4 += 0x8000
+#platform: Use_Origins
+		TempValue2 = 1
+		TempValue3 = 2
+#endplatform
 		if Object.AnimationTimer == 64
 			Object.BlockXPos_4 = Object.BlockXPos_1
 			Object.BlockYPos_4 = Object.BlockYPos_1
@@ -223,6 +315,10 @@ function MovingBlocks_MoveType_2
 	case 6
 		Object.BlockYPos_1 += 0x8000
 		Object.BlockXPos_4 += 0x8000
+#platform: Use_Origins
+		TempValue2 = 1
+		TempValue3 = 4
+#endplatform
 		if Object.AnimationTimer == 64
 			Object.BlockXPos_2 = Object.BlockXPos_1
 			Object.BlockYPos_2 = Object.BlockYPos_1
@@ -232,6 +328,10 @@ function MovingBlocks_MoveType_2
 	case 7
 		Object.BlockYPos_1 += 0x8000
 		Object.BlockXPos_4 += 0x8000
+#platform: Use_Origins
+		TempValue2 = 1
+		TempValue3 = 4
+#endplatform
 		if Object.AnimationTimer == 64
 			Object.BlockXPos_3 = Object.BlockXPos_1
 			Object.BlockYPos_3 = Object.BlockYPos_1
@@ -241,6 +341,10 @@ function MovingBlocks_MoveType_2
 	case 8
 		Object.BlockYPos_1 += 0x8000
 		Object.BlockXPos_4 += 0x8000
+#platform: Use_Origins
+		TempValue2 = 1
+		TempValue3 = 4
+#endplatform
 		if Object.AnimationTimer == 64
 			Object.BlockYPos_4 = Object.BlockYPos_1
 			Object.BlockYPos_1 = Object.YPos
@@ -250,6 +354,10 @@ function MovingBlocks_MoveType_2
 	case 9
 		Object.BlockXPos_1 += 0x8000
 		Object.BlockYPos_4 -= 0x8000
+#platform: Use_Origins
+		TempValue2 = 1
+		TempValue3 = 3
+#endplatform
 		if Object.AnimationTimer == 64
 			Object.BlockXPos_3 = Object.BlockXPos_1
 			Object.BlockYPos_3 = Object.BlockYPos_1
@@ -259,6 +367,10 @@ function MovingBlocks_MoveType_2
 	case 10
 		Object.BlockXPos_1 += 0x8000
 		Object.BlockYPos_4 -= 0x8000
+#platform: Use_Origins
+		TempValue2 = 1
+		TempValue3 = 3
+#endplatform
 		if Object.AnimationTimer == 64
 			Object.BlockXPos_2 = Object.BlockXPos_1
 			Object.BlockYPos_2 = Object.BlockYPos_1
@@ -268,6 +380,10 @@ function MovingBlocks_MoveType_2
 	case 11
 		Object.BlockXPos_1 += 0x8000
 		Object.BlockYPos_4 -= 0x8000
+#platform: Use_Origins
+		TempValue2 = 1
+		TempValue3 = 3
+#endplatform
 		if Object.AnimationTimer == 64
 			Object.BlockXPos_4 = Object.BlockXPos_1
 			Object.BlockXPos_1 = Object.XPos
@@ -277,6 +393,10 @@ function MovingBlocks_MoveType_2
 	case 12
 		Object.BlockYPos_1 -= 0x8000
 		Object.BlockXPos_4 -= 0x8000
+#platform: Use_Origins
+		TempValue2 = 1
+		TempValue3 = 3
+#endplatform
 		if Object.AnimationTimer == 64
 			Object.BlockXPos_2 = Object.BlockXPos_1
 			Object.BlockYPos_2 = Object.BlockYPos_1
@@ -286,6 +406,10 @@ function MovingBlocks_MoveType_2
 	case 13
 		Object.BlockYPos_1 -= 0x8000
 		Object.BlockXPos_4 -= 0x8000
+#platform: Use_Origins
+		TempValue2 = 1
+		TempValue3 = 1
+#endplatform
 		if Object.AnimationTimer == 64
 			Object.BlockXPos_3 = Object.BlockXPos_1
 			Object.BlockYPos_3 = Object.BlockYPos_1
@@ -295,6 +419,10 @@ function MovingBlocks_MoveType_2
 	case 14
 		Object.BlockYPos_1 -= 0x8000
 		Object.BlockXPos_4 -= 0x8000
+#platform: Use_Origins
+		TempValue2 = 1
+		TempValue3 = 1
+#endplatform
 		if Object.AnimationTimer == 64
 			Object.BlockYPos_4 = Object.BlockYPos_1
 			Object.BlockYPos_1 = Object.YPos
@@ -308,6 +436,10 @@ function MovingBlocks_MoveType_3
 	switch Object.Direction
 	case 0
 		Object.BlockYPos_1 -= 0x8000
+#platform: Use_Origins
+		TempValue2 = 1
+		TempValue3 = 1
+#endplatform
 		if Object.AnimationTimer == 64
 			Object.BlockYPos_2 = Object.BlockYPos_1
 		end if
@@ -315,6 +447,10 @@ function MovingBlocks_MoveType_3
 
 	case 1
 		Object.BlockYPos_1 -= 0x8000
+#platform: Use_Origins
+		TempValue2 = 1
+		TempValue3 = 1
+#endplatform
 		if Object.AnimationTimer == 64
 			Object.BlockYPos_3 = Object.BlockYPos_1
 		end if
@@ -322,11 +458,19 @@ function MovingBlocks_MoveType_3
 		
 	case 2
 		Object.BlockXPos_1 += 0x8000
+#platform: Use_Origins
+		TempValue2 = 1
+		TempValue3 = 3
+#endplatform
 		break
 
 	case 3
 		Object.BlockXPos_1 -= 0x8000
 		Object.BlockXPos_4 += 0x8000
+#platform: Use_Origins
+		TempValue2 = 4
+		TempValue3 = 3
+#endplatform
 		if Object.AnimationTimer == 64
 			Object.BlockXPos_3 = Object.BlockXPos_4
 			Object.BlockYPos_3 = Object.BlockYPos_4
@@ -336,6 +480,10 @@ function MovingBlocks_MoveType_3
 	case 4
 		Object.BlockYPos_1 += 0x8000
 		Object.BlockYPos_4 -= 0x8000
+#platform: Use_Origins
+		TempValue2 = 4
+		TempValue3 = 1
+#endplatform
 		if Object.AnimationTimer == 64
 			Object.BlockXPos_2 = Object.BlockXPos_4
 			Object.BlockYPos_2 = Object.BlockYPos_4
@@ -345,11 +493,19 @@ function MovingBlocks_MoveType_3
 	case 5
 		Object.BlockYPos_1 += 0x8000
 		Object.BlockXPos_4 += 0x8000
+#platform: Use_Origins
+		TempValue2 = 1
+		TempValue3 = 4
+#endplatform
 		break
 
 	case 6
 		Object.BlockYPos_1 += 0x8000
 		Object.BlockXPos_4 -= 0x8000
+#platform: Use_Origins
+		TempValue2 = 1
+		TempValue3 = 4
+#endplatform
 		if Object.AnimationTimer == 64
 			Object.BlockXPos_2 = Object.BlockXPos_1
 			Object.BlockYPos_2 = Object.BlockYPos_1
@@ -359,6 +515,10 @@ function MovingBlocks_MoveType_3
 	case 7
 		Object.BlockYPos_1 += 0x8000
 		Object.BlockYPos_4 += 0x8000
+#platform: Use_Origins
+		TempValue2 = 1
+		TempValue3 = 4
+#endplatform
 		if Object.AnimationTimer == 64
 			Object.BlockXPos_3 = Object.BlockXPos_1
 			Object.BlockYPos_3 = Object.BlockYPos_1
@@ -368,11 +528,19 @@ function MovingBlocks_MoveType_3
 	case 8
 		Object.BlockXPos_1 += 0x8000
 		Object.BlockXPos_4 -= 0x8000
+#platform: Use_Origins
+		TempValue2 = 1
+		TempValue3 = 3
+#endplatform
 		break
 		
 	case 9
 		Object.BlockXPos_1 -= 0x8000
 		Object.BlockXPos_4 -= 0x8000
+#platform: Use_Origins
+		TempValue2 = 4
+		TempValue3 = 2
+#endplatform
 		if Object.AnimationTimer == 64
 			Object.BlockXPos_3 = Object.BlockXPos_4
 			Object.BlockYPos_3 = Object.BlockYPos_4
@@ -382,6 +550,10 @@ function MovingBlocks_MoveType_3
 	case 10
 		Object.BlockYPos_1 -= 0x8000
 		Object.BlockXPos_4 -= 0x8000
+#platform: Use_Origins
+		TempValue2 = 4
+		TempValue3 = 2
+#endplatform
 		if Object.AnimationTimer == 64
 			Object.BlockXPos_2 = Object.BlockXPos_4
 			Object.BlockYPos_2 = Object.BlockYPos_4
@@ -391,11 +563,19 @@ function MovingBlocks_MoveType_3
 	case 11
 		Object.BlockYPos_1 -= 0x8000
 		Object.BlockXPos_4 -= 0x8000
+#platform: Use_Origins
+		TempValue2 = 4
+		TempValue3 = 2
+#endplatform
 		break
 
 	case 12
 		Object.BlockYPos_1 -= 0x8000
 		Object.BlockXPos_4 += 0x8000
+#platform: Use_Origins
+		TempValue2 = 1
+		TempValue3 = 1
+#endplatform
 		if Object.AnimationTimer == 64
 			Object.BlockXPos_2 = Object.BlockXPos_1
 			Object.BlockYPos_2 = Object.BlockYPos_1
@@ -405,6 +585,10 @@ function MovingBlocks_MoveType_3
 	case 13
 		Object.BlockYPos_1 -= 0x8000
 		Object.BlockXPos_4 += 0x8000
+#platform: Use_Origins
+		TempValue2 = 1
+		TempValue3 = 1
+#endplatform
 		if Object.AnimationTimer == 64
 			Object.BlockXPos_3 = Object.BlockXPos_1
 			Object.BlockYPos_3 = Object.BlockYPos_1
@@ -414,6 +598,10 @@ function MovingBlocks_MoveType_3
 	case 14
 		Object.BlockXPos_1 += 0x8000
 		Object.BlockXPos_4 += 0x8000
+#platform: Use_Origins
+		TempValue2 = 1
+		TempValue3 = 3
+#endplatform
 		break
 	end switch
 end function
@@ -423,6 +611,10 @@ function MovingBlocks_MoveType_4
 	switch Object.Direction
 	case 0
 		Object.BlockXPos_1 += 0x8000
+#platform: Use_Origins
+		TempValue2 = 1
+		TempValue3 = 3
+#endplatform
 		if Object.AnimationTimer == 64
 			Object.BlockXPos_2 = Object.BlockXPos_1
 		end if
@@ -430,6 +622,10 @@ function MovingBlocks_MoveType_4
 
 	case 1
 		Object.BlockXPos_1 += 0x8000
+#platform: Use_Origins
+		TempValue2 = 1
+		TempValue3 = 3
+#endplatform
 		if Object.AnimationTimer == 64
 			Object.BlockXPos_3 = Object.BlockXPos_1
 		end if
@@ -437,10 +633,18 @@ function MovingBlocks_MoveType_4
 
 	case 2
 		Object.BlockYPos_1 -= 0x8000
+#platform: Use_Origins
+		TempValue2 = 1
+		TempValue3 = 1
+#endplatform
 		break
 	case 3
 		Object.BlockYPos_1 += 0x8000
 		Object.BlockYPos_4 += 0x8000
+#platform: Use_Origins
+		TempValue2 = 4
+		TempValue3 = 4
+#endplatform
 		if Object.AnimationTimer == 64
 			Object.BlockXPos_3 = Object.BlockXPos_4
 			Object.BlockYPos_3 = Object.BlockYPos_4
@@ -450,6 +654,10 @@ function MovingBlocks_MoveType_4
 	case 4
 		Object.BlockXPos_1 -= 0x8000
 		Object.BlockXPos_4 -= 0x8000
+#platform: Use_Origins
+		TempValue2 = 4
+		TempValue3 = 2
+#endplatform
 		if Object.AnimationTimer == 64
 			Object.BlockXPos_2 = Object.BlockXPos_4
 			Object.BlockYPos_2 = Object.BlockYPos_4
@@ -459,11 +667,19 @@ function MovingBlocks_MoveType_4
 	case 5
 		Object.BlockXPos_1 -= 0x8000
 		Object.BlockXPos_4 -= 0x8000
+#platform: Use_Origins
+		TempValue2 = 4
+		TempValue3 = 2
+#endplatform
 		break
 
 	case 6
 		Object.BlockXPos_1 -= 0x8000
 		Object.BlockXPos_4 += 0x8000
+#platform: Use_Origins
+		TempValue2 = 1
+		TempValue3 = 2
+#endplatform
 		if Object.AnimationTimer == 64
 			Object.BlockXPos_2 = Object.BlockXPos_1
 			Object.BlockYPos_2 = Object.BlockYPos_1
@@ -473,6 +689,10 @@ function MovingBlocks_MoveType_4
 	case 7
 		Object.BlockYPos_1 -= 0x8000
 		Object.BlockXPos_4 += 0x8000
+#platform: Use_Origins
+		TempValue2 = 1
+		TempValue3 = 1
+#endplatform
 		if Object.AnimationTimer == 64
 			Object.BlockXPos_3 = Object.BlockXPos_1
 			Object.BlockYPos_3 = Object.BlockYPos_1
@@ -482,11 +702,19 @@ function MovingBlocks_MoveType_4
 	case 8
 		Object.BlockXPos_1 -= 0x8000
 		Object.BlockYPos_4 -= 0x8000
+#platform: Use_Origins
+		TempValue2 = 1
+		TempValue3 = 2
+#endplatform
 		break
 
 	case 9
 		Object.BlockXPos_1 += 0x8000
 		Object.BlockYPos_4 -= 0x8000
+#platform: Use_Origins
+		TempValue2 = 4
+		TempValue3 = 1
+#endplatform
 		if Object.AnimationTimer == 64
 			Object.BlockXPos_3 = Object.BlockXPos_4
 			Object.BlockYPos_3 = Object.BlockYPos_4
@@ -496,6 +724,10 @@ function MovingBlocks_MoveType_4
 	case 10
 		Object.BlockYPos_1 += 0x8000
 		Object.BlockXPos_4 += 0x8000
+#platform: Use_Origins
+		TempValue2 = 4
+		TempValue3 = 3
+#endplatform
 		if Object.AnimationTimer == 64
 			Object.BlockXPos_2 = Object.BlockXPos_4
 			Object.BlockYPos_2 = Object.BlockYPos_4
@@ -505,11 +737,19 @@ function MovingBlocks_MoveType_4
 	case 11
 		Object.BlockXPos_1 += 0x8000
 		Object.BlockYPos_4 -= 0x8000
+#platform: Use_Origins
+		TempValue2 = 4
+		TempValue3 = 1
+#endplatform
 		break
 
 	case 12
 		Object.BlockXPos_1 += 0x8000
 		Object.BlockYPos_4 += 0x8000
+#platform: Use_Origins
+		TempValue2 = 1
+		TempValue3 = 3
+#endplatform
 		if Object.AnimationTimer == 64
 			Object.BlockXPos_2 = Object.BlockXPos_1
 			Object.BlockYPos_2 = Object.BlockYPos_1
@@ -519,6 +759,10 @@ function MovingBlocks_MoveType_4
 	case 13
 		Object.BlockXPos_1 += 0x8000
 		Object.BlockXPos_4 -= 0x8000
+#platform: Use_Origins
+		TempValue2 = 1
+		TempValue3 = 3
+#endplatform
 		if Object.AnimationTimer == 64
 			Object.BlockXPos_3 = Object.BlockXPos_1
 			Object.BlockYPos_3 = Object.BlockYPos_1
@@ -528,8 +772,116 @@ function MovingBlocks_MoveType_4
 	case 14
 		Object.BlockYPos_1 -= 0x8000
 		Object.BlockYPos_4 += 0x8000
+#platform: Use_Origins
+		TempValue2 = 1
+		TempValue3 = 1
+#endplatform
 		break
 	end switch
+end function
+
+
+function MovingBlocks_CrushCheck
+#platform: Use_Origins
+	if TempValue3 == 4
+		if Player.Gravity == GRAVITY_GROUND
+			Player.XPos = TempValue4
+			Player.YPos = TempValue5
+			PlayerObjectCollision(C_BOX, -8, -17, 8, 8)
+			if CheckResult == PLAYER_COL_ROOF
+				CallFunction(Player_Kill)
+			end if
+		end if
+	end if
+	ArrayPos0  = 0
+	TempValue6 = 0
+	while ArrayPos0 < 1056
+		if Object[ArrayPos0].Type == TypeName[MovingBlocks]
+			if ArrayPos0 != Object.EntityNo
+				if Object[ArrayPos0].CrushCheck > 0
+					TempValue6 = Object[ArrayPos0].CrushCheck
+				end if
+			end if
+		end if
+		ArrayPos0++
+	loop
+
+	if TempValue6 > 0
+		GetBit(CheckResult, TempValue6, 2)
+		if CheckResult == true
+			if TempValue3 == 3
+				Player.XPos = TempValue4
+				Player.YPos = TempValue5
+				PlayerObjectCollision(C_BOX, -16, -9, 14, 8)
+				if CheckResult == PLAYER_COL_RWALL
+					CallFunction(Player_Kill)
+				end if
+			end if
+		end if
+
+		GetBit(CheckResult, TempValue6, 3)
+		if CheckResult == true
+			if TempValue3 == 2
+				Player.XPos = TempValue4
+				Player.YPos = TempValue5
+				PlayerObjectCollision(C_BOX, -14, -9, 16, 8)
+				if CheckResult == PLAYER_COL_LWALL
+					CallFunction(Player_Kill)
+				end if
+			end if
+		end if
+
+		GetBit(CheckResult, TempValue6, 1)
+		if CheckResult == true
+			if TempValue3 == 4
+				Player.XPos = TempValue4
+				Player.YPos = TempValue5
+				PlayerObjectCollision(C_BOX, -8, -16, 8, 4)
+				if CheckResult == PLAYER_COL_ROOF
+					CallFunction(Player_Kill)
+				end if
+			end if
+		end if
+
+		if TempValue3 == 1
+			SetBit(Object.CrushCheck, 0, 1)
+		end if
+	end if
+	PlayerObjectCollision(C_BOX, -16, -17, 16, 16)
+	TempValue4 = Player.XPos
+	TempValue5 = Player.YPos
+#endplatform
+end function
+
+
+function MovingBlocks_CrushCheckTop
+#platform: Use_Origins
+	Player.XPos = TempValue4
+	Player.YPos = TempValue5
+	PlayerObjectCollision(C_BOX, -16, -17, 16, 4)
+	if CheckResult == PLAYER_COL_ROOF
+		ArrayPos0  = 0
+		TempValue6 = 0
+		while ArrayPos0 < 1056
+			if Object[ArrayPos0].Type == TypeName[MovingBlocks]
+				if ArrayPos0 != Object.EntityNo
+					GetBit(CheckResult, Object[ArrayPos0].CrushCheck, 0)
+					if CheckResult == true
+						TempValue6 = Object[ArrayPos0].CrushCheck
+					end if
+				end if
+			end if
+			ArrayPos0++
+		loop
+
+		if TempValue6 > 0
+			GetBit(CheckResult, TempValue6, 1)
+			if CheckResult == true
+				CallFunction(Player_Kill)
+			end if
+		end if
+	end if
+#endplatform
 end function
 
 
@@ -558,6 +910,12 @@ end sub
 
 
 sub ObjectPlayerInteraction
+#platform: Use_Origins
+	Object.CrushCheck = 0
+	TempValue4 = Player.XPos
+	TempValue5 = Player.YPos
+#endplatform
+
 	TempValue0 = Object.XPos
 	TempValue1 = Object.YPos
 
@@ -566,32 +924,108 @@ sub ObjectPlayerInteraction
 	PlayerObjectCollision(C_BOX, -16, -17, 16, 16)
 	if CheckResult == PLAYER_COL_FLOOR
 		Player.YPos += 0x10000
+#platform: Use_Origins
+		TempValue5 = Player.YPos
+#endplatform
 	end if
+#platform: Use_Origins
+	if CheckResult > 0
+		SetBit(Object.CrushCheck, CheckResult, 1)
+		if TempValue2 == 1
+			CallFunction(MovingBlocks_CrushCheck)
+		else
+			if CheckResult == PLAYER_COL_ROOF
+				CallFunction(MovingBlocks_CrushCheckTop)
+			end if
+		end if
+	end if
+	TempValue4 = Player.XPos
+	TempValue5 = Player.YPos
+#endplatform
 
 	Object.XPos = Object.BlockXPos_2
 	Object.YPos = Object.BlockYPos_2
 	PlayerObjectCollision(C_BOX, -16, -17, 16, 16)
 	if CheckResult == PLAYER_COL_FLOOR
 		Player.YPos += 0x10000
+#platform: Use_Origins
+		TempValue5 = Player.YPos
+#endplatform
 	end if
+
+#platform: Use_Origins
+	if CheckResult > 0
+		SetBit(Object.CrushCheck, CheckResult, 1)
+		if TempValue2 == 2
+			CallFunction(MovingBlocks_CrushCheck)
+		else
+			if CheckResult == PLAYER_COL_ROOF
+				CallFunction(MovingBlocks_CrushCheckTop)
+			end if
+		end if
+	end if
+	TempValue4 = Player.XPos
+	TempValue5 = Player.YPos
+#endplatform
 
 	Object.XPos = Object.BlockXPos_3
 	Object.YPos = Object.BlockYPos_3
 	PlayerObjectCollision(C_BOX, -16, -17, 16, 16)
 	if CheckResult == PLAYER_COL_FLOOR
 		Player.YPos += 0x10000
+#platform: Use_Origins
+		TempValue5 = Player.YPos
+#endplatform
 	end if
+
+#platform: Use_Origins
+	if CheckResult > 0
+		SetBit(Object.CrushCheck, CheckResult, 1)
+		if TempValue2 == 3
+			CallFunction(MovingBlocks_CrushCheck)
+		else
+			if CheckResult == PLAYER_COL_ROOF
+				CallFunction(MovingBlocks_CrushCheckTop)
+			end if
+		end if
+	end if
+#endplatform
 
 	Object.XPos = Object.BlockXPos_4
 	Object.YPos = Object.BlockYPos_4
 	PlayerObjectCollision(C_BOX, -16, -17, 16, 16)
 	if CheckResult == PLAYER_COL_FLOOR
 		Player.YPos += 0x10000
+#platform: Use_Origins
+		TempValue5 = Player.YPos
+#endplatform
 	end if
 
+#platform: Use_Origins
+	if CheckResult > 0
+		SetBit(Object.CrushCheck, CheckResult, 1)
+		if TempValue2 == 4
+			CallFunction(MovingBlocks_CrushCheck)
+		else
+			if CheckResult == PLAYER_COL_ROOF
+				CallFunction(MovingBlocks_CrushCheckTop)
+			end if
+		end if
+	end if
+#endplatform
 	Object.XPos = TempValue0
 	Object.YPos = TempValue1
 	PlayerObjectCollision(C_BOX, -16, -16, 16, 16)
+#platform: Use_Origins
+	if CheckResult > 0
+		SetBit(Object.CrushCheck, CheckResult, 1)
+		if CheckResult == PLAYER_COL_ROOF
+			CallFunction(MovingBlocks_CrushCheckTop)
+		end if
+	end if
+	TempValue2 = 0
+	TempValue3 = 0
+#endplatform
 end sub
 
 

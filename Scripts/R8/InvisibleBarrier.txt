@@ -4,20 +4,26 @@
 
 
 sub ObjectPlayerInteraction
-	PlayerObjectCollision(C_TOUCH, -16, -14, 16, 16)
-	if CheckResult == true
-		if Player.XPos < Object.XPos
-			Player.XPos   = Player.CollisionLeft
-			Player.XPos <<= 16
-			Player.XPos  += Object.XPos
-			Player.XPos  -= 0x100000
-		else
-			Player.XPos   = Player.CollisionRight
-			Player.XPos <<= 16
-			Player.XPos  += Object.XPos
-			Player.XPos  += 0x100000
+#platform: Use_Origins
+	if Player.Animation != ANI_LEDGEPULLUP
+#endplatform
+		PlayerObjectCollision(C_TOUCH, -16, -14, 16, 16)
+		if CheckResult == true
+			if Player.XPos < Object.XPos
+				Player.XPos   = Player.CollisionLeft
+				Player.XPos <<= 16
+				Player.XPos  += Object.XPos
+				Player.XPos  -= 0x100000
+			else
+				Player.XPos   = Player.CollisionRight
+				Player.XPos <<= 16
+				Player.XPos  += Object.XPos
+				Player.XPos  += 0x100000
+			end if
 		end if
+#platform: Use_Origins
 	end if
+#endplatform
 end sub
 
 
