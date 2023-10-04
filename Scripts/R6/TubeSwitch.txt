@@ -43,6 +43,7 @@
 
 
 sub ObjectPlayerInteraction
+	// (Note - this part is kinda weird in act 1, check out ObjectStartup for more info)
 	PlayerObjectCollision(C_TOUCH, Object.ColLeftTop, Object.ColLeftTop, Object.ColRightBottom, Object.ColRightBottom)
 #platform: Use_Origins
 	if CheckResult == true
@@ -61,6 +62,7 @@ sub ObjectPlayerInteraction
 				Player.Speed     = 1
 				Object.LedgeStop = false
 			end if
+			
 			if Player.Speed > -1
 				Player.Direction	= FACING_RIGHT
 				Player.Speed		= 0xA0000
@@ -439,6 +441,11 @@ end sub
 sub ObjectStartup
 	ArrayPos0 = 32
 	while ArrayPos0 < 1056
+		// Bug Details (?):
+		// -> In all versions of act 1, this object has the name of "Tube Switch", which doesn't match the TypeName down below
+		//    Because of this, all tube switches in act 1 have hitboxes of 0x0, so they only work if the player's touching their centers
+		// -> In act 2, however, the object has the correct name of "Tube SW", which lets the object have its correct hitboxes
+		// -> Now the question is, was this intentional or was it just a small mistake? Can't say for sure..
 		if Object[ArrayPos0].Type == TypeName[Tube SW]
 			switch Object[ArrayPos0].PropertyValue
 			case TUBESW_ENTER_H

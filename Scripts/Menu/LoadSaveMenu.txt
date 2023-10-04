@@ -613,8 +613,9 @@ sub ObjectMain
 		if CheckResult == true
 			if Object.SelectedOption < BUTTON_DELETE // If a save file was selected
 #platform: Use_Origins
-				if game.continueFlag != 0
-					ArrayPos0=Object.SelectedOption
+				// this object isn't used in the final version of Origins, but it looks like they had plans to use it at first?
+				if game.continueFlag != false
+					ArrayPos0 = Object.SelectedOption
 					if Object[+ArrayPos0].StageListPos == 0
 						break	// break STATE_MAIN_SAVE_MENU
 					end if
@@ -781,6 +782,7 @@ sub ObjectMain
 			Stage.PlayerListPos = Object[+ArrayPos0].PlayerListPos
 
 #platform: Use_Origins
+			// normally saveSlot is just forced to 0 on the title screen, but it looks like they were planning to do a bit more than that initially? not like it matters anyways though, cause this object's unused in origins and all
 			game.callbackParam0 = Object.SelectedOption
 			EngineCallback(NOTIFY_SAVESLOT_SELECT)
 #endplatform
@@ -1067,13 +1069,14 @@ sub ObjectMain
 			Stage.PlayerListPos = Object[+ArrayPos0].PlayerListPos
 
 #platform: Use_Origins
+			// normally saveSlot is just forced to 0 on the title screen, but it looks like they were planning to do a bit more than that initially? not like it matters anyways though, cause this object's unused in origins and all
 			game.callbackParam0 = Object.SelectedOption
 			EngineCallback(NOTIFY_SAVESLOT_SELECT)
 #endplatform
 
 			LoadStage()
 			
-			if Stage.PlayerListPos == PLAYER_SONIC_A // PLAYER_SONIC in origins
+			if Stage.PlayerListPos == PLAYER_SONIC_A // PLAYER_SONIC in origins plus - why did they update this object in plus even if it's unused in origins? wish i knew..
 				LoadVideo("Opening")
 
 //	#platform: Mobile
