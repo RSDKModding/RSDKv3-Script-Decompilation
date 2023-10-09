@@ -14,6 +14,7 @@ sub ObjectMain
 			if game.playMode == BOOT_PLAYMODE_BOSSRUSH
 				Object.Type = TypeName[Blank Object]
 			else
+#endplatform
 				if Player.XPos > Object.XPos
 					// Set Left Bound
 					TempValue0  = 3120
@@ -35,8 +36,10 @@ sub ObjectMain
 					if Stage.YBoundary2 < Object.iYPos
 						Stage.YBoundary2 = Object.iYPos
 					end if
+
 					Object.State++
 				end if
+#platform: Use_Origins
 			end if
 		else
 			if game.playMode != BOOT_PLAYMODE_BOSSRUSH
@@ -63,34 +66,10 @@ sub ObjectMain
 					Stage.YBoundary2  = Screen.YOffset
 					Stage.YBoundary2 += Screen.YSize
 					Stage.YBoundary2  = Object.iYPos
+
 					Object.State++
 				end if
 			end if
-		end if
-#endplatform
-
-#platform: Use_Standalone
-		if Player.XPos > Object.XPos
-			// Set Left Bound
-			TempValue0  = 3120
-			TempValue0 -= Screen.CenterX
-			Stage.NewXBoundary1 = TempValue0
-			// Set Right Bound
-			TempValue0 += Screen.XSize
-			Stage.NewXBoundary2 = TempValue0
-
-			// Set Top Bound
-			TempValue0  = Object.iYPos
-			TempValue0 -= Screen.YSize
-			Stage.NewYBoundary1 = TempValue0
-
-			// Set Bottom Bound
-			Stage.YBoundary2  = Screen.YOffset
-			Stage.YBoundary2 += Screen.YSize
-			if Stage.YBoundary2 < Object.iYPos
-				Stage.YBoundary2 = Object.iYPos
-			end if
-			Object.State++
 		end if
 #endplatform
 	else
