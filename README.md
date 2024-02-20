@@ -14,7 +14,7 @@ Some portions of the code have been slightly modified for compatibility purposes
 To use these scripts in mods: 
 * RSDKv3/RSDKv5U Decompilation: Extract the `Scripts` folder to the exe's root directory: eg `[rootdir]/Scripts/`.
 * Sonic Origins (Requires [Hedge Mod Manager](https://github.com/thesupersonic16/HedgeModManager)):
-  * Navigate to game's executable directory. The easy way to get to it is by clicking `Open Game Directory` in the Settings tab of Hedge Mod Manager.
+  * Navigate to the game's executable directory. The easy way to get to it is by clicking `Open Game Directory` in the Settings tab of Hedge Mod Manager.
   * Once you're there, extract the `Scripts` folder into a folder named `SonicCDu` in the exe's root directory: eg `[rootdir]/SonicCDu/Scripts/`.
 
 These scripts do NOT work with the standalone Steam release of the game.
