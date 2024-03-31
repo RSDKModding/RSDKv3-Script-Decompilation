@@ -609,29 +609,40 @@ end sub
 sub RSDKEdit
 	if Editor.ReturnVariable == true
 		switch Editor.VariableID
-		case EDIT_VAR_PROPVAL // Property Value
+		case EDIT_VAR_PROPVAL // property value
 			CheckResult = Object.PropertyValue
 			break
-		case 0 // Type
+			
+		case 0 // flipFlags
 			CheckResult = Object.PropertyValue
 			CheckResult &= 7
 			break
-		case 1 // EnabledInAir
-			CheckGreater(Object.PropertyValue, 7)
+			
+		case 1 // enabledInAir
+			GetBit(CheckResult, Object.PropertyValue, 3)
 			break
+			
 		end switch
 	else
 		switch Editor.VariableID
-		case EDIT_VAR_PROPVAL // Property Value
+		case EDIT_VAR_PROPVAL // property value
 			Object.PropertyValue = Editor.VariableValue
 			break
-		case 0 // Type
-			Object.PropertyValue = Editor.VariableValue
-			Object.PropertyValue &= 7
+			
+		case 0 // flipFlags
+			TempValue0 = 7
+			Not(TempValue0)
+			Object.PropertyValue &= TempValue0
+			Editor.VariableValue &= 7
+
+			Object.PropertyValue |= Editor.VariableValue
 			break
-		case 1 // EnabledInAir
+			
+		case 1 // enabledInAir
+			CheckNotEqual(Editor.VariableValue, false)
 			SetBit(Object.PropertyValue, 3, CheckResult)
 			break
+			
 		end switch
 	end if
 end sub
