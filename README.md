@@ -1,4 +1,4 @@
-# Sonic CD 2011 Script Decompilation
+# RSDKv3 Script Decompilation
 
 A full decompilation for the scripts in Sonic CD's 2011 remake.
 
