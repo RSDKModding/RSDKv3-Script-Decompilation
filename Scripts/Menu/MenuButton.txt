@@ -950,38 +950,22 @@ sub ObjectStartup
 		TempValue1 += 17
 		TempValue0++
 	loop
-	// #3 - Achievements/ Trophies
-	switch Engine.PlatformID
-	case RETRO_WIN
-	case RETRO_ANDROID
-		switch Engine.Language
-		case LANG_ENGLISH
-		case LANG_FRENCH
-		case LANG_SPANISH
-		case LANG_JAPANESE
-			SpriteFrame(19, -7, 128, 16, 1, TempValue1)
-			break
-
-		case LANG_ITALIAN
-		case LANG_DEUTSCH
-			SpriteFrame(19, -7, 128, 16, 1, 770)
-			break
-
-		end switch
-		break
-
-	case RETRO_PS3
+	
+	// #3 - Achievements/Trophies/Game Center
+	if Engine.PlatformID == RETRO_PS3
 		SpriteFrame(19, -7, 128, 16, 1, 513)
-		break
-
-	case RETRO_XBOX_360
-	case RETRO_iOS
-	case RETRO_ANDROID
-	case RETRO_WP7
+	else
+#platform: Use_Standalone
 		SpriteFrame(19, -7, 128, 16, 1, TempValue1)
-		break
-
-	end switch
+#endplatform
+#platform: Use_Origins
+		if Engine.PlatformID != RETRO_IOS
+			SpriteFrame(19, -7, 128, 16, 1, TempValue1)
+		else
+			SpriteFrame(19, -7, 128, 16, 291, 615)
+		end if
+#endplatform
+	end if
 
 	TempValue1 += 17
 	TempValue0++
@@ -1019,14 +1003,20 @@ sub ObjectStartup
 		TempValue0++
 	loop
 
-	if Engine.PlatformID==RETRO_PS3
-		SpriteFrame(19,-7,128,16,130,513)
+	// (#13 Standard, #14 Mobile) - Achievements/Trophies/Game Center
+	if Engine.PlatformID == RETRO_PS3
+		SpriteFrame(19, -7, 128, 16, 130, 513)
 	else
-		if Engine.PlatformID!=RETRO_IOS
-			SpriteFrame(19,-7,128,16,130,TempValue1)
+#platform: Use_Standalone
+		SpriteFrame(19, -7, 128, 16, 130, TempValue1)
+#endplatform
+#platform: Use_Origins
+		if Engine.PlatformID != RETRO_IOS
+			SpriteFrame(19, -7, 128, 16, 130, TempValue1)
 		else
-			SpriteFrame(19,-7,128,16,291,632)
+			SpriteFrame(19, -7, 128, 16, 291, 632)
 		end if
+#endplatform
 	end if
 
 	TempValue1 += 17
@@ -1177,9 +1167,7 @@ sub ObjectStartup
 			end if
 		end if
 	end if
-
 #endplatform
-
 end sub
 
 
