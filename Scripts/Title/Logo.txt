@@ -155,30 +155,26 @@ sub ObjectStartup
 	// 16 - Left Mountain Frame
 	SpriteFrame(0, 0, 176, 68, 256, 4)
 	
-	// Do note that the following frame is different on different data files
-	
 	// 17 - Right Mountain
-#platform: Use_Origins
-	SpriteFrame(-144, 0, 144, 68, 257, 251)	// Latest - Origins
-#endplatform
+	
+	// This SpriteFrame differs across each version of the game
+	// The Blit version had an issue where it didn't cover empty space when in widescreen, revealing a grey rectangle
+	// The Mobile and Origins releases use a new sprite that's wider, with it getting even wider in a later mobile version
 	
 #platform: Use_Decomp
-	// Custom decomp check of versions
-	// Checks the amount of rows Credits_Console has, a file that doesn't exist on mobile data files.
-	// if it's equal or less than 1 (depending of platform), means there's no such file in the game, therefore we're using a mobile data file, otherwise is the older blit version
-	// depending of the version the position of the right mountain is different
-	// so we need to check which version we are using to avoid glitchy looks
-	SetupMenu(MENU_1, 0, 0, 0)
-	LoadTextFile(MENU_1, "Data/Game/Credits_Console.txt", false)
-	GetTextInfo(CheckResult, MENU_1, TEXTINFO_ROWCOUNT, 0, 0)
+	// For the decomp, use the original Blit sprite regardless of version
+	// The grey square is fixed via added code in the Background object's ObjectDraw sub
+	SpriteFrame(-124, 0, 124, 68, 256, 77)
 #endplatform
 
 #platform: Use_Standalone
-	if CheckResult > 1
-		SpriteFrame(-124, 0, 124, 68, 256, 77)	// Blit
-	else
-		SpriteFrame(-174, 0, 174, 68, 246, 267)	// Mobile
-	end if
+	// SpriteFrame(-124, 0, 124, 68, 256, 77) // Blit version
+	// SpriteFrame(-144, 0, 144, 68, 257, 251) // Older Mobile version
+	SpriteFrame(-174, 0, 174, 68, 246, 267)	// Current Mobile version
+#endplatform
+
+#platform: Use_Origins
+	SpriteFrame(-144, 0, 144, 68, 257, 251) // Origins version
 #endplatform
 end sub
 
