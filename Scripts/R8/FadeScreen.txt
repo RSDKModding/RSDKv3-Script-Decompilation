@@ -12,13 +12,13 @@
 // States
 #alias 0	:	FADESCREEN_SETUP
 #alias 1	:	FADESCREEN_AMY
-#alias 2	:	FADESCREEN_TAILS
+#alias 2	:	FADESCREEN_FINALFEVER
 #alias 3	:	FADESCREEN_BLANK
 #alias 4	:	FADESCREEN_BOSSRUSH		// Origins Exclusive
 
 // Property Values
-#alias 0	:	CUTSCENE_NO_SKIP
-#alias 1	:	CUTSCENE_SKIP
+#alias 0	:	CUTSCENE_ENDING
+#alias 1	:	CUTSCENE_FINALFEVER
 
 // Game Mode Aliases
 #alias 1	:	MODE_SAVEGAME
@@ -52,14 +52,14 @@ sub ObjectMain
 			Music.Volume--
 		else
 			Object.Timer = 224
-			if Object.PropertyValue == CUTSCENE_NO_SKIP
+			if Object.PropertyValue == CUTSCENE_ENDING
 				Object.State++
 			else
 				Object.State += 2
 			end if
 		end if
 
-		if Object.PropertyValue == CUTSCENE_SKIP
+		if Object.PropertyValue == CUTSCENE_FINALFEVER
 			SetScreenFade(0, 0, 0, Object.Timer)
 		else
 			SetScreenFade(224, 224, 224, Object.Timer)
@@ -239,7 +239,7 @@ sub ObjectMain
 					end if
 
 #platform: Use_Decomp
-					// We don't really want to softlock the game don't we?
+					// We don't really want to softlock the game, do we?
 					if Engine.State == ENGINE_WAIT
 						Engine.State = ENGINE_MAINGAME
 					end if
@@ -252,8 +252,8 @@ sub ObjectMain
 #endplatform
 
 #platform: Use_Standalone
-					// Originally the game checked if the player was using sonic or tails
-					// This got removed on origins, but since it covers this whole thing, this workaround should do
+					// Originally the game checked if the player was using Sonic or Tails
+					// This got removed in Origins, but since it covers this whole thing, this workaround should do
 					if Stage.PlayerListPos == PLAYER_TAILS_A
 						Stage.ListPos = STAGE_P_STAFFCREDITS
 					end if
@@ -267,13 +267,13 @@ sub ObjectMain
 		SetScreenFade(Object.Timer, Object.Timer, Object.Timer, 255)
 		break
 
-	case FADESCREEN_TAILS
+	case FADESCREEN_FINALFEVER
 		if Object.Timer > 0
 			Music.Volume--
 			Object.Timer -= 16
 		else
 			StopMusic()
-			Stage.ListPos += 2
+			Stage.ListPos += 2 // Would load Final Fever (if it was there), assuming you're in R83C
 			LoadStage()
 		end if
 		break

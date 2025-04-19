@@ -68,7 +68,7 @@
 #alias 3	:	EGGANI_DEFEAT
 
 // Cutscene
-#alias 1	:	CUTSCENE_SKIP
+#alias 1	:	CUTSCENE_FINALFEVER
 
 // Players
 #alias 0	:	PLAYER_SONIC_A
@@ -130,7 +130,7 @@
 #function Helper1Controller_OneWing
 
 #function EggMobile_Destroyed
-#function EggMobile_Destroyed_NoAmy
+#function EggMobile_Destroyed_FinalFever
 #function EggMobile_HandleWingRotation
 #function EggMobile_DropDamagedWing
 #function EggMobile_HandleAnimations
@@ -1427,7 +1427,7 @@ function EggMobile_Destroyed
 end function
 
 
-function EggMobile_Destroyed_NoAmy
+function EggMobile_Destroyed_FinalFever
 	switch Helper2.SecondaryState
 	case 0
 		Object.Timer++
@@ -1467,7 +1467,7 @@ function EggMobile_Destroyed_NoAmy
 		Object.Timer++
 		if Object.Timer == 120
 			Object[+5].Type			 = TypeName[Fade Screen]
-			Object[+5].PropertyValue = CUTSCENE_SKIP
+			Object[+5].PropertyValue = CUTSCENE_FINALFEVER
 		end if
 		break
 	end switch
@@ -1786,12 +1786,15 @@ sub ObjectPlayerInteraction
 						Helper2.BossInvincible = true
 						Object.Animation = EGGANI_DEFEAT
 						Object.Timer	 = 0
-						// Check if it's the bad future, for what? who knows
+						
 						if HUD.CurrentTimePeriod == TIME_BAD_FUTURE
 							Object.State = EggMobile_Destroyed
 						else
+							// Before Final Fever was cut, this would have set the state to EggMobile_Destroyed_FinalFever instead
+							// Now there's a redundant time period check, what a shame
 							Object.State = EggMobile_Destroyed
 						end if
+						
 						Object[+3].State++
 						Object[+3].Alpha >>= 1
 						Object[+3].Alpha <<= 1
